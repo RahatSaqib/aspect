@@ -154,16 +154,11 @@ class DeviceApiTestContext {
         .andWhere('g.lgaId', null)
         .first('g.*')
       const approvedApprovalStatus = await knex.from('DeviceApproval').where('token', 'approved').first()
-      const deviceCapacity = await knex('DeviceCapacity')
-        .where({ deviceTypeId: alereFtpConnectorDeviceType.id })
-        .where({ partnerId: partner.id })
-        .where({ defaultForDeviceType: 1 })
-        .first('id')
+
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         deviceTypeId: alereFtpConnectorDeviceType.id,
-        deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceApprovalId: approvedApprovalStatus.id,
         name: 'Some Alere FTP Connector',
         shortName: 'Alere FTP',

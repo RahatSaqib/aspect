@@ -144,10 +144,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .innerJoin('Assay as a', 'r.assayId', 'a.id')
       .leftOuterJoin('Site as s', 's.id', 'r.siteId')
       .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-      /**
-       * join to `DeviceCapacity` to count number of modules per device
-       */
-      .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
       .leftJoin('ResultCategoryAssay as rca1', function () {
         this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
       })

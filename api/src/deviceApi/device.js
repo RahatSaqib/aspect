@@ -237,6 +237,7 @@ async function createNewDevice(
     putInService,
     lastSeenOn,
     lastPingOn,
+    dailyTestCapacity,
   }
 ) {
   const deviceType = await knex('DeviceType').where({ externalId: deviceTypeExternalId }).first('id', 'name', 'plugin')
@@ -256,12 +257,6 @@ async function createNewDevice(
   const { existingTimeZone } = await knex('TimeZone')
     .where('id', timezone || defaultTimeZone)
     .first('id as existingTimeZone')
-
-  const deviceCapacity = await knex('DeviceCapacity')
-    .where({ deviceTypeId: deviceType.id })
-    .where({ partnerId })
-    .where({ defaultForDeviceType: 1 })
-    .first('id')
 
   // Use or generate device name
   if (!name) {
@@ -290,7 +285,7 @@ async function createNewDevice(
     partnerId,
     siteId,
     deviceTypeId: deviceType.id,
-    deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
+    dailyTestCapacity,
     deviceApprovalId,
     name,
     serial,

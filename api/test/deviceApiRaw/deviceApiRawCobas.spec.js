@@ -33,11 +33,7 @@ describe('Device API Raw routes for cobas', () => {
         .andWhere('g.lgaId', null)
         .first('g.*')
       const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
-      const deviceCapacity = await knex('DeviceCapacity')
-        .where({ deviceTypeId: cobasDeviceType.id })
-        .where({ partnerId: partner.id })
-        .where({ defaultForDeviceType: 1 })
-        .first('id')
+
       const [siteId] = await insertSite(knex, {
         name: 'Some Site for Some cobas Device',
         shortName: 'SSF',
@@ -56,7 +52,7 @@ describe('Device API Raw routes for cobas', () => {
         partnerId: partner.id,
         siteId,
         deviceTypeId: cobasDeviceType.id,
-        deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
+        dailyTestCapacity: 8,
         deviceApprovalId: approvedDeviceApproval.id,
         name: 'Some COBAS Device',
         shortName: 'COBAS',

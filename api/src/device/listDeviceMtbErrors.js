@@ -57,7 +57,6 @@ const listDeviceMtbErrors = async request => {
     query,
     timeFrame: 'day',
   })
-    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .sum({
       cntMtbResults: 'r.resultCount',
       cntMtbError: knex.raw(`

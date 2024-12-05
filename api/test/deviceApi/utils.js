@@ -200,21 +200,15 @@ async function createDevice(
 
   const deviceTypeId = await deviceTypeToId(type)
 
-  const deviceCapacity = await knex('DeviceCapacity')
-    .where({ deviceTypeId })
-    .where({ partnerId })
-    .where({ defaultForDeviceType: 1 })
-    .first('id')
-
   const [deviceId] = await knex('Device').insert({
     partnerId,
     siteId,
     deviceTypeId,
-    deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
     deviceApprovalId: await deviceApprovalToId(approval),
     configurationData: JSON.stringify(baseConfig),
     name: 'Test Device',
     shortName: 'Test Device',
+    dailyTestCapacity: 8,
     lastSeenOn: now,
     lastInstrumentSerial: instrumentSerial,
   })

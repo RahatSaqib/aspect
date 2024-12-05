@@ -31,11 +31,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       .andWhere('g.lgaId', null)
       .first('g.*')
     const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
-    const deviceCapacity = await knex('DeviceCapacity')
-      .where({ deviceTypeId: bdMgitDeviceType.id })
-      .where({ partnerId: partner.id })
-      .where({ defaultForDeviceType: 1 })
-      .first('id')
+
     ;[bdMgitSiteId] = await insertSite(knex, {
       name: 'Some Site for Some BD MGIT Device',
       shortName: 'SSFSBDMD',
@@ -54,7 +50,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       partnerId: partner.id,
       siteId: bdMgitSiteId,
       deviceTypeId: bdMgitDeviceType.id,
-      deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
+      dailyTestCapacity: 8,
       deviceApprovalId: approvedDeviceApproval.id,
       name: 'Some BD MGIT Device',
       shortName: 'BD MGIT',

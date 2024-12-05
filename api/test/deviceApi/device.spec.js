@@ -305,13 +305,6 @@ describe('Device API routes', () => {
 
       const newDevice = await getDeviceFromApiKey(knex, apiKey)
 
-      const { id: deviceCapacityId } = await knex('DeviceCapacity')
-        .where({ deviceTypeId: newDevice.deviceTypeId })
-        .where({ partnerId: newDevice.partnerId })
-        .where({ defaultForDeviceType: 1 })
-        .first('id')
-
-      assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
       // this is the site default timezone
       assert.equal(newDevice.timezone, 'South Africa Standard Time')
     })
