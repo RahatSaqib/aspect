@@ -212,6 +212,7 @@ async function findInventoryItem(siteId, consumableId, expiresOn, lotNumber, inT
 const getInventoryLogBaseQuery = (knex, dataConstraints) =>
   knex('InventoryLog as il')
     .innerJoin('Consumable as c', 'il.consumableId', 'c.id')
+    .innerJoin('ConsumableAssay as ca', 'ca.consumableId', 'c.id')
     .innerJoin('Site as s', 'il.siteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
@@ -838,6 +839,21 @@ async function getReconciliationList(query, dataConstraints) {
   return Promise.all([getCount, getItems])
 }
 
+async function appendSiteConsumables(data) {
+  const siteIds = [...new Set(data.map(it => it.siteId))]
+  const items = await knex('SiteConsumable')
+    .whereIn('siteId', siteIds)
+    .select('siteId', knex.raw(`GROUP_CONCAT(consumableId SEPARATOR ',') as siteConsumables`))
+    .groupBy('siteId')
+  data.map(d => {
+    const { siteId } = d
+    d.siteConsumables = items.find(it => it.siteId === siteId)?.siteConsumables || ''
+    d.siteConsumables = d.siteConsumables.split(',').map(x => +x)
+    return d
+  })
+  return data
+}
+
 module.exports = {
   baseMissingInventoryLotsQuery,
   findInventoryItem,
@@ -846,7 +862,6 @@ module.exports = {
   getInventoryItem,
   getInventoryItems,
   getInventorySitesQuery,
-  getInventoryLogBaseQuery,
   getInventoryLog,
   getInventoryLots,
   getInventoryByLot,
@@ -861,4 +876,5 @@ module.exports = {
   createInventoryTransfer,
   updateInventoryTransfer,
   getReconciliationList,
+  appendSiteConsumables,
 }

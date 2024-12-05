@@ -483,8 +483,7 @@ const inventoryLog = {
 
 const tbWorkloadSummary = {
   name: 'Report of TB Workload Summary',
-  description:
-    'Summary of TB Workload (MTB RIf and Ultra only for last 5 years) grouped by month, quarter and year for all regions.',
+  description: 'Summary of TB Workload grouped by month, quarter and year for all regions.',
   i18nKey: 'reportTBWorkloadSummary',
   externalId: 'tb_workload_summary', // folder name in /templates
   i18nKeyDescription: 'reportTBWorkloadSummaryDescription',
@@ -804,6 +803,30 @@ const xpertSiteSummaryReportSiteWise = {
   ],
 }
 
+const unreconciledInventoryReport = {
+  name: 'List of Unreconciled Inventory',
+  description:
+    "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
+  i18nKey: 'unreconciled_inventory_report',
+  i18nKeyDescription: 'unreconciled_inventory_report_description',
+  externalId: 'unreconciled_inventory_report', // folder name in /templates with low dash casing
+  fileName: 'UnReconciledInventoryReport',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 0,
+  validations: [],
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'inventory/serviceReports',
+      functionName: 'unreconciledInventoryReport',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -834,4 +857,5 @@ module.exports = {
   inventoryNoStock,
   xpertSiteSummaryReportSiteWise,
   unusedModulesReport,
+  unreconciledInventoryReport,
 }

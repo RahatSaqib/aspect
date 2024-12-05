@@ -64,6 +64,14 @@ export const validationMessages = defineMessages({
     id: 'pages.InventoryAdjustmentDialogForm.consumableRequired',
     defaultMessage: 'Please specify a consumable',
   },
+  quantityMissingToTransfer: {
+    id: 'pages.NewInventoryDialogForm.quantityMissingToTransfer',
+    defaultMessage: 'No inventory to transfer',
+  },
+  quantityMissingToRemove: {
+    id: 'pages.NewInventoryDialogForm.quantityMissingToRemove',
+    defaultMessage: 'No inventory to remove',
+  },
   quantityNumber: {
     id: 'pages.NewInventoryDialogForm.quantityNumber',
     defaultMessage: 'Please enter positive integer value',
@@ -79,6 +87,10 @@ export const validationMessages = defineMessages({
   quantityInteger: {
     id: 'pages.NewInventoryDialogForm.quantityInteger',
     defaultMessage: 'Please enter integer value',
+  },
+  quantityNotMoreThanOnHand: {
+    id: 'pages.NewInventoryDialogForm.quantityNotMoreThanOnHand',
+    defaultMessage: 'Can not be greater than on-hand',
   },
   expiryDateRequired: {
     id: 'pages.InventoryAdjustmentDialogForm.expiryDateRequired',
