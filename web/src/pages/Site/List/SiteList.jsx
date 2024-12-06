@@ -29,7 +29,7 @@ import getExportableFile from './SiteQueries'
 const SiteList = ({ navigate, location }) => {
   const user = useAuthState()
   const intl = useIntl()
-  const { formatMessage} = intl
+  const { formatMessage } = intl
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
