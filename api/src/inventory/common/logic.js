@@ -678,7 +678,7 @@ async function consumeInventoryForResult(
 
         const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber)
         if (inventoryAdjustment === 'currentSiteAndProviderAdjustment') {
-          if (inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
+          if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
             const site = await getSiteById(siteId)
             if (site.parentWarehouseId) {
               const parentInventoryItem = await findInventoryItem(
