@@ -561,6 +561,10 @@ const messages = {
     last: { id: 'pages.TablePaginator.last', defaultMessage: 'Last' },
     optionFalse: { id: 'pages.revokedSelectField.false', defaultMessage: 'False' },
     optionTrue: { id: 'pages.revokedSelectField.true', defaultMessage: 'True' },
+    selectAllUnselectAll: {
+      id: 'forms.formItem.selectAllUnselectAll',
+      defaultMessage: 'Select All / Unselect All',
+    },
   }),
 }
 export default messages

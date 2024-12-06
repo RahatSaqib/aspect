@@ -3,9 +3,12 @@ import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import FormGroup from '@mui/material/FormGroup'
 import Summary from '../../oldComponents/Summary'
-
+import { format } from 'date-fns'
+import { useIntl } from 'react-intl'
+import messages from '../../messages/allMessages'
 const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSelect, isLoading, listData = [] }) => {
   const [selectAll, setSelectAll] = useState(false)
+  const { formatMessage } = useIntl();
 
   useEffect(() => {
     setSelectAll(selectedList.length === listData.length && listData.length > 0)
@@ -54,7 +57,7 @@ const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSele
                     disabled={isChanging}
                   />
                 }
-                label="Select All / Unselect All"
+                label={formatMessage(messages.selectAllUnselectAll)}
               />
               {listData.map(({ name, id }) => (
                 <FormControlLabel
