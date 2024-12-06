@@ -20,6 +20,7 @@ const InventoryOverviewPage = () => {
 
   function getInventoryLabel(item, isState) {
     if (item.type === 'clinic') return item?.lab
+    if (item.type === 'warehouse') return item?.lab
     if (item.type && item[item.type]) return item.type && item[item.type]
     return isState ? formatMessage(messages.noAssociatedState) : formatMessage(messages.noAssociatedLga)
   }
