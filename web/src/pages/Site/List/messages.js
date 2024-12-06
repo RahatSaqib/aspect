@@ -47,6 +47,10 @@ const messages = {
       id: 'pages.SiteList.createSite',
       defaultMessage: 'Create Site',
     },
+    hierarchicalView: {
+      id: 'pages.inventoryReconciliations.hierarchicalView',
+      defaultMessage: 'Hierarchical View',
+    },
   }),
 }
 

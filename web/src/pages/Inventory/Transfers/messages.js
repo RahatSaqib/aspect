@@ -24,6 +24,10 @@ const messages = {
       other {# Transfers}
     }`,
     },
+    hierarchicalView: {
+      id: 'pages.InventoryTransfer.hierarchicalView',
+      defaultMessage: 'Hierarchical View',
+    },
   }),
 }
 

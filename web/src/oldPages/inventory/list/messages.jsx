@@ -155,6 +155,10 @@ const messages = {
       id: 'pages.InventoryItemsList.expired',
       defaultMessage: 'Expired',
     },
+    hierarchicalView: {
+      id: 'pages.inventoryIteamList.hierarchicalView',
+      defaultMessage: 'Hierarchical View',
+    },
   }),
 }
 

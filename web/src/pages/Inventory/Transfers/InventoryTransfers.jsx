@@ -112,7 +112,7 @@ const InventoryTransfers = () => {
                     checked={isHierarchicalView}
                     onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
                   />
-                  Hierarchical View
+                  {formatMessage(messages.hierarchicalView)}
                 </Typography>
                 <AspectExportListButton onExport={onExcelClick} visible />
               </Stack>

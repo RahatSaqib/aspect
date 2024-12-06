@@ -141,6 +141,10 @@ const messages = {
       id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove',
       defaultMessage: 'Asserted inventory on hand increase',
     },
+    hierarchicalView: {
+      id: 'pages.InventoryLog.hierarchicalView',
+      defaultMessage: 'Hierarchical View',
+    },
   }),
 }
 
