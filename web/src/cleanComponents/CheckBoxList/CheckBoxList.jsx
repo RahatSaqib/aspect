@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import FormGroup from '@mui/material/FormGroup'
-import Summary from '../../oldComponents/Summary'
-import { format } from 'date-fns'
 import { useIntl } from 'react-intl'
 import messages from '../../messages/allMessages'
+import Summary from '../../oldComponents/Summary'
+
 const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSelect, isLoading, listData = [] }) => {
   const [selectAll, setSelectAll] = useState(false)
-  const { formatMessage } = useIntl();
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     setSelectAll(selectedList.length === listData.length && listData.length > 0)

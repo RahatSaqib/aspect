@@ -51,8 +51,7 @@ const InventoryOverviewPage = () => {
       key: 'Last 6 Months',
       name: formatMessage(messages.last6Months),
       prop: 'usedLastSixMonths',
-      tooltip:
-        formatMessage(messages.last6MonthsTooltip),
+      tooltip: formatMessage(messages.last6MonthsTooltip),
     },
     {
       key: 'Used',
@@ -70,8 +69,7 @@ const InventoryOverviewPage = () => {
       key: 'Days Left',
       name: formatMessage(messages.daysLeft),
       prop: 'daysOfInventoryLeft',
-      tooltip:
-        formatMessage(messages.daysLeftTooltip),
+      tooltip: formatMessage(messages.daysLeftTooltip),
     },
   ]
 
