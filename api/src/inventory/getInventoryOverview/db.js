@@ -28,7 +28,8 @@ module.exports = async function (query, constraints) {
         .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
         .leftJoin('Unit as u', 'c.unit', 'u.id')
         .where(r =>
-          r.whereNull('r.id')
+          r
+            .whereNull('r.id')
             .orWhere(r2 =>
               r2.modify(filterDateRangeParams, { minDate: query.minDate, maxDate: query.maxDate }, 'r.endedOn')
             )
@@ -60,18 +61,14 @@ module.exports = async function (query, constraints) {
         .as('site')
     )
     .leftJoin('InventoryItem as ii', builder => {
-      builder.on('site.id', 'ii.siteId')
+      builder
+        .on('site.id', 'ii.siteId')
         .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
         .andOn('ii.consumableId', consumableId)
     })
-    .groupBy('site.id',
-      'site.lab',
-      'site.type',
-      'site.geographyId',
-      'site.countryId',
-      'site.stateId',
-      'site.lgaId',)
-    .select([knex.raw('SUM(IFNULL(ii.quantityOnHand,0)) as quantity'),
+    .groupBy('site.id', 'site.lab', 'site.type', 'site.geographyId', 'site.countryId', 'site.stateId', 'site.lgaId')
+    .select([
+      knex.raw('SUM(IFNULL(ii.quantityOnHand,0)) as quantity'),
       'site.id',
       'site.lab',
       'site.type',
@@ -79,10 +76,10 @@ module.exports = async function (query, constraints) {
       'site.countryId',
       'site.stateId',
       'site.lgaId',
-    knex.raw('SUM(IFNULL(site.usedLastSixMonths,0)) as usedLastSixMonths'),
-    knex.raw('SUM(IFNULL(site.usedInDateRange,0)) as usedInDateRange'),
-    knex.raw('MIN(IFNULL(site.firstResultDateInLastSixMonths,0)) as firstResultDateInLastSixMonths'),
-    knex.raw('SUM(IFNULL(site.unreconciledQuantity,0)) as unreconciledQuantity'),
+      knex.raw('SUM(IFNULL(site.usedLastSixMonths,0)) as usedLastSixMonths'),
+      knex.raw('SUM(IFNULL(site.usedInDateRange,0)) as usedInDateRange'),
+      knex.raw('MIN(IFNULL(site.firstResultDateInLastSixMonths,0)) as firstResultDateInLastSixMonths'),
+      knex.raw('SUM(IFNULL(site.unreconciledQuantity,0)) as unreconciledQuantity'),
     ])
 
   const sites = await overviewQuery
@@ -94,8 +91,8 @@ module.exports = async function (query, constraints) {
 
       site.consumptionRateLastSixMonths = site.firstResultDateInLastSixMonths
         ? +(site.usedLastSixMonths / Math.min(180, differenceInDays(now, site.firstResultDateInLastSixMonths))).toFixed(
-          2
-        )
+            2
+          )
         : 0
 
       site.daysOfInventoryLeft = Math.round(site.quantity / site.consumptionRateLastSixMonths)
