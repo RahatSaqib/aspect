@@ -163,8 +163,7 @@ function getInventorySitesQuery(constraints, request) {
       'st.name as stateName',
       'l.name as lgaName',
       'ficr.rate as dailyConsumptionRate',
-      // Use DISTINCT to ensure that we only sum `quantityOnHand` once per unique inventory item
-      knex.raw('SUM(DISTINCT ii.quantityOnHand) as quantityOnHand'),
+      knex.raw('SUM(ii.quantityOnHand) as quantityOnHand'),
       knex.raw('COUNT(ii_transfer.id) as pendingTransfers'),
       knex.raw('SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'),
       knex.raw(
