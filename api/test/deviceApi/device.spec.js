@@ -287,7 +287,7 @@ describe('Device API routes', () => {
     })
 
     // TODO: Need to rewrite the test case once the definition of daily capacity is defineds
-    it('should assign the Device to the default capacity for the device type and partner', async () => {
+    it.skip('should assign the Device to the default capacity for the device type and partner', async () => {
       const { apiKey, deviceAuth } = newDeviceContext
       assert.isOk(apiKey)
 
@@ -305,6 +305,8 @@ describe('Device API routes', () => {
       await waitForIdle()
 
       const newDevice = await getDeviceFromApiKey(knex, apiKey)
+
+      // TODO: Check Here the device capacity according to the definition, still missing at the moment of writing ASP-7458
 
       // this is the site default timezone
       assert.equal(newDevice.timezone, 'South Africa Standard Time')
