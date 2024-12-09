@@ -201,7 +201,7 @@ function InventoryAdjustmentDialog(props) {
 
                 <FormGroup
                   labelProps={{
-                    required: withExpirationDate(partner, values.consumable),
+                    required: withExpirationDate(partner), // NOTE: `undefined` is passed as `partner` argument explicitly to avoid using inventory strategy from consumables
                   }}
                   label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
                   error={!!errors.expiresOn}
@@ -221,7 +221,7 @@ function InventoryAdjustmentDialog(props) {
                 </FormGroup>
 
                 <TextField
-                  required={withLotNumber(partner, values.consumable)}
+                  required={withLotNumber(partner, undefined)} // NOTE: `undefined` is passed as `consumable` argument explicitly
                   fullWidth
                   type="text"
                   name="lotNumber"
