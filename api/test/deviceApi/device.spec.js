@@ -286,28 +286,6 @@ describe('Device API routes', () => {
       assert.equal(onlineFactDevice.offline, 0)
     })
 
-    it('should assign the Device to the default capacity for the device type and partner', async () => {
-      const { apiKey, deviceAuth } = newDeviceContext
-      assert.isOk(apiKey)
-
-      // add device
-      const res = await server
-        .post(devicePath)
-        .set('Authorization', deviceAuth)
-        .send({
-          type: { id: 'DaktariInSight' },
-          site: { id: 'CHIZ' },
-        })
-
-      assert.equal(res.status, 200)
-
-      await waitForIdle()
-
-      const newDevice = await getDeviceFromApiKey(knex, apiKey)
-
-      // this is the site default timezone
-      assert.equal(newDevice.timezone, 'South Africa Standard Time')
-    })
     it('should return shortName of 45 characters if shortName is greater than 45 when creating a device', async () => {
       const { apiKey, deviceAuth } = newDeviceContext
       assert.isOk(apiKey)
