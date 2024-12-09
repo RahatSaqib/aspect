@@ -26,6 +26,9 @@ const InventoryReconciliation = lazy(() => import('./pages/Inventory/Reconciliat
 const InventoryLog = lazy(() => import('./oldPages/inventory/log/InventoryLog'))
 const InventoryTransfers = lazy(() => import('./pages/Inventory/Transfers'))
 const InventoryList = lazy(() => import('./pages/Inventory/InventoryList'))
+const InventoryReconciliationForm = lazy(() =>
+  import('./pages/Inventory/InventoryDetails/InventoryForm/InventoryReconciliationForm')
+)
 const InventoryDetails = lazy(() => import('./pages/Inventory/InventoryDetails'))
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
@@ -257,6 +260,7 @@ const LogInApp = () => {
                     <Route path="/browse/inventory/log" element={<InventoryLog />} />
                     <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
                     <Route path="/browse/inventory/overview" element={<InventoryOverview />} />
+                    <Route path="/browse/inventory/reconciliation/form" element={<InventoryReconciliationForm />} />
                     {isPakistan ? (
                       <Route path="/browse/inventory/reconciliation" element={<InventoryReconciliation />} />
                     ) : null}

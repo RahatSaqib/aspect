@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Box, Tab, Tabs, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import { ConsumptionRate } from './ConsumptionRate.jsx'
@@ -44,10 +44,10 @@ export const InventoryTabs = ({ consumableId, siteIds, disabledSites }) => {
 
       <TabPanel value={tabValue} index={0}>
         <Box display="flex" alignItems="center">
-          <h4>Locations with this Item</h4>
+          <h4>{formatMessage(messages.locationsWithThisItem)}</h4>
           <AspectTooltip showHelpIcon title={formatMessage(messages.trackByLocationTooltip)} />
         </Box>
-        <Typography>Select all Locations to track inventory for this item</Typography>
+        <Typography>{formatMessage(messages.selectAllLocations)}</Typography>
         <TrackByLocation consumableId={consumableId} disabledSites={disabledSites} siteIds={siteIds} />
       </TabPanel>
 

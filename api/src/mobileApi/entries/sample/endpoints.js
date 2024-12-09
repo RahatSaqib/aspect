@@ -1,5 +1,5 @@
 const { sampleRegistrationPayloadValidation, sampleRegistrationResponseValidation } = require('./common/validations')
-const { registerNewSample } = require('./service')
+const { registerNewSample } = require('./registerNewSample')
 const { asyncHandler } = require('../../../routes')
 
 // -----------------------------------------------------
