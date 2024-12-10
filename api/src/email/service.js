@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays, subMonths } = require('date-fns')
+
 const { emailMessageReadyForSending, emailMessageProcessed } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
@@ -59,33 +60,13 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
 
   return context.transact(async knex => {
     const partnerDetails = await knex('EmailMessage as em')
-      .join('Notification as n', 'em.id', 'n.emailMessageId')
-      .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
-      .join('Partner as p', 'nt.partnerId', 'p.id')
+      .join('Device as d', 'em.deviceId', 'd.id')
+      .join('Partner as p', 'd.partnerId', 'p.id')
       .where({ 'em.id': emailMessageId })
       .first('*')
-    const emailMessageCount = await knex('EmailMessage as em')
-      .join('Device as d', 'em.deviceId', 'd.id')
-      .where('em.createdOn', '>', partnerDetails?.serviceStartDate)
-      .where('em.createdOn', '<', partnerDetails?.serviceEndDate)
-      .andWhere('d.partnerId', partnerDetails?.partnerId)
-      .first('*')
-      .count('* as count')
-    if (
-      (partnerDetails?.serviceStartDate &&
-        partnerDetails?.notificationLimit &&
-        new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
-        emailMessageCount?.count <= partnerDetails?.notificationLimit) ||
-      !partnerDetails?.serviceStartDate ||
-      !partnerDetails?.notificationLimit
-    ) {
+    if (new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
       await doSendEmailMessage(context, knex, emailMessageId)
-    } else {
-      await knex('EmailMessage').where({ id: emailMessageId }).update({
-        messageStatusId: 4,
-        updatedOn: new Date(),
-      })
-    }
+    } else return Promise.reject(new Error('Service is not available'))
   })
 }
 
