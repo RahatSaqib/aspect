@@ -17,7 +17,7 @@ const { emailMessageCreated, emailMessageReadyForSending, emailMessageProcessed 
 const { columnsDeviceErrorHistoryForAttachment } = require('../../src/result/serviceReport')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 
-describe('Sending Email via Message Queue', () => {
+describe.only('Sending Email via Message Queue', () => {
   const { runTest } = context
 
   afterEach(context.afterEach)
