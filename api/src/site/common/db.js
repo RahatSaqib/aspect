@@ -1,8 +1,25 @@
 const uuid = require('node-uuid')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
-const { knex, filterParams } = require('../../db')
+const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
+const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
+const { SELECT_LIST_FIELDS } = require('./constants')
+const { getNotDecommissionedDevices } = require('../../device/common/db')
+
+function getSitesQuery(dataConstraints) {
+  return knex('Site as s')
+    .join('SiteType as st', 's.siteTypeId', 'st.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
+    .leftOuterJoin('Site as spw', 's.parentWarehouseId', 'spw.id')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
+    .groupBy(['s.id'])
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+}
 
 const getExistingSite = async (name, shortName, externalId) =>
   getExistingSiteExcludingCurrent(null, name, shortName, externalId)
@@ -145,6 +162,59 @@ const insertSite = (knex, site) => {
   return knex('Site').insert(site)
 }
 
+function getSiteListQuery(query, dataConstraints) {
+  const baseSiteQuery = getSitesQuery(dataConstraints)
+  const siteQuery = baseSiteQuery
+    .clone()
+    .where(function () {
+      if (!query.siteIds) {
+        return
+      }
+      this.whereIn('s.id', query.siteIds.split(','))
+    })
+    .andWhere(function () {
+      if (!query.deviceName) {
+        return
+      }
+      const deviceQuery = knex('Device as d')
+        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .select('d.siteId')
+        .modify(filterParams, query, {
+          deviceName: 'd.name',
+          deviceType: 'dt.externalId',
+        })
+
+      this.whereIn('s.id', deviceQuery)
+    })
+    .modify(filterDateRangeParams, query, 's.createdOn')
+    .modify(
+      filterParams,
+      query,
+      {
+        countryId: 'g.countryId',
+        stateId: 'g.stateId',
+        lgaId: 'g.lgaId',
+        siteName: 's.name',
+        externalId: 's.externalId',
+        parentWarehouseId: 's.parentWarehouseId',
+        siteTypeId: 'st.id',
+      },
+      { whereArgs: { handleNullValues: true } }
+    )
+
+  return siteQuery
+}
+
+function getSiteListModifiedQuery(query, dataConstraints) {
+  const getItems = getSiteListQuery(query, dataConstraints)
+    .clone()
+    .modify(sortPageParams, query, 'name')
+    .select([
+      ...SELECT_LIST_FIELDS,
+      getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
+    ])
+  return getItems
+}
 module.exports = {
   getExistingSite,
   getExistingSiteExcludingCurrent,
@@ -157,4 +227,7 @@ module.exports = {
   getSamplesRegisteredCount,
   getSites,
   insertSite,
+  getSitesQuery,
+  getSiteListQuery,
+  getSiteListModifiedQuery,
 }
