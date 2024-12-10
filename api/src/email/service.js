@@ -71,6 +71,8 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .andWhere('d.partnerId', partnerDetails?.partnerId)
       .first('*')
       .count('* as count')
+    // eslint-disable-next-line
+      console.log('emailMessageCount', emailMessageCount,partnerDetails)
     if (
       // (partnerDetails?.serviceStartDate &&
       //   partnerDetails?.notificationLimit &&
