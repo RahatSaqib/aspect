@@ -64,7 +64,8 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .join('Partner as p', 'nt.partnerId', 'p.id')
       .where({ 'em.id': emailMessageId })
       .first('*')
-      console.log('emailMessageCount',partnerDetails)
+    // eslint-disable-next-line
+    console.log('emailMessageCount', partnerDetails)
 
     const emailMessageCount = await knex('EmailMessage as em')
       .join('Device as d', 'em.deviceId', 'd.id')
@@ -73,7 +74,7 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .andWhere('d.partnerId', partnerDetails?.partnerId)
       .first('*')
       .count('* as count')
-    // eslint-disable-next-line
+    
     if (
       // (partnerDetails?.serviceStartDate &&
       //   partnerDetails?.notificationLimit &&
