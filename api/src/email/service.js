@@ -74,7 +74,7 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .andWhere('d.partnerId', partnerDetails?.partnerId)
       .first('*')
       .count('* as count')
-    
+
     if (
       // (partnerDetails?.serviceStartDate &&
       //   partnerDetails?.notificationLimit &&
