@@ -64,7 +64,22 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .join('Partner as p', 'nt.partnerId', 'p.id')
       .where({ 'em.id': emailMessageId })
       .first('*')
-    if (new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+    const emailMessageCount = await knex('EmailMessage as em')
+      .join('Device as d', 'em.deviceId', 'd.id')
+      .where('em.createdOn', '>', partnerDetails?.serviceStartDate)
+      .where('em.createdOn', '<', partnerDetails?.serviceEndDate)
+      .andWhere('d.partnerId', partnerDetails?.partnerId)
+      .first('*')
+      .count('* as count')
+    if (
+      // (partnerDetails?.serviceStartDate &&
+      //   partnerDetails?.notificationLimit &&
+      //   new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
+      //   emailMessageCount?.count <= (partnerDetails?.notificationLimit)) ||
+      // !partnerDetails?.serviceStartDate ||
+      // !partnerDetails?.notificationLimit
+      emailMessageCount?.count <= (partnerDetails?.notificationLimit || 10000)
+    ) {
       await doSendEmailMessage(context, knex, emailMessageId)
     } else {
       await knex('EmailMessage').where({ id: emailMessageId }).update({
