@@ -66,19 +66,19 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
       .join('Partner as p', 'nt.partnerId', 'p.id')
       .where({ 'sm.id': smsMessageId })
       .first('*')
-    const smsMessageCount = await knex('SmsMessage as sm')
-      .join('Device as d', 'sm.deviceId', 'd.id')
-      .where('sm.createdOn', '>', partnerDetails?.serviceStartDate)
-      .where('sm.createdOn', '<', partnerDetails?.serviceEndDate)
-      .andWhere('d.partnerId', partnerDetails?.partnerId)
-      .first('*')
-      .count('* as count')
+    // const smsMessageCount = await knex('SmsMessage as sm')
+    //   .join('Device as d', 'sm.deviceId', 'd.id')
+    //   .where('sm.createdOn', '>', partnerDetails?.serviceStartDate)
+    //   .where('sm.createdOn', '<', partnerDetails?.serviceEndDate)
+    //   .andWhere('d.partnerId', partnerDetails?.partnerId)
+    //   .first('*')
+    //   .count('* as count')
 
     if (
       (partnerDetails?.serviceStartDate &&
         partnerDetails?.notificationLimit &&
-        new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
-        smsMessageCount?.count <= partnerDetails?.notificationLimit) ||
+        new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) ||
+      // && smsMessageCount?.count <= partnerDetails?.notificationLimit
       !partnerDetails?.serviceStartDate ||
       !partnerDetails?.notificationLimit
     ) {
