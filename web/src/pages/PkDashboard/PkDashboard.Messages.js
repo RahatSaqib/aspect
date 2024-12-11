@@ -149,7 +149,7 @@ const messages = {
       defaultMessage: 'Provincial MTB+ detection trends',
     },
     provincialMTBPositivesTrendsCurrentYear: {
-      id: 'p.PkDashboard.provincialMTBPositivesTrends',
+      id: 'p.PkDashboard.provincialMTBPositivesTrends.currentYear',
       defaultMessage: 'Provincial MTB+ detected in current year',
     },
     xdrFLQAndINHTrends: {
@@ -185,7 +185,7 @@ const messages = {
       defaultMessage: 'Provinces annual utilization rates',
     },
     provincialDiagnosisTrendsCurrentYear: {
-      id: 'p.PkDashboard.tbCasesDiagnosed',
+      id: 'p.PkDashboard.tbCasesDiagnosed.currentYear',
       defaultMessage: 'Provincial Diagnosis Trends for the current year',
     },
     provincialDiagnosisTrendsComparison: {
@@ -201,7 +201,7 @@ const messages = {
       defaultMessage: 'Provincial Testing in current year',
     },
     provincialDistrictFqrDiagnosisTrends: {
-      id: 'p.PkDashboard.provincialFqrDiagnosisTrends',
+      id: 'p.PkDashboard.provincial.district.FqrDiagnosisTrends',
       defaultMessage: 'Provincial/District FQ Diagnosis Trends',
     },
     provincialFqrDiagnosisTrends: {
@@ -438,6 +438,70 @@ const messages = {
     mtbPlusAndTrace: {
       id: 'p.PkDashboard.mtbPlusAndTrace',
       defaultMessage: 'MTB+ and Trace',
+    },
+    provinceRegion: {
+      id: 'p.PkDashboard.provinceRegion',
+      defaultMessage: 'Province/Region',
+    },
+    gxSites: {
+      id: 'p.PkDashboard.gxSites',
+      defaultMessage: 'GX Sites',
+    },
+    gx6CDevices: {
+      id: 'p.PkDashboard.gx6CDevices',
+      defaultMessage: 'GX-6C Devices',
+    },
+    gx10CDevices: {
+      id: 'p.PkDashboard.gx10CDevices',
+      defaultMessage: 'GX-10C Devices',
+    },
+    combinedGX6CGX10CDevices: {
+      id: 'p.PkDashboard.combinedGX6CGX10CDevices',
+      defaultMessage: 'Combined GX-6C/GX-10C Devices',
+    },
+    gx6CModules: {
+      id: 'p.PkDashboard.gx6CModules',
+      defaultMessage: 'GX-6C Modules',
+    },
+    gx10CModules: {
+      id: 'p.PkDashboard.gx10CModules',
+      defaultMessage: 'GX-10C Modules',
+    },
+    utilizationName: {
+      id: 'p.PkDashboard.utilizationName',
+      defaultMessage: 'Name',
+    },
+    utilizationTotalModules: {
+      id: 'p.PkDashboard.utilizationTotalModules',
+      defaultMessage: 'Total Modules',
+    },
+    utilizationTotalTests: {
+      id: 'p.PkDashboard.utilizationTotalTests',
+      defaultMessage: 'Total Tests',
+    },
+    utilizationPercent: {
+      id: 'p.PkDashboard.utilizationPercent',
+      defaultMessage: 'Utilization%',
+    },
+    currentQty: {
+      id: 'p.PkDashboard.currentQty',
+      defaultMessage: 'Current Qty.',
+    },
+    used: {
+      id: 'p.PkDashboard.used',
+      defaultMessage: 'Used',
+    },
+    daysLeft: {
+      id: 'p.PkDashboard.daysLeft',
+      defaultMessage: 'Days Left',
+    },
+    consumptionRate: {
+      id: 'p.PkDashboard.consumptionRate',
+      defaultMessage: 'Consumption Rate',
+    },
+    last6Months: {
+      id: 'p.PkDashboard.last6Months',
+      defaultMessage: 'Last 6 Months',
     },
   }),
 }

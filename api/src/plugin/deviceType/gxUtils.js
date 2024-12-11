@@ -391,9 +391,22 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
         }
       }
     }
-    device = await updateDeviceDetails(knex, deviceId, _.omitBy(deviceDetails, _.isNil), now, isFastImport)
+    if (deviceId) {
+      await updateDeviceDetails(knex, deviceId, _.omitBy(deviceDetails, _.isNil), now, isFastImport)
+      device = await getDeviceInfo(knex, deviceId)
+    }
   }
   return { device }
+}
+
+async function getDeviceInfo(knex, deviceId) {
+  const device = await knex('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .where({ 'd.id': deviceId })
+    .first('d.*', 'g.id as geographyId')
+  delete device.configurationData
+  return device
 }
 
 async function findDevices(availableDeviceDetails, knex) {

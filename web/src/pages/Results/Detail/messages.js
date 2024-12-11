@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { resultCategory, resultCategoryType, commonDefinitions, sampleType } from '../../../messages'
+import { commonDefinitions, resultCategory, resultCategoryType, sampleType } from '../../../messages'
 import resultCategoryAssayMessages from '../../../oldPages/result/list/messages'
 
 const messagesResult = defineMessages({
@@ -48,7 +48,7 @@ const messagesResult = defineMessages({
     defaultMessage: 'Include ALL results related to Patient ID',
   },
   processing: {
-    id: 'pages.transferResult.processing',
+    id: 'pages.result.transferResult.processing',
     defaultMessage: 'Processing...',
   },
   note: {
@@ -258,7 +258,7 @@ const messagesResult = defineMessages({
     defaultMessage: 'Positive',
   },
   negative: {
-    id: 'pages.resultEdit.positive',
+    id: 'pages.resultEdit.negative',
     defaultMessage: 'Negative',
   },
   pulmonary: {

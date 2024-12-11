@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
+"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -26,7 +26,7 @@ msgstr "módulos \"Não utilizar\""
 #. "No Stock" Inventory Report
 #: extracted_strings.json
 msgid "\"No Stock\" Inventory Report"
-msgstr "\"Relatório de Inventário \"Sem stock"
+msgstr "\"Relatório de inventário \"Sem stock"
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
@@ -61,12 +61,12 @@ msgstr "# Número de locais testados Ensaio MTB/XDR"
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
 msgid "(New quantity on hand: {nextQuantity} {unitShortName})"
-msgstr "(Nova quantidade em mão: {nextQuantity} {unitShortName})"
+msgstr "(Nova quantidade disponível: {nextQuantity} {unitShortName})"
 
-#. [pages.InventoryItemsList.inTransitFromSiteName]
+#. [pages.excluded.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
 #. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
-#. [pages.InventoryLog.inTransitFromSiteName]
+#. [pages.InventoryLog.excluded.inTransitFromSiteName]
 #. defaultMessage is:
 #. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
@@ -77,12 +77,57 @@ msgstr ""
 "* excluídos {pendingTransfersQuantityOnHand} artigos em {pendingTransfers} "
 "lote/s em trânsito"
 
+#. [pages.inTransit.InventoryItemsList.inTransitFromSiteName]
+#. defaultMessage is:
+#. * in transit from {inTransitFromSiteName}
+#. [pages.InventoryLog.inTransitFromSiteName]
+#. defaultMessage is:
+#. * in transit from {inTransitFromSiteName}
+#: extracted_strings.json
+msgid "* in transit from {inTransitFromSiteName}"
+msgstr "* em trânsito a partir de {inTransitFromSiteName}"
+
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{contactos, plural, one {# more {name}} other {# more {name}s} }"
+msgstr "...{contactos, plural, um {# mais {name}} outro {# mais {name}s} }"
+
+#. [filter.btnGroup.daysStockLeft.upTo14]
+#. defaultMessage is:
+#. 1-14 Days
+#: extracted_strings.json
+msgid "1-14 Days"
+msgstr "1-14 dias"
+
+#. [filter.btnGroup.daysStockLeft.upTo90]
+#. defaultMessage is:
+#. 1-3 Months
+#: extracted_strings.json
+msgid "1-3 Months"
+msgstr "1-3 Meses"
+
+#. [filter.btnGroup.daysStockLeft.upTo30]
+#. defaultMessage is:
+#. 15-30 Days
+#: extracted_strings.json
+msgid "15-30 Days"
+msgstr "15-30 dias"
+
+#. [filter.btnGroup.daysStockLeft.upTo180]
+#. defaultMessage is:
+#. 4-6 Months
+#: extracted_strings.json
+msgid "4-6 Months"
+msgstr "4-6 Meses"
+
+#. [component.InputPassword.eightCharsLong]
+#. defaultMessage is:
+#. 8 Characters Long or more
+#: extracted_strings.json
+msgid "8 Characters Long or more"
+msgstr "A senha precisa ter pelo menos 8 caracteres"
 
 #. [pages.DeviceList.mergeDeviceActionDescription]
 #. defaultMessage is:
@@ -121,6 +166,13 @@ msgstr ""
 "serão eliminados da Aspect.</li> <ul> </p> <br/> <p style=\"color: red;\"> "
 "**IMPORTANTE:** Esta acção é irreversível! </p>"
 
+#. [filter.btnGroup.daysStockLeft.moreThan180]
+#. defaultMessage is:
+#. >6 Months
+#: extracted_strings.json
+msgid ">6 Months"
+msgstr ">6 Meses"
+
 #. [pages.ReportIndex.doNotUseModulesReport_Description]
 #. defaultMessage is:
 #. A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.
@@ -131,6 +183,16 @@ msgid ""
 msgstr ""
 "Uma lista de todos os módulos do dispositivo GeneXpert marcados como 'não "
 "usar'. Inclui nome do dispositivo, serial do módulo."
+
+#. [pages.ReportIndex.deviceSummaryReportDescription]
+#. defaultMessage is:
+#. A list of all devices in the system and aggregated test results per device.
+#: extracted_strings.json
+msgid ""
+"A list of all devices in the system and aggregated test results per device."
+msgstr ""
+"Uma lista de todos os dispositivos no sistema e resultados de testes "
+"agregados por dispositivo."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -160,6 +222,20 @@ msgstr "AMK R %"
 msgid "AMK Resistance"
 msgstr "Resistência AMK"
 
+#. [legends.Unknown.AMKPercent]
+#. defaultMessage is:
+#. AMK-R %
+#: extracted_strings.json
+msgid "AMK-R %"
+msgstr "AMK-R %"
+
+#. [legends.Unknown.AmkDetected]
+#. defaultMessage is:
+#. AMK-R Detected
+#: extracted_strings.json
+msgid "AMK-R Detected"
+msgstr "AMK-R Detectado"
+
 #. [months.april]
 #. defaultMessage is:
 #. APR
@@ -174,6 +250,9 @@ msgstr "abril"
 msgid "AUG"
 msgstr "agosto"
 
+#. [legends.Unknown.assayAbbottM2000DBSHivVL]
+#. defaultMessage is:
+#. Abbott m2000 DBS HIV VL
 #. [filter.AssaySelectField.AssayAbbottM2000DBSHivVl]
 #. defaultMessage is:
 #. Abbott m2000 DBS HIV VL
@@ -184,6 +263,9 @@ msgstr "agosto"
 msgid "Abbott m2000 DBS HIV VL"
 msgstr "Abbott m2000 DBS HIV VL"
 
+#. [legends.Unknown.assayAbbottM2000DaanNCOVID19]
+#. defaultMessage is:
+#. Abbott m2000 Daan N COVID-19
 #. [filter.AssaySelectField.AssayAbbottM2000DaanNCOVID19]
 #. defaultMessage is:
 #. Abbott m2000 Daan N COVID-19
@@ -194,6 +276,9 @@ msgstr "Abbott m2000 DBS HIV VL"
 msgid "Abbott m2000 Daan N COVID-19"
 msgstr "Abbott m2000 Daan N COVID-19"
 
+#. [legends.Unknown.assayAbbottM2000HIVEID]
+#. defaultMessage is:
+#. Abbott m2000 HIV EID
 #. [filter.AssaySelectField.AssayAbbottM2000HivEid]
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
@@ -204,6 +289,9 @@ msgstr "Abbott m2000 Daan N COVID-19"
 msgid "Abbott m2000 HIV EID"
 msgstr "Abbott m2000 EID HIV"
 
+#. [legends.Unknown.assayAbbottM2000PlasmaHbvVL]
+#. defaultMessage is:
+#. Abbott m2000 Plasma HBV VL
 #. [filter.AssaySelectField.abbottM2000PlasmaHbvVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HBV VL
@@ -211,12 +299,22 @@ msgstr "Abbott m2000 EID HIV"
 msgid "Abbott m2000 Plasma HBV VL"
 msgstr "Abbott m2000 Plasma HBV VL"
 
+#. [legends.Unknown.assayAbbottM2000PlasmaHivVL]
+#. defaultMessage is:
+#. Abbott m2000 Plasma HIV VL
 #. [filter.AssaySelectField.abbottM2000PlasmaHivVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HIV VL
 #: extracted_strings.json
 msgid "Abbott m2000 Plasma HIV VL"
 msgstr "Abbott m2000 Plasma HIV VL"
+
+#. [pages.admin.abbreviation]
+#. defaultMessage is:
+#. Abbreviation
+#: extracted_strings.json
+msgid "Abbreviation"
+msgstr "Abreviatura"
 
 #. [pages.deviceDetail.aboveAverage]
 #. defaultMessage is:
@@ -231,6 +329,24 @@ msgstr "Acima da média"
 #: extracted_strings.json
 msgid "Above Target"
 msgstr "Acima do Alvo"
+
+#. [pages.Consumable.New.aboveRuleAndParentSites]
+#. defaultMessage is:
+#. Above rule and Parent sites of Stock Provider site or Regional or National warehouses in the hierarchical sequence
+#: extracted_strings.json
+msgid ""
+"Above rule and Parent sites of Stock Provider site or Regional or National "
+"warehouses in the hierarchical sequence"
+msgstr ""
+"Regra acima e locais pai do local do fornecedor de stock ou dos armazéns "
+"regionais ou nacionais na sequência hierárquica"
+
+#. [pages.Consumable.New.aboveRuleAndStockProvider]
+#. defaultMessage is:
+#. Above rule and Stock Provider site mentioned
+#: extracted_strings.json
+msgid "Above rule and Stock Provider site mentioned"
+msgstr "Regra acima e sítio Web do fornecedor de acções mencionado"
 
 #. [queryFetch.errorResponseMessages.GET.403.title]
 #. defaultMessage is:
@@ -250,6 +366,9 @@ msgstr ""
 "Acesso negado para este recurso. Por favor, contate seu administrador para "
 "obter suporte."
 
+#. [pages.HorizontalAppBar.accountDetails]
+#. defaultMessage is:
+#. Account Details
 #. [pages.PersonDetails.accountDetails]
 #. defaultMessage is:
 #. Account Details
@@ -290,6 +409,20 @@ msgstr "Casos ativos"
 #: extracted_strings.json
 msgid "Active status can't be edited"
 msgstr "O estado activo não pode ser editado"
+
+#. [pages.displayResultSelectField.Actual]
+#. defaultMessage is:
+#. Actual
+#: extracted_strings.json
+msgid "Actual"
+msgstr "Atual"
+
+#. [filter.btnGroup.displayActualResults]
+#. defaultMessage is:
+#. Actual Results
+#: extracted_strings.json
+msgid "Actual Results"
+msgstr "Resultados reais"
 
 #. [pages.NotificationDetail.actionAdd]
 #. defaultMessage is:
@@ -336,6 +469,13 @@ msgstr "Adicionar linha"
 msgid "Add {consumableName}"
 msgstr "Adicionar {consumableName}"
 
+#. [errorResponseMessages.addInventory.PUT.default.title]
+#. defaultMessage is:
+#. Adding Inventory Failed
+#: extracted_strings.json
+msgid "Adding Inventory Failed"
+msgstr "Adicionando Inventário Falhado"
+
 #. [pages.NotificationDetail.fieldAddress]
 #. defaultMessage is:
 #. Address
@@ -376,6 +516,9 @@ msgstr "Ajuste"
 msgid "Adjust Quantity"
 msgstr "Ajustar a quantidade"
 
+#. [browsePage.browseDropdown.admin]
+#. defaultMessage is:
+#. Admin
 #. [jobFunction.admin]
 #. defaultMessage is:
 #. Admin
@@ -408,6 +551,9 @@ msgstr "Idade"
 msgid "Age and Gender"
 msgstr "Idade e sexo"
 
+#. [legends.Unknown.assayAlereQHiv12Detect]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 Detect
 #. [filter.AssaySelectField.assayAlereQHiv12Detect]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 Detect
@@ -429,6 +575,9 @@ msgstr "Alere Q Cartucho de detecção de VIH-1/2"
 msgid "Alere Q HIV-1/2 VL Plasma Cartridge"
 msgstr "Alere Q Cartucho de Plasma HIV-1/2 VL"
 
+#. [legends.Unknown.assayAlereQHiv12VLPlasma]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 VL plasma
 #. [filter.AssaySelectField.assayAlereQHiv12VLPlasma]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 VL plasma
@@ -447,6 +596,12 @@ msgid "Alerts"
 msgstr "Alertas"
 
 #. [filter.popover.all]
+#. defaultMessage is:
+#. All
+#. [pages.connectorStatusSelectField.all]
+#. defaultMessage is:
+#. All
+#. [filter.btnGroup.all]
 #. defaultMessage is:
 #. All
 #. [filter.AssaySelectField.All]
@@ -469,6 +624,9 @@ msgstr "Todos"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Todos os resultados de VIH em que o vírus não é suprimido"
 
+#. [filter.btnGroup.displayAllResults]
+#. defaultMessage is:
+#. All Results
 #. [pages.ReportIndex.all_results]
 #. defaultMessage is:
 #. All Results
@@ -631,6 +789,20 @@ msgstr "Tendências anuais dos testesTendências anuais dos testes"
 msgid "Annual diagnosis Trends"
 msgstr "Tendências do diagnóstico anual"
 
+#. [pages.dateRangeSelector.any]
+#. defaultMessage is:
+#. Any
+#: extracted_strings.json
+msgid "Any"
+msgstr "Qualquer"
+
+#. [pages.admin.apiKeys]
+#. defaultMessage is:
+#. Api Keys
+#: extracted_strings.json
+msgid "Api Keys"
+msgstr "Chaves de API"
+
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
 #. Apply Filters
@@ -671,6 +843,13 @@ msgstr "Aprovado"
 #: extracted_strings.json
 msgid "Are you sure to delete notification {notificationName}?"
 msgstr "Tem certeza de que deseja excluir a notificação {notificationName}?"
+
+#. [admin.page.removeConfirmation]
+#. defaultMessage is:
+#. Are you sure to delete this {entity}?
+#: extracted_strings.json
+msgid "Are you sure to delete this {entity}?"
+msgstr "Tem a certeza de que quer apagar este {entity}?"
 
 #. [contextualMenu.notifications.areYouSureToToggleStatus]
 #. defaultMessage is:
@@ -850,6 +1029,13 @@ msgstr ""
 msgid "At least one of the notification channels should be selected"
 msgstr "Pelo menos um dos canais de notificação deve ser selecionado"
 
+#. [pages.IdleDialog.title]
+#. defaultMessage is:
+#. Automatic Logout
+#: extracted_strings.json
+msgid "Automatic Logout"
+msgstr "Logout automático"
+
 #. [pages.Consumable.New.includeLocation]
 #. defaultMessage is:
 #. Automatic include location with reported consumption
@@ -1027,6 +1213,9 @@ msgstr "Aguardando tratamento"
 msgid "BACK"
 msgstr "ANTERIOR"
 
+#. [legends.Unknown.assayBdMgitAst]
+#. defaultMessage is:
+#. BD MGIT AST
 #. [filter.AssaySelectField.assayBdMgitAst]
 #. defaultMessage is:
 #. BD MGIT AST
@@ -1037,6 +1226,9 @@ msgstr "ANTERIOR"
 msgid "BD MGIT AST"
 msgstr "BD MGIT AST"
 
+#. [legends.Unknown.assayBdMgitGnd]
+#. defaultMessage is:
+#. BD MGIT GND
 #. [filter.AssaySelectField.assayBdMgitGnd]
 #. defaultMessage is:
 #. BD MGIT GND
@@ -1125,12 +1317,36 @@ msgstr ""
 "O organismo deve conter percentagem de conclusão para Sítio com baixa taxa "
 "de conclusão Notificação"
 
+#. [pages.allMessages.InventoryItemsList.breakOutByLot]
+#. defaultMessage is:
+#. Break Out by Lot
+#: extracted_strings.json
+msgid "Break Out by Lot"
+msgstr "Distribuição por lote"
+
+#. [pages.filter.InventoryItemsList.breakOutByLot]
+#. defaultMessage is:
+#. Break out by lot
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
 #: extracted_strings.json
 msgid "Break out by lot"
 msgstr "Sair por lote"
+
+#. [pages.inventoryReconciliation.breakdownByLots]
+#. defaultMessage is:
+#. Breakdown by Lots
+#: extracted_strings.json
+msgid "Breakdown by Lots"
+msgstr "Repartição por lotes"
+
+#. [header.link.browse.title]
+#. defaultMessage is:
+#. Browse
+#: extracted_strings.json
+msgid "Browse"
+msgstr "Procurar"
 
 #. [pages.NotificationDetail.New.buildNotification]
 #. defaultMessage is:
@@ -1145,6 +1361,20 @@ msgstr "Notificação de construção"
 #: extracted_strings.json
 msgid "CAP Resistance"
 msgstr "Resistência CAP"
+
+#. [legends.Unknown.CAPPercent]
+#. defaultMessage is:
+#. CAP-R %
+#: extracted_strings.json
+msgid "CAP-R %"
+msgstr "CAP-R %"
+
+#. [legends.Unknown.CapDetected]
+#. defaultMessage is:
+#. CAP-R Detected
+#: extracted_strings.json
+msgid "CAP-R Detected"
+msgstr "CAP-R detectado"
 
 #. [filter.AssayTypeSelectField.assayTypeCD4]
 #. defaultMessage is:
@@ -1167,6 +1397,9 @@ msgstr "CHAI EID"
 msgid "CHAI HIV VL"
 msgstr "CHAI HIV VL"
 
+#. [legends.Unknown.assayCobasHivVl]
+#. defaultMessage is:
+#. COBAS 4800 VL
 #. [filter.AssaySelectField.assayCobasHivVl]
 #. defaultMessage is:
 #. COBAS 4800 VL
@@ -1188,6 +1421,9 @@ msgstr "Resultados da COVID"
 msgid "COVID-19 Error"
 msgstr "Erro COVID-19"
 
+#. [legends.Unknown.assayGenericCovid19]
+#. defaultMessage is:
+#. COVID-19 Generic Test
 #. [filter.AssaySelectField.assayGenericCovid19]
 #. defaultMessage is:
 #. COVID-19 Generic Test
@@ -1389,6 +1625,23 @@ msgstr "A Data de Calibração é necessária"
 msgid "Calibration Due Date"
 msgstr "Data de vencimento da calibragem"
 
+#. [pages.NewInventoryDialogForm.quantityNotMoreThanOnHand]
+#. defaultMessage is:
+#. Can not be greater than on-hand
+#: extracted_strings.json
+msgid "Can not be greater than on-hand"
+msgstr "Não pode ser superior às disponibilidades"
+
+#. [errorResponseMessages.removeInventory.PUT.notExisted.resolution]
+#. defaultMessage is:
+#. Can not deduct from non-existed inventory item.
+#. [errorResponseMessages.transferInventory.transfer.PUT.notExisted.resolution]
+#. defaultMessage is:
+#. Can not deduct from non-existed inventory item.
+#: extracted_strings.json
+msgid "Can not deduct from non-existed inventory item."
+msgstr "Não é possível deduzir de um artigo de inventário inexistente."
+
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable]
 #. defaultMessage is:
 #. Can't be edited
@@ -1400,6 +1653,9 @@ msgstr "Não pode ser editado"
 #. defaultMessage is:
 #. Cancel
 #. [button_Cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.admin.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.UpdateLoginDetails.cancelCurrentPassword]
@@ -1462,12 +1718,26 @@ msgstr "Capacidade"
 msgid "Captured"
 msgstr "Capturado"
 
+#. [pages.Consumable.New.cartridgeLotNumber]
+#. defaultMessage is:
+#. Cartridge Lot Number
+#: extracted_strings.json
+msgid "Cartridge Lot Number"
+msgstr "Número de lote do cartucho"
+
 #. [pages.InventoryAdjustmentDialogForm.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot number
 #: extracted_strings.json
 msgid "Cartridge Lot number"
 msgstr "Cartucho Número de lote"
+
+#. [pages.Consumable.New.cartridgesManagedThrough]
+#. defaultMessage is:
+#. Cartridges are managed through
+#: extracted_strings.json
+msgid "Cartridges are managed through"
+msgstr "Os cartuchos são geridos através de"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -1476,6 +1746,16 @@ msgstr "Cartucho Número de lote"
 msgid "Case ID"
 msgstr "Identificação do caso"
 
+#. [browsePage.browseDropdown.cases]
+#. defaultMessage is:
+#. Cases
+#: extracted_strings.json
+msgid "Cases"
+msgstr "Casos"
+
+#. [pages.ResultList.resultCategory1Name]
+#. defaultMessage is:
+#. Category
 #. [pages.Notifications.table.categoryHeader]
 #. defaultMessage is:
 #. Category
@@ -1493,7 +1773,7 @@ msgstr "Categoria 1"
 #. [legends.Unknown.resultCategory2]
 #. defaultMessage is:
 #. Category 2
-#. [pages.ResultList.resultCategory1Name]
+#. [pages.ResultList.resultCategory2Name]
 #. defaultMessage is:
 #. Category 2
 #: extracted_strings.json
@@ -1610,6 +1890,13 @@ msgstr "Limpar filtros"
 msgid "Click here to go to the result"
 msgstr "Clique aqui para aceder ao resultado"
 
+#. [header.link.clinicalIndicators.title]
+#. defaultMessage is:
+#. Clinical Indicators
+#: extracted_strings.json
+msgid "Clinical Indicators"
+msgstr "Indicadores Clínico"
+
 #. [jobFunction.clinician]
 #. defaultMessage is:
 #. Clinician
@@ -1672,6 +1959,13 @@ msgstr "Coletado em"
 msgid "Collection of Results"
 msgstr "Coleção de resultados"
 
+#. [p.PkDashboard.combinedGX6CGX10CDevices]
+#. defaultMessage is:
+#. Combined GX-6C/GX-10C Devices
+#: extracted_strings.json
+msgid "Combined GX-6C/GX-10C Devices"
+msgstr "Dispositivos GX-6C/GX-10C combinados"
+
 #. [filter.AssaySelectField.assayCommCareGatesRDT]
 #. defaultMessage is:
 #. CommCare Gates RDT
@@ -1724,6 +2018,13 @@ msgstr "Confirmar Nova Senha"
 msgid "Confirm to proceed."
 msgstr "Confirme para prosseguir."
 
+#. [legends.Unknown.Confirmed]
+#. defaultMessage is:
+#. Confirmed
+#: extracted_strings.json
+msgid "Confirmed"
+msgstr "Confirmado"
+
 #. [pages.Status.treatmentGraphStatusMonthly.graph]
 #. defaultMessage is:
 #. Confirmed Response
@@ -1767,6 +2068,13 @@ msgstr "Conectividade"
 msgid "Connector Status"
 msgstr "Estado do conector"
 
+#. [filter.btnGroup.withConnectorStatus]
+#. defaultMessage is:
+#. Connector Status is {connectorStatus}
+#: extracted_strings.json
+msgid "Connector Status is {connectorStatus}"
+msgstr "O estado do conector é {connectorStatus}"
+
 #. [pages.DeviceList.connectorVersion]
 #. defaultMessage is:
 #. Connector Version
@@ -1787,6 +2095,12 @@ msgstr "Versão Connector"
 #. defaultMessage is:
 #. Consumable
 #. [pages.InventoryLog.consumableName]
+#. defaultMessage is:
+#. Consumable
+#. [pages.inventoryReconciliation.consumable]
+#. defaultMessage is:
+#. Consumable
+#. [pages.InventoryTransfer.consumableName]
 #. defaultMessage is:
 #. Consumable
 #: extracted_strings.json
@@ -1821,6 +2135,16 @@ msgstr "Consumíveis"
 msgid "Consumables applicable for the site"
 msgstr "Consumíveis aplicáveis ao sítio"
 
+#. [pages.consumables.consumablesApplicableForThisSite]
+#. defaultMessage is:
+#. Consumables applicable for this site
+#: extracted_strings.json
+msgid "Consumables applicable for this site"
+msgstr "Consumíveis aplicáveis a este sítio"
+
+#. [p.PkDashboard.consumptionRate]
+#. defaultMessage is:
+#. Consumption Rate
 #. [pages.InventoryTabs.New.consumpationRate]
 #. defaultMessage is:
 #. Consumption Rate
@@ -1849,6 +2173,13 @@ msgstr "Detalhes do contato"
 msgid "Contact Status"
 msgstr "Status do contato"
 
+#. [filter.btnGroup.contactEnabledStatus]
+#. defaultMessage is:
+#. Contact Status: {contactStatus}
+#: extracted_strings.json
+msgid "Contact Status: {contactStatus}"
+msgstr "Estado de Contacto: {contactStatus}"
+
 #. [pages.PersonDetails.contactDetailsUpdatedMessage]
 #. defaultMessage is:
 #. Contact details changed successfully
@@ -1870,6 +2201,9 @@ msgstr "Dados de contato criados com sucesso"
 msgid "Contact name/email"
 msgstr "Nome/email de contato"
 
+#. [browsePage.browseDropdown.contacts]
+#. defaultMessage is:
+#. Contacts
 #. [component.Widget.personTitle]
 #. defaultMessage is:
 #. Contacts
@@ -1897,7 +2231,7 @@ msgstr "Contém todos os casos de MTB Detectado/Rif Detectado"
 msgid "Contaminated"
 msgstr "Contaminado"
 
-#. [pages.ResultList.resultCategoryHiv]
+#. [pages.ResultList.resultCategoryHivCopiesMl]
 #. defaultMessage is:
 #. Copies/ML
 #: extracted_strings.json
@@ -1970,6 +2304,9 @@ msgstr ""
 #. [filter.popover.country]
 #. defaultMessage is:
 #. Country
+#. [pages.LocationSelector.country]
+#. defaultMessage is:
+#. Country
 #. [forms.formItem.country]
 #. defaultMessage is:
 #. Country
@@ -1998,6 +2335,13 @@ msgstr "País"
 #: extracted_strings.json
 msgid "Country Average"
 msgstr "País Média"
+
+#. [pages.LocationSelector.countryRequired]
+#. defaultMessage is:
+#. Country is required
+#: extracted_strings.json
+msgid "Country is required"
+msgstr "O País é obrigatório"
 
 #. [component.Widget.unusedModulesDescription]
 #. defaultMessage is:
@@ -2059,12 +2403,22 @@ msgstr "Covid 19"
 msgid "Covid Testing"
 msgstr "Testes de Covid"
 
+#. [pages.admin.create]
+#. defaultMessage is:
+#. Create
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
 #: extracted_strings.json
 msgid "Create"
 msgstr "Criar"
+
+#. [admin.page.states.createNew]
+#. defaultMessage is:
+#. Create New
+#: extracted_strings.json
+msgid "Create New"
+msgstr "Criar novo"
 
 #. [pages.NotificationList.createNotification]
 #. defaultMessage is:
@@ -2120,6 +2474,9 @@ msgstr "Erros Críticos por Dispositivo"
 msgid "Critical Errors By Module"
 msgstr "Erros críticos por módulo"
 
+#. [legends.Unknown.assayGenericCulture]
+#. defaultMessage is:
+#. Culture
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
 #. Culture
@@ -2265,6 +2622,13 @@ msgstr "Status atual da rede"
 msgid "Current Password"
 msgstr "Senha Atual"
 
+#. [p.PkDashboard.currentQty]
+#. defaultMessage is:
+#. Current Qty.
+#: extracted_strings.json
+msgid "Current Qty."
+msgstr "Qtd. atual."
+
 #. [p.PkDashboard.RRCurrent]
 #. defaultMessage is:
 #. Current RRTB Diagnosis
@@ -2313,6 +2677,13 @@ msgstr "Teste atual de MTB/RIF realizado em"
 #: extracted_strings.json
 msgid "Currently not selectable - missing role"
 msgstr "Atualmente não selecionável - função ausente"
+
+#. [pages.dateRangeSelector.custom]
+#. defaultMessage is:
+#. Custom
+#: extracted_strings.json
+msgid "Custom"
+msgstr "Personalizado"
 
 #. [placeholder.result.placeholderCustomFields]
 #. defaultMessage is:
@@ -2454,6 +2825,9 @@ msgstr "Daktari HIV-VL"
 msgid "Damage"
 msgstr "Danos"
 
+#. [header.link.dashboardv2.title]
+#. defaultMessage is:
+#. Dashboard
 #. [pages.OperationalDashboard.dashboard]
 #. defaultMessage is:
 #. Dashboard
@@ -2552,6 +2926,13 @@ msgstr "Data Removido"
 msgid "Date Transferred"
 msgstr "Data de transferência"
 
+#. [pages.dateRangeSelector.day]
+#. defaultMessage is:
+#. Day
+#: extracted_strings.json
+msgid "Day"
+msgstr "Dia"
+
 #. [components.shared.dayOfEveryMonth]
 #. defaultMessage is:
 #. Day of Every Months(s)
@@ -2586,6 +2967,13 @@ msgstr "Dia(s) anterior(es) ao final do mês"
 #: extracted_strings.json
 msgid "Days"
 msgstr "Dias"
+
+#. [p.PkDashboard.daysLeft]
+#. defaultMessage is:
+#. Days Left
+#: extracted_strings.json
+msgid "Days Left"
+msgstr "Dias restantes"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -2680,6 +3068,13 @@ msgstr "Definir intervalo de datas para relatório"
 msgid "Define which Assay consume this inventory item"
 msgstr "Definir que Ensaio consome este item de inventário"
 
+#. [pages.admin.delete]
+#. defaultMessage is:
+#. Delete
+#: extracted_strings.json
+msgid "Delete"
+msgstr "Excluir"
+
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
 #. Delete (Only 0 triggers)
@@ -2739,6 +3134,9 @@ msgstr "Detectado"
 #. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
+#. [legends.Unknown.device]
+#. defaultMessage is:
+#. Device
 #. [forms.formSectionHeader.device]
 #. defaultMessage is:
 #. Device
@@ -2767,6 +3165,9 @@ msgstr "Detectado"
 msgid "Device"
 msgstr "Dispositivo"
 
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device API Keys
 #. [pages.DeviceApiKeyList.title]
 #. defaultMessage is:
 #. Device API Keys
@@ -2835,6 +3236,13 @@ msgstr "Calibração de dispositivos"
 msgid "Device Calibration Report"
 msgstr "Relatório de calibração de dispositivos"
 
+#. [pages.admin.deviceConfigurations]
+#. defaultMessage is:
+#. Device Configurations
+#: extracted_strings.json
+msgid "Device Configurations"
+msgstr "Configurações do dispositivo"
+
 #. [pages.NotificationDetail.SelectNationalTitle]
 #. defaultMessage is:
 #. Device Country
@@ -2848,6 +3256,13 @@ msgstr "Dispositivo País"
 #: extracted_strings.json
 msgid "Device Inactive"
 msgstr "Dispositivo inativo"
+
+#. [filter.btnGroup.deviceIssueType]
+#. defaultMessage is:
+#. Device Issue: {issueTypeId}
+#: extracted_strings.json
+msgid "Device Issue: {issueTypeId}"
+msgstr "Emissão do dispositivo: {issueTypeId}"
 
 #. [pages.MaintenanceStatusDialog.dialogTitle]
 #. defaultMessage is:
@@ -2937,6 +3352,13 @@ msgstr "Utilização do dispositivo por dia"
 msgid "Device Warranty"
 msgstr "Garantia do dispositivo"
 
+#. [browsePage.browseDropdown.devicesWorkload]
+#. defaultMessage is:
+#. Device Workload
+#: extracted_strings.json
+msgid "Device Workload"
+msgstr "Carga de trabalho do dispositivo"
+
 #. [pages.ReportIndex.device_and_site_summary_report]
 #. defaultMessage is:
 #. Device and Site Sumary
@@ -2972,6 +3394,9 @@ msgstr "Registos de dispositivos"
 msgid "Device type"
 msgstr "Tipo de dispositivo"
 
+#. [legends.Unknown.devices]
+#. defaultMessage is:
+#. Devices
 #. [pages.Status.summaryWidgetGroup.devices]
 #. defaultMessage is:
 #. Devices
@@ -2997,6 +3422,13 @@ msgstr "Dispositivos"
 #: extracted_strings.json
 msgid "Devices Active"
 msgstr "Dispositivos ativos"
+
+#. [browsePage.browseDropdown.devicesList]
+#. defaultMessage is:
+#. Devices List
+#: extracted_strings.json
+msgid "Devices List"
+msgstr "Lista de Dispositivos"
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
@@ -3033,6 +3465,9 @@ msgstr "Dispositivos com Módulos Não Usados"
 msgid "Disable"
 msgstr "Desativar"
 
+#. [filter.btnGroup.contactStatus.contactDisabled]
+#. defaultMessage is:
+#. Disabled
 #. [pages.common.disabled]
 #. defaultMessage is:
 #. Disabled
@@ -3144,6 +3579,9 @@ msgstr "Deseja remover as tarefas abaixo indicadas?"
 msgid "Donor"
 msgstr "Doador"
 
+#. [pages.DeviceStatusSelectField.down]
+#. defaultMessage is:
+#. Down
 #. [pages.DeviceList.down]
 #. defaultMessage is:
 #. Down
@@ -3224,6 +3662,20 @@ msgstr "ETH R %"
 msgid "ETH Resistance"
 msgstr "Resistência ETH"
 
+#. [legends.Unknown.ETHPercent]
+#. defaultMessage is:
+#. ETH-R %
+#: extracted_strings.json
+msgid "ETH-R %"
+msgstr "ETH-R %"
+
+#. [legends.Unknown.EthDetected]
+#. defaultMessage is:
+#. ETH-R Detected
+#: extracted_strings.json
+msgid "ETH-R Detected"
+msgstr "ETH-R detectado"
+
 #. [filter.AssayTypeSelectField.assayTypeEbola]
 #. defaultMessage is:
 #. Ebola
@@ -3235,6 +3687,9 @@ msgid "Ebola"
 msgstr "Ebola"
 
 #. [button_Edit]
+#. defaultMessage is:
+#. Edit
+#. [pages.admin.edit]
 #. defaultMessage is:
 #. Edit
 #. [pages.DeviceDetail.edit]
@@ -3369,6 +3824,9 @@ msgstr "Ativar esta notificação"
 msgid "Enable/Disable User"
 msgstr "Activar/Desactivar Utilizador"
 
+#. [filter.btnGroup.contactStatus.contactEnabled]
+#. defaultMessage is:
+#. Enabled
 #. [pages.common.enabled]
 #. defaultMessage is:
 #. Enabled
@@ -3626,6 +4084,13 @@ msgstr "Envio de erro Redefinir senha E-mail"
 msgid "Error: Date Selection Required to Download Report"
 msgstr "Erro: Seleção de data necessária para descarregar o relatório"
 
+#. [pages.ErrorRate.errors]
+#. defaultMessage is:
+#. Errors
+#: extracted_strings.json
+msgid "Errors"
+msgstr "Erros"
+
 #. [components.shared.everyDay]
 #. defaultMessage is:
 #. Every Day(s)
@@ -3654,6 +4119,9 @@ msgstr "Excel"
 msgid "Exclude reason is required"
 msgstr "É necessário um motivo para excluir"
 
+#. [pages.displayResultSelectField.Excluded]
+#. defaultMessage is:
+#. Excluded
 #. [forms.formItem.excluded]
 #. defaultMessage is:
 #. Excluded
@@ -3668,12 +4136,33 @@ msgstr "Excluído"
 msgid "Excluded Reason"
 msgstr "Motivo da exclusão"
 
+#. [filter.btnGroup.displayExcludedResults]
+#. defaultMessage is:
+#. Excluded Results
+#: extracted_strings.json
+msgid "Excluded Results"
+msgstr "Resultados Excluídos"
+
 #. [components.shared.execute]
 #. defaultMessage is:
 #. Execute
 #: extracted_strings.json
 msgid "Execute"
 msgstr "Executar"
+
+#. [filter.btnGroup.expDateFrom]
+#. defaultMessage is:
+#. Exp. since {date}
+#: extracted_strings.json
+msgid "Exp. since {date}"
+msgstr "Exp. desde {date}"
+
+#. [filter.btnGroup.expDateTo]
+#. defaultMessage is:
+#. Exp. until {date}
+#: extracted_strings.json
+msgid "Exp. until {date}"
+msgstr "Expirar até {date}"
 
 #. [hierarchicalSiteView.expandAll]
 #. defaultMessage is:
@@ -3717,6 +4206,9 @@ msgid "Expected Back Online Date"
 msgstr "Data prevista para o regresso à atividade"
 
 #. [forms.formItem.consumableExpirationDate]
+#. defaultMessage is:
+#. Expiration Date
+#. [pages.InventoryTransfer.expirationDate]
 #. defaultMessage is:
 #. Expiration Date
 #: extracted_strings.json
@@ -3773,9 +4265,22 @@ msgstr "A expirar em dias"
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.Consumable.New.expiryDate]
+#. defaultMessage is:
+#. Expiry Date
+#. [pages.inventoryReconciliation.expiryDate]
+#. defaultMessage is:
+#. Expiry Date
 #: extracted_strings.json
 msgid "Expiry Date"
 msgstr "Data de validade"
+
+#. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
+#. defaultMessage is:
+#. Expiry Date and Cartridge Lot Number
+#: extracted_strings.json
+msgid "Expiry Date and Cartridge Lot Number"
+msgstr "Data de validade e número de lote do cartucho"
 
 #. [pages.DeviceList.exportDevices]
 #. defaultMessage is:
@@ -3783,6 +4288,13 @@ msgstr "Data de validade"
 #: extracted_strings.json
 msgid "Export device list"
 msgstr "Lista de dispositivos de exportação"
+
+#. [errorResponseMessages.device.exportResults.GET.default.title]
+#. defaultMessage is:
+#. Exporting Device Log Failed
+#: extracted_strings.json
+msgid "Exporting Device Log Failed"
+msgstr "Falha na exportação do registo do dispositivo"
 
 #. [errorResponseMessages.exportWorkload.GET.400.title]
 #. defaultMessage is:
@@ -3804,10 +4316,17 @@ msgstr "Carga de trabalho do dispositivo de exportação falhada"
 msgid "Exporting DeviceApiKeys Failed"
 msgstr "Exportando DeviceApiKeys Fracassados"
 
-#. [errorResponseMessages.exportResults.GET.400.title]
+#. [errorResponseMessages.store.exportResults.GET.400.title]
+#. defaultMessage is:
+#. Exporting DeviceLog Failed
+#: extracted_strings.json
+msgid "Exporting DeviceLog Failed"
+msgstr "Falha na exportação do DeviceLog"
+
+#. [errorResponseMessages.result.exportResults.GET.400.title]
 #. defaultMessage is:
 #. Exporting Results Failed
-#. [errorResponseMessages.exportResults.GET.default.title]
+#. [errorResponseMessages.result.exportResults.GET.default.title]
 #. defaultMessage is:
 #. Exporting Results Failed
 #: extracted_strings.json
@@ -3886,6 +4405,20 @@ msgstr "FQ R %"
 msgid "FQ Resistance"
 msgstr "Resistência FQ"
 
+#. [legends.Unknown.FQRPercent]
+#. defaultMessage is:
+#. FQ-R %
+#: extracted_strings.json
+msgid "FQ-R %"
+msgstr "FQ-R %"
+
+#. [legends.Unknown.FqrDetected]
+#. defaultMessage is:
+#. FQ-R Detected
+#: extracted_strings.json
+msgid "FQ-R Detected"
+msgstr "FQ-R Detectado"
+
 #. [p.PkDashboard.FQRCurrentYear]
 #. defaultMessage is:
 #. FQ-R cases diagnosed in current year
@@ -3951,6 +4484,13 @@ msgstr "Falhas da Categoria I"
 #: extracted_strings.json
 msgid "Failures of Retreatment"
 msgstr "Falhas de Retratamento"
+
+#. [pages.revokedSelectField.false]
+#. defaultMessage is:
+#. False
+#: extracted_strings.json
+msgid "False"
+msgstr "Falso"
 
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
 #. defaultMessage is:
@@ -4081,6 +4621,9 @@ msgstr "Esqueceu a senha?"
 msgid "Friday"
 msgstr "Sexta-feira"
 
+#. [pages.InventoryTransfer.originSiteName]
+#. defaultMessage is:
+#. From
 #. [pages.DailyStatusDialog.siteWorkingHoursFrom]
 #. defaultMessage is:
 #. From
@@ -4095,6 +4638,9 @@ msgstr "A partir de"
 msgid "From Site"
 msgstr "Do site"
 
+#. [pages.dateRangeSelector.fromDate]
+#. defaultMessage is:
+#. From...
 #. [pages.NotificationDetail.from]
 #. defaultMessage is:
 #. From...
@@ -4186,6 +4732,41 @@ msgstr "GP Não Detectado - NP Detectado"
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP Não Detectado - NP Não Detectado"
 
+#. [p.PkDashboard.gxSites]
+#. defaultMessage is:
+#. GX Sites
+#: extracted_strings.json
+msgid "GX Sites"
+msgstr "Sites GX"
+
+#. [p.PkDashboard.gx10CDevices]
+#. defaultMessage is:
+#. GX-10C Devices
+#: extracted_strings.json
+msgid "GX-10C Devices"
+msgstr "Dispositivos GX-10C"
+
+#. [p.PkDashboard.gx10CModules]
+#. defaultMessage is:
+#. GX-10C Modules
+#: extracted_strings.json
+msgid "GX-10C Modules"
+msgstr "Módulos GX-10C"
+
+#. [p.PkDashboard.gx6CDevices]
+#. defaultMessage is:
+#. GX-6C Devices
+#: extracted_strings.json
+msgid "GX-6C Devices"
+msgstr "Dispositivos GX-6C"
+
+#. [p.PkDashboard.gx6CModules]
+#. defaultMessage is:
+#. GX-6C Modules
+#: extracted_strings.json
+msgid "GX-6C Modules"
+msgstr "Módulos GX-6C"
+
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
 #. Gastric Lavage
@@ -4203,6 +4784,9 @@ msgstr "Lavagem gástrica"
 msgid "Gender"
 msgstr "Género"
 
+#. [legends.Unknown.assayGXCovid19]
+#. defaultMessage is:
+#. GeneXpert COVID-19
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
 #. GeneXpert COVID-19
@@ -4255,6 +4839,9 @@ msgstr "Utilização do dispositivo GeneXpert"
 msgid "GeneXpert Devices"
 msgstr "Dispositivos GeneXpert"
 
+#. [legends.Unknown.assayGeneXpertEbola]
+#. defaultMessage is:
+#. GeneXpert Ebola
 #. [filter.AssaySelectField.assayGeneXpertEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
@@ -4275,6 +4862,9 @@ msgstr "GeneXpert Ebola"
 msgid "GeneXpert Ebola Cartridge"
 msgstr "GeneXpert Ebola Cartucho"
 
+#. [legends.Unknown.assayGeneXpertHcv]
+#. defaultMessage is:
+#. GeneXpert HCV
 #. [filter.AssaySelectField.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
@@ -4288,6 +4878,9 @@ msgstr "GeneXpert Ebola Cartucho"
 msgid "GeneXpert HCV"
 msgstr "GeneXpert HCV"
 
+#. [legends.Unknown.assayGeneXpertHiv1Qual]
+#. defaultMessage is:
+#. GeneXpert HIV-1 Qual
 #. [filter.AssaySelectField.assayGeneXpertHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
@@ -4301,6 +4894,9 @@ msgstr "GeneXpert HCV"
 msgid "GeneXpert HIV-1 Qual"
 msgstr "GeneXpert HIV-1 Qual"
 
+#. [legends.Unknown.assayGeneXpertHiv1Vl]
+#. defaultMessage is:
+#. GeneXpert HIV-1 VL
 #. [filter.AssaySelectField.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
@@ -4331,6 +4927,9 @@ msgstr "Questões GeneXpert"
 msgid "GeneXpert MTB-RIF/Ultra Device Errors"
 msgstr "Erros do dispositivo GeneXpert MTB-RIF/Ultra"
 
+#. [legends.Unknown.assayGeneXpertMtbRif]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif
 #. [filter.AssaySelectField.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
@@ -4344,6 +4943,9 @@ msgstr "Erros do dispositivo GeneXpert MTB-RIF/Ultra"
 msgid "GeneXpert MTB/Rif"
 msgstr "GeneXpert MTB/Rif"
 
+#. [legends.Unknown.assayGeneXpertMtbRifUltra]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif Ultra
 #. [filter.AssaySelectField.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
@@ -4357,6 +4959,9 @@ msgstr "GeneXpert MTB/Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
 
+#. [legends.Unknown.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
 #. [filter.AssaySelectField.assayGeneXpertMtbXdr]
 #. defaultMessage is:
 #. GeneXpert MTB/XDR
@@ -4408,6 +5013,16 @@ msgstr "Carga de trabalho do GeneXpert TB"
 msgid "GeneXpert Type"
 msgstr "Tipo GeneXpert"
 
+#. [filter.btnGroup.withGeneXpertType]
+#. defaultMessage is:
+#. GeneXpert Type is {geneXpertType}
+#: extracted_strings.json
+msgid "GeneXpert Type is {geneXpertType}"
+msgstr "GeneXpert Type é {geneXpertType}"
+
+#. [legends.Unknown.assayGeneXpertUnknown]
+#. defaultMessage is:
+#. GeneXpert Unknown
 #. [filter.AssaySelectField.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
@@ -4455,6 +5070,9 @@ msgstr "Gerar"
 msgid "Generic RDT"
 msgstr "Genéricos RDT"
 
+#. [legends.Unknown.assayGenoTypeMTBCV1]
+#. defaultMessage is:
+#. GenoType MTBC VER 1.X
 #. [filter.AssaySelectField.assayGenoTypeMTBCV1]
 #. defaultMessage is:
 #. GenoType MTBC VER 1.X
@@ -4472,6 +5090,9 @@ msgstr "GenoType MTBC VER 1.X"
 msgid "GenoType MTBC VER 1.X Test Strip"
 msgstr "Faixa de teste GenoType MTBC VER 1.X"
 
+#. [legends.Unknown.assayGenoTypeMTBDRplusV2]
+#. defaultMessage is:
+#. GenoType MTBDRplus VER 2.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRplusV2]
 #. defaultMessage is:
 #. GenoType MTBDRplus VER 2.0
@@ -4489,6 +5110,9 @@ msgstr "GenoType MTBDRplus VER 2.0"
 msgid "GenoType MTBDRplus VER 2.0 Test Strip"
 msgstr "Faixa de teste GenoType MTBDRplus VER 2.0"
 
+#. [legends.Unknown.assayGenoTypeMTBDRslV1]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 1.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRslV1]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 1.0
@@ -4506,6 +5130,9 @@ msgstr "GenoType MTBDRsl VER 1.0"
 msgid "GenoType MTBDRsl VER 1.0 Test Strip"
 msgstr "Faixa de teste GenoType MTBDRsl VER 1.0"
 
+#. [legends.Unknown.assayGenoTypeMTBDRslV2]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 2.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRslV2]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 2.0
@@ -4660,6 +5287,9 @@ msgid "HCV Not Detected"
 msgstr "HCV Não Detectado"
 
 #. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
+#. [pages.ResultList.resultCategoryHiv]
 #. defaultMessage is:
 #. HIV
 #. [pages.ResultList.resultCategoryHivVl]
@@ -4951,6 +5581,23 @@ msgstr "Hepatite B"
 msgid "Hepatitis C"
 msgstr "Hepatite C"
 
+#. [pages.inventoryReconciliation.hierarchicalView]
+#. defaultMessage is:
+#. Hierarchical View
+#: extracted_strings.json
+msgid "Hierarchical View"
+msgstr "Vista hierárquica"
+
+#. [header.link.home.title]
+#. defaultMessage is:
+#. Home
+#: extracted_strings.json
+msgid "Home"
+msgstr "Home"
+
+#. [pages.DeviceDetailEdit.hostId]
+#. defaultMessage is:
+#. Host
 #. [pages.DeviceDetailProfile.hostId]
 #. defaultMessage is:
 #. Host
@@ -4958,7 +5605,7 @@ msgstr "Hepatite C"
 msgid "Host"
 msgstr "Hospedeiro"
 
-#. [pages.DeviceDetailEdit.hostId]
+#. [pages.DeviceDetail.operation.hostId]
 #. defaultMessage is:
 #. Host ID
 #: extracted_strings.json
@@ -5031,6 +5678,13 @@ msgstr "Não sei com qual endereço de e-mail estou registrado"
 msgid "ID"
 msgstr "ID"
 
+#. [filter.btnGroup.whereExternalIdIncludes]
+#. defaultMessage is:
+#. ID includes "{externalId}"
+#: extracted_strings.json
+msgid "ID includes \"{externalId}\""
+msgstr "O ID inclui \"{externalId}\""
+
 #. [pages.XDR.cnt_inh]
 #. defaultMessage is:
 #. INH R
@@ -5051,6 +5705,20 @@ msgstr "INH R %"
 #: extracted_strings.json
 msgid "INH Resistance"
 msgstr "Resistência INH"
+
+#. [legends.Unknown.INHPercent]
+#. defaultMessage is:
+#. INH-R %
+#: extracted_strings.json
+msgid "INH-R %"
+msgstr "INH-R %"
+
+#. [legends.Unknown.InhDetected]
+#. defaultMessage is:
+#. INH-R Detected
+#: extracted_strings.json
+msgid "INH-R Detected"
+msgstr "INH-R Detectado"
 
 #. [pages.ResetPassword.adminHelpContent]
 #. defaultMessage is:
@@ -5213,6 +5881,13 @@ msgstr "Instrumento Substituído"
 msgid "Instrument Serial"
 msgstr "Instrumento Serial"
 
+#. [component.Widget.instrumentsConnectedTitle]
+#. defaultMessage is:
+#. Instruments
+#: extracted_strings.json
+msgid "Instruments"
+msgstr "Instrumentos"
+
 #. [pages.DeviceDetailEdit.instrumentsConnected]
 #. defaultMessage is:
 #. Instruments Connected
@@ -5237,6 +5912,9 @@ msgid "Insufficient Permissions"
 msgstr "Permissões insuficientes"
 
 #. [legends.Unknown.resultCategoryInvalid]
+#. defaultMessage is:
+#. Invalid
+#. [pages.ErrorRate.invalid]
 #. defaultMessage is:
 #. Invalid
 #: extracted_strings.json
@@ -5306,6 +5984,20 @@ msgstr "URL de webhook inválido"
 msgid "Inventory"
 msgstr "Inventário"
 
+#. [pages.Consumable.New.inventoryDetail]
+#. defaultMessage is:
+#. Inventory Detail
+#: extracted_strings.json
+msgid "Inventory Detail"
+msgstr "Detalhe do inventário"
+
+#. [pages.Consumable.New.inventoryDetails]
+#. defaultMessage is:
+#. Inventory Details
+#: extracted_strings.json
+msgid "Inventory Details"
+msgstr "Detalhes do inventário"
+
 #. [notificationCategoryTypeSelect.notificationTypeInventoryExpiring]
 #. defaultMessage is:
 #. Inventory Expiring
@@ -5326,6 +6018,9 @@ msgstr "Item de Estoque"
 #. [pages.Consumable.New.name]
 #. defaultMessage is:
 #. Inventory Item Name
+#. [pages.inventoryList.InventoryItemName]
+#. defaultMessage is:
+#. Inventory Item Name
 #: extracted_strings.json
 msgid "Inventory Item Name"
 msgstr "Nome do item de inventário"
@@ -5337,6 +6032,16 @@ msgstr "Nome do item de inventário"
 msgid "Inventory Item Name Required"
 msgstr "Nome do item de inventário obrigatório"
 
+#. [browsePage.browseDropdown.inventoryItems]
+#. defaultMessage is:
+#. Inventory Items
+#: extracted_strings.json
+msgid "Inventory Items"
+msgstr "Itens de inventário"
+
+#. [browsePage.browseDropdown.inventoryLog]
+#. defaultMessage is:
+#. Inventory Log
 #. [pages.ReportIndex.inventoryLog]
 #. defaultMessage is:
 #. Inventory Log
@@ -5350,12 +6055,47 @@ msgstr "Nome do item de inventário obrigatório"
 msgid "Inventory Log"
 msgstr "Log de inventário"
 
+#. [browsePage.browseDropdown.inventoryOverview]
+#. defaultMessage is:
+#. Inventory Overview
 #. [p.PkDashboard.overview]
 #. defaultMessage is:
 #. Inventory Overview
 #: extracted_strings.json
 msgid "Inventory Overview"
 msgstr "Síntese do inventário"
+
+#. [browsePage.browseDropdown.inventoryReconciliation]
+#. defaultMessage is:
+#. Inventory Reconciliation
+#. [pages.inventoryReconciliation.title]
+#. defaultMessage is:
+#. Inventory Reconciliation
+#: extracted_strings.json
+msgid "Inventory Reconciliation"
+msgstr "Reconciliação de inventário"
+
+#. [pages.InventoryTransfer.InventoryTransferTitle]
+#. defaultMessage is:
+#. Inventory Transfer
+#: extracted_strings.json
+msgid "Inventory Transfer"
+msgstr "Transferência de inventário"
+
+#. [pages.Consumable.New.inventoryAtCurrentSite]
+#. defaultMessage is:
+#. Inventory at Current Site only
+#: extracted_strings.json
+msgid "Inventory at Current Site only"
+msgstr "Inventário apenas no local atual"
+
+#. [pages.Consumable.New.inventoryAdjustedAgainst]
+#. defaultMessage is:
+#. Inventory at site is adjusted against results by considering
+#: extracted_strings.json
+msgid "Inventory at site is adjusted against results by considering"
+msgstr ""
+"As existências no local são ajustadas em relação aos resultados, considerando"
 
 #. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
 #. defaultMessage is:
@@ -5367,6 +6107,9 @@ msgstr "Síntese do inventário"
 msgid "Inventory levels have been adjusted successfully"
 msgstr "Os níveis de estoque foram ajustados com sucesso"
 
+#. [browsePage.browseDropdown.inventoryOnHand]
+#. defaultMessage is:
+#. Inventory on Hand
 #. [pages.InventoryItemsList.inventoryItemsTitle]
 #. defaultMessage is:
 #. Inventory on Hand
@@ -5414,6 +6157,9 @@ msgstr "Isolar"
 msgid "Issue Based"
 msgstr "Com base no problema"
 
+#. [pages.admin.issues]
+#. defaultMessage is:
+#. Issues
 #. [pages.DeviceList.issues]
 #. defaultMessage is:
 #. Issues
@@ -5515,6 +6261,20 @@ msgstr "Funções de Trabalho"
 msgid "KAN Resistance"
 msgstr "Resistência KAN"
 
+#. [legends.Unknown.KANPercent]
+#. defaultMessage is:
+#. KAN-R %
+#: extracted_strings.json
+msgid "KAN-R %"
+msgstr "KAN-R %"
+
+#. [legends.Unknown.KanDetected]
+#. defaultMessage is:
+#. KAN-R Detected
+#: extracted_strings.json
+msgid "KAN-R Detected"
+msgstr "KAN-R Detectado"
+
 #. [pages.DeviceApiKeyList.token]
 #. defaultMessage is:
 #. Key
@@ -5552,6 +6312,16 @@ msgstr "Contactos LGA"
 msgid "LGA name"
 msgstr "Nome da LGA"
 
+#. [browsePage.browseDropdown.lgas]
+#. defaultMessage is:
+#. LGAs
+#: extracted_strings.json
+msgid "LGAs"
+msgstr "LGAs"
+
+#. [legends.Unknown.assayLPA]
+#. defaultMessage is:
+#. LPA
 #. [filter.AssaySelectField.assayLPA]
 #. defaultMessage is:
 #. LPA
@@ -5618,6 +6388,9 @@ msgstr "Idioma e Fuso Horário"
 msgid "Last"
 msgstr "Último"
 
+#. [pages.dateRangeSelector.last30Days]
+#. defaultMessage is:
+#. Last 30 Days
 #. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
@@ -5627,6 +6400,27 @@ msgstr "Último"
 #: extracted_strings.json
 msgid "Last 30 Days"
 msgstr "Último 30 dias"
+
+#. [p.PkDashboard.last6Months]
+#. defaultMessage is:
+#. Last 6 Months
+#: extracted_strings.json
+msgid "Last 6 Months"
+msgstr "Últimos 6 meses"
+
+#. [pages.dateRangeSelector.last7Days]
+#. defaultMessage is:
+#. Last 7 Days
+#: extracted_strings.json
+msgid "Last 7 Days"
+msgstr "Último 7 dias"
+
+#. [pages.dateRangeSelector.lastMonth]
+#. defaultMessage is:
+#. Last Month
+#: extracted_strings.json
+msgid "Last Month"
+msgstr "Mês Passado"
 
 #. [component.DateTimeInput.LastMonth]
 #. defaultMessage is:
@@ -5675,6 +6469,20 @@ msgstr "Visto pela Última vez"
 #: extracted_strings.json
 msgid "Last Triggered"
 msgstr "Último disparo"
+
+#. [pages.dateRangeSelector.lastWeek]
+#. defaultMessage is:
+#. Last Week
+#: extracted_strings.json
+msgid "Last Week"
+msgstr "Última semana"
+
+#. [pages.dateRangeSelector.lastYear]
+#. defaultMessage is:
+#. Last Year
+#: extracted_strings.json
+msgid "Last Year"
+msgstr "Último ano"
 
 #. [components.shared.lastDayofQuarter]
 #. defaultMessage is:
@@ -5759,12 +6567,19 @@ msgstr "Painel de lipídios"
 #. [pages.ReportIndex.missing_cartridges_report]
 #. defaultMessage is:
 #. List of Missing Lots
-#. [pages.ReportIndex.pk_missing_cartridges_report]
-#. defaultMessage is:
-#. List of Missing Lots
 #: extracted_strings.json
 msgid "List of Missing Lots"
 msgstr "Lista de Lotes Perdidos"
+
+#. [pages.ReportIndex.unreconciled_inventory_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#. [pages.ReportIndex.pk_missing_cartridges_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#: extracted_strings.json
+msgid "List of Unreconciled Inventory"
+msgstr "Lista de inventário não reconciliado"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -5870,12 +6685,29 @@ msgstr "Carregamento de resultados Status de tratamento falhados"
 msgid "Loading Results Failed"
 msgstr "Falha nos resultados de carregamento"
 
+#. [legends.Unknown.location]
+#. defaultMessage is:
+#. Location
 #. [pages.ContactDetails.locationHeader]
 #. defaultMessage is:
 #. Location
 #: extracted_strings.json
 msgid "Location"
 msgstr "Localização"
+
+#. [pages.inventoryList.locationTracking]
+#. defaultMessage is:
+#. Location Tracking
+#: extracted_strings.json
+msgid "Location Tracking"
+msgstr "Rastreio de localização"
+
+#. [pages.InventoryTabs.New.locationsWithThisItem]
+#. defaultMessage is:
+#. Locations with this Item
+#: extracted_strings.json
+msgid "Locations with this Item"
+msgstr "Locais com este item"
 
 #. [page.contacts.person.locked]
 #. defaultMessage is:
@@ -5970,6 +6802,12 @@ msgstr "Lote"
 #. [pages.InventoryLog.lotNumber]
 #. defaultMessage is:
 #. Lot Number
+#. [pages.inventoryReconciliation.lotNumber]
+#. defaultMessage is:
+#. Lot Number
+#. [pages.InventoryTransfer.lotNumber]
+#. defaultMessage is:
+#. Lot Number
 #: extracted_strings.json
 msgid "Lot Number"
 msgstr "Número do lote"
@@ -6025,6 +6863,9 @@ msgstr "MTB"
 msgid "MTB Contaminated"
 msgstr "MTB Contaminado"
 
+#. [legends.Unknown.MtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [resultCategoryGroup.gxMtbRifMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -6066,10 +6907,10 @@ msgstr "MTB Detectado"
 msgid "MTB Detected - Rif Detected"
 msgstr "MTB Detectado - Rif Detectado"
 
-#. [resultCategoryGroup.gxMtbRifUltraMtbDetectedRifIndeterminate]
+#. [pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate]
 #. defaultMessage is:
 #. MTB Detected - Rif Indeterminate
-#. [pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate]
+#. [resultCategoryGroup.gxMtbRifUltraMtbDetectedRifIndeterminate]
 #. defaultMessage is:
 #. MTB Detected - Rif Indeterminate
 #: extracted_strings.json
@@ -6211,10 +7052,10 @@ msgstr "Detecção de MTB"
 msgid "MTB Error"
 msgstr "Erro MTB"
 
-#. [resultCategoryGroup.GxMtbRifMTBErrorRifError]
+#. [pages.filters.GxMtbRifMTBErrorRifError]
 #. defaultMessage is:
 #. MTB Error Rif Error
-#. [pages.filters.GxMtbRifMTBErrorRifError]
+#. [resultCategoryGroup.GxMtbRifMTBErrorRifError]
 #. defaultMessage is:
 #. MTB Error Rif Error
 #: extracted_strings.json
@@ -6327,10 +7168,10 @@ msgstr "MTB sem resultado"
 msgid "MTB Not Detected"
 msgstr "MTB Não Detectado"
 
-#. [resultCategoryGroup.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
+#. [pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected Drug Resistance Not Detected
-#. [pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
+#. [resultCategoryGroup.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected Drug Resistance Not Detected
 #: extracted_strings.json
@@ -6419,20 +7260,20 @@ msgstr "MTB Resistência ao Sucesso Susceptível"
 msgid "MTB Trace Detected"
 msgstr "Rastreamento MTB detectado"
 
-#. [resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
+#. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
 #. defaultMessage is:
 #. MTB Trace Detected Rif Indeterminate
-#. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
+#. [resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
 #. defaultMessage is:
 #. MTB Trace Detected Rif Indeterminate
 #: extracted_strings.json
 msgid "MTB Trace Detected Rif Indeterminate"
 msgstr "MTB Trace Detectado Rif Indeterminado"
 
-#. [resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifNoResult]
+#. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult]
 #. defaultMessage is:
 #. MTB Trace Detected Rif No Result
-#. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult]
+#. [resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifNoResult]
 #. defaultMessage is:
 #. MTB Trace Detected Rif No Result
 #: extracted_strings.json
@@ -6463,6 +7304,16 @@ msgstr "MTB positivos detectados no ano em curso"
 msgid "MTB positives diagnosed in current year"
 msgstr "MTB positivos diagnosticados no ano em curso"
 
+#. [legends.Unknown.MTBPercent]
+#. defaultMessage is:
+#. MTB%
+#: extracted_strings.json
+msgid "MTB%"
+msgstr "MTB%"
+
+#. [legends.Unknown.MTBPlus]
+#. defaultMessage is:
+#. MTB+
 #. [pages.XDR.cnt_mtb]
 #. defaultMessage is:
 #. MTB+
@@ -6532,6 +7383,9 @@ msgstr "MTB/XDR"
 msgid "MTB/XDR drug resistance"
 msgstr "Resistência aos medicamentos MTB/XDR"
 
+#. [legends.Unknown.assayMP96Covid19]
+#. defaultMessage is:
+#. MagNA Pure-96 COVID-19
 #. [filter.AssaySelectField.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
@@ -6578,6 +7432,16 @@ msgstr "O status de manutenção necessário"
 #: extracted_strings.json
 msgid "Male"
 msgstr "Masculino"
+
+#. [header.link.manage.title]
+#. defaultMessage is:
+#. Manage
+#. [admin.page.states.manage]
+#. defaultMessage is:
+#. Manage
+#: extracted_strings.json
+msgid "Manage"
+msgstr "Gerenciar"
 
 #. [jobFunction.manager]
 #. defaultMessage is:
@@ -6767,6 +7631,9 @@ msgstr "Módulo Não utilizado"
 msgid "Monday"
 msgstr "Segunda-feira"
 
+#. [pages.dateRangeSelector.month]
+#. defaultMessage is:
+#. Month
 #. [component.DateTimeInput.month.placeholder]
 #. defaultMessage is:
 #. Month
@@ -6919,6 +7786,12 @@ msgstr "NTP"
 #. [pages.resultEdit.NameFieldi18nKey]
 #. defaultMessage is:
 #. Name
+#. [pages.admin.name]
+#. defaultMessage is:
+#. Name
+#. [p.PkDashboard.utilizationName]
+#. defaultMessage is:
+#. Name
 #. [pages.NotificationDetail.fieldName]
 #. defaultMessage is:
 #. Name
@@ -6935,6 +7808,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.DeviceDetailEdit.name]
+#. defaultMessage is:
+#. Name
+#. [pages.ErrorRate.name]
 #. defaultMessage is:
 #. Name
 #: extracted_strings.json
@@ -7080,7 +7956,7 @@ msgstr "Precisa ser reparado"
 #. [legends.Unknown.resultCategoryNegative]
 #. defaultMessage is:
 #. Negative
-#. [pages.resultEdit.positive]
+#. [pages.resultEdit.negative]
 #. defaultMessage is:
 #. Negative
 #: extracted_strings.json
@@ -7196,6 +8072,9 @@ msgstr "Nenhum LGA associado"
 msgid "No Associated State"
 msgstr "Nenhum Estado associado"
 
+#. [filter.btnGroup.daysStockLeft.noConsumption]
+#. defaultMessage is:
+#. No Consumption
 #. [pages.InventoryItemsList.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -7227,6 +8106,13 @@ msgstr "Campos personalizados Conclusão média"
 msgid "No Data Available"
 msgstr "Sem Dados Disponíveis"
 
+#. [filter.btnGroup.noFilters]
+#. defaultMessage is:
+#. No Filters Applied
+#: extracted_strings.json
+msgid "No Filters Applied"
+msgstr "Sem filtros aplicados"
+
 #. [pages.shared.deviceStatus.inactiveNoPower]
 #. defaultMessage is:
 #. No Power
@@ -7238,6 +8124,9 @@ msgstr "Sem energia"
 #. defaultMessage is:
 #. No Result
 #. [pages.NotificationDetail.type.NoResult]
+#. defaultMessage is:
+#. No Result
+#. [pages.ErrorRate.noResult]
 #. defaultMessage is:
 #. No Result
 #: extracted_strings.json
@@ -7288,6 +8177,20 @@ msgstr "Sem Testes Executados"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "Nenhum contato designado ao site"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToRemove]
+#. defaultMessage is:
+#. No inventory to remove
+#: extracted_strings.json
+msgid "No inventory to remove"
+msgstr "Não há inventário a remover"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToTransfer]
+#. defaultMessage is:
+#. No inventory to transfer
+#: extracted_strings.json
+msgid "No inventory to transfer"
+msgstr "Não há inventário a transferir"
 
 #. [pages.SiteDetail.siteWithoutLocation]
 #. defaultMessage is:
@@ -7376,6 +8279,13 @@ msgstr "Não disponivel"
 msgid "Not Configured"
 msgstr "Não Configurado"
 
+#. [legends.Unknown.NotConfirmed]
+#. defaultMessage is:
+#. Not Confirmed
+#: extracted_strings.json
+msgid "Not Confirmed"
+msgstr "Não confirmado"
+
 #. [legends.Unknown.resultCategoryNotDetected]
 #. defaultMessage is:
 #. Not Detected
@@ -7397,6 +8307,9 @@ msgstr "Não encontrado"
 msgid "Not Possible"
 msgstr "Não é possivel"
 
+#. [filter.btnGroup.daysStockLeft.notRecorded]
+#. defaultMessage is:
+#. Not Recorded
 #. [pages.InventoryItemsList.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
@@ -7409,6 +8322,16 @@ msgstr "Não é possivel"
 #: extracted_strings.json
 msgid "Not Recorded"
 msgstr "Não Gravado"
+
+#. [errorResponseMessages.removeInventory.PUT.notEnoughInventory.resolution]
+#. defaultMessage is:
+#. Not enough inventory items on the site to remove.
+#. [errorResponseMessages.transferInventory.transfer.PUT.notEnoughInventory.resolution]
+#. defaultMessage is:
+#. Not enough inventory items on the site to remove.
+#: extracted_strings.json
+msgid "Not enough inventory items on the site to remove."
+msgstr "Não existem artigos de inventário suficientes no sítio para remover."
 
 #. [pages.ResultList.notProvided]
 #. defaultMessage is:
@@ -7479,12 +8402,22 @@ msgstr "Notificação"
 msgid "Notification Category Type"
 msgstr "Categoria de notificação Tipo"
 
+#. [browsePage.browseDropdown.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
 #. [pages.NotificationList.notificationLogs]
 #. defaultMessage is:
 #. Notification Logs
 #: extracted_strings.json
 msgid "Notification Logs"
 msgstr "Registos de notificação"
+
+#. [pages.admin.notificationStates]
+#. defaultMessage is:
+#. Notification States
+#: extracted_strings.json
+msgid "Notification States"
+msgstr "Estados de notificação"
 
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
@@ -7506,6 +8439,20 @@ msgstr "Tipo de notificação"
 #: extracted_strings.json
 msgid "Notification Type Name"
 msgstr "Nome do tipo de nota"
+
+#. [browsePage.browseDropdown.notificationTypes]
+#. defaultMessage is:
+#. Notification Types
+#: extracted_strings.json
+msgid "Notification Types"
+msgstr "Tipos de Notificação"
+
+#. [filter.btnGroup.notificationTypeCategory]
+#. defaultMessage is:
+#. Notification category type is "{notificationCategoryType}"
+#: extracted_strings.json
+msgid "Notification category type is \"{notificationCategoryType}\""
+msgstr "O tipo de categoria de notificação é \"{notificationCategoryType}\""
 
 #. [pages.Notifications.group.forDevices]
 #. defaultMessage is:
@@ -7534,6 +8481,16 @@ msgstr "Notificação de Resultados"
 msgid "Notification for Site"
 msgstr "Notificação"
 
+#. [filter.btnGroup.notificationType]
+#. defaultMessage is:
+#. Notification type is "{notificationType}"
+#: extracted_strings.json
+msgid "Notification type is \"{notificationType}\""
+msgstr "O tipo de notificação é \"{notificationType}\""
+
+#. [browsePage.browseDropdown.notifications]
+#. defaultMessage is:
+#. Notifications
 #. [pages.NotificationList.title]
 #. defaultMessage is:
 #. Notifications
@@ -7581,6 +8538,13 @@ msgstr "Número de módulos GX-10C"
 #: extracted_strings.json
 msgid "Number of GX-6C modules"
 msgstr "Número de módulos GX-6C"
+
+#. [legends.Unknown.inventoryGraphStatusXAxisLegend]
+#. defaultMessage is:
+#. Number of Locations
+#: extracted_strings.json
+msgid "Number of Locations"
+msgstr "Número de locais"
 
 #. [pages.XDR.isPmdt]
 #. defaultMessage is:
@@ -7636,6 +8600,13 @@ msgid "Number of times to repeat check and notify if inactive ..."
 msgstr ""
 "Número de vezes para repetir a verificação e notificar se estiver inativo ..."
 
+#. [component.InputPassword.numbersIncluded]
+#. defaultMessage is:
+#. Numbers Included
+#: extracted_strings.json
+msgid "Numbers Included"
+msgstr "Números Incluídos"
+
 #. [months.october]
 #. defaultMessage is:
 #. OCT
@@ -7656,6 +8627,12 @@ msgstr "outubro"
 msgid "OK"
 msgstr "OK"
 
+#. [pages.connectorStatusSelectField.offline]
+#. defaultMessage is:
+#. Offline
+#. [filter.btnGroup.offline]
+#. defaultMessage is:
+#. Offline
 #. [notificationCategoryTypeSelect.notificationTypeOffline]
 #. defaultMessage is:
 #. Offline
@@ -7694,6 +8671,12 @@ msgstr "Sobre o tratamento"
 msgid "On the last weekday of every month"
 msgstr "No último dia da semana de cada mês"
 
+#. [pages.connectorStatusSelectField.online]
+#. defaultMessage is:
+#. Online
+#. [filter.btnGroup.online]
+#. defaultMessage is:
+#. Online
 #. [pages.DeviceList.online]
 #. defaultMessage is:
 #. Online
@@ -7736,12 +8719,32 @@ msgstr "Apenas resultados descarregados por Repórter"
 msgid "Only Results With Treatment Required"
 msgstr "Apenas resultados com tratamento necessário"
 
+#. [filter.btnGroup.hasStock]
+#. defaultMessage is:
+#. Only lots with stock
+#: extracted_strings.json
+msgid "Only lots with stock"
+msgstr "Apenas lotes com estoque"
+
 #. [filter.popover.onlyTransfers]
 #. defaultMessage is:
 #. Only transfers
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Apenas lotes com estoque"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Ops! Algo correu mal. A nossa equipa foi notificada e estamos a trabalhar "
+"para resolver o problema. Tente novamente mais tarde. Se o problema "
+"persistir, contacte a nossa equipa de apoio e forneça o seguinte erro:"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
@@ -7750,6 +8753,9 @@ msgstr "Apenas lotes com estoque"
 msgid "Operation"
 msgstr "Operações"
 
+#. [header.link.operationData.title]
+#. defaultMessage is:
+#. Operational Data
 #. [pages.OperationalData.title]
 #. defaultMessage is:
 #. Operational Data
@@ -7829,6 +8835,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "Out of Inventory"
 msgstr "Fora do estoque"
+
+#. [filter.btnGroup.daysStockLeft.outOfStock]
+#. defaultMessage is:
+#. Out of Stock
+#: extracted_strings.json
+msgid "Out of Stock"
+msgstr "Fora de Estoque"
 
 #. [pages.Status.deviceStatusTitle.graph]
 #. defaultMessage is:
@@ -7937,6 +8950,13 @@ msgstr "Identificação do paciente"
 msgid "Patient Id"
 msgstr "ID do paciente"
 
+#. [filter.btnGroup.patientId]
+#. defaultMessage is:
+#. Patient Id includes "{patientId}"
+#: extracted_strings.json
+msgid "Patient Id includes \"{patientId}\""
+msgstr "O ID do doente inclui \"{patientId}\""
+
 #. [pages.resultEdit.PatientNameI18nCaptionKey]
 #. defaultMessage is:
 #. Patient Name
@@ -7965,6 +8985,20 @@ msgstr "Identificação do paciente/do caso"
 msgid "Pending changes"
 msgstr "Alterações pendentes"
 
+#. [pages.admin.people]
+#. defaultMessage is:
+#. People
+#: extracted_strings.json
+msgid "People"
+msgstr "Pessoas"
+
+#. [pages.admin.peopleWithAccess]
+#. defaultMessage is:
+#. People With Access to State
+#: extracted_strings.json
+msgid "People With Access to State"
+msgstr "Pessoas com acesso ao Estado"
+
 #. [p.PkDashboard.peopleTestedCovid]
 #. defaultMessage is:
 #. People tested for Covid in current year
@@ -7987,6 +9021,20 @@ msgid "People tested for TB using MTB/Rif assay in current year"
 msgstr ""
 "Pessoas testadas para a tuberculose utilizando o ensaio MTB/Rif no ano em "
 "curso"
+
+#. [pages.OperationalData.percentPositive]
+#. defaultMessage is:
+#. Percent Positive
+#: extracted_strings.json
+msgid "Percent Positive"
+msgstr "Porcentagem Positiva"
+
+#. [pages.OperationalData.percentReported]
+#. defaultMessage is:
+#. Percent Reported
+#: extracted_strings.json
+msgid "Percent Reported"
+msgstr "Porcentagem relatada"
 
 #. [pages.ReportIndex.reportCustomFieldsCompletion]
 #. defaultMessage is:
@@ -8333,6 +9381,9 @@ msgstr ""
 #. [legends.Unknown.resultCategoryPositive]
 #. defaultMessage is:
 #. Positive
+#. [pages.resultEdit.positive]
+#. defaultMessage is:
+#. Positive
 #: extracted_strings.json
 msgid "Positive"
 msgstr "Positivo"
@@ -8378,6 +9429,20 @@ msgstr "MTB Positivo"
 #: extracted_strings.json
 msgid "Positive Results Notified"
 msgstr "Resultados Positivos Notificados"
+
+#. [pages.OperationalData.resultsTransmittedTitle]
+#. defaultMessage is:
+#. Positive Test Results Transmitted
+#: extracted_strings.json
+msgid "Positive Test Results Transmitted"
+msgstr "Resultados positivos dos testes transmitidos"
+
+#. [pages.OperationalData.cntPositive]
+#. defaultMessage is:
+#. Positives
+#: extracted_strings.json
+msgid "Positives"
+msgstr "Positivos"
 
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
@@ -8513,6 +9578,13 @@ msgstr "Processado"
 
 #. [pages.transferResult.processing]
 #. defaultMessage is:
+#. Processing ...
+#: extracted_strings.json
+msgid "Processing ..."
+msgstr "A processar..."
+
+#. [pages.result.transferResult.processing]
+#. defaultMessage is:
 #. Processing...
 #: extracted_strings.json
 msgid "Processing..."
@@ -8558,6 +9630,9 @@ msgstr "Região"
 #. [pages.common.state_PK]
 #. defaultMessage is:
 #. Province/Region
+#. [p.PkDashboard.provinceRegion]
+#. defaultMessage is:
+#. Province/Region
 #: extracted_strings.json
 msgid "Province/Region"
 msgstr "Província/Região"
@@ -8583,7 +9658,7 @@ msgstr "Tendências do diagnóstico provincial"
 msgid "Provincial Diagnosis Trends Comparison"
 msgstr "Comparação das tendências dos diagnósticos provinciais"
 
-#. [p.PkDashboard.tbCasesDiagnosed]
+#. [p.PkDashboard.tbCasesDiagnosed.currentYear]
 #. defaultMessage is:
 #. Provincial Diagnosis Trends for the current year
 #: extracted_strings.json
@@ -8607,12 +9682,19 @@ msgstr "Tendências provinciais do diagnóstico de FQ"
 msgid "Provincial MTB Detection Trends Comparison"
 msgstr "Comparação das tendências provinciais de deteção de MTB"
 
-#. [p.PkDashboard.provincialMTBPositivesTrends]
+#. [p.PkDashboard.provincialMTBPositivesTrends.currentYear]
 #. defaultMessage is:
 #. Provincial MTB+ detected in current year
 #: extracted_strings.json
 msgid "Provincial MTB+ detected in current year"
 msgstr "MTB+ provincial detectado no ano em curso"
+
+#. [p.PkDashboard.provincialMTBPositivesTrends]
+#. defaultMessage is:
+#. Provincial MTB+ detection trends
+#: extracted_strings.json
+msgid "Provincial MTB+ detection trends"
+msgstr "Tendências provinciais de deteção de MTB+"
 
 #. [p.PkDashboard.provincialMTBDiagnosisCurrentYear]
 #. defaultMessage is:
@@ -8705,6 +9787,13 @@ msgstr "Testes provinciais de XDR no ano em curso"
 msgid "Provincial XDR testing trends"
 msgstr "Tendências provinciais dos testes XDR"
 
+#. [p.PkDashboard.provincial.district.FqrDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial/District FQ Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial/District FQ Diagnosis Trends"
+msgstr "Tendências Provinciais/Distritais do Diagnóstico de FQ"
+
 #. [p.PkDashboard.provincialTestingTrends]
 #. defaultMessage is:
 #. Provincial/District Testing Trends
@@ -8747,6 +9836,9 @@ msgstr "Pus"
 msgid "Q"
 msgstr "Q"
 
+#. [legends.Unknown.QHivVL]
+#. defaultMessage is:
+#. Q HIV VL
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
 #. Q HIV VL
@@ -8764,6 +9856,9 @@ msgstr "Q HIV VL"
 msgid "Quality Control"
 msgstr "Controle de Qualidade"
 
+#. [legends.Unknown.assayQS7Covid19]
+#. defaultMessage is:
+#. QuantStudio7 Flex COVID-19
 #. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
@@ -8790,6 +9885,16 @@ msgstr "Quantidade"
 #: extracted_strings.json
 msgid "Quantity Received"
 msgstr "Quantidade Recebida"
+
+#. [errorResponseMessages.removeInventory.PUT.negativeQuantity.resolution]
+#. defaultMessage is:
+#. Quantity is negative for current inventory.
+#. [errorResponseMessages.transferInventory.transfer.PUT.negativeQuantity.resolution]
+#. defaultMessage is:
+#. Quantity is negative for current inventory.
+#: extracted_strings.json
+msgid "Quantity is negative for current inventory."
+msgstr "A quantidade é negativa para o inventário atual."
 
 #. [pages.InventoryItemsList.quantityOnHand]
 #. defaultMessage is:
@@ -8818,6 +9923,13 @@ msgstr "Quantidade a ser removida"
 #: extracted_strings.json
 msgid "Quantity to Transfer"
 msgstr "Quantidade a transferir"
+
+#. [pages.dateRangeSelector.quarter]
+#. defaultMessage is:
+#. Quarter
+#: extracted_strings.json
+msgid "Quarter"
+msgstr "Trimestre"
 
 #. [components.shared.quarterly]
 #. defaultMessage is:
@@ -8899,6 +10011,20 @@ msgstr "RRD Em Trimestres"
 msgid "RRD Trends In Year"
 msgstr "Tendências do RRD no ano"
 
+#. [legends.Unknown.RRDHash]
+#. defaultMessage is:
+#. RRD#
+#: extracted_strings.json
+msgid "RRD#"
+msgstr "RRD#"
+
+#. [legends.Unknown.RRDPercent]
+#. defaultMessage is:
+#. RRD%
+#: extracted_strings.json
+msgid "RRD%"
+msgstr "RRD%"
+
 #. [p.PkDashboard.RTTB]
 #. defaultMessage is:
 #. RRTB Cases Diagnosed in current year
@@ -8957,12 +10083,43 @@ msgstr "Receber Inventário em Trânsito"
 msgid "Receive {consumableName}"
 msgstr "Receber {consumableName}"
 
+#. [pages.InventoryTransfer.receivedOn]
+#. defaultMessage is:
+#. Received On
+#: extracted_strings.json
+msgid "Received On"
+msgstr "Recebido em"
+
+#. [pages.InventoryTransfer.receivedQuantity]
+#. defaultMessage is:
+#. Received Qty
+#: extracted_strings.json
+msgid "Received Qty"
+msgstr "Qtd. Recebida"
+
+#. [errorResponseMessages.receiveInventory.PUT.default.title]
+#. defaultMessage is:
+#. Receiving Inventory Failed
+#: extracted_strings.json
+msgid "Receiving Inventory Failed"
+msgstr "Recebimento de inventário falhado"
+
 #. [pages.Notifications.table.notificationsTableRecepientName]
 #. defaultMessage is:
 #. Recepient Name
 #: extracted_strings.json
 msgid "Recepient Name"
 msgstr "Nome do destinatário"
+
+#. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#. [pages.inventoryList.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#: extracted_strings.json
+msgid "Reconciliation Configuration"
+msgstr "Configuração de reconciliação"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -9048,6 +10205,22 @@ msgstr "Remover linha"
 msgid "Remove {consumableName}"
 msgstr "Remover {consumableName}"
 
+#. [errorResponseMessages.removeInventory.PUT.notExisted.title]
+#. defaultMessage is:
+#. Removing Inventory Failed
+#. [errorResponseMessages.removeInventory.PUT.negativeQuantity.title]
+#. defaultMessage is:
+#. Removing Inventory Failed
+#. [errorResponseMessages.removeInventory.PUT.notEnoughInventory.title]
+#. defaultMessage is:
+#. Removing Inventory Failed
+#. [errorResponseMessages.removeInventory.PUT.default.title]
+#. defaultMessage is:
+#. Removing Inventory Failed
+#: extracted_strings.json
+msgid "Removing Inventory Failed"
+msgstr "Remoção de inventário falhado"
+
 #. [pages.resultEdit.repeatBaseline]
 #. defaultMessage is:
 #. Repeat Baseline
@@ -9108,6 +10281,13 @@ msgstr ""
 "Relate as taxas de erro por trimestre, divida-as por dispositivos, módulos e "
 "usuários"
 
+#. [filter.btnGroup.reportWithName]
+#. defaultMessage is:
+#. Report name includes "{reportWithName}"
+#: extracted_strings.json
+msgid "Report name includes \"{reportWithName}\""
+msgstr "O nome do relatório inclui \"{reportWithName}\""
+
 #. [pages.ReportIndex.reportTBWorkloadSummary]
 #. defaultMessage is:
 #. Report of TB Workload Summary
@@ -9135,6 +10315,13 @@ msgstr "Relatório sobre Xpert MTB/RIF e Covid"
 msgid "Report on Xpert MTB/RIF and Covid - NTP Use"
 msgstr "Relatório sobre o uso de Xpert MTB/RIF e Covid - NTP"
 
+#. [legends.Unknown.ReportableResults]
+#. defaultMessage is:
+#. Reportable Results
+#: extracted_strings.json
+msgid "Reportable Results"
+msgstr "Resultados reportáveis"
+
 #. [filter.popover.site]
 #. defaultMessage is:
 #. Reportable Site
@@ -9152,6 +10339,9 @@ msgstr "Site reportável"
 msgid "Reported Active"
 msgstr "Reportado Ativo"
 
+#. [legends.Unknown.ReporterEID]
+#. defaultMessage is:
+#. Reporter EID
 #. [filter.AssaySelectField.AssayReporterEid]
 #. defaultMessage is:
 #. Reporter EID
@@ -9162,6 +10352,9 @@ msgstr "Reportado Ativo"
 msgid "Reporter EID"
 msgstr "Repórter EID"
 
+#. [legends.Unknown.ReporterHivVL]
+#. defaultMessage is:
+#. Reporter HIV VL
 #. [filter.AssaySelectField.AssayReporterHivVl]
 #. defaultMessage is:
 #. Reporter HIV VL
@@ -9186,6 +10379,9 @@ msgstr "Localização do Repórter"
 msgid "Reporting Since"
 msgstr "Relatórios desde"
 
+#. [browsePage.browseDropdown.reportingSites]
+#. defaultMessage is:
+#. Reporting Sites
 #. [pages.ReporterList.reportingSitesTitle]
 #. defaultMessage is:
 #. Reporting Sites
@@ -9193,6 +10389,12 @@ msgstr "Relatórios desde"
 msgid "Reporting Sites"
 msgstr "Locais de notificação"
 
+#. [browsePage.browseDropdown.reports]
+#. defaultMessage is:
+#. Reports
+#. [header.link.reports.title]
+#. defaultMessage is:
+#. Reports
 #. [pages.ReportIndex.title]
 #. defaultMessage is:
 #. Reports
@@ -9630,6 +10832,9 @@ msgstr "Resultado é Criado ou Actualizado"
 msgid "Result is Updated"
 msgstr "O resultado é Actualizado"
 
+#. [browsePage.browseDropdown.results]
+#. defaultMessage is:
+#. Results
 #. [component.Widget.resultsTitle]
 #. defaultMessage is:
 #. Results
@@ -9739,6 +10944,13 @@ msgstr "Resistente ao Rif"
 #: extracted_strings.json
 msgid "Rif Susceptible"
 msgstr "Rif Susceptível"
+
+#. [browsePage.browseDropdown.routers]
+#. defaultMessage is:
+#. Routers
+#: extracted_strings.json
+msgid "Routers"
+msgstr "Roteadores"
 
 #. [filter.DiseaseSelectField.diseaseNameCovid19]
 #. defaultMessage is:
@@ -10001,6 +11213,13 @@ msgstr "Resultados da pesquisa falhados"
 msgid "Select Assay ..."
 msgstr "Seleccionar Ensaio ..."
 
+#. [pages.dateRangeSelector.selectDay]
+#. defaultMessage is:
+#. Select Day...
+#: extracted_strings.json
+msgid "Select Day..."
+msgstr "Selecione o Dia..."
+
 #. [filter.popover.selectDeviceStatus]
 #. defaultMessage is:
 #. Select Device status...
@@ -10029,6 +11248,20 @@ msgstr "Selecionar vaga"
 msgid "Select Level"
 msgstr "Seleccionar Nível"
 
+#. [pages.dateRangeSelector.selectMonth]
+#. defaultMessage is:
+#. Select Month...
+#: extracted_strings.json
+msgid "Select Month..."
+msgstr "Selecione o mês..."
+
+#. [pages.dateRangeSelector.selectQuarter]
+#. defaultMessage is:
+#. Select Quarter...
+#: extracted_strings.json
+msgid "Select Quarter..."
+msgstr "Selecione Trimestre..."
+
 #. [pages.DailyStatusDialog.selectReason]
 #. defaultMessage is:
 #. Select Reason
@@ -10049,6 +11282,27 @@ msgstr "Seleccionar Categoria de Resultados ..."
 #: extracted_strings.json
 msgid "Select Site..."
 msgstr "Seleccionar Site..."
+
+#. [pages.dateRangeSelector.selectWeek]
+#. defaultMessage is:
+#. Select Week...
+#: extracted_strings.json
+msgid "Select Week..."
+msgstr "Selecione a Semana..."
+
+#. [pages.dateRangeSelector.selectYear]
+#. defaultMessage is:
+#. Select Year...
+#: extracted_strings.json
+msgid "Select Year..."
+msgstr "Selecione o ano..."
+
+#. [pages.InventoryTabs.siteList.selectAllLocations]
+#. defaultMessage is:
+#. Select all Locations to track inventory for this item
+#: extracted_strings.json
+msgid "Select all Locations to track inventory for this item"
+msgstr "Selecionar todos os locais para acompanhar o inventário deste item"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -10179,6 +11433,9 @@ msgstr "Selecione {entity}..."
 msgid "Selectable"
 msgstr "Selecionável"
 
+#. [legends.Unknown.senaiteSmearMicroscopy]
+#. defaultMessage is:
+#. Senaite LIMS Smear Microscopy
 #. [filter.AssaySelectField.assaySenaiteLIMSSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
@@ -10192,6 +11449,9 @@ msgstr "Selecionável"
 msgid "Senaite LIMS Smear Microscopy"
 msgstr "Microscopia Senaite LIMS Smear"
 
+#. [legends.Unknown.senaiteTbCulture]
+#. defaultMessage is:
+#. Senaite LIMS TB Culture
 #. [filter.AssaySelectField.assaySenaiteLIMSTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
@@ -10205,6 +11465,9 @@ msgstr "Microscopia Senaite LIMS Smear"
 msgid "Senaite LIMS TB Culture"
 msgstr "Cultura Senaite LIMS TB"
 
+#. [legends.Unknown.senaiteUnknown]
+#. defaultMessage is:
+#. Senaite LIMS Unknown
 #. [filter.AssaySelectField.assaySenaiteLIMSUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
@@ -10248,6 +11511,34 @@ msgstr "Enviar ao paciente"
 #: extracted_strings.json
 msgid "Sender Operator"
 msgstr "Operador Remetente"
+
+#. [pages.InventoryTransfer.sentOn]
+#. defaultMessage is:
+#. Sent On
+#: extracted_strings.json
+msgid "Sent On"
+msgstr "Enviado em"
+
+#. [pages.InventoryTransfer.sentQuantity]
+#. defaultMessage is:
+#. Sent Qty
+#: extracted_strings.json
+msgid "Sent Qty"
+msgstr "Quantidade enviada"
+
+#. [pages.OperationalData.percentViaEmail]
+#. defaultMessage is:
+#. Sent via Email
+#: extracted_strings.json
+msgid "Sent via Email"
+msgstr "Enviado por e-mail"
+
+#. [pages.OperationalData.percentViaSms]
+#. defaultMessage is:
+#. Sent via SMS
+#: extracted_strings.json
+msgid "Sent via SMS"
+msgstr "Enviado via SMS"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:
@@ -10307,6 +11598,13 @@ msgstr "Definir status de manutenção"
 #: extracted_strings.json
 msgid "Set based on address"
 msgstr "Conjunto baseado no endereço"
+
+#. [pages.Consumable.New.reconciliationTitle]
+#. defaultMessage is:
+#. Set the below configurations to manage Inventory across the sites
+#: extracted_strings.json
+msgid "Set the below configurations to manage Inventory across the sites"
+msgstr "Defina as configurações abaixo para gerir o Inventário nos locais"
 
 #. [pages.Notifications.setting]
 #. defaultMessage is:
@@ -10387,6 +11685,41 @@ msgstr ""
 msgid "Show Label"
 msgstr "Mostrar Etiqueta"
 
+#. [filter.btnGroup.onlyReportableResults]
+#. defaultMessage is:
+#. Show Only Reportable Results
+#: extracted_strings.json
+msgid "Show Only Reportable Results"
+msgstr "Mostrar apenas resultados reportáveis"
+
+#. [filter.btnGroup.onlyDownloadedByReporter]
+#. defaultMessage is:
+#. Show Only Results Downloaded By Reporter
+#: extracted_strings.json
+msgid "Show Only Results Downloaded By Reporter"
+msgstr "Mostrar apenas resultados descarregados por Repórter"
+
+#. [filter.btnGroup.onlyEverTransferred]
+#. defaultMessage is:
+#. Show Only Results Ever Transferred
+#: extracted_strings.json
+msgid "Show Only Results Ever Transferred"
+msgstr "Mostrar apenas resultados alguma vez transferidos"
+
+#. [filter.btnGroup.onlyTreatmentRequired]
+#. defaultMessage is:
+#. Show Only Results With Treatment Required
+#: extracted_strings.json
+msgid "Show Only Results With Treatment Required"
+msgstr "Pesquisa de resultados Status de tratamento falhados"
+
+#. [filter.btnGroup.onlyTransfers]
+#. defaultMessage is:
+#. Show Only Transfers
+#: extracted_strings.json
+msgid "Show Only Transfers"
+msgstr "Mostrar apenas transferências"
+
 #. [pages.Status.showPercentage]
 #. defaultMessage is:
 #. Show Percentage
@@ -10395,6 +11728,9 @@ msgid "Show Percentage"
 msgstr "Mostrar Porcentagem"
 
 #. [filter.popover.showDecommissionedDevices]
+#. defaultMessage is:
+#. Show Results From Decommissioned Devices
+#. [filter.btnGroup.showDecommissionedDevices]
 #. defaultMessage is:
 #. Show Results From Decommissioned Devices
 #: extracted_strings.json
@@ -10411,6 +11747,9 @@ msgstr "Mostrar linha para"
 #. [filter.popover.onlyErrors]
 #. defaultMessage is:
 #. Show only notifications with errors
+#. [pages.filters.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
 #: extracted_strings.json
 msgid "Show only notifications with errors"
 msgstr "Mostrar apenas as notificações com erros"
@@ -10425,6 +11764,28 @@ msgid ""
 msgstr ""
 "Mostrando todos os sítios/dispositivos e o número de dias em que não tinham "
 "stock no último mês."
+
+#. [pages.inventoryList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# Consumable} other {# Consumables} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"Consumable} other {# Consumables} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"Consumível} outros {# Consumíveis} }"
+
+#. [pages.InventoryTransfer.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# Transfer} other {# Transfers} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"Transfer} other {# Transfers} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"Transferência} other {# Transferências} }"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
@@ -10537,6 +11898,23 @@ msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 "suprimento} other {# suprimentos} }"
 
+#. [pages.admin.states.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } other {# } }
+#. [pages.admin.lga.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } other {# } }
+#. [pages.inventoryReconciliation.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } other {# } }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } "
+"other {# } }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# } "
+"outro {# } }"
+
 #. [pages.ReportIndex.unUsedModulesReport_Description]
 #. defaultMessage is:
 #. Shows all devices that haven't used all available modules in the selected time period.
@@ -10561,6 +11939,13 @@ msgstr "Mostra dispositivos com um ou mais módulos inactivos"
 #: extracted_strings.json
 msgid "Shows stats about the use of the system."
 msgstr "Mostra estatísticas sobre a utilização do sistema."
+
+#. [pages.HorizontalAppBar.signOut]
+#. defaultMessage is:
+#. Sign Out
+#: extracted_strings.json
+msgid "Sign Out"
+msgstr "Terminar Sessão"
 
 #. [filter.popover.siteName]
 #. defaultMessage is:
@@ -10668,6 +12053,9 @@ msgstr "O Site Id já está em uso"
 #. [pages.InventoryLog.siteName]
 #. defaultMessage is:
 #. Site Name
+#. [pages.inventoryReconciliation.siteName]
+#. defaultMessage is:
+#. Site Name
 #: extracted_strings.json
 msgid "Site Name"
 msgstr "Nome do Site"
@@ -10699,7 +12087,13 @@ msgstr "Horário de trabalho do local"
 msgid "Site name is already in use"
 msgstr "O nome do sítio já está a ser utilizado"
 
+#. [browsePage.browseDropdown.sites]
+#. defaultMessage is:
+#. Sites
 #. [component.Widget.sitesTitle]
+#. defaultMessage is:
+#. Sites
+#. [pages.admin.sites]
 #. defaultMessage is:
 #. Sites
 #. [pages.SiteList.title]
@@ -10709,6 +12103,9 @@ msgstr "O nome do sítio já está a ser utilizado"
 msgid "Sites"
 msgstr "Sites"
 
+#. [legends.Unknown.assaySmear]
+#. defaultMessage is:
+#. Smear
 #. [filter.AssaySelectField.assaySmear]
 #. defaultMessage is:
 #. Smear
@@ -10806,6 +12203,17 @@ msgstr "A mensagem Sms não deve ter mais de 2000 caracteres"
 msgid "Software Type"
 msgstr "Tipo de software"
 
+#. [pages.consumables.consumablesApplicableForThisSiteTooltip]
+#. defaultMessage is:
+#. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
+#: extracted_strings.json
+msgid ""
+"Some consumables may appear unavailable for selection change as the site has "
+"inventory or unreconciled transactions"
+msgstr ""
+"Alguns consumíveis podem parecer indisponíveis para alteração da seleção, "
+"uma vez que o local tem inventário ou transacções não reconciliadas"
+
 #. [pages.InventoryTabs.New.trackByLocationTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
@@ -10824,6 +12232,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "Source devices"
 msgstr "Dispositivos de origem"
+
+#. [component.InputPassword.specialChar]
+#. defaultMessage is:
+#. Special Character
+#: extracted_strings.json
+msgid "Special Character"
+msgstr "Carácter especial"
 
 #. [filter.sampleType.sampleTypeSputum]
 #. defaultMessage is:
@@ -10885,6 +12300,13 @@ msgstr "Nome do Estado"
 #: extracted_strings.json
 msgid "State/Region"
 msgstr "Estado/Região"
+
+#. [browsePage.browseDropdown.states]
+#. defaultMessage is:
+#. States
+#: extracted_strings.json
+msgid "States"
+msgstr "Distritos"
 
 #. [pages.ReportIndex.szSmsStatsDescription]
 #. defaultMessage is:
@@ -11003,15 +12425,15 @@ msgstr "Enviar"
 msgid "Success"
 msgstr "Sucesso"
 
-#. [pages.ReportIndex.reportTBWorkloadSummary_description]
+#. [pages.ReportIndex.reportTBWorkloadSummaryDescription]
 #. defaultMessage is:
-#. Summary of TB Workload grouped by month, quarter and year for all regions
+#. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
 msgid ""
-"Summary of TB Workload grouped by month, quarter and year for all regions"
+"Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
-"Resumo da carga de trabalho de TB agrupada por mês, trimestre e ano para "
-"todas as regiões"
+"Resumo do volume de trabalho em matéria de tuberculose agrupado por mês, "
+"trimestre e ano para todas as regiões."
 
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
@@ -11030,6 +12452,16 @@ msgstr "Tabela de resumo para dispositivos XDR"
 msgid "Sunday"
 msgstr "Domingo"
 
+#. [browsePage.browseDropdown.supplies]
+#. defaultMessage is:
+#. Supplies
+#: extracted_strings.json
+msgid "Supplies"
+msgstr "Suprimentos"
+
+#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
+#. defaultMessage is:
+#. Supply in Stock
 #. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
@@ -11065,6 +12497,13 @@ msgstr "Diagnóstico de TB e RRTB"
 msgid "TB AST"
 msgstr "TB AST"
 
+#. [p.PkDashboard.tbCasesDiagnosed]
+#. defaultMessage is:
+#. TB Cases Diagnosed
+#: extracted_strings.json
+msgid "TB Cases Diagnosed"
+msgstr "Casos de tuberculose diagnosticados"
+
 #. [p.PkDashboard.TB]
 #. defaultMessage is:
 #. TB Cases Diagnosed in current year
@@ -11072,6 +12511,9 @@ msgstr "TB AST"
 msgid "TB Cases Diagnosed in current year"
 msgstr "Casos de TB diagnosticados no ano corrente"
 
+#. [legends.Unknown.assayGenericDst]
+#. defaultMessage is:
+#. TB DST
 #. [filter.AssaySelectField.assayGenericDst]
 #. defaultMessage is:
 #. TB DST
@@ -11093,6 +12535,9 @@ msgstr "Diagnóstico de TB"
 msgid "TB G&D"
 msgstr "TB G&D"
 
+#. [legends.Unknown.assayTbLamp]
+#. defaultMessage is:
+#. TB LAMP
 #. [pages.ResultList.assayTbLamp]
 #. defaultMessage is:
 #. TB LAMP
@@ -11217,6 +12662,13 @@ msgstr "Alvo"
 msgid "Target device"
 msgstr "Dispositivo de destino"
 
+#. [header.link.taskList.title]
+#. defaultMessage is:
+#. Task List
+#: extracted_strings.json
+msgid "Task List"
+msgstr "Lista de tarefas"
+
 #. [p.PkDashboard.TbTotal]
 #. defaultMessage is:
 #. Tb Total
@@ -11273,6 +12725,9 @@ msgid "Test Date"
 msgstr "Data do Exame"
 
 #. [placeholder.result.ended.on]
+#. defaultMessage is:
+#. Test Ended On
+#. [pages.inventoryReconciliation.testEndedOn]
 #. defaultMessage is:
 #. Test Ended On
 #: extracted_strings.json
@@ -11365,7 +12820,7 @@ msgstr "Tests Performed in current year"
 msgid "Tests Run Between"
 msgstr "Testes realizados entre"
 
-#. [pages.ReportIndex.missing_cartridges_report_description]
+#. [pages.ReportIndex.unreconciled_inventory_report_description]
 #. defaultMessage is:
 #. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
 #: extracted_strings.json
@@ -11512,6 +12967,17 @@ msgstr ""
 msgid "The average uptime of the Aspect server this month."
 msgstr "O tempo médio de atividade do servidor Aspect neste mês."
 
+#. [legends.Unknown.hover]
+#. defaultMessage is:
+#. The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.
+#: extracted_strings.json
+msgid ""
+"The device hasn't connected to Aspect for several days. It may be running "
+"tests, but the tests aren't uploaded to Aspect yet."
+msgstr ""
+"O dispositivo não se conecta ao Aspect há vários dias. Pode estar executando "
+"testes, mas os testes não foram carregados para Aspect ainda."
+
 #. [component.Widget.errorRateDescription]
 #. defaultMessage is:
 #. The error rate is calculated by counting all errors in the tests conducted in the month and dividing that number by the total tests carried out of all devices.
@@ -11612,6 +13078,17 @@ msgid ""
 "\"Down for repair\" for it maintenance status."
 msgstr ""
 "O número de dispositivos com interrupção do serviço neste e no mês anterior."
+
+#. [component.Widget.instrumentsConnectedDescription]
+#. defaultMessage is:
+#. The number of instruments connected to a single laptop in multi-device connector configuration.
+#: extracted_strings.json
+msgid ""
+"The number of instruments connected to a single laptop in multi-device "
+"connector configuration."
+msgstr ""
+"O número de instrumentos ligados a um único computador portátil na "
+"configuração de conetor multi-dispositivo."
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -11729,6 +13206,39 @@ msgid "The percentage of positive results that were notified via SMS or email."
 msgstr ""
 "A percentagem de resultados positivos que foram notificados por SMS ou "
 "correio eletrónico."
+
+#. [pages.OperationalData.percentReportedDescription]
+#. defaultMessage is:
+#. The percentage of positive results that were reported via Email or SMS.
+#: extracted_strings.json
+msgid "The percentage of positive results that were reported via Email or SMS."
+msgstr ""
+"A porcentagem de resultados positivos que foram relatados via e-mail ou SMS."
+
+#. [pages.OperationalData.percentWithin2HoursDescription]
+#. defaultMessage is:
+#. The percentage of positive results that were reported within two hours of test completion.
+#: extracted_strings.json
+msgid ""
+"The percentage of positive results that were reported within two hours of "
+"test completion."
+msgstr ""
+"A porcentagem de resultados positivos relatados em até duas horas após a "
+"conclusão do teste."
+
+#. [pages.OperationalData.percentViaEmailDescription]
+#. defaultMessage is:
+#. The percentage of reported results that were reported via Email.
+#: extracted_strings.json
+msgid "The percentage of reported results that were reported via Email."
+msgstr "A porcentagem de resultados relatados que foram relatados por e-mail."
+
+#. [pages.OperationalData.percentViaSmsDescription]
+#. defaultMessage is:
+#. The percentage of reported results that were reported via SMS.
+#: extracted_strings.json
+msgid "The percentage of reported results that were reported via SMS."
+msgstr "A porcentagem de resultados relatados que foram relatados via SMS."
 
 #. [pages.InventoryItemsList.projectedWasteDescription]
 #. defaultMessage is:
@@ -11911,12 +13421,40 @@ msgstr ""
 msgid "These passwords don't match"
 msgstr "Essas senhas não correspondem"
 
+#. [pages.dateRangeSelector.thisMonth]
+#. defaultMessage is:
+#. This Month
+#: extracted_strings.json
+msgid "This Month"
+msgstr "Este mês"
+
 #. [component.DateTimeInput.ThisMonth]
 #. defaultMessage is:
 #. This Month ({minDate} - {maxDate})
 #: extracted_strings.json
 msgid "This Month ({minDate} - {maxDate})"
 msgstr "Este mês ({minDate} - {maxDate})"
+
+#. [pages.dateRangeSelector.thisQuarter]
+#. defaultMessage is:
+#. This Quarter
+#: extracted_strings.json
+msgid "This Quarter"
+msgstr "Este Trimestre"
+
+#. [pages.dateRangeSelector.thisWeek]
+#. defaultMessage is:
+#. This Week
+#: extracted_strings.json
+msgid "This Week"
+msgstr "Esta Semana"
+
+#. [pages.dateRangeSelector.thisYear]
+#. defaultMessage is:
+#. This Year
+#: extracted_strings.json
+msgid "This Year"
+msgstr "Este ano"
 
 #. [page.contacts.person.userCanAlsoLogIn]
 #. defaultMessage is:
@@ -12161,6 +13699,9 @@ msgstr "Vezes"
 msgid "Title"
 msgstr "Título"
 
+#. [pages.InventoryTransfer.destinationSiteName]
+#. defaultMessage is:
+#. To
 #. [pages.DailyStatusDialog.siteWorkingHoursTo]
 #. defaultMessage is:
 #. To
@@ -12207,6 +13748,16 @@ msgstr ""
 msgid "To update your login details, please enter your current password"
 msgstr "Para atualizar seus dados de login, por favor, digite sua senha atual"
 
+#. [pages.dateRangeSelector.toDate]
+#. defaultMessage is:
+#. To...
+#: extracted_strings.json
+msgid "To..."
+msgstr "Para..."
+
+#. [pages.dateRangeSelector.today]
+#. defaultMessage is:
+#. Today
 #. [p.PkDashboard.molecularAssay25]
 #. defaultMessage is:
 #. Today
@@ -12234,6 +13785,9 @@ msgstr "Alternar tudo"
 msgid "Toggle status confirmation"
 msgstr "Confirmação do estado de alternância"
 
+#. [legends.Unknown.Total]
+#. defaultMessage is:
+#. Total
 #. [pages.Status.total]
 #. defaultMessage is:
 #. Total
@@ -12269,6 +13823,23 @@ msgstr "Total de Erros"
 msgid "Total MTB detected and MTB Trace detected"
 msgstr "Total de MTB detectados e vestígios de MTB detectados"
 
+#. [p.PkDashboard.utilizationTotalModules]
+#. defaultMessage is:
+#. Total Modules
+#. [pages.ErrorRate.totalModules]
+#. defaultMessage is:
+#. Total Modules
+#: extracted_strings.json
+msgid "Total Modules"
+msgstr "Total de módulos"
+
+#. [pages.inventoryList.totalOnHand]
+#. defaultMessage is:
+#. Total On Hand
+#: extracted_strings.json
+msgid "Total On Hand"
+msgstr "Total em mãos"
+
 #. [p.PkDashboard.totalRRTBDetectedInCurrentYear]
 #. defaultMessage is:
 #. Total RRTB detected in current year
@@ -12276,6 +13847,9 @@ msgstr "Total de MTB detectados e vestígios de MTB detectados"
 msgid "Total RRTB detected in current year"
 msgstr "Total de TBMR detectado no ano em curso"
 
+#. [pages.OperationalData.cntAll]
+#. defaultMessage is:
+#. Total Results
 #. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
@@ -12298,7 +13872,16 @@ msgid "Total TB tests with a reportable result in current year"
 msgstr ""
 "Total de testes de tuberculose com um resultado notificável no ano em curso"
 
+#. [legends.Unknown.TotalTests]
+#. defaultMessage is:
+#. Total Tests
+#. [p.PkDashboard.utilizationTotalTests]
+#. defaultMessage is:
+#. Total Tests
 #. [pages.workload.totalTests]
+#. defaultMessage is:
+#. Total Tests
+#. [pages.ErrorRate.totalTests]
 #. defaultMessage is:
 #. Total Tests
 #. [pages.XDR.cntAll]
@@ -12335,6 +13918,13 @@ msgstr "Seguimento por localização"
 #: extracted_strings.json
 msgid "Track by expiration date"
 msgstr "Acompanhar por data de expiração"
+
+#. [pages.inventoryList.trackByDate]
+#. defaultMessage is:
+#. Track by expiry date
+#: extracted_strings.json
+msgid "Track by expiry date"
+msgstr "Seguir por data de expiração"
 
 #. [pages.resultEdit.Training]
 #. defaultMessage is:
@@ -12423,6 +14013,29 @@ msgstr "Transferência para a Clínica"
 msgid "Transfer {consumableName}"
 msgstr "Transferência  {consumableName}"
 
+#. [errorResponseMessages.transferInventory.transfer.notExisted.PUT.title]
+#. defaultMessage is:
+#. Transferring Inventory Failed
+#. [errorResponseMessages.transferInventory.transfer.negativeQuantity.notExisted.PUT.title]
+#. defaultMessage is:
+#. Transferring Inventory Failed
+#. [errorResponseMessages.transferInventory.transfer.notExisted.notEnough.PUT.title]
+#. defaultMessage is:
+#. Transferring Inventory Failed
+#. [errorResponseMessages.transferInventory.PUT.default.title]
+#. defaultMessage is:
+#. Transferring Inventory Failed
+#: extracted_strings.json
+msgid "Transferring Inventory Failed"
+msgstr "Transferência de inventário falhada"
+
+#. [browsePage.browseDropdown.inventoryTransfers]
+#. defaultMessage is:
+#. Transfers
+#: extracted_strings.json
+msgid "Transfers"
+msgstr "Transferências"
+
 #. [filter.popover.treatmentStatus]
 #. defaultMessage is:
 #. Treatment Status
@@ -12447,12 +14060,26 @@ msgstr "Tratamento após perda para acompanhamento"
 msgid "Trigger this notification when..."
 msgstr "Accione esta notificação quando..."
 
+#. [pages.revokedSelectField.true]
+#. defaultMessage is:
+#. True
+#: extracted_strings.json
+msgid "True"
+msgstr "Verdadeiro"
+
 #. [consumable.truenatMTBPlusTestKit]
 #. defaultMessage is:
 #. Truenat MTB Plus Test Kit
 #: extracted_strings.json
 msgid "Truenat MTB Plus Test Kit"
 msgstr "Truenat® MTB Plus"
+
+#. [consumable.rif.truenatMTBRifTestKit]
+#. defaultMessage is:
+#. Truenat MTB Rif Test Kit
+#: extracted_strings.json
+msgid "Truenat MTB Rif Test Kit"
+msgstr "Kit de teste Truenat MTB Rif"
 
 #. [consumable.truenatMTBRifTestKit]
 #. defaultMessage is:
@@ -12468,6 +14095,9 @@ msgstr "Truenat MTB Test Kit"
 msgid "Truenat Unknown Test Kit"
 msgstr "Truenat® Unknown Test Type"
 
+#. [legends.Unknown.assayTruenatMtb]
+#. defaultMessage is:
+#. Truenat® MTB
 #. [filter.AssaySelectField.assayTruenatMtb]
 #. defaultMessage is:
 #. Truenat® MTB
@@ -12478,6 +14108,9 @@ msgstr "Truenat® Unknown Test Type"
 msgid "Truenat® MTB"
 msgstr "Truenat® MTB"
 
+#. [legends.Unknown.assayTruenatMtbPlus]
+#. defaultMessage is:
+#. Truenat® MTB Plus
 #. [filter.AssaySelectField.assayTruenatMtbPlus]
 #. defaultMessage is:
 #. Truenat® MTB Plus
@@ -12488,6 +14121,9 @@ msgstr "Truenat® MTB"
 msgid "Truenat® MTB Plus"
 msgstr "Truenat® MTB Plus"
 
+#. [legends.Unknown.assayTruenatRif]
+#. defaultMessage is:
+#. Truenat® MTB-RIF Dx
 #. [filter.AssaySelectField.assayTruenatRif]
 #. defaultMessage is:
 #. Truenat® MTB-RIF Dx
@@ -12498,6 +14134,9 @@ msgstr "Truenat® MTB Plus"
 msgid "Truenat® MTB-RIF Dx"
 msgstr "Truenat® MTB-RIF Dx"
 
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
 #. [filter.AssaySelectField.assayTruenatUnknown]
 #. defaultMessage is:
 #. Truenat® Unknown Test Type
@@ -12584,17 +14223,23 @@ msgstr "Não é possível retirar o cartucho da lista!"
 #. [pages.Consumable.New.unit]
 #. defaultMessage is:
 #. Unit
+#. [pages.inventoryList.unit]
+#. defaultMessage is:
+#. Unit
 #: extracted_strings.json
 msgid "Unit"
 msgstr "Unidade"
 
+#. [pages.DeviceStatusSelectField.unknown]
+#. defaultMessage is:
+#. Unknown
+#. [legends.Unknown.resultCategoryUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [legends.Unknown.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceList.unknown]
@@ -12617,6 +14262,13 @@ msgstr "Desconhecido"
 msgid "Unlocked"
 msgstr "Desbloqueado"
 
+#. [pages.inventoryReconciliation.unreconciledQuantity]
+#. defaultMessage is:
+#. Unreconciled quantity
+#: extracted_strings.json
+msgid "Unreconciled quantity"
+msgstr "Quantidade não apurada"
+
 #. [pages.ReportIndex.unUsedModulesReport]
 #. defaultMessage is:
 #. Unused Modules
@@ -12624,6 +14276,9 @@ msgstr "Desbloqueado"
 msgid "Unused Modules"
 msgstr "Módulos não utilizados"
 
+#. [pages.DeviceStatusSelectField.up]
+#. defaultMessage is:
+#. Up
 #. [pages.DeviceList.up]
 #. defaultMessage is:
 #. Up
@@ -12644,6 +14299,13 @@ msgstr "Cima"
 msgid "Update"
 msgstr "Atualizar"
 
+#. [component.InputPassword.mixCase]
+#. defaultMessage is:
+#. Upper and Lower Case mix
+#: extracted_strings.json
+msgid "Upper and Lower Case mix"
+msgstr "Mistura de maiúsculas e minúsculas"
+
 #. [pages.ReportIndex.usageStatistics]
 #. defaultMessage is:
 #. Usage Statistics Report
@@ -12653,6 +14315,13 @@ msgstr "Atualizar"
 #: extracted_strings.json
 msgid "Usage Statistics Report"
 msgstr "Relatório de Estatísticas de Utilização"
+
+#. [p.PkDashboard.used]
+#. defaultMessage is:
+#. Used
+#: extracted_strings.json
+msgid "Used"
+msgstr "Usado"
 
 #. [page.contacts.person.userLockedOut]
 #. defaultMessage is:
@@ -12712,6 +14381,13 @@ msgid ""
 msgstr ""
 "Taxa de utilização: (Total de testes no período selecionado * 100) / "
 "(Capacidade diária do dispositivo * Dias úteis no período selecionado)"
+
+#. [p.PkDashboard.utilizationPercent]
+#. defaultMessage is:
+#. Utilization%
+#: extracted_strings.json
+msgid "Utilization%"
+msgstr "Utilização%"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -12915,6 +14591,13 @@ msgstr "Gancho da Web Enviado"
 msgid "Wednesday"
 msgstr "Quarta-feira"
 
+#. [pages.dateRangeSelector.week]
+#. defaultMessage is:
+#. Week
+#: extracted_strings.json
+msgid "Week"
+msgstr "Semana"
+
 #. [pages.shared.deviceStatus.weekendOrHoliday]
 #. defaultMessage is:
 #. Week or holiday
@@ -12984,6 +14667,13 @@ msgstr "Quando o dispositivo está desligado há mais de ..."
 #: extracted_strings.json
 msgid "When the result is"
 msgstr "Quando o resultado é"
+
+#. [pages.OperationalData.percentWithin2Hours]
+#. defaultMessage is:
+#. Within 2 hours of testing
+#: extracted_strings.json
+msgid "Within 2 hours of testing"
+msgstr "Dentro de 2 horas de testes"
 
 #. [filter.popover.workflowStatus]
 #. defaultMessage is:
@@ -13124,6 +14814,9 @@ msgstr "Relatório de atividades do Xpert Test"
 msgid "Xpert Workload Summary Report"
 msgstr "Relatório de resumo do volume de trabalho do Xpert"
 
+#. [pages.dateRangeSelector.year]
+#. defaultMessage is:
+#. Year
 #. [component.DateTimeInput.year.placeholder]
 #. defaultMessage is:
 #. Year
@@ -13131,6 +14824,9 @@ msgstr "Relatório de resumo do volume de trabalho do Xpert"
 msgid "Year"
 msgstr "Ano"
 
+#. [pages.admin.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationDetail.New.yes]
 #. defaultMessage is:
 #. Yes
@@ -13169,6 +14865,13 @@ msgstr "Sim, Excluir"
 #: extracted_strings.json
 msgid "Yes, delete it"
 msgstr "Sim, exclua"
+
+#. [pages.dateRangeSelector.yesterday]
+#. defaultMessage is:
+#. Yesterday
+#: extracted_strings.json
+msgid "Yesterday"
+msgstr "Ontem"
 
 #. [errorResponseMessages.loginStart.POST.417.missingPermissions.resolution]
 #. defaultMessage is:
@@ -13277,6 +14980,17 @@ msgstr "Voçê foi desconectado por inatividade"
 #: extracted_strings.json
 msgid "You were logged out due to refreshing session failure"
 msgstr "Voçê foi desconectado devido a falha de sessão refrescante"
+
+#. [shared.IdleDialog.help]
+#. defaultMessage is:
+#. You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.
+#: extracted_strings.json
+msgid ""
+"You will be logged out automatically in one minute due to inactivity. To "
+"stay logged in, hit any button or move your mouse."
+msgstr ""
+"Você será desconectado automaticamente em um minuto devido à inatividade. "
+"Para permanecer logado, aperte qualquer botão ou mova o mouse."
 
 #. [pages.Login.reasonUserRequested]
 #. defaultMessage is:
@@ -13387,6 +15101,13 @@ msgstr "Zona"
 msgid "and"
 msgstr "e"
 
+#. [filter.btnGroup.withDeviceApproval]
+#. defaultMessage is:
+#. approval status is {deviceApprovalName}
+#: extracted_strings.json
+msgid "approval status is {deviceApprovalName}"
+msgstr "o status de aprovação é {deviceApprovalName}"
+
 #. [widgetAlerts.averageDaysBetweenModuleSwaps]
 #. defaultMessage is:
 #. average days between module swaps
@@ -13435,6 +15156,41 @@ msgstr "tempo médio para substituir módulos desativados"
 #: extracted_strings.json
 msgid "data"
 msgstr "dados"
+
+#. [filter.btnGroup.whereDestinationSiteNameIncludes]
+#. defaultMessage is:
+#. destination site name includes "{destinationSiteName}"
+#: extracted_strings.json
+msgid "destination site name includes \"{destinationSiteName}\""
+msgstr "o nome do sítio de destino inclui \"{destinationSiteName}\""
+
+#. [filter.btnGroup.whereDeviceNameIncludes]
+#. defaultMessage is:
+#. device name includes "{deviceName}"
+#: extracted_strings.json
+msgid "device name includes \"{deviceName}\""
+msgstr "o nome do dispositivo inclui \"{deviceName}\""
+
+#. [filter.btnGroup.whereDeviceIdIsIn]
+#. defaultMessage is:
+#. deviceId is in ({joinedIds})
+#: extracted_strings.json
+msgid "deviceId is in ({joinedIds})"
+msgstr "dispositivoId está em  ({joinedIds})"
+
+#. [filter.btnGroup.withDisplayResult]
+#. defaultMessage is:
+#. display "{displayResult}"
+#: extracted_strings.json
+msgid "display \"{displayResult}\""
+msgstr "mostrar \"{displayResult}\""
+
+#. [filter.btnGroup.errorCode]
+#. defaultMessage is:
+#. error code includes "{errorCode}"
+#: extracted_strings.json
+msgid "error code includes \"{errorCode}\""
+msgstr "o código de erro inclui \"{errorCode}\""
 
 #. [widgetAlerts.errorRate]
 #. defaultMessage is:
@@ -13485,6 +15241,27 @@ msgstr "no ano em curso"
 msgid "indicator"
 msgstr "indicador"
 
+#. [filter.btnGroup.whereLgaNameIncludes]
+#. defaultMessage is:
+#. lga name includes "{lgaName}"
+#: extracted_strings.json
+msgid "lga name includes \"{lgaName}\""
+msgstr "o nome do lga inclui \"{lgaName}\""
+
+#. [filter.btnGroup.whereLotNumberIncludes]
+#. defaultMessage is:
+#. lot number includes "{lotNumber}"
+#: extracted_strings.json
+msgid "lot number includes \"{lotNumber}\""
+msgstr "o número do lote inclui “{lotNumber}”"
+
+#. [filter.btnGroup.withDeviceMaintenanceStatus]
+#. defaultMessage is:
+#. maintenance status is {deviceMaintenanceStatusName}
+#: extracted_strings.json
+msgid "maintenance status is {deviceMaintenanceStatusName}"
+msgstr "o status de manutenção é {deviceMaintenanceStatusName}"
+
 #. [component.DateTimeInput.minutes.placeholder]
 #. defaultMessage is:
 #. min.
@@ -13499,6 +15276,13 @@ msgstr "min."
 msgid "n/a"
 msgstr "n/a"
 
+#. [filter.btnGroup.whoseNameOrEmailIncludes]
+#. defaultMessage is:
+#. name/email includes "{contactNameOrEmail}"
+#: extracted_strings.json
+msgid "name/email includes \"{contactNameOrEmail}\""
+msgstr "nome/email inclui \"{contactNameOrEmail}\""
+
 #. [pages.InventoryItemsList.inventoryOnNote]
 #. defaultMessage is:
 #. notes
@@ -13512,6 +15296,13 @@ msgstr "notas"
 #: extracted_strings.json
 msgid "notification"
 msgstr "notificação"
+
+#. [filter.btnGroup.whereNotificationNameIncludes]
+#. defaultMessage is:
+#. notification name includes "{notificationName}"
+#: extracted_strings.json
+msgid "notification name includes \"{notificationName}\""
+msgstr "o nome da notificação inclui \"{notificationName}\""
 
 #. [pages.Notifications.table.notificationsTableNamePlural]
 #. defaultMessage is:
@@ -13547,6 +15338,34 @@ msgstr "de {unit} dispositivos em linha"
 #: extracted_strings.json
 msgid "of {unit} total modules"
 msgstr "de {unit} módulos totais"
+
+#. [filter.btnGroup.whereOriginSiteNameIncludes]
+#. defaultMessage is:
+#. origin site name includes "{originSiteName}"
+#: extracted_strings.json
+msgid "origin site name includes \"{originSiteName}\""
+msgstr "o nome do sítio de origem inclui \"{originSiteName}\""
+
+#. [filter.btnGroup.partnerId]
+#. defaultMessage is:
+#. partner "{partnerName}"
+#: extracted_strings.json
+msgid "partner \"{partnerName}\""
+msgstr "parceiro \"{partnerName}\""
+
+#. [filter.btnGroup.patientOrResearchId]
+#. defaultMessage is:
+#. patient ID includes {patientOrResearchId}
+#: extracted_strings.json
+msgid "patient ID includes {patientOrResearchId}"
+msgstr "a identificassão do paciente inclui {patientOrResearchId}"
+
+#. [filter.btnGroup.patientOrCaseId]
+#. defaultMessage is:
+#. patient/case ID includes {patientOrCaseId}
+#: extracted_strings.json
+msgid "patient/case ID includes {patientOrCaseId}"
+msgstr "a identificassão do paciente/caso inclui {patientOrCaseId}"
 
 #. [widgetAlerts.percentageOfActiveDevices]
 #. defaultMessage is:
@@ -13612,6 +15431,125 @@ msgstr ""
 msgid "percentage of valid results"
 msgstr "porcentagem de resultados válidos"
 
+#. [filter.btnGroup.whereReportNameIncludes]
+#. defaultMessage is:
+#. report name includes "{reportName}"
+#: extracted_strings.json
+msgid "report name includes \"{reportName}\""
+msgstr "o nome do relatório inclui \"{reportName}\""
+
+#. [filter.btnGroup.whereReportableSiteIs]
+#. defaultMessage is:
+#. reportable site "{reportableSiteName}"
+#: extracted_strings.json
+msgid "reportable site \"{reportableSiteName}\""
+msgstr "sítio relatável \"{reportableSiteName}\""
+
+#. [filter.btnGroup.whereReportableSiteIdIncludes]
+#. defaultMessage is:
+#. reportable site ID includes "{reportableSiteId}"
+#: extracted_strings.json
+msgid "reportable site ID includes \"{reportableSiteId}\""
+msgstr "o ID do sítio relatável inclui \"{reportableSiteId}\""
+
+#. [filter.btnGroup.whereReportableSiteNameIncludes]
+#. defaultMessage is:
+#. reportable site name includes "{reportableSiteName}"
+#: extracted_strings.json
+msgid "reportable site name includes \"{reportableSiteName}\""
+msgstr "o nome do sítio relatável inclui \"{reportableSiteName}\""
+
+#. [filter.btnGroup.withRevoked]
+#. defaultMessage is:
+#. revoked is "{revokedStatus}"
+#: extracted_strings.json
+msgid "revoked is \"{revokedStatus}\""
+msgstr "revogado é \"{revokedStatus}\""
+
+#. [filter.btnGroup.sampleOriginSite]
+#. defaultMessage is:
+#. sample collection site is {sampleOriginSiteName}
+#: extracted_strings.json
+msgid "sample collection site is {sampleOriginSiteName}"
+msgstr "site de coleta de amostra é {sampleOriginSiteName}"
+
+#. [filter.btnGroup.sampleId]
+#. defaultMessage is:
+#. sample includes "{sampleId}"
+#: extracted_strings.json
+msgid "sample includes \"{sampleId}\""
+msgstr "amostra inclui \"{sampleId}\""
+
+#. [filter.btnGroup.dateFrom]
+#. defaultMessage is:
+#. since {date}
+#: extracted_strings.json
+msgid "since {date}"
+msgstr "desde {date}"
+
+#. [filter.btnGroup.whereSiteIdIncludes]
+#. defaultMessage is:
+#. site ID includes "{siteId}"
+#: extracted_strings.json
+msgid "site ID includes \"{siteId}\""
+msgstr "o ID do site inclui \"{siteId}\""
+
+#. [filter.btnGroup.whereSiteIdIsIn]
+#. defaultMessage is:
+#. site ID is in ({joinedIds})
+#: extracted_strings.json
+msgid "site ID is in ({joinedIds})"
+msgstr "o ID do site está em ({joinedIds})"
+
+#. [filter.btnGroup.whereSiteNameIncludes]
+#. defaultMessage is:
+#. site name includes "{siteName}"
+#: extracted_strings.json
+msgid "site name includes \"{siteName}\""
+msgstr "o nome do site inclui \"{siteName}\""
+
+#. [filter.btnGroup.whereSiteTypeIs]
+#. defaultMessage is:
+#. site type is "{siteType}"
+#: extracted_strings.json
+msgid "site type is \"{siteType}\""
+msgstr "o tipo de sítio é \"{siteType}\""
+
+#. [filter.btnGroup.whereStateNameIncludes]
+#. defaultMessage is:
+#. state name includes "{stateName}"
+#: extracted_strings.json
+msgid "state name includes \"{stateName}\""
+msgstr "o nome do estado inclui \"{stateName}\""
+
+#. [filter.btnGroup.whereStockProviderIs]
+#. defaultMessage is:
+#. stock provider is "{stockProvider}"
+#: extracted_strings.json
+msgid "stock provider is \"{stockProvider}\""
+msgstr "o fornecedor de acções é \"{stockProvider}\""
+
+#. [filter.btnGroup.withTreatmentStatus]
+#. defaultMessage is:
+#. treatment status is {treatmentStatusName}
+#: extracted_strings.json
+msgid "treatment status is {treatmentStatusName}"
+msgstr "o status do tratamento é  {treatmentStatusName}"
+
+#. [filter.btnGroup.withDeviceType]
+#. defaultMessage is:
+#. type is {deviceTypeName}
+#: extracted_strings.json
+msgid "type is {deviceTypeName}"
+msgstr "tipo é {deviceTypeName}"
+
+#. [filter.btnGroup.dateTo]
+#. defaultMessage is:
+#. until {date}
+#: extracted_strings.json
+msgid "until {date}"
+msgstr "até {date}"
+
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
 #. utilization rate
@@ -13619,12 +15557,33 @@ msgstr "porcentagem de resultados válidos"
 msgid "utilization rate"
 msgstr "taxa de utilização"
 
+#. [filter.btnGroup.withResultCategoryGroup]
+#. defaultMessage is:
+#. with result {resultCategoryGroupName}
+#: extracted_strings.json
+msgid "with result {resultCategoryGroupName}"
+msgstr "com resultado {resultCategoryGroupName}"
+
+#. [filter.btnGroup.withResultCategory]
+#. defaultMessage is:
+#. with result {resultCategoryName}
+#: extracted_strings.json
+msgid "with result {resultCategoryName}"
+msgstr "com resultado {resultCategoryName}"
+
+#. [filter.btnGroup.withWorkflowStatus]
+#. defaultMessage is:
+#. workflow status is {workflowStatusName}
+#: extracted_strings.json
+msgid "workflow status is {workflowStatusName}"
+msgstr "o status do fluxo de trabalho é {workflowStatusName}"
+
 #. [pages.DeviceList.errorOfTotal]
 #. defaultMessage is:
 #. {count} of {total}
 #: extracted_strings.json
 msgid "{count} of {total}"
-msgstr "de {count} de {total}"
+msgstr "{count} de {total}"
 
 #. [pages.DeviceList.availabilityOfDays]
 #. defaultMessage is:
@@ -13649,6 +15608,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "{elapsed} elapsed, {upcoming} upcoming"
 msgstr "{elapsed} decorrido, {upcoming}próximo"
+
+#. [pages.LocationSelector.isRequired]
+#. defaultMessage is:
+#. {entity} is required
+#: extracted_strings.json
+msgid "{entity} is required"
+msgstr "{entity} é necessário"
 
 #. [pages.Notifications.notificationsTableContactsCount]
 #. defaultMessage is:
@@ -13805,9 +15771,6 @@ msgstr "{unit} calibrações totais"
 #~ msgstr ""
 #~ "Tendências do diagnóstico provincial/distrital utilizando o ensaio MTB/XDR"
 
-#~ msgid "Provincial/District RR Diagnosis Trends"
-#~ msgstr "Tendências do diagnóstico de RR a nível provincial/distrital"
-
 #~ msgid "Provincial/District TB Testing Trends"
 #~ msgstr "Tendências dos testes de TB a nível provincial/distrital"
 
@@ -13847,423 +15810,11 @@ msgstr "{unit} calibrações totais"
 #~ msgid "Error Rate (Pending)"
 #~ msgstr "Taxa de erro (pendente)"
 
-#~ msgid "1-14 Days"
-#~ msgstr "1-14 dias"
-
-#~ msgid "1-3 Months"
-#~ msgstr "1-3 Meses"
-
-#~ msgid "15-30 Days"
-#~ msgstr "15-30 dias"
-
-#~ msgid "4-6 Months"
-#~ msgstr "4-6 Meses"
-
-#~ msgid "8 Characters Long or more"
-#~ msgstr "A senha precisa ter pelo menos 8 caracteres"
-
-#~ msgid ">6 Months"
-#~ msgstr ">6 Meses"
-
-#~ msgid "AMK-R %"
-#~ msgstr "AMK-R %"
-
-#~ msgid "AMK-R Detected"
-#~ msgstr "AMK-R Detectado"
-
-#~ msgid "Actual"
-#~ msgstr "Atual"
-
-#~ msgid "Actual Results"
-#~ msgstr "Resultados reais"
-
-#~ msgid "Any"
-#~ msgstr "Qualquer"
-
-#~ msgid "Automatic Logout"
-#~ msgstr "Logout automático"
-
-#~ msgid "Browse"
-#~ msgstr "Procurar"
-
-#~ msgid "CAP-R %"
-#~ msgstr "CAP-R %"
-
-#~ msgid "CAP-R Detected"
-#~ msgstr "CAP-R detectado"
-
-#~ msgid "Cases"
-#~ msgstr "Casos"
-
-#~ msgid "Clinical Indicators"
-#~ msgstr "Indicadores Clínico"
-
-#~ msgid "Confirmed"
-#~ msgstr "Confirmado"
-
-#~ msgid "Connector Status is {connectorStatus}"
-#~ msgstr "O estado do conector é {connectorStatus}"
-
-#~ msgid "Contact Status: {contactStatus}"
-#~ msgstr "Estado de Contacto: {contactStatus}"
-
-#~ msgid "Country is required"
-#~ msgstr "O País é obrigatório"
-
-#~ msgid "Custom"
-#~ msgstr "Personalizado"
-
-#~ msgid "Day"
-#~ msgstr "Dia"
-
-#~ msgid "Device Issue: {issueTypeId}"
-#~ msgstr "Emissão do dispositivo: {issueTypeId}"
-
-#~ msgid "Device Workload"
-#~ msgstr "Carga de trabalho do dispositivo"
-
-#~ msgid "Devices List"
-#~ msgstr "Lista de Dispositivos"
-
-#~ msgid "ETH-R %"
-#~ msgstr "ETH-R %"
-
-#~ msgid "ETH-R Detected"
-#~ msgstr "ETH-R detectado"
-
-#~ msgid "Excluded Results"
-#~ msgstr "Resultados Excluídos"
-
-#~ msgid "Exp. since {date}"
-#~ msgstr "Exp. desde {date}"
-
-#~ msgid "Exp. until {date}"
-#~ msgstr "Expirar até {date}"
-
-#~ msgid "FQ-R %"
-#~ msgstr "FQ-R %"
-
-#~ msgid "FQ-R Detected"
-#~ msgstr "FQ-R Detectado"
-
-#~ msgid "False"
-#~ msgstr "Falso"
-
-#~ msgid "GeneXpert Type is {geneXpertType}"
-#~ msgstr "GeneXpert Type é {geneXpertType}"
-
-#~ msgid "Home"
-#~ msgstr "Home"
-
-#~ msgid "ID includes \"{externalId}\""
-#~ msgstr "O ID inclui \"{externalId}\""
-
-#~ msgid "INH-R %"
-#~ msgstr "INH-R %"
-
-#~ msgid "INH-R Detected"
-#~ msgstr "INH-R Detectado"
-
-#~ msgid "KAN-R %"
-#~ msgstr "KAN-R %"
-
-#~ msgid "KAN-R Detected"
-#~ msgstr "KAN-R Detectado"
-
-#~ msgid "Last 7 Days"
-#~ msgstr "Último 7 dias"
-
-#~ msgid "Last Month"
-#~ msgstr "Mês Passado"
-
-#~ msgid "Last Week"
-#~ msgstr "Última semana"
-
-#~ msgid "Last Year"
-#~ msgstr "Último ano"
-
-#~ msgid "MTB%"
-#~ msgstr "MTB%"
-
-#~ msgid "Manage"
-#~ msgstr "Gerenciar"
-
-#~ msgid "No Filters Applied"
-#~ msgstr "Sem filtros aplicados"
-
-#~ msgid "Not Confirmed"
-#~ msgstr "Não confirmado"
-
-#~ msgid "Notification Types"
-#~ msgstr "Tipos de Notificação"
-
-#~ msgid "Notification category type is \"{notificationCategoryType}\""
-#~ msgstr "O tipo de categoria de notificação é \"{notificationCategoryType}\""
-
-#~ msgid "Notification type is \"{notificationType}\""
-#~ msgstr "O tipo de notificação é \"{notificationType}\""
-
-#~ msgid "Number of Locations"
-#~ msgstr "Número de locais"
-
-#~ msgid "Numbers Included"
-#~ msgstr "Números Incluídos"
-
-#~ msgid "Only lots with stock"
-#~ msgstr "Apenas lotes com estoque"
-
-#~ msgid ""
-#~ "Oops! Something went wrong. Our team has been notified, and we're working "
-#~ "to fix the issue. Please try again later. If the problem persists, "
-#~ "contact our support team and provide them with the folowing error:"
-#~ msgstr ""
-#~ "Ops! Algo correu mal. A nossa equipa foi notificada e estamos a trabalhar "
-#~ "para resolver o problema. Tente novamente mais tarde. Se o problema "
-#~ "persistir, contacte a nossa equipa de apoio e forneça o seguinte erro:"
-
-#~ msgid "Out of Stock"
-#~ msgstr "Fora de Estoque"
-
 #~ msgid "Pakistan Testing"
 #~ msgstr "Ensaios no Paquistão"
 
-#~ msgid "Patient Id includes \"{patientId}\""
-#~ msgstr "O ID do doente inclui \"{patientId}\""
-
-#~ msgid "Percent Positive"
-#~ msgstr "Porcentagem Positiva"
-
-#~ msgid "Percent Reported"
-#~ msgstr "Porcentagem relatada"
-
-#~ msgid "Positive Test Results Transmitted"
-#~ msgstr "Resultados positivos dos testes transmitidos"
-
-#~ msgid "Positives"
-#~ msgstr "Positivos"
-
-#~ msgid "Quarter"
-#~ msgstr "Trimestre"
-
-#~ msgid "RRD#"
-#~ msgstr "RRD#"
-
-#~ msgid "RRD%"
-#~ msgstr "RRD%"
-
-#~ msgid "Report name includes \"{reportWithName}\""
-#~ msgstr "O nome do relatório inclui \"{reportWithName}\""
-
-#~ msgid "Routers"
-#~ msgstr "Roteadores"
-
-#~ msgid "Select Day..."
-#~ msgstr "Selecione o Dia..."
-
-#~ msgid "Select Month..."
-#~ msgstr "Selecione o mês..."
-
-#~ msgid "Select Quarter..."
-#~ msgstr "Selecione Trimestre..."
-
-#~ msgid "Select Week..."
-#~ msgstr "Selecione a Semana..."
-
-#~ msgid "Select Year..."
-#~ msgstr "Selecione o ano..."
-
-#~ msgid "Sent via Email"
-#~ msgstr "Enviado por e-mail"
-
-#~ msgid "Sent via SMS"
-#~ msgstr "Enviado via SMS"
-
-#~ msgid "Show Only Reportable Results"
-#~ msgstr "Mostrar apenas resultados reportáveis"
-
-#~ msgid "Show Only Results Downloaded By Reporter"
-#~ msgstr "Mostrar apenas resultados descarregados por Repórter"
-
-#~ msgid "Show Only Results Ever Transferred"
-#~ msgstr "Mostrar apenas resultados alguma vez transferidos"
-
-#~ msgid "Show Only Results With Treatment Required"
-#~ msgstr "Pesquisa de resultados Status de tratamento falhados"
-
-#~ msgid "Show Only Transfers"
-#~ msgstr "Mostrar apenas transferências"
-
-#~ msgid "Sign Out"
-#~ msgstr "Terminar Sessão"
-
-#~ msgid "Special Character"
-#~ msgstr "Carácter especial"
-
-#~ msgid "Supplies"
-#~ msgstr "Suprimentos"
-
-#~ msgid "Task List"
-#~ msgstr "Lista de tarefas"
-
-#~ msgid ""
-#~ "The device hasn't connected to Aspect for several days. It may be running "
-#~ "tests, but the tests aren't uploaded to Aspect yet."
-#~ msgstr ""
-#~ "O dispositivo não se conecta ao Aspect há vários dias. Pode estar "
-#~ "executando testes, mas os testes não foram carregados para Aspect ainda."
-
-#~ msgid ""
-#~ "The percentage of positive results that were reported via Email or SMS."
-#~ msgstr ""
-#~ "A porcentagem de resultados positivos que foram relatados via e-mail ou "
-#~ "SMS."
-
-#~ msgid ""
-#~ "The percentage of positive results that were reported within two hours of "
-#~ "test completion."
-#~ msgstr ""
-#~ "A porcentagem de resultados positivos relatados em até duas horas após a "
-#~ "conclusão do teste."
-
-#~ msgid "The percentage of reported results that were reported via Email."
-#~ msgstr ""
-#~ "A porcentagem de resultados relatados que foram relatados por e-mail."
-
-#~ msgid "The percentage of reported results that were reported via SMS."
-#~ msgstr "A porcentagem de resultados relatados que foram relatados via SMS."
-
-#~ msgid "This Month"
-#~ msgstr "Este mês"
-
-#~ msgid "This Quarter"
-#~ msgstr "Este Trimestre"
-
-#~ msgid "This Week"
-#~ msgstr "Esta Semana"
-
-#~ msgid "This Year"
-#~ msgstr "Este ano"
-
-#~ msgid "To..."
-#~ msgstr "Para..."
-
-#~ msgid "Transfers"
-#~ msgstr "Transferências"
-
-#~ msgid "True"
-#~ msgstr "Verdadeiro"
-
-#~ msgid "Upper and Lower Case mix"
-#~ msgstr "Mistura de maiúsculas e minúsculas"
-
 #~ msgid "Utilization (Pending)"
 #~ msgstr "Utilização (pendente)"
-
-#~ msgid "Week"
-#~ msgstr "Semana"
-
-#~ msgid "Within 2 hours of testing"
-#~ msgstr "Dentro de 2 horas de testes"
-
-#~ msgid "Yesterday"
-#~ msgstr "Ontem"
-
-#~ msgid ""
-#~ "You will be logged out automatically in one minute due to inactivity. To "
-#~ "stay logged in, hit any button or move your mouse."
-#~ msgstr ""
-#~ "Você será desconectado automaticamente em um minuto devido à inatividade. "
-#~ "Para permanecer logado, aperte qualquer botão ou mova o mouse."
-
-#~ msgid "approval status is {deviceApprovalName}"
-#~ msgstr "o status de aprovação é {deviceApprovalName}"
-
-#~ msgid "destination site name includes \"{destinationSiteName}\""
-#~ msgstr "o nome do sítio de destino inclui \"{destinationSiteName}\""
-
-#~ msgid "device name includes \"{deviceName}\""
-#~ msgstr "o nome do dispositivo inclui \"{deviceName}\""
-
-#~ msgid "deviceId is in ({joinedIds})"
-#~ msgstr "dispositivoId está em  ({joinedIds})"
-
-#~ msgid "display \"{displayResult}\""
-#~ msgstr "mostrar \"{displayResult}\""
-
-#~ msgid "error code includes \"{errorCode}\""
-#~ msgstr "o código de erro inclui \"{errorCode}\""
-
-#~ msgid "lot number includes \"{lotNumber}\""
-#~ msgstr "o número do lote inclui “{lotNumber}”"
-
-#~ msgid "maintenance status is {deviceMaintenanceStatusName}"
-#~ msgstr "o status de manutenção é {deviceMaintenanceStatusName}"
-
-#~ msgid "name/email includes \"{contactNameOrEmail}\""
-#~ msgstr "nome/email inclui \"{contactNameOrEmail}\""
-
-#~ msgid "notification name includes \"{notificationName}\""
-#~ msgstr "o nome da notificação inclui \"{notificationName}\""
-
-#~ msgid "origin site name includes \"{originSiteName}\""
-#~ msgstr "o nome do sítio de origem inclui \"{originSiteName}\""
-
-#~ msgid "partner \"{partnerName}\""
-#~ msgstr "parceiro \"{partnerName}\""
-
-#~ msgid "patient ID includes {patientOrResearchId}"
-#~ msgstr "a identificassão do paciente inclui {patientOrResearchId}"
-
-#~ msgid "patient/case ID includes {patientOrCaseId}"
-#~ msgstr "a identificassão do paciente/caso inclui {patientOrCaseId}"
-
-#~ msgid "report name includes \"{reportName}\""
-#~ msgstr "o nome do relatório inclui \"{reportName}\""
-
-#~ msgid "reportable site \"{reportableSiteName}\""
-#~ msgstr "sítio relatável \"{reportableSiteName}\""
-
-#~ msgid "reportable site ID includes \"{reportableSiteId}\""
-#~ msgstr "o ID do sítio relatável inclui \"{reportableSiteId}\""
-
-#~ msgid "reportable site name includes \"{reportableSiteName}\""
-#~ msgstr "o nome do sítio relatável inclui \"{reportableSiteName}\""
-
-#~ msgid "revoked is \"{revokedStatus}\""
-#~ msgstr "revogado é \"{revokedStatus}\""
-
-#~ msgid "sample collection site is {sampleOriginSiteName}"
-#~ msgstr "site de coleta de amostra é {sampleOriginSiteName}"
-
-#~ msgid "sample includes \"{sampleId}\""
-#~ msgstr "amostra inclui \"{sampleId}\""
-
-#~ msgid "since {date}"
-#~ msgstr "desde {date}"
-
-#~ msgid "site ID is in ({joinedIds})"
-#~ msgstr "o ID do site está em ({joinedIds})"
-
-#~ msgid "site name includes \"{siteName}\""
-#~ msgstr "o nome do site inclui \"{siteName}\""
-
-#~ msgid "treatment status is {treatmentStatusName}"
-#~ msgstr "o status do tratamento é  {treatmentStatusName}"
-
-#~ msgid "type is {deviceTypeName}"
-#~ msgstr "tipo é {deviceTypeName}"
-
-#~ msgid "until {date}"
-#~ msgstr "até {date}"
-
-#~ msgid "with result {resultCategoryGroupName}"
-#~ msgstr "com resultado {resultCategoryGroupName}"
-
-#~ msgid "with result {resultCategoryName}"
-#~ msgstr "com resultado {resultCategoryName}"
-
-#~ msgid "workflow status is {workflowStatusName}"
-#~ msgstr "o status do fluxo de trabalho é {workflowStatusName}"
 
 #~ msgid "Dashboard v2"
 #~ msgstr "Painel de controlo v2"
@@ -14519,9 +16070,6 @@ msgstr "{unit} calibrações totais"
 #~ msgid "Add Note"
 #~ msgstr "Adicionar Nota"
 
-#~ msgid "Adding Inventory Failed"
-#~ msgstr "Adicionando Inventário Falhado"
-
 #~ msgid "An Error Occurred When Trying to Save the Result"
 #~ msgstr "Ocorreu um erro ao tentar salvar o resultado"
 
@@ -14618,15 +16166,6 @@ msgstr "{unit} calibrações totais"
 #~ msgid "Patient Data"
 #~ msgstr "Dados do paciente"
 
-#~ msgid "People alerted"
-#~ msgstr "Pessoas alertadas"
-
-#~ msgid "Receiving Inventory Failed"
-#~ msgstr "Recebimento de inventário falhado"
-
-#~ msgid "Removing Inventory Failed"
-#~ msgstr "Remoção de inventário falhado"
-
 #~ msgid ""
 #~ "Result Workflow Status Log {itemCount, plural, =0 {} other "
 #~ "{({itemCount})} }"
@@ -14664,13 +16203,6 @@ msgstr "{unit} calibrações totais"
 #~ msgid "Select an Assay"
 #~ msgstr "Selecione o ensaio"
 
-#~ msgid ""
-#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#~ "log} other {# logs} }"
-#~ msgstr ""
-#~ "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-#~ "registro} other {# histórico} }"
-
 #~ msgid "Site contact"
 #~ msgstr "Contato do site"
 
@@ -14682,9 +16214,6 @@ msgstr "{unit} calibrações totais"
 
 #~ msgid "This field is required"
 #~ msgstr "Este campo é obrigatório"
-
-#~ msgid "Transferring Inventory Failed"
-#~ msgstr "Transferência de inventário falhada"
 
 #~ msgid "Treatment"
 #~ msgstr "Tratamento"
@@ -14737,9 +16266,6 @@ msgstr "{unit} calibrações totais"
 #~ msgid "Assign DeviceApiKeys Failed"
 #~ msgstr "Atribuir DeviceApiKeys Fracassados"
 
-#~ msgid "Configuration"
-#~ msgstr "Configuração"
-
 #~ msgid "Connected"
 #~ msgstr "Conectado"
 
@@ -14774,9 +16300,6 @@ msgstr "{unit} calibrações totais"
 #~ msgid "Expires {date}"
 #~ msgstr "Expira em {date}"
 
-#~ msgid "Exporting Devices Failed"
-#~ msgstr "Falha na exportação de dispositivos"
-
 #~ msgid "Exporting Routers Failed"
 #~ msgstr "Roteadores de exportação falhados"
 
@@ -14797,9 +16320,6 @@ msgstr "{unit} calibrações totais"
 
 #~ msgid "Invalid Password"
 #~ msgstr "Senha Inválida"
-
-#~ msgid "Inventory Transfer"
-#~ msgstr "Transferência de inventário"
 
 #~ msgid "Last calibrated {date}"
 #~ msgstr "Última calibragem {date}"
@@ -14841,9 +16361,6 @@ msgstr "{unit} calibrações totais"
 #~ msgstr ""
 #~ "Por favor, tente digitar novamente sua senha ou entre em contato conosco "
 #~ "para redefinir seus dados de login"
-
-#~ msgid "Received On"
-#~ msgstr "Recebido em"
 
 #~ msgid "Region: {region}"
 #~ msgstr "Região: {region}"
@@ -14887,21 +16404,8 @@ msgstr "{unit} calibrações totais"
 #~ msgid "Searching Sites Failed"
 #~ msgstr "Sites de busca falhados"
 
-#~ msgid "Sent On"
-#~ msgstr "Enviado em"
-
-#~ msgid "Sent Qty"
-#~ msgstr "Quantidade enviada"
-
 #~ msgid "Serial"
 #~ msgstr "Serial"
-
-#~ msgid ""
-#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#~ "Transfer} other {# Transfers} }"
-#~ msgstr ""
-#~ "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-#~ "Transferência} other {# Transferências} }"
 
 #~ msgid ""
 #~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
@@ -14970,9 +16474,6 @@ msgstr "{unit} calibrações totais"
 #~ msgid "Go To Supplies"
 #~ msgstr "Ir para Suprimentos"
 
-#~ msgid "Site is required"
-#~ msgstr "O site é necessário"
-
 #~ msgid "Start date is required"
 #~ msgstr "Data de início é necessária"
 
@@ -14985,9 +16486,6 @@ msgstr "{unit} calibrações totais"
 #~ msgstr ""
 #~ "Esta notificação será accionada para resultados terminados nos últimos 30 "
 #~ "dias. Para resultados mais antigos, a notificação não será accionada."
-
-#~ msgid "Time cannot be greater than current time"
-#~ msgstr "A hora não pode ser maior que a hora atual"
 
 #~ msgid "A person with the same email exists. Please use a different email."
 #~ msgstr ""
@@ -15147,17 +16645,11 @@ msgstr "{unit} calibrações totais"
 #~ msgid "TB XDR"
 #~ msgstr "TB XDR"
 
-#~ msgid "* in transit from {inTransitFromSiteName}"
-#~ msgstr "* em trânsito a partir de {inTransitFromSiteName}"
-
 #~ msgid "Group by Site"
 #~ msgstr "Grupo por site"
 
 #~ msgid "The most that you can remove is {currentQuantity}"
 #~ msgstr "O máximo que você pode remover é {currentQuantity}"
-
-#~ msgid "Delete"
-#~ msgstr "Excluir"
 
 #~ msgid "Connectivity issues"
 #~ msgstr "Questões de conectividade"
@@ -15185,14 +16677,6 @@ msgstr "{unit} calibrações totais"
 
 #~ msgid "Updating Inventory Failed"
 #~ msgstr "Atualização de Inventário Falhada"
-
-#~ msgid "site ID includes \"{siteId}\""
-#~ msgstr "o ID do site inclui \"{siteId}\""
-
-#, fuzzy
-#~| msgid "Device Api Keys"
-#~ msgid "Device Api Key"
-#~ msgstr "Chaves API do dispositivo"
 
 #, fuzzy
 #~| msgid "Results"

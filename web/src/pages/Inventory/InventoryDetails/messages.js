@@ -17,6 +17,10 @@ export default defineMessages({
     id: 'pages.Consumable.New.inventoryDetails',
     defaultMessage: 'Inventory Details',
   },
+  inventoryDetail: {
+    id: 'pages.Consumable.New.inventoryDetail',
+    defaultMessage: 'Inventory Detail',
+  },
   reconciliationConfiguration: {
     id: 'pages.Consumable.New.reconciliationConfiguration',
     defaultMessage: 'Reconciliation Configuration',
