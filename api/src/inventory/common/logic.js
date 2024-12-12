@@ -77,6 +77,7 @@ async function upsertInventoryItem({
   now,
   userId,
   inTransitFromSiteId,
+  logProps,
 }) {
   if (inventoryItemId) {
     await updateInventoryItem(knex, inventoryItemId, {
@@ -84,6 +85,11 @@ async function upsertInventoryItem({
       inTransitFromSiteId: inTransitFromSiteId || null,
       updatedOn: now,
       updatedBy: userId,
+      ...(logProps.operation.includes('modify') &&
+        quantityOnHand === 0 && {
+          lotNumber: null,
+          expiresOn: null,
+        }),
     })
   } else {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
@@ -169,6 +175,7 @@ async function upsertInventoryItemAndLog(
     inTransitFromSiteId,
     now,
     userId,
+    logProps,
   })
   /**
    * log changing inventory quantity
