@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-26T04:43:44.240Z\n"
+"POT-Creation-Date: 2024-12-03T04:30:39.539Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1612,6 +1612,13 @@ msgstr "Ngày hiệu chuẩn là bắt buộc"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Ngày đến hạn hiệu chuẩn"
+
+#. [pages.NewInventoryDialogForm.quantityNotMoreThanOnHand]
+#. defaultMessage is:
+#. Can not be greater than on-hand
+#: extracted_strings.json
+msgid "Can not be greater than on-hand"
+msgstr "Không thể lớn hơn số lượng có sẵn"
 
 #. [errorResponseMessages.removeInventory.PUT.notExisted.resolution]
 #. defaultMessage is:
@@ -6443,15 +6450,15 @@ msgstr "Giấy phép"
 msgid "Lipid Panel"
 msgstr "Bảng lipid"
 
-#. [pages.ReportIndex.missing_cartridges_report]
+#. [pages.ReportIndex.unreconciled_inventory_report]
 #. defaultMessage is:
-#. List of Missing Lots
+#. List of Unreconciled Inventory
 #. [pages.ReportIndex.pk_missing_cartridges_report]
 #. defaultMessage is:
-#. List of Missing Lots
+#. List of Unreconciled Inventory
 #: extracted_strings.json
-msgid "List of Missing Lots"
-msgstr "Danh sách các lô bị thiếu"
+msgid "List of Unreconciled Inventory"
+msgstr "Danh sách hàng tồn kho chưa đối chiếu"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -8033,6 +8040,20 @@ msgstr "Không có thử nghiệm nào được thực hiện"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "Không có địa chỉ liên hệ nào được chỉ định cho đơn vị"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToRemove]
+#. defaultMessage is:
+#. No inventory to remove
+#: extracted_strings.json
+msgid "No inventory to remove"
+msgstr "Không có hàng tồn kho để loại bỏ"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToTransfer]
+#. defaultMessage is:
+#. No inventory to transfer
+#: extracted_strings.json
+msgid "No inventory to transfer"
+msgstr "Không có hàng tồn kho để chuyển"
 
 #. [pages.SiteDetail.siteWithoutLocation]
 #. defaultMessage is:
@@ -9950,6 +9971,9 @@ msgid "Recepient Name"
 msgstr "Tên người nhận"
 
 #. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#. [pages.inventoryList.reconciliationConfiguration]
 #. defaultMessage is:
 #. Reconciliation Configuration
 #: extracted_strings.json
@@ -12635,7 +12659,7 @@ msgstr "Không có thử nghiệm nào được thực hiện"
 msgid "Tests Run Between"
 msgstr "Kiểm tra chạy giữa"
 
-#. [pages.ReportIndex.missing_cartridges_report_description]
+#. [pages.ReportIndex.unreconciled_inventory_report_description]
 #. defaultMessage is:
 #. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
 #: extracted_strings.json
@@ -15509,6 +15533,9 @@ msgstr "{unit} kể từ tuần trước"
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
 
+#~ msgid "List of Missing Lots"
+#~ msgstr "Danh sách các lô bị thiếu"
+
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Xét nghiệm MTB Rif Ultra"
 
@@ -16248,9 +16275,6 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 #~ "Thông báo này sẽ được kích hoạt cho các kết quả kết thúc trong khoảng "
 #~ "thời gian 30 ngày qua. Đối với thông báo kết quả cũ hơn sẽ không kích "
 #~ "hoạt."
-
-#~ msgid "Time cannot be greater than current time"
-#~ msgstr "Thời gian không được lớn hơn thời gian hiện tại"
 
 #~ msgid "A person with the same email exists. Please use a different email."
 #~ msgstr "Một người có cùng email tồn tại. Vui lòng sử dụng một email khác."
