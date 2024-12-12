@@ -7236,7 +7236,7 @@ msgstr "MTB positif MTB résistant Susceptible"
 #. MTB Positivity In Quarters
 #: extracted_strings.json
 msgid "MTB Positivity In Quarters"
-msgstr "La positivité du VTT dans les trimestres"
+msgstr "La positivité du MTB dans les trimestres"
 
 #. [pages.Status.mtbRifResistance]
 #. defaultMessage is:
@@ -7250,7 +7250,7 @@ msgstr "MTB Rif Résistance"
 #. MTB Success
 #: extracted_strings.json
 msgid "MTB Success"
-msgstr "Succès du VTT"
+msgstr "Succès du MTB"
 
 #. [assayGenericDstresultCategorySuccessresultCategoryResistant]
 #. defaultMessage is:
@@ -7325,7 +7325,7 @@ msgstr "MTB positifs diagnostiqués pendant l'année en cours"
 #. MTB%
 #: extracted_strings.json
 msgid "MTB%"
-msgstr "VTT%"
+msgstr "MTB%"
 
 #. [legends.Unknown.MTBPlus]
 #. defaultMessage is:
