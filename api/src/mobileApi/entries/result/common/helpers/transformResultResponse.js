@@ -62,7 +62,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
       followUps: resultFollowUps,
       history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
-      patientId: patientData?.id || patientSampleData?.patientExternalId,
+      patientId: patientData?.id || patientSampleData?.patientExternalId || null,
       sample: transformSampleData(result),
       resultRequiresTreatment,
       ...clinicalFollowUpFlags,
