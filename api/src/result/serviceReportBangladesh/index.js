@@ -938,8 +938,9 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * TODO: change below value and count modules that haven’t sent results
          * for several days in the given time frame (>5)
          */
-        cntModulesActive: knex.raw(`DISTINCT
-          CONCAT(r.deviceId, '-',  r.moduleName)
+        cntModulesActive: knex.raw(`
+          DISTINCT
+          CONCAT(r.instrumentSerial, '-', CAST(REGEXP_SUBSTR(r.moduleName, '[0-9]+') AS UNSIGNED))
         `),
 
         cnt_Xdr_Tested_From_Eligible: counter('r.id', `${assayXdr}`),
