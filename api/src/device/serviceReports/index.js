@@ -281,7 +281,7 @@ async function getDeviceCapacityReport(auth, query) {
       'd.id AS deviceId',
       knex.raw('COUNT(DISTINCT r.id) as resultCount'),
       lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
-      'd.daiyTestCapacity as dailyCapacity'
+      'd.dailyTestCapacity as dailyCapacity'
     )
     .orderBy('d.name')
 

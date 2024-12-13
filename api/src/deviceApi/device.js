@@ -237,7 +237,6 @@ async function createNewDevice(
     putInService,
     lastSeenOn,
     lastPingOn,
-    dailyTestCapacity,
   }
 ) {
   const deviceType = await knex('DeviceType').where({ externalId: deviceTypeExternalId }).first('id', 'name', 'plugin')
@@ -281,11 +280,21 @@ async function createNewDevice(
   if (shortName && shortName.length > 45) {
     shortName = shortName.substr(0, 45)
   }
+
+  const partnerData = await knex('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
+
+  const deviceCapacity = await knex('DeviceCapacity')
+    .where({ deviceTypeId: deviceType.id })
+    .where({ partnerId })
+    .where({ defaultForDeviceType: 1 })
+    .first('id')
+
   const [deviceId] = await knex('Device').insert({
     partnerId,
     siteId,
     deviceTypeId: deviceType.id,
-    dailyTestCapacity,
+    dailyTestCapacity: partnerData.deviceCapacityFactor * deviceCapacity.modules,
+    moduleBayCapacity: deviceCapacity.modules,
     deviceApprovalId,
     name,
     serial,
