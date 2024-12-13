@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
+"POT-Creation-Date: 2024-12-13T03:41:41.628Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1819,7 +1819,7 @@ msgstr "Changé"
 #. Check Inbox
 #: extracted_strings.json
 msgid "Check Inbox"
-msgstr "Check Inbox"
+msgstr "Vérifier la boîte de réception"
 
 #. [pages.NotificationDetail.SelectNationalPlaceholder]
 #. defaultMessage is:
@@ -9239,6 +9239,20 @@ msgstr "Veuillez saisir votre email"
 #: extracted_strings.json
 msgid "Please enter your new password?"
 msgstr "Veuillez entrer votre nouveau mot de passe?"
+
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Veuillez saisir votre mot de passe"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+msgid "Please enter your username"
+msgstr "Veuillez saisir votre nom d'utilisateur"
 
 #. [pages.transferResult.note]
 #. defaultMessage is:
