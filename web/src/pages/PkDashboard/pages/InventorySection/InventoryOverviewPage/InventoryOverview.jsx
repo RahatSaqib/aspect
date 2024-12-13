@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { ConsumableSelector, PeriodSelector } from '../../../../../cleanComponents'
 import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
+import inventoryMessages from '../../../../../oldPages/inventory/list/messages'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
@@ -82,13 +83,16 @@ const InventoryOverviewPage = () => {
       tooltip: 'Its the current quantity in hand, including the expired quantity.',
     },
     {
-      name: 'Current Unreconciled Qty.',
+      name: 'Current Unreconciled Qty2.',
       prop: 'unreconciledQuantity',
-      cellProp: c => ({
-        sx: c.unreconciledQuantity ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' } : undefined,
-        onClick: () => handleUnreconciledClick(c),
-      }),
-      tooltip: 'Total cartridges consumed and reported under tests but not yet adjusted against the inventory',
+      cellProp: c =>
+        c.unreconciledQuantity
+          ? {
+              sx: { cursor: 'pointer', color: 'blue', textDecoration: 'underline' },
+              onClick: () => handleUnreconciledClick(c),
+            }
+          : {},
+      tooltip: formatMessage(inventoryMessages.unreconciledQuantityDescription),
     },
     {
       key: 'Last 6 Months',
