@@ -18,6 +18,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
   return _.map(data, result => {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
     const patientData = JSON.parse(result?.patientData)
+    const patientSampleData = result.sampleData ? JSON.parse(result.sampleData) : null
     const acknowledgement = acknowledgements?.find(ack => ack.resultId === result.id)
     const resultFlags = flags?.filter(flag => flag.resultId === result.id)
     const resultRequiresTreatment = !!(
@@ -61,7 +62,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
       followUps: resultFollowUps,
       history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
-      patientId: patientData?.id || null,
+      patientId: patientData?.id || patientSampleData?.patientExternalId,
       sample: transformSampleData(result),
       resultRequiresTreatment,
       ...clinicalFollowUpFlags,
