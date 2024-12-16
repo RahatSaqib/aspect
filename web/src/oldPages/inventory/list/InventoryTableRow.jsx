@@ -180,7 +180,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       {!breakOutByLot ? (
         <TableCell
           onClick={() => {
-            if (inventoryItem.get('siteType') !== 'warehouse') {
+            if (inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse') {
               addFilter(
                 omitBy(
                   {
