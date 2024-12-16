@@ -85,7 +85,7 @@ async function upsertInventoryItem({
       inTransitFromSiteId: inTransitFromSiteId || null,
       updatedOn: now,
       updatedBy: userId,
-      ...(logProps.operation.includes('modify') &&
+      ...(logProps?.operation.includes('modify') &&
         quantityOnHand === 0 && {
           lotNumber: null,
           expiresOn: null,
