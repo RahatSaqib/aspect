@@ -32,6 +32,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   if (!_.isNil(data.testDate)) {
     const patientData = data?.patientData
     const parsedPatientData = patientData ? JSON.parse(patientData) : null
+    const patientSampleData = data.sampleData ? JSON.parse(data.sampleData) : null
     output.push({
       id: data.resultSampleId,
       resultId: data.id,
@@ -40,7 +41,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
       sampleId: data.sampleExternalId,
-      patientId: parsedPatientData?.id || null,
+      patientId: parsedPatientData?.id || patientSampleData?.patientExternalId || null,
     })
   }
 
