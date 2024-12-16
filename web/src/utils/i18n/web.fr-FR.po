@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
+"POT-Creation-Date: 2024-12-13T03:41:41.628Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1819,7 +1819,7 @@ msgstr "Changé"
 #. Check Inbox
 #: extracted_strings.json
 msgid "Check Inbox"
-msgstr "Check Inbox"
+msgstr "Vérifier la boîte de réception"
 
 #. [pages.NotificationDetail.SelectNationalPlaceholder]
 #. defaultMessage is:
@@ -7236,7 +7236,7 @@ msgstr "MTB positif MTB résistant Susceptible"
 #. MTB Positivity In Quarters
 #: extracted_strings.json
 msgid "MTB Positivity In Quarters"
-msgstr "La positivité du VTT dans les trimestres"
+msgstr "La positivité du MTB dans les trimestres"
 
 #. [pages.Status.mtbRifResistance]
 #. defaultMessage is:
@@ -7250,7 +7250,7 @@ msgstr "MTB Rif Résistance"
 #. MTB Success
 #: extracted_strings.json
 msgid "MTB Success"
-msgstr "Succès du VTT"
+msgstr "Succès du MTB"
 
 #. [assayGenericDstresultCategorySuccessresultCategoryResistant]
 #. defaultMessage is:
@@ -7325,7 +7325,7 @@ msgstr "MTB positifs diagnostiqués pendant l'année en cours"
 #. MTB%
 #: extracted_strings.json
 msgid "MTB%"
-msgstr "VTT%"
+msgstr "MTB%"
 
 #. [legends.Unknown.MTBPlus]
 #. defaultMessage is:
@@ -9239,6 +9239,20 @@ msgstr "Veuillez saisir votre email"
 #: extracted_strings.json
 msgid "Please enter your new password?"
 msgstr "Veuillez entrer votre nouveau mot de passe?"
+
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Veuillez saisir votre mot de passe"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+msgid "Please enter your username"
+msgstr "Veuillez saisir votre nom d'utilisateur"
 
 #. [pages.transferResult.note]
 #. defaultMessage is:

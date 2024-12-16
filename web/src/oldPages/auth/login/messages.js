@@ -21,6 +21,14 @@ const messages = defineMessages({
     id: 'pages.Login.resetPasswordLink',
     defaultMessage: 'Forgot Password?',
   },
+  passwordRequired: {
+    id: 'pages.Login.passwordRequired',
+    defaultMessage: 'Please enter your password',
+  },
+  usernameRequired: {
+    id: 'pages.Login.usernameRequired',
+    defaultMessage: 'Please enter your username',
+  },
 })
 
 export default messages
