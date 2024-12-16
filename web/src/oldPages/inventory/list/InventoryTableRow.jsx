@@ -135,7 +135,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
   }
   return (
     <TableRow
-      className={styles.TableRow}
+      style={{ cursor: 'default' }}
       key={rowSpan('id')}
       onBlur={updateInventoryOnBlur}
       onFocus={() => setShowCheck(false)}
