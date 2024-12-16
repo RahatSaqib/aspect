@@ -155,6 +155,7 @@ function getInventorySitesQuery(constraints, request) {
       's.id as siteId',
       's.name as siteName',
       'g.countryId',
+      'a.id as assayId',
       'g.stateId',
       'g.lgaId',
       'sty.externalId as siteType',
@@ -387,7 +388,7 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
   const inventoryQuery = getInventorySitesQuery(dataConstraints, request)
     .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
     .innerJoin('Assay as a', 'ca.assayId', 'a.id')
-    .leftJoin('SiteConsumable as sc', function () {
+    .innerJoin('SiteConsumable as sc', function () {
       this.on('s.id', 'sc.siteId').andOn('c.id', 'sc.consumableId')
     })
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -419,7 +420,7 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
         )
       }
     })
-    .select(columns)
+    .select(columns, 'assayId')
 }
 
 async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
