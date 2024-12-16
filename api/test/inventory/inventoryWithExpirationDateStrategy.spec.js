@@ -63,8 +63,14 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
+
         const { id } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
         consumableId = id
+
+        await Promise.all([
+          knex('SiteConsumable').insert({ siteId: site1Id, consumableId }),
+          knex('SiteConsumable').insert({ siteId: site2Id, consumableId }),
+        ])
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,
           siteId: site1Id,
