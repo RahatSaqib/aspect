@@ -67,11 +67,14 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       return doSendEmailMessage(context, knex, emailMessageId)
     }
     if (partnerDetails?.serviceStartDate && new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+      const pendingMessageStatusId = await messageStatusToId('Pending')
+      const sentMessageStatusId = await messageStatusToId('Sent')
       const emailMessageCount = await knex('EmailMessage as em')
         .join('Device as d', 'em.deviceId', 'd.id')
         .where('em.createdOn', '>', partnerDetails?.serviceStartDate)
         .where('em.createdOn', '<', partnerDetails?.serviceEndDate)
         .andWhere('d.partnerId', partnerDetails?.partnerId)
+        .andWhere('em.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
         .first('*')
         .count('* as count')
       if (emailMessageCount?.count <= partnerDetails?.notificationLimit)
