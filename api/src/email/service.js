@@ -56,7 +56,6 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
   })
 
   // check for partner service end date should be less then current date
-
   return context.transact(async knex => {
     const partnerDetails = await knex('EmailMessage as em')
       .join('Notification as n', 'em.id', 'n.emailMessageId')
@@ -64,25 +63,23 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .join('Partner as p', 'nt.partnerId', 'p.id')
       .where({ 'em.id': emailMessageId })
       .first('*')
-
-    const emailMessageCount = await knex('EmailMessage as em')
-      .join('Device as d', 'em.deviceId', 'd.id')
-      .where('em.createdOn', '>', partnerDetails?.serviceStartDate)
-      .where('em.createdOn', '<', partnerDetails?.serviceEndDate)
-      .andWhere('d.partnerId', partnerDetails?.partnerId)
-      .first('*')
-      .count('* as count')
-
-    if (
-      partnerDetails?.serviceStartDate &&
-      partnerDetails?.notificationLimit &&
-      new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
-      emailMessageCount?.count <= partnerDetails?.notificationLimit
-    ) {
-      await doSendEmailMessage(context, knex, emailMessageId)
+    if (!partnerDetails?.serviceStartDate || !partnerDetails?.notificationLimit) {
+      return doSendEmailMessage(context, knex, emailMessageId)
+    }
+    if (partnerDetails?.serviceStartDate && new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+      const emailMessageCount = await knex('EmailMessage as em')
+        .join('Device as d', 'em.deviceId', 'd.id')
+        .where('em.createdOn', '>', partnerDetails?.serviceStartDate)
+        .where('em.createdOn', '<', partnerDetails?.serviceEndDate)
+        .andWhere('d.partnerId', partnerDetails?.partnerId)
+        .first('*')
+        .count('* as count')
+      if (emailMessageCount?.count <= partnerDetails?.notificationLimit)
+        await doSendEmailMessage(context, knex, emailMessageId)
     } else {
+      const errorMessageStatusId = await messageStatusToId('Error')
       await knex('EmailMessage').where({ id: emailMessageId }).update({
-        messageStatusId: 4,
+        messageStatusId: errorMessageStatusId,
         updatedOn: new Date(),
       })
     }

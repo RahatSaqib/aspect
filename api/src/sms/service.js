@@ -61,29 +61,28 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
 
   return context.transact(async knex => {
     const partnerDetails = await knex('SmsMessage as sm')
-      .join('Notification as n', 'sm.id', 'n.emailMessageId')
+      .join('Notification as n', 'sm.id', 'n.smsMessageId')
       .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
       .join('Partner as p', 'nt.partnerId', 'p.id')
       .where({ 'sm.id': smsMessageId })
       .first('*')
-    const smsMessageCount = await knex('SmsMessage as sm')
-      .join('Device as d', 'sm.deviceId', 'd.id')
-      .where('sm.createdOn', '>', partnerDetails?.serviceStartDate)
-      .where('sm.createdOn', '<', partnerDetails?.serviceEndDate)
-      .andWhere('d.partnerId', partnerDetails?.partnerId)
-      .first('*')
-      .count('* as count')
-
-    if (
-      partnerDetails?.serviceStartDate &&
-      partnerDetails?.notificationLimit &&
-      new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
-      smsMessageCount?.count <= partnerDetails?.notificationLimit
-    ) {
-      await doSendSmsMessage(context, knex, smsMessageId)
+    if (!partnerDetails?.serviceStartDate || !partnerDetails?.notificationLimit) {
+      return doSendSmsMessage(context, knex, smsMessageId)
+    }
+    if (partnerDetails?.serviceStartDate && new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+      const smsMessageCount = await knex('SmsMessage as sm')
+        .join('Device as d', 'sm.deviceId', 'd.id')
+        .where('sm.createdOn', '>', partnerDetails?.serviceStartDate)
+        .where('sm.createdOn', '<', partnerDetails?.serviceEndDate)
+        .andWhere('d.partnerId', partnerDetails?.partnerId)
+        .first('*')
+        .count('* as count')
+      if (smsMessageCount?.count <= partnerDetails?.notificationLimit)
+        await doSendSmsMessage(context, knex, smsMessageId)
     } else {
+      const errorMessageStatusId = await messageStatusToId('Error')
       await knex('SmsMessage').where({ id: smsMessageId }).update({
-        messageStatusId: 4,
+        messageStatusId: errorMessageStatusId,
         updatedOn: new Date(),
       })
     }
