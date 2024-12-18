@@ -24,7 +24,7 @@ const SELECT_LIST_FIELDS = [
   knex.raw('COALESCE(COUNT(DISTINCT sc.siteId), 0) as totalConsumablesTracked'),
 ]
 
-function getConsumableTypes(dataConstraints, query) {
+async function getConsumableTypes(dataConstraints, query) {
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
     .leftOuterJoin('SiteConsumable as sc', 'c.id', 'sc.consumableId')
@@ -34,14 +34,25 @@ function getConsumableTypes(dataConstraints, query) {
     .leftJoin('Partner as p', 'pc.partnerId', 'p.id')
     .modify(filterParams, query, { name: 'c.name' })
 
+  const partner = await knex('Partner').where({ id: dataConstraints.partner.id }).first()
+
   const getCount = consumableQuery.clone().countDistinct('c.id as count').first()
 
-  const getItems = consumableQuery
+  const getItems = await consumableQuery
     .clone()
     .modify(sortPageParams, query, 'name')
     .select(SELECT_LIST_FIELDS)
     .groupBy('c.id')
 
+  if (partner.inventoryStrategy) {
+    // The partner inventory strategy takes precedence over the consumable strategy,
+    // so it is being overridden if a partner inventory strategy exists.
+    // Since the partner is not directly linked to the consumable,
+    // a separate query is required to fetch the partner details and merge them accordingly.
+    getItems.forEach(item => {
+      item.strategy = partner.inventoryStrategy
+    })
+  }
   return { getCount, getItems }
 }
 
