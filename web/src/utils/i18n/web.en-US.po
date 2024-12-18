@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
+"POT-Creation-Date: 2024-12-18T04:25:22.566Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2133,7 +2133,6 @@ msgstr "Consumables applicable for the site"
 #. defaultMessage is:
 #. Consumables applicable for this site
 #: extracted_strings.json
-#| msgid "Consumables applicable for the site"
 msgid "Consumables applicable for this site"
 msgstr "Consumables applicable for this site"
 
@@ -2617,7 +2616,6 @@ msgstr "Current Password"
 #. defaultMessage is:
 #. Current Qty.
 #: extracted_strings.json
-#| msgid "Sent Qty"
 msgid "Current Qty."
 msgstr "Current Qty."
 
@@ -2964,7 +2962,6 @@ msgstr "Days"
 #. defaultMessage is:
 #. Days Left
 #: extracted_strings.json
-#| msgid "Days Stock Left"
 msgid "Days Left"
 msgstr "Days Left"
 
@@ -4078,7 +4075,6 @@ msgstr "Error: Date Selection Required to Download Report"
 #. defaultMessage is:
 #. Errors
 #: extracted_strings.json
-#| msgid "Error"
 msgid "Errors"
 msgstr "Errors"
 
@@ -4726,7 +4722,6 @@ msgstr "GP Not Detected - NP Not Detected"
 #. defaultMessage is:
 #. GX Sites
 #: extracted_strings.json
-#| msgid "Sites"
 msgid "GX Sites"
 msgstr "GX Sites"
 
@@ -4734,7 +4729,6 @@ msgstr "GX Sites"
 #. defaultMessage is:
 #. GX-10C Devices
 #: extracted_strings.json
-#| msgid "Devices"
 msgid "GX-10C Devices"
 msgstr "GX-10C Devices"
 
@@ -4742,7 +4736,6 @@ msgstr "GX-10C Devices"
 #. defaultMessage is:
 #. GX-10C Modules
 #: extracted_strings.json
-#| msgid "Number of GX-10C modules"
 msgid "GX-10C Modules"
 msgstr "GX-10C Modules"
 
@@ -4750,7 +4743,6 @@ msgstr "GX-10C Modules"
 #. defaultMessage is:
 #. GX-6C Devices
 #: extracted_strings.json
-#| msgid "Devices"
 msgid "GX-6C Devices"
 msgstr "GX-6C Devices"
 
@@ -4758,7 +4750,6 @@ msgstr "GX-6C Devices"
 #. defaultMessage is:
 #. GX-6C Modules
 #: extracted_strings.json
-#| msgid "Number of GX-6C modules"
 msgid "GX-6C Modules"
 msgstr "GX-6C Modules"
 
@@ -5982,7 +5973,6 @@ msgstr "Inventory"
 #. defaultMessage is:
 #. Inventory Detail
 #: extracted_strings.json
-#| msgid "Inventory Details"
 msgid "Inventory Detail"
 msgstr "Inventory Detail"
 
@@ -6399,7 +6389,6 @@ msgstr "Last 30 Days"
 #. defaultMessage is:
 #. Last 6 Months
 #: extracted_strings.json
-#| msgid "Last Month"
 msgid "Last 6 Months"
 msgstr "Last 6 Months"
 
@@ -9206,6 +9195,22 @@ msgstr "Please enter your email"
 msgid "Please enter your new password?"
 msgstr "Please enter your new password?"
 
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+#| msgid "Please enter your new password?"
+msgid "Please enter your password"
+msgstr "Please enter your password"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+#| msgid "Please enter your Full name"
+msgid "Please enter your username"
+msgstr "Please enter your username"
+
 #. [pages.transferResult.note]
 #. defaultMessage is:
 #. Please notice that above field 'Transfer to Clinic' lists all clinics, even those which you may not have access to. In a such case - by transferring this result you won't be able to edit this result record any more, and your action cannot be undone.
@@ -11285,7 +11290,6 @@ msgstr "Select Year..."
 #. defaultMessage is:
 #. Select all Locations to track inventory for this item
 #: extracted_strings.json
-#| msgid "Set the below configurations to manage Inventory across the sites"
 msgid "Select all Locations to track inventory for this item"
 msgstr "Select all Locations to track inventory for this item"
 
@@ -12192,9 +12196,6 @@ msgstr "Software Type"
 #. defaultMessage is:
 #. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
 #: extracted_strings.json
-#| msgid ""
-#| "Some sites may appear unavailable for selection change as they have "
-#| "inventory or unreconciled transactions for the selected Inventory item"
 msgid ""
 "Some consumables may appear unavailable for selection change as the site has "
 "inventory or unreconciled transactions"
@@ -12416,8 +12417,6 @@ msgstr "Success"
 #. defaultMessage is:
 #. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
-#| msgid ""
-#| "Summary of TB Workload grouped by month, quarter and year for all regions"
 msgid ""
 "Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
@@ -13811,7 +13810,6 @@ msgstr "Total MTB detected and MTB Trace detected"
 #. defaultMessage is:
 #. Total Modules
 #: extracted_strings.json
-#| msgid "Total Results"
 msgid "Total Modules"
 msgstr "Total Modules"
 
@@ -14367,7 +14365,6 @@ msgstr ""
 #. defaultMessage is:
 #. Utilization%
 #: extracted_strings.json
-#| msgid "Utilization"
 msgid "Utilization%"
 msgstr "Utilization%"
 

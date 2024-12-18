@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
+"POT-Creation-Date: 2024-12-18T04:25:22.566Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9218,6 +9218,20 @@ msgstr "Por favor, insira o seu e-mail"
 #: extracted_strings.json
 msgid "Please enter your new password?"
 msgstr "Por favor, digite sua nova senha?"
+
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Por favor, insira a sua palavra-passe"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+msgid "Please enter your username"
+msgstr "Por favor, insira o seu nome de utilizador"
 
 #. [pages.transferResult.note]
 #. defaultMessage is:

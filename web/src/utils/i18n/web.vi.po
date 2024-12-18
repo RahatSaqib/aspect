@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-03T04:30:39.539Z\n"
+"POT-Creation-Date: 2024-12-18T04:25:22.566Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -183,6 +183,16 @@ msgid ""
 msgstr ""
 "Danh sách tất cả các mô-đun thiết bị GeneXpert được đánh dấu là 'không sử "
 "dụng'. Bao gồm tên thiết bị, mô-đun nối tiếp."
+
+#. [pages.ReportIndex.deviceSummaryReportDescription]
+#. defaultMessage is:
+#. A list of all devices in the system and aggregated test results per device.
+#: extracted_strings.json
+msgid ""
+"A list of all devices in the system and aggregated test results per device."
+msgstr ""
+"Danh sách tất cả các thiết bị trong hệ thống và kết quả kiểm tra tổng hợp "
+"cho từng thiết bị."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -1947,6 +1957,13 @@ msgstr "Đã thu thập vào"
 msgid "Collection of Results"
 msgstr "Thu thập kết quả"
 
+#. [p.PkDashboard.combinedGX6CGX10CDevices]
+#. defaultMessage is:
+#. Combined GX-6C/GX-10C Devices
+#: extracted_strings.json
+msgid "Combined GX-6C/GX-10C Devices"
+msgstr "Thiết bị GX-6C/GX-10C kết hợp"
+
 #. [filter.AssaySelectField.assayCommCareGatesRDT]
 #. defaultMessage is:
 #. CommCare Gates RDT
@@ -2116,6 +2133,16 @@ msgstr "Tiêu thụ"
 msgid "Consumables applicable for the site"
 msgstr "Vật tư tiêu hao áp dụng cho trang web"
 
+#. [pages.consumables.consumablesApplicableForThisSite]
+#. defaultMessage is:
+#. Consumables applicable for this site
+#: extracted_strings.json
+msgid "Consumables applicable for this site"
+msgstr "Vật tư tiêu hao áp dụng cho trang web này"
+
+#. [p.PkDashboard.consumptionRate]
+#. defaultMessage is:
+#. Consumption Rate
 #. [pages.InventoryTabs.New.consumpationRate]
 #. defaultMessage is:
 #. Consumption Rate
@@ -2591,6 +2618,13 @@ msgstr "Trạng thái mạng hiện tại"
 msgid "Current Password"
 msgstr "Mật khẩu hiện tại"
 
+#. [p.PkDashboard.currentQty]
+#. defaultMessage is:
+#. Current Qty.
+#: extracted_strings.json
+msgid "Current Qty."
+msgstr "Số lượng hiện tại"
+
 #. [p.PkDashboard.RRCurrent]
 #. defaultMessage is:
 #. Current RRTB Diagnosis
@@ -2929,6 +2963,13 @@ msgstr "(Những) ngày trước cuối tháng"
 #: extracted_strings.json
 msgid "Days"
 msgstr "Ngày"
+
+#. [p.PkDashboard.daysLeft]
+#. defaultMessage is:
+#. Days Left
+#: extracted_strings.json
+msgid "Days Left"
+msgstr "残り日数"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -4036,6 +4077,13 @@ msgstr "Lỗi khi gửi Email Đặt lại Mật khẩu"
 msgid "Error: Date Selection Required to Download Report"
 msgstr "Lỗi: Cần chọn ngày để tải xuống báo cáo"
 
+#. [pages.ErrorRate.errors]
+#. defaultMessage is:
+#. Errors
+#: extracted_strings.json
+msgid "Errors"
+msgstr "Lỗi"
+
 #. [components.shared.everyDay]
 #. defaultMessage is:
 #. Every Day(s)
@@ -4674,6 +4722,41 @@ msgstr "GP không được phát hiện - NP được phát hiện"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP không được phát hiện - NP không được phát hiện"
+
+#. [p.PkDashboard.gxSites]
+#. defaultMessage is:
+#. GX Sites
+#: extracted_strings.json
+msgid "GX Sites"
+msgstr "Các trang web GX"
+
+#. [p.PkDashboard.gx10CDevices]
+#. defaultMessage is:
+#. GX-10C Devices
+#: extracted_strings.json
+msgid "GX-10C Devices"
+msgstr "Thiết bị GX-10C"
+
+#. [p.PkDashboard.gx10CModules]
+#. defaultMessage is:
+#. GX-10C Modules
+#: extracted_strings.json
+msgid "GX-10C Modules"
+msgstr "Mô-đun GX-10C"
+
+#. [p.PkDashboard.gx6CDevices]
+#. defaultMessage is:
+#. GX-6C Devices
+#: extracted_strings.json
+msgid "GX-6C Devices"
+msgstr "Thiết bị GX-6C"
+
+#. [p.PkDashboard.gx6CModules]
+#. defaultMessage is:
+#. GX-6C Modules
+#: extracted_strings.json
+msgid "GX-6C Modules"
+msgstr "Mô-đun GX-6C"
 
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
@@ -5818,6 +5901,9 @@ msgstr "Không đủ quyền"
 #. [legends.Unknown.resultCategoryInvalid]
 #. defaultMessage is:
 #. Invalid
+#. [pages.ErrorRate.invalid]
+#. defaultMessage is:
+#. Invalid
 #: extracted_strings.json
 msgid "Invalid"
 msgstr "Không hợp lệ"
@@ -5884,6 +5970,13 @@ msgstr "Url webhook không hợp lệ"
 #: extracted_strings.json
 msgid "Inventory"
 msgstr "Hàng tồn kho"
+
+#. [pages.Consumable.New.inventoryDetail]
+#. defaultMessage is:
+#. Inventory Detail
+#: extracted_strings.json
+msgid "Inventory Detail"
+msgstr "Chi tiết hàng tồn kho"
 
 #. [pages.Consumable.New.inventoryDetails]
 #. defaultMessage is:
@@ -5974,7 +6067,7 @@ msgstr "Đối chiếu hàng tồn kho"
 #. Inventory Transfer
 #: extracted_strings.json
 msgid "Inventory Transfer"
-msgstr "chuyển hàng tồn kho"
+msgstr "Chuyển hàng tồn kho"
 
 #. [pages.Consumable.New.inventoryAtCurrentSite]
 #. defaultMessage is:
@@ -6294,6 +6387,13 @@ msgstr "Cuối cùng"
 msgid "Last 30 Days"
 msgstr "30 ngày qua"
 
+#. [p.PkDashboard.last6Months]
+#. defaultMessage is:
+#. Last 6 Months
+#: extracted_strings.json
+msgid "Last 6 Months"
+msgstr "6 tháng qua"
+
 #. [pages.dateRangeSelector.last7Days]
 #. defaultMessage is:
 #. Last 7 Days
@@ -6450,6 +6550,13 @@ msgstr "Giấy phép"
 msgid "Lipid Panel"
 msgstr "Bảng lipid"
 
+#. [pages.ReportIndex.missing_cartridges_report]
+#. defaultMessage is:
+#. List of Missing Lots
+#: extracted_strings.json
+msgid "List of Missing Lots"
+msgstr "Danh sách các lô bị thiếu"
+
 #. [pages.ReportIndex.unreconciled_inventory_report]
 #. defaultMessage is:
 #. List of Unreconciled Inventory
@@ -6580,6 +6687,13 @@ msgstr "Vị trí"
 #: extracted_strings.json
 msgid "Location Tracking"
 msgstr "Theo dõi vị trí"
+
+#. [pages.InventoryTabs.New.locationsWithThisItem]
+#. defaultMessage is:
+#. Locations with this Item
+#: extracted_strings.json
+msgid "Locations with this Item"
+msgstr "Vị trí có mục này"
 
 #. [page.contacts.person.locked]
 #. defaultMessage is:
@@ -7661,6 +7775,9 @@ msgstr "NTP"
 #. [pages.admin.name]
 #. defaultMessage is:
 #. Name
+#. [p.PkDashboard.utilizationName]
+#. defaultMessage is:
+#. Name
 #. [pages.NotificationDetail.fieldName]
 #. defaultMessage is:
 #. Name
@@ -7677,6 +7794,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.DeviceDetailEdit.name]
+#. defaultMessage is:
+#. Name
+#. [pages.ErrorRate.name]
 #. defaultMessage is:
 #. Name
 #: extracted_strings.json
@@ -7990,6 +8110,9 @@ msgstr "Không có điện"
 #. defaultMessage is:
 #. No Result
 #. [pages.NotificationDetail.type.NoResult]
+#. defaultMessage is:
+#. No Result
+#. [pages.ErrorRate.noResult]
 #. defaultMessage is:
 #. No Result
 #: extracted_strings.json
@@ -9081,6 +9204,20 @@ msgstr "Hãy nhập email"
 msgid "Please enter your new password?"
 msgstr "Vui lòng nhập mật khẩu mới của bạn?"
 
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Vui lòng nhập mật khẩu của bạn"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+msgid "Please enter your username"
+msgstr "Hãy nhập tên đăng nhập"
+
 #. [pages.transferResult.note]
 #. defaultMessage is:
 #. Please notice that above field 'Transfer to Clinic' lists all clinics, even those which you may not have access to. In a such case - by transferring this result you won't be able to edit this result record any more, and your action cannot be undone.
@@ -9490,6 +9627,9 @@ msgid "Province"
 msgstr "Tỉnh"
 
 #. [pages.common.state_PK]
+#. defaultMessage is:
+#. Province/Region
+#. [p.PkDashboard.provinceRegion]
 #. defaultMessage is:
 #. Province/Region
 #: extracted_strings.json
@@ -11155,6 +11295,13 @@ msgstr "Chọn Tuần ..."
 msgid "Select Year..."
 msgstr "Chọn năm ..."
 
+#. [pages.InventoryTabs.siteList.selectAllLocations]
+#. defaultMessage is:
+#. Select all Locations to track inventory for this item
+#: extracted_strings.json
+msgid "Select all Locations to track inventory for this item"
+msgstr "Chọn tất cả các Địa điểm để theo dõi hàng tồn kho cho mặt hàng này"
+
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select approval status...
@@ -12055,6 +12202,17 @@ msgstr "Tin nhắn sms không được dài quá 2000 ký tự"
 msgid "Software Type"
 msgstr "Loại phần mềm"
 
+#. [pages.consumables.consumablesApplicableForThisSiteTooltip]
+#. defaultMessage is:
+#. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
+#: extracted_strings.json
+msgid ""
+"Some consumables may appear unavailable for selection change as the site has "
+"inventory or unreconciled transactions"
+msgstr ""
+"Một số vật tư tiêu hao có thể không khả dụng để thay đổi lựa chọn vì trang "
+"web có hàng tồn kho hoặc giao dịch chưa được đối chiếu"
+
 #. [pages.InventoryTabs.New.trackByLocationTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
@@ -12265,14 +12423,15 @@ msgstr "Gửi"
 msgid "Success"
 msgstr "Thành công"
 
-#. [pages.ReportIndex.reportTBWorkloadSummary_description]
+#. [pages.ReportIndex.reportTBWorkloadSummaryDescription]
 #. defaultMessage is:
-#. Summary of TB Workload grouped by month, quarter and year for all regions
+#. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
 msgid ""
-"Summary of TB Workload grouped by month, quarter and year for all regions"
+"Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
-"Tổng hợp Khối lượng công việc TB nhóm theo tháng, quý, năm cho các vùng miền"
+"Tóm tắt khối lượng công việc về bệnh lao theo tháng, quý và năm cho tất cả "
+"các khu vực."
 
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
@@ -13650,6 +13809,16 @@ msgstr "Tổng số lỗi"
 msgid "Total MTB detected and MTB Trace detected"
 msgstr "Tổng số MTB được phát hiện và MTB Trace được phát hiện"
 
+#. [p.PkDashboard.utilizationTotalModules]
+#. defaultMessage is:
+#. Total Modules
+#. [pages.ErrorRate.totalModules]
+#. defaultMessage is:
+#. Total Modules
+#: extracted_strings.json
+msgid "Total Modules"
+msgstr "Tổng số mô-đun"
+
 #. [pages.inventoryList.totalOnHand]
 #. defaultMessage is:
 #. Total On Hand
@@ -13691,7 +13860,13 @@ msgstr "Tổng số xét nghiệm lao có kết quả báo cáo trong năm hiệ
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [p.PkDashboard.utilizationTotalTests]
+#. defaultMessage is:
+#. Total Tests
 #. [pages.workload.totalTests]
+#. defaultMessage is:
+#. Total Tests
+#. [pages.ErrorRate.totalTests]
 #. defaultMessage is:
 #. Total Tests
 #. [pages.XDR.cntAll]
@@ -14126,6 +14301,13 @@ msgstr "Kết hợp chữ hoa và chữ thường"
 msgid "Usage Statistics Report"
 msgstr "Báo cáo thống kê sử dụng"
 
+#. [p.PkDashboard.used]
+#. defaultMessage is:
+#. Used
+#: extracted_strings.json
+msgid "Used"
+msgstr "Đã sử dụng"
+
 #. [page.contacts.person.userLockedOut]
 #. defaultMessage is:
 #. User is locked?
@@ -14185,6 +14367,13 @@ msgstr ""
 "Tỷ lệ sử dụng: (Tổng số xét nghiệm trong khoảng thời gian đã chọn * 100) / "
 "(Công suất thiết bị hàng ngày * Số ngày làm việc trong khoảng thời gian đã "
 "chọn)"
+
+#. [p.PkDashboard.utilizationPercent]
+#. defaultMessage is:
+#. Utilization%
+#: extracted_strings.json
+msgid "Utilization%"
+msgstr "Sử dụng%"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -15298,7 +15487,7 @@ msgstr "ID trang web bao gồm \"{siteId}\""
 #. site ID is in ({joinedIds})
 #: extracted_strings.json
 msgid "site ID is in ({joinedIds})"
-msgstr "ID trang web ở ({joinedIds})"
+msgstr "ID trang web nằm trong ({joinedIds})"
 
 #. [filter.btnGroup.whereSiteNameIncludes]
 #. defaultMessage is:
@@ -15532,9 +15721,6 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
-
-#~ msgid "List of Missing Lots"
-#~ msgstr "Danh sách các lô bị thiếu"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Xét nghiệm MTB Rif Ultra"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
+"POT-Creation-Date: 2024-12-18T04:25:22.566Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -54,7 +54,7 @@ msgstr "# Кількість сайтів PMDT з 10 C GX"
 #. # of sites tested MTB/XDR Assay
 #: extracted_strings.json
 msgid "# of sites tested MTB/XDR Assay"
-msgstr "# Кількість протестованих сайтів MTB/XDR-аналіз"
+msgstr "# Кількість протестованих сайтів MTB/XDR Аналіз"
 
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -9216,6 +9216,20 @@ msgstr "Введіть e-mail"
 msgid "Please enter your new password?"
 msgstr "Введіть новий пароль?"
 
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Введіть пароль"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+msgid "Please enter your username"
+msgstr "Будь ласка, введіть своє ім'я користувача"
+
 #. [pages.transferResult.note]
 #. defaultMessage is:
 #. Please notice that above field 'Transfer to Clinic' lists all clinics, even those which you may not have access to. In a such case - by transferring this result you won't be able to edit this result record any more, and your action cannot be undone.
@@ -15620,8 +15634,7 @@ msgstr "{itemCount, plural, one {# Contact} other {# Contacts} }"
 #. {itemCount, plural, one {# Job Function} other {# Job Functions} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
-msgstr ""
-"{itemCount, plural, one {# Посадові обов'язки} other {# Посадові функції} }"
+msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} } }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
@@ -15635,7 +15648,7 @@ msgstr "{itemCount, plural, one {# Name} other {# Names} }"
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, plural, one {# Особа} other {# Особи} }"
+msgstr "{itemCount, plural, one {# Person} other {# Persons} } }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -15671,7 +15684,7 @@ msgstr ""
 #. {numberOfModules, plural, one {# module} other {# modules} }
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
-msgstr "{numberOfModules, множина, один {# модуль} інші {# модулі} } }"
+msgstr "{numberOfModules, plural, один {# модуль} інші {# модулі} } }"
 
 #. [p.PkDashboard.customPerYear]
 #. defaultMessage is:
@@ -15692,7 +15705,7 @@ msgstr "{resultType} виявлено сьогодні"
 #. {unit} YTD
 #: extracted_strings.json
 msgid "{unit} YTD"
-msgstr "{unit} З початку року"
+msgstr "{unit} З ПОЧАТКУ РОКУ"
 
 #. [component.Widget.lastMonth]
 #. defaultMessage is:
@@ -15709,7 +15722,7 @@ msgstr "{unit} минулого місяця"
 #. {unit} of all devices
 #: extracted_strings.json
 msgid "{unit} of all devices"
-msgstr "{unit} з усіх пристроїв"
+msgstr "{unit} всіх пристроїв"
 
 #. [component.Widget.sinceLastWeek]
 #. defaultMessage is:
@@ -15723,7 +15736,7 @@ msgstr "{unit} з минулого тижня"
 #. {unit} total calibrations
 #: extracted_strings.json
 msgid "{unit} total calibrations"
-msgstr "{unit} загальна калібрування"
+msgstr "{unit} всього калібрувань"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Аналіз для MTB Rif Ultra"
