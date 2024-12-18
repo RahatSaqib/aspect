@@ -1,9 +1,11 @@
 import { defineMessages } from 'react-intl'
 import { consumableMessages } from '../../../messages'
+import allMessage from '../../../messages/allMessages'
 import { commonDefinitions } from '../../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,
+  ...allMessage,
   ...consumableMessages,
   ...defineMessages({
     date: {
@@ -140,10 +142,6 @@ const messages = {
     ConsumableReason_AssertedInventoryOnHandRemove: {
       id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove',
       defaultMessage: 'Asserted inventory on hand increase',
-    },
-    hierarchicalView: {
-      id: 'pages.InventoryLog.hierarchicalView',
-      defaultMessage: 'Hierarchical View',
     },
   }),
 }

@@ -565,6 +565,10 @@ const messages = {
       id: 'forms.formItem.selectAllUnselectAll',
       defaultMessage: 'Select All / Unselect All',
     },
+    hierarchicalView: {
+      id: 'pages.inventoryReconciliations.hierarchicalView',
+      defaultMessage: 'Hierarchical View',
+    },
   }),
 }
 export default messages

@@ -1,8 +1,10 @@
 import { defineMessages } from 'react-intl'
+import allmessages from '../../../messages/allMessages'
 import { commonDefinitions } from '../../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,
+  ...allmessages,
   ...defineMessages({
     sitesTitle: {
       id: 'pages.SiteList.title',
@@ -46,10 +48,6 @@ const messages = {
     createSite: {
       id: 'pages.SiteList.createSite',
       defaultMessage: 'Create Site',
-    },
-    hierarchicalView: {
-      id: 'pages.inventoryReconciliations.hierarchicalView',
-      defaultMessage: 'Hierarchical View',
     },
   }),
 }
