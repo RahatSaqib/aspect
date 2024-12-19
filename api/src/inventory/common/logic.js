@@ -691,7 +691,7 @@ async function consumeInventoryForResult(
                 lotNumber
               )
 
-              if (parentInventoryItem?.quantityOnHand > quantity) {
+              if (parentInventoryItem?.quantityOnHand >= quantity) {
                 const payload = {
                   dateAdjusted: new Date(),
                   quantity,
