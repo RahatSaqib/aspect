@@ -40,12 +40,13 @@ const NationalTestingTrendsGraph = () => {
         .map(item => ({ year: item.month.split('-')[0], month: item.month.split('-')[1], value: item.cnt }))
         .sort((a, b) => b.month - a.month || b.year - a.year)
         .reverse()
-        .map(item => ({ ...item, month: `${months[item.month - 1].defaultMessage}` }))
+        .map(item => ({ ...item, month: `${formatMessage(months[item.month - 1])}` }))
 
       if (grouped) {
-        setGraphData(fillYear(grouped).sort((a, b) => a.year - b.year))
+        setGraphData(fillYear(grouped, formatMessage).sort((a, b) => a.year - b.year))
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   return isLoading ? (
