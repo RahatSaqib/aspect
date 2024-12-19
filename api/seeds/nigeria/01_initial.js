@@ -8,6 +8,7 @@ const { commonUpserts, upsertGeneXpertDeviceTypeAndAssays } = require('../common
 const partnerData = require('./fixtures/partnerData')
 const upsertPartnerData = require('../common/upsert_partner_data')
 const { upsertTruenatDeviceTypeAndAssays } = require('../commonTruenat')
+const { addDeviceCapacities } = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()
@@ -42,5 +43,6 @@ async function seed(knex) {
     'assayGXCovid19',
   ])
 
-  return upsertTruenatDeviceTypeAndAssays(knex)
+  await upsertTruenatDeviceTypeAndAssays(knex)
+  await addDeviceCapacities(knex)
 }
