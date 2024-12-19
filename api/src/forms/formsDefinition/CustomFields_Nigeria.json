@@ -60,17 +60,17 @@
             "migrateFromId": -4,
             "items": [
                 {
-                    "key": "Male",
+                    "key": 1,
                     "value": "Male",
                     "order": 0
                 },
                 {
-                    "key": "Female",
+                    "key": 0,
                     "value": "Female",
                     "order": 10
                 },
                 {
-                    "key": "Other",
+                    "key": 2,
                     "value": "Other",
                     "order": 20
                 }
@@ -4221,17 +4221,17 @@
             "migrateFromId": -1,
             "items": [
                 {
-                    "key": "HIV Positive",
+                    "key": 1,
                     "value": "HIV Positive",
                     "order": 0
                 },
                 {
-                    "key": "HIV Negative",
+                    "key": 0,
                     "value": "HIV Negative",
                     "order": 10
                 },
                 {
-                    "key": "HIV Unknown",
+                    "key": 2,
                     "value": "HIV Unknown",
                     "order": 20
                 }
