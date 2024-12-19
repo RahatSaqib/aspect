@@ -77,7 +77,7 @@ async function upsertInventoryItem({
       updatedOn: now,
       updatedBy: userId,
     })
-  } else {
+  } else if (quantityOnHand > 0) {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
       consumableId,
       inTransitFromSiteId: inTransitFromSiteId || null,
@@ -109,7 +109,7 @@ async function getActualQuantityOnHand(
   { quantityOnHand, quantity }
 ) {
   const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, fromSiteId)
-  const newQuantityOnHand = await defaultInventoryStrategy.getNewQuantityOnHand(
+  const { newQuantityOnHand, isUnreconciledResult } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
     inventoryItem,
     operation,
@@ -123,7 +123,7 @@ async function getActualQuantityOnHand(
   if (Boom.isBoom(newQuantityOnHand)) {
     return newQuantityOnHand
   }
-  return { inventoryItem, quantityOnHand: newQuantityOnHand }
+  return { inventoryItem, quantityOnHand: newQuantityOnHand, isUnreconciledResult }
 }
 
 // ----------------------------------------------------------------------------------
@@ -217,25 +217,28 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     if (Boom.isBoom(res)) {
       return res
     }
-    /**
-     * return object { inventoryItemId, inventoryLogId }
-     */
-    return upsertInventoryItemAndLog(knex, {
-      inventoryItemId: res.inventoryItem?.id,
-      quantityOnHand: res.quantityOnHand,
-      siteId: res.inventoryItem?.siteId ?? siteId,
-      consumableId,
-      lotNumber,
-      expiresOn,
-      inTransitFromSiteId,
-      now,
-      userId,
-      logProps: {
-        operation,
-        quantity,
-        ...logProps,
-      },
-    })
+
+    if (!res.isUnreconciledResult) {
+      /**
+       * return object { inventoryItemId, inventoryLogId }
+       */
+      return upsertInventoryItemAndLog(knex, {
+        inventoryItemId: res.inventoryItem?.id,
+        quantityOnHand: res.quantityOnHand,
+        siteId: res.inventoryItem?.siteId ?? siteId,
+        consumableId,
+        lotNumber,
+        expiresOn,
+        inTransitFromSiteId,
+        now,
+        userId,
+        logProps: {
+          operation,
+          quantity,
+          ...logProps,
+        },
+      })
+    }
   }
 
   let res

@@ -1,8 +1,7 @@
 const { get } = require('lodash')
 const Boom = require('@hapi/boom')
-const { startOfDay } = require('date-fns')
 const { knex, transact } = require('../db')
-const { consumeInventoryForResult, transferInventory } = require('./common/logic')
+const { consumeInventoryForResult } = require('./common/logic')
 
 const getInventoryBaseQuery = () =>
   knex('InventoryItem')
@@ -80,7 +79,6 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
     const {
       partnerId,
       siteId,
-      parentWarehouseId,
       consumableId,
       expirationDate,
       totalRequiredInventory,
@@ -103,27 +101,6 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
     const missingInventoryToReconcile = await getMissingInventoryToReconcile(siteId, consumableId, expirationDate)
       .orderBy('r.endedOn')
       .limit(quantityToReconcile)
-
-    // Transfer, if neccesary, the quantityToTransfer from the warehouse to the site and save the InventoryTransfer
-    // (with the effectiveDate set with the oldest result.endedOn overrading the time to 00:00:00 and the automaticTransfer set in true)
-    if (quantityToTransfer > 0) {
-      const minimumDate = missingInventoryToReconcile[0].endedOn
-      const effectiveDate = startOfDay(minimumDate)
-
-      const payload = {
-        fromSiteId: parentWarehouseId,
-        toSiteId: siteId,
-        consumableId,
-        quantity: quantityToTransfer,
-        expiresOn: expirationDate,
-        logProps: {
-          effectiveDate,
-          isAutomatic: true,
-        },
-        force: true,
-      }
-      await transferInventory({ payload, messageContext, partnerId })
-    }
 
     // Substract each consumable from the site (the InventoryLog should have an effectiveDate = result.endedOn)
     /* eslint-disable no-await-in-loop */
