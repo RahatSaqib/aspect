@@ -216,7 +216,8 @@ const getCustomFieldsFromPayload = async (payload, countryAbbreviation, partnerI
           _.get(payload, `data.customFieldData.${field.id}.key`) ||
           _.get(payload, `data.customFieldData.${migrateFromId}.key`) // Might not be necessary, but it's safer to check it as well.
         // eslint-disable-next-line no-await-in-loop
-        _.set(obj, source, key || (await getSiteIdByName(value)))
+        const siteId = key || (await getSiteIdByName(value))
+        _.set(obj, source, siteId)
       } else _.set(obj, source, value)
     }
   }
