@@ -683,7 +683,7 @@ async function consumeInventoryForResult(
         if (inventoryAdjustment === 'currentSiteAndProviderAdjustment') {
           if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
             const site = await getSiteById(siteId)
-            if (site.parentWarehouseId) {
+            if (site?.parentWarehouseId) {
               const parentInventoryItem = await findInventoryItem(
                 site.parentWarehouseId,
                 consumableId,
