@@ -67,7 +67,8 @@ const getResultsToUpdateInRange = async (knex, minId, maxId) => {
       const additionalData = getAdditionalDataFromPayload({ data: resultData }, potentialAssayIds)
 
       const customFieldsFromNotes = parseNotes(existingResult.notes)
-      const customFieldsData = transformCustomFields(JSON.parse(customFields))
+      // eslint-disable-next-line no-await-in-loop
+      const customFieldsData = await transformCustomFields(knex, JSON.parse(customFields))
 
       const baseResult = {
         ...existingResult,
@@ -95,15 +96,42 @@ const getResultsToUpdateInRange = async (knex, minId, maxId) => {
   return transformedResults
 }
 
-const transformCustomFields = customFields => {
+const transformCustomFields = async (knex, customFields) => {
   const obj = {}
   const fields = Object.keys(customFields)
   for (const field of fields) {
     const customFieldDef = customFieldsNigeria.fields.find(cf => cf.id === Number(field))
     if (customFieldDef) {
-      _.set(obj, customFieldDef.source, customFields[field])
+      if (customFields[field]) {
+        // eslint-disable-next-line no-await-in-loop
+        const value = await getCustomFieldValue(knex, customFieldDef, customFields[field])
+        _.set(obj, customFieldDef.source, value)
+      }
     }
   }
 
   return obj
+}
+
+const getCustomFieldValue = async (knex, customFieldDef, value) => {
+  if (customFieldDef.items) {
+    const item = customFieldDef.items.find(item => item.key.toString() === value.toString())
+    if (item) {
+      return item.value
+    }
+  }
+
+  if (customFieldDef.itemsSource === 'state') {
+    const state = await knex('State').where('id', value).first()
+    if (state) {
+      return state.name
+    }
+  } else if (customFieldDef.itemsSource === 'lga') {
+    const lga = await knex('Lga').where('id', value).first()
+    if (lga) {
+      return lga.name
+    }
+  }
+
+  return value
 }
