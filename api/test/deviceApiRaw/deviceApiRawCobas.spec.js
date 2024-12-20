@@ -52,7 +52,6 @@ describe('Device API Raw routes for cobas', () => {
         partnerId: partner.id,
         siteId,
         deviceTypeId: cobasDeviceType.id,
-        dailyTestCapacity: 8,
         deviceApprovalId: approvedDeviceApproval.id,
         name: 'Some COBAS Device',
         shortName: 'COBAS',

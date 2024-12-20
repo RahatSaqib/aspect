@@ -46,7 +46,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     ;[senaiteLimsDeviceId] = await knex('Device').insert({
       partnerId: partner.id,
       deviceTypeId: senaiteLimsDeviceType.id,
-      dailyTestCapacity: 8,
       deviceApprovalId: approvedDeviceApproval.id,
       siteId: senaiteLimsSiteId,
       name: 'Some Senaite LIMS',

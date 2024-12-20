@@ -50,7 +50,6 @@ describe('Device API Raw routes for BD MGIT', () => {
       partnerId: partner.id,
       siteId: bdMgitSiteId,
       deviceTypeId: bdMgitDeviceType.id,
-      dailyTestCapacity: 8,
       deviceApprovalId: approvedDeviceApproval.id,
       name: 'Some BD MGIT Device',
       shortName: 'BD MGIT',

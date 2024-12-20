@@ -60,4 +60,5 @@ module.exports = {
       modules: [1, 2, 6, 10, 12, 14, 18, 24, 30, 36, 42, 48],
     },
   ],
+  deviceCapacityFactor: 3,
 }
