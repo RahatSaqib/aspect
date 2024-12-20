@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-26T04:43:44.240Z\n"
+"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -183,6 +183,16 @@ msgid ""
 msgstr ""
 "Список всех модулей устройства GeneXpert, помеченных как «не использовать». "
 "Включает имя устройства, серийный номер модуля."
+
+#. [pages.ReportIndex.deviceSummaryReportDescription]
+#. defaultMessage is:
+#. A list of all devices in the system and aggregated test results per device.
+#: extracted_strings.json
+msgid ""
+"A list of all devices in the system and aggregated test results per device."
+msgstr ""
+"Список всех устройств в системе и агрегированные результаты тестирования "
+"каждого устройства."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -1613,6 +1623,13 @@ msgstr "Требуется дата калибровки"
 msgid "Calibration Due Date"
 msgstr "Срок выполнения калибровки"
 
+#. [pages.NewInventoryDialogForm.quantityNotMoreThanOnHand]
+#. defaultMessage is:
+#. Can not be greater than on-hand
+#: extracted_strings.json
+msgid "Can not be greater than on-hand"
+msgstr "Не может быть больше, чем в наличии"
+
 #. [errorResponseMessages.removeInventory.PUT.notExisted.resolution]
 #. defaultMessage is:
 #. Can not deduct from non-existed inventory item.
@@ -1940,6 +1957,13 @@ msgstr "Собрано на"
 msgid "Collection of Results"
 msgstr "Сбор результатов"
 
+#. [p.PkDashboard.combinedGX6CGX10CDevices]
+#. defaultMessage is:
+#. Combined GX-6C/GX-10C Devices
+#: extracted_strings.json
+msgid "Combined GX-6C/GX-10C Devices"
+msgstr "Комбинированные устройства GX-6C/GX-10C"
+
 #. [filter.AssaySelectField.assayCommCareGatesRDT]
 #. defaultMessage is:
 #. CommCare Gates RDT
@@ -2109,6 +2133,16 @@ msgstr "Расходники"
 msgid "Consumables applicable for the site"
 msgstr "Расходные материалы, применяемые на объекте"
 
+#. [pages.consumables.consumablesApplicableForThisSite]
+#. defaultMessage is:
+#. Consumables applicable for this site
+#: extracted_strings.json
+msgid "Consumables applicable for this site"
+msgstr "Расходные материалы, применимые для данного участка"
+
+#. [p.PkDashboard.consumptionRate]
+#. defaultMessage is:
+#. Consumption Rate
 #. [pages.InventoryTabs.New.consumpationRate]
 #. defaultMessage is:
 #. Consumption Rate
@@ -2585,6 +2619,13 @@ msgstr "Текущий Статус Сети"
 msgid "Current Password"
 msgstr "Текущий пароль"
 
+#. [p.PkDashboard.currentQty]
+#. defaultMessage is:
+#. Current Qty.
+#: extracted_strings.json
+msgid "Current Qty."
+msgstr "Текущее количество."
+
 #. [p.PkDashboard.RRCurrent]
 #. defaultMessage is:
 #. Current RRTB Diagnosis
@@ -2923,6 +2964,13 @@ msgstr "За день(ы) до окончания квартала"
 #: extracted_strings.json
 msgid "Days"
 msgstr "Дней"
+
+#. [p.PkDashboard.daysLeft]
+#. defaultMessage is:
+#. Days Left
+#: extracted_strings.json
+msgid "Days Left"
+msgstr "Осталось дней"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -4034,6 +4082,13 @@ msgstr "Ошибка при отправке сообщения о сбросе 
 msgid "Error: Date Selection Required to Download Report"
 msgstr "Ошибка: Требуется выбор даты для загрузки отчета"
 
+#. [pages.ErrorRate.errors]
+#. defaultMessage is:
+#. Errors
+#: extracted_strings.json
+msgid "Errors"
+msgstr "Ошибки"
+
 #. [components.shared.everyDay]
 #. defaultMessage is:
 #. Every Day(s)
@@ -4674,6 +4729,41 @@ msgstr "GP не обнаружен - обнаружен NP"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP не обнаружен - NP не обнаружен"
+
+#. [p.PkDashboard.gxSites]
+#. defaultMessage is:
+#. GX Sites
+#: extracted_strings.json
+msgid "GX Sites"
+msgstr "Сайты GX"
+
+#. [p.PkDashboard.gx10CDevices]
+#. defaultMessage is:
+#. GX-10C Devices
+#: extracted_strings.json
+msgid "GX-10C Devices"
+msgstr "Устройства GX-10C"
+
+#. [p.PkDashboard.gx10CModules]
+#. defaultMessage is:
+#. GX-10C Modules
+#: extracted_strings.json
+msgid "GX-10C Modules"
+msgstr "Модули GX-10C"
+
+#. [p.PkDashboard.gx6CDevices]
+#. defaultMessage is:
+#. GX-6C Devices
+#: extracted_strings.json
+msgid "GX-6C Devices"
+msgstr "Устройства GX-6C"
+
+#. [p.PkDashboard.gx6CModules]
+#. defaultMessage is:
+#. GX-6C Modules
+#: extracted_strings.json
+msgid "GX-6C Modules"
+msgstr "Модули GX-6C"
 
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
@@ -5823,6 +5913,9 @@ msgstr "Недостаточное количество разрешений"
 #. [legends.Unknown.resultCategoryInvalid]
 #. defaultMessage is:
 #. Invalid
+#. [pages.ErrorRate.invalid]
+#. defaultMessage is:
+#. Invalid
 #: extracted_strings.json
 msgid "Invalid"
 msgstr "Недействительный"
@@ -5889,6 +5982,13 @@ msgstr "Недействительный URL-адрес веб-перехват�
 #: extracted_strings.json
 msgid "Inventory"
 msgstr "Склад"
+
+#. [pages.Consumable.New.inventoryDetail]
+#. defaultMessage is:
+#. Inventory Detail
+#: extracted_strings.json
+msgid "Inventory Detail"
+msgstr "Детализация инвентаря"
 
 #. [pages.Consumable.New.inventoryDetails]
 #. defaultMessage is:
@@ -6299,6 +6399,13 @@ msgstr "Последний"
 msgid "Last 30 Days"
 msgstr "Последние 30 дней"
 
+#. [p.PkDashboard.last6Months]
+#. defaultMessage is:
+#. Last 6 Months
+#: extracted_strings.json
+msgid "Last 6 Months"
+msgstr "За последние 6 месяцев"
+
 #. [pages.dateRangeSelector.last7Days]
 #. defaultMessage is:
 #. Last 7 Days
@@ -6458,12 +6565,19 @@ msgstr "Липидная панель"
 #. [pages.ReportIndex.missing_cartridges_report]
 #. defaultMessage is:
 #. List of Missing Lots
-#. [pages.ReportIndex.pk_missing_cartridges_report]
-#. defaultMessage is:
-#. List of Missing Lots
 #: extracted_strings.json
 msgid "List of Missing Lots"
 msgstr "Список недостающих лотов"
+
+#. [pages.ReportIndex.unreconciled_inventory_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#. [pages.ReportIndex.pk_missing_cartridges_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#: extracted_strings.json
+msgid "List of Unreconciled Inventory"
+msgstr "Список несвернутой инвентаризации"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -6586,6 +6700,13 @@ msgstr "Местоположение"
 #: extracted_strings.json
 msgid "Location Tracking"
 msgstr "Отслеживание местоположения"
+
+#. [pages.InventoryTabs.New.locationsWithThisItem]
+#. defaultMessage is:
+#. Locations with this Item
+#: extracted_strings.json
+msgid "Locations with this Item"
+msgstr "Места с этим предметом"
 
 #. [page.contacts.person.locked]
 #. defaultMessage is:
@@ -7667,6 +7788,9 @@ msgstr "NTP"
 #. [pages.admin.name]
 #. defaultMessage is:
 #. Name
+#. [p.PkDashboard.utilizationName]
+#. defaultMessage is:
+#. Name
 #. [pages.NotificationDetail.fieldName]
 #. defaultMessage is:
 #. Name
@@ -7683,6 +7807,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.DeviceDetailEdit.name]
+#. defaultMessage is:
+#. Name
+#. [pages.ErrorRate.name]
 #. defaultMessage is:
 #. Name
 #: extracted_strings.json
@@ -7999,6 +8126,9 @@ msgstr "Нет питания"
 #. [pages.NotificationDetail.type.NoResult]
 #. defaultMessage is:
 #. No Result
+#. [pages.ErrorRate.noResult]
+#. defaultMessage is:
+#. No Result
 #: extracted_strings.json
 msgid "No Result"
 msgstr "Нет результата"
@@ -8047,6 +8177,20 @@ msgstr "Тесты не проводились"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "Контакты, привязанные к сайту, отсутствуют"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToRemove]
+#. defaultMessage is:
+#. No inventory to remove
+#: extracted_strings.json
+msgid "No inventory to remove"
+msgstr "Не нужно удалять инвентарь"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToTransfer]
+#. defaultMessage is:
+#. No inventory to transfer
+#: extracted_strings.json
+msgid "No inventory to transfer"
+msgstr "Нет инвентаря для передачи"
 
 #. [pages.SiteDetail.siteWithoutLocation]
 #. defaultMessage is:
@@ -9489,6 +9633,9 @@ msgstr "Провинция"
 #. [pages.common.state_PK]
 #. defaultMessage is:
 #. Province/Region
+#. [p.PkDashboard.provinceRegion]
+#. defaultMessage is:
+#. Province/Region
 #: extracted_strings.json
 msgid "Province/Region"
 msgstr "Провинция/Регион"
@@ -9968,6 +10115,9 @@ msgid "Recepient Name"
 msgstr "Имя получателя"
 
 #. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#. [pages.inventoryList.reconciliationConfiguration]
 #. defaultMessage is:
 #. Reconciliation Configuration
 #: extracted_strings.json
@@ -11153,6 +11303,13 @@ msgstr "Выберите неделю…"
 msgid "Select Year..."
 msgstr "Выберите год…"
 
+#. [pages.InventoryTabs.siteList.selectAllLocations]
+#. defaultMessage is:
+#. Select all Locations to track inventory for this item
+#: extracted_strings.json
+msgid "Select all Locations to track inventory for this item"
+msgstr "Выберите все местоположения для отслеживания запасов этого товара"
+
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select approval status...
@@ -12053,6 +12210,17 @@ msgstr "Длина Sms-сообщения не должна превышать 2
 msgid "Software Type"
 msgstr "Тип программного обеспечения"
 
+#. [pages.consumables.consumablesApplicableForThisSiteTooltip]
+#. defaultMessage is:
+#. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
+#: extracted_strings.json
+msgid ""
+"Some consumables may appear unavailable for selection change as the site has "
+"inventory or unreconciled transactions"
+msgstr ""
+"Некоторые расходные материалы могут оказаться недоступными для изменения "
+"выбора, так как на сайте есть инвентаризация или невыверенные транзакции"
+
 #. [pages.InventoryTabs.New.trackByLocationTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
@@ -12264,15 +12432,15 @@ msgstr "Отправить"
 msgid "Success"
 msgstr "Успешно"
 
-#. [pages.ReportIndex.reportTBWorkloadSummary_description]
+#. [pages.ReportIndex.reportTBWorkloadSummaryDescription]
 #. defaultMessage is:
-#. Summary of TB Workload grouped by month, quarter and year for all regions
+#. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
 msgid ""
-"Summary of TB Workload grouped by month, quarter and year for all regions"
+"Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
-"Сводные данные о нагрузке по ТБ, сгруппированные по месяцам, кварталам и "
-"годам для всех регионов"
+"Сводная информация о нагрузке по туберкулезу, сгруппированная по месяцам, "
+"кварталам и годам для всех регионов."
 
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
@@ -12659,7 +12827,7 @@ msgstr "Испытания, проведенные в этом году"
 msgid "Tests Run Between"
 msgstr "Пробег тестов между"
 
-#. [pages.ReportIndex.missing_cartridges_report_description]
+#. [pages.ReportIndex.unreconciled_inventory_report_description]
 #. defaultMessage is:
 #. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
 #: extracted_strings.json
@@ -13664,6 +13832,16 @@ msgstr "Всего ошибок"
 msgid "Total MTB detected and MTB Trace detected"
 msgstr "Общее количество обнаруженных МТБ и обнаруженных следов МТБ"
 
+#. [p.PkDashboard.utilizationTotalModules]
+#. defaultMessage is:
+#. Total Modules
+#. [pages.ErrorRate.totalModules]
+#. defaultMessage is:
+#. Total Modules
+#: extracted_strings.json
+msgid "Total Modules"
+msgstr "Всего Модулей"
+
 #. [pages.inventoryList.totalOnHand]
 #. defaultMessage is:
 #. Total On Hand
@@ -13706,7 +13884,13 @@ msgstr ""
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [p.PkDashboard.utilizationTotalTests]
+#. defaultMessage is:
+#. Total Tests
 #. [pages.workload.totalTests]
+#. defaultMessage is:
+#. Total Tests
+#. [pages.ErrorRate.totalTests]
 #. defaultMessage is:
 #. Total Tests
 #. [pages.XDR.cntAll]
@@ -14141,6 +14325,13 @@ msgstr "Смешение верхнего и нижнего регистров"
 msgid "Usage Statistics Report"
 msgstr "Отчет о статистике использования"
 
+#. [p.PkDashboard.used]
+#. defaultMessage is:
+#. Used
+#: extracted_strings.json
+msgid "Used"
+msgstr "Используемый"
+
 #. [page.contacts.person.userLockedOut]
 #. defaultMessage is:
 #. User is locked?
@@ -14200,6 +14391,13 @@ msgstr ""
 "Коэффициент использования: (Общее количество тестов за выбранный период * "
 "100) / (Суточная производительность устройства * Рабочие дни за выбранный "
 "период)"
+
+#. [p.PkDashboard.utilizationPercent]
+#. defaultMessage is:
+#. Utilization%
+#: extracted_strings.json
+msgid "Utilization%"
+msgstr "Использование%"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -16300,9 +16498,6 @@ msgstr "{unit} суммарные калибровки"
 #~ "Это уведомление будет срабатывать для результатов, полученных в течение "
 #~ "последних 30 дней. Для более старых результатов уведомление не "
 #~ "срабатывает."
-
-#~ msgid "Time cannot be greater than current time"
-#~ msgstr "Время не может быть больше текущего времени"
 
 #~ msgid "A person with the same email exists. Please use a different email."
 #~ msgstr ""
