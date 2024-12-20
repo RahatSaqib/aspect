@@ -7,7 +7,7 @@ async function listConsumableTypes(request) {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const { getCount, getItems } = getConsumableTypes(dataConstraints, query)
+  const { getCount, getItems } = await getConsumableTypes(dataConstraints, query)
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
   const result = { ok: true, total, length: data.length, data }
   return result
