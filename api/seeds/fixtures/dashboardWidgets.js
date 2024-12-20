@@ -616,7 +616,7 @@ const errorRate = {
         ,0)
       ,'%') AS cnt
       FROM (
-        SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, d.dailyCapacity
+        SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, d.dailyTestCapacity
           FROM Result AS r
           INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
           INNER JOIN Device AS d ON d.id = r.deviceId
