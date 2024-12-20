@@ -273,21 +273,20 @@ const utilizationRate = {
       IFNULL(
         SUM(resultCount)
         /
-        SUM(dailyCapacity * GetWeekdaysInRange(NOW(), DATE_FORMAT(NOW(), '%Y-%m-01'))) * 100
+        SUM(dailyTestCapacity * GetWeekdaysInRange(NOW(), DATE_FORMAT(NOW(), '%Y-%m-01'))) * 100
       ,0)
     ,0)
   ,'%') AS cnt
   FROM (
-    SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, dc.dailyCapacity
+    SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity
       FROM Device AS d
       INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
       INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
-      INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Result AS r ON d.id= r.deviceId AND DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn) AND DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dtc.hasResults = 1
-    GROUP BY d.id, dc.dailyCapacity
+    GROUP BY d.id, d.dailyTestCapacity
   ) AS innerQuery`,
   sqlForStatUnit: `SELECT
   CONCAT(
@@ -295,21 +294,20 @@ const utilizationRate = {
       IFNULL(
         SUM(resultCount)
         /
-        SUM(dailyCapacity * GetWeekdaysInRange(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'))) * 100
+        SUM(dailyTestCapacity * GetWeekdaysInRange(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'))) * 100
       ,0)
     ,0)
   ,'%') AS cnt
   FROM (
-    SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, dc.dailyCapacity
+    SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity
       FROM Device AS d
       INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
       INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
-      INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Result AS r ON d.id = r.deviceId AND DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') > r.endedOn AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') < r.endedOn AND DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dtc.hasResults = 1
-    GROUP BY d.id, dc.dailyCapacity
+    GROUP BY d.id, d.dailyTestCapacity
   ) AS innerQuery`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
@@ -618,13 +616,12 @@ const errorRate = {
         ,0)
       ,'%') AS cnt
       FROM (
-        SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity
+        SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, d.dailyCapacity
           FROM Result AS r
           INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
           INNER JOIN Device AS d ON d.id = r.deviceId
           INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
           INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
-          INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
@@ -642,20 +639,19 @@ const errorRate = {
         ,0)
       ,'%') AS cnt
       FROM (
-        SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity
+        SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, d.dailyTestCapacity
           FROM Result AS r
           INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
           INNER JOIN Device AS d ON d.id = r.deviceId
           INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
           INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
-          INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         WHERE DATE(r.endedOn)
               BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
               AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
               AND dtc.hasResults = 1
-        GROUP BY r.deviceId, dc.dailyCapacity
+        GROUP BY r.deviceId, d.dailyTestCapacity
       ) AS innerQuery`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
