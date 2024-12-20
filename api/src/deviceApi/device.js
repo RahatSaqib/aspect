@@ -106,47 +106,40 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
 
 // --------------------------------------------------------------------
 async function updateDeviceDetails(knex, deviceId, deviceDetails, now, isFastImport) {
-  if (deviceId) {
-    // Compare existing device to these details
-    // which field vakues are different?
-    const existingDevice = await knex('Device as d').where({ 'd.id': deviceId }).first()
-    /* validates if the tz is included in our db */
-    if (deviceDetails.timezone && existingDevice.timezone !== deviceDetails.timezone) {
-      const { timeZone: defaultTimeZone } =
-        (await knex('Site as s')
-          .join('Geography as g', 's.geographyId', 'g.id')
-          .join('Country as c', 'g.countryId', 'c.id')
-          .where('s.id', existingDevice.siteId)
-          .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
-        (await knex('Country as c').first('c.timezone as timeZone'))
-      const { existingTimeZone } = (await knex('TimeZone')
-        .where('id', deviceDetails.timezone)
-        .first('id as existingTimeZone')) || {
-        existingTimeZone: defaultTimeZone,
-      }
+  // Compare existing device to these details
+  // which field vakues are different?
+  const existingDevice = await knex('Device as d').where({ 'd.id': deviceId }).first()
+  /* validates if the tz is included in our db */
+  if (deviceDetails.timezone && existingDevice.timezone !== deviceDetails.timezone) {
+    const { timeZone: defaultTimeZone } =
+      (await knex('Site as s')
+        .join('Geography as g', 's.geographyId', 'g.id')
+        .join('Country as c', 'g.countryId', 'c.id')
+        .where('s.id', existingDevice.siteId)
+        .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
+      (await knex('Country as c').first('c.timezone as timeZone'))
+    const { existingTimeZone } = (await knex('TimeZone')
+      .where('id', deviceDetails.timezone)
+      .first('id as existingTimeZone')) || {
+      existingTimeZone: defaultTimeZone,
+    }
 
-      deviceDetails.timezone = existingTimeZone
-    }
-    const changedDetails = _.omitBy(
-      deviceDetails,
-      (v, k) => ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
-    )
-    if (!_.isEmpty(changedDetails) && !isFastImport) {
-      await knex('Device')
-        .where({ id: deviceId })
-        .update(
-          _.merge({}, changedDetails, {
-            updatedBy: null,
-            updatedOn: now,
-          })
-        )
-    }
+    deviceDetails.timezone = existingTimeZone
   }
-  return knex('Device as d')
-    .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .where({ 'd.id': deviceId })
-    .first('d.*', 'g.id as geographyId')
+  const changedDetails = _.omitBy(
+    deviceDetails,
+    (v, k) => ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
+  )
+  if (!_.isEmpty(changedDetails) && !isFastImport) {
+    await knex('Device')
+      .where({ id: deviceId })
+      .update(
+        _.merge({}, changedDetails, {
+          updatedBy: null,
+          updatedOn: now,
+        })
+      )
+  }
 }
 
 async function getDeviceConfiguration(knex, deviceId) {
@@ -172,7 +165,8 @@ async function getDeviceConfigurationFromQuery(deviceQuery) {
   if (device == null || device.configurationData == null) {
     return null
   }
-  return { data: JSON.parse(device.configurationData) }
+  // Exclude 'latestErrors' from 'configurationData' in the response to reduce network data usage
+  return { data: _.omit(JSON.parse(device.configurationData), ['latestErrors']) }
 }
 
 async function addDeviceOperation(knex, deviceId, payload, now = new Date()) {

@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listPartners, showPartner } = require('./service')
+const { listPartners, showPartner, updatePartnerInventory } = require('./service')
 const getCurrentPartner = require('./getCurrentPartner')
 const { listPartnersForSelectList } = require('./listPartnersForSelectList')
 
@@ -57,6 +57,22 @@ const routes = [
       validate: {
         query: {
           partnerType: Joi.string().allow('').description('Filter for partner type externalId'),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/partner/current-partner/inventory',
+    handler: asyncHandler(updatePartnerInventory),
+    config: {
+      auth: { scope: ['partner'] },
+      description: 'Update partner inventory',
+      notes: 'Update current partner inventory configuration',
+      validate: {
+        payload: {
+          inventoryAdjustment: Joi.string().allow('', null),
+          inventoryStrategy: Joi.string().allow('', null),
         },
       },
     },

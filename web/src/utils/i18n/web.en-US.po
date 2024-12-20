@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-26T04:43:44.240Z\n"
+"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -183,6 +183,15 @@ msgstr ""
 "A list of all GeneXpert device modules marked as 'do not use'. Includes "
 "device name, module serial."
 
+#. [pages.ReportIndex.deviceSummaryReportDescription]
+#. defaultMessage is:
+#. A list of all devices in the system and aggregated test results per device.
+#: extracted_strings.json
+msgid ""
+"A list of all devices in the system and aggregated test results per device."
+msgstr ""
+"A list of all devices in the system and aggregated test results per device."
+
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
 #. A username is required
@@ -302,7 +311,6 @@ msgstr "Abbott m2000 Plasma HIV VL"
 #. defaultMessage is:
 #. Abbreviation
 #: extracted_strings.json
-#| msgid "Calibration"
 msgid "Abbreviation"
 msgstr "Abbreviation"
 
@@ -837,7 +845,6 @@ msgstr "Are you sure to delete notification {notificationName}?"
 #. defaultMessage is:
 #. Are you sure to delete this {entity}?
 #: extracted_strings.json
-#| msgid "Are you sure to delete notification {notificationName}?"
 msgid "Are you sure to delete this {entity}?"
 msgstr "Are you sure to delete this {entity}?"
 
@@ -1308,7 +1315,6 @@ msgstr ""
 #. defaultMessage is:
 #. Break Out by Lot
 #: extracted_strings.json
-#| msgid "Break out by lot"
 msgid "Break Out by Lot"
 msgstr "Break Out by Lot"
 
@@ -1326,7 +1332,6 @@ msgstr "Break out by lot"
 #. defaultMessage is:
 #. Breakdown by Lots
 #: extracted_strings.json
-#| msgid "Break out by lot"
 msgid "Breakdown by Lots"
 msgstr "Breakdown by Lots"
 
@@ -1613,6 +1618,13 @@ msgstr "Calibration Date is required"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Calibration Due Date"
+
+#. [pages.NewInventoryDialogForm.quantityNotMoreThanOnHand]
+#. defaultMessage is:
+#. Can not be greater than on-hand
+#: extracted_strings.json
+msgid "Can not be greater than on-hand"
+msgstr "Can not be greater than on-hand"
 
 #. [errorResponseMessages.removeInventory.PUT.notExisted.resolution]
 #. defaultMessage is:
@@ -1941,6 +1953,13 @@ msgstr "Collected On"
 msgid "Collection of Results"
 msgstr "Collection of Results"
 
+#. [p.PkDashboard.combinedGX6CGX10CDevices]
+#. defaultMessage is:
+#. Combined GX-6C/GX-10C Devices
+#: extracted_strings.json
+msgid "Combined GX-6C/GX-10C Devices"
+msgstr "Combined GX-6C/GX-10C Devices"
+
 #. [filter.AssaySelectField.assayCommCareGatesRDT]
 #. defaultMessage is:
 #. CommCare Gates RDT
@@ -2110,6 +2129,17 @@ msgstr "Consumables"
 msgid "Consumables applicable for the site"
 msgstr "Consumables applicable for the site"
 
+#. [pages.consumables.consumablesApplicableForThisSite]
+#. defaultMessage is:
+#. Consumables applicable for this site
+#: extracted_strings.json
+#| msgid "Consumables applicable for the site"
+msgid "Consumables applicable for this site"
+msgstr "Consumables applicable for this site"
+
+#. [p.PkDashboard.consumptionRate]
+#. defaultMessage is:
+#. Consumption Rate
 #. [pages.InventoryTabs.New.consumpationRate]
 #. defaultMessage is:
 #. Consumption Rate
@@ -2378,7 +2408,6 @@ msgstr "Create"
 #. defaultMessage is:
 #. Create New
 #: extracted_strings.json
-#| msgid "Create Site"
 msgid "Create New"
 msgstr "Create New"
 
@@ -2583,6 +2612,14 @@ msgstr "Current Network Status"
 #: extracted_strings.json
 msgid "Current Password"
 msgstr "Current Password"
+
+#. [p.PkDashboard.currentQty]
+#. defaultMessage is:
+#. Current Qty.
+#: extracted_strings.json
+#| msgid "Sent Qty"
+msgid "Current Qty."
+msgstr "Current Qty."
 
 #. [p.PkDashboard.RRCurrent]
 #. defaultMessage is:
@@ -2923,6 +2960,14 @@ msgstr "Day(s) before the end of the month"
 msgid "Days"
 msgstr "Days"
 
+#. [p.PkDashboard.daysLeft]
+#. defaultMessage is:
+#. Days Left
+#: extracted_strings.json
+#| msgid "Days Stock Left"
+msgid "Days Left"
+msgstr "Days Left"
+
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
@@ -3188,7 +3233,6 @@ msgstr "Device Calibration Report"
 #. defaultMessage is:
 #. Device Configurations
 #: extracted_strings.json
-#| msgid "Device Calibration"
 msgid "Device Configurations"
 msgstr "Device Configurations"
 
@@ -4030,6 +4074,14 @@ msgstr "Error Sending Reset Password Email"
 msgid "Error: Date Selection Required to Download Report"
 msgstr "Error: Date Selection Required to Download Report"
 
+#. [pages.ErrorRate.errors]
+#. defaultMessage is:
+#. Errors
+#: extracted_strings.json
+#| msgid "Error"
+msgid "Errors"
+msgstr "Errors"
+
 #. [components.shared.everyDay]
 #. defaultMessage is:
 #. Every Day(s)
@@ -4232,7 +4284,6 @@ msgstr "Export device list"
 #. defaultMessage is:
 #. Exporting Device Log Failed
 #: extracted_strings.json
-#| msgid "Exporting Devices Failed"
 msgid "Exporting Device Log Failed"
 msgstr "Exporting Device Log Failed"
 
@@ -4260,7 +4311,6 @@ msgstr "Exporting DeviceApiKeys Failed"
 #. defaultMessage is:
 #. Exporting DeviceLog Failed
 #: extracted_strings.json
-#| msgid "Exporting Devices Failed"
 msgid "Exporting DeviceLog Failed"
 msgstr "Exporting DeviceLog Failed"
 
@@ -4671,6 +4721,46 @@ msgstr "GP Not Detected - NP Detected"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP Not Detected - NP Not Detected"
+
+#. [p.PkDashboard.gxSites]
+#. defaultMessage is:
+#. GX Sites
+#: extracted_strings.json
+#| msgid "Sites"
+msgid "GX Sites"
+msgstr "GX Sites"
+
+#. [p.PkDashboard.gx10CDevices]
+#. defaultMessage is:
+#. GX-10C Devices
+#: extracted_strings.json
+#| msgid "Devices"
+msgid "GX-10C Devices"
+msgstr "GX-10C Devices"
+
+#. [p.PkDashboard.gx10CModules]
+#. defaultMessage is:
+#. GX-10C Modules
+#: extracted_strings.json
+#| msgid "Number of GX-10C modules"
+msgid "GX-10C Modules"
+msgstr "GX-10C Modules"
+
+#. [p.PkDashboard.gx6CDevices]
+#. defaultMessage is:
+#. GX-6C Devices
+#: extracted_strings.json
+#| msgid "Devices"
+msgid "GX-6C Devices"
+msgstr "GX-6C Devices"
+
+#. [p.PkDashboard.gx6CModules]
+#. defaultMessage is:
+#. GX-6C Modules
+#: extracted_strings.json
+#| msgid "Number of GX-6C modules"
+msgid "GX-6C Modules"
+msgstr "GX-6C Modules"
 
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
@@ -5789,7 +5879,6 @@ msgstr "Instrument Serial"
 #. defaultMessage is:
 #. Instruments
 #: extracted_strings.json
-#| msgid "Instrument Model"
 msgid "Instruments"
 msgstr "Instruments"
 
@@ -5817,6 +5906,9 @@ msgid "Insufficient Permissions"
 msgstr "Insufficient Permissions"
 
 #. [legends.Unknown.resultCategoryInvalid]
+#. defaultMessage is:
+#. Invalid
+#. [pages.ErrorRate.invalid]
 #. defaultMessage is:
 #. Invalid
 #: extracted_strings.json
@@ -5886,6 +5978,14 @@ msgstr "Invalid webhook url"
 msgid "Inventory"
 msgstr "Inventory"
 
+#. [pages.Consumable.New.inventoryDetail]
+#. defaultMessage is:
+#. Inventory Detail
+#: extracted_strings.json
+#| msgid "Inventory Details"
+msgid "Inventory Detail"
+msgstr "Inventory Detail"
+
 #. [pages.Consumable.New.inventoryDetails]
 #. defaultMessage is:
 #. Inventory Details
@@ -5931,7 +6031,6 @@ msgstr "Inventory Item Name Required"
 #. defaultMessage is:
 #. Inventory Items
 #: extracted_strings.json
-#| msgid "Inventory Item"
 msgid "Inventory Items"
 msgstr "Inventory Items"
 
@@ -5968,7 +6067,6 @@ msgstr "Inventory Overview"
 #. defaultMessage is:
 #. Inventory Reconciliation
 #: extracted_strings.json
-#| msgid "Inventory on Hand"
 msgid "Inventory Reconciliation"
 msgstr "Inventory Reconciliation"
 
@@ -6297,6 +6395,14 @@ msgstr "Last"
 msgid "Last 30 Days"
 msgstr "Last 30 Days"
 
+#. [p.PkDashboard.last6Months]
+#. defaultMessage is:
+#. Last 6 Months
+#: extracted_strings.json
+#| msgid "Last Month"
+msgid "Last 6 Months"
+msgstr "Last 6 Months"
+
 #. [pages.dateRangeSelector.last7Days]
 #. defaultMessage is:
 #. Last 7 Days
@@ -6456,12 +6562,19 @@ msgstr "Lipid Panel"
 #. [pages.ReportIndex.missing_cartridges_report]
 #. defaultMessage is:
 #. List of Missing Lots
-#. [pages.ReportIndex.pk_missing_cartridges_report]
-#. defaultMessage is:
-#. List of Missing Lots
 #: extracted_strings.json
 msgid "List of Missing Lots"
 msgstr "List of Missing Lots"
+
+#. [pages.ReportIndex.unreconciled_inventory_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#. [pages.ReportIndex.pk_missing_cartridges_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#: extracted_strings.json
+msgid "List of Unreconciled Inventory"
+msgstr "List of Unreconciled Inventory"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -6578,9 +6691,15 @@ msgstr "Location"
 #. defaultMessage is:
 #. Location Tracking
 #: extracted_strings.json
-#| msgid "Location"
 msgid "Location Tracking"
 msgstr "Location Tracking"
+
+#. [pages.InventoryTabs.New.locationsWithThisItem]
+#. defaultMessage is:
+#. Locations with this Item
+#: extracted_strings.json
+msgid "Locations with this Item"
+msgstr "Locations with this Item"
 
 #. [page.contacts.person.locked]
 #. defaultMessage is:
@@ -7662,6 +7781,9 @@ msgstr "NTP"
 #. [pages.admin.name]
 #. defaultMessage is:
 #. Name
+#. [p.PkDashboard.utilizationName]
+#. defaultMessage is:
+#. Name
 #. [pages.NotificationDetail.fieldName]
 #. defaultMessage is:
 #. Name
@@ -7678,6 +7800,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.DeviceDetailEdit.name]
+#. defaultMessage is:
+#. Name
+#. [pages.ErrorRate.name]
 #. defaultMessage is:
 #. Name
 #: extracted_strings.json
@@ -7993,6 +8118,9 @@ msgstr "No Power"
 #. [pages.NotificationDetail.type.NoResult]
 #. defaultMessage is:
 #. No Result
+#. [pages.ErrorRate.noResult]
+#. defaultMessage is:
+#. No Result
 #: extracted_strings.json
 msgid "No Result"
 msgstr "No Result"
@@ -8041,6 +8169,20 @@ msgstr "No Tests Performed"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "No contacts assigned to site"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToRemove]
+#. defaultMessage is:
+#. No inventory to remove
+#: extracted_strings.json
+msgid "No inventory to remove"
+msgstr "No inventory to remove"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToTransfer]
+#. defaultMessage is:
+#. No inventory to transfer
+#: extracted_strings.json
+msgid "No inventory to transfer"
+msgstr "No inventory to transfer"
 
 #. [pages.SiteDetail.siteWithoutLocation]
 #. defaultMessage is:
@@ -8266,7 +8408,6 @@ msgstr "Notification Logs"
 #. defaultMessage is:
 #. Notification States
 #: extracted_strings.json
-#| msgid "Notifications"
 msgid "Notification States"
 msgstr "Notification States"
 
@@ -8839,7 +8980,6 @@ msgstr "Pending changes"
 #. defaultMessage is:
 #. People
 #: extracted_strings.json
-#| msgid "People alerted"
 msgid "People"
 msgstr "People"
 
@@ -9427,7 +9567,6 @@ msgstr "Processed"
 #. defaultMessage is:
 #. Processing ...
 #: extracted_strings.json
-#| msgid "Processing..."
 msgid "Processing ..."
 msgstr "Processing ..."
 
@@ -9476,6 +9615,9 @@ msgid "Province"
 msgstr "Province"
 
 #. [pages.common.state_PK]
+#. defaultMessage is:
+#. Province/Region
+#. [p.PkDashboard.provinceRegion]
 #. defaultMessage is:
 #. Province/Region
 #: extracted_strings.json
@@ -9538,7 +9680,6 @@ msgstr "Provincial MTB+ detected in current year"
 #. defaultMessage is:
 #. Provincial MTB+ detection trends
 #: extracted_strings.json
-#| msgid "Annual MTB+ detection trends"
 msgid "Provincial MTB+ detection trends"
 msgstr "Provincial MTB+ detection trends"
 
@@ -9637,7 +9778,6 @@ msgstr "Provincial XDR testing trends"
 #. defaultMessage is:
 #. Provincial/District FQ Diagnosis Trends
 #: extracted_strings.json
-#| msgid "Provincial/District RR Diagnosis Trends"
 msgid "Provincial/District FQ Diagnosis Trends"
 msgstr "Provincial/District FQ Diagnosis Trends"
 
@@ -9941,7 +10081,6 @@ msgstr "Received On"
 #. defaultMessage is:
 #. Received Qty
 #: extracted_strings.json
-#| msgid "Received On"
 msgid "Received Qty"
 msgstr "Received Qty"
 
@@ -9960,6 +10099,9 @@ msgid "Recepient Name"
 msgstr "Recepient Name"
 
 #. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#. [pages.inventoryList.reconciliationConfiguration]
 #. defaultMessage is:
 #. Reconciliation Configuration
 #: extracted_strings.json
@@ -10163,7 +10305,6 @@ msgstr "Report on Xpert MTB/RIF and Covid - NTP Use"
 #. defaultMessage is:
 #. Reportable Results
 #: extracted_strings.json
-#| msgid "Only Reportable Results"
 msgid "Reportable Results"
 msgstr "Reportable Results"
 
@@ -11140,6 +11281,14 @@ msgstr "Select Week..."
 msgid "Select Year..."
 msgstr "Select Year..."
 
+#. [pages.InventoryTabs.siteList.selectAllLocations]
+#. defaultMessage is:
+#. Select all Locations to track inventory for this item
+#: extracted_strings.json
+#| msgid "Set the below configurations to manage Inventory across the sites"
+msgid "Select all Locations to track inventory for this item"
+msgstr "Select all Locations to track inventory for this item"
+
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select approval status...
@@ -11605,9 +11754,6 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# Consumable} other {# Consumables} }
 #: extracted_strings.json
-#| msgid ""
-#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#| "supply} other {# supplies} }"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "Consumable} other {# Consumables} }"
@@ -11747,9 +11893,6 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } other {# } }
 #: extracted_strings.json
-#| msgid ""
-#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#| "log} other {# logs} }"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } "
 "other {# } }"
@@ -12045,6 +12188,20 @@ msgstr "Sms message should not be longer than 2000 characters"
 msgid "Software Type"
 msgstr "Software Type"
 
+#. [pages.consumables.consumablesApplicableForThisSiteTooltip]
+#. defaultMessage is:
+#. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
+#: extracted_strings.json
+#| msgid ""
+#| "Some sites may appear unavailable for selection change as they have "
+#| "inventory or unreconciled transactions for the selected Inventory item"
+msgid ""
+"Some consumables may appear unavailable for selection change as the site has "
+"inventory or unreconciled transactions"
+msgstr ""
+"Some consumables may appear unavailable for selection change as the site has "
+"inventory or unreconciled transactions"
+
 #. [pages.InventoryTabs.New.trackByLocationTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
@@ -12135,7 +12292,6 @@ msgstr "State/Region"
 #. defaultMessage is:
 #. States
 #: extracted_strings.json
-#| msgid "State"
 msgid "States"
 msgstr "States"
 
@@ -12256,14 +12412,16 @@ msgstr "Submit"
 msgid "Success"
 msgstr "Success"
 
-#. [pages.ReportIndex.reportTBWorkloadSummary_description]
+#. [pages.ReportIndex.reportTBWorkloadSummaryDescription]
 #. defaultMessage is:
-#. Summary of TB Workload grouped by month, quarter and year for all regions
+#. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
+#| msgid ""
+#| "Summary of TB Workload grouped by month, quarter and year for all regions"
 msgid ""
-"Summary of TB Workload grouped by month, quarter and year for all regions"
+"Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
-"Summary of TB Workload grouped by month, quarter and year for all regions"
+"Summary of TB Workload grouped by month, quarter and year for all regions."
 
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
@@ -12331,7 +12489,6 @@ msgstr "TB AST"
 #. defaultMessage is:
 #. TB Cases Diagnosed
 #: extracted_strings.json
-#| msgid "TB cases diagnosed in"
 msgid "TB Cases Diagnosed"
 msgstr "TB Cases Diagnosed"
 
@@ -12651,7 +12808,7 @@ msgstr "Tests Performed in current year"
 msgid "Tests Run Between"
 msgstr "Tests Run Between"
 
-#. [pages.ReportIndex.missing_cartridges_report_description]
+#. [pages.ReportIndex.unreconciled_inventory_report_description]
 #. defaultMessage is:
 #. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
 #: extracted_strings.json
@@ -13647,6 +13804,17 @@ msgstr "Total Errors"
 msgid "Total MTB detected and MTB Trace detected"
 msgstr "Total MTB detected and MTB Trace detected"
 
+#. [p.PkDashboard.utilizationTotalModules]
+#. defaultMessage is:
+#. Total Modules
+#. [pages.ErrorRate.totalModules]
+#. defaultMessage is:
+#. Total Modules
+#: extracted_strings.json
+#| msgid "Total Results"
+msgid "Total Modules"
+msgstr "Total Modules"
+
 #. [pages.inventoryList.totalOnHand]
 #. defaultMessage is:
 #. Total On Hand
@@ -13688,7 +13856,13 @@ msgstr "Total TB tests with a reportable result in current year"
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [p.PkDashboard.utilizationTotalTests]
+#. defaultMessage is:
+#. Total Tests
 #. [pages.workload.totalTests]
+#. defaultMessage is:
+#. Total Tests
+#. [pages.ErrorRate.totalTests]
 #. defaultMessage is:
 #. Total Tests
 #. [pages.XDR.cntAll]
@@ -13730,7 +13904,6 @@ msgstr "Track by expiration date"
 #. defaultMessage is:
 #. Track by expiry date
 #: extracted_strings.json
-#| msgid "Track by expiration date"
 msgid "Track by expiry date"
 msgstr "Track by expiry date"
 
@@ -13886,7 +14059,6 @@ msgstr "Truenat MTB Plus Test Kit"
 #. defaultMessage is:
 #. Truenat MTB Rif Test Kit
 #: extracted_strings.json
-#| msgid "Truenat MTB Test Kit"
 msgid "Truenat MTB Rif Test Kit"
 msgstr "Truenat MTB Rif Test Kit"
 
@@ -14125,6 +14297,13 @@ msgstr "Upper and Lower Case mix"
 msgid "Usage Statistics Report"
 msgstr "Usage Statistics Report"
 
+#. [p.PkDashboard.used]
+#. defaultMessage is:
+#. Used
+#: extracted_strings.json
+msgid "Used"
+msgstr "Used"
+
 #. [page.contacts.person.userLockedOut]
 #. defaultMessage is:
 #. User is locked?
@@ -14183,6 +14362,14 @@ msgid ""
 msgstr ""
 "Utilization Rate : (Total tests in the selected period * 100) / (Daily "
 "Capacity of device * Working days in the selected period)"
+
+#. [p.PkDashboard.utilizationPercent]
+#. defaultMessage is:
+#. Utilization%
+#: extracted_strings.json
+#| msgid "Utilization"
+msgid "Utilization%"
+msgstr "Utilization%"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -15034,7 +15221,6 @@ msgstr "indicator"
 #. defaultMessage is:
 #. lga name includes "{lgaName}"
 #: extracted_strings.json
-#| msgid "site name includes \"{siteName}\""
 msgid "lga name includes \"{lgaName}\""
 msgstr "lga name includes \"{lgaName}\""
 
@@ -15301,7 +15487,6 @@ msgstr "site name includes \"{siteName}\""
 #. defaultMessage is:
 #. site type is "{siteType}"
 #: extracted_strings.json
-#| msgid "site name includes \"{siteName}\""
 msgid "site type is \"{siteType}\""
 msgstr "site type is \"{siteType}\""
 
@@ -15309,7 +15494,6 @@ msgstr "site type is \"{siteType}\""
 #. defaultMessage is:
 #. state name includes "{stateName}"
 #: extracted_strings.json
-#| msgid "site name includes \"{siteName}\""
 msgid "state name includes \"{stateName}\""
 msgstr "state name includes \"{stateName}\""
 
@@ -15403,7 +15587,6 @@ msgstr "{elapsed} elapsed, {upcoming} upcoming"
 #. defaultMessage is:
 #. {entity} is required
 #: extracted_strings.json
-#| msgid "Site is required"
 msgid "{entity} is required"
 msgstr "{entity} is required"
 
@@ -16248,9 +16431,6 @@ msgstr "{unit} total calibrations"
 
 #~ msgid "Start time cannot be after End time"
 #~ msgstr "Start time cannot be after End time"
-
-#~ msgid "Time cannot be greater than current time"
-#~ msgstr "Time cannot be greater than current time"
 
 #~ msgid ""
 #~ "This notification will be triggered for results ended on within last 30 "

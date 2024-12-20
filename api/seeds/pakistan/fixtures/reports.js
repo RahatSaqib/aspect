@@ -79,30 +79,6 @@ const xpertWorkloadSummaryReport = {
   ],
 }
 
-const missingCartridgesReport = {
-  name: 'List of Missing Lots',
-  description:
-    "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
-  i18nKey: 'missing_cartridges_report',
-  i18nKeyDescription: 'missing_cartridges_report_description',
-  externalId: 'pk_missing_cartridges_report', // folder name in /templates with low dash casing
-  fileName: 'missingCartridgesReport',
-  exportCsv: false,
-  exportExcel: true,
-  sortOrder: 0,
-  validations: [],
-  sheets: [
-    {
-      sortOrder: 0,
-      moduleName: 'inventory/serviceReportsPakistan',
-      functionName: 'missingCartridgesReport',
-      query: {
-        avoidStreaming: true,
-      },
-    },
-  ],
-}
-
 const annualUtilizationRates = {
   name: 'National and Provincial Trends in Annual Utilization Rates',
   description:
@@ -141,6 +117,5 @@ module.exports = {
   xpertSiteDetailedReport,
   xpertSiteSummaryReportSiteWise,
   xpertWorkloadSummaryReport,
-  missingCartridgesReport,
   annualUtilizationRates,
 }

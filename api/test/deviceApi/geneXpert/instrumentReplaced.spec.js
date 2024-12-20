@@ -72,7 +72,7 @@ describe('Backward update db after getting tests from offline device', () => {
     })
     assert.equal(response.statusCode, 200)
 
-    const { id: deviceId, siteId, geographyId, partnerId } = response.body.device
+    const { id: deviceId } = response.body.device
 
     // wait a bit until all MQ jobs are finished after creating a new device
     await waitForIdle()
@@ -121,6 +121,11 @@ describe('Backward update db after getting tests from offline device', () => {
       .where('it.externalId', 'InstrumentReplaced')
       .where('i.deviceId', deviceId)
       .select('i.*')
+    const { siteId, geographyId, partnerId } = await knex('Device as d')
+      .join('Site as s', 'd.siteId', 's.id')
+      .where('d.id', deviceId)
+      .first('d.siteId', 's.geographyId', 'd.partnerId')
+
     assert.equal(issues.length, 1)
     const [issue] = issues
     assert.equal(issue.siteId, siteId)
