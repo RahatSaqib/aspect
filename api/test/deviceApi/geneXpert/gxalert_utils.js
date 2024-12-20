@@ -202,6 +202,7 @@ class GxAlertApiTestContext {
         partnerId: partner.id,
         deviceTypeId: gxAlertDeviceType.id,
         deviceApprovalId: approvedDeviceApproval.id,
+        moduleBayCapacity: 0,
         name: this.basicDevicePayload.name,
         shortName: this.basicDevicePayload.name,
         configurationData: '{}',

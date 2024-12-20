@@ -60,6 +60,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
       siteId: abbottM2000SiteId,
       deviceTypeId: abbottM2000DeviceType.id,
       deviceApprovalId: approvedDeviceApproval.id,
+      moduleBayCapacity: 0,
       name: 'Some Abbott M2000 Device',
       shortName: 'Abbott M2000',
       configurationData: '{}',

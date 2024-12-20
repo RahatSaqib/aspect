@@ -47,6 +47,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       partnerId: partner.id,
       deviceTypeId: senaiteLimsDeviceType.id,
       deviceApprovalId: approvedDeviceApproval.id,
+      moduleBayCapacity: 0,
       siteId: senaiteLimsSiteId,
       name: 'Some Senaite LIMS',
       shortName: 'Senaite LIMS',

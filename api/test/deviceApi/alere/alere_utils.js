@@ -160,6 +160,7 @@ class DeviceApiTestContext {
         partnerId: partner.id,
         deviceTypeId: alereFtpConnectorDeviceType.id,
         deviceApprovalId: approvedApprovalStatus.id,
+        moduleBayCapacity: 0,
         name: 'Some Alere FTP Connector',
         shortName: 'Alere FTP',
         configurationData: '{}',

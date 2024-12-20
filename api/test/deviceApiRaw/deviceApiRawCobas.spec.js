@@ -53,6 +53,7 @@ describe('Device API Raw routes for cobas', () => {
         siteId,
         deviceTypeId: cobasDeviceType.id,
         deviceApprovalId: approvedDeviceApproval.id,
+        moduleBayCapacity: 0,
         name: 'Some COBAS Device',
         shortName: 'COBAS',
         configurationData: '{}',

@@ -63,7 +63,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       partnerId: partner.id,
       siteId,
       deviceTypeId: truenatDeviceType.id,
-      dailyTestCapacity: 8,
+      moduleBayCapacity: 0,
       deviceApprovalId: approvedDeviceApproval.id,
       name: 'Some Truenat Device',
       shortName: 'TRUENAT',

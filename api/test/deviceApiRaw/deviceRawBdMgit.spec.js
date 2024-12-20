@@ -51,6 +51,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       siteId: bdMgitSiteId,
       deviceTypeId: bdMgitDeviceType.id,
       deviceApprovalId: approvedDeviceApproval.id,
+      moduleBayCapacity: 0,
       name: 'Some BD MGIT Device',
       shortName: 'BD MGIT',
       configurationData: '{}',

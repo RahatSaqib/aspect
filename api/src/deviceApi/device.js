@@ -288,7 +288,7 @@ async function createNewDevice(
     siteId,
     deviceTypeId: deviceType.id,
     dailyTestCapacity: deviceType.id === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
-    moduleBayCapacity: deviceType.id === 'CepheidGeneXpert' ? 4 : null,
+    moduleBayCapacity: deviceType.id === 'CepheidGeneXpert' ? 4 : 0,
     deviceApprovalId,
     name,
     serial,
