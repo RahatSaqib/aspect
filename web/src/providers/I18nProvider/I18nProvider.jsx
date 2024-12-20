@@ -5,6 +5,7 @@ import { createIntl, createIntlCache, RawIntlProvider } from 'react-intl'
 import translation from '../../utils/i18n/translation.json'
 import { getTimezoneById } from '../../utils/utils/timezone'
 import dateFNSLocales from './dateFNSLocales'
+import config from '../../config'
 
 // This is optional but highly recommended
 // since it prevents memory leak
@@ -12,7 +13,7 @@ const cache = createIntlCache()
 
 const I18nProvider = ({ timezoneId, children }) => {
   const validTimeZone = getTimezoneById(timezoneId)
-  const [locale, setLocale] = useState(localStorage.getItem('asCulture') || 'en')
+  const [locale, setLocale] = useState(localStorage.getItem('asCulture') || config.defaultCulture)  
   const [intl, setIntl] = useState({})
 
   useEffect(() => {
