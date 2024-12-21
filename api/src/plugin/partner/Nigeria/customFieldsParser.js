@@ -1,7 +1,7 @@
 const _ = require('lodash')
 
 const hivRegex =
-  /HIV.?POSITIVE|HIV.?POS|HIV[\s=-]*P|HIV\+|HIV.?UNK(NOWN)|HIV.?\?|HIV.?NEGATIVE|HIV.?NEG|HIV[\s=-]*N|HIV-/i
+  /HIV.?POSITIVE|HIV.?POS|HIV[\s=-]*P|HIV\+|HIV.?UNK(NOWN)?|HIV.?UK|HIV.?UN|HIV.?UKN|HIV.?\?|HIV.?NEGATIVE|HIV.?NEG|HIV[\s=-]*N|HIV-/i
 const drRegex = /(^|\s)(dr[?]),?($|\s)/i
 const ageYearsRegex = /(^|,|\s|:)([1]?[0-9]{1,2})(YRS|YEARS|,)?($|\s|,|\/)/i
 const genderRegex = /\b(female|male|m|f)\b/i
@@ -36,7 +36,7 @@ function parseNotes(notes) {
 
   // HIV status
   if (/HIV.?POSITIVE|HIV.?POS|HIV[\s=-]*P|HIV\+/i.test(notes)) patientData.HivStatus = 'HIV Positive'
-  else if (/HIV.?UNK(NOWN)|HIV.?\?/i.test(notes)) patientData.HivStatus = 'HIV Unknown'
+  else if (/HIV.?UNK(NOWN)?|HIV.?UK|HIV.?UN|HIV.?UKN|HIV.?\?/i.test(notes)) patientData.HivStatus = 'HIV Unknown'
   else if (/HIV.?NEGATIVE|HIV.?NEG|HIV[\s=-]*N|HIV-/i.test(notes)) patientData.HivStatus = 'HIV Negative'
 
   // DR suspect

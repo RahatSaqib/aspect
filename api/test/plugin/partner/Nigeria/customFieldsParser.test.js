@@ -108,6 +108,28 @@ describe('parseNotes', () => {
         },
       },
       {
+        given: '45YRS,F,ADD- 2 AGBEJE STR.08133413 480, HIV-UNK,VOL-2MLS,APP- MUCOPURULENT,FACILITY- PHC ITA-OSU',
+        expected: {
+          patientData: {
+            PatientAge: 45,
+            HivStatus: 'HIV Unknown',
+            PatientStreet: 'FADD- 2 AGBEJE STR08133413 480 VOL-2MLSAPP- MUCOFACILITY- PHC ITA-OSU',
+            PatientGender: 'Female',
+          },
+        },
+      },
+      {
+        given: '45YRS,F,ADD- 2 AGBEJE STR.08133413 480, HIV-UK,VOL-2MLS,APP- MUCOPURULENT,FACILITY- PHC ITA-OSU',
+        expected: {
+          patientData: {
+            PatientAge: 45,
+            HivStatus: 'HIV Unknown',
+            PatientStreet: 'FADD- 2 AGBEJE STR08133413 480 VOL-2MLSAPP- MUCOFACILITY- PHC ITA-OSU',
+            PatientGender: 'Female',
+          },
+        },
+      },
+      {
         given: 'F 79YRS 25, BARKINGON STR QUARRY ROAD ABK HIV? MUCOS AIVARY S.H.I',
         expected: {
           patientData: {
