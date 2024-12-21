@@ -1,5 +1,4 @@
-const jobFunctions = require('./jobFunctions')
-const webhookServers = require('../../fixtures/webhookServers')
+const jobFunctions = require('../../fixtures/jobFunctions')
 
 module.exports = {
   partner: {
@@ -11,10 +10,9 @@ module.exports = {
   adminUserName: 'admin',
   adminPassword: 'test07',
   defaultPassword: 'azD45r', // default password for users that are not admins
-  plugin: '',
+  plugin: 'nigeria',
   fixtures: {
     jobFunctions,
-    webhookServers,
   },
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
@@ -25,4 +23,18 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://nigeria.aspect.id',
   apiUrl: 'https://nigeria.aspect.id/api',
+  excludePattern: '\\d{4}-[AaBbCcDdEe]-[1-9]',
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        GxAlertApiEndpoint: 'https://nigeria.gxalert.com/api/',
+        EnableAspectSync: true,
+        SendResultsToAspect: true,
+        AspectUploadExcludePatientId: false,
+        AspectApiEndpoint: 'https://nigeria.aspect.id/api',
+        MigrateAspectApiKey: true,
+      },
+    },
+  ],
 }
