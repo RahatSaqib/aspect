@@ -150,7 +150,12 @@ const LIST_FIELDS_UTC = {
   treatmentStatusInfo: knex.raw(
     "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end"
   ),
-  patientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))'),
+  patientId: knex.raw(`
+    COALESCE(
+      JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")),
+      JSON_UNQUOTE(JSON_EXTRACT(sp.sampleData, "$.patientExternalId"))
+    )
+  `),
   assayId: 'r.assayId',
   resultCategory1Name: 'rc1.name',
   resultCategory1I18nKey: 'rc1.i18nKey',
@@ -163,6 +168,7 @@ const LIST_FIELDS_UTC = {
   diseaseName: 'dis.name',
   diseaseExternalId: 'dis.externalId',
   requiresTreatment: 'rca.requiresTreatment',
+  // samplePatientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(sp.sampleData, "$.patientExternalId"))'),
 }
 
 /**
