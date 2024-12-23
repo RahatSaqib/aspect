@@ -168,7 +168,6 @@ const LIST_FIELDS_UTC = {
   diseaseName: 'dis.name',
   diseaseExternalId: 'dis.externalId',
   requiresTreatment: 'rca.requiresTreatment',
-  // samplePatientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(sp.sampleData, "$.patientExternalId"))'),
 }
 
 /**
