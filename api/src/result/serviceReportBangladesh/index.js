@@ -138,36 +138,42 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
                       ${resultCategoryIds.NoResult})`
 
   return {
-    drTb10AData: knex('Result as r')
+    drTb10AData: knex
+      .with(
+        'modulesActive',
+        knex.raw(`
+        SELECT
+          r.deviceId,
+          COUNT(DISTINCT CONCAT(r.instrumentSerial, '-', CAST(REGEXP_SUBSTR(r.moduleName, '[0-9]+') AS UNSIGNED))) AS cntModulesActive
+        FROM
+          Result r
+        WHERE
+          r.assayId IN (3, 11, 4)
+        GROUP BY
+          r.deviceId
+      `)
+      )
+      .select(
+        'r.deviceId',
+        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
+        knex.raw(`d.moduleBayCapacity as cntModules`),
+        knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive` from CTE
+      )
+      .from('Result as r')
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
       .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
       .innerJoin('Assay as a', 'r.assayId', 'a.id')
       .leftOuterJoin('Site as s', 's.id', 'r.siteId')
       .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-      /**
-       * join to `DeviceCapacity` to count number of modules per device
-       */
       .leftJoin('ResultCategoryAssay as rca1', function () {
         this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
       })
       .leftJoin('ResultCategoryAssay as rca2', function () {
         this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
       })
-      // Add the subquery for cntModulesActive
-      .leftJoin(
-        knex('Result as r')
-          .select(
-            'r.deviceId',
-            knex.raw(
-              `COUNT(DISTINCT CONCAT(r.instrumentSerial, '-', CAST(REGEXP_SUBSTR(r.moduleName, '[0-9]+') AS UNSIGNED))) AS cntModulesActive`
-            )
-          )
-          .whereIn('r.assayId', [3, 11, 4])
-          .groupBy('r.deviceId')
-          .as('modulesActive'),
-        'r.deviceId',
-        'modulesActive.deviceId'
-      )
+      .leftJoin('modulesActive', 'r.deviceId', 'modulesActive.deviceId') // Use CTE to avoid double scan of the Result table
+
       /**
        * better and faster to use joins with Sample/SampleType tables to get sample types for
        * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
@@ -203,7 +209,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         knex.raw(`
          d.moduleBayCapacity as cntModules
         `),
-        knex.raw('modulesActive.cntModulesActive') // Add cntModulesActive column
+        knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive`
       )
       .groupBy('r.deviceId', 'sampleType')
       /**
