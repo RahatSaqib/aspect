@@ -1032,7 +1032,7 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
       /**
        * 1st worksheet shows only `Pulmonary` and `Extra-pulmonary` sample types
        */
-      sampleType: ['Pulmonary', 'Extra-pulmonary'],
+      sampleType: ['Pulmonary & Extra-pulmonary'],
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
