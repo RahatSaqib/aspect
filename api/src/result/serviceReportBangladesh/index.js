@@ -98,7 +98,7 @@ const andByRetreatment = (typeOfPatientValue, patientRetreatmentValue, resultCat
   return counter('r.id', condition)
 }
 // ---------------------------------------------------------------------------
-const reportDrTb10ABaseQuery = async (auth, query) => {
+const reportDrTb10ABaseQuery = async (auth, query, sampleType) => {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const dates = getDatesFromQuery(query)
@@ -137,6 +137,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
                       ${resultCategoryIds.Error},
                       ${resultCategoryIds.NoResult})`
 
+  const groupBy = sampleType ? ['r.deviceId'] : ['r.deviceId', 'sampleType']
+
   return {
     drTb10AData: knex('Result as r')
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -163,6 +165,11 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
       // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
       .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
+      .modify(qb => {
+        if (sampleType) {
+          qb.whereIn(knex.raw(`r.resultData ->> '$.customFieldData."1211".value'`), sampleType)
+        }
+      })
       .modify(addConstraints, dataConstraints, {
         device: 'd',
         site: 's',
@@ -190,7 +197,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          d.moduleBayCapacity as cntModules
         `)
       )
-      .groupBy('r.deviceId', 'sampleType')
+      .groupBy(groupBy)
       /**
        * get total results per each device per period
        *
@@ -1003,8 +1010,8 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
-
-  const { drTb10AData, getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
+  const sampleType = ['Pulmonary', 'Extra-pulmonary']
+  const { drTb10AData, getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query, sampleType)
   // eslint-disable-next-line prefer-const
   let [data, devicesData] = await Promise.all([drTb10AData, getDeviceInfo(auth.credentials, query)])
 
@@ -1018,7 +1025,7 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
       /**
        * 1st worksheet shows only `Pulmonary` and `Extra-pulmonary` sample types
        */
-      sampleType: ['Pulmonary', 'Extra-pulmonary'],
+      sampleType,
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
@@ -1137,7 +1144,9 @@ async function getDataForSheet1or2(
 async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
   const { sharedResults, useNamedData } = options
 
-  const { getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
+  const sampleType = ['Stool']
+
+  const { getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query, sampleType)
   let data = sharedResults[useNamedData]
 
   const { stateId, lgaId, siteName } = query
@@ -1151,7 +1160,7 @@ async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
       /**
        * 2nd worksheet shows only sample type `Stool`
        */
-      sampleType: ['Stool'],
+      sampleType,
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
