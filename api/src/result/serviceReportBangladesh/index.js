@@ -1074,7 +1074,7 @@ async function getDataForSheet1or2(
   let allSiteIds = []
   _.forEach(
     rawData?.filter(it => sampleType.includes(it.sampleType)),
-    ({ deviceId, siteIds, ...rest }) => {
+    ({ deviceId, cntModulesActive, siteIds, ...rest }) => {
       /**
        *
        */
@@ -1089,6 +1089,7 @@ async function getDataForSheet1or2(
        * unique deviceId's
        */
       item.devices.add(deviceId)
+      item.cntModulesActive = cntModulesActive
     }
   )
   /**
