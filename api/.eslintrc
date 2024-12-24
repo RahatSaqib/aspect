@@ -137,6 +137,7 @@
     "security/detect-unsafe-regex": "off",
     "security/detect-non-literal-require": "off",
     "security/detect-non-literal-fs-filename": "off",
-    "mocha/no-exclusive-tests": "error"
+    "mocha/no-exclusive-tests": "error",
+    "no-await-in-loop": "off"
   }
 }
