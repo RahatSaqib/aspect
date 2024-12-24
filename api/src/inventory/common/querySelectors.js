@@ -65,6 +65,8 @@ const INVENTORY_LOG_LIST = {
   assayId: 'ca.assayId',
   consumableNameI18nKey: 'c.i18nKey',
   lotNumber: 'il.lotNumber',
+  reconcilationAdjustment: 'il.reconcilationAdjustment',
+  reconcilationStrategy: 'il.reconcilationStrategy',
   expirationDate: 'il.expiresOn',
   siteName: 's.name',
   quantity: knex.raw('CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE il.quantity END'),
