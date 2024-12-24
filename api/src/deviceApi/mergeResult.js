@@ -12,6 +12,7 @@ const {
 } = require('../shared/dictionary')
 const { insertSite } = require('../site/common/db')
 const { getLatestResultWorkflowLog } = require('./result')
+const { parseNotes } = require('../plugin/partner/Myanmar/customFieldsParser')
 
 async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId = null } = {}, context) {
   const sampleExternalId = _.get(payload, 'sample.id', null)
@@ -129,12 +130,29 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
 
   const preProcessedResultWithCustomFields = _.merge(preProcessedResult, customFieldsData)
 
+  let customPatientData = !_.isEmpty(preProcessedResultWithCustomFields.patientData)
+    ? JSON.stringify(preProcessedResultWithCustomFields.patientData)
+    : null
+
+  // get device aspect settings
+  const deviceAspectSettings = (await knex('DeviceAspectSettings')
+    .first('enableCustomFieldParsing')
+    .where({ deviceId })) || { enableCustomFieldParsing: true }
+
+  if (!deviceAspectSettings.enableCustomFieldParsing) {
+    const parsedNotesPatientData = parseNotes(payload.notes).patientData
+
+    customPatientData = JSON.stringify({
+      id: JSON.parse(customPatientData).id,
+      age: parsedNotesPatientData.PatientAge,
+      ...parsedNotesPatientData,
+    })
+  }
+
   const result = {
     ...preProcessedResultWithCustomFields,
     resultData: JSON.stringify(preProcessedResultWithCustomFields.resultData),
-    patientData: !_.isEmpty(preProcessedResultWithCustomFields.patientData)
-      ? JSON.stringify(preProcessedResultWithCustomFields.patientData)
-      : null,
+    patientData: customPatientData,
   }
 
   // Processed result contains result with additional fields
