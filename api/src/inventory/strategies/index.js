@@ -12,6 +12,8 @@ async function getNewQuantityOnHand(
 ) {
   let newQuantityOnHand = inventoryItem?.quantityOnHand || 0
 
+  let isUnreconciledResult = false
+
   switch (operation) {
     case 'add':
     case 'add from GxConnect':
@@ -34,6 +36,7 @@ async function getNewQuantityOnHand(
         } else {
           // log missing lots only for results, and not for manual changes
           await logMissingInventory(knex, resultId, userId)
+          isUnreconciledResult = true
         }
       else {
         /**
@@ -65,7 +68,7 @@ async function getNewQuantityOnHand(
     }
   }
   // return items
-  return newQuantityOnHand
+  return { newQuantityOnHand, isUnreconciledResult }
 }
 
 let currentUserId

@@ -1879,7 +1879,7 @@ describe('Device API routes for GxConnect Devices', () => {
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
-            const { basicDevicePayload, deviceAuth, now } = context
+            const { basicDevicePayload, deviceAuth, now, site } = context
             const uniqueTestId = dateFormat(new Date(), 'T')
 
             const consumableAssays = await knex('ConsumableAssay as ca')
@@ -1892,6 +1892,12 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.isNotEmpty(consumableAssays)
             const [consumableAssay] = consumableAssays
             assert.isAbove(consumableAssay.quantity, 0)
+
+            await knex('InventoryItem').insert({
+              consumableId: consumableAssay.consumableId,
+              siteId: site.id,
+              quantityOnHand: initialQuantityOnHand,
+            })
 
             const testStartedOn = setMilliseconds(
               subMinutes(subHours(now, Math.floor(Math.random() * 24)), Math.floor(Math.random() * 60)),
