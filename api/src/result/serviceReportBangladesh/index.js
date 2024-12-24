@@ -142,6 +142,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .with(
         'modulesActive',
         knex('Result as r')
+          .leftOuterJoin('Site as st', 'st.id', 'r.siteId')
           .select(
             'r.deviceId',
             knex.raw(
@@ -149,6 +150,9 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
             )
           )
           .modify(filterDateRangeParams, query, 'r.endedOn')
+          .modify(filterParams, query, {
+            siteName: 'st.name',
+          })
           .groupBy('r.deviceId')
       )
       .select(
@@ -1072,7 +1076,7 @@ async function getDataForSheet1or2(
   let allSiteIds = []
   _.forEach(
     rawData?.filter(it => sampleType.includes(it.sampleType)),
-    ({ deviceId, cntModulesActive, siteIds, ...rest }) => {
+    ({ deviceId, siteIds, ...rest }) => {
       /**
        *
        */
@@ -1087,9 +1091,20 @@ async function getDataForSheet1or2(
        * unique deviceId's
        */
       item.devices.add(deviceId)
-      item.cntModulesActive = cntModulesActive
     }
   )
+  const uniqueDevices = new Set()
+
+  // Calculate the total cntModulesActive across unique device IDs
+  const totalActiveModules = rawData.reduce((sum, { deviceId, cntModulesActive }) => {
+    if (!uniqueDevices.has(deviceId)) {
+      uniqueDevices.add(deviceId)
+      return sum + Number(cntModulesActive) // Add to sum only if deviceId is new
+    }
+    return sum
+  }, 0)
+  item.cntModulesActive = totalActiveModules
+
   /**
    * unique site id's
    */
