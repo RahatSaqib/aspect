@@ -1,10 +1,18 @@
-module.exports = require('../utils').seed(seed, __filename)
+module.exports = require('../utils').seed(async function (knex) {
+  const deviceId = 3052
+  const deviceExists = await knex('Devices').where('id', deviceId).first()
 
-async function seed(knex) {
-  return knex('DeviceAspectSettings').insert([
-    {
-      deviceId: 3052,
-      enableCustomFieldParsing: false,
-    },
-  ])
-}
+  if (!deviceExists) {
+    return
+  }
+
+  return knex('DeviceAspectSettings')
+    .insert([
+      {
+        deviceId,
+        enableCustomFieldParsing: false,
+      },
+    ])
+    .onConflict('deviceId')
+    .merge()
+})
