@@ -38,6 +38,14 @@ const messages = {
       id: 'pages.InventoryLog.notes',
       defaultMessage: 'Notes',
     },
+    reconcilationAdjustment: {
+      id: 'pages.InventoryLog.reconcilationAdjustment',
+      defaultMessage: 'Reconcilation Adjustment',
+    },
+    reconcilationStrategy: {
+      id: 'pages.InventoryLog.reconcilationStrategy',
+      defaultMessage: 'Reconcilation Strategy',
+    },
     notRecorded: {
       id: 'pages.InventoryLog.notRecorded',
       defaultMessage: 'Not Recorded',

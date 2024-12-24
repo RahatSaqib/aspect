@@ -137,6 +137,8 @@ async function upsertInventoryItemAndLog(
      */
     inventoryItemId,
     quantityOnHand,
+    inventoryAdjustment,
+    inventoryStrategy,
     siteId,
     /**
      * common props
@@ -175,6 +177,8 @@ async function upsertInventoryItemAndLog(
     siteId,
     lotNumber,
     expiresOn,
+    reconcilationAdjustment: inventoryAdjustment,
+    reconcilationStrategy: inventoryStrategy,
     createdOn: now,
     createdBy: userId,
     ...logProps,
@@ -197,6 +201,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     inTransitFromSiteId,
     now,
     userId,
+    inventoryAdjustment,
     logProps,
     resultId,
     /**
@@ -224,6 +229,8 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
       inventoryItemId: res.inventoryItem?.id,
       quantityOnHand: res.quantityOnHand,
       siteId: res.inventoryItem?.siteId ?? siteId,
+      inventoryAdjustment,
+      inventoryStrategy,
       consumableId,
       lotNumber,
       expiresOn,
@@ -715,6 +722,7 @@ async function consumeInventoryForResult(
           operation: 'remove',
           now,
           userId,
+          inventoryAdjustment,
           messageContext,
           logProps: {
             consumableReasonId: testRunConsumableReasonId,
