@@ -1017,9 +1017,9 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
   }
   const { drTb10AData, getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
   // eslint-disable-next-line prefer-const
-  let [data, devicesData] = await Promise.all([drTb10AData, getDeviceInfo(auth.credentials, query)])
+  let [data, deviceInfo] = await Promise.all([drTb10AData, getDeviceInfo(auth.credentials, query)])
 
-  sharedResults[nameOfSharedData] = data
+  sharedResults[nameOfSharedData] = { data, deviceInfo }
 
   data = await getDataForSheet1or2(
     data,
@@ -1033,7 +1033,7 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
-  data = { ...data, ...devicesData[0] }
+  data = { ...data, ...deviceInfo[0] }
 
   return {
     ok: true,
@@ -1117,7 +1117,6 @@ async function getDataForSheet1or2(
   if (!_.isEmpty(data)) {
     data.cntDevices = item.devices?.size || 0
   }
-  delete data.devices
   /**
    * additional props
    */
@@ -1150,7 +1149,8 @@ async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
   const { sharedResults, useNamedData } = options
 
   const { getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
-  let data = sharedResults[useNamedData]
+  // eslint-disable-next-line prefer-const
+  let { data, deviceInfo } = sharedResults[useNamedData]
 
   const { stateId, lgaId, siteName } = query
   const { userName, cell, phone, email } = await getUser(auth.credentials.name)
@@ -1167,7 +1167,7 @@ async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
-
+  data = { ...data, ...deviceInfo[0] }
   return {
     ok: true,
     data,
