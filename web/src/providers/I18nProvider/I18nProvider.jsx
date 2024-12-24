@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { utcToZonedTime, format, formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz'
 import formatDistance from 'date-fns/formatDistance'
 import { createIntl, createIntlCache, RawIntlProvider } from 'react-intl'
+import config from '../../config'
 import translation from '../../utils/i18n/translation.json'
 import { getTimezoneById } from '../../utils/utils/timezone'
 import dateFNSLocales from './dateFNSLocales'
-import config from '../../config'
 
 // This is optional but highly recommended
 // since it prevents memory leak
@@ -13,7 +13,7 @@ const cache = createIntlCache()
 
 const I18nProvider = ({ timezoneId, children }) => {
   const validTimeZone = getTimezoneById(timezoneId)
-  const [locale, setLocale] = useState(localStorage.getItem('asCulture') || config.defaultCulture)  
+  const [locale, setLocale] = useState(localStorage.getItem('asCulture') || config.defaultCulture)
   const [intl, setIntl] = useState({})
 
   useEffect(() => {

@@ -14,6 +14,7 @@ import {
 import { getClientId, getClientName } from '../utils/utils/browser'
 import { aspectFetch } from '../utils/utils/fetch'
 import { hideServiceDegradation, showServiceDegradation } from './ServiceDegradation'
+
 const previousCulture = localStorage.getItem('asCulture')
 const currentCulture = config.defaultCulture
 
@@ -473,7 +474,7 @@ const User = Immutable.Record({
   access: undefined,
   refresh: undefined,
   clientId: undefined,
-  culture: previousCulture ? previousCulture : currentCulture,
+  culture: previousCulture || currentCulture,
   timezoneId: 'Eastern Standard Time',
   displayPreferences: Immutable.Map(),
   countryAbbreviation: null,
