@@ -141,17 +141,15 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
     drTb10AData: knex
       .with(
         'modulesActive',
-        knex.raw(`
-        SELECT
-          r.deviceId,
-          COUNT(DISTINCT CONCAT(r.instrumentSerial, '-', CAST(REGEXP_SUBSTR(r.moduleName, '[0-9]+') AS UNSIGNED))) AS cntModulesActive
-        FROM
-          Result r
-        WHERE
-          r.assayId IN (3, 11, 4)
-        GROUP BY
-          r.deviceId
-      `)
+        knex('Result as r')
+          .select(
+            'r.deviceId',
+            knex.raw(
+              `COUNT(DISTINCT CONCAT(r.instrumentSerial, '-', CAST(REGEXP_SUBSTR(r.moduleName, '[0-9]+') AS UNSIGNED))) AS cntModulesActive`
+            )
+          )
+          .modify(filterDateRangeParams, query, 'r.endedOn')
+          .groupBy('r.deviceId')
       )
       .select(
         'r.deviceId',
@@ -207,8 +205,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * for each device
          */
         knex.raw(`
-         d.moduleBayCapacity as cntModules
-        `),
+          d.moduleBayCapacity as cntModules
+          `),
         knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive`
       )
       .groupBy('r.deviceId', 'sampleType')
