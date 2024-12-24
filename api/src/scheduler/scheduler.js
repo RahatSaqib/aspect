@@ -90,8 +90,8 @@ function startScheduler(queue) {
 
   cron.schedule('0 7 * * *', dispatcher.factNewResultsAvailableCheck) // daily at 7am
 
-  // TODO: run every 5 minutes for testing purpose
-  cron.schedule('*/5 * * * *', dispatcher.missingInventoryLotsResolver) // daily at 02:00 am
+  // TODO: run every 15 minutes for testing purpose
+  cron.schedule('*/15 * * * *', dispatcher.missingInventoryLotsResolver) // daily at 02:00 am
 
   cron.schedule('0 */8 * * *', dispatcher.deviceUpdateModuleSerials) // run every 8 hours
 
