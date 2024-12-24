@@ -8,6 +8,7 @@ const defaultInventoryStrategy = require('../strategies')
 
 const { knex, transact } = require('../../db')
 const { getSite } = require('../../site/service')
+const { INVENTORY_ADJUSTMENT } = require('../../shared/constants')
 const { updateSiteConsumable, getSiteListModifiedQuery } = require('../../site/common/db')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 const { getConstraints } = require('../../auth/constraints')
@@ -77,7 +78,7 @@ async function upsertInventoryItem({
       updatedOn: now,
       updatedBy: userId,
     })
-  } else {
+  } else if (quantityOnHand > 0) {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
       consumableId,
       inTransitFromSiteId: inTransitFromSiteId || null,
@@ -109,7 +110,7 @@ async function getActualQuantityOnHand(
   { quantityOnHand, quantity }
 ) {
   const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, fromSiteId)
-  const newQuantityOnHand = await defaultInventoryStrategy.getNewQuantityOnHand(
+  const { newQuantityOnHand, isUnreconciledResult } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
     inventoryItem,
     operation,
@@ -123,7 +124,7 @@ async function getActualQuantityOnHand(
   if (Boom.isBoom(newQuantityOnHand)) {
     return newQuantityOnHand
   }
-  return { inventoryItem, quantityOnHand: newQuantityOnHand }
+  return { inventoryItem, quantityOnHand: newQuantityOnHand, isUnreconciledResult }
 }
 
 // ----------------------------------------------------------------------------------
@@ -222,27 +223,30 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     if (Boom.isBoom(res)) {
       return res
     }
-    /**
-     * return object { inventoryItemId, inventoryLogId }
-     */
-    return upsertInventoryItemAndLog(knex, {
-      inventoryItemId: res.inventoryItem?.id,
-      quantityOnHand: res.quantityOnHand,
-      siteId: res.inventoryItem?.siteId ?? siteId,
-      inventoryAdjustment,
-      inventoryStrategy,
-      consumableId,
-      lotNumber,
-      expiresOn,
-      inTransitFromSiteId,
-      now,
-      userId,
-      logProps: {
-        operation,
-        quantity,
-        ...logProps,
-      },
-    })
+
+    if (!res.isUnreconciledResult) {
+      /**
+       * return object { inventoryItemId, inventoryLogId }
+       */
+      return upsertInventoryItemAndLog(knex, {
+        inventoryItemId: res.inventoryItem?.id,
+        quantityOnHand: res.quantityOnHand,
+        siteId: res.inventoryItem?.siteId ?? siteId,
+        consumableId,
+        lotNumber,
+        inventoryAdjustment,
+        inventoryStrategy,
+        expiresOn,
+        inTransitFromSiteId,
+        now,
+        userId,
+        logProps: {
+          operation,
+          quantity,
+          ...logProps,
+        },
+      })
+    }
   }
 
   let res
@@ -706,7 +710,7 @@ async function findAndTransferInventory({
     return { success: true, message: 'Sufficient inventory found at the original site' }
   }
 
-  if (inventoryAdjustment === 'currentSiteAndProviderAdjustment')
+  if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER)
     return { success: false, message: 'Insufficient inventory and no parent warehouse available' }
 
   if (site.parentWarehouseId) {
@@ -825,8 +829,8 @@ async function consumeInventoryForResult({
         const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber)
         const site = await getSite(siteId, dataConstraints)
 
-        if (inventoryAdjustment === 'currentSiteAndProviderAdjustment') {
-          if (!inventoryItem || inventoryItem?.quantityOnHand < quantity) {
+        if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
+          if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
             if (site.parentWarehouseId) {
               const response = await findAndTransferInventory({
                 originalSiteId: siteId,
@@ -844,7 +848,7 @@ async function consumeInventoryForResult({
               if (!response.success) return response.error
             }
           }
-        } else if (inventoryAdjustment === 'currentSiteAndProviderAndNationalAdjustment') {
+        } else if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER_AND_NATIONAL) {
           let response = { success: false }
           // find by parentWarehouseId
           if (site.parentWarehouseId) {
