@@ -104,12 +104,12 @@ async function upsertInventoryItem({
 async function getActualQuantityOnHand(
   knex,
   inventoryStrategy,
-  { siteId, consumableId, expiresOn, lotNumber, fromSiteId, resultId },
+  { siteId, consumableId, expiresOn, lotNumber, fromSiteId, resultId, isUnreconciledResult },
   operation,
   { quantityOnHand, quantity }
 ) {
   const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, fromSiteId)
-  const { newQuantityOnHand, isUnreconciledResult } = await defaultInventoryStrategy.getNewQuantityOnHand(
+  const { newQuantityOnHand } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
     inventoryItem,
     operation,
@@ -118,12 +118,13 @@ async function getActualQuantityOnHand(
     {
       resultId,
       userId: inventoryStrategy.getUserId(),
+      isUnreconciledResult,
     }
   )
   if (Boom.isBoom(newQuantityOnHand)) {
     return newQuantityOnHand
   }
-  return { inventoryItem, quantityOnHand: newQuantityOnHand, isUnreconciledResult }
+  return { inventoryItem, quantityOnHand: newQuantityOnHand }
 }
 
 // ----------------------------------------------------------------------------------
@@ -210,12 +211,13 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
      */
     plugins,
     messageContext,
+    isUnreconciledResult,
   } = params
   const getAffectedIds = async knex => {
     const res = await getActualQuantityOnHand(
       knex,
       inventoryStrategy,
-      { siteId, consumableId, expiresOn, lotNumber, resultId },
+      { siteId, consumableId, expiresOn, lotNumber, resultId, isUnreconciledResult },
       operation,
       { quantityOnHand, quantity }
     )
@@ -223,29 +225,26 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
       return res
     }
 
-    if (!res.isUnreconciledResult) {
-      /**
-       * return object { inventoryItemId, inventoryLogId }
-       */
-      return upsertInventoryItemAndLog(knex, {
-        inventoryItemId: res.inventoryItem?.id,
-        quantityOnHand: res.quantityOnHand,
-        siteId: res.inventoryItem?.siteId ?? siteId,
-        consumableId,
-        lotNumber,
-        inventoryAdjustment,
-        inventoryStrategy,
-        expiresOn,
-        inTransitFromSiteId,
-        now,
-        userId,
-        logProps: {
-          operation,
-          quantity,
-          ...logProps,
-        },
-      })
-    }
+    /**
+     * return object { inventoryItemId, inventoryLogId }
+     */
+    return upsertInventoryItemAndLog(knex, {
+      inventoryItemId: res.inventoryItem?.id,
+      quantityOnHand: res.quantityOnHand,
+      siteId: res.inventoryItem?.siteId ?? siteId,
+      consumableId,
+      lotNumber,
+      ...(resultId && { inventoryAdjustment, inventoryStrategy }),
+      expiresOn,
+      inTransitFromSiteId,
+      now,
+      userId,
+      logProps: {
+        operation,
+        quantity,
+        ...logProps,
+      },
+    })
   }
 
   let res
@@ -644,7 +643,8 @@ async function consumeInventoryForResult(
   testEndedOn,
   knex, // <--- means we are inside transaction and should use this `knex`
   messageContext,
-  userId
+  userId,
+  isUnreconciledResult
 ) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategy({ partnerId })
@@ -679,7 +679,7 @@ async function consumeInventoryForResult(
       /**
        * Don't double deduct inventory for the same result
        */
-      if (_.isEmpty(existingInventoryLog)) {
+      if (isUnreconciledResult || _.isEmpty(existingInventoryLog)) {
         const consumableStrategy = await getConsumableStrategy(consumableId)
         const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
         const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))
@@ -734,6 +734,7 @@ async function consumeInventoryForResult(
             operation: 'result',
             resultId,
             effectiveDate: testEndedOn,
+            isUnreconciledResult,
           },
           resultId,
         })
