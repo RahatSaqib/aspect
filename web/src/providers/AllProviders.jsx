@@ -24,6 +24,7 @@ const jss = create({ ...jssPreset(), insertionPoint: 'insertion-point-jss' })
 
 const AppWithProviders = ({ children }) => {
   const { culture, timezoneId, access, refresh, clientId, displayPreferences } = useSelector(({ user }) => user)
+  const previousCulture = localStorage.getItem('asCulture')
 
   return (
     <JssProvider jss={jss}>
@@ -33,7 +34,7 @@ const AppWithProviders = ({ children }) => {
             access={access}
             refresh={refresh}
             clientId={clientId}
-            culture={culture}
+            culture={previousCulture || culture}
             timezoneId={timezoneId}
             displayPreferences={displayPreferences}
           />
