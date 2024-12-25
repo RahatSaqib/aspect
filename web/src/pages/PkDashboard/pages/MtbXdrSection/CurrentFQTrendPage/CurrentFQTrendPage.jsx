@@ -74,7 +74,9 @@ const CurrentFQTrendPage = () => {
         allKeysButMonth.map(key =>
           expandedBarData.push({
             id: key,
-            month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
+            month:
+              formatMessage(messages[format(negateTimeZoneOffset(new Date(result.month)), 'MMM').toLowerCase()]) +
+              format(negateTimeZoneOffset(new Date(result.month)), '-yyyy'),
             value: +result[key].toFixed(3).slice(0, -1),
             type: 'FQ Detected',
             originalMonth: result.month,
