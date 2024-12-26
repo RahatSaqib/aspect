@@ -851,7 +851,7 @@ async function consumeInventoryForResult({
 
         if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
           if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
-            if (site.parentWarehouseId) {
+            if (site?.parentWarehouseId) {
               const response = await findAndTransferInventory({
                 originalSiteId: siteId,
                 currentSiteId: site.parentWarehouseId,
