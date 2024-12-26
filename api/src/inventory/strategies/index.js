@@ -26,40 +26,41 @@ async function getNewQuantityOnHand(
     case 'transfer':
     case 'transfer sent':
     case 'transfer from':
-      if (resultId)
+      if (resultId) {
         if (inventoryItem && inventoryItem.quantityOnHand >= quantity) {
           /**
            * normal mode - deduct `quantity` from current site
            */
-          newQuantityOnHand -= quantity
+          newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
         } else if (!isUnreconciledResult) {
           // log missing lots only for results, and not for manual changes
           await logMissingInventory(knex, resultId, userId)
           isResultPendingReconciliation = !isUnreconciledResult
-        } else {
-          /**
-           * normal mode - deduct `quantity` from current site
-           */
-          // case of ui operation
-          if (_.isUndefined(quantityOnHand)) {
-            if (!inventoryItem) {
-              return Boom.notFound('Can not deduct from non-existed inventory item', { errorKeyCode: 'notExisted' })
-            }
-            if (inventoryItem.quantityOnHand < 0) {
-              return Boom.notFound(
-                `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`,
-                { errorKeyCode: 'negativeQuantity' }
-              )
-            }
-            if (inventoryItem.quantityOnHand < quantity) {
-              return Boom.notFound(
-                `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`,
-                { errorKeyCode: 'notEnoughInventory' }
-              )
-            }
-          }
-          newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
         }
+      } else {
+        /**
+         * normal mode - deduct `quantity` from current site
+         */
+        // case of ui operation
+        if (_.isUndefined(quantityOnHand)) {
+          if (!inventoryItem) {
+            return Boom.notFound('Can not deduct from non-existed inventory item', { errorKeyCode: 'notExisted' })
+          }
+          if (inventoryItem.quantityOnHand < 0) {
+            return Boom.notFound(
+              `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`,
+              { errorKeyCode: 'negativeQuantity' }
+            )
+          }
+          if (inventoryItem.quantityOnHand < quantity) {
+            return Boom.notFound(
+              `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`,
+              { errorKeyCode: 'notEnoughInventory' }
+            )
+          }
+        }
+        newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
+      }
       break
     default: {
       // do not change quantityOnHand
