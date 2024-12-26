@@ -653,9 +653,6 @@ describe('Device API routes for GxAlert Device', () => {
         },
       })
 
-      // eslint-disable-next-line no-console
-      console.log('payload', payload)
-
       await postToDeviceApi({
         authHeader: deviceAuth,
         payload,
