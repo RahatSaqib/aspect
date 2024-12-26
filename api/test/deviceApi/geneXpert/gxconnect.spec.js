@@ -3164,16 +3164,13 @@ describe('Device API routes for GxConnect Devices', () => {
             ['consumableName', 'consumableReason', 'expiresOn']
           ),
           _.sortBy(
-            _.map(
-              inventoryChanges.filter(change => change.quantity > 0),
-              inventoryChange => ({
-                consumableName: inventoryChange.consumableName,
-                inTransitFromSiteId: null,
-                lotNumber: null,
-                expiresOn: new Date(inventoryChange.expirationDate),
-                quantityOnHand: inventoryChange.resultingQuantityOnHand,
-              })
-            ),
+            _.map(inventoryChanges, inventoryChange => ({
+              consumableName: inventoryChange.consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: new Date(inventoryChange.expirationDate),
+              quantityOnHand: inventoryChange.resultingQuantityOnHand,
+            })),
             ['consumableName', 'consumableReason', 'expiresOn']
           )
         )
@@ -3199,22 +3196,19 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.deepEqual(
           _.sortBy(inventoryLog, ['consumableName', 'consumableReason', 'expiresOn']),
           _.sortBy(
-            _.map(
-              inventoryChanges.filter(change => change.quantity > 0), // Filter out negative quantity changes
-              inventoryChange => ({
-                consumableName: inventoryChange.consumableName,
-                siteId: site.id,
-                consumableReason: inventoryChange.consumableReasonName,
-                resultId: null,
-                operation: inventoryChange.quantity >= 0 ? 'add from GxConnect' : 'remove from GxConnect',
-                lotNumber: null,
-                expiresOn: new Date(inventoryChange.expirationDate),
-                quantity: Math.abs(inventoryChange.quantity),
-                notes: null,
-                adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-                adjustedTo: null,
-              })
-            ),
+            _.map(inventoryChanges, inventoryChange => ({
+              consumableName: inventoryChange.consumableName,
+              siteId: site.id,
+              consumableReason: inventoryChange.consumableReasonName,
+              resultId: null,
+              operation: inventoryChange.quantity >= 0 ? 'add from GxConnect' : 'remove from GxConnect',
+              lotNumber: null,
+              expiresOn: new Date(inventoryChange.expirationDate),
+              quantity: Math.abs(inventoryChange.quantity),
+              notes: null,
+              adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
+              adjustedTo: null,
+            })),
             ['consumableName', 'consumableReason', 'expiresOn']
           )
         )
