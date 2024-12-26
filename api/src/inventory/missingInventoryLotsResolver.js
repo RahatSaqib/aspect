@@ -119,7 +119,8 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
           endedOn,
           knex,
           messageContext,
-          null
+          null,
+          true
         )
 
         if (!consumableResults.some(s => Boom.isBoom(s))) {
