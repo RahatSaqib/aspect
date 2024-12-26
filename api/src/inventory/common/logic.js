@@ -688,7 +688,15 @@ async function findAndTransferInventory({
   messageContext,
   dataConstraints,
   inventoryAdjustment,
+  visitedWarehouses = new Set(), // Track visited warehouses to prevent circular dependency
 }) {
+  // If the current site has already been visited, return to avoid circular dependency
+  if (visitedWarehouses.has(currentSiteId)) {
+    return { success: false, message: 'Circular dependency detected in warehouse hierarchy' }
+  }
+
+  visitedWarehouses.add(currentSiteId)
+
   const site = await getSite(currentSiteId, dataConstraints)
 
   const inventoryItem = await findInventoryItem(currentSiteId, consumableId, expiresOn, lotNumber)
@@ -710,8 +718,10 @@ async function findAndTransferInventory({
     return { success: true, message: 'Sufficient inventory found at the original site' }
   }
 
-  if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER)
+  //  based on the adjustment type, terminate the recursion
+  if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
     return { success: false, message: 'Insufficient inventory and no parent warehouse available' }
+  }
 
   if (site.parentWarehouseId) {
     return findAndTransferInventory({
@@ -725,6 +735,7 @@ async function findAndTransferInventory({
       userId,
       messageContext,
       dataConstraints,
+      visitedWarehouses,
     })
   }
 
@@ -743,8 +754,8 @@ async function inventoryTransferByRegion({
   messageContext,
   dataConstraints,
 }) {
-  const filters = { lgaId: site.lgaId, stateId: site.stateId, countryId: site.countryId }
-  const levels = ['lgaId', 'stateId', 'countryId']
+  const filters = { lgaId: site.lgaId, stateId: site.stateId, countryId: site.countryId } // Initial filter criteria based on the site's LGA, state, and country ID
+  const levels = ['lgaId', 'stateId', 'countryId'] // will remove these levels one by one if we don't find the inventory
   let levelIndex = 0
 
   while (levelIndex < levels.length) {
@@ -772,7 +783,7 @@ async function inventoryTransferByRegion({
       }
     }
 
-    delete filters[levels[levelIndex]]
+    delete filters[levels[levelIndex]] // Remove the current level from the filters and use other remaining levels in filters
     levelIndex += 1
   }
 
