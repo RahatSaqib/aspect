@@ -8,9 +8,10 @@ async function getNewQuantityOnHand(
   operation,
   quantityOnHand,
   quantity,
-  { resultId, userId, isUnreconciledResult } = {}
+  { resultId, userId, isUnreconciledResult = false } = {}
 ) {
   let newQuantityOnHand = inventoryItem?.quantityOnHand || 0
+  let isResultPendingReconciliation = isUnreconciledResult
 
   switch (operation) {
     case 'add':
@@ -34,6 +35,7 @@ async function getNewQuantityOnHand(
         } else if (!isUnreconciledResult) {
           // log missing lots only for results, and not for manual changes
           await logMissingInventory(knex, resultId, userId)
+          isResultPendingReconciliation = !isUnreconciledResult
         } else {
           /**
            * normal mode - deduct `quantity` from current site
@@ -64,7 +66,7 @@ async function getNewQuantityOnHand(
     }
   }
   // return items
-  return { newQuantityOnHand }
+  return { newQuantityOnHand, isResultPendingReconciliation }
 }
 
 let currentUserId

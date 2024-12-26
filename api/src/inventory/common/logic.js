@@ -109,7 +109,7 @@ async function getActualQuantityOnHand(
   { quantityOnHand, quantity }
 ) {
   const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, fromSiteId)
-  const { newQuantityOnHand } = await defaultInventoryStrategy.getNewQuantityOnHand(
+  const { newQuantityOnHand, isResultPendingReconciliation } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
     inventoryItem,
     operation,
@@ -124,7 +124,7 @@ async function getActualQuantityOnHand(
   if (Boom.isBoom(newQuantityOnHand)) {
     return newQuantityOnHand
   }
-  return { inventoryItem, quantityOnHand: newQuantityOnHand }
+  return { inventoryItem, quantityOnHand: newQuantityOnHand, isResultPendingReconciliation }
 }
 
 // ----------------------------------------------------------------------------------
@@ -203,6 +203,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     now,
     userId,
     inventoryAdjustment,
+    partnerInventoryStrategy,
     logProps,
     resultId,
     /**
@@ -228,23 +229,24 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     /**
      * return object { inventoryItemId, inventoryLogId }
      */
-    return upsertInventoryItemAndLog(knex, {
-      inventoryItemId: res.inventoryItem?.id,
-      quantityOnHand: res.quantityOnHand,
-      siteId: res.inventoryItem?.siteId ?? siteId,
-      consumableId,
-      lotNumber,
-      ...(resultId && { inventoryAdjustment, inventoryStrategy }),
-      expiresOn,
-      inTransitFromSiteId,
-      now,
-      userId,
-      logProps: {
-        operation,
-        quantity,
-        ...logProps,
-      },
-    })
+    if (!res.isResultPendingReconciliation)
+      return upsertInventoryItemAndLog(knex, {
+        inventoryItemId: res.inventoryItem?.id,
+        quantityOnHand: res.quantityOnHand,
+        siteId: res.inventoryItem?.siteId ?? siteId,
+        consumableId,
+        lotNumber,
+        ...(resultId && { inventoryAdjustment, inventoryStrategy: partnerInventoryStrategy }),
+        expiresOn,
+        inTransitFromSiteId,
+        now,
+        userId,
+        logProps: {
+          operation,
+          quantity,
+          ...logProps,
+        },
+      })
   }
 
   let res
@@ -653,7 +655,9 @@ async function consumeInventoryForResult(
       id: partnerId,
     },
   }
-  const { inventoryAdjustment } = await getPartnerByConstraints(dataConstraints)
+  const { inventoryAdjustment, inventoryStrategy: partnerInventoryStrategy } = await getPartnerByConstraints(
+    dataConstraints
+  )
 
   const assayConsumables = await selectAssayConsumables(knex, dataConstraints, assayId)
 
@@ -726,6 +730,7 @@ async function consumeInventoryForResult(
           now,
           userId,
           inventoryAdjustment,
+          partnerInventoryStrategy,
           messageContext,
           logProps: {
             consumableReasonId: testRunConsumableReasonId,
