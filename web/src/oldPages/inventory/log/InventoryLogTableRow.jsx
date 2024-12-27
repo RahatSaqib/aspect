@@ -94,6 +94,8 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
+      <TableCell className={styles.TableCell}>{inventoryLogItem.reconcilationStrategy}</TableCell>
+      <TableCell className={styles.TableCell}>{inventoryLogItem.reconcilationAdjustment}</TableCell>
     </TableRow>
   )
 }

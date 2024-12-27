@@ -40,11 +40,11 @@ const messages = {
     },
     reconcilationAdjustment: {
       id: 'pages.InventoryLog.reconcilationAdjustment',
-      defaultMessage: 'Reconcilation Adjustment',
+      defaultMessage: 'Applied Consumable Strategy',
     },
     reconcilationStrategy: {
       id: 'pages.InventoryLog.reconcilationStrategy',
-      defaultMessage: 'Reconcilation Strategy',
+      defaultMessage: 'Applied Reconciliation Strategy',
     },
     notRecorded: {
       id: 'pages.InventoryLog.notRecorded',
