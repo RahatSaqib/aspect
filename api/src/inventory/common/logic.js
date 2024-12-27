@@ -821,13 +821,17 @@ async function consumeInventoryForResult({
   return Promise.all(
     assayConsumables.map(async assayConsumable => {
       const { consumableId, quantity } = assayConsumable
-      const existingInventoryLog = await knex('InventoryLog as il')
-        .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
+      const isResultInReconciliation = await knex('MissingInventoryLots as mil')
         .where({
-          'il.resultId': resultId,
-          'ii.consumableId': consumableId,
+          'mil.resultId': resultId,
         })
-        .first('ii.id', 'il.inventoryItemId')
+        .first()
+
+      const { resultCountInDeviceLog } = await knex('DeviceLog as mil')
+        .where({ 'mil.resultId': resultId })
+        .count('mil.resultId as resultCountInDeviceLog')
+        .first()
+
       /**
        * Add consumable to site if not exits
        */
@@ -837,9 +841,18 @@ async function consumeInventoryForResult({
       }
 
       /**
-       * Don't double deduct inventory for the same result
+       * Process inventory based on the following conditions:
+       * 1. `isUnreconciledResult`: The result is flagged as unreconciled, requiring inventory processing.
+       * 2. `!isResultInReconciliation && resultCountInDeviceLog === 0`:
+       *    The result is being processed for the first time (not in missing inventory lots and no prior logs).
+       * 3. `isResultInReconciliation && resultCountInDeviceLog > 0`:
+       *    The result is already in unreconciled and result is not processed for the first time
        */
-      if (isUnreconciledResult || _.isEmpty(existingInventoryLog)) {
+      if (
+        isUnreconciledResult ||
+        (!isResultInReconciliation && resultCountInDeviceLog === 0) ||
+        (isResultInReconciliation && resultCountInDeviceLog > 0)
+      ) {
         const consumableStrategy = await getConsumableStrategy(consumableId)
         const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
         const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))
@@ -852,7 +865,7 @@ async function consumeInventoryForResult({
         if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
           if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
             if (site?.parentWarehouseId) {
-              const response = await findAndTransferInventory({
+              await findAndTransferInventory({
                 originalSiteId: siteId,
                 currentSiteId: site.parentWarehouseId,
                 consumableId,
@@ -865,13 +878,12 @@ async function consumeInventoryForResult({
                 dataConstraints,
                 inventoryAdjustment,
               })
-              if (!response.success) return response.error
             }
           }
         } else if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER_AND_NATIONAL) {
           let response = { success: false }
           // find by parentWarehouseId
-          if (site.parentWarehouseId) {
+          if (site?.parentWarehouseId) {
             response = await findAndTransferInventory({
               originalSiteId: siteId,
               currentSiteId: site.parentWarehouseId,

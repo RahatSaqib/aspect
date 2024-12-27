@@ -83,18 +83,25 @@ function getUserId() {
 // ----------------------------------------------------------------------------------
 async function logMissingInventory(knex, resultId, userId) {
   const now = new Date()
+  const isResultInReconciliation = await knex('MissingInventoryLots as mil')
+    .where({
+      'mil.resultId': resultId,
+    })
+    .first()
 
-  const { siteId, lotNumber, expiresOn } = await knex('Result as r')
-    .where({ id: resultId })
-    .first('siteId', 'consumableLot as lotNumber', 'consumableExpirationDate as expiresOn')
-  await knex('MissingInventoryLots').insert({
-    resultId,
-    expirationDate: expiresOn,
-    lotNumber,
-    siteId,
-    createdOn: now,
-    createdBy: userId,
-  })
+  if (!isResultInReconciliation) {
+    const { siteId, lotNumber, expiresOn } = await knex('Result as r')
+      .where({ id: resultId })
+      .first('siteId', 'consumableLot as lotNumber', 'consumableExpirationDate as expiresOn')
+    await knex('MissingInventoryLots').insert({
+      resultId,
+      expirationDate: expiresOn,
+      lotNumber,
+      siteId,
+      createdOn: now,
+      createdBy: userId,
+    })
+  }
 }
 
 /**
