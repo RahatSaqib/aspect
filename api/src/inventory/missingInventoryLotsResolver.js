@@ -36,6 +36,7 @@ const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate) =>
       'r.id as resultId',
       'r.assayId',
       'r.endedOn',
+      'r.startedOn',
       knex('DeviceLog')
         .where('resultId', knex.ref('r.id'))
         .select('rawMessage')
