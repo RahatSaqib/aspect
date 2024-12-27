@@ -861,9 +861,8 @@ async function consumeInventoryForResult({
 
         const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber)
         const site = await getSite(siteId, dataConstraints)
-
-        if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
-          if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
+        if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
+          if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
             if (site?.parentWarehouseId) {
               await findAndTransferInventory({
                 originalSiteId: siteId,
@@ -879,41 +878,40 @@ async function consumeInventoryForResult({
                 inventoryAdjustment,
               })
             }
-          }
-        } else if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER_AND_NATIONAL) {
-          let response = { success: false }
-          // find by parentWarehouseId
-          if (site?.parentWarehouseId) {
-            response = await findAndTransferInventory({
-              originalSiteId: siteId,
-              currentSiteId: site.parentWarehouseId,
-              consumableId,
-              quantity,
-              expiresOn,
-              lotNumber,
-              partnerId,
-              userId,
-              messageContext,
-              dataConstraints,
-            })
-          }
-          // find by Region
-          if (!response.success) {
-            response = await inventoryTransferByRegion({
-              site,
-              consumableId,
-              quantity,
-              lotNumber,
-              expiresOn,
-              siteId,
-              partnerId,
-              userId,
-              messageContext,
-              dataConstraints,
-            })
+          } else if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER_AND_NATIONAL) {
+            let response = { success: false }
+            // find by parentWarehouseId
+            if (site?.parentWarehouseId) {
+              response = await findAndTransferInventory({
+                originalSiteId: siteId,
+                currentSiteId: site.parentWarehouseId,
+                consumableId,
+                quantity,
+                expiresOn,
+                lotNumber,
+                partnerId,
+                userId,
+                messageContext,
+                dataConstraints,
+              })
+            }
+            // find by Region
+            if (!response.success) {
+              response = await inventoryTransferByRegion({
+                site,
+                consumableId,
+                quantity,
+                lotNumber,
+                expiresOn,
+                siteId,
+                partnerId,
+                userId,
+                messageContext,
+                dataConstraints,
+              })
+            }
           }
         }
-
         return changeInventoryQuantity(inventoryStrategy, {
           knex,
           consumableId,
