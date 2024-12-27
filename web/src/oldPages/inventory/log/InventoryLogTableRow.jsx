@@ -95,10 +95,14 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
       <TableCell className={styles.TableCell}>
-        {formatMessage(messages[inventoryLogItem.reconcilationStrategy])}
+        {inventoryLogItem.reconcilationAdjustment
+          ? formatMessage(messages[inventoryLogItem.reconcilationStrategy])
+          : ''}
       </TableCell>
       <TableCell className={styles.TableCell}>
-        {formatMessage(messages[inventoryLogItem.reconcilationAdjustment])}
+        {inventoryLogItem.reconcilationAdjustment
+          ? formatMessage(messages[inventoryLogItem.reconcilationAdjustment])
+          : ''}
       </TableCell>
     </TableRow>
   )

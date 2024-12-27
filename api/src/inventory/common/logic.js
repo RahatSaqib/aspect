@@ -802,7 +802,7 @@ async function consumeInventoryForResult({
   knex, // <--- means we are inside transaction and should use this `knex`
   messageContext,
   userId,
-  isUnreconciledResult,
+  isUnreconciledResult = false,
 }) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategy({ partnerId })
@@ -922,8 +922,8 @@ async function consumeInventoryForResult({
             operation: 'result',
             resultId,
             effectiveDate: testEndedOn,
-            isUnreconciledResult,
           },
+          isUnreconciledResult,
           resultId,
         })
       }

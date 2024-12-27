@@ -53,12 +53,12 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
     const { partnerId, siteId, consumableId, expirationDate } = missingInventoryGroup
 
     // We should get all the InventoryMissingLots limited by the quantityToReconcile and ordered by result.endedOn
-    const missingInventoryToReconcileQuery = getMissingInventoryToReconcile(
+    const missingInventoryToReconcile = await getMissingInventoryToReconcile(
       siteId,
       consumableId,
       expirationDate
     ).orderBy('r.endedOn')
-    const missingInventoryToReconcile = await missingInventoryToReconcileQuery
+
     for (const missingInventory of missingInventoryToReconcile) {
       const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, payload } = missingInventory
       const consumables = get(JSON.parse(payload), 'result.consumable') || []

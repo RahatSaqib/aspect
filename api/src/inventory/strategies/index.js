@@ -32,6 +32,7 @@ async function getNewQuantityOnHand(
            * normal mode - deduct `quantity` from current site
            */
           newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
+          isResultPendingReconciliation = false
         } else if (!isUnreconciledResult) {
           // log missing lots only for results, and not for manual changes
           await logMissingInventory(knex, resultId, userId)
