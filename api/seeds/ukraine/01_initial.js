@@ -5,20 +5,20 @@ const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 
 const { commonUpserts, upsertGeneXpertDeviceTypeAndAssays } = require('../common')
-const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
 const partnerData = require('./fixtures/partnerData')
 const upsertPartnerData = require('../common/upsert_partner_data')
+const { upsertTruenatDeviceTypeAndAssays } = require('../commonTruenat')
+const { addDeviceCapacities } = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const lowerLevelUserPassword = 'TOVpMx3nHP'
 const now = new Date()
-const { adminUserName, adminPassword, deviceApiToken } = partnerData
+const { adminUserName, adminPassword, deviceApiToken, partnerAbbreviation } = partnerData
+
 async function seed(knex) {
   const partnerId = await upsertPartnerData(knex, {
     ...partnerData,
     partnerTypeId: await partnerTypeToId('operating'),
   })
-
   const [adminId] = await knex('User').insert({
     name: adminUserName,
     password: bcrypt.hashSync(adminPassword, saltRounds),
@@ -28,32 +28,21 @@ async function seed(knex) {
     createdOn: now,
   })
 
-  // Common upserts
-  await commonUpserts(
-    knex,
-    partnerId,
-    adminId,
-    geography,
-    'UA',
-    deviceApiToken,
-    {
-      password: lowerLevelUserPassword,
-    },
-    partnerData
-  )
+  await commonUpserts(knex, partnerId, adminId, geography, partnerAbbreviation, deviceApiToken, null, partnerData)
 
-  // GeneXpert
   await upsertGeneXpertDeviceTypeAndAssays(knex, [
     'GxUnknown',
     'GxHcv',
     'GxHiv',
     'GxMtbRif',
     'GxMtbRifUltra',
+    'GxMtbXdr',
     'GxHiv1Vl',
     'GxHiv1Qual',
     'GxEbola',
+    'assayGXCovid19',
   ])
 
-  // MGIT
-  await upsertMGITDeviceTypeAndAssays(knex)
+  await upsertTruenatDeviceTypeAndAssays(knex)
+  await addDeviceCapacities(knex)
 }

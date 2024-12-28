@@ -25,4 +25,27 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://ukraine.aspect.id',
   apiUrl: 'https://ukraine.aspect.id/api',
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        AspectApiEndpoint: 'https://ukraine.aspect.id/api',
+        AspectAssayNameIdMappings: {
+          4: 'GxMtbRif',
+          7: 'GxEbola',
+          8: 'GxHiv1Qual',
+          9: 'GxHiv1Vl',
+          10: 'GxMtbRifUltra',
+          12: 'GxMtbRifUltra',
+          14: 'GxHcv',
+          15: 'assayGXCovid19',
+          16: 'GxMtbXdr',
+        },
+        AspectUploadExcludePatientId: false,
+        EnableAspectSync: true,
+        MigrateAspectApiKey: true,
+        SendResultsToAspect: true,
+      },
+    },
+  ],
 }
