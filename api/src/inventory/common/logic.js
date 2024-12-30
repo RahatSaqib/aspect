@@ -809,7 +809,7 @@ async function inventoryTransferByRegion({
       }
     }
 
-    delete filters[levels[levelIndex]] // Remove the current level from the filters and use other remaining levels in filters
+    filters[levels[levelIndex]] = null // change the current level to null from the filters and use other remaining levels in filters
     levelIndex += 1
   }
 
@@ -827,7 +827,6 @@ async function consumeInventoryForResult({
   knex, // <--- means we are inside transaction and should use this `knex`
   messageContext,
   userId,
-  isUnreconciledResult = false,
 }) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategy({ partnerId })
@@ -865,19 +864,15 @@ async function consumeInventoryForResult({
         await updateSiteConsumable(siteId, { modify: 'add', consumableId }, knex)
       }
 
+      const isUnreconciledResult = isResultInReconciliation && resultCountInDeviceLog > 0
+
       /**
        * Process inventory based on the following conditions:
        * 1. `isUnreconciledResult`: The result is flagged as unreconciled, requiring inventory processing.
        * 2. `!isResultInReconciliation && resultCountInDeviceLog === 0`:
        *    The result is being processed for the first time (not in missing inventory lots and no prior logs).
-       * 3. `isResultInReconciliation && resultCountInDeviceLog > 0`:
-       *    The result is already in unreconciled and result is not processed for the first time
        */
-      if (
-        isUnreconciledResult ||
-        (!isResultInReconciliation && resultCountInDeviceLog === 0) ||
-        (isResultInReconciliation && resultCountInDeviceLog > 0)
-      ) {
+      if (isUnreconciledResult || (!isResultInReconciliation && resultCountInDeviceLog === 0)) {
         const consumableStrategy = await getConsumableStrategy(consumableId)
         const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
         const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))

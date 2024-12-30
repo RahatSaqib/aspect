@@ -75,7 +75,6 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
           knex,
           messageContext,
           userId: null,
-          isUnreconciledResult: true,
         })
 
         if (!consumableResults.some(s => Boom.isBoom(s) || !s)) {
