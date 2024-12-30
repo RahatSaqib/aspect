@@ -61,14 +61,14 @@ const enhance = compose(
       { fieldName: 'user', valueFromChangeEvent: it => it.target.value },
       { fieldName: 'password', valueFromChangeEvent: it => it.target.value },
     ],
-    validate(values) {
+    validate(values, { intl }) {
       const errors = {}
       if (values) {
         if (!values.user) {
-          errors.user = 'Please enter your username'
+          errors.user = intl.formatMessage(messages.usernameRequired)
         }
         if (!values.password) {
-          errors.password = 'Please enter your password'
+          errors.password = intl.formatMessage(messages.passwordRequired)
         }
       }
       return errors

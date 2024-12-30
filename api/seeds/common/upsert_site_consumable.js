@@ -24,7 +24,7 @@ async function seedSiteConsumables(knex, partnerData) {
     },
   }
 
-  const { getItems: consumableQuery } = getConsumableTypes(dataConstraints, {})
+  const { getItems: consumableQuery } = await getConsumableTypes(dataConstraints, {})
   const [{ data: sites }, consumables] = await Promise.all([
     getListSitesForSelectList(dataConstraints, {}),
     consumableQuery,

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-03T03:27:04.430Z\n"
+"POT-Creation-Date: 2024-12-13T03:41:41.628Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,14 +34,14 @@ msgstr "\"Rapport d'inventaire \"No Stock"
 #. # Results Current Month
 #: extracted_strings.json
 msgid "# Results Current Month"
-msgstr "Mois"
+msgstr "# Résultats du mois en cours"
 
 #. [pages.DeviceList.lastMonth]
 #. defaultMessage is:
 #. # Results Last month
 #: extracted_strings.json
 msgid "# Results Last month"
-msgstr "Le mois dernier ({minDate} - {maxDate})"
+msgstr "# Résultats du mois dernier"
 
 #. [pages.XDR.pmdtSites]
 #. defaultMessage is:
@@ -1819,7 +1819,7 @@ msgstr "Changé"
 #. Check Inbox
 #: extracted_strings.json
 msgid "Check Inbox"
-msgstr "Check Inbox"
+msgstr "Vérifier la boîte de réception"
 
 #. [pages.NotificationDetail.SelectNationalPlaceholder]
 #. defaultMessage is:
@@ -6580,12 +6580,19 @@ msgstr "Panel sur les lipides"
 #. [pages.ReportIndex.missing_cartridges_report]
 #. defaultMessage is:
 #. List of Missing Lots
-#. [pages.ReportIndex.pk_missing_cartridges_report]
-#. defaultMessage is:
-#. List of Missing Lots
 #: extracted_strings.json
 msgid "List of Missing Lots"
 msgstr "Liste des lots manquants"
+
+#. [pages.ReportIndex.unreconciled_inventory_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#. [pages.ReportIndex.pk_missing_cartridges_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#: extracted_strings.json
+msgid "List of Unreconciled Inventory"
+msgstr "Liste des inventaires non réconciliés"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -7229,7 +7236,7 @@ msgstr "MTB positif MTB résistant Susceptible"
 #. MTB Positivity In Quarters
 #: extracted_strings.json
 msgid "MTB Positivity In Quarters"
-msgstr "La positivité du VTT dans les trimestres"
+msgstr "La positivité du MTB dans les trimestres"
 
 #. [pages.Status.mtbRifResistance]
 #. defaultMessage is:
@@ -7243,7 +7250,7 @@ msgstr "MTB Rif Résistance"
 #. MTB Success
 #: extracted_strings.json
 msgid "MTB Success"
-msgstr "Succès du VTT"
+msgstr "Succès du MTB"
 
 #. [assayGenericDstresultCategorySuccessresultCategoryResistant]
 #. defaultMessage is:
@@ -7318,7 +7325,7 @@ msgstr "MTB positifs diagnostiqués pendant l'année en cours"
 #. MTB%
 #: extracted_strings.json
 msgid "MTB%"
-msgstr "VTT%"
+msgstr "MTB%"
 
 #. [legends.Unknown.MTBPlus]
 #. defaultMessage is:
@@ -9232,6 +9239,20 @@ msgstr "Veuillez saisir votre email"
 #: extracted_strings.json
 msgid "Please enter your new password?"
 msgstr "Veuillez entrer votre nouveau mot de passe?"
+
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Veuillez saisir votre mot de passe"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+msgid "Please enter your username"
+msgstr "Veuillez saisir votre nom d'utilisateur"
 
 #. [pages.transferResult.note]
 #. defaultMessage is:
@@ -12451,15 +12472,13 @@ msgstr "Succès"
 
 #. [pages.ReportIndex.reportTBWorkloadSummaryDescription]
 #. defaultMessage is:
-#. Summary of TB Workload (MTB RIf and Ultra only for last 5 years) grouped by month, quarter and year for all regions.
+#. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
 msgid ""
-"Summary of TB Workload (MTB RIf and Ultra only for last 5 years) grouped by "
-"month, quarter and year for all regions."
+"Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
-"Résumé de la charge de travail liée à la tuberculose (MTB RIf et Ultra "
-"uniquement pour les 5 dernières années) regroupée par mois, trimestre et "
-"année pour toutes les régions."
+"Résumé de la charge de travail de la tuberculose regroupée par mois, "
+"trimestre et année pour toutes les régions."
 
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
@@ -12847,7 +12866,7 @@ msgstr "Tests effectués pendant l'année en cours"
 msgid "Tests Run Between"
 msgstr "Tests exécutés entre"
 
-#. [pages.ReportIndex.missing_cartridges_report_description]
+#. [pages.ReportIndex.unreconciled_inventory_report_description]
 #. defaultMessage is:
 #. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
 #: extracted_strings.json
@@ -15679,32 +15698,28 @@ msgstr "{entity} est nécessaire"
 #. {itemCount, plural, one {# Contact} other {# Contacts} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
-msgstr ""
-"Affichage de {firstItemIndex} - {lastItemIndex} de {itemCount, plural, one "
-"{# contact} other {# contacts}}"
+msgstr "{itemCount, pluriel, un {# Contact} d'autres {# Contacts} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Job Function} other {# Job Functions} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
-msgstr ""
-"{itemCount, plural, one {# Fonction de travail} other {# Fonctions de "
-"travail} }"
+msgstr "{itemCount, pluriel, une {# Job Function} autres {# Job Functions} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Name} other {# Names} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Name} other {# Names} }"
-msgstr "{itemCount, pluriel, un {# Nom} autre {# Noms} }"
+msgstr "{itemCount, pluriel, un {# Name} d'autres {# Names} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCountPersons]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, plural, one {# Personne} other {# Personnes} }"
+msgstr "{itemCount, pluriel, une {# Person} d'autres {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -15721,8 +15736,8 @@ msgid ""
 "{maintenanceStatusName} ({totalResults, plural, one {# result reported} "
 "other {# results reported} })"
 msgstr ""
-"{maintenanceStatusName} ({totalRésultats, au pluriel, un {# résultat "
-"rapporté} autre {# résultats rapportés} })"
+"{maintenanceStatusName} ({totalResults, pluriel, one {# result reported} "
+"other {# results reported} })"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus]
 #. defaultMessage is:
@@ -15732,15 +15747,15 @@ msgid ""
 "{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one "
 "{# day} other {# days} }"
 msgstr ""
-"{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one "
-"{# day} other {# days} }"
+"{maintenanceStatusName} ({totalResults}) pour {daysInSameStatus, plural, one "
+"{# day} d’autres {# days} }"
 
 #. [pages.DeviceDetailProfile.deviceCapacityModules]
 #. defaultMessage is:
 #. {numberOfModules, plural, one {# module} other {# modules} }
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
-msgstr "{numberOfModules, pluriel, un {# module} d'autres {# modules} }"
+msgstr "{numberOfModules, pluriel, one {# module} d'autres {# modules} }"
 
 #. [p.PkDashboard.customPerYear]
 #. defaultMessage is:

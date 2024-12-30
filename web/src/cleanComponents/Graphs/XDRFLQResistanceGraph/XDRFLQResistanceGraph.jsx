@@ -55,9 +55,9 @@ const XDRFLQResistanceGraph = () => {
       data.grouped.map(
         ({ month, FqrToMtbPercentage, InhToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected }) => {
           if (lineFor === FQRPercentMessage) {
-            line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+            line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(1) })
           } else if (lineFor === INHPercentMessage) {
-            line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+            line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(1) })
           }
           bar.push({ month, value: TotalTests, type: totalTestsMessage })
           bar.push({ month, value: MtbDetected, type: mtbDetectedMessage })
