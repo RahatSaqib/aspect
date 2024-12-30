@@ -90,7 +90,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       const detected = pieData.find(elem => elem.id === 'Detected') || {}
 
-      const pieAvg = ((detected.value / pieTotal) * 100).toFixed(2)
+      const pieAvg = ((detected.value / pieTotal) * 100).toFixed(1)
 
       const pie = pieData.map(d => ({
         ...d,
@@ -118,7 +118,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
           expandedBarData.push({
             id: key,
             month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: +result[key].toFixed(3).slice(0, -1),
+            value: +result[key].toFixed(1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.month,
           })

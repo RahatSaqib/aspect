@@ -104,7 +104,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
           expandedBarData.push({
             id: key,
             month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: +result[key].toFixed(3).slice(0, -1),
+            value: +result[key].toFixed(1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.month,
           })

@@ -113,7 +113,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       // const { totals: pieAverage } = getAverageFromData(pieData, 'value', '*', 'standard')
       // pieAverage = parseFloat(pieAverage).toFixed(1)
-      const totalAverage = (pieTotal / 12)?.toFixed(2)
+      const totalAverage = (pieTotal / 12)?.toFixed(1)
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
