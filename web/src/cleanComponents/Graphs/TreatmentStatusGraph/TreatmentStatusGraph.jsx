@@ -104,7 +104,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assaysFromState, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(

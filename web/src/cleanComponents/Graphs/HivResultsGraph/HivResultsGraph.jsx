@@ -82,7 +82,7 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       const parsedData = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(
