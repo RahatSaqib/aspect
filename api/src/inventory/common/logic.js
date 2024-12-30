@@ -3,7 +3,6 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
 const { getUser } = require('../../auth/service')
-// const { getPartnerPluginName, getDeviceTypePluginName } = require('../../plugin/utils')
 const defaultInventoryStrategy = require('../strategies')
 
 const { knex, transact } = require('../../db')
