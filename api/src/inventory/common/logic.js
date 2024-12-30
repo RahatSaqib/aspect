@@ -370,8 +370,21 @@ async function removeInventory({ auth, payload, plugins }) {
 
 // ----------------------------------------------------------------------------------
 async function transferInventory({ payload, messageContext, partnerId, userId }) {
-  const { fromSiteId, toSiteId, consumableId, expiresOn, lotNumber, quantity, dateAdjusted, notes, logProps, force } =
-    payload
+  const {
+    fromSiteId,
+    toSiteId,
+    resultId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    quantity,
+    dateAdjusted,
+    notes,
+    logProps,
+    force,
+    inventoryAdjustment,
+    partnerInventoryStrategy,
+  } = payload
 
   /**
    * get MQ context and bind few action creators
@@ -451,6 +464,9 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
       lotNumber,
       expiresOn,
       quantity,
+      resultId,
+      reconcilationAdjustment: inventoryAdjustment,
+      reconcilationStrategy: partnerInventoryStrategy,
       operation: 'transfer from',
       notes,
       adjustedFrom: dateAdjusted,
@@ -472,6 +488,9 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
         lotNumber,
         expiresOn,
         quantity,
+        resultId,
+        reconcilationAdjustment: inventoryAdjustment,
+        reconcilationStrategy: partnerInventoryStrategy,
         operation: 'receive to',
         notes,
         adjustedFrom: dateAdjusted,
@@ -635,20 +654,6 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
   return getInventoryItem(res.inventoryItemId)
 }
 
-// Utility function to create transfer payload
-function createTransferPayload({ quantity, lotNumber, toSiteId, fromSiteId, expiresOn, consumableId }) {
-  return {
-    dateAdjusted: new Date(),
-    quantity,
-    lotNumber,
-    toSiteId,
-    fromSiteId,
-    expiresOn,
-    consumableId,
-    force: true,
-  }
-}
-
 // Function to transfer inventory from a source site to a target site
 async function transferInventoryFromSourceToTarget({
   sourceSiteId,
@@ -660,15 +665,22 @@ async function transferInventoryFromSourceToTarget({
   partnerId,
   userId,
   messageContext,
+  inventoryAdjustment,
+  partnerInventoryStrategy,
 }) {
-  const payload = createTransferPayload({
+  const payload = {
+    dateAdjusted: new Date(),
     quantity,
     lotNumber,
     toSiteId: targetSiteId,
     fromSiteId: sourceSiteId,
     expiresOn,
     consumableId,
-  })
+    force: true,
+    inventoryAdjustment,
+    partnerInventoryStrategy,
+  }
+
   const res = await transferInventory({ payload, partnerId, userId, messageContext })
   if (Boom.isBoom(res)) {
     return { success: false, error: res }
@@ -686,9 +698,11 @@ async function findAndTransferInventory({
   lotNumber,
   partnerId,
   userId,
+  resultId,
   messageContext,
   dataConstraints,
   inventoryAdjustment,
+  partnerInventoryStrategy,
   visitedWarehouses = new Set(), // Track visited warehouses to prevent circular dependency
 }) {
   // If the current site has already been visited, return to avoid circular dependency
@@ -713,7 +727,10 @@ async function findAndTransferInventory({
         expiresOn,
         partnerId,
         userId,
+        resultId,
         messageContext,
+        inventoryAdjustment,
+        partnerInventoryStrategy,
       })
     }
     return { success: true, message: 'Sufficient inventory found at the original site' }
@@ -737,6 +754,9 @@ async function findAndTransferInventory({
       messageContext,
       dataConstraints,
       visitedWarehouses,
+      resultId,
+      inventoryAdjustment,
+      partnerInventoryStrategy,
     })
   }
 
@@ -752,6 +772,9 @@ async function inventoryTransferByRegion({
   siteId,
   partnerId,
   userId,
+  resultId,
+  inventoryAdjustment,
+  partnerInventoryStrategy,
   messageContext,
   dataConstraints,
 }) {
@@ -760,7 +783,7 @@ async function inventoryTransferByRegion({
   let levelIndex = 0
 
   while (levelIndex < levels.length) {
-    const sites = await getSiteListModifiedQuery(filters, dataConstraints)
+    const sites = await getSiteListModifiedQuery({ ...filters, siteTypeName: 'Warehouse' }, dataConstraints)
 
     for (const regionalSite of sites) {
       const regionalInventoryItem = await findInventoryItem(regionalSite.id, consumableId, expiresOn, lotNumber)
@@ -775,6 +798,9 @@ async function inventoryTransferByRegion({
           expiresOn,
           partnerId,
           userId,
+          resultId,
+          inventoryAdjustment,
+          partnerInventoryStrategy,
           messageContext,
         })
 
@@ -862,20 +888,25 @@ async function consumeInventoryForResult({
         const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber)
         const site = await getSite(siteId, dataConstraints)
         if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
+          const commonPayload = {
+            originalSiteId: siteId,
+            consumableId,
+            quantity,
+            expiresOn,
+            lotNumber,
+            partnerId,
+            userId,
+            messageContext,
+            dataConstraints,
+            resultId,
+            inventoryAdjustment,
+            partnerInventoryStrategy,
+          }
           if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
             if (site?.parentWarehouseId) {
               await findAndTransferInventory({
-                originalSiteId: siteId,
+                ...commonPayload,
                 currentSiteId: site.parentWarehouseId,
-                consumableId,
-                quantity,
-                expiresOn,
-                lotNumber,
-                partnerId,
-                userId,
-                messageContext,
-                dataConstraints,
-                inventoryAdjustment,
               })
             }
           } else if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER_AND_NATIONAL) {
@@ -883,31 +914,16 @@ async function consumeInventoryForResult({
             // find by parentWarehouseId
             if (site?.parentWarehouseId) {
               response = await findAndTransferInventory({
-                originalSiteId: siteId,
+                ...commonPayload,
                 currentSiteId: site.parentWarehouseId,
-                consumableId,
-                quantity,
-                expiresOn,
-                lotNumber,
-                partnerId,
-                userId,
-                messageContext,
-                dataConstraints,
               })
             }
             // find by Region
             if (!response.success) {
               response = await inventoryTransferByRegion({
+                ...commonPayload,
                 site,
-                consumableId,
-                quantity,
-                lotNumber,
-                expiresOn,
                 siteId,
-                partnerId,
-                userId,
-                messageContext,
-                dataConstraints,
               })
             }
           }

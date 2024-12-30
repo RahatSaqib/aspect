@@ -198,6 +198,7 @@ function getSiteListQuery(query, dataConstraints) {
         externalId: 's.externalId',
         parentWarehouseId: 's.parentWarehouseId',
         siteTypeId: 'st.id',
+        siteTypeName: 'st.name',
       },
       { whereArgs: { handleNullValues: true } }
     )
