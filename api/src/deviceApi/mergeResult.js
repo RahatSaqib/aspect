@@ -129,18 +129,12 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
 
   const preProcessedResultWithCustomFields = _.merge(preProcessedResult, customFieldsData)
 
-  let customPatientData = !_.isEmpty(preProcessedResultWithCustomFields.patientData)
-    ? JSON.stringify(preProcessedResultWithCustomFields.patientData)
-    : null
-
-  if (payload.parsedCustomFieldNotes) {
-    customPatientData = JSON.stringify(payload.parsedCustomFieldNotes)
-  }
-
   const result = {
     ...preProcessedResultWithCustomFields,
     resultData: JSON.stringify(preProcessedResultWithCustomFields.resultData),
-    patientData: customPatientData,
+    patientData: !_.isEmpty(preProcessedResultWithCustomFields.patientData)
+      ? JSON.stringify(preProcessedResultWithCustomFields.patientData)
+      : null,
   }
 
   // Processed result contains result with additional fields
