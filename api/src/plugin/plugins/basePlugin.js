@@ -81,6 +81,7 @@ const basePlugin = {
   onPatientUpdated,
   getCustomFields,
   findResult,
+  extractCustomFieldsFromPayload,
 }
 
 /**
@@ -291,6 +292,13 @@ async function onPatientAdded(/* { patientId }, { messageContext } */) {
  */
 async function onPatientUpdated(/* { patientId }, { messageContext } */) {
   // do nothing by default
+}
+
+/**
+ * This function returns an object containing custom field data, which can be merged with the Result object and saved to the database
+ */
+async function extractCustomFieldsFromPayload(/* { payload, countryAbbreviation, partnerId, assayId } */) {
+  return {}
 }
 
 module.exports = {

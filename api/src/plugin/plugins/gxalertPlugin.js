@@ -8,6 +8,7 @@ const transformMergeResultPayload = require('../deviceType/GxAlert/transformMerg
 const preProcessMergeResult = require('../deviceType/GxAlert/preProcessMergeResult')
 const postProcessMergeResult = require('../deviceType/GxAlert/postProcessMergeResult')
 const onResultLogged = require('../deviceType/AspectResultEntry/onResultLogged.js')
+const { extractCustomFieldsFromPayload } = require('../deviceType/GxConnect/extractCustomFieldsFromPayload')
 
 const gxalertPlugin = {
   getDeviceSeenOn,
@@ -20,6 +21,7 @@ const gxalertPlugin = {
   preProcessMergeResult,
   postProcessMergeResult,
   onResultLogged,
+  extractCustomFieldsFromPayload,
 }
 
 module.exports = {

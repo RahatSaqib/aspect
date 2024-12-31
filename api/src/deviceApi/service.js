@@ -627,6 +627,12 @@ async function mergeResultWithContext(context) {
   //   reLabel: 'deviceApi:findResult',
   // })
 
+  const extractCustomFieldsFromPayload = await loadPlugin(
+    partnerPluginName,
+    deviceTypePluginName,
+    'extractCustomFieldsFromPayload'
+  )
+
   const pluginContext = {
     knex,
     deviceId,
@@ -638,6 +644,7 @@ async function mergeResultWithContext(context) {
     messageContext,
     userId,
     findResult,
+    extractCustomFieldsFromPayload,
   }
 
   const preProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessMergeResult')
