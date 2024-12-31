@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-13T03:41:41.628Z\n"
+"POT-Creation-Date: 2024-12-31T01:08:00.706Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -5591,7 +5591,7 @@ msgstr "Hépatite B"
 msgid "Hepatitis C"
 msgstr "Hépatite C"
 
-#. [pages.inventoryReconciliation.hierarchicalView]
+#. [pages.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
 #: extracted_strings.json
@@ -6203,6 +6203,17 @@ msgstr "Types de problèmes"
 msgid "It might have been deleted or renamed"
 msgstr "Il a peut-être été supprimé ou renommé"
 
+#. [p.PkDashboard.consumptionRateTooltip]
+#. defaultMessage is:
+#. Its the average daily consumption of the specific cartridge considering the date range selected
+#: extracted_strings.json
+msgid ""
+"Its the average daily consumption of the specific cartridge considering the "
+"date range selected"
+msgstr ""
+"La consommation journalière moyenne de la cartouche spécifique en fonction "
+"de la plage de dates sélectionnée"
+
 #. [pages.InventoryItemsList.dailyConsumptionRateDescription]
 #. defaultMessage is:
 #. Its the average daily consumption of the specific cartridge considering the last 180 day period
@@ -6214,6 +6225,9 @@ msgstr ""
 "Il s'agit de la consommation journalière moyenne de la cartouche spécifique "
 "au cours des 180 derniers jours"
 
+#. [p.PkDashboard.currentQtyTooltip]
+#. defaultMessage is:
+#. Its the current quantity in hand, including the expired quantity.
 #. [pages.InventoryItemsList.quantityOnHandDescription]
 #. defaultMessage is:
 #. Its the current quantity in hand, including the expired quantity.
@@ -6221,6 +6235,26 @@ msgstr ""
 msgid "Its the current quantity in hand, including the expired quantity."
 msgstr ""
 "Il s'agit de la quantité actuelle en stock, y compris la quantité périmée."
+
+#. [p.PkDashboard.usedToolTip]
+#. defaultMessage is:
+#. Its the total cartidges consumed in the date range filter selected
+#: extracted_strings.json
+msgid "Its the total cartidges consumed in the date range filter selected"
+msgstr ""
+"Il s'agit du nombre total de carafes consommées dans la plage de dates "
+"sélectionnée"
+
+#. [p.PkDashboard.last6MonthsTooltip]
+#. defaultMessage is:
+#. Its the total cartridges consumed in last 6 months, irrespective of the period selected in filter option
+#: extracted_strings.json
+msgid ""
+"Its the total cartridges consumed in last 6 months, irrespective of the "
+"period selected in filter option"
+msgstr ""
+"Il s'agit du nombre total de cartouches consommées au cours des 6 derniers "
+"mois, quelle que soit la période sélectionnée dans l'option de filtrage"
 
 #. [months.january]
 #. defaultMessage is:
@@ -11248,6 +11282,13 @@ msgstr "Échec de la recherche des résultats de traitement"
 msgid "Searching Results Failed"
 msgstr "Echec de la recherche dans les résultats"
 
+#. [forms.formItem.selectAllUnselectAll]
+#. defaultMessage is:
+#. Select All / Unselect All
+#: extracted_strings.json
+msgid "Select All / Unselect All"
+msgstr "Sélectionner tout / Désélectionner tout"
+
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -13108,6 +13149,17 @@ msgstr ""
 msgid "The number of contacts in the system."
 msgstr "Le nombre de contacts dans le système."
 
+#. [p.PkDashboard.daysLeftTooltip]
+#. defaultMessage is:
+#. The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges
+#: extracted_strings.json
+msgid ""
+"The number of days left with available and not-expired cartridge and the "
+"daily consumption rate of the cartridges"
+msgstr ""
+"Le nombre de jours restants avec les cartouches disponibles et non expirées "
+"et le taux de consommation quotidien des cartouches"
+
 #. [pages.InventoryItemsList.daysStockLeftDescription]
 #. defaultMessage is:
 #. The number of days left with available and not-expired stock, assuming that the cartridges to be consumed are always the ones closer to their expiration
@@ -14517,6 +14569,13 @@ msgstr "Voir le journal"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Tension"
+
+#. [pages.ErrorRate.whoBenchmark]
+#. defaultMessage is:
+#. WHO Benchmark
+#: extracted_strings.json
+msgid "WHO Benchmark"
+msgstr "Critère de référence de l'OMS"
 
 #. [hierarchicalSiteView.warehouse]
 #. defaultMessage is:
