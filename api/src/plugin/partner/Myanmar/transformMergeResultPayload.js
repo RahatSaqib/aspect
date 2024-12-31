@@ -6,11 +6,22 @@ const { parseNotes } = require('./customFieldsParser')
 async function transformMergeResultPayload(context) {
   const customFieldsFromNotes = parseNotes(context.payload.notes)
   const customFieldsFromPatientId = parsePatientId(_.get(context.payload, 'patient.id'))
+
+  // https://systemone.youtrack.cloud/issue/HD-15458/Myanmarsite-disable-custom-fields-for-site-SCH-Yangon
+  if (context.deviceId === 3052) {
+    // Clear all patient data as custom fields are parsed by GxConnect
+    context.payload.patient = {}
+    if (customFieldsFromNotes.PatientAge) {
+      context.payload.patient.age = customFieldsFromNotes.PatientAge
+    }
+  }
+
   context.payload.patient = {
     ...context.payload.patient,
     ...customFieldsFromNotes.patientData,
     ...customFieldsFromPatientId.patientData,
   }
+
   return defaultOrDeviceTypeTransformMergeResultPayload(context)
 }
 
