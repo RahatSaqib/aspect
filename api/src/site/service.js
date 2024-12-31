@@ -1,6 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
+const { knex, filterParams, sortPageParams } = require('../db')
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getTagsById } = require('../tag/service')
@@ -8,69 +8,15 @@ const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getNotDecommissionedDevices } = require('../device/common/db')
-const { getLinkedResults, getSamplesRegisteredCount, getSites } = require('./common/db')
-
-const SELECT_LIST_FIELDS = [
-  's.id',
-  's.name',
-  's.shortName',
-  'sta.name as state',
-  'st.name as siteType',
-  'spw.name as parentWarehouseName',
-  'l.name as lga',
-  's.createdOn',
-  's.externalId',
-  's.parentWarehouseId',
-  knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
-  knex.raw('COALESCE(COUNT(DISTINCT sc.consumableId), 0) as siteConsumableCount'),
-]
-
-const SITE_FIELDS = [
-  's.id',
-  's.name',
-  's.shortName',
-  's.externalId',
-  's.timezoneId as timezone',
-  's.city',
-  's.zip',
-  's.street1',
-  's.street2',
-  's.longitude',
-  's.latitude',
-  's.geographyId',
-  's.siteTypeId',
-  's.hoursStart',
-  's.hoursEnd',
-  's.notes',
-  's.parentWarehouseId',
-  's.hoursStart',
-  's.hoursEnd',
-  's.createdOn',
-]
-
-const SELECT_SHOW_FIELDS = [
-  'sta.name as state',
-  'l.name as lga',
-  'ct.name as country',
-  'g.countryId',
-  'g.stateId',
-  'g.lgaId',
-  ...SITE_FIELDS,
-]
-
-function getSitesQuery(dataConstraints) {
-  return knex('Site as s')
-    .join('SiteType as st', 's.siteTypeId', 'st.id')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
-    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
-    .leftOuterJoin('Site as spw', 's.parentWarehouseId', 'spw.id')
-    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
-    .groupBy(['s.id'])
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-}
+const {
+  getLinkedResults,
+  getSamplesRegisteredCount,
+  getSites,
+  getSitesQuery,
+  getSiteListQuery,
+  getSiteListModifiedQuery,
+} = require('./common/db')
+const { SELECT_SHOW_FIELDS } = require('./common/constants')
 
 async function listSites(request) {
   const { query, auth } = request
@@ -85,57 +31,14 @@ async function listSites(request) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const baseSiteQuery = getSitesQuery(dataConstraints)
-  const siteQuery = baseSiteQuery
-    .clone()
-    .where(function () {
-      if (!query.siteIds) {
-        return
-      }
-      this.whereIn('s.id', query.siteIds.split(','))
-    })
-    .andWhere(function () {
-      if (!query.deviceName) {
-        return
-      }
-      const deviceQuery = knex('Device as d')
-        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .select('d.siteId')
-        .modify(filterParams, query, {
-          deviceName: 'd.name',
-          deviceType: 'dt.externalId',
-        })
-
-      this.whereIn('s.id', deviceQuery)
-    })
-    .modify(filterDateRangeParams, query, 's.createdOn')
-    .modify(
-      filterParams,
-      query,
-      {
-        countryId: 'g.countryId',
-        stateId: 'g.stateId',
-        lgaId: 'g.lgaId',
-        siteName: 's.name',
-        externalId: 's.externalId',
-        parentWarehouseId: 's.parentWarehouseId',
-        siteTypeId: 'st.id',
-      },
-      { whereArgs: { handleNullValues: true } }
-    )
+  const siteQuery = getSiteListQuery(query, dataConstraints)
 
   const getCount = knex
     .count('siteId as count')
     .from(siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery'))
     .first()
   // get rows
-  const getItems = siteQuery
-    .clone()
-    .modify(sortPageParams, query, 'name')
-    .select([
-      ...SELECT_LIST_FIELDS,
-      getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
-    ])
+  const getItems = getSiteListModifiedQuery(query, dataConstraints)
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -143,6 +46,7 @@ async function listSites(request) {
   return result
 }
 
+// TODO: should also be in the db file
 function getSite(siteId, dataConstraints) {
   return knex('Site as s')
     .join('SiteType as st', 's.siteTypeId', 'st.id')
@@ -157,13 +61,6 @@ function getSite(siteId, dataConstraints) {
       getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
     ])
     .select('st.name as siteType')
-}
-
-function getSiteById(siteId) {
-  const siteQuery = knex('Site as s')
-    .where('s.id', siteId)
-    .first([...SITE_FIELDS])
-  return siteQuery
 }
 
 async function showSite(request) {
@@ -656,5 +553,4 @@ module.exports = {
   getListSitesForSelectList,
   disableSite,
   getReportingSites,
-  getSiteById,
 }

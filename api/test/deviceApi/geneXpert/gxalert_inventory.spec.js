@@ -644,21 +644,16 @@ describe('Device API routes for GxAlert Device', () => {
         },
       ]
 
-      const payload = _.merge({}, basicDevicePayload, {
-        name: deviceName,
-        operation: {
-          startedOn,
-          endedOn,
-          data: { inventoryChanges },
-        },
-      })
-
-      // eslint-disable-next-line no-console
-      console.log('payload', payload)
-
       await postToDeviceApi({
         authHeader: deviceAuth,
-        payload,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+          operation: {
+            startedOn,
+            endedOn,
+            data: { inventoryChanges },
+          },
+        }),
       })
 
       const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')

@@ -3,18 +3,6 @@ const Boom = require('@hapi/boom')
 const { knex, transact } = require('../db')
 const { consumeInventoryForResult } = require('./common/logic')
 
-const getInventoryBaseQuery = () =>
-  knex('InventoryItem')
-    .whereNull('inTransitFromSiteId')
-    .groupBy(['siteId', 'consumableId', knex.raw('DATE(expiresOn)')])
-    .select([
-      'siteId',
-      'consumableId',
-      knex.raw('DATE(expiresOn) as expiresOn'),
-      knex.raw('IFNULL(SUM(quantityOnHand), 0) as total'),
-    ])
-    .clone()
-
 const getMissingInventoryBaseQuery = () =>
   knex('MissingInventoryLots as m')
     .innerJoin('Result as r', 'm.resultId', 'r.id')
@@ -25,18 +13,6 @@ const getMissingInventoryGroups = () =>
   getMissingInventoryBaseQuery()
     .innerJoin('Site as s', 'm.siteId', 's.id')
     .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
-    .leftJoin(getInventoryBaseQuery().as('siteInventory'), qb =>
-      qb
-        .on('siteInventory.siteId', 's.id')
-        .andOn('siteInventory.consumableId', 'ca.consumableId')
-        .andOn(knex.raw('DATE(siteInventory.expiresOn) <=> DATE(m.expirationDate)'))
-    )
-    .leftJoin(getInventoryBaseQuery().as('warehouseInventory'), qb =>
-      qb
-        .on('warehouseInventory.siteId', 's.parentWarehouseId')
-        .andOn('warehouseInventory.consumableId', 'ca.consumableId')
-        .andOn(knex.raw('DATE(warehouseInventory.expiresOn) <=> DATE(m.expirationDate)'))
-    )
     .groupBy(['siteId', 'consumableId', knex.raw('DATE(expirationDate)')])
     .select([
       'r.partnerId',
@@ -44,9 +20,6 @@ const getMissingInventoryGroups = () =>
       's.parentWarehouseId',
       'ca.consumableId',
       knex.raw('DATE(m.expirationDate) as expirationDate'),
-      knex.raw('COUNT(m.id) as totalRequiredInventory'),
-      knex.raw('IFNULL(siteInventory.total, 0) as availableQuantityInSiteInventory'),
-      knex.raw('IFNULL(warehouseInventory.total, 0) as availableQuantityInWarehouseInventory'),
     ])
     .clone()
 
@@ -63,6 +36,7 @@ const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate) =>
       'r.id as resultId',
       'r.assayId',
       'r.endedOn',
+      'r.startedOn',
       knex('DeviceLog')
         .where('resultId', knex.ref('r.id'))
         .select('rawMessage')
@@ -76,54 +50,34 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
   const missingInventoryGroups = await getMissingInventoryGroups()
   /* eslint-disable no-await-in-loop */
   for (const missingInventoryGroup of missingInventoryGroups) {
-    const {
-      partnerId,
-      siteId,
-      consumableId,
-      expirationDate,
-      totalRequiredInventory,
-      availableQuantityInSiteInventory,
-      availableQuantityInWarehouseInventory,
-    } = missingInventoryGroup
-
-    // Calculate, if necessary, how many consumables should/can be transfered from the warehouse (consumablesToTransfer)
-    const remainingRequiredQuantity = Math.max(totalRequiredInventory - availableQuantityInSiteInventory, 0)
-    const quantityToTransfer =
-      remainingRequiredQuantity > 0 && availableQuantityInWarehouseInventory > 0
-        ? Math.min(remainingRequiredQuantity, availableQuantityInWarehouseInventory)
-        : 0
-    const quantityToReconcile = Math.max(
-      Math.min(totalRequiredInventory, availableQuantityInSiteInventory) + quantityToTransfer,
-      0
-    )
+    const { partnerId, siteId, consumableId, expirationDate } = missingInventoryGroup
 
     // We should get all the InventoryMissingLots limited by the quantityToReconcile and ordered by result.endedOn
-    const missingInventoryToReconcile = await getMissingInventoryToReconcile(siteId, consumableId, expirationDate)
-      .orderBy('r.endedOn')
-      .limit(quantityToReconcile)
+    const missingInventoryToReconcile = await getMissingInventoryToReconcile(
+      siteId,
+      consumableId,
+      expirationDate
+    ).orderBy('r.endedOn')
 
-    // Substract each consumable from the site (the InventoryLog should have an effectiveDate = result.endedOn)
-    /* eslint-disable no-await-in-loop */
     for (const missingInventory of missingInventoryToReconcile) {
       const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, payload } = missingInventory
       const consumables = get(JSON.parse(payload), 'result.consumable') || []
 
       await transact(async knex => {
-        const consumableResults = await consumeInventoryForResult(
+        const consumableResults = await consumeInventoryForResult({
           resultId,
           assayId,
           siteId,
-          consumables,
+          consumablesInResultData: consumables,
           partnerId,
-          startedOn,
-          endedOn,
+          testStartedOn: startedOn,
+          testEndedOn: endedOn,
           knex,
           messageContext,
-          null,
-          true
-        )
+          userId: null,
+        })
 
-        if (!consumableResults.some(s => Boom.isBoom(s))) {
+        if (!consumableResults.some(s => Boom.isBoom(s) || !s)) {
           // Delete missingInventoryLots entry
           await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
         }
