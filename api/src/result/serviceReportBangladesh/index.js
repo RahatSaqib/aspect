@@ -138,7 +138,31 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
                       ${resultCategoryIds.NoResult})`
 
   return {
-    drTb10AData: knex('Result as r')
+    drTb10AData: knex
+      .with(
+        'modulesActive',
+        knex('Result as r')
+          .leftOuterJoin('Site as st', 'st.id', 'r.siteId')
+          .select(
+            'r.deviceId',
+            knex.raw(
+              `COUNT(DISTINCT CONCAT(r.instrumentSerial, '-', CAST(REGEXP_SUBSTR(r.moduleName, '[0-9]+') AS UNSIGNED))) AS cntModulesActive`
+            )
+          )
+          .modify(filterDateRangeParams, query, 'r.endedOn')
+          .modify(filterParams, query, {
+            siteName: 'st.name',
+          })
+          .groupBy('r.deviceId')
+      )
+      .select(
+        'r.deviceId',
+        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
+        knex.raw(`d.moduleBayCapacity as cntModules`),
+        knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive` from CTE
+      )
+      .from('Result as r')
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
       .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
       .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -150,6 +174,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .leftJoin('ResultCategoryAssay as rca2', function () {
         this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
       })
+      .leftJoin('modulesActive', 'r.deviceId', 'modulesActive.deviceId') // Use CTE to avoid double scan of the Result table
+
       /**
        * better and faster to use joins with Sample/SampleType tables to get sample types for
        * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
@@ -183,8 +209,9 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * for each device
          */
         knex.raw(`
-         d.moduleBayCapacity as cntModules
-        `)
+          d.moduleBayCapacity as cntModules
+          `),
+        knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive`
       )
       .groupBy('r.deviceId', 'sampleType')
       /**
@@ -930,14 +957,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           assayMtb
         ),
 
-        /**
-         * TODO: change below value and count modules that haven’t sent results
-         * for several days in the given time frame (>5)
-         */
-        cntModulesActive: knex.raw(`DISTINCT
-          CONCAT(r.deviceId, '-',  r.moduleName)
-        `),
-
         cnt_Xdr_Tested_From_Eligible: counter('r.id', `${assayXdr}`),
         /**
          * cnt_Xdr_Total_Tests is calculated in the code
@@ -998,12 +1017,11 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
-
   const { drTb10AData, getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
   // eslint-disable-next-line prefer-const
-  let [data, devicesData] = await Promise.all([drTb10AData, getDeviceInfo(auth.credentials, query)])
+  let [data, deviceInfo] = await Promise.all([drTb10AData, getDeviceInfo(auth.credentials, query)])
 
-  sharedResults[nameOfSharedData] = data
+  sharedResults[nameOfSharedData] = { data, deviceInfo }
 
   data = await getDataForSheet1or2(
     data,
@@ -1017,7 +1035,7 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
-  data = { ...data, ...devicesData[0] }
+  data = { ...data, ...deviceInfo[0] }
 
   return {
     ok: true,
@@ -1075,6 +1093,18 @@ async function getDataForSheet1or2(
       item.devices.add(deviceId)
     }
   )
+  const uniqueDevices = new Set()
+
+  // Calculate the total cntModulesActive across unique device IDs
+  const totalActiveModules = rawData.reduce((sum, { deviceId, cntModulesActive }) => {
+    if (!uniqueDevices.has(deviceId)) {
+      uniqueDevices.add(deviceId)
+      return sum + Number(cntModulesActive) // Add to sum only if deviceId is new
+    }
+    return sum
+  }, 0)
+  item.cntModulesActive = totalActiveModules
+
   /**
    * unique site id's
    */
@@ -1100,7 +1130,6 @@ async function getDataForSheet1or2(
   if (!_.isEmpty(data)) {
     data.cntDevices = item.devices?.size || 0
   }
-  delete data.devices
   /**
    * additional props
    */
@@ -1133,7 +1162,8 @@ async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
   const { sharedResults, useNamedData } = options
 
   const { getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
-  let data = sharedResults[useNamedData]
+  // eslint-disable-next-line prefer-const
+  let { data, deviceInfo } = sharedResults[useNamedData]
 
   const { stateId, lgaId, siteName } = query
   const { userName, cell, phone, email } = await getUser(auth.credentials.name)
@@ -1150,7 +1180,7 @@ async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
-
+  data = { ...data, ...deviceInfo[0] }
   return {
     ok: true,
     data,
