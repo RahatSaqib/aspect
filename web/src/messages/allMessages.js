@@ -566,7 +566,7 @@ const messages = {
       defaultMessage: 'Select All / Unselect All',
     },
     hierarchicalView: {
-      id: 'pages.inventoryReconciliations.hierarchicalView',
+      id: 'pages.hierarchicalView',
       defaultMessage: 'Hierarchical View',
     },
     jan: { id: 'months.jan', defaultMessage: 'Jan' },
@@ -581,7 +581,7 @@ const messages = {
     oct: { id: 'months.oct', defaultMessage: 'Oct' },
     nov: { id: 'months.nov', defaultMessage: 'Nov' },
     dec: { id: 'months.dec', defaultMessage: 'Dec' },
-    january: { id: 'chart.january', defaultMessage: 'January1' },
+    january: { id: 'chart.january', defaultMessage: 'January' },
     february: { id: 'chart.february', defaultMessage: 'February' },
     march: { id: 'chart.march', defaultMessage: 'March' },
     april: { id: 'chart.april', defaultMessage: 'April' },
