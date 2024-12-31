@@ -113,7 +113,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               onChange={implementingPartnerId => setEditDevice(prv => ({ ...prv, implementingPartnerId }))}
             />
             <TextField
-              label={intl.formatMessage(messages.capacity)}
+              label={intl.formatMessage(messages.dailyTestCapacity)}
               type="number"
               name="capacity"
               error={error?.dailyTestCapacity}
