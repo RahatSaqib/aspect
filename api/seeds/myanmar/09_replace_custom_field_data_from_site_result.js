@@ -1,9 +1,4 @@
 module.exports = require('../utils').seed(seed, __filename)
-const _ = require('lodash')
-const { getAdditionalDataFromPayload } = require('../../src/plugin/deviceType/gxUtils')
-const { assayNameToExternalId } = require('../../src/shared/assayNameToExternalId')
-const { deepMerge } = require('../../src/shared/json')
-const { getResultDataHash } = require('../../src/result/common/logic')
 const { parseNotes } = require('../../src/plugin/partner/Myanmar/customFieldsParser')
 
 async function seed(knex) {
@@ -55,9 +50,19 @@ const getResultsToUpdateInRange = async (knex, minId, maxId, siteId) => {
       const parsedNotesPatientData = parseNotes(resultToUpdate.notes).patientData
 
       const parsedPatientData = {
-        id: patientData.id,
-        age: parsedNotesPatientData.PatientAge,
         ...parsedNotesPatientData,
+      }
+
+      if (patientData.id) {
+        parsedPatientData.id = patientData.id
+      }
+
+      if (patientData.PatientTownship) {
+        parsedPatientData.PatientTownship = patientData.PatientTownship
+      }
+
+      if (parsedNotesPatientData.PatientAge) {
+        parsedPatientData.age = parsedNotesPatientData.PatientAge
       }
 
       const transformedResult = {

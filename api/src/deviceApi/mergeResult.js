@@ -125,6 +125,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     countryAbbreviation,
     partnerId: site.partnerId,
     assayId: assay.id,
+    deviceId,
   })
 
   const preProcessedResultWithCustomFields = _.merge(preProcessedResult, customFieldsData)
