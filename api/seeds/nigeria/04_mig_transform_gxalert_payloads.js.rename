@@ -1,0 +1,101 @@
+module.exports = require('../utils').seed(seed, __filename)
+const { transformPayload } = require('../../src/plugin/deviceType/transformPayload')
+const { getOffsetFromTimeZone } = require('../../src/shared/date')
+const customFieldsNigeria = require('../../src/forms/formsDefinition/CustomFields_Nigeria.json')
+
+async function seed(knex) {
+  const { minDeviceLogId, maxDeviceLogId } = await knex('DeviceLog')
+    .whereNotNull('resultId') // Only result payloads
+    .first({
+      minDeviceLogId: knex.raw('MIN(id)'),
+      maxDeviceLogId: knex.raw('MAX(id)'),
+    })
+
+  const batchSize = 1000
+  const startFrom = minDeviceLogId
+  const endAt = maxDeviceLogId
+
+  let processed = startFrom - 1
+  while (processed < endAt) {
+    const start = processed + 1
+    const end = Math.min(processed + batchSize, endAt)
+    // eslint-disable-next-line no-console
+    console.log(`processing batch: ${start}-${end}`)
+
+    // eslint-disable-next-line no-await-in-loop
+    const deviceLogsToUpdate = await getDeviceLogsToUpdateInRange(knex, start, end)
+
+    if (deviceLogsToUpdate.length > 0) {
+      // eslint-disable-next-line no-await-in-loop
+      await knex('DeviceLog').insert(deviceLogsToUpdate).onConflict('id').merge()
+    }
+
+    processed = end
+  }
+}
+
+const getDeviceLogsToUpdateInRange = async (knex, minDeviceLogId, maxDeviceLogId) => {
+  const range = [minDeviceLogId, maxDeviceLogId]
+
+  const deviceLogsToUpdate = await knex('DeviceLog as dl')
+    .join('Device as d', 'dl.deviceId', 'd.id')
+    .join('TimeZone as tz', 'd.timezone', 'tz.id')
+    .whereNotNull('resultId') // Only result payloads
+    .whereBetween('dl.id', range)
+    .select({
+      id: 'dl.id',
+      deviceId: 'dl.deviceId',
+      source: 'dl.source',
+      createdOn: 'dl.createdOn',
+      senderIp: 'dl.senderIp',
+      rawMessage: 'dl.rawMessage',
+      deviceConfigurationUpdated: 'dl.deviceConfigurationUpdated',
+      resultId: 'dl.resultId',
+      deviceOperationId: 'dl.deviceOperationId',
+      timezone: 'd.timezone',
+      timezoneIANA: 'tz.timeZone',
+    })
+
+  const transformedDeviceLogs = []
+
+  for (const deviceLogToUpdate of deviceLogsToUpdate) {
+    const countryTimeZoneData = {
+      timezone: deviceLogToUpdate.timezone,
+      timezoneIANA: deviceLogToUpdate.timezoneIANA,
+      timezoneUtcOffset: getOffsetFromTimeZone(deviceLogToUpdate.timezoneIANA),
+    }
+
+    const customFields = {
+      fields: [...customFieldsNigeria.fields],
+      refForms: [],
+    }
+
+    try {
+      const transformedPayload = transformPayload(
+        JSON.parse(deviceLogToUpdate.rawMessage),
+        true,
+        countryTimeZoneData,
+        customFields
+      )
+
+      const transformedDeviceLog = {
+        id: deviceLogToUpdate.id,
+        deviceId: deviceLogToUpdate.deviceId,
+        source: deviceLogToUpdate.source,
+        createdOn: deviceLogToUpdate.createdOn,
+        senderIp: deviceLogToUpdate.senderIp,
+        deviceConfigurationUpdated: deviceLogToUpdate.deviceConfigurationData,
+        resultId: deviceLogToUpdate.resultId,
+        deviceOperationId: deviceLogToUpdate.deviceOperationId,
+        rawMessage: JSON.stringify(transformedPayload),
+      }
+
+      transformedDeviceLogs.push(transformedDeviceLog)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(`skip deviceLogId ${deviceLogToUpdate.id} - Error: ${error}`)
+    }
+  }
+
+  return transformedDeviceLogs
+}
