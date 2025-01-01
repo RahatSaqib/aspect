@@ -108,7 +108,7 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
 async function getInventoryData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const data = await getGeneXpertInventoryBySitesAndConsumableQuery(
+  const dataQuery = getGeneXpertInventoryBySitesAndConsumableQuery(
     { query: _.omit(query, ['minDate', 'maxDate']), auth },
     dataConstraints,
     null,
@@ -123,8 +123,18 @@ async function getInventoryData(auth, query) {
       't2.qtyExpired as quantityExpired',
     ]
   )
-    .whereRaw('t2.quantityOnHand IS NOT NULL')
+    .select(knex.raw('COUNT(CONCAT(mi.siteId, "-", ca.consumableId)) AS unreconciledResults'))
+    .leftJoin('MissingInventoryLots AS mi', 'mi.siteId', 't2.siteId')
+    .innerJoin('Result AS r', 'r.id', 'mi.resultId')
+    .innerJoin('ConsumableAssay AS ca', join => {
+      join.on('ca.assayId', '=', 'r.assayId')
+      join.on('ca.consumableId', '=', 't2.consumableId')
+    })
+    .whereNotNull('t2.quantityOnHand')
+    .groupBy('t2.siteName', 't2.consumableName')
     .orderBy(['t2.siteName', 't2.consumableName'])
+
+  const data = await dataQuery
 
   return {
     ok: true,
