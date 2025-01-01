@@ -92,7 +92,7 @@ export function getValidations(format, actionType, { partner, inventory, allSite
           /**
            * require
            */
-          is: consumable => withExpirationDate(partner, consumable),
+          is: () => withExpirationDate(partner),
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         })
         .when(['toSiteId'], {
@@ -128,7 +128,7 @@ export function getValidations(format, actionType, { partner, inventory, allSite
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: consumable => withLotNumber(partner, consumable),
+          is: () => withLotNumber(partner),
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })

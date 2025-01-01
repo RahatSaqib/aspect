@@ -1,0 +1,4518 @@
+{
+    "fields": [
+        {
+            "id": 1,
+            "name": "NGPatientName",
+            "title": "Patient Name",
+            "i18nKey": "NGPatientNameI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 0,
+            "gxAlertDbColumn": "PatientName",
+            "caption": "Patient Name",
+            "i18nKeyCaption": "NGPatientNameI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.1.value",
+            "source": "patientData.PatientName",
+            "mandatory": false,
+            "migrateFromId": -8
+        },
+        {
+            "id": 2,
+            "name": "NGPatientAge",
+            "title": "Age",
+            "i18nKey": "NGPatientAgeI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 10,
+            "gxAlertDbColumn": "PatientAge",
+            "caption": "Age",
+            "i18nKeyCaption": "NGPatientAgeI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.2.value",
+            "source": "patientData.PatientAge",
+            "mandatory": false,
+            "migrateFromId": -3,
+            "validation": [
+                {
+                    "validationType": "regex",
+                    "value": "^[2-9]$|^[1-9][0-9]$|^1[0-4][0-9]$|^150$",
+                    "errorMessage": "Patient Age should be a number between 2 and 150. For lower age please use field Age in Months.",
+                    "errorMessageI18nKey": "GHPatientAgeValidationFieldi18nKey"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "NGPatientGender",
+            "title": "Gender",
+            "i18nKey": "NGPatientGenderI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 20,
+            "gxAlertDbColumn": "PatientGender",
+            "caption": "Gender",
+            "i18nKeyCaption": "NGPatientGenderI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.3.value",
+            "source": "patientData.PatientGender",
+            "mandatory": false,
+            "migrateFromId": -4,
+            "items": [
+                {
+                    "key": 1,
+                    "value": "Male",
+                    "order": 0
+                },
+                {
+                    "key": 0,
+                    "value": "Female",
+                    "order": 10
+                },
+                {
+                    "key": 2,
+                    "value": "Other",
+                    "order": 20
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "NGPatientPhone",
+            "title": "Patient Phone",
+            "i18nKey": "NGPatientPhoneI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 30,
+            "gxAlertDbColumn": "PatientPhone",
+            "caption": "Patient Phone",
+            "i18nKeyCaption": "NGPatientPhoneI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.4.value",
+            "source": "patientData.PatientPhone",
+            "mandatory": false,
+            "migrateFromId": -13
+        },
+        {
+            "id": 5,
+            "name": "NGPatientStreet",
+            "title": "Patient Address",
+            "i18nKey": "NGPatientStreetI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 40,
+            "gxAlertDbColumn": "PatientStreet",
+            "caption": "Patient Address",
+            "i18nKeyCaption": "NGPatientStreetI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.5.value",
+            "source": "patientData.PatientStreet",
+            "mandatory": false,
+            "migrateFromId": -9
+        },
+        {
+            "id": 6,
+            "name": "NGPatientStateId",
+            "title": "Patient State",
+            "i18nKey": "NGPatientStateIdI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 50,
+            "gxAlertDbColumn": "PatientStateId",
+            "caption": "Patient State",
+            "i18nKeyCaption": "NGPatientStateIdI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.6.value",
+            "source": "patientData.PatientStateId",
+            "mandatory": false,
+            "migrateFromId": -10,
+            "items": [
+                {
+                    "key": 3,
+                    "value": "Abia State",
+                    "order": 0
+                },
+                {
+                    "key": 4,
+                    "value": "Adamawa State",
+                    "order": 0
+                },
+                {
+                    "key": 5,
+                    "value": "Akwa Ibom State",
+                    "order": 0
+                },
+                {
+                    "key": 6,
+                    "value": "Anambra State",
+                    "order": 0
+                },
+                {
+                    "key": 7,
+                    "value": "Bauchi State",
+                    "order": 0
+                },
+                {
+                    "key": 8,
+                    "value": "Bayelsa State",
+                    "order": 0
+                },
+                {
+                    "key": 9,
+                    "value": "Benue State",
+                    "order": 0
+                },
+                {
+                    "key": 10,
+                    "value": "Borno State",
+                    "order": 0
+                },
+                {
+                    "key": 14,
+                    "value": "Edo State",
+                    "order": 0
+                },
+                {
+                    "key": 15,
+                    "value": "Ekiti State",
+                    "order": 0
+                },
+                {
+                    "key": 16,
+                    "value": "Enugu State",
+                    "order": 0
+                },
+                {
+                    "key": 17,
+                    "value": "Gombe State",
+                    "order": 0
+                },
+                {
+                    "key": 18,
+                    "value": "Imo State",
+                    "order": 0
+                },
+                {
+                    "key": 19,
+                    "value": "Jigawa State",
+                    "order": 0
+                },
+                {
+                    "key": 20,
+                    "value": "Kaduna State",
+                    "order": 0
+                },
+                {
+                    "key": 21,
+                    "value": "Kano State",
+                    "order": 0
+                },
+                {
+                    "key": 22,
+                    "value": "Katsina State",
+                    "order": 0
+                },
+                {
+                    "key": 23,
+                    "value": "Kebbi State",
+                    "order": 0
+                },
+                {
+                    "key": 24,
+                    "value": "Kogi State",
+                    "order": 0
+                },
+                {
+                    "key": 25,
+                    "value": "Kwara State",
+                    "order": 0
+                },
+                {
+                    "key": 26,
+                    "value": "Lagos State",
+                    "order": 0
+                },
+                {
+                    "key": 27,
+                    "value": "Nasarawa State",
+                    "order": 0
+                },
+                {
+                    "key": 28,
+                    "value": "Niger State",
+                    "order": 0
+                },
+                {
+                    "key": 29,
+                    "value": "Ogun State",
+                    "order": 0
+                },
+                {
+                    "key": 30,
+                    "value": "Ondo State",
+                    "order": 0
+                },
+                {
+                    "key": 31,
+                    "value": "Osun State",
+                    "order": 0
+                },
+                {
+                    "key": 32,
+                    "value": "Oyo State",
+                    "order": 0
+                },
+                {
+                    "key": 33,
+                    "value": "Plateau State",
+                    "order": 0
+                },
+                {
+                    "key": 34,
+                    "value": "Rivers State",
+                    "order": 0
+                },
+                {
+                    "key": 35,
+                    "value": "Sokoto State",
+                    "order": 0
+                },
+                {
+                    "key": 36,
+                    "value": "Taraba State",
+                    "order": 0
+                },
+                {
+                    "key": 37,
+                    "value": "Yobe State",
+                    "order": 0
+                },
+                {
+                    "key": 38,
+                    "value": "Zamfara State",
+                    "order": 0
+                },
+                {
+                    "key": 39,
+                    "value": "Abuja Federal Capital Territory",
+                    "order": 0
+                },
+                {
+                    "key": 13,
+                    "value": "Ebonyi State",
+                    "order": 0
+                },
+                {
+                    "key": 11,
+                    "value": "Cross River State",
+                    "order": 0
+                },
+                {
+                    "key": 12,
+                    "value": "Delta State",
+                    "order": 0
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "name": "NGPatientLgaId",
+            "title": "Patient LGA",
+            "i18nKey": "NGPatientLgaIdI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 60,
+            "gxAlertDbColumn": "PatientLgaId",
+            "caption": "Patient LGA",
+            "i18nKeyCaption": "NGPatientLgaIdI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.7.value",
+            "source": "patientData.PatientLgaId",
+            "mandatory": false,
+            "migrateFromId": -11,
+            "items": [
+                {
+                    "key": 4,
+                    "value": "Abadam",
+                    "order": 0
+                },
+                {
+                    "key": 5,
+                    "value": "Abaji",
+                    "order": 0
+                },
+                {
+                    "key": 6,
+                    "value": "Abak",
+                    "order": 0
+                },
+                {
+                    "key": 7,
+                    "value": "Abakaliki",
+                    "order": 0
+                },
+                {
+                    "key": 8,
+                    "value": "Aba North",
+                    "order": 0
+                },
+                {
+                    "key": 9,
+                    "value": "Aba South",
+                    "order": 0
+                },
+                {
+                    "key": 10,
+                    "value": "Abeokuta North",
+                    "order": 0
+                },
+                {
+                    "key": 11,
+                    "value": "Abeokuta South",
+                    "order": 0
+                },
+                {
+                    "key": 12,
+                    "value": "Abi",
+                    "order": 0
+                },
+                {
+                    "key": 13,
+                    "value": "Aboh Mbaise",
+                    "order": 0
+                },
+                {
+                    "key": 14,
+                    "value": "Abua/Odual",
+                    "order": 0
+                },
+                {
+                    "key": 16,
+                    "value": "Ado Ekiti",
+                    "order": 0
+                },
+                {
+                    "key": 17,
+                    "value": "Ado-Odo/Ota",
+                    "order": 0
+                },
+                {
+                    "key": 18,
+                    "value": "Afijio",
+                    "order": 0
+                },
+                {
+                    "key": 19,
+                    "value": "Afikpo North",
+                    "order": 0
+                },
+                {
+                    "key": 20,
+                    "value": "Afikpo South",
+                    "order": 0
+                },
+                {
+                    "key": 21,
+                    "value": "Agaie",
+                    "order": 0
+                },
+                {
+                    "key": 22,
+                    "value": "Agatu",
+                    "order": 0
+                },
+                {
+                    "key": 23,
+                    "value": "Agwara",
+                    "order": 0
+                },
+                {
+                    "key": 24,
+                    "value": "Agege",
+                    "order": 0
+                },
+                {
+                    "key": 25,
+                    "value": "Aguata",
+                    "order": 0
+                },
+                {
+                    "key": 26,
+                    "value": "Ahiazu Mbaise",
+                    "order": 0
+                },
+                {
+                    "key": 27,
+                    "value": "Ahoada East",
+                    "order": 0
+                },
+                {
+                    "key": 28,
+                    "value": "Ahoada West",
+                    "order": 0
+                },
+                {
+                    "key": 29,
+                    "value": "Ajaokuta",
+                    "order": 0
+                },
+                {
+                    "key": 30,
+                    "value": "Ajeromi-Ifelodun",
+                    "order": 0
+                },
+                {
+                    "key": 31,
+                    "value": "Ajingi",
+                    "order": 0
+                },
+                {
+                    "key": 32,
+                    "value": "Akamkpa",
+                    "order": 0
+                },
+                {
+                    "key": 33,
+                    "value": "Akinyele",
+                    "order": 0
+                },
+                {
+                    "key": 34,
+                    "value": "Akko",
+                    "order": 0
+                },
+                {
+                    "key": 35,
+                    "value": "Akoko-Edo",
+                    "order": 0
+                },
+                {
+                    "key": 36,
+                    "value": "Akoko North-East",
+                    "order": 0
+                },
+                {
+                    "key": 37,
+                    "value": "Akoko North-West",
+                    "order": 0
+                },
+                {
+                    "key": 38,
+                    "value": "Akoko South-West",
+                    "order": 0
+                },
+                {
+                    "key": 39,
+                    "value": "Akoko South-East",
+                    "order": 0
+                },
+                {
+                    "key": 40,
+                    "value": "Akpabuyo",
+                    "order": 0
+                },
+                {
+                    "key": 41,
+                    "value": "Akuku-Toru",
+                    "order": 0
+                },
+                {
+                    "key": 42,
+                    "value": "Akure North",
+                    "order": 0
+                },
+                {
+                    "key": 43,
+                    "value": "Akure South",
+                    "order": 0
+                },
+                {
+                    "key": 44,
+                    "value": "Akwanga",
+                    "order": 0
+                },
+                {
+                    "key": 45,
+                    "value": "Albasu",
+                    "order": 0
+                },
+                {
+                    "key": 46,
+                    "value": "Aleiro",
+                    "order": 0
+                },
+                {
+                    "key": 47,
+                    "value": "Alimosho",
+                    "order": 0
+                },
+                {
+                    "key": 48,
+                    "value": "Alkaleri",
+                    "order": 0
+                },
+                {
+                    "key": 49,
+                    "value": "Amuwo-Odofin",
+                    "order": 0
+                },
+                {
+                    "key": 50,
+                    "value": "Anambra East",
+                    "order": 0
+                },
+                {
+                    "key": 51,
+                    "value": "Anambra West",
+                    "order": 0
+                },
+                {
+                    "key": 52,
+                    "value": "Anaocha",
+                    "order": 0
+                },
+                {
+                    "key": 53,
+                    "value": "Andoni",
+                    "order": 0
+                },
+                {
+                    "key": 54,
+                    "value": "Aninri",
+                    "order": 0
+                },
+                {
+                    "key": 55,
+                    "value": "Aniocha North",
+                    "order": 0
+                },
+                {
+                    "key": 56,
+                    "value": "Aniocha South",
+                    "order": 0
+                },
+                {
+                    "key": 57,
+                    "value": "Anka",
+                    "order": 0
+                },
+                {
+                    "key": 58,
+                    "value": "Ankpa",
+                    "order": 0
+                },
+                {
+                    "key": 59,
+                    "value": "Apa",
+                    "order": 0
+                },
+                {
+                    "key": 60,
+                    "value": "Apapa",
+                    "order": 0
+                },
+                {
+                    "key": 61,
+                    "value": "Ado",
+                    "order": 0
+                },
+                {
+                    "key": 62,
+                    "value": "Ardo Kola",
+                    "order": 0
+                },
+                {
+                    "key": 63,
+                    "value": "Arewa Dandi",
+                    "order": 0
+                },
+                {
+                    "key": 64,
+                    "value": "Argungu",
+                    "order": 0
+                },
+                {
+                    "key": 65,
+                    "value": "Arochukwu",
+                    "order": 0
+                },
+                {
+                    "key": 66,
+                    "value": "Asa",
+                    "order": 0
+                },
+                {
+                    "key": 67,
+                    "value": "Asari-Toru",
+                    "order": 0
+                },
+                {
+                    "key": 68,
+                    "value": "Askira/Uba",
+                    "order": 0
+                },
+                {
+                    "key": 69,
+                    "value": "Atakunmosa East",
+                    "order": 0
+                },
+                {
+                    "key": 70,
+                    "value": "Atakunmosa West",
+                    "order": 0
+                },
+                {
+                    "key": 71,
+                    "value": "Atiba",
+                    "order": 0
+                },
+                {
+                    "key": 72,
+                    "value": "Atisbo",
+                    "order": 0
+                },
+                {
+                    "key": 73,
+                    "value": "Augie",
+                    "order": 0
+                },
+                {
+                    "key": 74,
+                    "value": "Auyo",
+                    "order": 0
+                },
+                {
+                    "key": 75,
+                    "value": "Awe",
+                    "order": 0
+                },
+                {
+                    "key": 76,
+                    "value": "Awgu",
+                    "order": 0
+                },
+                {
+                    "key": 77,
+                    "value": "Awka North",
+                    "order": 0
+                },
+                {
+                    "key": 78,
+                    "value": "Awka South",
+                    "order": 0
+                },
+                {
+                    "key": 79,
+                    "value": "Ayamelum",
+                    "order": 0
+                },
+                {
+                    "key": 80,
+                    "value": "Aiyedaade",
+                    "order": 0
+                },
+                {
+                    "key": 81,
+                    "value": "Aiyedire",
+                    "order": 0
+                },
+                {
+                    "key": 82,
+                    "value": "Babura",
+                    "order": 0
+                },
+                {
+                    "key": 83,
+                    "value": "Badagry",
+                    "order": 0
+                },
+                {
+                    "key": 84,
+                    "value": "Bagudo",
+                    "order": 0
+                },
+                {
+                    "key": 85,
+                    "value": "Bagwai",
+                    "order": 0
+                },
+                {
+                    "key": 86,
+                    "value": "Bakassi",
+                    "order": 0
+                },
+                {
+                    "key": 87,
+                    "value": "Bokkos",
+                    "order": 0
+                },
+                {
+                    "key": 88,
+                    "value": "Bakori",
+                    "order": 0
+                },
+                {
+                    "key": 89,
+                    "value": "Bakura",
+                    "order": 0
+                },
+                {
+                    "key": 90,
+                    "value": "Balanga",
+                    "order": 0
+                },
+                {
+                    "key": 91,
+                    "value": "Bali",
+                    "order": 0
+                },
+                {
+                    "key": 92,
+                    "value": "Bama",
+                    "order": 0
+                },
+                {
+                    "key": 93,
+                    "value": "Bade",
+                    "order": 0
+                },
+                {
+                    "key": 94,
+                    "value": "Barkin Ladi",
+                    "order": 0
+                },
+                {
+                    "key": 95,
+                    "value": "Baruten",
+                    "order": 0
+                },
+                {
+                    "key": 96,
+                    "value": "Bassa",
+                    "order": 0
+                },
+                {
+                    "key": 97,
+                    "value": "Bassa",
+                    "order": 0
+                },
+                {
+                    "key": 98,
+                    "value": "Batagarawa",
+                    "order": 0
+                },
+                {
+                    "key": 99,
+                    "value": "Batsari",
+                    "order": 0
+                },
+                {
+                    "key": 100,
+                    "value": "Bauchi",
+                    "order": 0
+                },
+                {
+                    "key": 101,
+                    "value": "Baure",
+                    "order": 0
+                },
+                {
+                    "key": 102,
+                    "value": "Bayo",
+                    "order": 0
+                },
+                {
+                    "key": 103,
+                    "value": "Bebeji",
+                    "order": 0
+                },
+                {
+                    "key": 104,
+                    "value": "Bekwarra",
+                    "order": 0
+                },
+                {
+                    "key": 105,
+                    "value": "Bende",
+                    "order": 0
+                },
+                {
+                    "key": 106,
+                    "value": "Biase",
+                    "order": 0
+                },
+                {
+                    "key": 107,
+                    "value": "Bichi",
+                    "order": 0
+                },
+                {
+                    "key": 108,
+                    "value": "Bida",
+                    "order": 0
+                },
+                {
+                    "key": 109,
+                    "value": "Billiri",
+                    "order": 0
+                },
+                {
+                    "key": 110,
+                    "value": "Bindawa",
+                    "order": 0
+                },
+                {
+                    "key": 111,
+                    "value": "Binji",
+                    "order": 0
+                },
+                {
+                    "key": 112,
+                    "value": "Biriniwa",
+                    "order": 0
+                },
+                {
+                    "key": 113,
+                    "value": "Birnin Gwari",
+                    "order": 0
+                },
+                {
+                    "key": 114,
+                    "value": "Birnin Kebbi",
+                    "order": 0
+                },
+                {
+                    "key": 115,
+                    "value": "Birnin Kudu",
+                    "order": 0
+                },
+                {
+                    "key": 116,
+                    "value": "Birnin Magaji/Kiyaw",
+                    "order": 0
+                },
+                {
+                    "key": 117,
+                    "value": "Biu",
+                    "order": 0
+                },
+                {
+                    "key": 118,
+                    "value": "Bodinga",
+                    "order": 0
+                },
+                {
+                    "key": 119,
+                    "value": "Bogoro",
+                    "order": 0
+                },
+                {
+                    "key": 120,
+                    "value": "Boki",
+                    "order": 0
+                },
+                {
+                    "key": 121,
+                    "value": "Boluwaduro",
+                    "order": 0
+                },
+                {
+                    "key": 122,
+                    "value": "Bomadi",
+                    "order": 0
+                },
+                {
+                    "key": 123,
+                    "value": "Bonny",
+                    "order": 0
+                },
+                {
+                    "key": 124,
+                    "value": "Borgu",
+                    "order": 0
+                },
+                {
+                    "key": 125,
+                    "value": "Boripe",
+                    "order": 0
+                },
+                {
+                    "key": 126,
+                    "value": "Bursari",
+                    "order": 0
+                },
+                {
+                    "key": 127,
+                    "value": "Bosso",
+                    "order": 0
+                },
+                {
+                    "key": 128,
+                    "value": "Brass",
+                    "order": 0
+                },
+                {
+                    "key": 129,
+                    "value": "Buji",
+                    "order": 0
+                },
+                {
+                    "key": 130,
+                    "value": "Bukkuyum",
+                    "order": 0
+                },
+                {
+                    "key": 131,
+                    "value": "Buruku",
+                    "order": 0
+                },
+                {
+                    "key": 132,
+                    "value": "Bungudu",
+                    "order": 0
+                },
+                {
+                    "key": 133,
+                    "value": "Bunkure",
+                    "order": 0
+                },
+                {
+                    "key": 134,
+                    "value": "Bunza",
+                    "order": 0
+                },
+                {
+                    "key": 135,
+                    "value": "Burutu",
+                    "order": 0
+                },
+                {
+                    "key": 136,
+                    "value": "Bwari",
+                    "order": 0
+                },
+                {
+                    "key": 137,
+                    "value": "Calabar Municipal",
+                    "order": 0
+                },
+                {
+                    "key": 138,
+                    "value": "Calabar South",
+                    "order": 0
+                },
+                {
+                    "key": 139,
+                    "value": "Chanchaga",
+                    "order": 0
+                },
+                {
+                    "key": 140,
+                    "value": "Charanchi",
+                    "order": 0
+                },
+                {
+                    "key": 141,
+                    "value": "Chibok",
+                    "order": 0
+                },
+                {
+                    "key": 142,
+                    "value": "Chikun",
+                    "order": 0
+                },
+                {
+                    "key": 143,
+                    "value": "Dala",
+                    "order": 0
+                },
+                {
+                    "key": 144,
+                    "value": "Damaturu",
+                    "order": 0
+                },
+                {
+                    "key": 145,
+                    "value": "Damban",
+                    "order": 0
+                },
+                {
+                    "key": 146,
+                    "value": "Dambatta",
+                    "order": 0
+                },
+                {
+                    "key": 147,
+                    "value": "Damboa",
+                    "order": 0
+                },
+                {
+                    "key": 148,
+                    "value": "Dandi",
+                    "order": 0
+                },
+                {
+                    "key": 149,
+                    "value": "Dandume",
+                    "order": 0
+                },
+                {
+                    "key": 150,
+                    "value": "Dange Shuni",
+                    "order": 0
+                },
+                {
+                    "key": 151,
+                    "value": "Danja",
+                    "order": 0
+                },
+                {
+                    "key": 152,
+                    "value": "Dan Musa",
+                    "order": 0
+                },
+                {
+                    "key": 153,
+                    "value": "Darazo",
+                    "order": 0
+                },
+                {
+                    "key": 154,
+                    "value": "Dass",
+                    "order": 0
+                },
+                {
+                    "key": 155,
+                    "value": "Daura",
+                    "order": 0
+                },
+                {
+                    "key": 156,
+                    "value": "Dawakin Kudu",
+                    "order": 0
+                },
+                {
+                    "key": 157,
+                    "value": "Dawakin Tofa",
+                    "order": 0
+                },
+                {
+                    "key": 158,
+                    "value": "Degema",
+                    "order": 0
+                },
+                {
+                    "key": 159,
+                    "value": "Dekina",
+                    "order": 0
+                },
+                {
+                    "key": 160,
+                    "value": "Demsa",
+                    "order": 0
+                },
+                {
+                    "key": 161,
+                    "value": "Dikwa",
+                    "order": 0
+                },
+                {
+                    "key": 162,
+                    "value": "Doguwa",
+                    "order": 0
+                },
+                {
+                    "key": 163,
+                    "value": "Doma",
+                    "order": 0
+                },
+                {
+                    "key": 164,
+                    "value": "Donga",
+                    "order": 0
+                },
+                {
+                    "key": 165,
+                    "value": "Dukku",
+                    "order": 0
+                },
+                {
+                    "key": 166,
+                    "value": "Dunukofia",
+                    "order": 0
+                },
+                {
+                    "key": 167,
+                    "value": "Dutse",
+                    "order": 0
+                },
+                {
+                    "key": 168,
+                    "value": "Dutsi",
+                    "order": 0
+                },
+                {
+                    "key": 169,
+                    "value": "Dutsin Ma",
+                    "order": 0
+                },
+                {
+                    "key": 170,
+                    "value": "Eastern Obolo",
+                    "order": 0
+                },
+                {
+                    "key": 171,
+                    "value": "Ebonyi",
+                    "order": 0
+                },
+                {
+                    "key": 172,
+                    "value": "Edati",
+                    "order": 0
+                },
+                {
+                    "key": 173,
+                    "value": "Ede North",
+                    "order": 0
+                },
+                {
+                    "key": 174,
+                    "value": "Ede South",
+                    "order": 0
+                },
+                {
+                    "key": 175,
+                    "value": "Edu",
+                    "order": 0
+                },
+                {
+                    "key": 176,
+                    "value": "Ife Central",
+                    "order": 0
+                },
+                {
+                    "key": 177,
+                    "value": "Ife East",
+                    "order": 0
+                },
+                {
+                    "key": 178,
+                    "value": "Ife North",
+                    "order": 0
+                },
+                {
+                    "key": 179,
+                    "value": "Ife South",
+                    "order": 0
+                },
+                {
+                    "key": 180,
+                    "value": "Efon",
+                    "order": 0
+                },
+                {
+                    "key": 181,
+                    "value": "Egbado North",
+                    "order": 0
+                },
+                {
+                    "key": 182,
+                    "value": "Egbado South",
+                    "order": 0
+                },
+                {
+                    "key": 183,
+                    "value": "Egbeda",
+                    "order": 0
+                },
+                {
+                    "key": 184,
+                    "value": "Egbedore",
+                    "order": 0
+                },
+                {
+                    "key": 185,
+                    "value": "Egor",
+                    "order": 0
+                },
+                {
+                    "key": 186,
+                    "value": "Ehime Mbano",
+                    "order": 0
+                },
+                {
+                    "key": 187,
+                    "value": "Ejigbo",
+                    "order": 0
+                },
+                {
+                    "key": 188,
+                    "value": "Ekeremor",
+                    "order": 0
+                },
+                {
+                    "key": 189,
+                    "value": "Eket",
+                    "order": 0
+                },
+                {
+                    "key": 190,
+                    "value": "Ekiti, Kwara State",
+                    "order": 0
+                },
+                {
+                    "key": 191,
+                    "value": "Ekiti East",
+                    "order": 0
+                },
+                {
+                    "key": 192,
+                    "value": "Ekiti South-West",
+                    "order": 0
+                },
+                {
+                    "key": 193,
+                    "value": "Ekiti West",
+                    "order": 0
+                },
+                {
+                    "key": 194,
+                    "value": "Ekwusigo",
+                    "order": 0
+                },
+                {
+                    "key": 195,
+                    "value": "Eleme",
+                    "order": 0
+                },
+                {
+                    "key": 196,
+                    "value": "Emuoha",
+                    "order": 0
+                },
+                {
+                    "key": 197,
+                    "value": "Emure",
+                    "order": 0
+                },
+                {
+                    "key": 198,
+                    "value": "Enugu East",
+                    "order": 0
+                },
+                {
+                    "key": 199,
+                    "value": "Enugu North",
+                    "order": 0
+                },
+                {
+                    "key": 200,
+                    "value": "Enugu South",
+                    "order": 0
+                },
+                {
+                    "key": 201,
+                    "value": "Epe",
+                    "order": 0
+                },
+                {
+                    "key": 202,
+                    "value": "Esan Central",
+                    "order": 0
+                },
+                {
+                    "key": 203,
+                    "value": "Esan North-East",
+                    "order": 0
+                },
+                {
+                    "key": 204,
+                    "value": "Esan South-East",
+                    "order": 0
+                },
+                {
+                    "key": 205,
+                    "value": "Esan West",
+                    "order": 0
+                },
+                {
+                    "key": 206,
+                    "value": "Ese Odo",
+                    "order": 0
+                },
+                {
+                    "key": 207,
+                    "value": "Esit Eket",
+                    "order": 0
+                },
+                {
+                    "key": 208,
+                    "value": "Essien Udim",
+                    "order": 0
+                },
+                {
+                    "key": 209,
+                    "value": "Etche",
+                    "order": 0
+                },
+                {
+                    "key": 210,
+                    "value": "Ethiope East",
+                    "order": 0
+                },
+                {
+                    "key": 211,
+                    "value": "Ethiope West",
+                    "order": 0
+                },
+                {
+                    "key": 212,
+                    "value": "Etim Ekpo",
+                    "order": 0
+                },
+                {
+                    "key": 213,
+                    "value": "Etinan",
+                    "order": 0
+                },
+                {
+                    "key": 214,
+                    "value": "Eti Osa",
+                    "order": 0
+                },
+                {
+                    "key": 215,
+                    "value": "Etsako Central",
+                    "order": 0
+                },
+                {
+                    "key": 216,
+                    "value": "Etsako East",
+                    "order": 0
+                },
+                {
+                    "key": 217,
+                    "value": "Etsako West",
+                    "order": 0
+                },
+                {
+                    "key": 218,
+                    "value": "Etung",
+                    "order": 0
+                },
+                {
+                    "key": 219,
+                    "value": "Ewekoro",
+                    "order": 0
+                },
+                {
+                    "key": 220,
+                    "value": "Ezeagu",
+                    "order": 0
+                },
+                {
+                    "key": 221,
+                    "value": "Ezinihitte",
+                    "order": 0
+                },
+                {
+                    "key": 222,
+                    "value": "Ezza North",
+                    "order": 0
+                },
+                {
+                    "key": 223,
+                    "value": "Ezza South",
+                    "order": 0
+                },
+                {
+                    "key": 224,
+                    "value": "Fagge",
+                    "order": 0
+                },
+                {
+                    "key": 225,
+                    "value": "Fakai",
+                    "order": 0
+                },
+                {
+                    "key": 226,
+                    "value": "Faskari",
+                    "order": 0
+                },
+                {
+                    "key": 227,
+                    "value": "Fika",
+                    "order": 0
+                },
+                {
+                    "key": 228,
+                    "value": "Fufure",
+                    "order": 0
+                },
+                {
+                    "key": 229,
+                    "value": "Funakaye",
+                    "order": 0
+                },
+                {
+                    "key": 230,
+                    "value": "Fune",
+                    "order": 0
+                },
+                {
+                    "key": 231,
+                    "value": "Funtua",
+                    "order": 0
+                },
+                {
+                    "key": 232,
+                    "value": "Gabasawa",
+                    "order": 0
+                },
+                {
+                    "key": 233,
+                    "value": "Gada",
+                    "order": 0
+                },
+                {
+                    "key": 234,
+                    "value": "Gagarawa",
+                    "order": 0
+                },
+                {
+                    "key": 235,
+                    "value": "Gamawa",
+                    "order": 0
+                },
+                {
+                    "key": 236,
+                    "value": "Ganjuwa",
+                    "order": 0
+                },
+                {
+                    "key": 237,
+                    "value": "Ganye",
+                    "order": 0
+                },
+                {
+                    "key": 238,
+                    "value": "Garki",
+                    "order": 0
+                },
+                {
+                    "key": 239,
+                    "value": "Garko",
+                    "order": 0
+                },
+                {
+                    "key": 240,
+                    "value": "Garun Mallam",
+                    "order": 0
+                },
+                {
+                    "key": 241,
+                    "value": "Gashaka",
+                    "order": 0
+                },
+                {
+                    "key": 242,
+                    "value": "Gassol",
+                    "order": 0
+                },
+                {
+                    "key": 243,
+                    "value": "Gaya",
+                    "order": 0
+                },
+                {
+                    "key": 244,
+                    "value": "Gayuk",
+                    "order": 0
+                },
+                {
+                    "key": 245,
+                    "value": "Gezawa",
+                    "order": 0
+                },
+                {
+                    "key": 246,
+                    "value": "Gbako",
+                    "order": 0
+                },
+                {
+                    "key": 247,
+                    "value": "Gboko",
+                    "order": 0
+                },
+                {
+                    "key": 248,
+                    "value": "Gbonyin",
+                    "order": 0
+                },
+                {
+                    "key": 249,
+                    "value": "Geidam",
+                    "order": 0
+                },
+                {
+                    "key": 250,
+                    "value": "Giade",
+                    "order": 0
+                },
+                {
+                    "key": 251,
+                    "value": "Giwa",
+                    "order": 0
+                },
+                {
+                    "key": 252,
+                    "value": "Gokana",
+                    "order": 0
+                },
+                {
+                    "key": 253,
+                    "value": "Gombe",
+                    "order": 0
+                },
+                {
+                    "key": 254,
+                    "value": "Gombi",
+                    "order": 0
+                },
+                {
+                    "key": 255,
+                    "value": "Goronyo",
+                    "order": 0
+                },
+                {
+                    "key": 256,
+                    "value": "Grie",
+                    "order": 0
+                },
+                {
+                    "key": 257,
+                    "value": "Gubio",
+                    "order": 0
+                },
+                {
+                    "key": 258,
+                    "value": "Gudu",
+                    "order": 0
+                },
+                {
+                    "key": 259,
+                    "value": "Gujba",
+                    "order": 0
+                },
+                {
+                    "key": 260,
+                    "value": "Gulani",
+                    "order": 0
+                },
+                {
+                    "key": 261,
+                    "value": "Guma",
+                    "order": 0
+                },
+                {
+                    "key": 262,
+                    "value": "Gumel",
+                    "order": 0
+                },
+                {
+                    "key": 263,
+                    "value": "Gummi",
+                    "order": 0
+                },
+                {
+                    "key": 264,
+                    "value": "Gurara",
+                    "order": 0
+                },
+                {
+                    "key": 265,
+                    "value": "Guri",
+                    "order": 0
+                },
+                {
+                    "key": 266,
+                    "value": "Gusau",
+                    "order": 0
+                },
+                {
+                    "key": 267,
+                    "value": "Guzamala",
+                    "order": 0
+                },
+                {
+                    "key": 268,
+                    "value": "Gwadabawa",
+                    "order": 0
+                },
+                {
+                    "key": 269,
+                    "value": "Gwagwalada",
+                    "order": 0
+                },
+                {
+                    "key": 270,
+                    "value": "Gwale",
+                    "order": 0
+                },
+                {
+                    "key": 271,
+                    "value": "Gwandu",
+                    "order": 0
+                },
+                {
+                    "key": 272,
+                    "value": "Gwaram",
+                    "order": 0
+                },
+                {
+                    "key": 273,
+                    "value": "Gwarzo",
+                    "order": 0
+                },
+                {
+                    "key": 274,
+                    "value": "Gwer East",
+                    "order": 0
+                },
+                {
+                    "key": 275,
+                    "value": "Gwer West",
+                    "order": 0
+                },
+                {
+                    "key": 276,
+                    "value": "Gwiwa",
+                    "order": 0
+                },
+                {
+                    "key": 277,
+                    "value": "Gwoza",
+                    "order": 0
+                },
+                {
+                    "key": 278,
+                    "value": "Hadejia",
+                    "order": 0
+                },
+                {
+                    "key": 279,
+                    "value": "Hawul",
+                    "order": 0
+                },
+                {
+                    "key": 280,
+                    "value": "Hong",
+                    "order": 0
+                },
+                {
+                    "key": 281,
+                    "value": "Ibadan North",
+                    "order": 0
+                },
+                {
+                    "key": 282,
+                    "value": "Ibadan North-East",
+                    "order": 0
+                },
+                {
+                    "key": 283,
+                    "value": "Ibadan North-West",
+                    "order": 0
+                },
+                {
+                    "key": 284,
+                    "value": "Ibadan South-East",
+                    "order": 0
+                },
+                {
+                    "key": 285,
+                    "value": "Ibadan South-West",
+                    "order": 0
+                },
+                {
+                    "key": 286,
+                    "value": "Ibaji",
+                    "order": 0
+                },
+                {
+                    "key": 287,
+                    "value": "Ibarapa Central",
+                    "order": 0
+                },
+                {
+                    "key": 288,
+                    "value": "Ibarapa East",
+                    "order": 0
+                },
+                {
+                    "key": 289,
+                    "value": "Ibarapa North",
+                    "order": 0
+                },
+                {
+                    "key": 290,
+                    "value": "Ibeju-Lekki",
+                    "order": 0
+                },
+                {
+                    "key": 291,
+                    "value": "Ibeno",
+                    "order": 0
+                },
+                {
+                    "key": 292,
+                    "value": "Ibesikpo Asutan",
+                    "order": 0
+                },
+                {
+                    "key": 293,
+                    "value": "Ibi",
+                    "order": 0
+                },
+                {
+                    "key": 294,
+                    "value": "Ibiono-Ibom",
+                    "order": 0
+                },
+                {
+                    "key": 295,
+                    "value": "Idah",
+                    "order": 0
+                },
+                {
+                    "key": 296,
+                    "value": "Idanre",
+                    "order": 0
+                },
+                {
+                    "key": 297,
+                    "value": "Ideato North",
+                    "order": 0
+                },
+                {
+                    "key": 298,
+                    "value": "Ideato South",
+                    "order": 0
+                },
+                {
+                    "key": 299,
+                    "value": "Idemili North",
+                    "order": 0
+                },
+                {
+                    "key": 300,
+                    "value": "Idemili South",
+                    "order": 0
+                },
+                {
+                    "key": 301,
+                    "value": "Ido",
+                    "order": 0
+                },
+                {
+                    "key": 302,
+                    "value": "Ido Osi",
+                    "order": 0
+                },
+                {
+                    "key": 303,
+                    "value": "Ifako-Ijaiye",
+                    "order": 0
+                },
+                {
+                    "key": 304,
+                    "value": "Ifedayo",
+                    "order": 0
+                },
+                {
+                    "key": 305,
+                    "value": "Ifedore",
+                    "order": 0
+                },
+                {
+                    "key": 306,
+                    "value": "Ifelodun",
+                    "order": 0
+                },
+                {
+                    "key": 307,
+                    "value": "Ifelodun",
+                    "order": 0
+                },
+                {
+                    "key": 308,
+                    "value": "Ifo",
+                    "order": 0
+                },
+                {
+                    "key": 309,
+                    "value": "Igabi",
+                    "order": 0
+                },
+                {
+                    "key": 310,
+                    "value": "Igalamela Odolu",
+                    "order": 0
+                },
+                {
+                    "key": 311,
+                    "value": "Igbo Etiti",
+                    "order": 0
+                },
+                {
+                    "key": 312,
+                    "value": "Igbo Eze North",
+                    "order": 0
+                },
+                {
+                    "key": 313,
+                    "value": "Igbo Eze South",
+                    "order": 0
+                },
+                {
+                    "key": 314,
+                    "value": "Igueben",
+                    "order": 0
+                },
+                {
+                    "key": 315,
+                    "value": "Ihiala",
+                    "order": 0
+                },
+                {
+                    "key": 316,
+                    "value": "Ihitte/Uboma",
+                    "order": 0
+                },
+                {
+                    "key": 317,
+                    "value": "Ilaje",
+                    "order": 0
+                },
+                {
+                    "key": 318,
+                    "value": "Ijebu East",
+                    "order": 0
+                },
+                {
+                    "key": 319,
+                    "value": "Ijebu North",
+                    "order": 0
+                },
+                {
+                    "key": 320,
+                    "value": "Ijebu North East",
+                    "order": 0
+                },
+                {
+                    "key": 321,
+                    "value": "Ijebu Ode",
+                    "order": 0
+                },
+                {
+                    "key": 322,
+                    "value": "Ijero",
+                    "order": 0
+                },
+                {
+                    "key": 323,
+                    "value": "Ijumu",
+                    "order": 0
+                },
+                {
+                    "key": 324,
+                    "value": "Ika",
+                    "order": 0
+                },
+                {
+                    "key": 325,
+                    "value": "Ika North East",
+                    "order": 0
+                },
+                {
+                    "key": 326,
+                    "value": "Ikara",
+                    "order": 0
+                },
+                {
+                    "key": 327,
+                    "value": "Ika South",
+                    "order": 0
+                },
+                {
+                    "key": 328,
+                    "value": "Ikeduru",
+                    "order": 0
+                },
+                {
+                    "key": 329,
+                    "value": "Ikeja",
+                    "order": 0
+                },
+                {
+                    "key": 330,
+                    "value": "Ikenne",
+                    "order": 0
+                },
+                {
+                    "key": 331,
+                    "value": "Ikere",
+                    "order": 0
+                },
+                {
+                    "key": 332,
+                    "value": "Ikole",
+                    "order": 0
+                },
+                {
+                    "key": 333,
+                    "value": "Ikom",
+                    "order": 0
+                },
+                {
+                    "key": 334,
+                    "value": "Ikono",
+                    "order": 0
+                },
+                {
+                    "key": 335,
+                    "value": "Ikorodu",
+                    "order": 0
+                },
+                {
+                    "key": 336,
+                    "value": "Ikot Abasi",
+                    "order": 0
+                },
+                {
+                    "key": 337,
+                    "value": "Ikot Ekpene",
+                    "order": 0
+                },
+                {
+                    "key": 338,
+                    "value": "Ikpoba Okha",
+                    "order": 0
+                },
+                {
+                    "key": 339,
+                    "value": "Ikwerre",
+                    "order": 0
+                },
+                {
+                    "key": 340,
+                    "value": "Ikwo",
+                    "order": 0
+                },
+                {
+                    "key": 341,
+                    "value": "Ikwuano",
+                    "order": 0
+                },
+                {
+                    "key": 342,
+                    "value": "Ila",
+                    "order": 0
+                },
+                {
+                    "key": 343,
+                    "value": "Ilejemeje",
+                    "order": 0
+                },
+                {
+                    "key": 344,
+                    "value": "Ile Oluji/Okeigbo",
+                    "order": 0
+                },
+                {
+                    "key": 345,
+                    "value": "Ilesa East",
+                    "order": 0
+                },
+                {
+                    "key": 346,
+                    "value": "Ilesa West",
+                    "order": 0
+                },
+                {
+                    "key": 347,
+                    "value": "Illela",
+                    "order": 0
+                },
+                {
+                    "key": 348,
+                    "value": "Ilorin East",
+                    "order": 0
+                },
+                {
+                    "key": 349,
+                    "value": "Ilorin South",
+                    "order": 0
+                },
+                {
+                    "key": 350,
+                    "value": "Ilorin West",
+                    "order": 0
+                },
+                {
+                    "key": 351,
+                    "value": "Imeko Afon",
+                    "order": 0
+                },
+                {
+                    "key": 352,
+                    "value": "Ingawa",
+                    "order": 0
+                },
+                {
+                    "key": 353,
+                    "value": "Ini",
+                    "order": 0
+                },
+                {
+                    "key": 354,
+                    "value": "Ipokia",
+                    "order": 0
+                },
+                {
+                    "key": 355,
+                    "value": "Irele",
+                    "order": 0
+                },
+                {
+                    "key": 356,
+                    "value": "Irepo",
+                    "order": 0
+                },
+                {
+                    "key": 357,
+                    "value": "Irepodun",
+                    "order": 0
+                },
+                {
+                    "key": 358,
+                    "value": "Irepodun",
+                    "order": 0
+                },
+                {
+                    "key": 359,
+                    "value": "Irepodun/Ifelodun",
+                    "order": 0
+                },
+                {
+                    "key": 360,
+                    "value": "Irewole",
+                    "order": 0
+                },
+                {
+                    "key": 361,
+                    "value": "Isa",
+                    "order": 0
+                },
+                {
+                    "key": 362,
+                    "value": "Ise/Orun",
+                    "order": 0
+                },
+                {
+                    "key": 363,
+                    "value": "Iseyin",
+                    "order": 0
+                },
+                {
+                    "key": 364,
+                    "value": "Ishielu",
+                    "order": 0
+                },
+                {
+                    "key": 365,
+                    "value": "Isiala Mbano",
+                    "order": 0
+                },
+                {
+                    "key": 366,
+                    "value": "Isiala Ngwa North",
+                    "order": 0
+                },
+                {
+                    "key": 367,
+                    "value": "Isiala Ngwa South",
+                    "order": 0
+                },
+                {
+                    "key": 368,
+                    "value": "Isin",
+                    "order": 0
+                },
+                {
+                    "key": 369,
+                    "value": "Isi Uzo",
+                    "order": 0
+                },
+                {
+                    "key": 370,
+                    "value": "Isokan",
+                    "order": 0
+                },
+                {
+                    "key": 371,
+                    "value": "Isoko North",
+                    "order": 0
+                },
+                {
+                    "key": 372,
+                    "value": "Isoko South",
+                    "order": 0
+                },
+                {
+                    "key": 373,
+                    "value": "Isu",
+                    "order": 0
+                },
+                {
+                    "key": 374,
+                    "value": "Isuikwuato",
+                    "order": 0
+                },
+                {
+                    "key": 375,
+                    "value": "Itas/Gadau",
+                    "order": 0
+                },
+                {
+                    "key": 376,
+                    "value": "Itesiwaju",
+                    "order": 0
+                },
+                {
+                    "key": 377,
+                    "value": "Itu",
+                    "order": 0
+                },
+                {
+                    "key": 378,
+                    "value": "Ivo",
+                    "order": 0
+                },
+                {
+                    "key": 379,
+                    "value": "Iwajowa",
+                    "order": 0
+                },
+                {
+                    "key": 380,
+                    "value": "Iwo",
+                    "order": 0
+                },
+                {
+                    "key": 381,
+                    "value": "Izzi",
+                    "order": 0
+                },
+                {
+                    "key": 382,
+                    "value": "Jaba",
+                    "order": 0
+                },
+                {
+                    "key": 383,
+                    "value": "Jada",
+                    "order": 0
+                },
+                {
+                    "key": 384,
+                    "value": "Jahun",
+                    "order": 0
+                },
+                {
+                    "key": 385,
+                    "value": "Jakusko",
+                    "order": 0
+                },
+                {
+                    "key": 386,
+                    "value": "Jalingo",
+                    "order": 0
+                },
+                {
+                    "key": 387,
+                    "value": "Jama'are",
+                    "order": 0
+                },
+                {
+                    "key": 388,
+                    "value": "Jega",
+                    "order": 0
+                },
+                {
+                    "key": 389,
+                    "value": "Jema'a",
+                    "order": 0
+                },
+                {
+                    "key": 390,
+                    "value": "Jere",
+                    "order": 0
+                },
+                {
+                    "key": 391,
+                    "value": "Jibia",
+                    "order": 0
+                },
+                {
+                    "key": 392,
+                    "value": "Jos East",
+                    "order": 0
+                },
+                {
+                    "key": 393,
+                    "value": "Jos North",
+                    "order": 0
+                },
+                {
+                    "key": 394,
+                    "value": "Jos South",
+                    "order": 0
+                },
+                {
+                    "key": 395,
+                    "value": "Kabba/Bunu",
+                    "order": 0
+                },
+                {
+                    "key": 396,
+                    "value": "Kabo",
+                    "order": 0
+                },
+                {
+                    "key": 397,
+                    "value": "Kachia",
+                    "order": 0
+                },
+                {
+                    "key": 398,
+                    "value": "Kaduna North",
+                    "order": 0
+                },
+                {
+                    "key": 399,
+                    "value": "Kaduna South",
+                    "order": 0
+                },
+                {
+                    "key": 400,
+                    "value": "Kafin Hausa",
+                    "order": 0
+                },
+                {
+                    "key": 401,
+                    "value": "Kafur",
+                    "order": 0
+                },
+                {
+                    "key": 402,
+                    "value": "Kaga",
+                    "order": 0
+                },
+                {
+                    "key": 403,
+                    "value": "Kagarko",
+                    "order": 0
+                },
+                {
+                    "key": 404,
+                    "value": "Kaiama",
+                    "order": 0
+                },
+                {
+                    "key": 405,
+                    "value": "Kaita",
+                    "order": 0
+                },
+                {
+                    "key": 406,
+                    "value": "Kajola",
+                    "order": 0
+                },
+                {
+                    "key": 407,
+                    "value": "Kajuru",
+                    "order": 0
+                },
+                {
+                    "key": 408,
+                    "value": "Kala/Balge",
+                    "order": 0
+                },
+                {
+                    "key": 409,
+                    "value": "Kalgo",
+                    "order": 0
+                },
+                {
+                    "key": 410,
+                    "value": "Kaltungo",
+                    "order": 0
+                },
+                {
+                    "key": 411,
+                    "value": "Kanam",
+                    "order": 0
+                },
+                {
+                    "key": 412,
+                    "value": "Kankara",
+                    "order": 0
+                },
+                {
+                    "key": 413,
+                    "value": "Kanke",
+                    "order": 0
+                },
+                {
+                    "key": 414,
+                    "value": "Kankia",
+                    "order": 0
+                },
+                {
+                    "key": 415,
+                    "value": "Kano Municipal",
+                    "order": 0
+                },
+                {
+                    "key": 416,
+                    "value": "Karasuwa",
+                    "order": 0
+                },
+                {
+                    "key": 417,
+                    "value": "Karaye",
+                    "order": 0
+                },
+                {
+                    "key": 418,
+                    "value": "Karim Lamido",
+                    "order": 0
+                },
+                {
+                    "key": 419,
+                    "value": "Karu",
+                    "order": 0
+                },
+                {
+                    "key": 420,
+                    "value": "Katagum",
+                    "order": 0
+                },
+                {
+                    "key": 421,
+                    "value": "Katcha",
+                    "order": 0
+                },
+                {
+                    "key": 422,
+                    "value": "Katsina",
+                    "order": 0
+                },
+                {
+                    "key": 423,
+                    "value": "Katsina-Ala",
+                    "order": 0
+                },
+                {
+                    "key": 424,
+                    "value": "Kaura",
+                    "order": 0
+                },
+                {
+                    "key": 425,
+                    "value": "Kaura Namoda",
+                    "order": 0
+                },
+                {
+                    "key": 426,
+                    "value": "Kauru",
+                    "order": 0
+                },
+                {
+                    "key": 427,
+                    "value": "Kazaure",
+                    "order": 0
+                },
+                {
+                    "key": 428,
+                    "value": "Keana",
+                    "order": 0
+                },
+                {
+                    "key": 429,
+                    "value": "Kebbe",
+                    "order": 0
+                },
+                {
+                    "key": 430,
+                    "value": "Keffi",
+                    "order": 0
+                },
+                {
+                    "key": 431,
+                    "value": "Khana",
+                    "order": 0
+                },
+                {
+                    "key": 432,
+                    "value": "Kibiya",
+                    "order": 0
+                },
+                {
+                    "key": 433,
+                    "value": "Kirfi",
+                    "order": 0
+                },
+                {
+                    "key": 434,
+                    "value": "Kiri Kasama",
+                    "order": 0
+                },
+                {
+                    "key": 435,
+                    "value": "Kiru",
+                    "order": 0
+                },
+                {
+                    "key": 436,
+                    "value": "Kiyawa",
+                    "order": 0
+                },
+                {
+                    "key": 437,
+                    "value": "Kogi",
+                    "order": 0
+                },
+                {
+                    "key": 438,
+                    "value": "Koko/Besse",
+                    "order": 0
+                },
+                {
+                    "key": 439,
+                    "value": "Kokona",
+                    "order": 0
+                },
+                {
+                    "key": 440,
+                    "value": "Kolokuma/Opokuma",
+                    "order": 0
+                },
+                {
+                    "key": 441,
+                    "value": "Konduga",
+                    "order": 0
+                },
+                {
+                    "key": 442,
+                    "value": "Konshisha",
+                    "order": 0
+                },
+                {
+                    "key": 443,
+                    "value": "Kontagora",
+                    "order": 0
+                },
+                {
+                    "key": 444,
+                    "value": "Kosofe",
+                    "order": 0
+                },
+                {
+                    "key": 445,
+                    "value": "Kaugama",
+                    "order": 0
+                },
+                {
+                    "key": 446,
+                    "value": "Kubau",
+                    "order": 0
+                },
+                {
+                    "key": 447,
+                    "value": "Kudan",
+                    "order": 0
+                },
+                {
+                    "key": 448,
+                    "value": "Kuje",
+                    "order": 0
+                },
+                {
+                    "key": 449,
+                    "value": "Kukawa",
+                    "order": 0
+                },
+                {
+                    "key": 450,
+                    "value": "Kumbotso",
+                    "order": 0
+                },
+                {
+                    "key": 451,
+                    "value": "Kumi",
+                    "order": 0
+                },
+                {
+                    "key": 452,
+                    "value": "Kunchi",
+                    "order": 0
+                },
+                {
+                    "key": 453,
+                    "value": "Kura",
+                    "order": 0
+                },
+                {
+                    "key": 454,
+                    "value": "Kurfi",
+                    "order": 0
+                },
+                {
+                    "key": 455,
+                    "value": "Kusada",
+                    "order": 0
+                },
+                {
+                    "key": 456,
+                    "value": "Kwali",
+                    "order": 0
+                },
+                {
+                    "key": 457,
+                    "value": "Kwande",
+                    "order": 0
+                },
+                {
+                    "key": 458,
+                    "value": "Kwami",
+                    "order": 0
+                },
+                {
+                    "key": 459,
+                    "value": "Kware",
+                    "order": 0
+                },
+                {
+                    "key": 460,
+                    "value": "Kwaya Kusar",
+                    "order": 0
+                },
+                {
+                    "key": 461,
+                    "value": "Lafia",
+                    "order": 0
+                },
+                {
+                    "key": 462,
+                    "value": "Lagelu",
+                    "order": 0
+                },
+                {
+                    "key": 463,
+                    "value": "Lagos Island",
+                    "order": 0
+                },
+                {
+                    "key": 464,
+                    "value": "Lagos Mainland",
+                    "order": 0
+                },
+                {
+                    "key": 465,
+                    "value": "Langtang South",
+                    "order": 0
+                },
+                {
+                    "key": 466,
+                    "value": "Langtang North",
+                    "order": 0
+                },
+                {
+                    "key": 467,
+                    "value": "Lapai",
+                    "order": 0
+                },
+                {
+                    "key": 468,
+                    "value": "Larmurde",
+                    "order": 0
+                },
+                {
+                    "key": 469,
+                    "value": "Lau",
+                    "order": 0
+                },
+                {
+                    "key": 470,
+                    "value": "Lavun",
+                    "order": 0
+                },
+                {
+                    "key": 471,
+                    "value": "Lere",
+                    "order": 0
+                },
+                {
+                    "key": 472,
+                    "value": "Logo",
+                    "order": 0
+                },
+                {
+                    "key": 473,
+                    "value": "Lokoja",
+                    "order": 0
+                },
+                {
+                    "key": 474,
+                    "value": "Machina",
+                    "order": 0
+                },
+                {
+                    "key": 475,
+                    "value": "Madagali",
+                    "order": 0
+                },
+                {
+                    "key": 476,
+                    "value": "Madobi",
+                    "order": 0
+                },
+                {
+                    "key": 477,
+                    "value": "Mafa",
+                    "order": 0
+                },
+                {
+                    "key": 478,
+                    "value": "Magama",
+                    "order": 0
+                },
+                {
+                    "key": 479,
+                    "value": "Magumeri",
+                    "order": 0
+                },
+                {
+                    "key": 480,
+                    "value": "Mai'Adua",
+                    "order": 0
+                },
+                {
+                    "key": 481,
+                    "value": "Maiduguri",
+                    "order": 0
+                },
+                {
+                    "key": 482,
+                    "value": "Maigatari",
+                    "order": 0
+                },
+                {
+                    "key": 483,
+                    "value": "Maiha",
+                    "order": 0
+                },
+                {
+                    "key": 484,
+                    "value": "Maiyama",
+                    "order": 0
+                },
+                {
+                    "key": 485,
+                    "value": "Makarfi",
+                    "order": 0
+                },
+                {
+                    "key": 486,
+                    "value": "Makoda",
+                    "order": 0
+                },
+                {
+                    "key": 487,
+                    "value": "Malam Madori",
+                    "order": 0
+                },
+                {
+                    "key": 488,
+                    "value": "Malumfashi",
+                    "order": 0
+                },
+                {
+                    "key": 489,
+                    "value": "Mangu",
+                    "order": 0
+                },
+                {
+                    "key": 490,
+                    "value": "Mani",
+                    "order": 0
+                },
+                {
+                    "key": 491,
+                    "value": "Maradun",
+                    "order": 0
+                },
+                {
+                    "key": 492,
+                    "value": "Mariga",
+                    "order": 0
+                },
+                {
+                    "key": 493,
+                    "value": "Makurdi",
+                    "order": 0
+                },
+                {
+                    "key": 494,
+                    "value": "Marte",
+                    "order": 0
+                },
+                {
+                    "key": 495,
+                    "value": "Maru",
+                    "order": 0
+                },
+                {
+                    "key": 496,
+                    "value": "Mashegu",
+                    "order": 0
+                },
+                {
+                    "key": 497,
+                    "value": "Mashi",
+                    "order": 0
+                },
+                {
+                    "key": 498,
+                    "value": "Matazu",
+                    "order": 0
+                },
+                {
+                    "key": 499,
+                    "value": "Mayo Belwa",
+                    "order": 0
+                },
+                {
+                    "key": 500,
+                    "value": "Mbaitoli",
+                    "order": 0
+                },
+                {
+                    "key": 501,
+                    "value": "Mbo",
+                    "order": 0
+                },
+                {
+                    "key": 502,
+                    "value": "Michika",
+                    "order": 0
+                },
+                {
+                    "key": 503,
+                    "value": "Miga",
+                    "order": 0
+                },
+                {
+                    "key": 504,
+                    "value": "Mikang",
+                    "order": 0
+                },
+                {
+                    "key": 505,
+                    "value": "Minjibir",
+                    "order": 0
+                },
+                {
+                    "key": 506,
+                    "value": "Misau",
+                    "order": 0
+                },
+                {
+                    "key": 507,
+                    "value": "Moba",
+                    "order": 0
+                },
+                {
+                    "key": 508,
+                    "value": "Mobbar",
+                    "order": 0
+                },
+                {
+                    "key": 509,
+                    "value": "Mubi North",
+                    "order": 0
+                },
+                {
+                    "key": 510,
+                    "value": "Mubi South",
+                    "order": 0
+                },
+                {
+                    "key": 511,
+                    "value": "Mokwa",
+                    "order": 0
+                },
+                {
+                    "key": 512,
+                    "value": "Monguno",
+                    "order": 0
+                },
+                {
+                    "key": 513,
+                    "value": "Mopa Muro",
+                    "order": 0
+                },
+                {
+                    "key": 514,
+                    "value": "Moro",
+                    "order": 0
+                },
+                {
+                    "key": 515,
+                    "value": "Moya",
+                    "order": 0
+                },
+                {
+                    "key": 516,
+                    "value": "Mkpat-Enin",
+                    "order": 0
+                },
+                {
+                    "key": 517,
+                    "value": "Municipal Area Council",
+                    "order": 0
+                },
+                {
+                    "key": 518,
+                    "value": "Musawa",
+                    "order": 0
+                },
+                {
+                    "key": 519,
+                    "value": "Mushin",
+                    "order": 0
+                },
+                {
+                    "key": 520,
+                    "value": "Nafada",
+                    "order": 0
+                },
+                {
+                    "key": 521,
+                    "value": "Nangere",
+                    "order": 0
+                },
+                {
+                    "key": 522,
+                    "value": "Nasarawa",
+                    "order": 0
+                },
+                {
+                    "key": 523,
+                    "value": "Nasarawa",
+                    "order": 0
+                },
+                {
+                    "key": 524,
+                    "value": "Nasarawa Egon",
+                    "order": 0
+                },
+                {
+                    "key": 525,
+                    "value": "Ndokwa East",
+                    "order": 0
+                },
+                {
+                    "key": 526,
+                    "value": "Ndokwa West",
+                    "order": 0
+                },
+                {
+                    "key": 527,
+                    "value": "Nembe",
+                    "order": 0
+                },
+                {
+                    "key": 528,
+                    "value": "Ngala",
+                    "order": 0
+                },
+                {
+                    "key": 529,
+                    "value": "Nganzai",
+                    "order": 0
+                },
+                {
+                    "key": 530,
+                    "value": "Ngaski",
+                    "order": 0
+                },
+                {
+                    "key": 531,
+                    "value": "Ngor Okpala",
+                    "order": 0
+                },
+                {
+                    "key": 532,
+                    "value": "Nguru",
+                    "order": 0
+                },
+                {
+                    "key": 533,
+                    "value": "Ningi",
+                    "order": 0
+                },
+                {
+                    "key": 534,
+                    "value": "Njaba",
+                    "order": 0
+                },
+                {
+                    "key": 535,
+                    "value": "Njikoka",
+                    "order": 0
+                },
+                {
+                    "key": 536,
+                    "value": "Nkanu East",
+                    "order": 0
+                },
+                {
+                    "key": 537,
+                    "value": "Nkanu West",
+                    "order": 0
+                },
+                {
+                    "key": 538,
+                    "value": "Nkwerre",
+                    "order": 0
+                },
+                {
+                    "key": 539,
+                    "value": "Nnewi North",
+                    "order": 0
+                },
+                {
+                    "key": 540,
+                    "value": "Nnewi South",
+                    "order": 0
+                },
+                {
+                    "key": 541,
+                    "value": "Nsit-Atai",
+                    "order": 0
+                },
+                {
+                    "key": 542,
+                    "value": "Nsit-Ibom",
+                    "order": 0
+                },
+                {
+                    "key": 543,
+                    "value": "Nsit-Ubium",
+                    "order": 0
+                },
+                {
+                    "key": 544,
+                    "value": "Nsukka",
+                    "order": 0
+                },
+                {
+                    "key": 545,
+                    "value": "Numan",
+                    "order": 0
+                },
+                {
+                    "key": 546,
+                    "value": "Nwangele",
+                    "order": 0
+                },
+                {
+                    "key": 547,
+                    "value": "Obafemi Owode",
+                    "order": 0
+                },
+                {
+                    "key": 548,
+                    "value": "Obanliku",
+                    "order": 0
+                },
+                {
+                    "key": 549,
+                    "value": "Obi",
+                    "order": 0
+                },
+                {
+                    "key": 550,
+                    "value": "Obi",
+                    "order": 0
+                },
+                {
+                    "key": 551,
+                    "value": "Obi Ngwa",
+                    "order": 0
+                },
+                {
+                    "key": 552,
+                    "value": "Obio/Akpor",
+                    "order": 0
+                },
+                {
+                    "key": 553,
+                    "value": "Obokun",
+                    "order": 0
+                },
+                {
+                    "key": 554,
+                    "value": "Obot Akara",
+                    "order": 0
+                },
+                {
+                    "key": 555,
+                    "value": "Obowo",
+                    "order": 0
+                },
+                {
+                    "key": 556,
+                    "value": "Obubra",
+                    "order": 0
+                },
+                {
+                    "key": 557,
+                    "value": "Obudu",
+                    "order": 0
+                },
+                {
+                    "key": 558,
+                    "value": "Odeda",
+                    "order": 0
+                },
+                {
+                    "key": 559,
+                    "value": "Odigbo",
+                    "order": 0
+                },
+                {
+                    "key": 560,
+                    "value": "Odogbolu",
+                    "order": 0
+                },
+                {
+                    "key": 561,
+                    "value": "Odo Otin",
+                    "order": 0
+                },
+                {
+                    "key": 562,
+                    "value": "Odukpani",
+                    "order": 0
+                },
+                {
+                    "key": 563,
+                    "value": "Offa",
+                    "order": 0
+                },
+                {
+                    "key": 564,
+                    "value": "Ofu",
+                    "order": 0
+                },
+                {
+                    "key": 565,
+                    "value": "Ogba/Egbema/Ndoni",
+                    "order": 0
+                },
+                {
+                    "key": 566,
+                    "value": "Ogbadibo",
+                    "order": 0
+                },
+                {
+                    "key": 567,
+                    "value": "Ogbaru",
+                    "order": 0
+                },
+                {
+                    "key": 568,
+                    "value": "Ogbia",
+                    "order": 0
+                },
+                {
+                    "key": 569,
+                    "value": "Ogbomosho North",
+                    "order": 0
+                },
+                {
+                    "key": 570,
+                    "value": "Ogbomosho South",
+                    "order": 0
+                },
+                {
+                    "key": 571,
+                    "value": "Ogu/Bolo",
+                    "order": 0
+                },
+                {
+                    "key": 572,
+                    "value": "Ogoja",
+                    "order": 0
+                },
+                {
+                    "key": 573,
+                    "value": "Ogo Oluwa",
+                    "order": 0
+                },
+                {
+                    "key": 574,
+                    "value": "Ogori/Magongo",
+                    "order": 0
+                },
+                {
+                    "key": 575,
+                    "value": "Ogun Waterside",
+                    "order": 0
+                },
+                {
+                    "key": 576,
+                    "value": "Oguta",
+                    "order": 0
+                },
+                {
+                    "key": 577,
+                    "value": "Ohafia",
+                    "order": 0
+                },
+                {
+                    "key": 578,
+                    "value": "Ohaji/Egbema",
+                    "order": 0
+                },
+                {
+                    "key": 579,
+                    "value": "Ohaozara",
+                    "order": 0
+                },
+                {
+                    "key": 580,
+                    "value": "Ohaukwu",
+                    "order": 0
+                },
+                {
+                    "key": 581,
+                    "value": "Ohimini",
+                    "order": 0
+                },
+                {
+                    "key": 582,
+                    "value": "Orhionmwon",
+                    "order": 0
+                },
+                {
+                    "key": 583,
+                    "value": "Oji River",
+                    "order": 0
+                },
+                {
+                    "key": 584,
+                    "value": "Ojo",
+                    "order": 0
+                },
+                {
+                    "key": 585,
+                    "value": "Oju",
+                    "order": 0
+                },
+                {
+                    "key": 586,
+                    "value": "Okehi",
+                    "order": 0
+                },
+                {
+                    "key": 587,
+                    "value": "Okene",
+                    "order": 0
+                },
+                {
+                    "key": 588,
+                    "value": "Oke Ero",
+                    "order": 0
+                },
+                {
+                    "key": 589,
+                    "value": "Okigwe",
+                    "order": 0
+                },
+                {
+                    "key": 590,
+                    "value": "Okitipupa",
+                    "order": 0
+                },
+                {
+                    "key": 591,
+                    "value": "Okobo",
+                    "order": 0
+                },
+                {
+                    "key": 592,
+                    "value": "Okpe",
+                    "order": 0
+                },
+                {
+                    "key": 593,
+                    "value": "Okrika",
+                    "order": 0
+                },
+                {
+                    "key": 594,
+                    "value": "Olamaboro",
+                    "order": 0
+                },
+                {
+                    "key": 595,
+                    "value": "Ola Oluwa",
+                    "order": 0
+                },
+                {
+                    "key": 596,
+                    "value": "Olorunda",
+                    "order": 0
+                },
+                {
+                    "key": 597,
+                    "value": "Olorunsogo",
+                    "order": 0
+                },
+                {
+                    "key": 598,
+                    "value": "Oluyole",
+                    "order": 0
+                },
+                {
+                    "key": 599,
+                    "value": "Omala",
+                    "order": 0
+                },
+                {
+                    "key": 600,
+                    "value": "Omuma",
+                    "order": 0
+                },
+                {
+                    "key": 601,
+                    "value": "Ona Ara",
+                    "order": 0
+                },
+                {
+                    "key": 602,
+                    "value": "Ondo East",
+                    "order": 0
+                },
+                {
+                    "key": 603,
+                    "value": "Ondo West",
+                    "order": 0
+                },
+                {
+                    "key": 604,
+                    "value": "Onicha",
+                    "order": 0
+                },
+                {
+                    "key": 605,
+                    "value": "Onitsha North",
+                    "order": 0
+                },
+                {
+                    "key": 606,
+                    "value": "Onitsha South",
+                    "order": 0
+                },
+                {
+                    "key": 607,
+                    "value": "Onna",
+                    "order": 0
+                },
+                {
+                    "key": 608,
+                    "value": "Okpokwu",
+                    "order": 0
+                },
+                {
+                    "key": 609,
+                    "value": "Opobo/Nkoro",
+                    "order": 0
+                },
+                {
+                    "key": 610,
+                    "value": "Oredo",
+                    "order": 0
+                },
+                {
+                    "key": 611,
+                    "value": "Orelope",
+                    "order": 0
+                },
+                {
+                    "key": 612,
+                    "value": "Oriade",
+                    "order": 0
+                },
+                {
+                    "key": 613,
+                    "value": "Ori Ire",
+                    "order": 0
+                },
+                {
+                    "key": 614,
+                    "value": "Orlu",
+                    "order": 0
+                },
+                {
+                    "key": 615,
+                    "value": "Orolu",
+                    "order": 0
+                },
+                {
+                    "key": 616,
+                    "value": "Oron",
+                    "order": 0
+                },
+                {
+                    "key": 617,
+                    "value": "Orsu",
+                    "order": 0
+                },
+                {
+                    "key": 618,
+                    "value": "Oru East",
+                    "order": 0
+                },
+                {
+                    "key": 619,
+                    "value": "Oruk Anam",
+                    "order": 0
+                },
+                {
+                    "key": 620,
+                    "value": "Orumba North",
+                    "order": 0
+                },
+                {
+                    "key": 621,
+                    "value": "Orumba South",
+                    "order": 0
+                },
+                {
+                    "key": 622,
+                    "value": "Oru West",
+                    "order": 0
+                },
+                {
+                    "key": 623,
+                    "value": "Ose",
+                    "order": 0
+                },
+                {
+                    "key": 624,
+                    "value": "Oshimili North",
+                    "order": 0
+                },
+                {
+                    "key": 625,
+                    "value": "Oshimili South",
+                    "order": 0
+                },
+                {
+                    "key": 626,
+                    "value": "Oshodi-Isolo",
+                    "order": 0
+                },
+                {
+                    "key": 627,
+                    "value": "Osisioma",
+                    "order": 0
+                },
+                {
+                    "key": 628,
+                    "value": "Osogbo",
+                    "order": 0
+                },
+                {
+                    "key": 629,
+                    "value": "Oturkpo",
+                    "order": 0
+                },
+                {
+                    "key": 630,
+                    "value": "Ovia North-East",
+                    "order": 0
+                },
+                {
+                    "key": 631,
+                    "value": "Ovia South-West",
+                    "order": 0
+                },
+                {
+                    "key": 632,
+                    "value": "Owan East",
+                    "order": 0
+                },
+                {
+                    "key": 633,
+                    "value": "Owan West",
+                    "order": 0
+                },
+                {
+                    "key": 634,
+                    "value": "Owerri Municipal",
+                    "order": 0
+                },
+                {
+                    "key": 635,
+                    "value": "Owerri North",
+                    "order": 0
+                },
+                {
+                    "key": 636,
+                    "value": "Owerri West",
+                    "order": 0
+                },
+                {
+                    "key": 637,
+                    "value": "Owo",
+                    "order": 0
+                },
+                {
+                    "key": 638,
+                    "value": "Oye",
+                    "order": 0
+                },
+                {
+                    "key": 639,
+                    "value": "Oyi",
+                    "order": 0
+                },
+                {
+                    "key": 640,
+                    "value": "Oyigbo",
+                    "order": 0
+                },
+                {
+                    "key": 641,
+                    "value": "Oyo",
+                    "order": 0
+                },
+                {
+                    "key": 642,
+                    "value": "Oyo East",
+                    "order": 0
+                },
+                {
+                    "key": 643,
+                    "value": "Oyun",
+                    "order": 0
+                },
+                {
+                    "key": 644,
+                    "value": "Paikoro",
+                    "order": 0
+                },
+                {
+                    "key": 645,
+                    "value": "Pankshin",
+                    "order": 0
+                },
+                {
+                    "key": 646,
+                    "value": "Patani",
+                    "order": 0
+                },
+                {
+                    "key": 647,
+                    "value": "Pategi",
+                    "order": 0
+                },
+                {
+                    "key": 648,
+                    "value": "Port Harcourt",
+                    "order": 0
+                },
+                {
+                    "key": 649,
+                    "value": "Potiskum",
+                    "order": 0
+                },
+                {
+                    "key": 650,
+                    "value": "Qua'an Pan",
+                    "order": 0
+                },
+                {
+                    "key": 651,
+                    "value": "Rabah",
+                    "order": 0
+                },
+                {
+                    "key": 652,
+                    "value": "Rafi",
+                    "order": 0
+                },
+                {
+                    "key": 653,
+                    "value": "Rano",
+                    "order": 0
+                },
+                {
+                    "key": 654,
+                    "value": "Remo North",
+                    "order": 0
+                },
+                {
+                    "key": 655,
+                    "value": "Rijau",
+                    "order": 0
+                },
+                {
+                    "key": 656,
+                    "value": "Rimi",
+                    "order": 0
+                },
+                {
+                    "key": 657,
+                    "value": "Rimin Gado",
+                    "order": 0
+                },
+                {
+                    "key": 658,
+                    "value": "Ringim",
+                    "order": 0
+                },
+                {
+                    "key": 659,
+                    "value": "Riyom",
+                    "order": 0
+                },
+                {
+                    "key": 660,
+                    "value": "Rogo",
+                    "order": 0
+                },
+                {
+                    "key": 661,
+                    "value": "Roni",
+                    "order": 0
+                },
+                {
+                    "key": 662,
+                    "value": "Sabon Birni",
+                    "order": 0
+                },
+                {
+                    "key": 663,
+                    "value": "Sabon Gari",
+                    "order": 0
+                },
+                {
+                    "key": 664,
+                    "value": "Sabuwa",
+                    "order": 0
+                },
+                {
+                    "key": 665,
+                    "value": "Safana",
+                    "order": 0
+                },
+                {
+                    "key": 666,
+                    "value": "Sagbama",
+                    "order": 0
+                },
+                {
+                    "key": 667,
+                    "value": "Sakaba",
+                    "order": 0
+                },
+                {
+                    "key": 668,
+                    "value": "Saki East",
+                    "order": 0
+                },
+                {
+                    "key": 669,
+                    "value": "Saki West",
+                    "order": 0
+                },
+                {
+                    "key": 670,
+                    "value": "Sandamu",
+                    "order": 0
+                },
+                {
+                    "key": 671,
+                    "value": "Sanga",
+                    "order": 0
+                },
+                {
+                    "key": 672,
+                    "value": "Sapele",
+                    "order": 0
+                },
+                {
+                    "key": 673,
+                    "value": "Sardauna",
+                    "order": 0
+                },
+                {
+                    "key": 674,
+                    "value": "Shagamu",
+                    "order": 0
+                },
+                {
+                    "key": 675,
+                    "value": "Shagari",
+                    "order": 0
+                },
+                {
+                    "key": 676,
+                    "value": "Shanga",
+                    "order": 0
+                },
+                {
+                    "key": 677,
+                    "value": "Shani",
+                    "order": 0
+                },
+                {
+                    "key": 678,
+                    "value": "Shanono",
+                    "order": 0
+                },
+                {
+                    "key": 679,
+                    "value": "Shelleng",
+                    "order": 0
+                },
+                {
+                    "key": 680,
+                    "value": "Shendam",
+                    "order": 0
+                },
+                {
+                    "key": 681,
+                    "value": "Shinkafi",
+                    "order": 0
+                },
+                {
+                    "key": 682,
+                    "value": "Shira",
+                    "order": 0
+                },
+                {
+                    "key": 683,
+                    "value": "Shiroro",
+                    "order": 0
+                },
+                {
+                    "key": 684,
+                    "value": "Shongom",
+                    "order": 0
+                },
+                {
+                    "key": 685,
+                    "value": "Shomolu",
+                    "order": 0
+                },
+                {
+                    "key": 686,
+                    "value": "Silame",
+                    "order": 0
+                },
+                {
+                    "key": 687,
+                    "value": "Soba",
+                    "order": 0
+                },
+                {
+                    "key": 688,
+                    "value": "Sokoto North",
+                    "order": 0
+                },
+                {
+                    "key": 689,
+                    "value": "Sokoto South",
+                    "order": 0
+                },
+                {
+                    "key": 690,
+                    "value": "Song",
+                    "order": 0
+                },
+                {
+                    "key": 691,
+                    "value": "Southern Ijaw",
+                    "order": 0
+                },
+                {
+                    "key": 692,
+                    "value": "Suleja",
+                    "order": 0
+                },
+                {
+                    "key": 693,
+                    "value": "Sule Tankarkar",
+                    "order": 0
+                },
+                {
+                    "key": 694,
+                    "value": "Sumaila",
+                    "order": 0
+                },
+                {
+                    "key": 695,
+                    "value": "Suru",
+                    "order": 0
+                },
+                {
+                    "key": 696,
+                    "value": "Surulere, Oyo State",
+                    "order": 0
+                },
+                {
+                    "key": 697,
+                    "value": "Surulere, Lagos State",
+                    "order": 0
+                },
+                {
+                    "key": 698,
+                    "value": "Tafa",
+                    "order": 0
+                },
+                {
+                    "key": 699,
+                    "value": "Tafawa Balewa",
+                    "order": 0
+                },
+                {
+                    "key": 700,
+                    "value": "Tai",
+                    "order": 0
+                },
+                {
+                    "key": 701,
+                    "value": "Takai",
+                    "order": 0
+                },
+                {
+                    "key": 702,
+                    "value": "Takum",
+                    "order": 0
+                },
+                {
+                    "key": 703,
+                    "value": "Talata Mafara",
+                    "order": 0
+                },
+                {
+                    "key": 704,
+                    "value": "Tambuwal",
+                    "order": 0
+                },
+                {
+                    "key": 705,
+                    "value": "Tangaza",
+                    "order": 0
+                },
+                {
+                    "key": 706,
+                    "value": "Tarauni",
+                    "order": 0
+                },
+                {
+                    "key": 707,
+                    "value": "Tarka",
+                    "order": 0
+                },
+                {
+                    "key": 708,
+                    "value": "Tarmuwa",
+                    "order": 0
+                },
+                {
+                    "key": 709,
+                    "value": "Taura",
+                    "order": 0
+                },
+                {
+                    "key": 710,
+                    "value": "Toungo",
+                    "order": 0
+                },
+                {
+                    "key": 711,
+                    "value": "Tofa",
+                    "order": 0
+                },
+                {
+                    "key": 712,
+                    "value": "Toro",
+                    "order": 0
+                },
+                {
+                    "key": 713,
+                    "value": "Toto",
+                    "order": 0
+                },
+                {
+                    "key": 714,
+                    "value": "Chafe",
+                    "order": 0
+                },
+                {
+                    "key": 715,
+                    "value": "Tsanyawa",
+                    "order": 0
+                },
+                {
+                    "key": 716,
+                    "value": "Tudun Wada",
+                    "order": 0
+                },
+                {
+                    "key": 717,
+                    "value": "Tureta",
+                    "order": 0
+                },
+                {
+                    "key": 718,
+                    "value": "Udenu",
+                    "order": 0
+                },
+                {
+                    "key": 719,
+                    "value": "Udi",
+                    "order": 0
+                },
+                {
+                    "key": 720,
+                    "value": "Udu",
+                    "order": 0
+                },
+                {
+                    "key": 721,
+                    "value": "Udung-Uko",
+                    "order": 0
+                },
+                {
+                    "key": 722,
+                    "value": "Ughelli North",
+                    "order": 0
+                },
+                {
+                    "key": 723,
+                    "value": "Ughelli South",
+                    "order": 0
+                },
+                {
+                    "key": 724,
+                    "value": "Ugwunagbo",
+                    "order": 0
+                },
+                {
+                    "key": 725,
+                    "value": "Uhunmwonde",
+                    "order": 0
+                },
+                {
+                    "key": 726,
+                    "value": "Ukanafun",
+                    "order": 0
+                },
+                {
+                    "key": 727,
+                    "value": "Ukum",
+                    "order": 0
+                },
+                {
+                    "key": 728,
+                    "value": "Ukwa East",
+                    "order": 0
+                },
+                {
+                    "key": 729,
+                    "value": "Ukwa West",
+                    "order": 0
+                },
+                {
+                    "key": 730,
+                    "value": "Ukwuani",
+                    "order": 0
+                },
+                {
+                    "key": 731,
+                    "value": "Umuahia North",
+                    "order": 0
+                },
+                {
+                    "key": 732,
+                    "value": "Umuahia South",
+                    "order": 0
+                },
+                {
+                    "key": 733,
+                    "value": "Umu Nneochi",
+                    "order": 0
+                },
+                {
+                    "key": 734,
+                    "value": "Ungogo",
+                    "order": 0
+                },
+                {
+                    "key": 735,
+                    "value": "Unuimo",
+                    "order": 0
+                },
+                {
+                    "key": 736,
+                    "value": "Uruan",
+                    "order": 0
+                },
+                {
+                    "key": 737,
+                    "value": "Urue-Offong/Oruko",
+                    "order": 0
+                },
+                {
+                    "key": 738,
+                    "value": "Ushongo",
+                    "order": 0
+                },
+                {
+                    "key": 739,
+                    "value": "Ussa",
+                    "order": 0
+                },
+                {
+                    "key": 740,
+                    "value": "Uvwie",
+                    "order": 0
+                },
+                {
+                    "key": 741,
+                    "value": "Uyo",
+                    "order": 0
+                },
+                {
+                    "key": 742,
+                    "value": "Uzo Uwani",
+                    "order": 0
+                },
+                {
+                    "key": 743,
+                    "value": "Vandeikya",
+                    "order": 0
+                },
+                {
+                    "key": 744,
+                    "value": "Wamako",
+                    "order": 0
+                },
+                {
+                    "key": 745,
+                    "value": "Wamba",
+                    "order": 0
+                },
+                {
+                    "key": 746,
+                    "value": "Warawa",
+                    "order": 0
+                },
+                {
+                    "key": 747,
+                    "value": "Warji",
+                    "order": 0
+                },
+                {
+                    "key": 748,
+                    "value": "Warri North",
+                    "order": 0
+                },
+                {
+                    "key": 749,
+                    "value": "Warri South",
+                    "order": 0
+                },
+                {
+                    "key": 750,
+                    "value": "Warri South West",
+                    "order": 0
+                },
+                {
+                    "key": 751,
+                    "value": "Wasagu/Danko",
+                    "order": 0
+                },
+                {
+                    "key": 752,
+                    "value": "Wase",
+                    "order": 0
+                },
+                {
+                    "key": 753,
+                    "value": "Wudil",
+                    "order": 0
+                },
+                {
+                    "key": 754,
+                    "value": "Wukari",
+                    "order": 0
+                },
+                {
+                    "key": 755,
+                    "value": "Wurno",
+                    "order": 0
+                },
+                {
+                    "key": 756,
+                    "value": "Wushishi",
+                    "order": 0
+                },
+                {
+                    "key": 757,
+                    "value": "Yabo",
+                    "order": 0
+                },
+                {
+                    "key": 758,
+                    "value": "Yagba East",
+                    "order": 0
+                },
+                {
+                    "key": 759,
+                    "value": "Yagba West",
+                    "order": 0
+                },
+                {
+                    "key": 760,
+                    "value": "Yakuur",
+                    "order": 0
+                },
+                {
+                    "key": 761,
+                    "value": "Yala",
+                    "order": 0
+                },
+                {
+                    "key": 762,
+                    "value": "Yamaltu/Deba",
+                    "order": 0
+                },
+                {
+                    "key": 763,
+                    "value": "Yankwashi",
+                    "order": 0
+                },
+                {
+                    "key": 764,
+                    "value": "Yauri",
+                    "order": 0
+                },
+                {
+                    "key": 765,
+                    "value": "Yenagoa",
+                    "order": 0
+                },
+                {
+                    "key": 766,
+                    "value": "Yola North",
+                    "order": 0
+                },
+                {
+                    "key": 767,
+                    "value": "Yola South",
+                    "order": 0
+                },
+                {
+                    "key": 768,
+                    "value": "Yorro",
+                    "order": 0
+                },
+                {
+                    "key": 769,
+                    "value": "Yunusari",
+                    "order": 0
+                },
+                {
+                    "key": 770,
+                    "value": "Yusufari",
+                    "order": 0
+                },
+                {
+                    "key": 771,
+                    "value": "Zaki",
+                    "order": 0
+                },
+                {
+                    "key": 772,
+                    "value": "Zango",
+                    "order": 0
+                },
+                {
+                    "key": 773,
+                    "value": "Zangon Kataf",
+                    "order": 0
+                },
+                {
+                    "key": 774,
+                    "value": "Zaria",
+                    "order": 0
+                },
+                {
+                    "key": 775,
+                    "value": "Zing",
+                    "order": 0
+                },
+                {
+                    "key": 776,
+                    "value": "Zurmi",
+                    "order": 0
+                },
+                {
+                    "key": 777,
+                    "value": "Zuru",
+                    "order": 0
+                },
+                {
+                    "key": 2970,
+                    "value": "AMAC",
+                    "order": 0
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "name": "NGHivStatus",
+            "title": "HIV Status",
+            "i18nKey": "NGHivStatusI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 25,
+            "gxAlertDbColumn": "HivStatus",
+            "caption": "HIV Status",
+            "i18nKeyCaption": "NGHivStatusI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.8.value",
+            "source": "patientData.HivStatus",
+            "mandatory": false,
+            "migrateFromId": -1,
+            "items": [
+                {
+                    "key": 1,
+                    "value": "HIV Positive",
+                    "order": 0
+                },
+                {
+                    "key": 0,
+                    "value": "HIV Negative",
+                    "order": 10
+                },
+                {
+                    "key": 2,
+                    "value": "HIV Unknown",
+                    "order": 20
+                }
+            ]
+        },
+        {
+            "id": 9,
+            "name": "NGTestReason",
+            "title": "Reason for Test",
+            "i18nKey": "NGTestReasonI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 80,
+            "gxAlertDbColumn": "TestReason",
+            "caption": "Reason for Test",
+            "i18nKeyCaption": "NGTestReasonI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.9.value",
+            "source": "patientData.TestReason",
+            "mandatory": false,
+            "migrateFromId": -12,
+            "items": [
+                {
+                    "key": "Failed 6 months regimen",
+                    "value": "Failed 6 months regimen",
+                    "order": 20
+                },
+                {
+                    "key": "Symptomatic contacts of DR-TB cases",
+                    "value": "Symptomatic contacts of DR-TB cases",
+                    "order": 30
+                },
+                {
+                    "key": "PLHIV with symptoms of TB",
+                    "value": "PLHIV with symptoms of TB",
+                    "order": 40
+                },
+                {
+                    "key": "EPTB",
+                    "value": "EPTB",
+                    "order": 50
+                },
+                {
+                    "key": "Health worker with TB symptoms",
+                    "value": "Health worker with TB symptoms",
+                    "order": 60
+                },
+                {
+                    "key": "Symptomatic presumptive TB cases with AFB Negative result",
+                    "value": "Symptomatic presumptive TB cases with AFB Negative result",
+                    "order": 70
+                },
+                {
+                    "key": "To Confirm MDR-TB (at enrollment)",
+                    "value": "To Confirm MDR-TB (at enrollment)",
+                    "order": 80
+                },
+                {
+                    "key": "Cases of Xpert MTB not detected but smear positive",
+                    "value": "Cases of Xpert MTB not detected but smear positive",
+                    "order": 90
+                },
+                {
+                    "key": "Routine follow-up of 2nd line TB Treatment",
+                    "value": "Routine follow-up of 2nd line TB Treatment",
+                    "order": 100
+                },
+                {
+                    "key": "Other",
+                    "value": "Other",
+                    "order": 110
+                }
+            ]
+        },
+        {
+            "id": 10,
+            "name": "NGRequestorName",
+            "title": "Name of Person Requesting Test",
+            "i18nKey": "NGRequestorNameI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 90,
+            "gxAlertDbColumn": "RequestorName",
+            "caption": "Name of Person Requesting Test",
+            "i18nKeyCaption": "NGRequestorNameI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.10.value",
+            "source": "patientData.RequestorName",
+            "mandatory": false,
+            "migrateFromId": -14
+        },
+        {
+            "id": 11,
+            "name": "NGRequestorPhone",
+            "title": "Referring Clinician or Facility Phone Number (if known)",
+            "i18nKey": "NGRequestorPhoneI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 100,
+            "gxAlertDbColumn": "RequestorPhone",
+            "caption": "Referring Clinician or Facility Phone Number (if known)",
+            "i18nKeyCaption": "NGRequestorPhoneI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.11.value",
+            "source": "patientData.RequestorPhone",
+            "mandatory": false,
+            "migrateFromId": -15
+        },
+        {
+            "id": 12,
+            "name": "NGRepeatTest",
+            "title": "Repeat Test",
+            "i18nKey": "NGRepeatTestI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 100,
+            "gxAlertDbColumn": "RepeatTest",
+            "caption": "Repeat Test",
+            "i18nKeyCaption": "NGRepeatTestI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.12.value",
+            "source": "patientData.RepeatTest",
+            "mandatory": false,
+            "migrateFromId": -19,
+            "items": [
+                {
+                    "key": 0,
+                    "value": "First or second",
+                    "order": 10
+                },
+                {
+                    "key": 1,
+                    "value": "Follow-up",
+                    "order": 20
+                },
+                {
+                    "key": 2,
+                    "value": "Repeat Baseline",
+                    "order": 30
+                }
+            ]
+        },
+        {
+            "id": 13,
+            "name": "NGHealthFacility",
+            "title": "Referring Facility:",
+            "i18nKey": "NGHealthFacilityI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 95,
+            "gxAlertDbColumn": "HealthFacility",
+            "caption": "Referring Facility:",
+            "i18nKeyCaption": "NGHealthFacilityI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.13.value",
+            "source": "patientData.HealthFacility",
+            "mandatory": false,
+            "migrateFromId": -6
+        },
+        {
+            "id": 14,
+            "name": "NGSampleOriginLocationId",
+            "title": "Referring Facility",
+            "i18nKey": "NGSampleOriginLocationIdI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 95,
+            "gxAlertDbColumn": "SampleOriginLocationId",
+            "caption": "Referring Facility",
+            "i18nKeyCaption": "NGSampleOriginLocationIdI18nCaptionKey",
+            "controlType": "autoComplete",
+            "payloadOriginPath": "data.customFieldData.14.value",
+            "source": "patientData.SampleOriginLocationId",
+            "mandatory": false,
+            "filters": [
+                {
+                    "propToCompare": "NGSampleOriginStateId",
+                    "fieldToCompare": "stateId",
+                    "operator": "not-selected",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "NGSampleOriginStateId",
+                    "fieldToCompare": "stateId",
+                    "operator": "=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "NGSampleOriginLgaId",
+                    "fieldToCompare": "lgaId",
+                    "operator": "not-selected",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "NGSampleOriginLgaId",
+                    "fieldToCompare": "lgaId",
+                    "operator": "=",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "NGSampleOriginLgaId",
+                    "fieldToCompare": "lgaId",
+                    "operator": "property-not-set"
+                }
+            ],
+            "itemsSource": "all-sites-clinics",
+            "itemsSourceConfig": {
+                "key": "id",
+                "value": "name",
+                "stateLgaMode": "id"
+            }
+        },
+        {
+            "id": 15,
+            "name": "NGTBStarrID",
+            "title": "TB Starr ID",
+            "i18nKey": "NGTBStarrIDI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 200,
+            "gxAlertDbColumn": "NGTBStarrID",
+            "caption": "TB Starr ID",
+            "i18nKeyCaption": "NGTBStarrIDI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.15.value",
+            "source": "patientData.NGTBStarrID",
+            "mandatory": false
+        },
+        {
+            "id": 16,
+            "name": "NGSampleOriginStateId",
+            "title": "Referring Facility State",
+            "i18nKey": "NGSampleOriginStateIdI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 90,
+            "gxAlertDbColumn": "SampleOriginStateId",
+            "caption": "Referring Facility State",
+            "i18nKeyCaption": "NGSampleOriginStateIdI18nCaptionKey",
+            "controlType": "autoComplete",
+            "payloadOriginPath": "data.customFieldData.16.value",
+            "source": "patientData.SampleOriginStateId",
+            "mandatory": false,
+            "itemsSource": "state"
+        },
+        {
+            "id": 17,
+            "name": "NGSampleOriginLgaId",
+            "title": "Referring Facility LGA",
+            "i18nKey": "NGSampleOriginLgaIdI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 93,
+            "gxAlertDbColumn": "SampleOriginLgaId",
+            "caption": "Referring Facility LGA",
+            "i18nKeyCaption": "NGSampleOriginLgaIdI18nCaptionKey",
+            "controlType": "autoComplete",
+            "payloadOriginPath": "data.customFieldData.17.value",
+            "source": "patientData.SampleOriginLgaId",
+            "mandatory": false,
+            "filters": [
+                {
+                    "propToCompare": "NGSampleOriginStateId",
+                    "fieldToCompare": "stateId",
+                    "operator": "not-selected",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "NGSampleOriginStateId",
+                    "fieldToCompare": "stateId",
+                    "operator": "=",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "NGSampleOriginStateId",
+                    "fieldToCompare": "stateId",
+                    "operator": "property-not-set"
+                }
+            ],
+            "itemsSource": "lga"
+        }
+    ],
+    "refForms": []
+}

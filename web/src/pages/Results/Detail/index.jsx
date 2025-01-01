@@ -15,7 +15,9 @@ import { FormikProvider } from '../../../components/Form/Formik/Context'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
+import useAuthState from '../../../hooks/useAuthState'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
+import COUNTRY_ISO_MAPPING from '../../../utils/consts/Countries/CONSTS'
 import { getReturnUrl, gotoReturnUrl } from '../../../utils/utils/browser'
 import { ResultDetailsErrors as customErrorNotifications } from './errors'
 import messages from './messages'
@@ -106,6 +108,8 @@ const AspectResultDetail = () => {
 
 const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
   const intl = useIntl()
+  const user = useAuthState()
+
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
   const { setToggleEdit, formik, toggleEdit } = useFormikContext()
   const location = useLocation()
@@ -139,7 +143,7 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
               )
             },
             disabled: toggleEdit,
-            visible: !toggleEdit,
+            visible: !toggleEdit && user?.countryAbbreviation !== COUNTRY_ISO_MAPPING.NGA,
           },
           {
             label: intl.formatMessage(messages.button_Cancel),
@@ -161,6 +165,7 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
             label: intl.formatMessage(messages.button_Save),
             onClick: () => onSubmit(),
             disabled: !toggleEdit || !formik.dirty || !formik.isValid,
+            visible: toggleEdit,
           },
         ].map(({ label, onClick, disabled = false, visible = true }) =>
           visible ? (

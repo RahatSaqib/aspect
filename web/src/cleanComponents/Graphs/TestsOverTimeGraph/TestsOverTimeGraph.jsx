@@ -113,11 +113,11 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       // const { totals: pieAverage } = getAverageFromData(pieData, 'value', '*', 'standard')
       // pieAverage = parseFloat(pieAverage).toFixed(1)
-      const totalAverage = (pieTotal / 12)?.toFixed(2)
+      const totalAverage = (pieTotal / 12)?.toFixed(1)
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(
@@ -142,7 +142,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
             month:
               formatMessage(messages[format(negateTimeZoneOffset(new Date(result.month)), 'MMM').toLowerCase()]) +
               format(negateTimeZoneOffset(new Date(result.month)), '-yyyy'),
-            value: +result[key].toFixed(3).slice(0, -1),
+            value: +result[key].toFixed(1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.month,
           })

@@ -1,0 +1,12 @@
+{
+  "CustomFields_Nigeria": {
+    "fileName": "CustomFields_Nigeria.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Nigeria",
+      "i18nKeyTitle": "CustomFields_Nigeria_i18nkey",
+      "externalId": "CustomFields_Nigeria",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  }
+}

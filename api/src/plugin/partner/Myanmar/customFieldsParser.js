@@ -6,7 +6,12 @@ const { GENDER_MAP, PREVIOUS_MAP, HIV_STATUS_MAP, MICROSCOPY_MAP, SPECIMEN_MAP }
 function parsePatientId(patientId) {
   const patientData = {}
 
-  if (!_.isString(patientId) || !patientId.includes(',')) {
+  if (!_.isString(patientId)) {
+    return { patientData }
+  }
+
+  if (!patientId.includes(',')) {
+    patientData.id = patientId
     return { patientData }
   }
 

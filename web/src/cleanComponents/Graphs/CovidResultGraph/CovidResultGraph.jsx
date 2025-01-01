@@ -79,7 +79,7 @@ const CovidResultGraph = ({ assaysFromState: assays, resultCategoryGroupsFromSta
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(
@@ -104,7 +104,7 @@ const CovidResultGraph = ({ assaysFromState: assays, resultCategoryGroupsFromSta
             month:
               formatMessage(messages[format(negateTimeZoneOffset(new Date(result.month)), 'MMM').toLowerCase()]) +
               format(negateTimeZoneOffset(new Date(result.month)), '-yyyy'),
-            value: +result[key]?.toFixed(3).slice(0, -1),
+            value: +result[key]?.toFixed(1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.month,
           })
