@@ -267,7 +267,6 @@ async function getDeviceCapacityReport(auth, query) {
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
   const monthlyCapacity = deviceQuery
     .clone()
-    .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .leftJoin('Result as r', builder =>
       builder
         .on('d.id', 'r.deviceId')
@@ -282,7 +281,7 @@ async function getDeviceCapacityReport(auth, query) {
       'd.id AS deviceId',
       knex.raw('COUNT(DISTINCT r.id) as resultCount'),
       lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
-      'dcap.dailyCapacity'
+      'd.dailyTestCapacity as dailyCapacity'
     )
     .orderBy('d.name')
 

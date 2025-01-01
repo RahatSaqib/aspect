@@ -44,4 +44,5 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://aspect.minsa.gov.ao',
   apiUrl: 'https://aspect.minsa.gov.ao/api',
+  deviceCapacityFactor: 3,
 }

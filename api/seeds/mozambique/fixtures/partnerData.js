@@ -32,4 +32,5 @@ module.exports = {
       manufacturer: 'SystemOne',
     },
   ],
+  deviceCapacityFactor: 3,
 }

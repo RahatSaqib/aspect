@@ -67,10 +67,8 @@ const SELECT_SHOW_FIELDS = [
   'dt.externalId as deviceTypeExternalId',
   'dt.configurationDataSchema',
   'dt.deviceOperationSchema',
-  'dp.dailyCapacity',
-  'dp.id as dailyCapacityId',
-  'dp.modules as dailyCapacityModules',
-  'dp.i18nKey as dailyCapacityModulesI18nKey',
+  'd.dailyTestCapacity as dailyCapacity',
+  'd.moduleBayCapacity as dailyCapacityModules',
   'frd30.resultCount as resultCountThisMonth',
   'frd60.resultCount as resultCount60',
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
@@ -136,7 +134,6 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
-    .leftJoin('DeviceCapacity as dp', 'd.deviceCapacityId', 'dp.id')
     .leftJoin('FactResultsDevice as frd30', function () {
       this.on('d.id', 'frd30.deviceId').andOn('frd30.days', 30)
     })

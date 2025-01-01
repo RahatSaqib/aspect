@@ -25,4 +25,5 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://timor.aspect.id',
   apiUrl: 'https://timor.aspect.id/api',
+  deviceCapacityFactor: 3,
 }

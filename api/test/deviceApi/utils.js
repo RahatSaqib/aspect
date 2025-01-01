@@ -197,24 +197,20 @@ async function createDevice(
   const now = new Date()
 
   const { partnerId } = await knex('Site as s').where({ id: siteId }).first()
+  const partnerData = await knex('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
 
   const deviceTypeId = await deviceTypeToId(type)
-
-  const deviceCapacity = await knex('DeviceCapacity')
-    .where({ deviceTypeId })
-    .where({ partnerId })
-    .where({ defaultForDeviceType: 1 })
-    .first('id')
 
   const [deviceId] = await knex('Device').insert({
     partnerId,
     siteId,
     deviceTypeId,
-    deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
     deviceApprovalId: await deviceApprovalToId(approval),
     configurationData: JSON.stringify(baseConfig),
     name: 'Test Device',
     shortName: 'Test Device',
+    dailyTestCapacity: deviceTypeId === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
+    moduleBayCapacity: deviceTypeId === 'CepheidGeneXpert' ? 4 : 0,
     lastSeenOn: now,
     lastInstrumentSerial: instrumentSerial,
   })
