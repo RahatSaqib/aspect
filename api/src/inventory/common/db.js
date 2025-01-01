@@ -19,13 +19,19 @@ const {
 const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
 const consumableStrategyModifier = require('./consumableStrategyModifier')
+const { getPartnerByConstraints } = require('../../partner/common/db')
 
 // ----------------------------------------------------------------------------------
-async function getConsumableStrategy(consumableId) {
-  let { strategy } = await knex('Consumable').where({ id: consumableId }).first('strategy')
-  strategy = _.trim(strategy)
-  const isLookingAsArray = _.startsWith(strategy, '[') && _.endsWith(strategy, ']')
-  const strategyJson = isLookingAsArray ? JSON.parse(strategy) : [strategy]
+async function getStrategy(partnerId) {
+  let { inventoryStrategy } = await getPartnerByConstraints({
+    partner: {
+      id: partnerId,
+    },
+  })
+
+  inventoryStrategy = _.trim(inventoryStrategy)
+  const isLookingAsArray = _.startsWith(inventoryStrategy, '[') && _.endsWith(inventoryStrategy, ']')
+  const strategyJson = isLookingAsArray ? JSON.parse(inventoryStrategy) : [inventoryStrategy]
   const consumableStrategy = _.reduce(
     strategyJson,
     (acc, name) => {
@@ -168,10 +174,9 @@ function getInventorySitesQuery(constraints, request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function findInventoryItem(siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId) {
+async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
-  const consumableStrategy = await getConsumableStrategy(consumableId)
-
+  const consumableStrategy = await getStrategy(partnerId)
   if (consumableStrategy) {
     consumableStrategy.forEach(({ handler }) => {
       handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
@@ -837,7 +842,6 @@ module.exports = {
   getInventoryBySitesAndConsumable,
   getGeneXpertInventoryBySitesAndConsumableQuery,
   logInventoryChange,
-  getConsumableStrategy,
   getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
   filteredInventoryItemsBase,
   getInventoryTransfer,
