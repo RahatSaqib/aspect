@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-18T04:25:22.566Z\n"
+"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -241,7 +241,7 @@ msgstr "Đã phát hiện AMK-R"
 #. APR
 #: extracted_strings.json
 msgid "APR"
-msgstr "tháng tư"
+msgstr "T4"
 
 #. [months.august]
 #. defaultMessage is:
@@ -835,6 +835,20 @@ msgstr "Trạng Thái Phê Duyệt"
 msgid "Approved"
 msgstr "Tán thành"
 
+#. [months.apr]
+#. defaultMessage is:
+#. Apr
+#: extracted_strings.json
+msgid "Apr"
+msgstr "T4"
+
+#. [chart.april]
+#. defaultMessage is:
+#. April
+#: extracted_strings.json
+msgid "April"
+msgstr "Tháng 4"
+
 #. [contextualMenu.notifications.areYouSureToDelete]
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
@@ -1025,6 +1039,20 @@ msgstr "Cần ít nhất một thử nghiệm để có thông báo dựa trên 
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Ít nhất một trong các kênh thông báo nên được chọn"
+
+#. [months.aug]
+#. defaultMessage is:
+#. Aug
+#: extracted_strings.json
+msgid "Aug"
+msgstr "T8"
+
+#. [chart.august]
+#. defaultMessage is:
+#. August
+#: extracted_strings.json
+msgid "August"
+msgstr "Tháng 8"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -2710,7 +2738,7 @@ msgstr "DBS"
 #. DEC
 #: extracted_strings.json
 msgid "DEC"
-msgstr "tháng 12"
+msgstr "T12"
 
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
@@ -3039,6 +3067,20 @@ msgstr "Ngày..."
 #: extracted_strings.json
 msgid "Deaths"
 msgstr "Chết"
+
+#. [months.dec]
+#. defaultMessage is:
+#. Dec
+#: extracted_strings.json
+msgid "Dec"
+msgstr "T12"
+
+#. [chart.december]
+#. defaultMessage is:
+#. December
+#: extracted_strings.json
+msgid "December"
+msgstr "Tháng 12"
 
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
@@ -4356,7 +4398,7 @@ msgstr "Trích xuất dữ liệu cho phạm vi ngày đã chọn để nhập t
 #. FEB
 #: extracted_strings.json
 msgid "FEB"
-msgstr "tháng hai"
+msgstr "T2"
 
 #. [results.categoryTypeFLQResistanceI18nKey]
 #. defaultMessage is:
@@ -4482,6 +4524,20 @@ msgstr "Thất bại trong việc rút lui"
 #: extracted_strings.json
 msgid "False"
 msgstr "Sai"
+
+#. [months.feb]
+#. defaultMessage is:
+#. Feb
+#: extracted_strings.json
+msgid "Feb"
+msgstr "T2"
+
+#. [chart.february]
+#. defaultMessage is:
+#. February
+#: extracted_strings.json
+msgid "February"
+msgstr "Tháng 2"
 
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
 #. defaultMessage is:
@@ -5571,6 +5627,9 @@ msgstr "Bệnh viêm gan B"
 msgid "Hepatitis C"
 msgstr "Viêm gan C"
 
+#. [pages.hierarchicalView]
+#. defaultMessage is:
+#. Hierarchical View
 #. [pages.inventoryReconciliation.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
@@ -6200,21 +6259,35 @@ msgstr "Đó là số lượng hiện có trong tay, bao gồm cả số lượn
 #. JAN
 #: extracted_strings.json
 msgid "JAN"
-msgstr "tháng Một"
+msgstr "T1"
 
 #. [months.july]
 #. defaultMessage is:
 #. JUL
 #: extracted_strings.json
 msgid "JUL"
-msgstr "tháng bảy"
+msgstr "T7"
 
 #. [months.june]
 #. defaultMessage is:
 #. JUN
 #: extracted_strings.json
 msgid "JUN"
-msgstr "tháng sáu"
+msgstr "T6"
+
+#. [months.jan]
+#. defaultMessage is:
+#. Jan
+#: extracted_strings.json
+msgid "Jan"
+msgstr "T1"
+
+#. [chart.january]
+#. defaultMessage is:
+#. January
+#: extracted_strings.json
+msgid "January"
+msgstr "Tháng 1"
 
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
@@ -6239,6 +6312,34 @@ msgstr "Phân công công việc"
 #: extracted_strings.json
 msgid "Job Functions"
 msgstr "Chức năng công việc"
+
+#. [months.jul]
+#. defaultMessage is:
+#. Jul
+#: extracted_strings.json
+msgid "Jul"
+msgstr "T7"
+
+#. [chart.july]
+#. defaultMessage is:
+#. July
+#: extracted_strings.json
+msgid "July"
+msgstr "Tháng 7"
+
+#. [months.jun]
+#. defaultMessage is:
+#. Jun
+#: extracted_strings.json
+msgid "Jun"
+msgstr "T6"
+
+#. [chart.june]
+#. defaultMessage is:
+#. June
+#: extracted_strings.json
+msgid "June"
+msgstr "Tháng 6"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -6823,14 +6924,14 @@ msgstr "Kiểm kê thấp"
 #. MAR
 #: extracted_strings.json
 msgid "MAR"
-msgstr "tháng Ba"
+msgstr "T3"
 
 #. [months.may]
 #. defaultMessage is:
 #. MAY
 #: extracted_strings.json
 msgid "MAY"
-msgstr "tháng năm"
+msgstr "T5"
 
 #. [filter.AssayTypeSelectField.assayTypeMtb]
 #. defaultMessage is:
@@ -7450,6 +7551,20 @@ msgstr "Được đặt thủ công bởi {username} ({updatedDate})"
 msgid "Manufacturer"
 msgstr "Nhà sản xuất"
 
+#. [months.mar]
+#. defaultMessage is:
+#. Mar
+#: extracted_strings.json
+msgid "Mar"
+msgstr "T3"
+
+#. [chart.march]
+#. defaultMessage is:
+#. March
+#: extracted_strings.json
+msgid "March"
+msgstr "Tháng 3"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7740,7 +7855,7 @@ msgstr "N/A"
 #. NOV
 #: extracted_strings.json
 msgid "NOV"
-msgstr "tháng mười một"
+msgstr "T11"
 
 #. [pages.ResultList.resultCategoryEbolaNp]
 #. defaultMessage is:
@@ -8491,6 +8606,20 @@ msgstr "Thông báo"
 msgid "Notifications History"
 msgstr "Lịch sử thông báo"
 
+#. [months.nov]
+#. defaultMessage is:
+#. Nov
+#: extracted_strings.json
+msgid "Nov"
+msgstr "T11"
+
+#. [chart.november]
+#. defaultMessage is:
+#. November
+#: extracted_strings.json
+msgid "November"
+msgstr "Tháng 11"
+
 #. [component.DateTimeInput.button.now]
 #. defaultMessage is:
 #. Now
@@ -8597,7 +8726,7 @@ msgstr "Bao gồm các số"
 #. OCT
 #: extracted_strings.json
 msgid "OCT"
-msgstr "tháng Mười"
+msgstr "T10"
 
 #. [pages.deviceDetail.ResultWorkflowStatusOK]
 #. defaultMessage is:
@@ -8611,6 +8740,20 @@ msgstr "tháng Mười"
 #: extracted_strings.json
 msgid "OK"
 msgstr "OK"
+
+#. [months.oct]
+#. defaultMessage is:
+#. Oct
+#: extracted_strings.json
+msgid "Oct"
+msgstr "T10"
+
+#. [chart.october]
+#. defaultMessage is:
+#. October
+#: extracted_strings.json
+msgid "October"
+msgstr "Tháng 10"
 
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
@@ -10962,7 +11105,7 @@ msgstr "SARS-CoV-2 (COVID-19)"
 #. SEP
 #: extracted_strings.json
 msgid "SEP"
-msgstr "tháng Chín"
+msgstr "T9"
 
 #. [pages.NotificationDetail.sms]
 #. defaultMessage is:
@@ -11203,6 +11346,13 @@ msgstr "Tìm kiếm Trạng thái Xử lý Kết quả Không thành công"
 #: extracted_strings.json
 msgid "Searching Results Failed"
 msgstr "Kết quả tìm kiếm không thành công"
+
+#. [forms.formItem.selectAllUnselectAll]
+#. defaultMessage is:
+#. Select All / Unselect All
+#: extracted_strings.json
+msgid "Select All / Unselect All"
+msgstr "Chọn tất cả / Bỏ chọn tất cả"
 
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
@@ -11537,6 +11687,20 @@ msgstr "Gửi qua Email"
 #: extracted_strings.json
 msgid "Sent via SMS"
 msgstr "Đã gửi qua SMS"
+
+#. [months.sep]
+#. defaultMessage is:
+#. Sep
+#: extracted_strings.json
+msgid "Sep"
+msgstr "T9"
+
+#. [chart.september]
+#. defaultMessage is:
+#. September
+#: extracted_strings.json
+msgid "September"
+msgstr "Tháng 9"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:

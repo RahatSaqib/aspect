@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-18T04:25:22.566Z\n"
+"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -837,6 +837,20 @@ msgstr "Статус затвердження"
 msgid "Approved"
 msgstr "Затверджений"
 
+#. [months.apr]
+#. defaultMessage is:
+#. Apr
+#: extracted_strings.json
+msgid "Apr"
+msgstr "Квіт"
+
+#. [chart.april]
+#. defaultMessage is:
+#. April
+#: extracted_strings.json
+msgid "April"
+msgstr "Квітень"
+
 #. [contextualMenu.notifications.areYouSureToDelete]
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
@@ -1027,6 +1041,20 @@ msgstr "Для сповіщень на основі результатів по�
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Необхідно вибрати принаймні один із каналів сповіщень"
+
+#. [months.aug]
+#. defaultMessage is:
+#. Aug
+#: extracted_strings.json
+msgid "Aug"
+msgstr "Серп"
+
+#. [chart.august]
+#. defaultMessage is:
+#. August
+#: extracted_strings.json
+msgid "August"
+msgstr "Серпень"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -3041,6 +3069,20 @@ msgstr "Дні..."
 msgid "Deaths"
 msgstr "Смерті"
 
+#. [months.dec]
+#. defaultMessage is:
+#. Dec
+#: extracted_strings.json
+msgid "Dec"
+msgstr "Гру"
+
+#. [chart.december]
+#. defaultMessage is:
+#. December
+#: extracted_strings.json
+msgid "December"
+msgstr "Грудень"
+
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
@@ -4488,6 +4530,20 @@ msgstr "Невдалі тести"
 msgid "False"
 msgstr "Брехня"
 
+#. [months.feb]
+#. defaultMessage is:
+#. Feb
+#: extracted_strings.json
+msgid "Feb"
+msgstr "Лют"
+
+#. [chart.february]
+#. defaultMessage is:
+#. February
+#: extracted_strings.json
+msgid "February"
+msgstr "Лютий"
+
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
 #. defaultMessage is:
 #. Female
@@ -5577,6 +5633,9 @@ msgstr "Гепатит Б"
 msgid "Hepatitis C"
 msgstr "Гепатит С"
 
+#. [pages.hierarchicalView]
+#. defaultMessage is:
+#. Hierarchical View
 #. [pages.inventoryReconciliation.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
@@ -6225,6 +6284,20 @@ msgstr "липень"
 msgid "JUN"
 msgstr "червень"
 
+#. [months.jan]
+#. defaultMessage is:
+#. Jan
+#: extracted_strings.json
+msgid "Jan"
+msgstr "Січ"
+
+#. [chart.january]
+#. defaultMessage is:
+#. January
+#: extracted_strings.json
+msgid "January"
+msgstr "Січень"
+
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
 #. Job
@@ -6248,6 +6321,34 @@ msgstr "Призначення роботи"
 #: extracted_strings.json
 msgid "Job Functions"
 msgstr "Посадові функції"
+
+#. [months.jul]
+#. defaultMessage is:
+#. Jul
+#: extracted_strings.json
+msgid "Jul"
+msgstr "Лип"
+
+#. [chart.july]
+#. defaultMessage is:
+#. July
+#: extracted_strings.json
+msgid "July"
+msgstr "Липень"
+
+#. [months.jun]
+#. defaultMessage is:
+#. Jun
+#: extracted_strings.json
+msgid "Jun"
+msgstr "Черв"
+
+#. [chart.june]
+#. defaultMessage is:
+#. June
+#: extracted_strings.json
+msgid "June"
+msgstr "Червень"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -7461,6 +7562,20 @@ msgstr "Вручну встановлено {username} ({updatedDate})"
 msgid "Manufacturer"
 msgstr "Виробник"
 
+#. [months.mar]
+#. defaultMessage is:
+#. Mar
+#: extracted_strings.json
+msgid "Mar"
+msgstr "Бер"
+
+#. [chart.march]
+#. defaultMessage is:
+#. March
+#: extracted_strings.json
+msgid "March"
+msgstr "Березень"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -8502,6 +8617,20 @@ msgstr "Повідомлення"
 msgid "Notifications History"
 msgstr "Історія сповіщень"
 
+#. [months.nov]
+#. defaultMessage is:
+#. Nov
+#: extracted_strings.json
+msgid "Nov"
+msgstr "Лис"
+
+#. [chart.november]
+#. defaultMessage is:
+#. November
+#: extracted_strings.json
+msgid "November"
+msgstr "Листопад"
+
 #. [component.DateTimeInput.button.now]
 #. defaultMessage is:
 #. Now
@@ -8624,6 +8753,20 @@ msgstr "жовтень"
 #: extracted_strings.json
 msgid "OK"
 msgstr "Добре"
+
+#. [months.oct]
+#. defaultMessage is:
+#. Oct
+#: extracted_strings.json
+msgid "Oct"
+msgstr "Жов"
+
+#. [chart.october]
+#. defaultMessage is:
+#. October
+#: extracted_strings.json
+msgid "October"
+msgstr "Жовтень"
 
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
@@ -11213,6 +11356,13 @@ msgstr "Пошук статусів лікування результатів н
 msgid "Searching Results Failed"
 msgstr "Помилка пошуку результатів"
 
+#. [forms.formItem.selectAllUnselectAll]
+#. defaultMessage is:
+#. Select All / Unselect All
+#: extracted_strings.json
+msgid "Select All / Unselect All"
+msgstr "Виділити все / Зняти виділення"
+
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -11546,6 +11696,20 @@ msgstr "Надіслано електронною поштою"
 #: extracted_strings.json
 msgid "Sent via SMS"
 msgstr "Надіслано через SMS"
+
+#. [months.sep]
+#. defaultMessage is:
+#. Sep
+#: extracted_strings.json
+msgid "Sep"
+msgstr "Вер"
+
+#. [chart.september]
+#. defaultMessage is:
+#. September
+#: extracted_strings.json
+msgid "September"
+msgstr "Вересень"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:

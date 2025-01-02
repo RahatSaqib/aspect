@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-18T04:25:22.566Z\n"
+"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -834,6 +834,20 @@ msgstr "Ҳолати тасдиқ"
 msgid "Approved"
 msgstr "Tасдик карда шуд"
 
+#. [months.apr]
+#. defaultMessage is:
+#. Apr
+#: extracted_strings.json
+msgid "Apr"
+msgstr "Апр"
+
+#. [chart.april]
+#. defaultMessage is:
+#. April
+#: extracted_strings.json
+msgid "April"
+msgstr "апрел"
+
 #. [contextualMenu.notifications.areYouSureToDelete]
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
@@ -1024,6 +1038,20 @@ msgstr "Барои огоҳиномаҳо дар асоси натиҷа ҳад�
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Ақаллан яке аз каналҳои огоҳӣ бояд интихоб карда шавад"
+
+#. [months.aug]
+#. defaultMessage is:
+#. Aug
+#: extracted_strings.json
+msgid "Aug"
+msgstr "август"
+
+#. [chart.august]
+#. defaultMessage is:
+#. August
+#: extracted_strings.json
+msgid "August"
+msgstr "август"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -3037,6 +3065,20 @@ msgstr "Рӯзҳо..."
 msgid "Deaths"
 msgstr "Маргҳо"
 
+#. [months.dec]
+#. defaultMessage is:
+#. Dec
+#: extracted_strings.json
+msgid "Dec"
+msgstr "декабр"
+
+#. [chart.december]
+#. defaultMessage is:
+#. December
+#: extracted_strings.json
+msgid "December"
+msgstr "декабр"
+
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
@@ -4487,6 +4529,20 @@ msgstr "Нокомии табобат"
 msgid "False"
 msgstr "Дурӯғ"
 
+#. [months.feb]
+#. defaultMessage is:
+#. Feb
+#: extracted_strings.json
+msgid "Feb"
+msgstr "феврал"
+
+#. [chart.february]
+#. defaultMessage is:
+#. February
+#: extracted_strings.json
+msgid "February"
+msgstr "феврал"
+
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
 #. defaultMessage is:
 #. Female
@@ -5576,6 +5632,9 @@ msgstr "Гепатити В"
 msgid "Hepatitis C"
 msgstr "Гепатити С"
 
+#. [pages.hierarchicalView]
+#. defaultMessage is:
+#. Hierarchical View
 #. [pages.inventoryReconciliation.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
@@ -6226,6 +6285,20 @@ msgstr "июл"
 msgid "JUN"
 msgstr "июн"
 
+#. [months.jan]
+#. defaultMessage is:
+#. Jan
+#: extracted_strings.json
+msgid "Jan"
+msgstr "январ"
+
+#. [chart.january]
+#. defaultMessage is:
+#. January
+#: extracted_strings.json
+msgid "January"
+msgstr "январ"
+
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
 #. Job
@@ -6249,6 +6322,34 @@ msgstr "Супориши кор"
 #: extracted_strings.json
 msgid "Job Functions"
 msgstr "Функсияҳои корӣ"
+
+#. [months.jul]
+#. defaultMessage is:
+#. Jul
+#: extracted_strings.json
+msgid "Jul"
+msgstr "июл"
+
+#. [chart.july]
+#. defaultMessage is:
+#. July
+#: extracted_strings.json
+msgid "July"
+msgstr "июл"
+
+#. [months.jun]
+#. defaultMessage is:
+#. Jun
+#: extracted_strings.json
+msgid "Jun"
+msgstr "июн"
+
+#. [chart.june]
+#. defaultMessage is:
+#. June
+#: extracted_strings.json
+msgid "June"
+msgstr "июн"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -7461,6 +7562,20 @@ msgstr "Аз ҷониби {username} ({updatedDate}) ба таври дастӣ 
 msgid "Manufacturer"
 msgstr "Истеҳсолкунанда"
 
+#. [months.mar]
+#. defaultMessage is:
+#. Mar
+#: extracted_strings.json
+msgid "Mar"
+msgstr "март"
+
+#. [chart.march]
+#. defaultMessage is:
+#. March
+#: extracted_strings.json
+msgid "March"
+msgstr "март"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -8502,6 +8617,20 @@ msgstr "Огоҳиҳо"
 msgid "Notifications History"
 msgstr "Таърихи огоҳиҳо"
 
+#. [months.nov]
+#. defaultMessage is:
+#. Nov
+#: extracted_strings.json
+msgid "Nov"
+msgstr "ноябр"
+
+#. [chart.november]
+#. defaultMessage is:
+#. November
+#: extracted_strings.json
+msgid "November"
+msgstr "ноябр"
+
 #. [component.DateTimeInput.button.now]
 #. defaultMessage is:
 #. Now
@@ -8627,6 +8756,20 @@ msgstr "октябр"
 #: extracted_strings.json
 msgid "OK"
 msgstr "Хуб"
+
+#. [months.oct]
+#. defaultMessage is:
+#. Oct
+#: extracted_strings.json
+msgid "Oct"
+msgstr "октябр"
+
+#. [chart.october]
+#. defaultMessage is:
+#. October
+#: extracted_strings.json
+msgid "October"
+msgstr "октябр"
 
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
@@ -11225,6 +11368,13 @@ msgstr "Ҷустуҷӯи ҳолати муолиҷаи натиҷа ноком �
 msgid "Searching Results Failed"
 msgstr "Натоиҷи ҷустуҷӯ"
 
+#. [forms.formItem.selectAllUnselectAll]
+#. defaultMessage is:
+#. Select All / Unselect All
+#: extracted_strings.json
+msgid "Select All / Unselect All"
+msgstr "Ҳамаро интихоб кунед / Ҳамаро интихоб кунед"
+
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -11558,6 +11708,20 @@ msgstr "Тавассути почтаи электронӣ фиристода ш
 #: extracted_strings.json
 msgid "Sent via SMS"
 msgstr "Тавассути SMS фиристода шуд"
+
+#. [months.sep]
+#. defaultMessage is:
+#. Sep
+#: extracted_strings.json
+msgid "Sep"
+msgstr "сентябр"
+
+#. [chart.september]
+#. defaultMessage is:
+#. September
+#: extracted_strings.json
+msgid "September"
+msgstr "сентябр"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:
