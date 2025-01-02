@@ -302,6 +302,9 @@ function getInventoryLots(request, dataConstraints) {
   const inventoryItemsQuery = query('Search Inventory Lots')
     .from('Site as s')
     .innerJoin('Consumable as c')
+    .innerJoin('SiteConsumable as sc', builder => {
+      builder.on('s.id', 'sc.siteId').andOn('c.id', 'sc.consumableId')
+    })
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
