@@ -101,7 +101,6 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
         )
         return result
       })
-      console.log(expandedBarData,'expandedBarData')
       setBarData({
         data: expandedBarData,
         average: calcOverallRate('devicesActiveRaw', 'devicesTotal', groupedForBar, { weekendOrHoliday: 0 }).toFixed(0),
