@@ -1,0 +1,52 @@
+module.exports = require('../utils').seed(seed, __filename)
+
+async function seed(knex) {
+  const { minResultId, maxResultId } = await knex('Result')
+    .first({
+      minResultId: knex.raw('MIN(id)'),
+      maxResultId: knex.raw('MAX(id)'),
+    })
+
+  const batchSize = 100
+  const startFrom = minResultId
+  const endAt = maxResultId
+
+  let processed = startFrom - 1
+  while (processed < endAt) {
+    const start = processed + 1
+    const end = Math.min(processed + batchSize, endAt)
+    // eslint-disable-next-line no-console
+    // console.log(`processing batch: ${start}-${end}`)
+
+    // eslint-disable-next-line no-await-in-loop
+    const deviceLogsToDelete = await getDeviceLogsToDeleteInRange(knex, start, end)
+
+    for (const deviceLogToDelete of deviceLogsToDelete) {
+      const idsToDelete = deviceLogToDelete.idsToDelete.split(',');
+      const deleteCount = idsToDelete.length
+      if (deleteCount > 0) {
+        // eslint-disable-next-line no-await-in-loop
+        await knex('DeviceLog').whereIn('id', idsToDelete).delete()
+        // eslint-disable-next-line no-console
+        console.log(`delete ${deleteCount} payloads of resultId: ${deviceLogToDelete.resultId}`)
+      }
+    }
+
+    processed = end
+  }
+}
+
+const getDeviceLogsToDeleteInRange = async (knex, minResultId, maxResultId) => {
+  const range = [minResultId, maxResultId]
+
+  const deviceLogsToDelete = await knex('DeviceLog as dl')
+    .whereBetween('dl.resultId', range)
+    .select({
+      resultId: 'resultId',
+      idsToDelete: knex.raw(`SUBSTRING_INDEX(GROUP_CONCAT(id), ',', -COUNT(*) + 1)`)
+    })
+    .groupBy(['resultId', knex.raw('LENGTH(rawMessage)')])
+    .having(knex.raw('count(*) > 1'))
+
+  return deviceLogsToDelete
+}

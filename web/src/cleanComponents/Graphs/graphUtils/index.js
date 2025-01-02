@@ -16,6 +16,7 @@ import startCase from 'lodash/startCase'
 import sum from 'lodash/sum'
 import uniqBy from 'lodash/uniqBy'
 import values from 'lodash/values'
+import { months } from '../../../messages/dateMessages'
 import { customPropertiesVariables as colors } from '../../../theme/colors'
 import {
   groupByKey,
@@ -361,10 +362,23 @@ const endOfMonthUTC = dateString => {
   )
 }
 
-const fillYear = data => {
+const fillYear = (data, formatMessage) => {
   const result = []
   const yearMap = {}
-  const monthMap = { JAN: 0, FEB: 0, MAR: 0, APR: 0, MAY: 0, JUN: 0, JUL: 0, AUG: 0, SEP: 0, OCT: 0, NOV: 0, DEC: 0 }
+  const monthMap = {
+    [formatMessage(months[0])]: 0,
+    [formatMessage(months[1])]: 0,
+    [formatMessage(months[2])]: 0,
+    [formatMessage(months[3])]: 0,
+    [formatMessage(months[4])]: 0,
+    [formatMessage(months[5])]: 0,
+    [formatMessage(months[6])]: 0,
+    [formatMessage(months[7])]: 0,
+    [formatMessage(months[8])]: 0,
+    [formatMessage(months[9])]: 0,
+    [formatMessage(months[10])]: 0,
+    [formatMessage(months[11])]: 0,
+  }
 
   for (const item of data) {
     const { year, month, value } = item

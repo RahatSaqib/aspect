@@ -90,7 +90,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
         allKeysButMonth.map(key =>
           expandedBarData.push({
             id: key,
-            date: result.date,
+            date: `${formatMessage(messages[result.date.split(' ')[0].toLowerCase()])} ${result.date.split(' ')[1]}`,
             value: +result[key],
             type: genLabel(key, assaysFromState, formatMessage, messages, i18nKeys),
             realValue:
@@ -101,7 +101,6 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
         )
         return result
       })
-
       setBarData({
         data: expandedBarData,
         average: calcOverallRate('devicesActiveRaw', 'devicesTotal', groupedForBar, { weekendOrHoliday: 0 }).toFixed(0),

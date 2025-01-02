@@ -201,7 +201,7 @@ function InventoryAdjustmentDialog(props) {
 
                 <FormGroup
                   labelProps={{
-                    required: withExpirationDate(partner, values.consumable),
+                    required: withExpirationDate(partner), // NOTE: `undefined` is passed as `partner` argument explicitly to avoid using inventory strategy from consumables
                   }}
                   label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
                   error={!!errors.expiresOn}
@@ -220,35 +220,33 @@ function InventoryAdjustmentDialog(props) {
                   />
                 </FormGroup>
 
-                {withLotNumber(partner, values.consumable) ? (
-                  <TextField
-                    required
-                    fullWidth
-                    type="text"
-                    name="lotNumber"
-                    label={formatMessage(messages.cartridgeLotNumber)}
-                    value={values.lotNumber}
-                    onChange={handleChange}
-                    disabled={!!initialValues?.lotNumber}
-                    onBlur={handleBlur}
-                    margin="normal"
-                    FormHelperTextProps={{
-                      margin: 'dense',
-                      classes: {
-                        error: styles.Field__error__message,
-                      },
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                      classes: {
-                        error: styles.Field__label__when__error,
-                      },
-                    }}
-                    inputProps={{ maxLength: 100 }}
-                    error={!!errors.lotNumber}
-                    helperText={errors.lotNumber}
-                  />
-                ) : null}
+                <TextField
+                  required={withLotNumber(partner, undefined)} // NOTE: `undefined` is passed as `consumable` argument explicitly
+                  fullWidth
+                  type="text"
+                  name="lotNumber"
+                  label={formatMessage(messages.cartridgeLotNumber)}
+                  value={values.lotNumber}
+                  onChange={handleChange}
+                  disabled={!!initialValues?.lotNumber}
+                  onBlur={handleBlur}
+                  margin="normal"
+                  FormHelperTextProps={{
+                    margin: 'dense',
+                    classes: {
+                      error: styles.Field__error__message,
+                    },
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                    classes: {
+                      error: styles.Field__label__when__error,
+                    },
+                  }}
+                  inputProps={{ maxLength: 100 }}
+                  error={!!errors.lotNumber}
+                  helperText={errors.lotNumber}
+                />
 
                 {uiTransfer ? (
                   <SiteAutoCompleteField
