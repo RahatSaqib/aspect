@@ -163,4 +163,15 @@ describe('parsePatientId', () => {
     const partialResult = parsePatientId(given)
     expect(partialResult).to.deep.equal(expected)
   })
+
+  it('should parse a case without PatientTownship', () => {
+    const given = 'Ni Ni Win'
+    const expected = {
+      patientData: {
+        id: 'Ni Ni Win',
+      },
+    }
+    const partialResult = parsePatientId(given)
+    expect(partialResult).to.deep.equal(expected)
+  })
 })

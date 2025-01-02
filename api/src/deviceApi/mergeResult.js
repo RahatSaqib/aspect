@@ -1,7 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { mergeResultWithPayload } = require('../result/common/logic')
-const { getCustomFieldsFromPayload } = require('../forms/service')
 const { convertStringToFloat } = require('../shared/string')
 const {
   resultSourceToId,
@@ -119,13 +118,15 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     gxAlertSyncedOn: _.get(payload, 'gxAlertTestId') ? now : null,
   }
 
-  // Add custom fields
-  const customFieldsData = await getCustomFieldsFromPayload(
+  // Extract CustomFields from Payload
+  const countryAbbreviation = await getCountryAbbreviationByDeviceId(knex, deviceId)
+  const customFieldsData = await context.extractCustomFieldsFromPayload({
     payload,
-    await getCountryAbbreviationByDeviceId(knex, deviceId),
-    site.partnerId,
-    assay.id
-  )
+    countryAbbreviation,
+    partnerId: site.partnerId,
+    assayId: assay.id,
+    deviceId,
+  })
 
   const preProcessedResultWithCustomFields = _.merge(preProcessedResult, customFieldsData)
 

@@ -37,7 +37,7 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
     _.filter(customFields, elem => elem.itemsSource),
     async field => {
       const { itemsSource, itemsSourceConfig } = field
-      if (itemsSource === 'lga' || itemsSource === 'state') {
+      if (itemsSource === 'state') {
         const { data: statesOrLgas } = await stateSelectList({
           params: {
             countryId,
@@ -47,27 +47,32 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
           key: geography.id,
           value: geography.name,
         }))
+      } else if (itemsSource === 'lga') {
+        const { data: statesOrLgas } = await stateSelectList({
+          params: {
+            countryId,
+          },
+        })
+        field.items = statesOrLgas.reduce((acc, state) => {
+          const lgas = state.lgas.map(lga => ({
+            stateId: state.id,
+            key: lga.id,
+            value: lga.name,
+          }))
+          return [...acc, ...lgas]
+        }, [])
       } else if (itemsSource === 'all-sites') {
-        const dataConstraints = {
-          partner: {
-            id: partnerId,
-          },
-          country: {
-            id: countryId,
-          },
-        }
-        const { data: items } = await getListSitesForSelectList(dataConstraints, {})
-
         if (!field.InputControlData) {
           field.InputControlData = {}
         }
-        field.items = _.map(items, item => ({
-          key: item[itemsSourceConfig?.key || 'externalId'],
-          value: item[itemsSourceConfig?.value || 'name'],
-          state: item.stateName,
-          lga: item.lgaName,
-          ...JSON.parse(item.customProperties || '{}'),
-        }))
+        field.items = await getAllSites(partnerId, countryId, itemsSourceConfig)
+      } else if (itemsSource === 'all-sites-clinics') {
+        if (!field.InputControlData) {
+          field.InputControlData = {}
+        }
+        field.items = await getAllSites(partnerId, countryId, itemsSourceConfig, {
+          siteTypeExternalIds: ['clinic'],
+        })
       }
 
       if (itemsSourceConfig?.extraItems) {
@@ -211,12 +216,44 @@ const getCustomFieldsFromPayload = async (payload, countryAbbreviation, partnerI
           _.get(payload, `data.customFieldData.${field.id}.key`) ||
           _.get(payload, `data.customFieldData.${migrateFromId}.key`) // Might not be necessary, but it's safer to check it as well.
         // eslint-disable-next-line no-await-in-loop
-        _.set(obj, source, key || (await getSiteIdByName(value)))
+        const siteId = key || (await getSiteIdByName(value))
+        _.set(obj, source, siteId)
       } else _.set(obj, source, value)
     }
   }
 
   return obj
+}
+
+const getAllSites = async (partnerId, countryId, itemsSourceConfig, opt = {}) => {
+  const dataConstraints = {
+    partner: {
+      id: partnerId,
+    },
+    country: {
+      id: countryId,
+    },
+  }
+  const { data: items } = await getListSitesForSelectList(dataConstraints, opt)
+
+  return _.map(items, item => {
+    const geographyData =
+      itemsSourceConfig.stateLgaMode === 'id'
+        ? {
+            stateId: item.stateId,
+            lgaId: item.lgaId,
+          }
+        : {
+            state: item.stateName,
+            lga: item.lgaName,
+          }
+    return {
+      key: item[itemsSourceConfig?.key || 'externalId'],
+      value: item[itemsSourceConfig?.value || 'name'],
+      ...geographyData,
+      ...JSON.parse(item.customProperties || '{}'),
+    }
+  })
 }
 
 module.exports = {
