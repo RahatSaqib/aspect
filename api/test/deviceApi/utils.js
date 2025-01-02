@@ -209,8 +209,8 @@ async function createDevice(
     configurationData: JSON.stringify(baseConfig),
     name: 'Test Device',
     shortName: 'Test Device',
-    dailyTestCapacity: deviceTypeId === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
-    moduleBayCapacity: deviceTypeId === 'CepheidGeneXpert' ? 4 : 0,
+    dailyTestCapacity: type === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are setting module=4
+    moduleBayCapacity: type === 'CepheidGeneXpert' ? 4 : 0,
     lastSeenOn: now,
     lastInstrumentSerial: instrumentSerial,
   })

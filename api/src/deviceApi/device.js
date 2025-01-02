@@ -239,7 +239,9 @@ async function createNewDevice(
     lastPingOn,
   }
 ) {
-  const deviceType = await knex('DeviceType').where({ externalId: deviceTypeExternalId }).first('id', 'name', 'plugin')
+  const deviceType = await knex('DeviceType')
+    .where({ externalId: deviceTypeExternalId })
+    .first('id', 'name', 'plugin', 'externalId')
   if (deviceType == null) {
     return {
       error: Boom.badRequest(`Cannot find DeviceType with id ${deviceTypeExternalId}`),
