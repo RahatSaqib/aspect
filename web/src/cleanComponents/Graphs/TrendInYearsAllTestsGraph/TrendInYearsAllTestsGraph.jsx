@@ -39,7 +39,7 @@ const TrendInYearsAllTestsGraph = () => {
         .map(item => ({ ...item, month: `${formatMessage(months[item.month - 1])}` }))
 
       if (grouped) {
-        setGraphData(fillYear(grouped))
+        setGraphData(fillYear(grouped, formatMessage))
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

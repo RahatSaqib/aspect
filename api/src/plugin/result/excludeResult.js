@@ -15,7 +15,9 @@ async function excludeResult(pluginContext) {
     const re = new RegExp(excludePattern, 'i')
     const sampleId = payload?.sample?.id ?? ''
     const sampleId1 = payload?.data?.sampleId ?? ''
-    const isEqaResult = re.test(sampleId) || re.test(sampleId1)
+    const patientId = payload.data?.patientId ?? ''
+    const patientId2 = payload.data?.patientId2 ?? ''
+    const isEqaResult = re.test(sampleId) || re.test(sampleId1) || re.test(patientId) || re.test(patientId2)
     const newResultTypeId = isEqaResult ? EQA_RESULT_TYPE_EXTERNAL_ID : PATIENT_RESULT_TYPE_EXTERNAL_ID
 
     const shouldUpdateResultType =
