@@ -91,7 +91,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
           expandedBarData.push({
             id: key,
             date: `${formatMessage(messages[result.date.split(' ')[0].toLowerCase()])} ${result.date.split(' ')[1]}`,
-            value: +result[key],
+            value: +result[key]?.toFixed(1),
             type: genLabel(key, assaysFromState, formatMessage, messages, i18nKeys),
             realValue:
               key === 'weekendOrHoliday'
@@ -101,6 +101,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
         )
         return result
       })
+      console.log(expandedBarData,'expandedBarData')
       setBarData({
         data: expandedBarData,
         average: calcOverallRate('devicesActiveRaw', 'devicesTotal', groupedForBar, { weekendOrHoliday: 0 }).toFixed(0),
