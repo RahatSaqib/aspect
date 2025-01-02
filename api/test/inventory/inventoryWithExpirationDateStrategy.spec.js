@@ -495,6 +495,14 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.equal(res.body.data.quantityOnHand, inventoryItem.quantityOnHand + quantityToAdjust)
           assert.isNull(res.body.data.lotNumber)
         })
+      })
+      describe('PUT', () => {
+        before(async () => knex('Partner').update({ inventoryStrategy: 'withExpirationDateStrategy' }))
+        after(async () =>
+          knex('Partner').update({
+            inventoryStrategy: 'withLotAndExpirationDateStrategy',
+          })
+        )
         it('should update the quantity of an inventory item only with expiration date matching', async () => {
           const res = await server
             .put(`${addInventoryPath}`)
@@ -633,6 +641,12 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
 
     describe('/inventory/receive', () => {
       describe('PUT', () => {
+        before(async () => knex('Partner').update({ inventoryStrategy: 'withExpirationDateStrategy' }))
+        after(async () =>
+          knex('Partner').update({
+            inventoryStrategy: 'withLotAndExpirationDateStrategy',
+          })
+        )
         let receivedItem
         afterEach(async () =>
           run(async knex => {

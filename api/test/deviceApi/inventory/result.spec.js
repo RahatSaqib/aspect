@@ -876,10 +876,10 @@ describe('admin result updates', () => {
   })
 
   describe('inventory management with Expiration date strategy', () => {
-    before(async () => knex('Consumable').update({ strategy: 'withExpirationDateStrategy' }))
+    before(async () => knex('Partner').update({ inventoryStrategy: 'withExpirationDateStrategy' }))
     after(async () =>
-      knex('Consumable').update({
-        strategy: 'withLotAndExpirationDateStrategy',
+      knex('Partner').update({
+        inventoryStrategy: 'withLotAndExpirationDateStrategy',
       })
     )
 
