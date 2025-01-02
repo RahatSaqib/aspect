@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaCheck, FaRegCopy } from 'react-icons/fa'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
@@ -7,13 +7,21 @@ import styles from './DeviceApiKeyTableRow.module.css'
 
 const DeviceApiKeyTableRow = ({ deviceApiKey, disabled, checked, onSelectedChange, onRevokedChange, ...restProps }) => {
   const [copied, setCopied] = useState(false)
+
   const copyToClipboard = value => {
     navigator.clipboard.writeText(value)
     setCopied(true)
-    setTimeout(() => {
-      setCopied(false)
-    }, 1000)
   }
+
+  useEffect(() => {
+    if (copied) {
+      const timeout = setTimeout(() => {
+        setCopied(false)
+      }, 1000)
+      return () => clearTimeout(timeout)
+    }
+  }, [copied])
+
   return (
     <TableRow {...restProps} className={styles[restProps.className]}>
       <TableCell>
