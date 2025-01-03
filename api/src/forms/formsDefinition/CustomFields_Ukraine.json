@@ -1,0 +1,70 @@
+{
+    "fields": [
+        {
+            "id": 117,
+            "name": "Біологічнийматеріал",
+            "title": "Біологічний матеріал",
+            "i18nKey": "БіологічнийматеріалI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 0,
+            "gxAlertDbColumn": "Біологічнийматеріал",
+            "caption": "Біологічний матеріал",
+            "i18nKeyCaption": "БіологічнийматеріалI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.117.value",
+            "source": "patientData.biologicalMaterial",
+            "mandatory": false,
+            "migrateFromId": 39,
+            "items": [
+                {
+                    "key": "1",
+                    "value": "мокротиння",
+                    "order": 0
+                },
+                {
+                    "key": "2",
+                    "value": "інший",
+                    "order": 10
+                }
+            ],
+            "needsConfirmationIfIsEmpty": true
+        },
+        {
+            "id": 118,
+            "name": "Метатесту",
+            "title": "Мета тесту",
+            "i18nKey": "МетатестуI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 10,
+            "gxAlertDbColumn": "Метатесту",
+            "caption": "Мета тесту",
+            "i18nKeyCaption": "МетатестуI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.118.value",
+            "source": "patientData.testPurpose",
+            "mandatory": false,
+            "migrateFromId": 40,
+            "items": [
+                {
+                    "key": "1",
+                    "value": "діагностика нового випадку, рецидиву",
+                    "order": 0
+                },
+                {
+                    "key": "2",
+                    "value": "тест після 60 доз",
+                    "order": 10
+                },
+                {
+                    "key": "3",
+                    "value": "скрининг",
+                    "order": 20
+                }
+            ],
+            "needsConfirmationIfIsEmpty": true
+        }
+    ],
+    "refForms": []
+}
