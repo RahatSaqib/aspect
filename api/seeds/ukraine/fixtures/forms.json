@@ -1,0 +1,12 @@
+{
+  "CustomFields_Ukraine": {
+    "fileName": "CustomFields_Ukraine.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Ukraine",
+      "i18nKeyTitle": "CustomFields_Ukraine_i18nkey",
+      "externalId": "CustomFields_Ukraine",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  }
+}
