@@ -125,6 +125,11 @@ describe('Inventory Routes', () => {
           expiresOn: expiresOn2,
           quantityOnHand: 500,
         })
+        const siteConsumables = [
+          { siteId: site1Id, consumableId },
+          { siteId: site2Id, consumableId },
+        ]
+        await knex('SiteConsumable').insert(siteConsumables)
         await knex('FactInventoryConsumptionRate').insert({
           siteId: site1Id,
           consumableId,
@@ -168,6 +173,7 @@ describe('Inventory Routes', () => {
           .delete()
         await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id, site2Id]).delete()
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
+        await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
       })
 
       describe('GET', () => {
