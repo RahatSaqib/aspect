@@ -125,8 +125,8 @@ async function getInventoryData(auth, query) {
   )
     .select(knex.raw('COUNT(CONCAT(mi.siteId, "-", ca.consumableId)) AS unreconciledResults'))
     .leftJoin('MissingInventoryLots AS mi', 'mi.siteId', 't2.siteId')
-    .innerJoin('Result AS r', 'r.id', 'mi.resultId')
-    .innerJoin('ConsumableAssay AS ca', join => {
+    .leftJoin('Result AS r', 'r.id', 'mi.resultId')
+    .leftJoin('ConsumableAssay AS ca', join => {
       join.on('ca.assayId', '=', 'r.assayId')
       join.on('ca.consumableId', '=', 't2.consumableId')
     })
