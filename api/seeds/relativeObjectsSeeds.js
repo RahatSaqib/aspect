@@ -2,7 +2,6 @@ const now = new Date()
 const Promise = require('bluebird')
 const _ = require('lodash')
 const forms = require('./fixtures/forms')
-const timeZones = require('./fixtures/TimeZone').data
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const { getBaseForms } = require('./relatedObjects/forms')
