@@ -83,7 +83,7 @@ const InventoryOverviewPage = () => {
       tooltip: 'Its the current quantity in hand, including the expired quantity.',
     },
     {
-      name: 'Current Unreconciled Qty2.',
+      name: 'Current Unreconciled Qty.',
       prop: 'unreconciledQuantity',
       cellProp: c =>
         c.unreconciledQuantity
