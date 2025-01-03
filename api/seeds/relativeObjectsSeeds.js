@@ -163,22 +163,7 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
   return true
 }
 
-async function addTimeZones(knex) {
-  const [{ qty }] = await knex('TimeZone as t').count('t.id as qty')
-  if (qty === 0) {
-    try {
-      await knex('TimeZone').insert(timeZones)
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('error inserting TimeZones', e)
-      return false
-    }
-  }
-  return true
-}
-
 module.exports = {
-  addTimeZones,
   addIssueTypes,
   addForms,
 }

@@ -11,6 +11,7 @@ const tbGeneXpertPatientDataSchema = require('../tb/fixtures/geneXpertPatientDat
 const hivPartnerVariables = require('../hiv/fixtures/partnerData')
 const hivGeneXpertPatientDataSchema = require('../hiv/fixtures/geneXpertPatientDataSchema.json')
 const upsertPartnerData = require('../../common/upsert_partner_data')
+const { addForms } = require('../../relativeObjectsSeeds')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -88,6 +89,7 @@ async function seed(knex) {
     ['GxUnknown', 'GxMtbRif', 'GxMtbRifUltra'],
     tbGeneXpertPatientDataSchema.patientData
   )
+  await addForms(knex)
 }
 
 module.exports = seed
