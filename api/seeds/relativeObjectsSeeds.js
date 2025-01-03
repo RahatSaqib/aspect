@@ -113,7 +113,7 @@ async function addIssueTypes(
   return true
 }
 
-async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
+async function addDefaultCustomFieldDefinitions(knex, _partnerId, formsNeeded = Object.keys(forms)) {
   const existingSchemas = await knex('FormDefinitionSchema').select()
   if (!_.isEmpty(existingSchemas)) {
     return
@@ -165,5 +165,5 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
 
 module.exports = {
   addIssueTypes,
-  addForms,
+  addDefaultCustomFieldDefinitions,
 }
