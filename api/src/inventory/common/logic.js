@@ -782,12 +782,15 @@ async function inventoryTransferByRegion({
   let levelIndex = 0
 
   while (levelIndex < levels.length) {
+    // eslint-disable-next-line no-await-in-loop
     const sites = await getSiteListModifiedQuery({ ...filters, siteTypeName: 'Warehouse' }, dataConstraints)
 
     for (const regionalSite of sites) {
+      // eslint-disable-next-line no-await-in-loop
       const regionalInventoryItem = await findInventoryItem(regionalSite.id, consumableId, expiresOn, lotNumber)
 
       if (regionalInventoryItem?.quantityOnHand >= quantity) {
+        // eslint-disable-next-line no-await-in-loop
         const transferResponse = await transferInventoryFromSourceToTarget({
           sourceSiteId: regionalSite.id,
           targetSiteId: siteId,
