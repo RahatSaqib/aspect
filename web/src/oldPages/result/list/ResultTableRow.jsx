@@ -13,8 +13,7 @@ import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../o
 import formatters from '../formatters'
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
-  const { format, formatMessage, formatNumber } = useIntl()
-  const { dateFormat } = getAspectDisplayPreferences().toJS()
+  const { formatMessage, formatNumber } = useIntl()
   let patientId = result?.patientId
   patientId = !patientId || patientId === 'null' ? 'N/A' : patientId
   const formatterByType = partial(
