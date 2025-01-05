@@ -65,7 +65,7 @@ const NationalRtbTrendsGraph = () => {
         return item
       })
       if (grouped) {
-        setGraphData(fillYear(grouped).sort((a, b) => a.year - b.year))
+        setGraphData(fillYear(grouped, formatMessage).sort((a, b) => a.year - b.year))
         setAnnual(annualData.sort((a, b) => a.year - b.year))
       }
     }

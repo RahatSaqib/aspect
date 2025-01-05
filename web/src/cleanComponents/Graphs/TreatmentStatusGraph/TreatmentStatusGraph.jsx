@@ -104,7 +104,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assaysFromState, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(
@@ -126,7 +126,9 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
         allKeysButMonth.map(key =>
           expandedBarData.push({
             id: key,
-            month: format(negateTimeZoneOffset(new Date(result.monthTested)), 'MMM-yyyy'),
+            month:
+              formatMessage(messages[format(negateTimeZoneOffset(new Date(result.monthTested)), 'MMM').toLowerCase()]) +
+              format(negateTimeZoneOffset(new Date(result.monthTested)), '-yyyy'),
             value: +result[key].toFixed(3).slice(0, -1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.monthTested,
