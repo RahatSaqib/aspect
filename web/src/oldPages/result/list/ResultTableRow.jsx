@@ -29,7 +29,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
 
   return (
     <TableRow {...restProps} className={styles[restProps.className]}>
-      <TableCell>{result.endedOn ? format(new Date(result.endedOn), dateFormat) : ''}</TableCell>
+      <TableCell>{result.endedOn ? result.endedOn.slice(0, 10) : ''}</TableCell>
       <TableCell hiddenOn="xs">{result.deviceName}</TableCell>
       <TableCell hiddenOn="sm">{result.sampleOriginSiteName}</TableCell>
       <TableCell>{result.sampleId}</TableCell>

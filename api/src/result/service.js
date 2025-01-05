@@ -8,6 +8,7 @@ const {
   getAllMonthsInRange,
   getMonthYearField,
   returnIso8601StringWithoutTimeZoneOffset,
+  formatDateToTimeZone,
 } = require('../shared/date')
 const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
@@ -62,6 +63,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
+  const { timezoneIANA } = await getUserFromCredentials(auth.credentials)
 
   /**
    * Make sure minDate and maxDate are Date object - needed to let knex correctly
@@ -199,11 +201,17 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // Remove extraColumns fields that shouldn't be retrieved to UI
   sanitizeExtraColumns(assayColumns)
 
+  // format the endedOn date to local time zone
+  const formattedResult = _.map(data, result => ({
+    ...result,
+    endedOn: formatDateToTimeZone(result.endedOn, timezoneIANA),
+  }))
+
   const result = {
     ok: true,
     total,
-    length: data.length,
-    data,
+    length: formattedResult.length,
+    data: formattedResult,
     extraColumns: assayColumns,
   }
   return result

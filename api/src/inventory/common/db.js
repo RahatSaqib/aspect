@@ -16,8 +16,8 @@ const {
   STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
-const { addConstraints } = require('../../auth/constraints')
-const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
+const { addConstraints, getUserFromCredentials } = require('../../auth/constraints')
+const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault, formatDateToTimeZone } = require('../../shared/date')
 const consumableStrategyModifier = require('./consumableStrategyModifier')
 
 // ----------------------------------------------------------------------------------
@@ -206,13 +206,15 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
     )
 
 // ----------------------------------------------------------------------------------
-async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
+async function getInventoryLog(query, dataConstraints, auth, querySelector = INVENTORY_LOG_LIST) {
   if (_.isNil(query.maxDate)) {
     query.maxDate = new Date()
   }
   if (_.isNil(query.minDate)) {
     query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
   }
+
+  const { timezoneIANA } = await getUserFromCredentials(auth.credentials)
 
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
     .modify(filterDateRangeParams, query, 'il.createdOn')
@@ -245,7 +247,12 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
   const data = await inventoryLogQuery
     .select(querySelector)
     .modify(sortPageParams, query, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
-  return { data, total }
+
+  const formattedData = _.map(data, logData => ({
+    ...logData,
+    endedOn: formatDateToTimeZone(logData.endedOn, timezoneIANA),
+  }))
+  return { data: formattedData, total }
 }
 
 // ----------------------------------------------------------------------------------
