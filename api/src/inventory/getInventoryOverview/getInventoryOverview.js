@@ -9,17 +9,27 @@ module.exports = async function (request) {
 
   const inventoryListPromise = getInventoryOverviewList(query, dataConstraints)
 
-  const geographiesPromise = getAllWithNames(request, dataConstraints)
   const geographiesPromise = getAllGeographiesWithNames(request, dataConstraints)
 
   const [sites, geographies] = await Promise.all([inventoryListPromise, geographiesPromise])
 
+  aggregateUnreconciledQtyToWarehouse(sites)
+
   const country = buildHierarchy(geographies, sites)
 
-  addAggregations(country)
   fillHierarchicalAggregations(country)
 
   return { ok: true, length: sites.length, data: { country } }
+}
+
+function aggregateUnreconciledQtyToWarehouse(sites) {
+  sites
+    .filter(s => s.type === 'warehouse')
+    .forEach(warehouse => {
+      warehouse.unreconciledQuantity = sites
+        .filter(child => child.parentWarehouseId === warehouse.id)
+        .reduce((total, child) => total + child.unreconciledQuantity, warehouse.unreconciledQuantity)
+    })
 }
 
 /**
@@ -105,26 +115,28 @@ function fillHierarchicalAggregations(item) {
       item.dailyConsumptionRate = 0
       item.unreconciledQuantity = 0
 
-      item.children.forEach(child => {
-        addAggregations(child)
-        item.quantity += child.quantity
-        item.unreconciledQuantity += child.unreconciledQuantity
-        if (child.usedLastSixMonths) {
-          item.usedLastSixMonths = parseFloat((item.usedLastSixMonths + child.usedLastSixMonths).toFixed(2))
-        }
-        if (child.usedInDateRange) {
-          item.usedInDateRange = parseFloat((item.usedInDateRange + child.usedInDateRange).toFixed(2))
-        }
-        if (child.dailyConsumptionRate) {
-          item.dailyConsumptionRate = parseFloat((item.dailyConsumptionRate + child.dailyConsumptionRate).toFixed(2))
-        }
-        if (child.daysOfInventoryLeft) {
-          item.daysOfInventoryLeft = Math.min(
-            (item.daysOfInventoryLeft = parseFloat(item.daysOfInventoryLeft + child.daysOfInventoryLeft.toFixed(2))),
-            child.daysOfInventoryLeft
-          )
-        }
-      })
+      item.children
+        .filter(site => site.type !== 'warehouse')
+        .forEach(child => {
+          fillHierarchicalAggregations(child)
+          item.quantity += child.quantity
+          item.unreconciledQuantity += child.unreconciledQuantity
+          if (child.usedLastSixMonths) {
+            item.usedLastSixMonths = parseFloat((item.usedLastSixMonths + child.usedLastSixMonths).toFixed(2))
+          }
+          if (child.usedInDateRange) {
+            item.usedInDateRange = parseFloat((item.usedInDateRange + child.usedInDateRange).toFixed(2))
+          }
+          if (child.dailyConsumptionRate) {
+            item.dailyConsumptionRate = parseFloat((item.dailyConsumptionRate + child.dailyConsumptionRate).toFixed(2))
+          }
+          if (child.daysOfInventoryLeft) {
+            item.daysOfInventoryLeft = Math.min(
+              (item.daysOfInventoryLeft = parseFloat(item.daysOfInventoryLeft + child.daysOfInventoryLeft.toFixed(2))),
+              child.daysOfInventoryLeft
+            )
+          }
+        })
       if (!item.daysOfInventoryLeft) {
         item.daysOfInventoryLeft = 0
       }

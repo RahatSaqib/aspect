@@ -42,6 +42,7 @@ module.exports = async function (query, constraints) {
           'c.id as consumableId',
           's.name as lab',
           'stype.externalId as type',
+          's.parentWarehouseId as parentWarehouseId',
           knex.raw(
             'IFNULL(SUM(CASE WHEN r.endedOn BETWEEN ? AND ? THEN ca.quantity ELSE 0 END),0) as usedLastSixMonths',
             [sixMonthsBeforeToday.toISOString(), now.toISOString()]
@@ -76,6 +77,7 @@ module.exports = async function (query, constraints) {
       'site.countryId',
       'site.stateId',
       'site.lgaId',
+      'site.parentWarehouseId',
       knex.raw('SUM(IFNULL(site.usedLastSixMonths,0)) as usedLastSixMonths'),
       knex.raw('SUM(IFNULL(site.usedInDateRange,0)) as usedInDateRange'),
       knex.raw('MIN(IFNULL(site.firstResultDateInLastSixMonths,0)) as firstResultDateInLastSixMonths'),
