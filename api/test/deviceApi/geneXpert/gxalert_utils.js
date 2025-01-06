@@ -43,6 +43,12 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
     .distinct('ii.id')
     .pluck('ii.id')
 
+  const inventoryLogIds = await knex('InventoryLog')
+    .whereIn('inventoryItemId', inventoryItemIds)
+    .distinct('id')
+    .pluck('id')
+
+  await knex('InventoryTransfer').whereIn('incomeInventoryLogId', inventoryLogIds).delete()
   await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
@@ -115,6 +121,8 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
     .orWhereIn('generatedResultId', resultIds)
     .delete()
 
+  await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
+
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('Result').whereIn('id', resultIds).delete()
@@ -134,6 +142,7 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
 
   await knex('FactInventoryConsumptionRate').whereIn('siteId', siteIds).delete()
   await knex('JobContext').whereIn('siteId', siteIds).delete()
+  await knex('InventoryLog').whereIn('siteId', siteIds).delete()
   await knex('Site').whereIn('id', siteIds).delete()
 
   await knex('DeviceMaintenanceStatusLog').whereIn('deviceId', deviceIds).delete()

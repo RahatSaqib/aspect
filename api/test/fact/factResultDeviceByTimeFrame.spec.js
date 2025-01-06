@@ -28,6 +28,7 @@ const deleteResults = async resultIds => {
   const resultIdsToBeDeleted = [...new Set(resultIds)]
 
   await knex('InventoryLog').delete().whereIn('resultId', resultIdsToBeDeleted)
+  await knex('MissingInventoryLots').whereIn('resultId', resultIdsToBeDeleted).delete()
   await knex('Result').delete().whereIn('id', resultIdsToBeDeleted)
 }
 
@@ -119,6 +120,7 @@ describe('Device result calculation test', function () {
   })
 
   after(async () => {
+    await deleteResults(resultIds)
     await deleteDevice([deviceId, deviceId2, deviceId3])
 
     await knex('InventoryItem').delete().whereIn('siteId', [siteId, siteId2])
