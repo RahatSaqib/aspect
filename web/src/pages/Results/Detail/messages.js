@@ -285,6 +285,50 @@ const messagesResult = defineMessages({
     id: 'pages.resultEdit.Study',
     defaultMessage: 'Study/Research',
   },
+  gender: {
+    id: 'pages.resultEdit.gender',
+    defaultMessage: 'Gender',
+  },
+  age: {
+    id: 'pages.resultEdit.age',
+    defaultMessage: 'Age',
+  },
+  name: {
+    id: 'pages.resultEdit.name',
+    defaultMessage: 'Name',
+  },
+  cellphoneNumber: {
+    id: 'pages.resultEdit.cellphoneNumber',
+    defaultMessage: 'Cellphone number',
+  },
+  surename: {
+    id: 'pages.resultEdit.surename',
+    defaultMessage: 'Surename',
+  },
+  retreatmentCase: {
+    id: 'pages.resultEdit.retreatmentCase',
+    defaultMessage: 'Retreatment Case',
+  },
+  referringClinicianOrFacilityPhoneNumberIfKnown: {
+    id: 'pages.resultEdit.referringClinicianOrFacilityPhoneNumberIfKnown',
+    defaultMessage: 'Referring Clinician or Facility Phone Number (if known)',
+  },
+  referringFacility: {
+    id: 'pages.resultEdit.referringFacility',
+    defaultMessage: 'Referring Facility',
+  },
+  repeatTest: {
+    id: 'pages.resultEdit.repeatTest',
+    defaultMessage: 'Repeat Test',
+  },
+  dateSpecimenCollected: {
+    id: 'pages.resultEdit.dateSpecimenCollected',
+    defaultMessage: 'Date Specimen Collected',
+  },
+  dateSpecimenReceived: {
+    id: 'pages.resultEdit.dateSpecimenReceived',
+    defaultMessage: 'Date Specimen Received',
+  },
 })
 
 export default {
