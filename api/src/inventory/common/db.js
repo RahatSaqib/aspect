@@ -30,21 +30,7 @@ async function getStrategy(partnerId) {
   })
 
   inventoryStrategy = _.trim(inventoryStrategy)
-  const isLookingAsArray = _.startsWith(inventoryStrategy, '[') && _.endsWith(inventoryStrategy, ']')
-  const strategyJson = isLookingAsArray ? JSON.parse(inventoryStrategy) : [inventoryStrategy]
-  const consumableStrategy = _.reduce(
-    strategyJson,
-    (acc, name) => {
-      const handler = consumableStrategyModifier[name]
-      if (handler) {
-        acc = [...acc, { name, handler }]
-      }
-      return acc
-    },
-    // {}
-    []
-  )
-  return consumableStrategy
+  return { name: inventoryStrategy, handler: consumableStrategyModifier[inventoryStrategy] }
 }
 
 // ----------------------------------------------------------------------------------
@@ -177,12 +163,7 @@ function getInventorySitesQuery(constraints, request) {
 async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
   const consumableStrategy = await getStrategy(partnerId)
-  if (consumableStrategy) {
-    consumableStrategy.forEach(({ handler }) => {
-      handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
-    })
-  }
-
+  consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
   const matchingInventoryItem = await matchingInventoryItemsQuery
     .orderBy('ii.quantityOnHand', 'desc')
     .first(INVENTORY_ITEM_SELECT)
