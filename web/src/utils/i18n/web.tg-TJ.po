@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-26T04:43:44.240Z\n"
+"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -183,6 +183,15 @@ msgid ""
 msgstr ""
 "Рӯйхати ҳамаи модулҳои дастгоҳи GeneXpert, ки ҳамчун \"истифода набаред\" "
 "ишора шудааст. Номи дастгоҳ, силсилаи модулро дар бар мегирад."
+
+#. [pages.ReportIndex.deviceSummaryReportDescription]
+#. defaultMessage is:
+#. A list of all devices in the system and aggregated test results per device.
+#: extracted_strings.json
+msgid ""
+"A list of all devices in the system and aggregated test results per device."
+msgstr ""
+"Рӯйхати ҳамаи дастгоҳҳои система ва натиҷаҳои санҷиши маҷмӯии ҳар як дастгоҳ."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -1610,6 +1619,13 @@ msgstr "Санаи калибрченкунӣ лозим аст"
 msgid "Calibration Due Date"
 msgstr "Санаи анҷоми калибрченкунӣ"
 
+#. [pages.NewInventoryDialogForm.quantityNotMoreThanOnHand]
+#. defaultMessage is:
+#. Can not be greater than on-hand
+#: extracted_strings.json
+msgid "Can not be greater than on-hand"
+msgstr "Наметавонанд бузургтар аз дастӣ бошад"
+
 #. [errorResponseMessages.removeInventory.PUT.notExisted.resolution]
 #. defaultMessage is:
 #. Can not deduct from non-existed inventory item.
@@ -1937,6 +1953,13 @@ msgstr "Дар ҷамъоварӣ"
 msgid "Collection of Results"
 msgstr "Ҷамъоварии натиҷаҳо"
 
+#. [p.PkDashboard.combinedGX6CGX10CDevices]
+#. defaultMessage is:
+#. Combined GX-6C/GX-10C Devices
+#: extracted_strings.json
+msgid "Combined GX-6C/GX-10C Devices"
+msgstr "Дастгоҳҳои якҷояи GX-6C/GX-10C"
+
 #. [filter.AssaySelectField.assayCommCareGatesRDT]
 #. defaultMessage is:
 #. CommCare Gates RDT
@@ -2106,6 +2129,16 @@ msgstr "Маводҳои истеъмолӣ"
 msgid "Consumables applicable for the site"
 msgstr "Маводҳои истеъмолӣ барои сайт"
 
+#. [pages.consumables.consumablesApplicableForThisSite]
+#. defaultMessage is:
+#. Consumables applicable for this site
+#: extracted_strings.json
+msgid "Consumables applicable for this site"
+msgstr "Маводи масрафшаванда барои ин сайт"
+
+#. [p.PkDashboard.consumptionRate]
+#. defaultMessage is:
+#. Consumption Rate
 #. [pages.InventoryTabs.New.consumpationRate]
 #. defaultMessage is:
 #. Consumption Rate
@@ -2582,6 +2615,13 @@ msgstr "Ҳолати ҷории шабака"
 msgid "Current Password"
 msgstr "Калидвожаи Феълӣ"
 
+#. [p.PkDashboard.currentQty]
+#. defaultMessage is:
+#. Current Qty.
+#: extracted_strings.json
+msgid "Current Qty."
+msgstr "Миқдори ҷорӣ."
+
 #. [p.PkDashboard.RRCurrent]
 #. defaultMessage is:
 #. Current RRTB Diagnosis
@@ -2920,6 +2960,13 @@ msgstr "Рӯз(ҳо) пеш аз анҷоми моҳ"
 #: extracted_strings.json
 msgid "Days"
 msgstr "Рузхо"
+
+#. [p.PkDashboard.daysLeft]
+#. defaultMessage is:
+#. Days Left
+#: extracted_strings.json
+msgid "Days Left"
+msgstr "Рӯзҳо монд"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -4031,6 +4078,13 @@ msgstr "Хатогӣ дар ирсоли почтаи электронии па�
 msgid "Error: Date Selection Required to Download Report"
 msgstr "Хатогӣ: Интихоби сана барои зеркашии гузориш зарур аст"
 
+#. [pages.ErrorRate.errors]
+#. defaultMessage is:
+#. Errors
+#: extracted_strings.json
+msgid "Errors"
+msgstr "Хатогиҳо"
+
 #. [components.shared.everyDay]
 #. defaultMessage is:
 #. Every Day(s)
@@ -4672,6 +4726,41 @@ msgstr "GP ошкор нашудааст - NP ошкор"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP ошкор нашудааст - NP ошкор нашудааст"
+
+#. [p.PkDashboard.gxSites]
+#. defaultMessage is:
+#. GX Sites
+#: extracted_strings.json
+msgid "GX Sites"
+msgstr "Сомонаҳои GX"
+
+#. [p.PkDashboard.gx10CDevices]
+#. defaultMessage is:
+#. GX-10C Devices
+#: extracted_strings.json
+msgid "GX-10C Devices"
+msgstr "Дастгоҳҳои GX-10C"
+
+#. [p.PkDashboard.gx10CModules]
+#. defaultMessage is:
+#. GX-10C Modules
+#: extracted_strings.json
+msgid "GX-10C Modules"
+msgstr "Модулҳои GX-10C"
+
+#. [p.PkDashboard.gx6CDevices]
+#. defaultMessage is:
+#. GX-6C Devices
+#: extracted_strings.json
+msgid "GX-6C Devices"
+msgstr "Дастгоҳҳои GX-6C"
+
+#. [p.PkDashboard.gx6CModules]
+#. defaultMessage is:
+#. GX-6C Modules
+#: extracted_strings.json
+msgid "GX-6C Modules"
+msgstr "Модулҳои GX-6C"
 
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
@@ -5821,6 +5910,9 @@ msgstr "Иҷозатҳои нокифоя"
 #. [legends.Unknown.resultCategoryInvalid]
 #. defaultMessage is:
 #. Invalid
+#. [pages.ErrorRate.invalid]
+#. defaultMessage is:
+#. Invalid
 #: extracted_strings.json
 msgid "Invalid"
 msgstr "Беэътибор"
@@ -5887,6 +5979,13 @@ msgstr "URL-и вебхук нодуруст"
 #: extracted_strings.json
 msgid "Inventory"
 msgstr "Инвентаризатсия"
+
+#. [pages.Consumable.New.inventoryDetail]
+#. defaultMessage is:
+#. Inventory Detail
+#: extracted_strings.json
+msgid "Inventory Detail"
+msgstr "Тафсилоти инвентаризатсия"
 
 #. [pages.Consumable.New.inventoryDetails]
 #. defaultMessage is:
@@ -6298,6 +6397,13 @@ msgstr "Охирин"
 msgid "Last 30 Days"
 msgstr "30 рӯзи охир"
 
+#. [p.PkDashboard.last6Months]
+#. defaultMessage is:
+#. Last 6 Months
+#: extracted_strings.json
+msgid "Last 6 Months"
+msgstr "6 моҳи охир"
+
 #. [pages.dateRangeSelector.last7Days]
 #. defaultMessage is:
 #. Last 7 Days
@@ -6457,12 +6563,19 @@ msgstr "Панели липидҳо"
 #. [pages.ReportIndex.missing_cartridges_report]
 #. defaultMessage is:
 #. List of Missing Lots
-#. [pages.ReportIndex.pk_missing_cartridges_report]
-#. defaultMessage is:
-#. List of Missing Lots
 #: extracted_strings.json
 msgid "List of Missing Lots"
 msgstr "Рӯйхати лотҳои гумшуда"
+
+#. [pages.ReportIndex.unreconciled_inventory_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#. [pages.ReportIndex.pk_missing_cartridges_report]
+#. defaultMessage is:
+#. List of Unreconciled Inventory
+#: extracted_strings.json
+msgid "List of Unreconciled Inventory"
+msgstr "Рӯйхати инвентаризатсияи мувофиқашуда"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -6585,6 +6698,13 @@ msgstr "Ҷойгиршавӣ"
 #: extracted_strings.json
 msgid "Location Tracking"
 msgstr "Пайгирии ҷойгиршавӣ"
+
+#. [pages.InventoryTabs.New.locationsWithThisItem]
+#. defaultMessage is:
+#. Locations with this Item
+#: extracted_strings.json
+msgid "Locations with this Item"
+msgstr "Ҷойҳо бо ин ашё"
 
 #. [page.contacts.person.locked]
 #. defaultMessage is:
@@ -7666,6 +7786,9 @@ msgstr "NTP"
 #. [pages.admin.name]
 #. defaultMessage is:
 #. Name
+#. [p.PkDashboard.utilizationName]
+#. defaultMessage is:
+#. Name
 #. [pages.NotificationDetail.fieldName]
 #. defaultMessage is:
 #. Name
@@ -7682,6 +7805,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.DeviceDetailEdit.name]
+#. defaultMessage is:
+#. Name
+#. [pages.ErrorRate.name]
 #. defaultMessage is:
 #. Name
 #: extracted_strings.json
@@ -7997,6 +8123,9 @@ msgstr "Не қудрат"
 #. [pages.NotificationDetail.type.NoResult]
 #. defaultMessage is:
 #. No Result
+#. [pages.ErrorRate.noResult]
+#. defaultMessage is:
+#. No Result
 #: extracted_strings.json
 msgid "No Result"
 msgstr "Натиҷа нест"
@@ -8045,6 +8174,20 @@ msgstr "Ягон санҷиш гузаронида нашудааст"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "Ягон алоқа ба сайт таъин нашудааст"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToRemove]
+#. defaultMessage is:
+#. No inventory to remove
+#: extracted_strings.json
+msgid "No inventory to remove"
+msgstr "Инвентаризатсия барои нест кардан нест"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToTransfer]
+#. defaultMessage is:
+#. No inventory to transfer
+#: extracted_strings.json
+msgid "No inventory to transfer"
+msgstr "Инвентаризатсия барои интиқол нест"
 
 #. [pages.SiteDetail.siteWithoutLocation]
 #. defaultMessage is:
@@ -9492,6 +9635,9 @@ msgstr "Вилоят"
 #. [pages.common.state_PK]
 #. defaultMessage is:
 #. Province/Region
+#. [p.PkDashboard.provinceRegion]
+#. defaultMessage is:
+#. Province/Region
 #: extracted_strings.json
 msgid "Province/Region"
 msgstr "Вилоят/минтақа"
@@ -9971,6 +10117,9 @@ msgid "Recepient Name"
 msgstr "Номи қабулкунанда"
 
 #. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#. [pages.inventoryList.reconciliationConfiguration]
 #. defaultMessage is:
 #. Reconciliation Configuration
 #: extracted_strings.json
@@ -11153,6 +11302,13 @@ msgstr "Ҳафтаро интихоб кунед..."
 msgid "Select Year..."
 msgstr "Солро интихоб кунед..."
 
+#. [pages.InventoryTabs.siteList.selectAllLocations]
+#. defaultMessage is:
+#. Select all Locations to track inventory for this item
+#: extracted_strings.json
+msgid "Select all Locations to track inventory for this item"
+msgstr "Барои пайгирии инвентаризатсияи ин ашё ҳама маконҳоро интихоб кунед"
+
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select approval status...
@@ -12055,6 +12211,17 @@ msgstr "Паёми SMS набояд аз 2000 аломат зиёд бошад"
 msgid "Software Type"
 msgstr "Навъи нармафзор"
 
+#. [pages.consumables.consumablesApplicableForThisSiteTooltip]
+#. defaultMessage is:
+#. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
+#: extracted_strings.json
+msgid ""
+"Some consumables may appear unavailable for selection change as the site has "
+"inventory or unreconciled transactions"
+msgstr ""
+"Баъзе масолеҳи масрафшаванда метавонанд барои тағир додани интихоб дастнорас "
+"бошанд, зеро сайт дорои инвентаризатсия ё муомилоти мувофиқашуда мебошад"
+
 #. [pages.InventoryTabs.New.trackByLocationTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
@@ -12266,15 +12433,15 @@ msgstr "Пешниҳод кунед"
 msgid "Success"
 msgstr "Муваффакият"
 
-#. [pages.ReportIndex.reportTBWorkloadSummary_description]
+#. [pages.ReportIndex.reportTBWorkloadSummaryDescription]
 #. defaultMessage is:
-#. Summary of TB Workload grouped by month, quarter and year for all regions
+#. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
 msgid ""
-"Summary of TB Workload grouped by month, quarter and year for all regions"
+"Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
 "Ҷамъбасти сарбории сил аз рӯи моҳ, семоҳа ва сол барои ҳамаи минтақаҳо "
-"гурӯҳбандӣ шудааст"
+"гурӯҳбандӣ шудааст."
 
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
@@ -12661,7 +12828,7 @@ msgstr "Санҷишҳо дар соли ҷорӣ гузаронида шуда�
 msgid "Tests Run Between"
 msgstr "Санҷишҳо дар байни"
 
-#. [pages.ReportIndex.missing_cartridges_report_description]
+#. [pages.ReportIndex.unreconciled_inventory_report_description]
 #. defaultMessage is:
 #. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
 #: extracted_strings.json
@@ -13668,6 +13835,16 @@ msgstr "Хатогиҳои умумӣ"
 msgid "Total MTB detected and MTB Trace detected"
 msgstr "Маҷмӯи MTB ошкор ва MTB Trace муайян карда шуд"
 
+#. [p.PkDashboard.utilizationTotalModules]
+#. defaultMessage is:
+#. Total Modules
+#. [pages.ErrorRate.totalModules]
+#. defaultMessage is:
+#. Total Modules
+#: extracted_strings.json
+msgid "Total Modules"
+msgstr "Модулҳои умумӣ"
+
 #. [pages.inventoryList.totalOnHand]
 #. defaultMessage is:
 #. Total On Hand
@@ -13709,7 +13886,13 @@ msgstr "Санҷишҳои умумии бемории сил бо натиҷа�
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [p.PkDashboard.utilizationTotalTests]
+#. defaultMessage is:
+#. Total Tests
 #. [pages.workload.totalTests]
+#. defaultMessage is:
+#. Total Tests
+#. [pages.ErrorRate.totalTests]
 #. defaultMessage is:
 #. Total Tests
 #. [pages.XDR.cntAll]
@@ -14144,6 +14327,13 @@ msgstr "Омезиши ҳарфҳои боло ва хурд"
 msgid "Usage Statistics Report"
 msgstr "Ҳисоботи омори истифода"
 
+#. [p.PkDashboard.used]
+#. defaultMessage is:
+#. Used
+#: extracted_strings.json
+msgid "Used"
+msgstr "Истифода бурда мешавад"
+
 #. [page.contacts.person.userLockedOut]
 #. defaultMessage is:
 #. User is locked?
@@ -14202,6 +14392,13 @@ msgid ""
 msgstr ""
 "Меъёри истифода: (Ҷамъи санҷишҳо дар давраи интихобшуда * 100) / (Иқтидори "
 "ҳаррӯзаи дастгоҳ * Рӯзҳои корӣ дар давраи интихобшуда)"
+
+#. [p.PkDashboard.utilizationPercent]
+#. defaultMessage is:
+#. Utilization%
+#: extracted_strings.json
+msgid "Utilization%"
+msgstr "Истифода%"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -16291,9 +16488,6 @@ msgstr "{unit} калибровкаи умумӣ"
 #~ "Ин огоҳинома барои натиҷаҳое, ки дар давоми 30 рӯзи охир ба охир "
 #~ "расидаанд, оғоз карда мешавад. Барои натиҷаҳои кӯҳна огоҳинома фаъол "
 #~ "намешавад."
-
-#~ msgid "Time cannot be greater than current time"
-#~ msgstr "Вақт наметавонад аз вақти ҷорӣ зиёдтар бошад"
 
 #~ msgid "A person with the same email exists. Please use a different email."
 #~ msgstr ""

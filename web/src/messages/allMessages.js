@@ -566,7 +566,7 @@ const messages = {
       defaultMessage: 'Select All / Unselect All',
     },
     hierarchicalView: {
-      id: 'pages.inventoryReconciliations.hierarchicalView',
+      id: 'pages.hierarchicalView',
       defaultMessage: 'Hierarchical View',
     },
   }),
