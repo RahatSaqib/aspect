@@ -333,7 +333,7 @@ describe('Device Result API routes', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '+18567909',
+          phone: '856-7909',
         })
         assert.deepEqual(JSON.parse(result2.oemData), {
           maker: 'XYZ',
@@ -1109,7 +1109,7 @@ describe('Device Result API routes', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '+18567909',
+          phone: '856-7909',
         })
         assert.deepEqual(JSON.parse(result2.oemData), {
           maker: 'ABC',
