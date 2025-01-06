@@ -1,4 +1,4 @@
-const { max, min, subDays, subYears, startOfDay, differenceInDays } = require('date-fns')
+const { max, min, subDays, subYears, startOfDay, differenceInDays, parseISO } = require('date-fns')
 const { knex, filterDateRangeParams } = require('../../db')
 
 const { addConstraints } = require('../../auth/constraints')
@@ -90,9 +90,9 @@ module.exports = async function (query, constraints) {
       addDailyConsumptionRateInDateRange(site, query.minDate, query.maxDate)
 
       site.consumptionRateLastSixMonths = site.firstResultDateInLastSixMonths
-        ? +(site.usedLastSixMonths / Math.min(180, differenceInDays(now, site.firstResultDateInLastSixMonths))).toFixed(
-            2
-          )
+        ? +(
+            site.usedLastSixMonths / Math.min(180, differenceInDays(now, parseISO(site.firstResultDateInLastSixMonths)))
+          ).toFixed(2)
         : 0
 
       site.daysOfInventoryLeft = Math.round(site.quantity / site.consumptionRateLastSixMonths)
@@ -117,7 +117,7 @@ function addDailyConsumptionRateInDateRange(site, minDate, maxDate) {
   // * after maxDate => 0
   const daysToDivideResultCount = differenceInDays(
     maxDate,
-    max([minDate, min([site.firstResultDateInLastSixMonths, maxDate])])
+    max([minDate, min([parseISO(site.firstResultDateInLastSixMonths), maxDate])])
   )
   site.dailyConsumptionRate =
     daysToDivideResultCount > 0 ? +(site.usedInDateRange / daysToDivideResultCount).toFixed(2) : 0
