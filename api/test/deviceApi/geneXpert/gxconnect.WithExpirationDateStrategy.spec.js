@@ -32,13 +32,13 @@ describe('Device API routes for GxConnect Devices', () => {
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const path = '/api/inventory'
   after(async () =>
-    knex('Consumable').update({
-      strategy: 'withLotAndExpirationDateStrategy',
+    knex('Partner').update({
+      inventoryStrategy: 'withLotAndExpirationDateStrategy',
     })
   )
   before(async () => {
     shared.checkToken(server, path)
-    await knex('Consumable').update({ strategy: 'withExpirationDateStrategy' })
+    await knex('Partner').update({ inventoryStrategy: 'withExpirationDateStrategy' })
   })
   describe('results', () => {
     const context = createGxConnectTestContext(server, {
@@ -76,22 +76,11 @@ describe('Device API routes for GxConnect Devices', () => {
             consumableId: consumableAssay.consumableId,
             siteId: site.id,
             expiresOn: expiryDate,
-            lotNumber: 'LOTNUMBER1',
-            quantityOnHand: initialQuantityOnHand,
-            createdOn: subDays(now, 4),
-            updatedOn: subDays(now, 4),
-          },
-          {
-            consumableId: consumableAssay.consumableId,
-            siteId: site.id,
-            expiresOn: expiryDate,
-            lotNumber: 'LOTNUMBER2',
             quantityOnHand: initialQuantityOnHand,
             createdOn: subDays(now, 4),
             updatedOn: subDays(now, 4),
           },
         ])
-
         const testStartedOn = setMilliseconds(subDays(now, 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
 
@@ -134,13 +123,12 @@ describe('Device API routes for GxConnect Devices', () => {
         const {
           body: { data },
         } = reply
-
         const inventoryItem = _.find(
           data,
           elem => elem.consumableId === consumableAssay.consumableId && elem.lotNumber === null
         )
 
-        assert.equal(inventoryItem.quantityOnHand, initialQuantityOnHand * 2 - consumableAssay.quantity)
+        assert.equal(inventoryItem.quantityOnHand, initialQuantityOnHand - consumableAssay.quantity)
 
         const inventoryLogs = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
