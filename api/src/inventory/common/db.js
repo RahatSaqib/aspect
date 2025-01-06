@@ -100,9 +100,8 @@ async function getUnreconciledCount(siteId, consumableId) {
     .whereIn('mil.siteId', knex.raw('(?)', [recursiveQuery]))
     .andWhere('ca.consumableId', consumableId)
     .count('r.id as resultCount')
-    .then(([result]) => result.resultCount)
-
-  return result
+    .first()
+  return result.resultCount
 }
 
 // ----------------------------------------------------------------------------------
@@ -231,22 +230,22 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
     )
 
 // ----------------------------------------------------------------------------------
-async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
-  if (_.isNil(query.maxDate)) {
-    query.maxDate = new Date()
+async function getInventoryLog(requestQuery, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
+  if (_.isNil(requestQuery.maxDate)) {
+    requestQuery.maxDate = new Date()
   }
-  if (_.isNil(query.minDate)) {
-    query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
+  if (_.isNil(requestQuery.minDate)) {
+    requestQuery.minDate = subDays(new Date(requestQuery.maxDate), 30).toISOString()
   }
 
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
-    .modify(filterDateRangeParams, query, 'il.createdOn')
+    .modify(filterDateRangeParams, requestQuery, 'il.createdOn')
     .modify(
       filterDateRangeParams,
-      { minDate: query.minExpirationDate, maxDate: query.maxExpirationDate },
+      { minDate: requestQuery.minExpirationDate, maxDate: requestQuery.maxExpirationDate },
       'il.expiresOn'
     )
-    .modify(filterParams, query, {
+    .modify(filterParams, requestQuery, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
@@ -257,19 +256,19 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
       lotNumber: 'il.lotNumber',
     })
     .modify(queryBuilder => {
-      if (query.onlyTransfers)
+      if (requestQuery.onlyTransfers)
         queryBuilder.whereIn('cr.i18nKey', ['ConsumableReason_TransferReceived', 'ConsumableReason_TransferSent'])
     })
     .modify(queryBuilder => {
-      if (query.siteIds) {
-        queryBuilder.whereIn('s.id', query.siteIds.split(','))
+      if (requestQuery.siteIds) {
+        queryBuilder.whereIn('s.id', requestQuery.siteIds.split(','))
       }
     })
   const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
 
   const data = await inventoryLogQuery
     .select(querySelector)
-    .modify(sortPageParams, query, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
+    .modify(sortPageParams, requestQuery, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
   return { data, total }
 }
 

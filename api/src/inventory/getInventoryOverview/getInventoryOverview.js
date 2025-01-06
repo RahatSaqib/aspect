@@ -1,6 +1,6 @@
 const { getConstraints } = require('../../auth/constraints')
 const getInventoryOverviewList = require('./db')
-const { getAllWithNames } = require('../../geography/service')
+const { getAllGeographiesWithNames } = require('../../geography/service')
 
 module.exports = async function (request) {
   const { auth, query } = request
@@ -10,12 +10,14 @@ module.exports = async function (request) {
   const inventoryListPromise = getInventoryOverviewList(query, dataConstraints)
 
   const geographiesPromise = getAllWithNames(request, dataConstraints)
+  const geographiesPromise = getAllGeographiesWithNames(request, dataConstraints)
 
   const [sites, geographies] = await Promise.all([inventoryListPromise, geographiesPromise])
 
   const country = buildHierarchy(geographies, sites)
 
   addAggregations(country)
+  fillHierarchicalAggregations(country)
 
   return { ok: true, length: sites.length, data: { country } }
 }
@@ -92,7 +94,7 @@ function buildHierarchy(geo, sites) {
   return reduceItemAuxiliarProperties(country)
 }
 
-function addAggregations(item) {
+function fillHierarchicalAggregations(item) {
   switch (item.type) {
     case 'country':
     case 'state':
