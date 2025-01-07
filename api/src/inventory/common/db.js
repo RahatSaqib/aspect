@@ -236,7 +236,9 @@ async function getInventoryLog(query, dataConstraints, auth, querySelector = INV
 
   const formattedData = _.map(data, logData => ({
     ...logData,
-    endedOn: formatDateToTimeZone(logData.endedOn, timezoneIANA),
+    resultEndedOn: logData.resultEndedOn
+      ? formatDateToTimeZone(logData.resultEndedOn, timezoneIANA)
+      : logData.resultEndedOn,
   }))
   return { data: formattedData, total }
 }

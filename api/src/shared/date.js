@@ -26,8 +26,7 @@ const {
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
-const { formatInTimeZone, zonedTimeToUtc } = require('date-fns-tz')
-const { DateTime } = require('luxon')
+const { formatInTimeZone, zonedTimeToUtc, utcToZonedTime } = require('date-fns-tz')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -513,14 +512,15 @@ function getWorkingDays(startDate, endDate) {
 const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
 
 /**
- * Formats a given UTC date to a specified time zone and returns the ISO string representation.
+ * Formats a given UTC date to a specified time zone.
  *
  * @param {Date} utcDate - The UTC date to be formatted.
- * @param {string} timeZone - The time zone to convert the date to.
- * @returns {string} The ISO string representation of the date in the specified time zone.
+ * @param {string} timeZone - The IANA time zone identifier (e.g., 'America/New_York').
+ * @returns {string} The formatted date string in the specified time zone.
  */
 function formatDateToTimeZone(utcDate, timeZone) {
-  return DateTime.fromJSDate(utcDate, { zone: 'utc' }).setZone(timeZone).toISO()
+  const zonedDate = utcToZonedTime(utcDate, timeZone)
+  return format(zonedDate, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone })
 }
 
 module.exports = {
