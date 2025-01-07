@@ -16,7 +16,7 @@ const {
   STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
-const { addConstraints, getUserFromCredentials } = require('../../auth/constraints')
+const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
 const consumableStrategyModifier = require('./consumableStrategyModifier')
 const { getPartnerByConstraints } = require('../../partner/common/db')
