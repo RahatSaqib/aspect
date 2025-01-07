@@ -7,7 +7,7 @@ async function listConsumableTypes(request) {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const { getCount, getItems } = getConsumableTypes(dataConstraints, query)
+  const { getCount, getItems } = await getConsumableTypes(dataConstraints, query)
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
   const result = { ok: true, total, length: data.length, data }
   return result
@@ -64,6 +64,8 @@ async function getConsumableDetail(consumableId) {
       'c.i18nKey',
       'c.canExpire',
       'c.manufacturer',
+      'c.strategy',
+      'c.adjustment',
       'c.unit',
       'c.price',
       'c.includeLocation',
@@ -101,7 +103,7 @@ async function getConsumableById(request) {
 async function updateConsumable(request) {
   const {
     params: { consumableId },
-    payload: { name, manufacturer, partNumber, price, unit, canExpire, includeLocation },
+    payload: { name, manufacturer, partNumber, price, unit, canExpire, includeLocation, strategy, adjustment },
   } = request
 
   const updatedValue = knex('Consumable')
@@ -111,6 +113,8 @@ async function updateConsumable(request) {
       canExpire,
       manufacturer,
       unit,
+      strategy,
+      adjustment,
       price,
       includeLocation,
       partNumber,

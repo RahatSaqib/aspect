@@ -267,6 +267,7 @@ async function listSitesForTransferSelectList(request) {
 async function getListSitesForSelectList(dataConstraints, opt = {}) {
   const { excludeSiteIds, mode, siteTypeExternalIds, tags } = opt
   let sitesQuery = knex('Site as s')
+    .leftOuterJoin('SiteType as sType', 's.siteTypeId', 'sType.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
@@ -282,9 +283,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
   }
   if (siteTypeExternalIds && siteTypeExternalIds.length > 0) {
     const siteTypes = _.isArray(siteTypeExternalIds) ? siteTypeExternalIds : [siteTypeExternalIds]
-    sitesQuery = sitesQuery
-      .leftOuterJoin('SiteType as sType', 's.siteTypeId', 'sType.id')
-      .whereIn('sType.externalId', siteTypes)
+    sitesQuery = sitesQuery.whereIn('sType.externalId', siteTypes)
   }
   if (excludeSiteIds) {
     const siteIds = _.isArray(excludeSiteIds) ? excludeSiteIds : [excludeSiteIds]
@@ -298,6 +297,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     'st.name as stateName',
     'stp.id as parentWarehouseId',
     knex.raw(`GROUP_CONCAT(sc.consumableId SEPARATOR ',') as siteConsumables`),
+    'sType.externalId as siteType',
   ]
 
   if (mode !== 'reporter') {

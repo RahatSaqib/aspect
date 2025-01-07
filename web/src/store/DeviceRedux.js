@@ -136,7 +136,7 @@ export function exportDeviceLogs(filtersParams, fileFormat, reportName) {
           400: filterFieldsRejectedError(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.exportResults.GET.400.title',
+                id: 'errorResponseMessages.store.exportResults.GET.400.title',
                 defaultMessage: 'Exporting DeviceLog Failed',
               },
             })
@@ -144,7 +144,7 @@ export function exportDeviceLogs(filtersParams, fileFormat, reportName) {
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.exportResults.GET.default.title',
+                id: 'errorResponseMessages.device.exportResults.GET.default.title',
                 defaultMessage: 'Exporting Device Log Failed',
               },
             })

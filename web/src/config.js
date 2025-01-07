@@ -7,6 +7,7 @@ const config = {
   },
   userInactiveMinutes: parseInt(process.env.userInactiveMinutes, 10),
   supportEmail: process.env.supportEmail,
+  defaultCulture: process.env.defaultCulture,
 }
 
 export default config

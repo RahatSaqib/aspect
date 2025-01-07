@@ -6,6 +6,8 @@ const transformMergeResultPayload = require('../deviceType/CepheidGeneXpert/tran
 const preProcessMergeResult = require('../deviceType/CepheidGeneXpert/preProcessMergeResult')
 const onResultLogged = require('../deviceType/AspectResultEntry/onResultLogged.js')
 const getCustomFields = require('../deviceType/GxConnect/customFields/customFields')
+const transformMergeResultResponse = require('../deviceType/CepheidGeneXpert/transformMergeResultResponse')
+const { extractCustomFieldsFromPayload } = require('../deviceType/GxConnect/extractCustomFieldsFromPayload')
 
 const gxconnectPlugin = {
   preProcessCreateDevice,
@@ -13,9 +15,11 @@ const gxconnectPlugin = {
   postProcessUpdateDeviceConfiguration,
   postProcessAddDeviceOperation,
   transformMergeResultPayload,
+  transformMergeResultResponse,
   preProcessMergeResult,
   onResultLogged,
   getCustomFields,
+  extractCustomFieldsFromPayload,
 }
 
 module.exports = {

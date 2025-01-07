@@ -71,6 +71,7 @@ const basePlugin = {
   preProcessMergeResult,
   excludeResult,
   transformMergeResultPayload,
+  transformMergeResultResponse,
   postProcessMergeResult,
   onResultLogged,
   onGxAlertAuthenticated,
@@ -80,6 +81,7 @@ const basePlugin = {
   onPatientUpdated,
   getCustomFields,
   findResult,
+  extractCustomFieldsFromPayload,
 }
 
 /**
@@ -229,6 +231,13 @@ async function transformMergeResultPayload(context) {
 }
 
 /**
+ * A new result is processed and transformed into a new response
+ */
+function transformMergeResultResponse(response) {
+  return response
+}
+
+/**
  * In daily details we are going to send the custom fields configured.
  * This function will return the daily details to be shared with all the gxconnect deployments.
  *
@@ -283,6 +292,13 @@ async function onPatientAdded(/* { patientId }, { messageContext } */) {
  */
 async function onPatientUpdated(/* { patientId }, { messageContext } */) {
   // do nothing by default
+}
+
+/**
+ * This function returns an object containing custom field data, which can be merged with the Result object and saved to the database
+ */
+async function extractCustomFieldsFromPayload(/* { payload, countryAbbreviation, partnerId, assayId } */) {
+  return {}
 }
 
 module.exports = {

@@ -8,15 +8,24 @@ const { MIN_PERCENTAGE_FIELDS_COMPLETION_RATE } = require('../fact/service')
 
 async function resolveIssueModuleDisabled(knex, issue) {
   const data = JSON.parse(issue.data)
-  const moduleReplacedIssue = await knex('Issue')
-    .where(knex.raw('data->>"$.replacedModuleSerial"=?', [data.moduleSerial]))
-    .andWhere({
-      deviceId: issue.deviceId,
-      issueTypeId: await issueTypeToId('ModuleReplaced'),
-    })
-    .first()
+  const [moduleReplacedIssue, moduleDisabledIssue] = await Promise.all([
+    knex('Issue')
+      .where(knex.raw('data->>"$.replacedModuleSerial"=?', [data.moduleSerial]))
+      .andWhere({
+        deviceId: issue.deviceId,
+        issueTypeId: await issueTypeToId('ModuleReplaced'),
+      })
+      .first(),
+    knex('Issue')
+      .where(knex.raw('data->>"$.moduleSerial"=?', [data.moduleSerial]))
+      .andWhere({ id: issue.id, issueTypeId: await issueTypeToId('ModuleDisabled') })
+      .first(),
+  ])
 
-  return moduleReplacedIssue && compareAsc(moduleReplacedIssue.createdOn, parseISO(data.disabledOn)) >= 0
+  return (
+    (moduleReplacedIssue && compareAsc(moduleReplacedIssue.createdOn, parseISO(data.disabledOn)) >= 0) ||
+    (moduleDisabledIssue && compareAsc(moduleDisabledIssue.createdOn, parseISO(data.disabledOn)) >= 0)
+  )
 }
 
 async function resolveIssueUnusedModules(knex, issue, conditions) {

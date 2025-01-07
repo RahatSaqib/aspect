@@ -74,7 +74,7 @@ const messages = {
       defaultMessage: '* in transit from {inTransitFromSiteName}',
     },
     excludedLotInTransit: {
-      id: 'pages.InventoryLog.inTransitFromSiteName',
+      id: 'pages.InventoryLog.excluded.inTransitFromSiteName',
       defaultMessage: '* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
     },
     never: {

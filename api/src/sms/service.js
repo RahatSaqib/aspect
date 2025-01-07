@@ -60,7 +60,35 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
   })
 
   return context.transact(async knex => {
-    await doSendSmsMessage(context, knex, smsMessageId)
+    const partnerDetails = await knex('SmsMessage as sm')
+      .join('Notification as n', 'sm.id', 'n.smsMessageId')
+      .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+      .join('Partner as p', 'nt.partnerId', 'p.id')
+      .where({ 'sm.id': smsMessageId })
+      .first('*')
+    if (!partnerDetails?.serviceStartDate || !partnerDetails?.notificationLimit) {
+      return doSendSmsMessage(context, knex, smsMessageId)
+    }
+    if (partnerDetails?.serviceStartDate && new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+      const pendingMessageStatusId = await messageStatusToId('Pending')
+      const sentMessageStatusId = await messageStatusToId('Sent')
+      const smsMessageCount = await knex('SmsMessage as sm')
+        .join('Device as d', 'sm.deviceId', 'd.id')
+        .where('sm.createdOn', '>', partnerDetails?.serviceStartDate)
+        .where('sm.createdOn', '<', partnerDetails?.serviceEndDate)
+        .andWhere('d.partnerId', partnerDetails?.partnerId)
+        .andWhere('em.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
+        .first('*')
+        .count('* as count')
+      if (smsMessageCount?.count <= partnerDetails?.notificationLimit)
+        await doSendSmsMessage(context, knex, smsMessageId)
+    } else {
+      const errorMessageStatusId = await messageStatusToId('Error')
+      await knex('SmsMessage').where({ id: smsMessageId }).update({
+        messageStatusId: errorMessageStatusId,
+        updatedOn: new Date(),
+      })
+    }
   })
 }
 

@@ -948,6 +948,18 @@ export default defineMessages({
     id: 'pages.Notifications.startingDayOfTheWeekTitle',
     defaultMessage: 'Starting Day of the Week',
   },
+  protectWithPassword: {
+    id: 'pages.Notifications.protectWithPassword',
+    defaultMessage: 'Protect report file with this password',
+  },
+  setting: {
+    id: 'pages.Notifications.setting',
+    defaultMessage: 'Setting',
+  },
+  password: {
+    id: 'pages.Notifications.password',
+    defaultMessage: 'Password',
+  },
 
   // Calibration section
   calibrationDays: {
@@ -1133,7 +1145,7 @@ export default defineMessages({
   },
   pk_missing_cartridges_report: {
     id: 'pages.ReportIndex.pk_missing_cartridges_report',
-    defaultMessage: 'List of Missing Lots',
+    defaultMessage: 'List of Unreconciled Inventory',
   },
 
   ...assay,
