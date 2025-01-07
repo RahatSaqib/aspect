@@ -201,17 +201,11 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // Remove extraColumns fields that shouldn't be retrieved to UI
   sanitizeExtraColumns(assayColumns)
 
-  // format the endedOn date to local time zone
-  const formattedResult = _.map(data, result => ({
-    ...result,
-    endedOn: formatDateToTimeZone(result.endedOn, timezoneIANA),
-  }))
-
   const result = {
     ok: true,
     total,
-    length: formattedResult.length,
-    data: formattedResult,
+    length: data.length,
+    data,
     extraColumns: assayColumns,
   }
   return result

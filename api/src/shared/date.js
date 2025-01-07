@@ -511,18 +511,6 @@ function getWorkingDays(startDate, endDate) {
 
 const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
 
-/**
- * Formats a given UTC date to a specified time zone.
- *
- * @param {Date} utcDate - The UTC date to be formatted.
- * @param {string} timeZone - The IANA time zone identifier (e.g., 'America/New_York').
- * @returns {string} The formatted date string in the specified time zone.
- */
-function formatDateToTimeZone(utcDate, timeZone) {
-  const zonedDate = utcToZonedTime(utcDate, timeZone)
-  return format(zonedDate, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone })
-}
-
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -571,5 +559,4 @@ module.exports = {
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
   adjustDate,
-  formatDateToTimeZone,
 }

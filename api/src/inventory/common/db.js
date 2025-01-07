@@ -17,7 +17,7 @@ const {
   SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
 const { addConstraints, getUserFromCredentials } = require('../../auth/constraints')
-const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault, formatDateToTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
 const consumableStrategyModifier = require('./consumableStrategyModifier')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 
@@ -234,13 +234,7 @@ async function getInventoryLog(query, dataConstraints, auth, querySelector = INV
     .select(querySelector)
     .modify(sortPageParams, query, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
 
-  const formattedData = _.map(data, logData => ({
-    ...logData,
-    resultEndedOn: logData.resultEndedOn
-      ? formatDateToTimeZone(logData.resultEndedOn, timezoneIANA)
-      : logData.resultEndedOn,
-  }))
-  return { data: formattedData, total }
+  return { data, total }
 }
 
 // ----------------------------------------------------------------------------------
