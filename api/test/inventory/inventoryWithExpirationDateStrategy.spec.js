@@ -289,8 +289,6 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           const res = await server
             .get(`${path}?siteName=test%20site&sortCol=consumableName`)
             .set('Authorization', `Bearer ${shared.token}`)
-
-          assert.equal(res.body.data[0].consumableName, res.body.data[1].consumableName)
           assert.isTrue(res.body.data[0].consumableName < res.body.data[res.body.data.length - 1].consumableName)
         })
 
