@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-07T03:40:01.593Z\n"
+"POT-Creation-Date: 2025-01-07T20:22:24.678Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -238,19 +238,19 @@ msgstr "AMK-R %"
 msgid "AMK-R Detected"
 msgstr "AMK-R détecté"
 
-#. [months.april]
+#. [monthsUpperShort.april]
 #. defaultMessage is:
 #. APR
 #: extracted_strings.json
 msgid "APR"
-msgstr "avril"
+msgstr "AVR"
 
-#. [months.august]
+#. [monthsUpperShort.august]
 #. defaultMessage is:
 #. AUG
 #: extracted_strings.json
 msgid "AUG"
-msgstr "août"
+msgstr "AOÛ"
 
 #. [legends.Unknown.assayAbbottM2000DBSHivVL]
 #. defaultMessage is:
@@ -810,6 +810,20 @@ msgstr "Tout"
 msgid "Api Keys"
 msgstr "Clés Api"
 
+#. [pages.InventoryLog.reconcilationAdjustment]
+#. defaultMessage is:
+#. Applied Consumable Strategy
+#: extracted_strings.json
+msgid "Applied Consumable Strategy"
+msgstr "Stratégie appliquée en matière de produits consommables"
+
+#. [pages.InventoryLog.reconcilationStrategy]
+#. defaultMessage is:
+#. Applied Reconciliation Strategy
+#: extracted_strings.json
+msgid "Applied Reconciliation Strategy"
+msgstr "Stratégie de réconciliation appliquée"
+
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
 #. Apply Filters
@@ -843,6 +857,20 @@ msgstr "Statut d'Approbation"
 #: extracted_strings.json
 msgid "Approved"
 msgstr "Approuvé"
+
+#. [months.apr]
+#. defaultMessage is:
+#. Apr
+#: extracted_strings.json
+msgid "Apr"
+msgstr "Avr"
+
+#. [chart.april]
+#. defaultMessage is:
+#. April
+#: extracted_strings.json
+msgid "April"
+msgstr "Avril"
 
 #. [contextualMenu.notifications.areYouSureToDelete]
 #. defaultMessage is:
@@ -1036,6 +1064,20 @@ msgstr ""
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Au moins un des canaux de notification doit être sélectionné"
+
+#. [months.aug]
+#. defaultMessage is:
+#. Aug
+#: extracted_strings.json
+msgid "Aug"
+msgstr "Août"
+
+#. [chart.august]
+#. defaultMessage is:
+#. August
+#: extracted_strings.json
+msgid "August"
+msgstr "Août"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -1728,6 +1770,9 @@ msgstr "Capacité"
 msgid "Captured"
 msgstr "Capturé"
 
+#. [pages.InventoryLog.withLotStrategy]
+#. defaultMessage is:
+#. Cartridge Lot Number
 #. [pages.Consumable.New.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot Number
@@ -2660,6 +2705,27 @@ msgstr "Diagnostic actuel de la RRTB"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Tendances actuelles du diagnostic de la résistance à la rifampicine"
 
+#. [pages.InventoryLog.currentSiteAdjustment]
+#. defaultMessage is:
+#. Current Site
+#: extracted_strings.json
+msgid "Current Site"
+msgstr "Site actuel"
+
+#. [pages.InventoryLog.currentSiteAndProviderAdjustment]
+#. defaultMessage is:
+#. Current Site and Stock Provider
+#: extracted_strings.json
+msgid "Current Site and Stock Provider"
+msgstr "Site actuel et fournisseur de stocks"
+
+#. [pages.InventoryLog.currentSiteAndProviderAndNationalAdjustment]
+#. defaultMessage is:
+#. Current Site, Stock Provider and all Parent Sites
+#: extracted_strings.json
+msgid "Current Site, Stock Provider and all Parent Sites"
+msgstr "Site actuel, fournisseur de stocks et tous les sites parents"
+
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
 #. Current TB Diagnosis
@@ -2726,12 +2792,12 @@ msgstr "Champs personnalisés Achèvement moyen"
 msgid "DBS"
 msgstr "DBS"
 
-#. [months.december]
+#. [monthsUpperShort.december]
 #. defaultMessage is:
 #. DEC
 #: extracted_strings.json
 msgid "DEC"
-msgstr "décembre"
+msgstr "DEC"
 
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
@@ -3075,6 +3141,20 @@ msgstr "Des jours..."
 #: extracted_strings.json
 msgid "Deaths"
 msgstr "Des morts"
+
+#. [months.dec]
+#. defaultMessage is:
+#. Dec
+#: extracted_strings.json
+msgid "Dec"
+msgstr "Déc"
+
+#. [chart.december]
+#. defaultMessage is:
+#. December
+#: extracted_strings.json
+msgid "December"
+msgstr "Décembre"
 
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
@@ -4298,6 +4378,9 @@ msgstr "Expirant dans les jours"
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.InventoryLog.withExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date
 #. [pages.Consumable.New.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
@@ -4308,6 +4391,9 @@ msgstr "Expirant dans les jours"
 msgid "Expiry Date"
 msgstr "Date d'expiration"
 
+#. [pages.InventoryLog.withLotAndExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date and Cartridge Lot Number
 #. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
 #. defaultMessage is:
 #. Expiry Date and Cartridge Lot Number
@@ -4393,12 +4479,12 @@ msgstr ""
 "Extrayez les données pour la plage de dates sélectionnée afin de les "
 "importer dans Tableau."
 
-#. [months.february]
+#. [monthsUpperShort.february]
 #. defaultMessage is:
 #. FEB
 #: extracted_strings.json
 msgid "FEB"
-msgstr "février"
+msgstr "FÉVR"
 
 #. [results.categoryTypeFLQResistanceI18nKey]
 #. defaultMessage is:
@@ -4525,6 +4611,20 @@ msgstr "Les échecs de la retraite"
 #: extracted_strings.json
 msgid "False"
 msgstr "Wronge"
+
+#. [months.feb]
+#. defaultMessage is:
+#. Feb
+#: extracted_strings.json
+msgid "Feb"
+msgstr "Fév"
+
+#. [chart.february]
+#. defaultMessage is:
+#. February
+#: extracted_strings.json
+msgid "February"
+msgstr "Février"
 
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
 #. defaultMessage is:
@@ -6283,26 +6383,40 @@ msgstr ""
 "Il s'agit du nombre total de cartouches consommées au cours des 6 derniers "
 "mois, quelle que soit la période sélectionnée dans l'option de filtrage"
 
-#. [months.january]
+#. [monthsUpperShort.january]
 #. defaultMessage is:
 #. JAN
 #: extracted_strings.json
 msgid "JAN"
-msgstr "janvier"
+msgstr "JANV"
 
-#. [months.july]
+#. [monthsUpperShort.july]
 #. defaultMessage is:
 #. JUL
 #: extracted_strings.json
 msgid "JUL"
-msgstr "juillet"
+msgstr "JUIL"
 
-#. [months.june]
+#. [monthsUpperShort.june]
 #. defaultMessage is:
 #. JUN
 #: extracted_strings.json
 msgid "JUN"
-msgstr "juin"
+msgstr "JUIN"
+
+#. [months.jan]
+#. defaultMessage is:
+#. Jan
+#: extracted_strings.json
+msgid "Jan"
+msgstr "Jan"
+
+#. [chart.january]
+#. defaultMessage is:
+#. January
+#: extracted_strings.json
+msgid "January"
+msgstr "Janvier"
 
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
@@ -6327,6 +6441,34 @@ msgstr "Profession"
 #: extracted_strings.json
 msgid "Job Functions"
 msgstr "Fonctions de travail"
+
+#. [months.jul]
+#. defaultMessage is:
+#. Jul
+#: extracted_strings.json
+msgid "Jul"
+msgstr "Juil"
+
+#. [chart.july]
+#. defaultMessage is:
+#. July
+#: extracted_strings.json
+msgid "July"
+msgstr "Juillet"
+
+#. [months.jun]
+#. defaultMessage is:
+#. Jun
+#: extracted_strings.json
+msgid "Jun"
+msgstr "Juin"
+
+#. [chart.june]
+#. defaultMessage is:
+#. June
+#: extracted_strings.json
+msgid "June"
+msgstr "Juin"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -6907,19 +7049,19 @@ msgstr "Faible taux d'achèvement des travaux sur le terrain"
 msgid "Low Inventory"
 msgstr "Faible inventaire"
 
-#. [months.march]
+#. [monthsUpperShort.march]
 #. defaultMessage is:
 #. MAR
 #: extracted_strings.json
 msgid "MAR"
-msgstr "mars"
+msgstr "MARS"
 
-#. [months.may]
+#. [monthsUpperShort.may]
 #. defaultMessage is:
 #. MAY
 #: extracted_strings.json
 msgid "MAY"
-msgstr "mai"
+msgstr "MAI"
 
 #. [filter.AssayTypeSelectField.assayTypeMtb]
 #. defaultMessage is:
@@ -7541,6 +7683,27 @@ msgstr "Réglé manuellement par {username} ({updatedDate})"
 msgid "Manufacturer"
 msgstr "Fabricant"
 
+#. [months.mar]
+#. defaultMessage is:
+#. Mar
+#: extracted_strings.json
+msgid "Mar"
+msgstr "Mar"
+
+#. [chart.march]
+#. defaultMessage is:
+#. March
+#: extracted_strings.json
+msgid "March"
+msgstr "Mars"
+
+#. [months.may]
+#. defaultMessage is:
+#. May
+#: extracted_strings.json
+msgid "May"
+msgstr "Mai"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7826,12 +7989,12 @@ msgstr "Au plus tard aujourd'hui"
 msgid "N/A"
 msgstr "N/D"
 
-#. [months.november]
+#. [monthsUpperShort.november]
 #. defaultMessage is:
 #. NOV
 #: extracted_strings.json
 msgid "NOV"
-msgstr "novembre"
+msgstr "NOV"
 
 #. [pages.ResultList.resultCategoryEbolaNp]
 #. defaultMessage is:
@@ -8586,6 +8749,20 @@ msgstr "Notifications"
 msgid "Notifications History"
 msgstr "Historique des notifications"
 
+#. [months.nov]
+#. defaultMessage is:
+#. Nov
+#: extracted_strings.json
+msgid "Nov"
+msgstr "Nov"
+
+#. [chart.november]
+#. defaultMessage is:
+#. November
+#: extracted_strings.json
+msgid "November"
+msgstr "Novembre"
+
 #. [component.DateTimeInput.button.now]
 #. defaultMessage is:
 #. Now
@@ -8689,12 +8866,12 @@ msgstr ""
 msgid "Numbers Included"
 msgstr "Numéros inclus"
 
-#. [months.october]
+#. [monthsUpperShort.october]
 #. defaultMessage is:
 #. OCT
 #: extracted_strings.json
 msgid "OCT"
-msgstr "octobre"
+msgstr "OCT"
 
 #. [pages.deviceDetail.ResultWorkflowStatusOK]
 #. defaultMessage is:
@@ -8708,6 +8885,20 @@ msgstr "octobre"
 #: extracted_strings.json
 msgid "OK"
 msgstr "OK"
+
+#. [months.oct]
+#. defaultMessage is:
+#. Oct
+#: extracted_strings.json
+msgid "Oct"
+msgstr "Oct"
+
+#. [chart.october]
+#. defaultMessage is:
+#. October
+#: extracted_strings.json
+msgid "October"
+msgstr "Octobre"
 
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
@@ -11077,12 +11268,12 @@ msgstr "Routeurs"
 msgid "SARS-CoV-2 (COVID-19)"
 msgstr "SRAS-CoV-2 (COVID-19)"
 
-#. [months.september]
+#. [monthsUpperShort.september]
 #. defaultMessage is:
 #. SEP
 #: extracted_strings.json
 msgid "SEP"
-msgstr "septembre"
+msgstr "SEP"
 
 #. [pages.NotificationDetail.sms]
 #. defaultMessage is:
@@ -11664,6 +11855,20 @@ msgstr "Envoyé par courrier électronique"
 #: extracted_strings.json
 msgid "Sent via SMS"
 msgstr "Envoyé par SMS"
+
+#. [months.sep]
+#. defaultMessage is:
+#. Sep
+#: extracted_strings.json
+msgid "Sep"
+msgstr "Sep"
+
+#. [chart.september]
+#. defaultMessage is:
+#. September
+#: extracted_strings.json
+msgid "September"
+msgstr "Septembre"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:
