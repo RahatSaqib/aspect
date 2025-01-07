@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
+"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -841,6 +841,20 @@ msgstr "Statut d'Approbation"
 msgid "Approved"
 msgstr "Approuvé"
 
+#. [months.apr]
+#. defaultMessage is:
+#. Apr
+#: extracted_strings.json
+msgid "Apr"
+msgstr "Avr"
+
+#. [chart.april]
+#. defaultMessage is:
+#. April
+#: extracted_strings.json
+msgid "April"
+msgstr "Avril"
+
 #. [contextualMenu.notifications.areYouSureToDelete]
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
@@ -1033,6 +1047,20 @@ msgstr ""
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Au moins un des canaux de notification doit être sélectionné"
+
+#. [months.aug]
+#. defaultMessage is:
+#. Aug
+#: extracted_strings.json
+msgid "Aug"
+msgstr "Août"
+
+#. [chart.august]
+#. defaultMessage is:
+#. August
+#: extracted_strings.json
+msgid "August"
+msgstr "Août"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -1819,7 +1847,7 @@ msgstr "Changé"
 #. Check Inbox
 #: extracted_strings.json
 msgid "Check Inbox"
-msgstr "Check Inbox"
+msgstr "Vérifier la boîte de réception"
 
 #. [pages.NotificationDetail.SelectNationalPlaceholder]
 #. defaultMessage is:
@@ -3051,6 +3079,20 @@ msgstr "Des jours..."
 #: extracted_strings.json
 msgid "Deaths"
 msgstr "Des morts"
+
+#. [months.dec]
+#. defaultMessage is:
+#. Dec
+#: extracted_strings.json
+msgid "Dec"
+msgstr "Déc"
+
+#. [chart.december]
+#. defaultMessage is:
+#. December
+#: extracted_strings.json
+msgid "December"
+msgstr "Décembre"
 
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
@@ -4502,6 +4544,20 @@ msgstr "Les échecs de la retraite"
 msgid "False"
 msgstr "Wronge"
 
+#. [months.feb]
+#. defaultMessage is:
+#. Feb
+#: extracted_strings.json
+msgid "Feb"
+msgstr "Fév"
+
+#. [chart.february]
+#. defaultMessage is:
+#. February
+#: extracted_strings.json
+msgid "February"
+msgstr "Février"
+
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
 #. defaultMessage is:
 #. Female
@@ -5591,6 +5647,9 @@ msgstr "Hépatite B"
 msgid "Hepatitis C"
 msgstr "Hépatite C"
 
+#. [pages.hierarchicalView]
+#. defaultMessage is:
+#. Hierarchical View
 #. [pages.inventoryReconciliation.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
@@ -6243,6 +6302,20 @@ msgstr "juillet"
 msgid "JUN"
 msgstr "juin"
 
+#. [months.jan]
+#. defaultMessage is:
+#. Jan
+#: extracted_strings.json
+msgid "Jan"
+msgstr "Jan"
+
+#. [chart.january]
+#. defaultMessage is:
+#. January
+#: extracted_strings.json
+msgid "January"
+msgstr "Janvier"
+
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
 #. Job
@@ -6266,6 +6339,34 @@ msgstr "Profession"
 #: extracted_strings.json
 msgid "Job Functions"
 msgstr "Fonctions de travail"
+
+#. [months.jul]
+#. defaultMessage is:
+#. Jul
+#: extracted_strings.json
+msgid "Jul"
+msgstr "Juil"
+
+#. [chart.july]
+#. defaultMessage is:
+#. July
+#: extracted_strings.json
+msgid "July"
+msgstr "Juillet"
+
+#. [months.jun]
+#. defaultMessage is:
+#. Jun
+#: extracted_strings.json
+msgid "Jun"
+msgstr "Juin"
+
+#. [chart.june]
+#. defaultMessage is:
+#. June
+#: extracted_strings.json
+msgid "June"
+msgstr "Juin"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -7480,6 +7581,20 @@ msgstr "Réglé manuellement par {username} ({updatedDate})"
 msgid "Manufacturer"
 msgstr "Fabricant"
 
+#. [months.mar]
+#. defaultMessage is:
+#. Mar
+#: extracted_strings.json
+msgid "Mar"
+msgstr "Mar"
+
+#. [chart.march]
+#. defaultMessage is:
+#. March
+#: extracted_strings.json
+msgid "March"
+msgstr "Mars"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -8522,6 +8637,20 @@ msgstr "Notifications"
 msgid "Notifications History"
 msgstr "Historique des notifications"
 
+#. [months.nov]
+#. defaultMessage is:
+#. Nov
+#: extracted_strings.json
+msgid "Nov"
+msgstr "Nov"
+
+#. [chart.november]
+#. defaultMessage is:
+#. November
+#: extracted_strings.json
+msgid "November"
+msgstr "Novembre"
+
 #. [component.DateTimeInput.button.now]
 #. defaultMessage is:
 #. Now
@@ -8644,6 +8773,20 @@ msgstr "octobre"
 #: extracted_strings.json
 msgid "OK"
 msgstr "OK"
+
+#. [months.oct]
+#. defaultMessage is:
+#. Oct
+#: extracted_strings.json
+msgid "Oct"
+msgstr "Oct"
+
+#. [chart.october]
+#. defaultMessage is:
+#. October
+#: extracted_strings.json
+msgid "October"
+msgstr "Octobre"
 
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
@@ -9239,6 +9382,20 @@ msgstr "Veuillez saisir votre email"
 #: extracted_strings.json
 msgid "Please enter your new password?"
 msgstr "Veuillez entrer votre nouveau mot de passe?"
+
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Veuillez saisir votre mot de passe"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+msgid "Please enter your username"
+msgstr "Veuillez saisir votre nom d'utilisateur"
 
 #. [pages.transferResult.note]
 #. defaultMessage is:
@@ -11234,6 +11391,13 @@ msgstr "Échec de la recherche des résultats de traitement"
 msgid "Searching Results Failed"
 msgstr "Echec de la recherche dans les résultats"
 
+#. [forms.formItem.selectAllUnselectAll]
+#. defaultMessage is:
+#. Select All / Unselect All
+#: extracted_strings.json
+msgid "Select All / Unselect All"
+msgstr "Sélectionner tout / Désélectionner tout"
+
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -11567,6 +11731,20 @@ msgstr "Envoyé par courrier électronique"
 #: extracted_strings.json
 msgid "Sent via SMS"
 msgstr "Envoyé par SMS"
+
+#. [months.sep]
+#. defaultMessage is:
+#. Sep
+#: extracted_strings.json
+msgid "Sep"
+msgstr "Sep"
+
+#. [chart.september]
+#. defaultMessage is:
+#. September
+#: extracted_strings.json
+msgid "September"
+msgstr "Septembre"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:
@@ -15684,28 +15862,28 @@ msgstr "{entity} est nécessaire"
 #. {itemCount, plural, one {# Contact} other {# Contacts} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
-msgstr "{itemCount, pluriel, un {# Contact} d'autres {# Contacts} }"
+msgstr "{itemCount, plural, un {# Contact} d'autres {# Contacts} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Job Function} other {# Job Functions} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
-msgstr "{itemCount, pluriel, une {# Job Function} autres {# Job Functions} }"
+msgstr "{itemCount, plural, une {# Job Function} autres {# Job Functions} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Name} other {# Names} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Name} other {# Names} }"
-msgstr "{itemCount, pluriel, un {# Name} d'autres {# Names} }"
+msgstr "{itemCount, plural, un {# Name} d'autres {# Names} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCountPersons]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, pluriel, une {# Person} d'autres {# Persons} }"
+msgstr "{itemCount, plural, une {# Person} d'autres {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -15722,7 +15900,7 @@ msgid ""
 "{maintenanceStatusName} ({totalResults, plural, one {# result reported} "
 "other {# results reported} })"
 msgstr ""
-"{maintenanceStatusName} ({totalResults, pluriel, one {# result reported} "
+"{maintenanceStatusName} ({totalResults, plural, one {# result reported} "
 "other {# results reported} })"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus]
@@ -15741,7 +15919,7 @@ msgstr ""
 #. {numberOfModules, plural, one {# module} other {# modules} }
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
-msgstr "{numberOfModules, pluriel, one {# module} d'autres {# modules} }"
+msgstr "{numberOfModules, plural, one {# module} d'autres {# modules} }"
 
 #. [p.PkDashboard.customPerYear]
 #. defaultMessage is:
