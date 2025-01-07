@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
+"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -834,6 +834,20 @@ msgstr "Approval Status"
 msgid "Approved"
 msgstr "Approved"
 
+#. [months.apr]
+#. defaultMessage is:
+#. Apr
+#: extracted_strings.json
+msgid "Apr"
+msgstr "Apr"
+
+#. [chart.april]
+#. defaultMessage is:
+#. April
+#: extracted_strings.json
+msgid "April"
+msgstr "April"
+
 #. [contextualMenu.notifications.areYouSureToDelete]
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
@@ -1024,6 +1038,21 @@ msgstr "At least one assay is required for result based notifications"
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "At least one of the notification channels should be selected"
+
+#. [months.aug]
+#. defaultMessage is:
+#. Aug
+#: extracted_strings.json
+#| msgid "Age"
+msgid "Aug"
+msgstr "Aug"
+
+#. [chart.august]
+#. defaultMessage is:
+#. August
+#: extracted_strings.json
+msgid "August"
+msgstr "August"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -2133,7 +2162,6 @@ msgstr "Consumables applicable for the site"
 #. defaultMessage is:
 #. Consumables applicable for this site
 #: extracted_strings.json
-#| msgid "Consumables applicable for the site"
 msgid "Consumables applicable for this site"
 msgstr "Consumables applicable for this site"
 
@@ -2617,7 +2645,6 @@ msgstr "Current Password"
 #. defaultMessage is:
 #. Current Qty.
 #: extracted_strings.json
-#| msgid "Sent Qty"
 msgid "Current Qty."
 msgstr "Current Qty."
 
@@ -2964,7 +2991,6 @@ msgstr "Days"
 #. defaultMessage is:
 #. Days Left
 #: extracted_strings.json
-#| msgid "Days Stock Left"
 msgid "Days Left"
 msgstr "Days Left"
 
@@ -3036,6 +3062,21 @@ msgstr "Days..."
 #: extracted_strings.json
 msgid "Deaths"
 msgstr "Deaths"
+
+#. [months.dec]
+#. defaultMessage is:
+#. Dec
+#: extracted_strings.json
+#| msgid "Device"
+msgid "Dec"
+msgstr "Dec"
+
+#. [chart.december]
+#. defaultMessage is:
+#. December
+#: extracted_strings.json
+msgid "December"
+msgstr "December"
 
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
@@ -4078,7 +4119,6 @@ msgstr "Error: Date Selection Required to Download Report"
 #. defaultMessage is:
 #. Errors
 #: extracted_strings.json
-#| msgid "Error"
 msgid "Errors"
 msgstr "Errors"
 
@@ -4482,6 +4522,21 @@ msgstr "Failures of Retreatment"
 msgid "False"
 msgstr "False"
 
+#. [months.feb]
+#. defaultMessage is:
+#. Feb
+#: extracted_strings.json
+#| msgid "Web"
+msgid "Feb"
+msgstr "Feb"
+
+#. [chart.february]
+#. defaultMessage is:
+#. February
+#: extracted_strings.json
+msgid "February"
+msgstr "February"
+
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
 #. defaultMessage is:
 #. Female
@@ -4726,7 +4781,6 @@ msgstr "GP Not Detected - NP Not Detected"
 #. defaultMessage is:
 #. GX Sites
 #: extracted_strings.json
-#| msgid "Sites"
 msgid "GX Sites"
 msgstr "GX Sites"
 
@@ -4734,7 +4788,6 @@ msgstr "GX Sites"
 #. defaultMessage is:
 #. GX-10C Devices
 #: extracted_strings.json
-#| msgid "Devices"
 msgid "GX-10C Devices"
 msgstr "GX-10C Devices"
 
@@ -4742,7 +4795,6 @@ msgstr "GX-10C Devices"
 #. defaultMessage is:
 #. GX-10C Modules
 #: extracted_strings.json
-#| msgid "Number of GX-10C modules"
 msgid "GX-10C Modules"
 msgstr "GX-10C Modules"
 
@@ -4750,7 +4802,6 @@ msgstr "GX-10C Modules"
 #. defaultMessage is:
 #. GX-6C Devices
 #: extracted_strings.json
-#| msgid "Devices"
 msgid "GX-6C Devices"
 msgstr "GX-6C Devices"
 
@@ -4758,7 +4809,6 @@ msgstr "GX-6C Devices"
 #. defaultMessage is:
 #. GX-6C Modules
 #: extracted_strings.json
-#| msgid "Number of GX-6C modules"
 msgid "GX-6C Modules"
 msgstr "GX-6C Modules"
 
@@ -5576,6 +5626,9 @@ msgstr "Hepatitis B"
 msgid "Hepatitis C"
 msgstr "Hepatitis C"
 
+#. [pages.hierarchicalView]
+#. defaultMessage is:
+#. Hierarchical View
 #. [pages.inventoryReconciliation.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
@@ -5982,7 +6035,6 @@ msgstr "Inventory"
 #. defaultMessage is:
 #. Inventory Detail
 #: extracted_strings.json
-#| msgid "Inventory Details"
 msgid "Inventory Detail"
 msgstr "Inventory Detail"
 
@@ -6224,6 +6276,21 @@ msgstr "JUL"
 msgid "JUN"
 msgstr "JUN"
 
+#. [months.jan]
+#. defaultMessage is:
+#. Jan
+#: extracted_strings.json
+#| msgid "and"
+msgid "Jan"
+msgstr "Jan"
+
+#. [chart.january]
+#. defaultMessage is:
+#. January
+#: extracted_strings.json
+msgid "January"
+msgstr "January"
+
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
 #. Job
@@ -6247,6 +6314,34 @@ msgstr "Job Assignment"
 #: extracted_strings.json
 msgid "Job Functions"
 msgstr "Job Functions"
+
+#. [months.jul]
+#. defaultMessage is:
+#. Jul
+#: extracted_strings.json
+msgid "Jul"
+msgstr "Jul"
+
+#. [chart.july]
+#. defaultMessage is:
+#. July
+#: extracted_strings.json
+msgid "July"
+msgstr "July"
+
+#. [months.jun]
+#. defaultMessage is:
+#. Jun
+#: extracted_strings.json
+msgid "Jun"
+msgstr "Jun"
+
+#. [chart.june]
+#. defaultMessage is:
+#. June
+#: extracted_strings.json
+msgid "June"
+msgstr "June"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -6399,7 +6494,6 @@ msgstr "Last 30 Days"
 #. defaultMessage is:
 #. Last 6 Months
 #: extracted_strings.json
-#| msgid "Last Month"
 msgid "Last 6 Months"
 msgstr "Last 6 Months"
 
@@ -7456,6 +7550,21 @@ msgstr "Manually set by {username} ({updatedDate})"
 msgid "Manufacturer"
 msgstr "Manufacturer"
 
+#. [months.mar]
+#. defaultMessage is:
+#. Mar
+#: extracted_strings.json
+#| msgid "Manager"
+msgid "Mar"
+msgstr "Mar"
+
+#. [chart.march]
+#. defaultMessage is:
+#. March
+#: extracted_strings.json
+msgid "March"
+msgstr "March"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -8497,6 +8606,21 @@ msgstr "Notifications"
 msgid "Notifications History"
 msgstr "Notifications History"
 
+#. [months.nov]
+#. defaultMessage is:
+#. Nov
+#: extracted_strings.json
+#| msgid "No"
+msgid "Nov"
+msgstr "Nov"
+
+#. [chart.november]
+#. defaultMessage is:
+#. November
+#: extracted_strings.json
+msgid "November"
+msgstr "November"
+
 #. [component.DateTimeInput.button.now]
 #. defaultMessage is:
 #. Now
@@ -8617,6 +8741,20 @@ msgstr "OCT"
 #: extracted_strings.json
 msgid "OK"
 msgstr "OK"
+
+#. [months.oct]
+#. defaultMessage is:
+#. Oct
+#: extracted_strings.json
+msgid "Oct"
+msgstr "Oct"
+
+#. [chart.october]
+#. defaultMessage is:
+#. October
+#: extracted_strings.json
+msgid "October"
+msgstr "October"
 
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
@@ -9205,6 +9343,20 @@ msgstr "Please enter your email"
 #: extracted_strings.json
 msgid "Please enter your new password?"
 msgstr "Please enter your new password?"
+
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Please enter your password"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+msgid "Please enter your username"
+msgstr "Please enter your username"
 
 #. [pages.transferResult.note]
 #. defaultMessage is:
@@ -11190,6 +11342,13 @@ msgstr "Searching Result Treatment Statuses Failed"
 msgid "Searching Results Failed"
 msgstr "Searching Results Failed"
 
+#. [forms.formItem.selectAllUnselectAll]
+#. defaultMessage is:
+#. Select All / Unselect All
+#: extracted_strings.json
+msgid "Select All / Unselect All"
+msgstr "Select All / Unselect All"
+
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -11285,7 +11444,6 @@ msgstr "Select Year..."
 #. defaultMessage is:
 #. Select all Locations to track inventory for this item
 #: extracted_strings.json
-#| msgid "Set the below configurations to manage Inventory across the sites"
 msgid "Select all Locations to track inventory for this item"
 msgstr "Select all Locations to track inventory for this item"
 
@@ -11524,6 +11682,20 @@ msgstr "Sent via Email"
 #: extracted_strings.json
 msgid "Sent via SMS"
 msgstr "Sent via SMS"
+
+#. [months.sep]
+#. defaultMessage is:
+#. Sep
+#: extracted_strings.json
+msgid "Sep"
+msgstr "Sep"
+
+#. [chart.september]
+#. defaultMessage is:
+#. September
+#: extracted_strings.json
+msgid "September"
+msgstr "September"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:
@@ -12192,9 +12364,6 @@ msgstr "Software Type"
 #. defaultMessage is:
 #. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
 #: extracted_strings.json
-#| msgid ""
-#| "Some sites may appear unavailable for selection change as they have "
-#| "inventory or unreconciled transactions for the selected Inventory item"
 msgid ""
 "Some consumables may appear unavailable for selection change as the site has "
 "inventory or unreconciled transactions"
@@ -12416,8 +12585,6 @@ msgstr "Success"
 #. defaultMessage is:
 #. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
-#| msgid ""
-#| "Summary of TB Workload grouped by month, quarter and year for all regions"
 msgid ""
 "Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
@@ -13811,7 +13978,6 @@ msgstr "Total MTB detected and MTB Trace detected"
 #. defaultMessage is:
 #. Total Modules
 #: extracted_strings.json
-#| msgid "Total Results"
 msgid "Total Modules"
 msgstr "Total Modules"
 
@@ -14367,7 +14533,6 @@ msgstr ""
 #. defaultMessage is:
 #. Utilization%
 #: extracted_strings.json
-#| msgid "Utilization"
 msgid "Utilization%"
 msgstr "Utilization%"
 
