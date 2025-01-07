@@ -64,12 +64,18 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
 
-        const { id } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
-        consumableId = id
+        const { id: tbRifConsumableId } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
+        consumableId = tbRifConsumableId
+        // attach a different consumable to test ordering
+        const { id: alereConsumableId } = await knex('Consumable')
+          .where('externalId', 'AlereHivDetectCartridge')
+          .first('id')
+        await knex('SiteConsumable').insert({ siteId: site1Id, consumableId: alereConsumableId })
 
         await Promise.all([
-          knex('SiteConsumable').insert({ siteId: site1Id, consumableId }),
-          knex('SiteConsumable').insert({ siteId: site2Id, consumableId }),
+          knex('SiteConsumable').insert({ siteId: site1Id, consumableId: tbRifConsumableId }),
+          knex('SiteConsumable').insert({ siteId: site2Id, consumableId: tbRifConsumableId }),
+          knex('SiteConsumable').insert({ siteId: site1Id, consumableId: alereConsumableId }),
         ])
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,
@@ -157,6 +163,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           ])
           .delete()
         await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id, site2Id]).delete()
+        await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
       })
 
