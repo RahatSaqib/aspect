@@ -5,7 +5,6 @@ const Promise = require('bluebird')
 
 const geography = require('./fixtures/geography.json')
 const labClinic = require('./fixtures/labClinic.json')
-const { addDeviceCapacities, setCapacityForExistingDevices } = require('../utils')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
 const { insertSite } = require('../../src/site/common/db')
@@ -221,7 +220,4 @@ async function seed(knex) {
       }
     })
   )
-
-  await addDeviceCapacities(knex)
-  await setCapacityForExistingDevices(knex)
 }

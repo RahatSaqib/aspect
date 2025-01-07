@@ -20,4 +20,5 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://zimbabwe.aspect.id:2843',
   apiUrl: 'https://zimbabwe.aspect.id:2843/api',
+  deviceCapacityFactor: 3,
 }

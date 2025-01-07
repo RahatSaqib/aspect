@@ -37,4 +37,5 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://eswatini.aspect.id',
   apiUrl: 'https://eswatini.aspect.id/api',
+  deviceCapacityFactor: 3,
 }
