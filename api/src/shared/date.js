@@ -26,7 +26,7 @@ const {
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
-const { formatInTimeZone, zonedTimeToUtc, utcToZonedTime } = require('date-fns-tz')
+const { formatInTimeZone, zonedTimeToUtc } = require('date-fns-tz')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)

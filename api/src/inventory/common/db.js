@@ -200,8 +200,6 @@ async function getInventoryLog(query, dataConstraints, auth, querySelector = INV
     query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
   }
 
-  const { timezoneIANA } = await getUserFromCredentials(auth.credentials)
-
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
     .modify(filterDateRangeParams, query, 'il.createdOn')
     .modify(
