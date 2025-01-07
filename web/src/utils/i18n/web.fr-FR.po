@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-31T01:08:00.706Z\n"
+"POT-Creation-Date: 2025-01-07T03:40:01.593Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,7 +20,7 @@ msgstr ""
 #. "Do Not Use" Modules
 #: extracted_strings.json
 msgid "\"Do Not Use\" Modules"
-msgstr "\"Modules \"à ne pas utiliser"
+msgstr "Modules marqués comme non utilisables"
 
 #. [pages.ReportIndex.no_stock]
 #. defaultMessage is:
@@ -540,6 +540,9 @@ msgstr ""
 "liste des résultats."
 
 #. [pages.resultEdit.AgeFieldi18nKey]
+#. defaultMessage is:
+#. Age
+#. [pages.resultEdit.age]
 #. defaultMessage is:
 #. Age
 #: extracted_strings.json
@@ -1801,6 +1804,13 @@ msgstr "Catégorie"
 msgid "Cellphone Number"
 msgstr "Numéro de téléphone portable"
 
+#. [pages.resultEdit.cellphoneNumber]
+#. defaultMessage is:
+#. Cellphone number
+#: extracted_strings.json
+msgid "Cellphone number"
+msgstr "Numéro de téléphone portable"
+
 #. [pages.NotificationDetail.actionChange]
 #. defaultMessage is:
 #. Change
@@ -2926,6 +2936,20 @@ msgstr "Date de réception"
 #: extracted_strings.json
 msgid "Date Removed"
 msgstr "Date supprimée"
+
+#. [pages.resultEdit.dateSpecimenCollected]
+#. defaultMessage is:
+#. Date Specimen Collected
+#: extracted_strings.json
+msgid "Date Specimen Collected"
+msgstr "Date du prélèvement"
+
+#. [pages.resultEdit.dateSpecimenReceived]
+#. defaultMessage is:
+#. Date Specimen Received
+#: extracted_strings.json
+msgid "Date Specimen Received"
+msgstr "Date de réception du spécimen"
 
 #. [pages.TransferInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -4788,6 +4812,9 @@ msgstr "Lavage gastrique"
 #. defaultMessage is:
 #. Gender
 #. [pages.resultEdit.Genderi18nCaptionKey]
+#. defaultMessage is:
+#. Gender
+#. [pages.resultEdit.gender]
 #. defaultMessage is:
 #. Gender
 #: extracted_strings.json
@@ -7851,6 +7878,9 @@ msgstr "NTP"
 #. [pages.PersonList.personName]
 #. defaultMessage is:
 #. Name
+#. [pages.resultEdit.name]
+#. defaultMessage is:
+#. Name
 #. [pages.SiteDetail.fieldName]
 #. defaultMessage is:
 #. Name
@@ -10213,12 +10243,18 @@ msgstr "Taux de recouvrement par sexe"
 #. [pages.resultEdit.ReferringClinicianI18nkey]
 #. defaultMessage is:
 #. Referring Clinician or Facility Phone Number (if known)
+#. [pages.resultEdit.referringClinicianOrFacilityPhoneNumberIfKnown]
+#. defaultMessage is:
+#. Referring Clinician or Facility Phone Number (if known)
 #: extracted_strings.json
 msgid "Referring Clinician or Facility Phone Number (if known)"
 msgstr ""
 "Numéro de téléphone du clinicien référent ou de l'établissement (si connu)"
 
 #. [pages.resultEdit.ReferringFacilityI18nkey]
+#. defaultMessage is:
+#. Referring Facility
+#. [pages.resultEdit.referringFacility]
 #. defaultMessage is:
 #. Referring Facility
 #: extracted_strings.json
@@ -10307,6 +10343,9 @@ msgstr "Répéter la ligne de base"
 #. [pages.resultEdit.RepeatTesti18nKey]
 #. defaultMessage is:
 #. Repeat Test
+#. [pages.resultEdit.repeatTest]
+#. defaultMessage is:
+#. Repeat Test
 #: extracted_strings.json
 msgid "Repeat Test"
 msgstr "Répétition du test"
@@ -10372,7 +10411,7 @@ msgstr "Le nom du rapport comprend \"{reportWithName}\""
 #. Report of TB Workload Summary
 #: extracted_strings.json
 msgid "Report of TB Workload Summary"
-msgstr "Rapport sur le résumé de la charge de travail du CT"
+msgstr "Rapport récapitulatif de la charge de travail de la TB"
 
 #. [pages.ReportIndex.reportDrTb10a10bCovid]
 #. defaultMessage is:
@@ -10382,7 +10421,7 @@ msgstr "Rapport sur le résumé de la charge de travail du CT"
 #. Report on Xpert MTB/RIF and Covid
 #: extracted_strings.json
 msgid "Report on Xpert MTB/RIF and Covid"
-msgstr "Reportage sur Xpert MTB/RIF et Covid"
+msgstr "Rapport sur Xpert MTB/RIF et Covid"
 
 #. [pages.ReportIndex.results_10a_10b_covid_ntp_use]
 #. defaultMessage is:
@@ -10453,7 +10492,7 @@ msgstr "Emplacement du journaliste"
 #. Reporting Since
 #: extracted_strings.json
 msgid "Reporting Since"
-msgstr "Reporting depuis"
+msgstr "Rapports depuis"
 
 #. [browsePage.browseDropdown.reportingSites]
 #. defaultMessage is:
@@ -10960,6 +10999,9 @@ msgid "Retreatment"
 msgstr "Retraitement"
 
 #. [pages.resultEdit.RetreatCaseFieldi18nKey]
+#. defaultMessage is:
+#. Retreatment Case
+#. [pages.resultEdit.retreatmentCase]
 #. defaultMessage is:
 #. Retreatment Case
 #: extracted_strings.json
@@ -12000,7 +12042,7 @@ msgstr ""
 "Afficher {firstItemIndex}-{lastItemIndex} of {itemCount, pluriel, un {# } "
 "autre {# } }"
 
-#. [pages.ReportIndex.unUsedModulesReport_Description]
+#. [pages.ReportIndex.unusedModulesReport_Description]
 #. defaultMessage is:
 #. Shows all devices that haven't used all available modules in the selected time period.
 #: extracted_strings.json
@@ -12555,6 +12597,13 @@ msgstr "Fournitures"
 msgid "Supply in Stock"
 msgstr "Approvisionnement en stock"
 
+#. [pages.resultEdit.surename]
+#. defaultMessage is:
+#. Surename
+#: extracted_strings.json
+msgid "Surename"
+msgstr "Nom de famille"
+
 #. [pages.resultEdit.SurenameFieldi18nKey]
 #. defaultMessage is:
 #. Surname
@@ -12636,14 +12685,14 @@ msgstr "TB LAMP"
 #. TB Registration Number - Current
 #: extracted_strings.json
 msgid "TB Registration Number - Current"
-msgstr "Numéro d'enregistrement du CT - actuel"
+msgstr "Numéro d'enregistrement du TB - actuel"
 
 #. [pages.resultEdit.TBRegistrationNumberPreviousI18nKey]
 #. defaultMessage is:
 #. TB Registration Number - Previous (if any)
 #: extracted_strings.json
 msgid "TB Registration Number - Previous (if any)"
-msgstr "Numéro d'enregistrement du CT - antérieur (le cas échéant)"
+msgstr "Numéro d'enregistrement du TB - antérieur (le cas échéant)"
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
 #. defaultMessage is:
@@ -14388,7 +14437,7 @@ msgstr "Déverrouillé"
 msgid "Unreconciled quantity"
 msgstr "Quantité non réconciliée"
 
-#. [pages.ReportIndex.unUsedModulesReport]
+#. [pages.ReportIndex.unusedModulesReport]
 #. defaultMessage is:
 #. Unused Modules
 #: extracted_strings.json
