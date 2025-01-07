@@ -108,6 +108,8 @@ function InventoryAdjustmentDialog(props) {
           }
         }
 
+        const isFormValid = !Object.keys(errors).length && Object.keys(touched).length > 0
+
         return (
           <AspectDialog
             maxWidth="sm"
@@ -385,7 +387,12 @@ function InventoryAdjustmentDialog(props) {
                   <Button color="primary" onClick={onCancel}>
                     {formatMessage(messages.cancel)}
                   </Button>
-                  <Button color="primary" variant="contained" disabled={isSubmitting} onClick={handleSubmit}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    disabled={!isFormValid || isSubmitting}
+                    onClick={handleSubmit}
+                  >
                     {formatMessage(messages.submit)}
                   </Button>
                 </DialogActions>
