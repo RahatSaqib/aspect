@@ -70,33 +70,37 @@ async function upsertInventoryItem({
   inTransitFromSiteId,
   logProps,
 }) {
+  const updateData = {
+    quantityOnHand,
+    inTransitFromSiteId: inTransitFromSiteId || null,
+    updatedOn: now,
+    updatedBy: userId,
+  }
   if (inventoryItemId) {
-    await updateInventoryItem(knex, inventoryItemId, {
-      quantityOnHand,
-      inTransitFromSiteId: inTransitFromSiteId || null,
-      updatedOn: now,
-      updatedBy: userId,
-      ...(logProps?.operation.includes('modify') &&
-        quantityOnHand === 0 && {
-          lotNumber: null,
-          expiresOn: null,
-        }),
-    })
+    if (logProps?.operation.includes('modify') && quantityOnHand === 0) {
+      const inventLog = await knex('InventoryLog as il')
+        .innerJoin('InventoryItem as ii', 'ii.id', 'il.inventoryItemId')
+        .whereNotNull('il.resultId')
+
+      if (!inventLog.length) {
+        updateData.lotNumber = null
+        updateData.expiresOn = null
+        updateData.quantityOnHand = null
+      }
+    }
+
+    await updateInventoryItem(knex, inventoryItemId, updateData)
   } else if (quantityOnHand > 0) {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
+      ...updateData,
       consumableId,
-      inTransitFromSiteId: inTransitFromSiteId || null,
       siteId,
       lotNumber,
       expiresOn,
-      quantityOnHand,
-      updatedOn: now,
-      updatedBy: userId,
       createdOn: now,
       createdBy: userId,
     })
   }
-
   return inventoryItemId
 }
 
