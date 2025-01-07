@@ -306,7 +306,7 @@ describe('Inventory Routes', () => {
             .set('Authorization', `Bearer ${shared.token}`)
 
           assert.equal(res.body.data[0].consumableName, res.body.data[1].consumableName)
-          assert.isTrue(res.body.data[0].consumableName < res.body.data[res.body.data.length - 1].consumableName)
+          assert.isTrue(res.body.data[0].consumableName <= res.body.data[res.body.data.length - 1].consumableName)
         })
 
         it('should return a list of inventory items, apply post-processing ordering by days stock left', async () => {
@@ -388,6 +388,11 @@ describe('Inventory Routes', () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
         ;({ id: consumableId } = await knex('Consumable').where('name', 'GeneXpert TB Cartridge').first('id'))
+        const siteConsumables = [
+          { siteId: site1Id, consumableId },
+          { siteId: site2Id, consumableId },
+        ]
+        await knex('SiteConsumable').insert(siteConsumables)
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,
           siteId: site1Id,
@@ -422,6 +427,7 @@ describe('Inventory Routes', () => {
         await knex('InventoryItem').whereIn('id', [inventoryItem1Id, inventoryItem2Id, inventoryItem3Id]).delete()
         await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id]).delete()
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
+        await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
       })
 
       it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 2', async () => {

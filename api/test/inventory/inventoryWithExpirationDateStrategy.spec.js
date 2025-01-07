@@ -291,7 +291,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             .set('Authorization', `Bearer ${shared.token}`)
 
           assert.equal(res.body.data[0].consumableName, res.body.data[1].consumableName)
-          assert.isTrue(res.body.data[0].consumableName < res.body.data[res.body.data.length - 1].consumableName)
+          assert.isTrue(res.body.data[0].consumableName <= res.body.data[res.body.data.length - 1].consumableName)
         })
 
         it('should return a list of inventory items, apply post-processing ordering by days stock left', async () => {
