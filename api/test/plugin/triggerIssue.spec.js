@@ -173,7 +173,7 @@ describe('This test suite is for testing different triggers conditions', async (
           endedOn: subDays(new Date(), _.random(1, 6, false)),
           assay: { id: 'GxMtbRif' },
           consumable: {
-            lot: !excludeLot ? 'Lot 0' : null,
+            lot: !excludeLot ? '311' : null,
           },
           error: {
             code: `${errorCode}`,
@@ -237,7 +237,7 @@ describe('This test suite is for testing different triggers conditions', async (
 
             await context.createResultForThisDevice({
               resultDetails: {
-                consumableLot: 'Lot 0',
+                consumableLot: '311',
                 moduleName: 'Module A',
                 moduleSerial: 'M-123456-0',
                 instrumentSerial: 'S-1234-0',
@@ -319,7 +319,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await Promise.each(_.range(0, 7), async i => {
             const resultCategory1 = i % 2 === 0 ? resultCategoryId : null
             const resultDetails = {
-              consumableLot: 'Lot 0',
+              consumableLot: '311',
               moduleName: 'Module A',
               moduleSerial: 'M-123456-0',
               instrumentSerial: 'S-1234-0',
@@ -349,7 +349,7 @@ describe('This test suite is for testing different triggers conditions', async (
            */
           const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId)
 
-          const consumableLot = 'The super Lot 0'
+          const consumableLot = '311'
           const { deviceAuth } = context
 
           let resp
@@ -444,7 +444,7 @@ describe('This test suite is for testing different triggers conditions', async (
            The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
           const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId)
-          const consumableLot = 'The super Lot 1'
+          const consumableLot = '311'
           const {
             deviceAuth,
             device: { id: deviceId },
@@ -658,7 +658,7 @@ describe('This test suite is for testing different triggers conditions', async (
       // Insert 25 results for the last month and for the same device, using the same module (will end with an issue created)
       await Promise.each(_.range(0, 25), async i => {
         const resultDetails = {
-          consumableLot: 'Lot 0',
+          consumableLot: '311',
           moduleName: 'Module A',
           moduleSerial: 'M-123456-0',
           instrumentSerial: 'S-1234-0',
@@ -716,7 +716,7 @@ describe('This test suite is for testing different triggers conditions', async (
 
       // Adds 3 more results with different modules than the original, so the issue should be resolved
       const resultDetails = {
-        consumableLot: 'Lot 0',
+        consumableLot: '311',
         moduleName: 'Module A',
         moduleSerial: 'M-123456-0',
         instrumentSerial: 'S-1234-0',

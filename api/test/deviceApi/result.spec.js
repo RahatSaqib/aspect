@@ -225,7 +225,7 @@ describe('Device Result API routes', () => {
             consumable: {
               serial: '132-44-222',
               expirationDate: '2014-03-01',
-              lot: '331-1',
+              lot: '331',
             },
             instrument: {
               serial: '444-3',
@@ -320,7 +320,7 @@ describe('Device Result API routes', () => {
         assert.equal(result2.sampleRunNumber, '10z')
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
-        assert.equal(result2.consumableLot, '331-1')
+        assert.equal(result2.consumableLot, '331')
         assert.equal(result2.instrumentSerial, '444-3')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
@@ -333,7 +333,7 @@ describe('Device Result API routes', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '+18567909',
+          phone: '856-7909',
         })
         assert.deepEqual(JSON.parse(result2.oemData), {
           maker: 'XYZ',
@@ -432,7 +432,7 @@ describe('Device Result API routes', () => {
           consumable: {
             serial: '132-44-222',
             expirationDate: '2014-03-01',
-            lot: '331-1',
+            lot: '331',
           },
           instrument: {
             serial: '444-3',
@@ -1019,7 +1019,7 @@ describe('Device Result API routes', () => {
             consumable: {
               serial: '132-44-222',
               expirationDate: '2014-03-01',
-              lot: '331-1',
+              lot: '331',
             },
             instrument: {
               serial: '444-3',
@@ -1096,7 +1096,7 @@ describe('Device Result API routes', () => {
         assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30:00.000Z'))
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
-        assert.equal(result2.consumableLot, '331-1')
+        assert.equal(result2.consumableLot, '331')
         assert.equal(result2.instrumentSerial, '444-3')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
@@ -1109,7 +1109,7 @@ describe('Device Result API routes', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '+18567909',
+          phone: '856-7909',
         })
         assert.deepEqual(JSON.parse(result2.oemData), {
           maker: 'ABC',

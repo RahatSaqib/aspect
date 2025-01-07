@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
+import { Checkbox, FormControlLabel, Stack, Typography, Divider } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import FormGroup from '@mui/material/FormGroup'
 import { useIntl } from 'react-intl'
@@ -59,6 +59,7 @@ const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSele
                 }
                 label={formatMessage(messages.selectAllUnselectAll)}
               />
+              <Divider sx={{ marginY: 2 }} />
               {listData.map(({ name, id }) => (
                 <FormControlLabel
                   id={id}

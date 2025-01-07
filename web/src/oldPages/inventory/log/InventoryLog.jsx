@@ -100,6 +100,16 @@ export const InventoryLogWithProps = ({
       label: intl.formatMessage(messages.notes),
       sortable: true,
     },
+    {
+      key: 'reconcilationStrategy',
+      label: intl.formatMessage(messages.reconcilationStrategy),
+      sortable: true,
+    },
+    {
+      key: 'reconcilationAdjustment',
+      label: intl.formatMessage(messages.reconcilationAdjustment),
+      sortable: true,
+    },
   ]
   const { data: items, total } = data || { data: null }
   const hasItems = items && items.length > 0
