@@ -1,6 +1,7 @@
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import { Tooltip } from '@mui/material'
+import { formatInTimeZone } from 'date-fns-tz'
 import identity from 'lodash/identity'
 import isEmpty from 'lodash/isEmpty'
 import isNumber from 'lodash/isNumber'
@@ -11,7 +12,7 @@ import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import formatters from '../formatters'
 
-const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
+const ResultTableRow = ({ extraColumns, result, messages, timeZone, ...restProps }) => {
   const { formatMessage, formatNumber } = useIntl()
   let patientId = result?.patientId
   patientId = !patientId || patientId === 'null' ? 'N/A' : patientId
@@ -27,7 +28,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
 
   return (
     <TableRow {...restProps} className={styles[restProps.className]}>
-      <TableCell>{result.endedOn ? result.endedOn.slice(0, 10) : ''}</TableCell>
+      <TableCell>{result.endedOn ? formatInTimeZone(new Date(result.endedOn), timeZone, 'yyyy-MM-dd') : ''}</TableCell>
       <TableCell hiddenOn="xs">{result.deviceName}</TableCell>
       <TableCell hiddenOn="sm">{result.sampleOriginSiteName}</TableCell>
       <TableCell>{result.sampleId}</TableCell>
