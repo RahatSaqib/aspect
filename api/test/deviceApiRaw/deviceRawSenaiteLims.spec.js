@@ -43,16 +43,11 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       externalId: 'senaiteTestSite1',
     })
     const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
-    const deviceCapacity = await knex('DeviceCapacity')
-      .where({ deviceTypeId: senaiteLimsDeviceType.id })
-      .where({ partnerId: partner.id })
-      .where({ defaultForDeviceType: 1 })
-      .first('id')
     ;[senaiteLimsDeviceId] = await knex('Device').insert({
       partnerId: partner.id,
       deviceTypeId: senaiteLimsDeviceType.id,
-      deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
       deviceApprovalId: approvedDeviceApproval.id,
+      moduleBayCapacity: 0,
       siteId: senaiteLimsSiteId,
       name: 'Some Senaite LIMS',
       shortName: 'Senaite LIMS',
@@ -144,6 +139,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .delete()
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
+    await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
     await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
     await knex('ResultGeneratedResult')
       .whereIn('sourceResultId', resultIds)

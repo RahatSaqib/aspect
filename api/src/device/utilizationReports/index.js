@@ -54,9 +54,7 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
     assay,
     query,
     timeFrame: 'day',
-  })
-    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
-    .where('dt.externalId', ['CepheidGeneXpert'])
+  }).where('dt.externalId', ['CepheidGeneXpert'])
   /**
    * get all devices recorded in FactResultsDeviceByTimeFrame during whole period
    */
@@ -67,8 +65,8 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
       'd.name',
       'd.id',
       knex.raw('COALESCE(d.gx6cModulesCount, 0) + COALESCE(d.gx10cModulesCount, 0) as modules'),
-      'dcap.dailyCapacity',
-      'dcap.modules as modules',
+      'd.dailyTestCapacity as dailyCapacity',
+      'd.moduleBayCapacity as modules',
       'st.id as stateId',
       'st.name as stateName',
       'lg.name as lgaName'

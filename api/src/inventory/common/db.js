@@ -19,26 +19,18 @@ const {
 const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
 const consumableStrategyModifier = require('./consumableStrategyModifier')
+const { getPartnerByConstraints } = require('../../partner/common/db')
 
 // ----------------------------------------------------------------------------------
-async function getConsumableStrategy(consumableId) {
-  let { strategy } = await knex('Consumable').where({ id: consumableId }).first('strategy')
-  strategy = _.trim(strategy)
-  const isLookingAsArray = _.startsWith(strategy, '[') && _.endsWith(strategy, ']')
-  const strategyJson = isLookingAsArray ? JSON.parse(strategy) : [strategy]
-  const consumableStrategy = _.reduce(
-    strategyJson,
-    (acc, name) => {
-      const handler = consumableStrategyModifier[name]
-      if (handler) {
-        acc = [...acc, { name, handler }]
-      }
-      return acc
+async function getStrategy(partnerId) {
+  let { inventoryStrategy } = await getPartnerByConstraints({
+    partner: {
+      id: partnerId,
     },
-    // {}
-    []
-  )
-  return consumableStrategy
+  })
+
+  inventoryStrategy = _.trim(inventoryStrategy)
+  return { name: inventoryStrategy, handler: consumableStrategyModifier[inventoryStrategy] }
 }
 
 // ----------------------------------------------------------------------------------
@@ -168,16 +160,10 @@ function getInventorySitesQuery(constraints, request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function findInventoryItem(siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId) {
+async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
-  const consumableStrategy = await getConsumableStrategy(consumableId)
-
-  if (consumableStrategy) {
-    consumableStrategy.forEach(({ handler }) => {
-      handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
-    })
-  }
-
+  const consumableStrategy = await getStrategy(partnerId)
+  consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
   const matchingInventoryItem = await matchingInventoryItemsQuery
     .orderBy('ii.quantityOnHand', 'desc')
     .first(INVENTORY_ITEM_SELECT)
@@ -517,6 +503,8 @@ async function logInventoryChange({
   referencedSiteId,
   consumableReasonId,
   resultId,
+  reconcilationAdjustment,
+  reconcilationStrategy,
   lotNumber,
   expiresOn,
   quantity,
@@ -541,6 +529,8 @@ async function logInventoryChange({
     quantity,
     operation,
     notes,
+    reconcilationAdjustment,
+    reconcilationStrategy,
     adjustedFrom,
     adjustedTo,
     createdOn,
@@ -836,7 +826,6 @@ module.exports = {
   getInventoryBySitesAndConsumable,
   getGeneXpertInventoryBySitesAndConsumableQuery,
   logInventoryChange,
-  getConsumableStrategy,
   getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
   filteredInventoryItemsBase,
   getInventoryTransfer,
