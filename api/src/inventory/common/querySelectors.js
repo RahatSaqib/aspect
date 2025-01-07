@@ -7,8 +7,8 @@ const CONCATENATED_ID = `CONCAT(
   '-',
   IFNULL(
     CASE
-      WHEN c.strategy IS NOT NULL
-      AND INSTR(c.strategy, 'expirationDate') > 0
+      WHEN p.inventoryStrategy IS NOT NULL
+      AND INSTR(p.inventoryStrategy, 'expirationDate') > 0
       THEN ii.expiresOn
       ELSE ''
     END,
@@ -17,8 +17,8 @@ const CONCATENATED_ID = `CONCAT(
   '-',
   IFNULL(
     CASE
-      WHEN c.strategy IS NOT NULL
-      AND INSTR(c.strategy, 'withlot') > 0
+      WHEN p.inventoryStrategy IS NOT NULL
+      AND INSTR(p.inventoryStrategy, 'withlot') > 0
       THEN ii.lotNumber
       ELSE ''
     END,
@@ -33,7 +33,7 @@ const INVENTORY_COMMON_FIELDS = [
   'c.name as consumableName',
   'c.manufacturer',
   'c.canExpire',
-  'c.strategy',
+  'p.inventoryStrategy as strategy',
   'u.shortName as unitShortName',
   's.id as siteId',
   's.name as siteName',
@@ -50,10 +50,10 @@ const INVENTORY_ITEM_SELECT = [
   'ii.updatedOn',
   'ii.id',
   knex.raw(
-    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
+    `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
   ),
   knex.raw(
-    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
+    `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
   ),
 
   'itfs.name as inTransitFromSiteName',
@@ -115,9 +115,25 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [...INVENTORY_COMMON_FIELDS, knex.raw(
 
 // Select for inventory split by lot
 const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
-  knex.raw(
-    "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE '' END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE '' END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
-  ),
+  knex.raw(`
+    CONCAT(
+        c.id, '-', 
+        s.id, '-', 
+        IFNULL(
+            (CASE 
+                WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy, 'expirationDate') > 0 THEN ii.expiresOn 
+                ELSE '' 
+            END), '-'
+        ), '-', 
+        IFNULL(
+            (CASE 
+                WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy, 'withlot') > 0 THEN ii.lotNumber 
+                ELSE '' 
+            END), ''
+        ), '-', 
+        IFNULL(ii.inTransitFromSiteId, '')
+    ) AS id
+  `),
 
   ...INVENTORY_ITEM_SELECT.filter(field => field !== 'ii.id' && field !== 'ii.quantityOnHand'),
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),

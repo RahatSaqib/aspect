@@ -18,19 +18,27 @@ const {
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
-const consumableStrategyModifier = require('./consumableStrategyModifier')
-const { getPartnerByConstraints } = require('../../partner/common/db')
 
-// ----------------------------------------------------------------------------------
-async function getStrategy(partnerId) {
-  let { inventoryStrategy } = await getPartnerByConstraints({
-    partner: {
-      id: partnerId,
-    },
-  })
+// May be used in future
+// async function getStrategy(partnerId) {
+//   let { inventoryStrategy } = await getPartnerByConstraints({
+//     partner: {
+//       id: partnerId,
+//     },
+//   })
 
-  inventoryStrategy = _.trim(inventoryStrategy)
-  return { name: inventoryStrategy, handler: consumableStrategyModifier[inventoryStrategy] }
+//   inventoryStrategy = _.trim(inventoryStrategy)
+//   return { name: inventoryStrategy, handler: consumableStrategyModifier[inventoryStrategy] }
+// }
+
+function addLotAndExpiryFilters(query, lotNumber, expiresOn) {
+  if (lotNumber && expiresOn) {
+    query.where('ii.lotNumber', lotNumber).andWhere(knex.raw('DATE(ii.expiresOn) = ?', [expiresOn]))
+  } else if (lotNumber) {
+    query.where('ii.lotNumber', lotNumber).andWhereNull('ii.expiresOn')
+  } else if (expiresOn) {
+    query.where(knex.raw('DATE(ii.expiresOn) = ?', [expiresOn])).andWhere(knex.raw('ii.lotNumber IS NULL'))
+  }
 }
 
 // ----------------------------------------------------------------------------------
@@ -39,6 +47,7 @@ function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -84,6 +93,7 @@ function getInventorySitesQuery(constraints, request) {
   return query('Search Inventory Sites')
     .from('Site as s')
     .innerJoin('Consumable as c')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
@@ -118,7 +128,7 @@ function getInventorySitesQuery(constraints, request) {
       knex.raw("CONCAT(c.id, '-', s.id) as id"),
       'c.id as consumableId',
       'c.name as consumableName',
-      'c.strategy',
+      'p.inventoryStrategy as strategy',
       'c.i18nKey as consumableNameI18nKey',
       'c.manufacturer',
       'c.canExpire',
@@ -141,10 +151,10 @@ function getInventorySitesQuery(constraints, request) {
         ) as qtyExpired`
       ),
       knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
       ),
       knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
       ),
       knex.raw(`CASE WHEN IFNULL(ficr.rate, 0) = 0
           THEN null
@@ -162,11 +172,14 @@ function getInventorySitesQuery(constraints, request) {
 // ----------------------------------------------------------------------------------
 async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
-  const consumableStrategy = await getStrategy(partnerId)
-  consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+
+  // Add filters for lot number and expiry date
+  addLotAndExpiryFilters(matchingInventoryItemsQuery, lotNumber, expiresOn)
+
   const matchingInventoryItem = await matchingInventoryItemsQuery
     .orderBy('ii.quantityOnHand', 'desc')
     .first(INVENTORY_ITEM_SELECT)
+
   return matchingInventoryItem
 }
 
@@ -288,6 +301,7 @@ function getInventoryLots(request, dataConstraints) {
   const inventoryItemsQuery = query('Search Inventory Lots')
     .from('Site as s')
     .innerJoin('Consumable as c')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
@@ -312,19 +326,21 @@ function getInventoryLots(request, dataConstraints) {
       knex.raw(CONCATENATED_ID),
 
       's.name',
-      knex.raw(`CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END`),
       knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END`
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN ii.lotNumber ELSE null END`
+      ),
+      knex.raw(
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END`
       ),
       'ii.inTransitFromSiteId',
     ])
     .select(
       ...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
       knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
       ),
       knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
       )
     )
 
@@ -403,6 +419,7 @@ function getInventoryItem(inventoryItemId) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
