@@ -192,7 +192,7 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
     )
 
 // ----------------------------------------------------------------------------------
-async function getInventoryLog(query, dataConstraints, auth, querySelector = INVENTORY_LOG_LIST) {
+async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
   if (_.isNil(query.maxDate)) {
     query.maxDate = new Date()
   }
@@ -231,7 +231,6 @@ async function getInventoryLog(query, dataConstraints, auth, querySelector = INV
   const data = await inventoryLogQuery
     .select(querySelector)
     .modify(sortPageParams, query, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
-
   return { data, total }
 }
 
