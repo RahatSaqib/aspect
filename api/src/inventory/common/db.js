@@ -18,18 +18,8 @@ const {
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
-
-// May be used in future
-// async function getStrategy(partnerId) {
-//   let { inventoryStrategy } = await getPartnerByConstraints({
-//     partner: {
-//       id: partnerId,
-//     },
-//   })
-
-//   inventoryStrategy = _.trim(inventoryStrategy)
-//   return { name: inventoryStrategy, handler: consumableStrategyModifier[inventoryStrategy] }
-// }
+const consumableStrategyModifier = require('./consumableStrategyModifier')
+const { getPartnerByConstraints } = require('../../partner/common/db')
 
 function addLotAndExpiryFilters(query, lotNumber, expiresOn) {
   if (lotNumber && expiresOn) {
@@ -39,6 +29,18 @@ function addLotAndExpiryFilters(query, lotNumber, expiresOn) {
   } else if (expiresOn) {
     query.where(knex.raw('DATE(ii.expiresOn) = ?', [expiresOn])).andWhere(knex.raw('ii.lotNumber IS NULL'))
   }
+}
+
+// ----------------------------------------------------------------------------------
+async function getStrategy(partnerId) {
+  let { inventoryStrategy } = await getPartnerByConstraints({
+    partner: {
+      id: partnerId,
+    },
+  })
+
+  inventoryStrategy = _.trim(inventoryStrategy)
+  return { name: inventoryStrategy, handler: consumableStrategyModifier[inventoryStrategy] }
 }
 
 // ----------------------------------------------------------------------------------
@@ -170,16 +172,28 @@ function getInventorySitesQuery(constraints, request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
+async function findInventoryItem({
+  siteId,
+  consumableId,
+  expiresOn,
+  lotNumber,
+  inTransitFromSiteId,
+  partnerId,
+  operation,
+}) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
 
-  // Add filters for lot number and expiry date
-  addLotAndExpiryFilters(matchingInventoryItemsQuery, lotNumber, expiresOn)
+  if (operation === 'add') {
+    // add lot and expiry filters without using strategy
+    addLotAndExpiryFilters(matchingInventoryItemsQuery, lotNumber, expiresOn)
+  } else {
+    const consumableStrategy = await getStrategy(partnerId)
+    consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+  }
 
   const matchingInventoryItem = await matchingInventoryItemsQuery
     .orderBy('ii.quantityOnHand', 'desc')
     .first(INVENTORY_ITEM_SELECT)
-
   return matchingInventoryItem
 }
 
