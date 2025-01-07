@@ -44,11 +44,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       .andWhere('g.lgaId', null)
       .first('g.*')
     const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
-    const deviceCapacity = await knex('DeviceCapacity')
-      .where({ deviceTypeId: truenatDeviceType.id })
-      .where({ partnerId: partner.id })
-      .where({ defaultForDeviceType: 1 })
-      .first('id')
+
     const [siteId] = await insertSite(knex, {
       name: 'Some Site for Some Truenat Device',
       shortName: 'SSF',
@@ -67,7 +63,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       partnerId: partner.id,
       siteId,
       deviceTypeId: truenatDeviceType.id,
-      deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
+      moduleBayCapacity: 0,
       deviceApprovalId: approvedDeviceApproval.id,
       name: 'Some Truenat Device',
       shortName: 'TRUENAT',

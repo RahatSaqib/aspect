@@ -17,7 +17,6 @@ import { Cron, getCronHumanValue } from './Cron'
 import DaysStockLeftSelect from './DaysStockLeftSelect'
 import DetailHeader from './DetailHeader'
 import DeviceApprovalSelect from './DeviceApprovalSelect'
-import DeviceCapacitySelect from './DeviceCapacitySelect'
 import DeviceMaintenanceStatusSelect from './DeviceMaintenanceStatusSelect'
 import DeviceStatusSelect from './DeviceStatusSelect'
 import DeviceTypeSelect from './DeviceTypeSelect'
@@ -195,7 +194,6 @@ export {
   LgasFilter,
   StatesFilter,
   ConsumableReasonSelect,
-  DeviceCapacitySelect,
   SimpleTableHeader,
   SimpleTablePagination,
   StateAutocomplete,
