@@ -348,15 +348,7 @@ function getInventoryLots(request, dataConstraints) {
       ),
       'ii.inTransitFromSiteId',
     ])
-    .select(
-      ...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
-      knex.raw(
-        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
-      ),
-      knex.raw(
-        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
-      )
-    )
+    .select(...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
 
   return inventoryItemsQuery
 }

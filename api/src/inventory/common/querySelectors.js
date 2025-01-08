@@ -135,7 +135,21 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
     ) AS id
   `),
 
-  ...INVENTORY_ITEM_SELECT.filter(field => field !== 'ii.id' && field !== 'ii.quantityOnHand'),
+  // Filter fields from INVENTORY_ITEM_SELECT
+  ...INVENTORY_ITEM_SELECT.filter(field => {
+    if (typeof field === 'string') {
+      return field !== 'ii.id' && field !== 'ii.quantityOnHand'
+    }
+    // For knex objects, convert to string before filtering
+    const fieldString = field.toString()
+    return (
+      !fieldString.includes('CASE WHEN p.inventoryStrategy') &&
+      !fieldString.includes('ii.id') &&
+      !fieldString.includes('ii.quantityOnHand')
+    )
+  }),
+  'ii.lotNumber AS lotNumber',
+  'ii.expiresOn AS expiresOn',
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
 
