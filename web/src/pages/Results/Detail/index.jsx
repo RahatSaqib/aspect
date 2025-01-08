@@ -52,7 +52,6 @@ const AspectResultDetail = () => {
 
   const { timezoneId } = useSelector(({ user }) => user)
   const validTimeZone = getTimezoneById(timezoneId)
-
   useEffect(() => {
     if (isLoading || !queryResponse) return
     if (queryResponse?.ok) {
