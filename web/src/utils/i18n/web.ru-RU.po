@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
+"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -836,6 +836,20 @@ msgstr "Статус одобрения"
 msgid "Approved"
 msgstr "Утвержден"
 
+#. [months.apr]
+#. defaultMessage is:
+#. Apr
+#: extracted_strings.json
+msgid "Apr"
+msgstr "Апр"
+
+#. [chart.april]
+#. defaultMessage is:
+#. April
+#: extracted_strings.json
+msgid "April"
+msgstr "Апрель"
+
 #. [contextualMenu.notifications.areYouSureToDelete]
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
@@ -1026,6 +1040,20 @@ msgstr "Для получения уведомлений по результат
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Следует выбрать хотя бы один из каналов уведомлений"
+
+#. [months.aug]
+#. defaultMessage is:
+#. Aug
+#: extracted_strings.json
+msgid "Aug"
+msgstr "Авг"
+
+#. [chart.august]
+#. defaultMessage is:
+#. August
+#: extracted_strings.json
+msgid "August"
+msgstr "Август"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -3041,6 +3069,20 @@ msgstr "Дни..."
 msgid "Deaths"
 msgstr "Смертей"
 
+#. [months.dec]
+#. defaultMessage is:
+#. Dec
+#: extracted_strings.json
+msgid "Dec"
+msgstr "Дек"
+
+#. [chart.december]
+#. defaultMessage is:
+#. December
+#: extracted_strings.json
+msgid "December"
+msgstr "Декабрь"
+
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
@@ -4490,6 +4532,20 @@ msgstr "Неудачи отступления"
 msgid "False"
 msgstr "Ложь"
 
+#. [months.feb]
+#. defaultMessage is:
+#. Feb
+#: extracted_strings.json
+msgid "Feb"
+msgstr "Фев"
+
+#. [chart.february]
+#. defaultMessage is:
+#. February
+#: extracted_strings.json
+msgid "February"
+msgstr "Февраль"
+
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
 #. defaultMessage is:
 #. Female
@@ -5579,6 +5635,9 @@ msgstr "Гепатит B"
 msgid "Hepatitis C"
 msgstr "Гепатит С"
 
+#. [pages.hierarchicalView]
+#. defaultMessage is:
+#. Hierarchical View
 #. [pages.inventoryReconciliation.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
@@ -6228,6 +6287,20 @@ msgstr "июль"
 msgid "JUN"
 msgstr "июнь"
 
+#. [months.jan]
+#. defaultMessage is:
+#. Jan
+#: extracted_strings.json
+msgid "Jan"
+msgstr "Янв"
+
+#. [chart.january]
+#. defaultMessage is:
+#. January
+#: extracted_strings.json
+msgid "January"
+msgstr "Январь"
+
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
 #. Job
@@ -6251,6 +6324,34 @@ msgstr "Назначение работы"
 #: extracted_strings.json
 msgid "Job Functions"
 msgstr "Функции работы"
+
+#. [months.jul]
+#. defaultMessage is:
+#. Jul
+#: extracted_strings.json
+msgid "Jul"
+msgstr "Июл"
+
+#. [chart.july]
+#. defaultMessage is:
+#. July
+#: extracted_strings.json
+msgid "July"
+msgstr "Июль"
+
+#. [months.jun]
+#. defaultMessage is:
+#. Jun
+#: extracted_strings.json
+msgid "Jun"
+msgstr "Июн"
+
+#. [chart.june]
+#. defaultMessage is:
+#. June
+#: extracted_strings.json
+msgid "June"
+msgstr "Июнь"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -7463,6 +7564,20 @@ msgstr "Вручную устанавливается {username} ({updatedDate})
 msgid "Manufacturer"
 msgstr "Производитель"
 
+#. [months.mar]
+#. defaultMessage is:
+#. Mar
+#: extracted_strings.json
+msgid "Mar"
+msgstr "Мар"
+
+#. [chart.march]
+#. defaultMessage is:
+#. March
+#: extracted_strings.json
+msgid "March"
+msgstr "Март"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -8505,6 +8620,20 @@ msgstr "Уведомления"
 msgid "Notifications History"
 msgstr "История уведомлений"
 
+#. [months.nov]
+#. defaultMessage is:
+#. Nov
+#: extracted_strings.json
+msgid "Nov"
+msgstr "Ноя"
+
+#. [chart.november]
+#. defaultMessage is:
+#. November
+#: extracted_strings.json
+msgid "November"
+msgstr "Ноябрь"
+
 #. [component.DateTimeInput.button.now]
 #. defaultMessage is:
 #. Now
@@ -8626,6 +8755,20 @@ msgstr "октябрь"
 #: extracted_strings.json
 msgid "OK"
 msgstr "ОК"
+
+#. [months.oct]
+#. defaultMessage is:
+#. Oct
+#: extracted_strings.json
+msgid "Oct"
+msgstr "Окт"
+
+#. [chart.october]
+#. defaultMessage is:
+#. October
+#: extracted_strings.json
+msgid "October"
+msgstr "Октябрь"
 
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
@@ -9221,6 +9364,22 @@ msgstr "Введите email"
 #: extracted_strings.json
 msgid "Please enter your new password?"
 msgstr "Пожалуйста, введите новый пароль?"
+
+#. [pages.Login.passwordRequired]
+#. defaultMessage is:
+#. Please enter your password
+#: extracted_strings.json
+msgid "Please enter your password"
+msgstr "Пожалуйста введите ваш пароль"
+
+#. [pages.Login.usernameRequired]
+#. defaultMessage is:
+#. Please enter your username
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Please enter your Full name"
+msgid "Please enter your username"
+msgstr "Пожалуйста, введите Ваше полное имя"
 
 #. [pages.transferResult.note]
 #. defaultMessage is:
@@ -11212,6 +11371,13 @@ msgstr "Поиск результатов Статус обработки Не �
 msgid "Searching Results Failed"
 msgstr "Результаты поиска не дали результатов"
 
+#. [forms.formItem.selectAllUnselectAll]
+#. defaultMessage is:
+#. Select All / Unselect All
+#: extracted_strings.json
+msgid "Select All / Unselect All"
+msgstr "Выбрать все / Снять выделение"
+
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -11545,6 +11711,20 @@ msgstr "Отправлено по электронной почте"
 #: extracted_strings.json
 msgid "Sent via SMS"
 msgstr "Отправлено через SMS"
+
+#. [months.sep]
+#. defaultMessage is:
+#. Sep
+#: extracted_strings.json
+msgid "Sep"
+msgstr "Сен"
+
+#. [chart.september]
+#. defaultMessage is:
+#. September
+#: extracted_strings.json
+msgid "September"
+msgstr "Сентябрь"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:

@@ -239,7 +239,9 @@ async function createNewDevice(
     lastPingOn,
   }
 ) {
-  const deviceType = await knex('DeviceType').where({ externalId: deviceTypeExternalId }).first('id', 'name', 'plugin')
+  const deviceType = await knex('DeviceType')
+    .where({ externalId: deviceTypeExternalId })
+    .first('id', 'name', 'plugin', 'externalId')
   if (deviceType == null) {
     return {
       error: Boom.badRequest(`Cannot find DeviceType with id ${deviceTypeExternalId}`),
@@ -256,12 +258,6 @@ async function createNewDevice(
   const { existingTimeZone } = await knex('TimeZone')
     .where('id', timezone || defaultTimeZone)
     .first('id as existingTimeZone')
-
-  const deviceCapacity = await knex('DeviceCapacity')
-    .where({ deviceTypeId: deviceType.id })
-    .where({ partnerId })
-    .where({ defaultForDeviceType: 1 })
-    .first('id')
 
   // Use or generate device name
   if (!name) {
@@ -286,11 +282,15 @@ async function createNewDevice(
   if (shortName && shortName.length > 45) {
     shortName = shortName.substr(0, 45)
   }
+
+  const partnerData = await knex('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
+
   const [deviceId] = await knex('Device').insert({
     partnerId,
     siteId,
     deviceTypeId: deviceType.id,
-    deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
+    dailyTestCapacity: deviceType.externalId === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
+    moduleBayCapacity: deviceType.externalId === 'CepheidGeneXpert' ? 4 : 0,
     deviceApprovalId,
     name,
     serial,

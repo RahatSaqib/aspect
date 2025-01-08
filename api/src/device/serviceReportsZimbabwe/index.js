@@ -28,7 +28,6 @@ function getResultsBaseQuery(query) {
     })
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as lg', 'g.lgaId', 'lg.id')
-    .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .whereNot('dt.externalId', 'GxAlert')
     .modify(filterParams, query, {
@@ -44,7 +43,7 @@ function getResultsBaseQuery(query) {
       'st.name as state',
       'lg.name as lga',
       knex.raw(`ROUND(SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END) * 100 / COUNT(r.id), 2) as errorRate`),
-      knex.raw(`IFNULL(ROUND(COUNT(r.id) * 100 / (${days.length} * dc.dailyCapacity), 2), 0) as utilizationRate`),
+      knex.raw(`IFNULL(ROUND(COUNT(r.id) * 100 / (${days.length} * d.dailyTestCapacity), 2), 0) as utilizationRate`),
       knex.raw(
         `IFNULL(ROUND(SUM(TIMESTAMPDIFF(MINUTE, IFNULL(r.endedOn, NOW()), r.createdOn)) / 60 / COUNT(r.id), 2), 0) as averageDelayToUpload`
       ),

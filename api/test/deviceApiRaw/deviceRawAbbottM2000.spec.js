@@ -40,11 +40,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
       .andWhere('g.lgaId', null)
       .first('g.*')
     const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
-    const deviceCapacity = await knex('DeviceCapacity')
-      .where({ deviceTypeId: abbottM2000DeviceType.id })
-      .where({ partnerId: partner.id })
-      .where({ defaultForDeviceType: 1 })
-      .first('id')
+
     ;[abbottM2000SiteId] = await insertSite(knex, {
       name: 'Some Site for Some Aboott M2000 Device',
       shortName: 'SSFSAM2D',
@@ -63,8 +59,8 @@ describe('Device API Raw routes for Abbott M2000', () => {
       partnerId: partner.id,
       siteId: abbottM2000SiteId,
       deviceTypeId: abbottM2000DeviceType.id,
-      deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
       deviceApprovalId: approvedDeviceApproval.id,
+      moduleBayCapacity: 0,
       name: 'Some Abbott M2000 Device',
       shortName: 'Abbott M2000',
       configurationData: '{}',
@@ -122,6 +118,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
     await knex('FactResultsDeviceByCategory1And2').where('deviceId', deviceId).delete()
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
+    await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
     await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
     await knex('ResultGeneratedResult')
       .whereIn('sourceResultId', resultIds)
