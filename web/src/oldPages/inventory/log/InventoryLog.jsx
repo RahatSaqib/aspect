@@ -117,7 +117,6 @@ export const InventoryLogWithProps = ({
   const hasItems = items && items.length > 0
   const { timezoneId } = useSelector(({ user }) => user)
   const validTimeZone = getTimezoneById(timezoneId)
-
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack />
