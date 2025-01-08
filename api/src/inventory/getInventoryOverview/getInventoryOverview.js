@@ -13,7 +13,7 @@ module.exports = async function (request) {
 
   const [sites, geographies] = await Promise.all([inventoryListPromise, geographiesPromise])
 
-  aggregateUnreconciledQtyToWarehouse(sites)
+  aggregateChildrenUnreconciledQtyToWarehouse(sites)
 
   const country = buildHierarchy(geographies, sites)
 
@@ -22,14 +22,26 @@ module.exports = async function (request) {
   return { ok: true, length: sites.length, data: { country } }
 }
 
-function aggregateUnreconciledQtyToWarehouse(sites) {
-  sites
-    .filter(s => s.type === 'warehouse')
-    .forEach(warehouse => {
-      warehouse.unreconciledQuantity = sites
-        .filter(child => child.parentWarehouseId === warehouse.id)
-        .reduce((total, child) => total + child.unreconciledQuantity, warehouse.unreconciledQuantity)
-    })
+/**
+ * Aggregates unreconciled quantities from child sites to their parent warehouses.
+ * @param {Array} sites - Array of site objects.
+ * @remarks This function mutates the input array.
+ * @remarks Note that the relationship between warehouses and their child sites
+ * is defined by the site.parentWarehouseId property, which can differ from the geographical
+ * relation between 2 sites.
+ */
+function aggregateChildrenUnreconciledQtyToWarehouse(sites) {
+  // Iterate over each warehouse
+  const warehouses = sites.filter(site => site.type === 'warehouse')
+  warehouses.forEach(warehouse => {
+    // Calculate the total unreconciled quantity from child sites
+    const totalUnreconciledQty = sites
+      .filter(child => child.parentWarehouseId === warehouse.id)
+      .reduce((total, child) => total + child.unreconciledQuantity, warehouse.unreconciledQuantity)
+
+    // Assign the calculated total to the warehouse's unreconciledQuantity
+    warehouse.unreconciledQuantity = totalUnreconciledQty
+  })
 }
 
 /**
