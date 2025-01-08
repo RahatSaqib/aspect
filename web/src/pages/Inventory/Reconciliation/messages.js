@@ -40,6 +40,10 @@ const messages = {
       id: 'pages.inventoryReconciliation.unreconciledQuantity',
       defaultMessage: 'Unreconciled quantity',
     },
+    autoReconcileNow: {
+      id: 'pages.inventoryReconciliation.autoReconcileNow',
+      defaultMessage: 'Auto Reconcile Now',
+    },
     paginatorStatus: {
       id: 'pages.inventoryReconciliation.paginatorStatus',
       defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
