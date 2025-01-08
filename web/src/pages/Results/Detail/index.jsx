@@ -59,7 +59,6 @@ const AspectResultDetail = () => {
       const { data } = queryResponse
       data.startedOn = data.startedOn ? formatInTimeZone(new Date(data.startedOn), validTimeZone, 'yyyy-MM-dd') : 'N/A'
       data.endedOn = data.endedOn ? formatInTimeZone(new Date(data.endedOn), validTimeZone, 'yyyy-MM-dd') : 'N/A'
-
       data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
       /**
        * This field `allResistances` is displayed in `textArea` component in readOnly mode.
