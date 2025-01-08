@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import { CircularProgress, Box, CardContent, Card } from '@mui/material'
+import { formatInTimeZone } from 'date-fns-tz'
 import { useFormikContext } from 'formik'
 import keys from 'lodash/keys'
 import reduce from 'lodash/reduce'
@@ -8,6 +9,7 @@ import startCase from 'lodash/startCase'
 import trim from 'lodash/trim'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
+import { useSelector } from 'react-redux'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
 import AspectForm from '../../../components/Form'
@@ -19,6 +21,7 @@ import useAuthState from '../../../hooks/useAuthState'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import COUNTRY_ISO_MAPPING from '../../../utils/consts/Countries/CONSTS'
 import { getReturnUrl, gotoReturnUrl } from '../../../utils/utils/browser'
+import { getTimezoneById } from '../../../utils/utils/timezone'
 import { ResultDetailsErrors as customErrorNotifications } from './errors'
 import messages from './messages'
 import ResultTransferModal from './ResultTransferModal'
@@ -47,10 +50,16 @@ const AspectResultDetail = () => {
     throw new Error(error)
   }
 
+  const { timezoneId } = useSelector(({ user }) => user)
+  const validTimeZone = getTimezoneById(timezoneId)
+
   useEffect(() => {
     if (isLoading || !queryResponse) return
     if (queryResponse?.ok) {
       const { data } = queryResponse
+      data.startedOn = data.startedOn ? formatInTimeZone(new Date(data.startedOn), validTimeZone, 'yyyy-MM-dd') : 'N/A'
+      data.endedOn = data.endedOn ? formatInTimeZone(new Date(data.endedOn), validTimeZone, 'yyyy-MM-dd') : 'N/A'
+
       data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
       /**
        * This field `allResistances` is displayed in `textArea` component in readOnly mode.
