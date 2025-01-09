@@ -190,8 +190,7 @@ async function serviceNotificationInformation() {
       const emailList = JSON.parse(notificationWarningSendEmails)
       const pendingMessageStatusId = await messageStatusToId('Pending')
       const sentMessageStatusId = await messageStatusToId('Sent')
-      let smsMessageCount = null
-      smsMessageCount = await knex('SmsMessage as sm')
+      const smsMessageCount = await knex('SmsMessage as sm')
         .join('Device as d', 'sm.deviceId', 'd.id')
         .where('sm.createdOn', '>', serviceStartDate)
         .where('sm.createdOn', '<', serviceEndDate)
@@ -348,10 +347,9 @@ async function authenticate(request, response) {
   }
   const pendingMessageStatusId = await messageStatusToId('Pending')
   const sentMessageStatusId = await messageStatusToId('Sent')
-  let smsMessageCount = null
   let notificationWarningMessage = null
 
-  smsMessageCount = await knex('SmsMessage as sm')
+  const smsMessageCount = await knex('SmsMessage as sm')
     .join('Device as d', 'sm.deviceId', 'd.id')
     .where('sm.createdOn', '>', partner?.serviceStartDate)
     .where('sm.createdOn', '<', partner?.serviceEndDate)
