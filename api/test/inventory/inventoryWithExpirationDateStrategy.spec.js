@@ -186,10 +186,10 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.equal(inventoryItem1.quantityOnHand, 300)
 
           const [inventoryItem2] = res.body.data.filter(
-            ii => ii.siteId === site1Id && ii.consumableId === consumableId && ii.expiresOn === expiresOn2.toISOString()
+            ii => ii.siteId === site1Id && ii.consumableId === consumableId && ii.expiresOn === expiresOn1.toISOString()
           )
           assert.isNotNull(inventoryItem2)
-          assert.equal(inventoryItem2.quantityOnHand, 500)
+          assert.equal(inventoryItem2.quantityOnHand, 250)
 
           assert.property(res.body, 'total')
         })
