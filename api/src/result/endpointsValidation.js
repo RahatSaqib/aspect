@@ -368,6 +368,8 @@ function listResultsBaseConfig() {
         ),
         onlyDownloadedByReporter: Joi.bool().description('Filter for only results downloaded by the Reporter App'),
         treatmentStatusId: Joi.number().allow(null, '').description('Filter for Result Treatment Status ID'),
+        expiresOn: Joi.date().allow(null).description('Expiration date of inventory item'),
+        lotNumber: Joi.number().allow(null, '').description('Lot number of a inventory item'),
         treatmentStatus: Joi.string().allow(null, '').description('Filter for Result Treatment Status by External ID'),
         onlyEverTransferred: Joi.bool().description('Filter for only results that have been ever transferred'),
         jsonFields: Joi.array()

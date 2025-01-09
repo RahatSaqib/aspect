@@ -827,6 +827,9 @@ async function getReconciliationList(query, dataConstraints) {
     .select([
       's.name as siteName',
       'c.name as consumableName',
+      'r.assayId',
+      'g.stateId',
+      'g.lgaId',
       'st.name as stateName',
       'l.name as lgaName',
       ...(query.breakOutByLot ? ['m.lotNumber'] : []),
