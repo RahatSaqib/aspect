@@ -115,12 +115,12 @@ async function getInventoryData(auth, query) {
     [
       't2.siteName',
       't2.consumableName',
-      't2.dailyConsumptionRate',
-      knex.raw('t2.dailyConsumptionRate * 365 as projectedAnnualConsumption'),
-      't2.quantityOnHand',
-      't2.daysStockLeft',
-      't2.projectedWaste',
-      't2.qtyExpired as quantityExpired',
+      knex.raw('COALESCE(t2.dailyConsumptionRate, 0) as dailyConsumptionRate'),
+      knex.raw('COALESCE(t2.dailyConsumptionRate, 0) * 365 as projectedAnnualConsumption'),
+      knex.raw('COALESCE(t2.quantityOnHand, 0) as quantityOnHand'),
+      knex.raw('COALESCE(t2.daysStockLeft, 0) as daysStockLeft'),
+      knex.raw('COALESCE(t2.projectedWaste, 0) as projectedWaste'),
+      knex.raw('COALESCE(t2.qtyExpired, 0) as quantityExpired'),
     ]
   )
     .select(knex.raw('COUNT(CONCAT(mi.siteId, "-", ca.consumableId)) AS unreconciledResults'))
@@ -130,7 +130,8 @@ async function getInventoryData(auth, query) {
       join.on('ca.assayId', '=', 'r.assayId')
       join.on('ca.consumableId', '=', 't2.consumableId')
     })
-    .whereNotNull('t2.quantityOnHand')
+    .having('quantityOnHand', '>', 0)
+    .orHaving('unreconciledResults', '>', 0)
     .groupBy('t2.siteName', 't2.consumableName')
     .orderBy(['t2.siteName', 't2.consumableName'])
 
