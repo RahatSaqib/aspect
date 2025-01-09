@@ -70,12 +70,11 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
         const { id: alereConsumableId } = await knex('Consumable')
           .where('externalId', 'AlereHivDetectCartridge')
           .first('id')
-        await knex('SiteConsumable').insert({ siteId: site1Id, consumableId: alereConsumableId })
 
-        await Promise.all([
-          knex('SiteConsumable').insert({ siteId: site1Id, consumableId: tbRifConsumableId }),
-          knex('SiteConsumable').insert({ siteId: site2Id, consumableId: tbRifConsumableId }),
-          knex('SiteConsumable').insert({ siteId: site1Id, consumableId: alereConsumableId }),
+        await knex('SiteConsumable').insert([
+          { siteId: site1Id, consumableId: tbRifConsumableId },
+          { siteId: site2Id, consumableId: tbRifConsumableId },
+          { siteId: site1Id, consumableId: alereConsumableId },
         ])
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,

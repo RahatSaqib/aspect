@@ -101,12 +101,10 @@ describe('Inventory Routes', () => {
         const { id: alereConsumableId } = await knex('Consumable')
           .where('externalId', 'AlereHivDetectCartridge')
           .first('id')
-        await knex('SiteConsumable').insert({ siteId: site1Id, consumableId: alereConsumableId })
-
-        await Promise.all([
-          knex('SiteConsumable').insert({ siteId: site1Id, consumableId: tbRifConsumableId }),
-          knex('SiteConsumable').insert({ siteId: site2Id, consumableId: tbRifConsumableId }),
-          knex('SiteConsumable').insert({ siteId: site1Id, consumableId: alereConsumableId }),
+        await knex('SiteConsumable').insert([
+          { siteId: site1Id, consumableId: tbRifConsumableId },
+          { siteId: site2Id, consumableId: tbRifConsumableId },
+          { siteId: site1Id, consumableId: alereConsumableId },
         ])
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,
@@ -392,11 +390,12 @@ describe('Inventory Routes', () => {
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
+
         const { id: tbRifConsumableId } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
         consumableId = tbRifConsumableId
-        await Promise.all([
-          knex('SiteConsumable').insert({ siteId: site1Id, consumableId }),
-          knex('SiteConsumable').insert({ siteId: site2Id, consumableId }),
+        await knex('SiteConsumable').insert([
+          { siteId: site1Id, consumableId: tbRifConsumableId },
+          { siteId: site2Id, consumableId: tbRifConsumableId },
         ])
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,
