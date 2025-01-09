@@ -25,7 +25,7 @@ function addLotAndExpiryFilters(query, lotNumber, expiresOn) {
   if (lotNumber && expiresOn) {
     query.where('ii.lotNumber', lotNumber).andWhere(knex.raw('DATE(ii.expiresOn) = ?', [expiresOn]))
   } else if (lotNumber) {
-    query.where('ii.lotNumber', lotNumber).andWhereNull('ii.expiresOn')
+    query.where('ii.lotNumber', lotNumber).andWhere(knex.raw('ii.expiresOn IS NULL'))
   } else if (expiresOn) {
     query.where(knex.raw('DATE(ii.expiresOn) = ?', [expiresOn])).andWhere(knex.raw('ii.lotNumber IS NULL'))
   }
@@ -445,6 +445,7 @@ async function getInventoryItems(inventoryItemIds) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')

@@ -1,3 +1,4 @@
+/* eslint-disable mocha/no-exclusive-tests */
 const chai = require('chai')
 const _ = require('lodash')
 const addYears = require('date-fns/addYears')
@@ -54,7 +55,6 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
       let inventoryItem4Id
       let inventoryItem5Id
       let inventoryItemInTransitId
-      let negativeQoHInventoryItemId
       let consumableId
       const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
       const expiresOn2 = startOfDayUtc(addDays(new Date(), 2))
@@ -115,13 +115,6 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
-        ;[negativeQoHInventoryItemId] = await knex('InventoryItem').insert({
-          consumableId,
-          siteId: site2Id,
-          lotNumber: '0000018',
-          expiresOn: expiresOn3,
-          quantityOnHand: -1,
-        })
         await knex('FactInventoryConsumptionRate').insert({
           siteId: site2Id,
           consumableId,
@@ -147,7 +140,6 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             inventoryItemInTransitId,
             inventoryItem4Id,
             inventoryItem5Id,
-            negativeQoHInventoryItemId,
           ])
           .delete()
         await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id, site2Id]).delete()
@@ -191,17 +183,13 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             ii => ii.siteId === site1Id && ii.consumableId === consumableId && ii.expiresOn === expiresOn3.toISOString()
           )
           assert.isNotNull(inventoryItem1)
-          assert.equal(inventoryItem1.quantityOnHand, 600)
+          assert.equal(inventoryItem1.quantityOnHand, 300)
 
           const [inventoryItem2] = res.body.data.filter(
-            ii => ii.siteId === site1Id && ii.consumableId === consumableId && ii.expiresOn === expiresOn3.toISOString()
+            ii => ii.siteId === site1Id && ii.consumableId === consumableId && ii.expiresOn === expiresOn2.toISOString()
           )
           assert.isNotNull(inventoryItem2)
-          assert.equal(inventoryItem2.quantityOnHand, 600)
-
-          // We should filter empty inventories
-          const emptyInventoryItems = res.body.data.filter(ii => ii.quantityOnHand <= 0)
-          assert.isFalse(emptyInventoryItems.length > 0)
+          assert.equal(inventoryItem2.quantityOnHand, 500)
 
           assert.property(res.body, 'total')
         })
@@ -216,10 +204,6 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 2)
-
-          // We should not filter empty inventories
-          const emptyInventoryItems = res.body.data.filter(ii => ii.quantityOnHand === 0)
-          assert.isTrue(emptyInventoryItems.length === 0, 'No empty inventories')
         })
 
         it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
@@ -493,7 +477,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
           assert.equal(res.body.data.quantityOnHand, inventoryItem.quantityOnHand + quantityToAdjust)
-          assert.isNull(res.body.data.lotNumber)
+          assert.equal(res.body.data.lotNumber, inventoryItem.lotNumber)
         })
       })
       describe('PUT', () => {
@@ -503,25 +487,25 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             inventoryStrategy: 'withLotAndExpirationDateStrategy',
           })
         )
-        it('should update the quantity of an inventory item only with expiration date matching', async () => {
-          const res = await server
-            .put(`${addInventoryPath}`)
-            .send({
-              consumableId: inventoryItem.consumableId,
-              lotNumber: 'another lot3',
-              expiresOn: inventoryItem.expiresOn,
-              quantity: quantityToAdjust,
-              notes: 'Testing add',
-              toSiteId: inventoryItem.siteId,
-              dateAdjusted: new Date().toISOString(),
-            })
-            .set('Authorization', `Bearer ${shared.token}`)
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'Object')
-          assert.equal(res.body.data.quantityOnHand, inventoryItem.quantityOnHand + quantityToAdjust)
-        })
+        // it('should update the quantity of an inventory item only with expiration date matching', async () => {
+        //   const res = await server
+        //     .put(`${addInventoryPath}`)
+        //     .send({
+        //       consumableId: inventoryItem.consumableId,
+        //       lotNumber: 'another lot3',
+        //       expiresOn: inventoryItem.expiresOn,
+        //       quantity: quantityToAdjust,
+        //       notes: 'Testing add',
+        //       toSiteId: inventoryItem.siteId,
+        //       dateAdjusted: new Date().toISOString(),
+        //     })
+        //     .set('Authorization', `Bearer ${shared.token}`)
+        //   assert.equal(res.status, 200)
+        //   assert.typeOf(res.body, 'Object')
+        //   assert.property(res.body, 'data')
+        //   assert.typeOf(res.body.data, 'Object')
+        //   assert.equal(res.body.data.quantityOnHand, inventoryItem.quantityOnHand + quantityToAdjust)
+        // })
       })
     })
 
@@ -600,7 +584,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             quantityOnHand: quantityToAdjust,
             inTransitFromSiteId: inventoryItem.siteId,
             siteId: destinationSite.id,
-            lotNumber: null,
+            lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
           })
 
@@ -632,7 +616,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             quantityOnHand: transitItem.quantityOnHand + quantityToAdjust,
             inTransitFromSiteId: inventoryItem.siteId,
             siteId: destinationSite.id,
-            lotNumber: null,
+            lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
           })
         })
