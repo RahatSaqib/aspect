@@ -198,7 +198,6 @@ async function postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now, messageContext, userId } = context
 
   await addResultWorkflowLogIfChanged(knex, payload, result, previousResult, 'Device API Update', now)
-
   await resolveAutoTagging(knex, result)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
@@ -213,18 +212,19 @@ async function consumeInventoryForResult(knex, payload, result, messageContext, 
   // TODO ASP-355 Move consumeInventory for Result to listener
   // Update Inventory Levels at Site
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
-  await inventoryUtils.consumeInventoryForResult(
-    result.id,
-    result.assayId,
-    result.siteId,
+
+  await inventoryUtils.consumeInventoryForResult({
+    resultId: result.id,
+    assayId: result.assayId,
+    siteId: result.siteId,
     consumablesInResultData,
-    result.partnerId,
-    result.startedOn,
-    result.endedOn,
+    partnerId: result.partnerId,
+    testStartedOn: result.startedOn,
+    testEndedOn: result.endedOn,
     knex,
     messageContext,
-    userId
-  )
+    userId,
+  })
 }
 
 const getTags = (regExp, field) => {

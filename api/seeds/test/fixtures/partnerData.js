@@ -20,4 +20,5 @@ module.exports = {
     },
   ],
   excludePattern: '^ExcludeMe.+$',
+  deviceCapacityFactor: 3,
 }

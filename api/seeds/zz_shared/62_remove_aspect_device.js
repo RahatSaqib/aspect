@@ -24,7 +24,6 @@ module.exports = require('../utils').seed(async knex => {
     await knex('Device').whereIn('id', aspectDeviceIds).delete()
 
     await knex('JobContext').where('deviceTypeId', aspectDeviceTypeId).delete()
-    await knex('DeviceCapacity').where('deviceTypeId', aspectDeviceTypeId).delete()
     await knex('DeviceConfiguration').where('deviceTypeId', aspectDeviceTypeId).delete()
     await knex('DeviceType').where({ id: aspectDeviceTypeId }).delete()
   }

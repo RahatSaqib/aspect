@@ -431,7 +431,7 @@ describe('Device API routes for GxAlert Device', () => {
             consumable: {
               serial: '132-44-222',
               expirationDate: '2014-03-01',
-              lot: '331-1',
+              lot: '331',
             },
             instrument: {
               serial: 'CEPH-PC-7813',
@@ -503,7 +503,7 @@ describe('Device API routes for GxAlert Device', () => {
       assert.approximately(result2.longitude, -87.581222, 0.000001)
       assert.equal(result2.consumableSerial, '132-44-222')
       assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
-      assert.equal(result2.consumableLot, '331-1')
+      assert.equal(result2.consumableLot, '331')
       assert.equal(result2.instrumentSerial, 'CEPH-PC-7813')
       assert.equal(result2.moduleName, 'ModA')
       assert.equal(result2.moduleSerial, '555-8')
@@ -1061,10 +1061,15 @@ describe('Device API routes for GxAlert Device', () => {
           .andWhere('ca.quantity', '>', 0)
           .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
 
+        const geneXpertDevice = await getCurrentGeneXpertDevice()
+        await knex('InventoryItem').insert({
+          consumableId: consumableAssay.consumableId,
+          siteId: geneXpertDevice.siteId,
+          quantityOnHand: initialQuantityOnHand,
+        })
+
         assert.isNotEmpty(consumableAssay)
         assert.isAbove(consumableAssay.quantity, 0)
-
-        const geneXpertDevice = await getCurrentGeneXpertDevice()
 
         const testStartedOn = setMilliseconds(subDays(now, 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
@@ -1109,8 +1114,7 @@ describe('Device API routes for GxAlert Device', () => {
             'ii.lotNumber',
             'ii.expiresOn'
           )
-
-        assert.equal(inventoryItemLog.quantityOnHand, -1)
+        assert.equal(inventoryItemLog.quantityOnHand, 99)
 
         assert.deepEqual(inventoryItemLog, {
           consumableId: consumableAssay.consumableId,
@@ -1120,7 +1124,7 @@ describe('Device API routes for GxAlert Device', () => {
           quantity: 1,
           expiresOn: null,
           lotNumber: null,
-          quantityOnHand: -1,
+          quantityOnHand: 99,
         })
       })
 
