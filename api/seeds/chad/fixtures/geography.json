@@ -240,7 +240,34 @@
           "name": "N'Djamena",
           "lgas": [
             {
-              "name": "10 dawāʾir or arrondissements"
+              "name": "première"
+            },
+            {
+              "name": "deuxième"
+            },
+            {
+              "name": "troisième"
+            },
+            {
+              "name": "quatrième"
+            },
+            {
+              "name": "cinquième"
+            },
+            {
+              "name": "sixième"
+            },
+            {
+              "name": "septième"
+            },
+            {
+              "name": "huitième"
+            },
+            {
+              "name": "neuvième"
+            },
+            {
+              "name": "dixième"
             }
           ]
         },
