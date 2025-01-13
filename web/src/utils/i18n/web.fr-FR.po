@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-07T20:22:24.678Z\n"
+"POT-Creation-Date: 2025-01-13T14:17:56.454Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2644,7 +2644,7 @@ msgstr "Diagnostic actuel"
 #. Current FQ Detection
 #: extracted_strings.json
 msgid "Current FQ Detection"
-msgstr "Détection actuelle du QF"
+msgstr "Détection actuelle du FQ"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
