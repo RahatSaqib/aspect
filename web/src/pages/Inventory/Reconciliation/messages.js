@@ -1,8 +1,10 @@
 import { defineMessages } from 'react-intl'
 import { commonDefinitions } from '../../../messages'
+import allMessage from '../../../messages/allMessages'
 
 const messages = {
   ...commonDefinitions,
+  ...allMessage,
   ...defineMessages({
     inventoryReconciliation: {
       id: 'pages.inventoryReconciliation.title',
@@ -27,10 +29,6 @@ const messages = {
     lotNumber: {
       id: 'pages.inventoryReconciliation.lotNumber',
       defaultMessage: 'Lot Number',
-    },
-    hierarchicalView: {
-      id: 'pages.inventoryReconciliation.hierarchicalView',
-      defaultMessage: 'Hierarchical View',
     },
     breakdownByLots: {
       id: 'pages.inventoryReconciliation.breakdownByLots',
