@@ -67,6 +67,7 @@ async function seed(knex) {
     'GxHiv1Qual',
     'GxEbola',
     'GxMtbXdr',
+    'assayGXCovid19',
   ])
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
 

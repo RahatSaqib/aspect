@@ -61,6 +61,7 @@ async function seed(knex) {
     'GxHiv1Qual',
     'GxEbola',
     'GxMtbXdr',
+    'assayGXCovid19',
   ])
   const auditFields = {
     createdOn: now,
