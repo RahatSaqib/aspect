@@ -10,11 +10,7 @@ const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResult
 const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
 const { baseGxAlertMigration, ensureResultTreatmentStatuses } = require('../common')
 const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
-const {
-  addDeviceCapacities,
-  setCapacityForExistingDevices,
-  updateReportableInResultCategoryAssay,
-} = require('../utils')
+const { updateReportableInResultCategoryAssay } = require('../utils')
 const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
@@ -46,7 +42,4 @@ async function seed(knex) {
     AssayBdMgitGndResultDataSchema,
     AssayBdMgitAstResultDataSchema
   )
-
-  await addDeviceCapacities(knex)
-  await setCapacityForExistingDevices(knex)
 }

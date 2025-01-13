@@ -11,6 +11,7 @@ const { upsertJobFunctionFixture } = require('../common')
 
 const partnerData = require('./fixtures/partnerData')
 const upsertPartnerData = require('../common/upsert_partner_data')
+const { addIssueTypes } = require('../relativeObjectsSeeds')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const { adminUserName, adminPassword, fixtures } = partnerData
@@ -92,4 +93,5 @@ async function seed(knex) {
     jobFunctionId: jobFunctionsById.admin,
     geographyId,
   })
+  await addIssueTypes(knex)
 }

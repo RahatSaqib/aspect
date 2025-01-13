@@ -43,6 +43,12 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
     .distinct('ii.id')
     .pluck('ii.id')
 
+  const inventoryLogIds = await knex('InventoryLog')
+    .whereIn('inventoryItemId', inventoryItemIds)
+    .distinct('id')
+    .pluck('id')
+
+  await knex('InventoryTransfer').whereIn('incomeInventoryLogId', inventoryLogIds).delete()
   await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
@@ -115,6 +121,8 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
     .orWhereIn('generatedResultId', resultIds)
     .delete()
 
+  await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
+
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('Result').whereIn('id', resultIds).delete()
@@ -134,6 +142,7 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
 
   await knex('FactInventoryConsumptionRate').whereIn('siteId', siteIds).delete()
   await knex('JobContext').whereIn('siteId', siteIds).delete()
+  await knex('InventoryLog').whereIn('siteId', siteIds).delete()
   await knex('Site').whereIn('id', siteIds).delete()
 
   await knex('DeviceMaintenanceStatusLog').whereIn('deviceId', deviceIds).delete()
@@ -197,18 +206,12 @@ class GxAlertApiTestContext {
         .first('g.*')
       const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
 
-      const deviceCapacity = await knex('DeviceCapacity')
-        .where({ deviceTypeId: gxAlertDeviceType.id })
-        .where({ partnerId: partner.id })
-        .where({ defaultForDeviceType: 1 })
-        .first('id')
-
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         deviceTypeId: gxAlertDeviceType.id,
-        deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceApprovalId: approvedDeviceApproval.id,
+        moduleBayCapacity: 0,
         name: this.basicDevicePayload.name,
         shortName: this.basicDevicePayload.name,
         configurationData: '{}',

@@ -7,6 +7,7 @@ import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
+import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { DetailHeader, ResultFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
@@ -18,6 +19,7 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
+import { getTimezoneById } from '../../../utils/utils/timezone'
 import getExportableFile from '../ResultQueries'
 import messages from './messages'
 import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './ResultDataTable'
@@ -35,6 +37,9 @@ export default function ResultList() {
     pageAt: page,
     pageSize: size,
   } = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })({ location })
+
+  const { timezoneId } = useSelector(({ user }) => user)
+  const validTimeZone = getTimezoneById(timezoneId)
 
   const params = omitBy(omit({ sortCol, sortDir, page, size, ...filters }, ['assayOverride']), isNil)
   const { isLoading, isError, data, error } = useQuery(
@@ -103,6 +108,7 @@ export default function ResultList() {
                         }
                         data-result-id={result.id}
                         messages={messages}
+                        timeZone={validTimeZone}
                       />
                     ))}
                   </TableBody>

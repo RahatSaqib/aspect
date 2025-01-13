@@ -7,6 +7,7 @@ const geography = require('./fixtures/geography.json')
 const { commonUpserts, upsertGeneXpertDeviceTypeAndAssays } = require('../common')
 const partnerData = require('./fixtures/partnerData')
 const upsertPartnerData = require('../common/upsert_partner_data')
+const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()
@@ -44,4 +45,5 @@ async function seed(knex) {
 
   // GeneXpert
   await upsertGeneXpertDeviceTypeAndAssays(knex, assays)
+  await addDefaultCustomFieldDefinitions(knex)
 }

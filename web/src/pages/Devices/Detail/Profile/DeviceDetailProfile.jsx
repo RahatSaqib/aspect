@@ -490,17 +490,7 @@ const DeviceDetailProfile = ({
                 </Button>
               }
             />
-            <Summary
-              title={formatMessage(messages.dailyCapacity)}
-              description={
-                device.get('dailyCapacity') +
-                (device.get('dailyCapacityModules')
-                  ? ` (${formatMessage(messages.deviceCapacityModules, {
-                      numberOfModules: device.get('dailyCapacityModules'),
-                    })})`
-                  : '')
-              }
-            />
+            <Summary title={formatMessage(messages.dailyCapacity)} description={device.get('dailyTestCapacity')} />
             <Summary title={formatMessage(messages.moduleBayCapacity)} description={device.get('moduleBayCapacity')} />
 
             <Summary

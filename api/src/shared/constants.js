@@ -49,6 +49,18 @@ const ISSUE_TYPE_EXTERNAL_IDS = {
   CepheidC360InstrumentLogsReceived: 'CepheidC360InstrumentLogsReceived',
 }
 
+const INVENTORY_ADJUSTMENT = Object.freeze({
+  CURRENT_SITE_AND_PROVIDER: 'currentSiteAndProviderAdjustment',
+  CURRENT_SITE: 'currentSiteAdjustment',
+  CURRENT_SITE_AND_PROVIDER_AND_NATIONAL: 'currentSiteAndProviderAndNationalAdjustment',
+})
+
+const INVENTORY_STRATEGY = Object.freeze({
+  EXPIRATION_DATE: 'withExpirationDateStrategy',
+  LOT_NUMBER: 'withLotStrategy',
+  LOT_AND_EXPIRATION_DATE: 'withLotAndExpirationDateStrategy',
+})
+
 module.exports = {
   IGNORED_SENTRY_ERRORS,
   INTERNAL_DEVICE_IDS,
@@ -63,4 +75,6 @@ module.exports = {
   GENEXPERT_ASSAYS,
   ISSUE_CATEGORY_EXTERNAL_IDS,
   ISSUE_TYPE_EXTERNAL_IDS,
+  INVENTORY_ADJUSTMENT,
+  INVENTORY_STRATEGY,
 }
