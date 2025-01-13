@@ -56,7 +56,7 @@ async function autoReconcile(request) {
           expirationDate,
         })
 
-        if (!consumableResults.some(s => Boom.isBoom(s) || !s)) {
+        if (consumableResults.every(s => s && !Boom.isBoom(s))) {
           // Delete missingInventoryLots entry
           await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
         }

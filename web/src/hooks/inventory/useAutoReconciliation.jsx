@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
-import { AUTO_INVENTORY_RECOCILIATION_KEY } from './inventoryKeys.js'
+import { AUTO_INVENTORY_RECONCILIATION_KEY, INVENTORY_RECONCILIATION_KEY } from './inventoryKeys.js'
 
 const autoReconcile = async data => {
   return fetchWrapperForQueries({
-    endpoint: AUTO_INVENTORY_RECOCILIATION_KEY,
+    endpoint: AUTO_INVENTORY_RECONCILIATION_KEY,
     method: 'POST',
     params: JSON.stringify(data),
   })
@@ -15,7 +15,7 @@ const useAutoReconcile = () => {
 
   const mutation = useMutation(data => autoReconcile(data), {
     onSuccess: () => {
-      queryClient.invalidateQueries([])
+      queryClient.invalidateQueries([INVENTORY_RECONCILIATION_KEY, 'unreconcileInventory'])
     },
   })
 
