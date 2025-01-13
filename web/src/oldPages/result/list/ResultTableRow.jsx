@@ -1,20 +1,19 @@
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import { Tooltip } from '@mui/material'
+import { formatInTimeZone } from 'date-fns-tz'
 import identity from 'lodash/identity'
 import isEmpty from 'lodash/isEmpty'
 import isNumber from 'lodash/isNumber'
 import partial from 'lodash/partial'
 import { useIntl } from 'react-intl'
 import PermissionChecker from '../../../components/PermissionChecker'
-import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import formatters from '../formatters'
 
-const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
-  const { format, formatMessage, formatNumber } = useIntl()
-  const { dateFormat } = getAspectDisplayPreferences().toJS()
+const ResultTableRow = ({ extraColumns, result, messages, timeZone, ...restProps }) => {
+  const { formatMessage, formatNumber } = useIntl()
   let patientId = result?.patientId
   patientId = !patientId || patientId === 'null' ? 'N/A' : patientId
   const formatterByType = partial(
@@ -29,7 +28,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
 
   return (
     <TableRow {...restProps} className={styles[restProps.className]}>
-      <TableCell>{result.endedOn ? format(new Date(result.endedOn), dateFormat) : ''}</TableCell>
+      <TableCell>{result.endedOn ? formatInTimeZone(new Date(result.endedOn), timeZone, 'yyyy-MM-dd') : ''}</TableCell>
       <TableCell hiddenOn="xs">{result.deviceName}</TableCell>
       <TableCell hiddenOn="sm">{result.sampleOriginSiteName}</TableCell>
       <TableCell>{result.sampleId}</TableCell>
