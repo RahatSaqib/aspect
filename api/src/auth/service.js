@@ -54,7 +54,14 @@ const userProps = [
   'c.timezone as defaultTimezone',
   ...personProps,
 ]
-const partnerProps = ['p.activeStatus', 'p.statusMessage']
+const partnerProps = [
+  'p.activeStatus',
+  'p.statusMessage',
+  'p.serviceStartDate',
+  'p.serviceEndDate',
+  'p.notificationLimit',
+  'p.notificationWarningMessage',
+]
 
 function getUser(username, options = {}) {
   const { partnerId = false } = options
@@ -192,8 +199,8 @@ async function serviceNotificationInformation() {
       const sentMessageStatusId = await messageStatusToId('Sent')
       const smsMessageCount = await knex('SmsMessage as sm')
         .join('Device as d', 'sm.deviceId', 'd.id')
-        .where('sm.createdOn', '>', serviceStartDate)
-        .where('sm.createdOn', '<', serviceEndDate)
+        .whereRaw(`sm.createdOn > DATE_FORMAT(STR_TO_DATE('${serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`)
+        .whereRaw(`sm.createdOn < DATE_FORMAT(STR_TO_DATE('${serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`)
         .andWhere('d.partnerId', partnerId)
         .andWhere('sm.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
         .first('*')
@@ -348,11 +355,10 @@ async function authenticate(request, response) {
   const pendingMessageStatusId = await messageStatusToId('Pending')
   const sentMessageStatusId = await messageStatusToId('Sent')
   let notificationWarningMessage = null
-
   const smsMessageCount = await knex('SmsMessage as sm')
     .join('Device as d', 'sm.deviceId', 'd.id')
-    .where('sm.createdOn', '>', partner?.serviceStartDate)
-    .where('sm.createdOn', '<', partner?.serviceEndDate)
+    .whereRaw(`sm.createdOn > DATE_FORMAT(STR_TO_DATE('${partner?.serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`)
+    .whereRaw(`sm.createdOn < DATE_FORMAT(STR_TO_DATE('${partner?.serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`)
     .andWhere('d.partnerId', user.partnerId)
     .andWhere('sm.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
     .first('*')
