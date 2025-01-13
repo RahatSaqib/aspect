@@ -101,14 +101,17 @@ function InventoryAdjustmentDialog(props) {
           delete errors.quantity
         }
         if (inventory?.quantityOnHand <= 0) {
-          if (uiTransfer) {
+          if (uiTransfer && !values.quantity) {
             errors.quantity = formatMessage(validationMessages.quantityMissingToTransfer)
-          } else if (uiRemove) {
+          } else if (uiRemove && !values.quantity) {
             errors.quantity = formatMessage(validationMessages.quantityMissingToRemove)
           }
         }
 
-        const isFormValid = !Object.keys(errors).length && Object.keys(touched).length > 0
+        const isFormValid =
+          !Object.keys(errors).length &&
+          Object.keys(touched).length > 0 &&
+          (!uiTransfer || (uiTransfer && values.quantity && values.toSiteId))
 
         return (
           <AspectDialog
