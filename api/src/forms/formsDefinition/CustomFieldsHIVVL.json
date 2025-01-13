@@ -8,7 +8,7 @@
       "fieldType": "number",
       "order": 1,
       "caption": "HIV Test Number field",
-      "gxAlertDbColumn": "PatientGender",
+      "gxAlertDbColumn": "hivTestNumberField",
       "i18nKeyCaption": "HivTestNumberCaptioni18nKey",
       "mandatory": false,
       "controlType": "textBox",
