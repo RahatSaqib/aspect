@@ -193,19 +193,10 @@ async function serviceNotificationInformation() {
         notificationWarningMessage,
         notificationWarningSendEmails,
       } = data
+      if (!serviceStartDate || !serviceEndDate || !notificationWarningSendEmails || notificationLimit) return
       // send notification info based on conditions
       const emailList = JSON.parse(notificationWarningSendEmails)
-      const pendingMessageStatusId = await messageStatusToId('Pending')
-      const sentMessageStatusId = await messageStatusToId('Sent')
-      const smsMessageCount = await knex('SmsMessage as sm')
-        .join('Device as d', 'sm.deviceId', 'd.id')
-        .whereRaw(`sm.createdOn > DATE_FORMAT(STR_TO_DATE('${serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`)
-        .whereRaw(`sm.createdOn < DATE_FORMAT(STR_TO_DATE('${serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`)
-        .andWhere('d.partnerId', partnerId)
-        .andWhere('sm.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
-        .first('*')
-        .count('* as count')
-
+      const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId)
       if (
         smsMessageCount?.count > notificationLimit ||
         (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
@@ -352,17 +343,8 @@ async function authenticate(request, response) {
       user.id
     )
   }
-  const pendingMessageStatusId = await messageStatusToId('Pending')
-  const sentMessageStatusId = await messageStatusToId('Sent')
   let notificationWarningMessage = null
-  const smsMessageCount = await knex('SmsMessage as sm')
-    .join('Device as d', 'sm.deviceId', 'd.id')
-    .whereRaw(`sm.createdOn > DATE_FORMAT(STR_TO_DATE('${partner?.serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`)
-    .whereRaw(`sm.createdOn < DATE_FORMAT(STR_TO_DATE('${partner?.serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`)
-    .andWhere('d.partnerId', user.partnerId)
-    .andWhere('sm.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
-    .first('*')
-    .count('* as count')
+  const smsMessageCount = await smsCount(partner, user.partnerId)
 
   if (
     smsMessageCount?.count > partner?.notificationLimit ||
@@ -404,6 +386,26 @@ async function authenticate(request, response) {
     statusMessage: partner?.statusMessage,
     notificationWarningMessage,
   }
+}
+
+async function smsCount(partner, partnerId) {
+  const pendingMessageStatusId = await messageStatusToId('Pending')
+  const sentMessageStatusId = await messageStatusToId('Sent')
+  const smsCountQuery = knex('SmsMessage as sm')
+    .join('Device as d', 'sm.deviceId', 'd.id')
+    .andWhere('d.partnerId', partnerId)
+    .andWhere('sm.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
+    .first('*')
+    .count('* as count')
+  if (partner?.serviceStartDate && partner?.serviceEndDate) {
+    smsCountQuery.whereRaw(
+      `sm.createdOn > DATE_FORMAT(STR_TO_DATE('${partner.serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`
+    )
+    smsCountQuery.whereRaw(
+      `sm.createdOn < DATE_FORMAT(STR_TO_DATE('${partner.serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`
+    )
+  }
+  return smsCountQuery
 }
 
 function setRefreshToken({
