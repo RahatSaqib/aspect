@@ -42,5 +42,5 @@ async function seed(knex) {
     'assayGXCovid19',
   ])
 
-  return upsertTruenatDeviceTypeAndAssays(knex)
+  await upsertTruenatDeviceTypeAndAssays(knex)
 }
