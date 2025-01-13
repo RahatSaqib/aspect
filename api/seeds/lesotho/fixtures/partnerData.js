@@ -7,13 +7,11 @@ module.exports = {
     name: 'Lesotho TB',
     externalId: 'lesothoTb',
   },
-  gxAlertDeviceApiKey: 'auv294emdbaervaeqzxc',
-  plugin: '',
+  plugin: 'lesothoTb',
   fixtures: {
     jobFunctions,
   },
   partnerAbbreviation: 'LS',
-  lowerLevelUserPassword: 'AL21Uqpo$^hT3',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,
@@ -23,4 +21,16 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://lesotho.aspect.id',
   apiUrl: 'https://lesotho.aspect.id/api',
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        EnableAspectSync: true,
+        SendResultsToAspect: true,
+        AspectUploadExcludePatientId: false,
+        AspectApiEndpoint: 'https://lesotho.aspect.id/api',
+        MigrateAspectApiKey: true,
+      },
+    },
+  ],
 }

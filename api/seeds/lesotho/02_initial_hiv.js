@@ -29,7 +29,6 @@ const {
   adminUserName,
   adminPassword,
   deviceApiToken,
-  lowerLevelUserPassword,
   partnerAbbreviation,
   partnerPlugin: pluginName,
 } = partnerData
@@ -49,18 +48,7 @@ async function seed(knex) {
     createdOn: now,
   })
 
-  await commonUpserts(
-    knex,
-    partnerId,
-    adminId,
-    geography,
-    partnerAbbreviation,
-    deviceApiToken,
-    {
-      password: lowerLevelUserPassword,
-    },
-    partnerData
-  )
+  await commonUpserts(knex, partnerId, adminId, geography, partnerAbbreviation, deviceApiToken, null, partnerData)
 
   // GeneXpert
   await upsertGeneXpertDeviceTypeAndAssays(knex, [
