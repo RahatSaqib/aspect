@@ -229,7 +229,7 @@ export default function InventoryItemsList() {
                   checked={isHierarchicalView}
                   onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
                 />
-                Hierarchical View
+                {intl.formatMessage(messages.hierarchicalView)}
               </Typography>
               <Stack sx={{ flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
                 <FormControlLabel

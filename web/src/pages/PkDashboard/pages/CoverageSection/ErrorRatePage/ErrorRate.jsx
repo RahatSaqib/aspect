@@ -99,7 +99,7 @@ const ErrorRateGraph = ({ category, title, user }) => {
                     lineWidth: 2,
                   },
                   text: {
-                    content: `WHO Benchmark(${WHOBenchmark[category]}%)`,
+                    content: `${formatMessage(messages.whoBenchmark)}(${WHOBenchmark[category]}%)`,
                     position: 'start',
                     offsetY: -10,
                     style: {

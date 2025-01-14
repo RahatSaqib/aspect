@@ -101,12 +101,17 @@ function InventoryAdjustmentDialog(props) {
           delete errors.quantity
         }
         if (inventory?.quantityOnHand <= 0) {
-          if (uiTransfer) {
+          if (uiTransfer && !values.quantity) {
             errors.quantity = formatMessage(validationMessages.quantityMissingToTransfer)
-          } else if (uiRemove) {
+          } else if (uiRemove && !values.quantity) {
             errors.quantity = formatMessage(validationMessages.quantityMissingToRemove)
           }
         }
+
+        const isFormValid =
+          !Object.keys(errors).length &&
+          Object.keys(touched).length > 0 &&
+          (!uiTransfer || (uiTransfer && values.quantity && values.toSiteId))
 
         return (
           <AspectDialog
@@ -144,7 +149,11 @@ function InventoryAdjustmentDialog(props) {
                       actionType === types.SHOW_ADD_INVENTORY_DIALOG
                     }
                     floatingLabelFixed
-                    floatingLabelText={formatMessage(messages.toSiteName)}
+                    floatingLabelText={
+                      <span>
+                        {formatMessage(messages.toSiteName)} <span style={{ color: 'red' }}>*</span>
+                      </span>
+                    }
                     floatingLabelClasses={{
                       error: styles.Field__label__when__error,
                     }}
@@ -161,7 +170,11 @@ function InventoryAdjustmentDialog(props) {
                 {!inventory ? (
                   <ConsumableSelect
                     name="consumable"
-                    label={formatMessage(messages.consumable)}
+                    label={
+                      <span>
+                        {formatMessage(messages.consumable)} <span style={{ color: 'red' }}>*</span>
+                      </span>
+                    }
                     error={errors?.consumable}
                     value={values.consumable ?? null}
                     onChange={consumable => setFieldValue('consumable', consumable)}
@@ -385,7 +398,12 @@ function InventoryAdjustmentDialog(props) {
                   <Button color="primary" onClick={onCancel}>
                     {formatMessage(messages.cancel)}
                   </Button>
-                  <Button color="primary" variant="contained" disabled={isSubmitting} onClick={handleSubmit}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    disabled={!isFormValid || isSubmitting}
+                    onClick={handleSubmit}
+                  >
                     {formatMessage(messages.submit)}
                   </Button>
                 </DialogActions>

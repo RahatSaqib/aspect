@@ -1,18 +1,18 @@
 import { defineMessages } from 'react-intl'
 
 const months = defineMessages({
-  0: { id: 'months.january', defaultMessage: 'JAN' },
-  1: { id: 'months.february', defaultMessage: 'FEB' },
-  2: { id: 'months.march', defaultMessage: 'MAR' },
-  3: { id: 'months.april', defaultMessage: 'APR' },
-  4: { id: 'months.may', defaultMessage: 'MAY' },
-  5: { id: 'months.june', defaultMessage: 'JUN' },
-  6: { id: 'months.july', defaultMessage: 'JUL' },
-  7: { id: 'months.august', defaultMessage: 'AUG' },
-  8: { id: 'months.september', defaultMessage: 'SEP' },
-  9: { id: 'months.october', defaultMessage: 'OCT' },
-  10: { id: 'months.november', defaultMessage: 'NOV' },
-  11: { id: 'months.december', defaultMessage: 'DEC' },
+  0: { id: 'monthsUpperShort.january', defaultMessage: 'JAN' },
+  1: { id: 'monthsUpperShort.february', defaultMessage: 'FEB' },
+  2: { id: 'monthsUpperShort.march', defaultMessage: 'MAR' },
+  3: { id: 'monthsUpperShort.april', defaultMessage: 'APR' },
+  4: { id: 'monthsUpperShort.may', defaultMessage: 'MAY' },
+  5: { id: 'monthsUpperShort.june', defaultMessage: 'JUN' },
+  6: { id: 'monthsUpperShort.july', defaultMessage: 'JUL' },
+  7: { id: 'monthsUpperShort.august', defaultMessage: 'AUG' },
+  8: { id: 'monthsUpperShort.september', defaultMessage: 'SEP' },
+  9: { id: 'monthsUpperShort.october', defaultMessage: 'OCT' },
+  10: { id: 'monthsUpperShort.november', defaultMessage: 'NOV' },
+  11: { id: 'monthsUpperShort.december', defaultMessage: 'DEC' },
   QUARTER: { id: 'quarter', defaultMessage: 'Q' },
 })
 
