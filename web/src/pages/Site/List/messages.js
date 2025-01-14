@@ -1,8 +1,10 @@
 import { defineMessages } from 'react-intl'
+import allmessages from '../../../messages/allMessages'
 import { commonDefinitions } from '../../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,
+  ...allmessages,
   ...defineMessages({
     sitesTitle: {
       id: 'pages.SiteList.title',

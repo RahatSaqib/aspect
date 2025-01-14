@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { Checkbox, FormControlLabel, Stack, Typography, Divider } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import FormGroup from '@mui/material/FormGroup'
+import { useIntl } from 'react-intl'
+import messages from '../../messages/allMessages'
 import Summary from '../../oldComponents/Summary'
 
 const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSelect, isLoading, listData = [] }) => {
   const [selectAll, setSelectAll] = useState(false)
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     setSelectAll(selectedList.length === listData.length && listData.length > 0)
@@ -54,7 +57,7 @@ const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSele
                     disabled={isChanging}
                   />
                 }
-                label="Select All / Unselect All"
+                label={formatMessage(messages.selectAllUnselectAll)}
               />
               <Divider sx={{ marginY: 2 }} />
               {listData.map(({ name, id }) => (
