@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt')
 const AWS = require('aws-sdk')
 require('isomorphic-fetch')
 const logger = require('../shared/logger')
+const { messageStatusToId } = require('../shared/dictionary')
 
 const bcryptCompare = promisify(bcrypt.compare)
 const bcryptHash = promisify(bcrypt.hash)
@@ -17,6 +18,7 @@ const { query, knex } = require('../db')
 const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
+const { sendEmail } = require('../email/emailUtil')
 
 const clientTypes = {
   app: 'reporter_app',
@@ -52,7 +54,14 @@ const userProps = [
   'c.timezone as defaultTimezone',
   ...personProps,
 ]
-const partnerProps = ['p.activeStatus', 'p.statusMessage']
+const partnerProps = [
+  'p.activeStatus',
+  'p.statusMessage',
+  'p.serviceStartDate',
+  'p.serviceEndDate',
+  'p.notificationLimit',
+  'p.notificationWarningMessage',
+]
 
 function getUser(username, options = {}) {
   const { partnerId = false } = options
@@ -132,8 +141,18 @@ async function serviceModification() {
     const data = await s3.getObject(params).promise()
     const jsonString = data.Body.toString('utf-8')
     const jsonData = JSON.parse(jsonString)
+
     jsonData.map(async data => {
-      const { activeStatus, statusMessage, partnerId, serviceStartDate, serviceEndDate, notificationLimit } = data
+      const {
+        activeStatus,
+        statusMessage,
+        partnerId,
+        serviceStartDate,
+        serviceEndDate,
+        notificationLimit,
+        notificationWarningMessage,
+        notificationWarningSendEmails,
+      } = data
       // Update the Partner table
       await query('Update partner active status').from('Partner').where({ id: partnerId }).update({
         activeStatus,
@@ -141,7 +160,53 @@ async function serviceModification() {
         serviceStartDate,
         serviceEndDate,
         notificationLimit,
+        notificationWarningMessage,
+        notificationWarningSendEmails,
       })
+    })
+  } catch (error) {
+    console.error('Error while updating partner active status:', error)
+  }
+}
+
+async function serviceNotificationInformation() {
+  try {
+    const s3 = new AWS.S3({
+      accessKeyId: config.aws.accessKeyId,
+      secretAccessKey: config.aws.secretAccessKey,
+      region: config.aws.region,
+    })
+    const params = {
+      Bucket: config.aws.serviceBucket,
+      Key: config.serviceStatusFile,
+    }
+    const data = await s3.getObject(params).promise()
+    const jsonString = data.Body.toString('utf-8')
+    const jsonData = JSON.parse(jsonString)
+
+    jsonData.map(async data => {
+      const {
+        partnerId,
+        serviceStartDate,
+        serviceEndDate,
+        notificationLimit,
+        notificationWarningMessage,
+        notificationWarningSendEmails,
+      } = data
+      if (!serviceStartDate || !serviceEndDate || !notificationWarningSendEmails || notificationLimit) return
+      // send notification info based on conditions
+      const emailList = JSON.parse(notificationWarningSendEmails)
+      const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId)
+      if (
+        smsMessageCount?.count > notificationLimit ||
+        (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
+      ) {
+        emailList.forEach(email => {
+          sendEmail(email, 'Notification Limit Exceeded', notificationWarningMessage, ``, []).catch(err =>
+            logger.error(err)
+          )
+        })
+      }
     })
   } catch (error) {
     console.error('Error while updating partner active status:', error)
@@ -278,7 +343,15 @@ async function authenticate(request, response) {
       user.id
     )
   }
+  let notificationWarningMessage = null
+  const smsMessageCount = await smsCount(partner, user.partnerId)
 
+  if (
+    smsMessageCount?.count > partner?.notificationLimit ||
+    (partner?.serviceStartDate && new Date(partner?.serviceEndDate || '2099-01-01') > new Date())
+  ) {
+    notificationWarningMessage = partner?.notificationWarningMessage
+  }
   await setRefreshToken({
     clientId,
     clientName,
@@ -311,7 +384,28 @@ async function authenticate(request, response) {
     personId: user.personId,
     activeStatus: partner.activeStatus,
     statusMessage: partner?.statusMessage,
+    notificationWarningMessage,
   }
+}
+
+async function smsCount(partner, partnerId) {
+  const pendingMessageStatusId = await messageStatusToId('Pending')
+  const sentMessageStatusId = await messageStatusToId('Sent')
+  const smsCountQuery = knex('SmsMessage as sm')
+    .join('Device as d', 'sm.deviceId', 'd.id')
+    .andWhere('d.partnerId', partnerId)
+    .andWhere('sm.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
+    .first('*')
+    .count('* as count')
+  if (partner?.serviceStartDate && partner?.serviceEndDate) {
+    smsCountQuery.whereRaw(
+      `sm.createdOn > DATE_FORMAT(STR_TO_DATE('${partner.serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`
+    )
+    smsCountQuery.whereRaw(
+      `sm.createdOn < DATE_FORMAT(STR_TO_DATE('${partner.serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`
+    )
+  }
+  return smsCountQuery
 }
 
 function setRefreshToken({
@@ -762,4 +856,5 @@ module.exports = {
   getPersonByPersonId,
   getDisplayPreferences,
   serviceModification,
+  serviceNotificationInformation,
 }
