@@ -370,7 +370,8 @@ async function getInventoryByLot(request, requestQuery, dataConstraints) {
 }
 
 // ----------------------------------------------------------------------------------
-function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, columns = '*') {
+function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, columns = '*', includeUnreconciledCounts = false) {
+
   const inventoryQuery = getInventorySitesQuery(dataConstraints, request)
     .innerJoin('Assay as a', 'ca.assayId', 'a.id')
     .innerJoin('SiteConsumable as sc', function () {
@@ -392,6 +393,13 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
       }
     })
 
+  if (includeUnreconciledCounts) {
+    inventoryQuery
+      .leftJoin('MissingInventoryLots as mil').on('s.id', 'mil.siteId')
+      .leftJoin('Result as r', 'mil.resultId', 'r.id').andOn('r.assayId', 'ca.assayId')
+      .count('r.id as unreconciledQuantity')
+  }
+
   return knex
     .from(inventoryQuery.as('t2'))
     .modify(builder => {
@@ -409,7 +417,7 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
 }
 
 async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
-  let inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range)
+  let inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, '*', true)
 
   // Get the total count of all items
   const [{ total }] = await inventoryQuery.clone().count('id as total')
@@ -420,7 +428,7 @@ async function getInventoryBySitesAndConsumable(request, dataConstraints, range)
   // Fetch the inventory sites
   const inventorySites = await inventoryQuery
 
-  // Add count of results to each inventory item
+  // Add count of unreconciled consumptions to each inventory item
   const inventoryWithCounts = await Promise.all(
     inventorySites.map(async item => {
       const unreconciledQuantity = await getUnreconciledCount(item.siteId, item.consumableId)

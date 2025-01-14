@@ -1,4 +1,4 @@
-const { getConstraints } = require('../../auth/constraints')
+  const { getConstraints } = require('../../auth/constraints')
 const getInventoryOverviewList = require('./db')
 const { getAllGeographiesWithNames } = require('../../geography/service')
 
