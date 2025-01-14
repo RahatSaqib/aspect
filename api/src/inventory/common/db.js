@@ -22,16 +22,6 @@ const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../
 const consumableStrategyModifier = require('./consumableStrategyModifier')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 
-// function addLotAndExpiryFilters(query, lotNumber, expiresOn) {
-//   if (lotNumber && expiresOn) {
-//     query.where('ii.lotNumber', lotNumber).andWhere(knex.raw('DATE(ii.expiresOn) = ?', [expiresOn]))
-//   } else if (lotNumber) {
-//     query.where('ii.lotNumber', lotNumber).andWhere(knex.raw('ii.expiresOn IS NULL'))
-//   } else if (expiresOn) {
-//     query.where(knex.raw('DATE(ii.expiresOn) = ?', [expiresOn])).andWhere(knex.raw('ii.lotNumber IS NULL'))
-//   }
-// }
-
 // ----------------------------------------------------------------------------------
 async function getStrategy(partnerId) {
   let { inventoryStrategy } = await getPartnerByConstraints({
