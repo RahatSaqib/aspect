@@ -26,6 +26,7 @@ const {
   logInventoryChange,
   createInventoryTransfer,
   updateInventoryTransfer,
+  getInventoryItemWithoutStrategy,
 } = require('./db')
 
 /**
@@ -323,7 +324,7 @@ async function addInventory({ auth, payload, plugins }) {
   }
   await updateSiteConsumable(toSite.id, { modify: 'add', consumableId })
 
-  return getInventoryItem(res.inventoryItemId)
+  return getInventoryItemWithoutStrategy(res.inventoryItemId)
 }
 
 // ----------------------------------------------------------------------------------
@@ -522,8 +523,8 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
   })
 
   return {
-    existingInventoryItem: await getInventoryItem(sourceInventoryItemId),
-    newInventoryItem: await getInventoryItem(destinationInventoryItemId),
+    existingInventoryItem: await getInventoryItemWithoutStrategy(sourceInventoryItemId),
+    newInventoryItem: await getInventoryItemWithoutStrategy(destinationInventoryItemId),
   }
 }
 
@@ -610,8 +611,7 @@ async function receiveInventory(request) {
 
     await knex('InventoryItem').where('id', inTransitInventoryItem.id).delete()
   })
-
-  return getInventoryItem(destinationInventoryItemId)
+  return getInventoryItemWithoutStrategy(destinationInventoryItemId)
 }
 
 // ----------------------------------------------------------------------------------

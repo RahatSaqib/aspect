@@ -59,6 +59,18 @@ const INVENTORY_ITEM_SELECT = [
   'itfs.name as inTransitFromSiteName',
   'ii.inTransitFromSiteId',
 ]
+
+const INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY = [
+  ...INVENTORY_COMMON_FIELDS,
+  'ii.quantityOnHand',
+  'ii.updatedOn',
+  'ii.id',
+  'ii.lotNumber',
+  'ii.expiresOn',
+  'itfs.name as inTransitFromSiteName',
+  'ii.inTransitFromSiteId',
+]
+
 const INVENTORY_LOG_LIST = {
   createdOn: 'il.createdOn',
   consumableName: 'c.name',
@@ -251,4 +263,5 @@ module.exports = {
   INVENTORY_COMMON_FIELDS,
   STOCK_LEFT_FILTER_FIELDS,
   CONCATENATED_ID,
+  INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY,
 }

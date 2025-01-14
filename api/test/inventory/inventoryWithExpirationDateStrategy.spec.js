@@ -665,7 +665,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             ...res.body.data,
             quantityOnHand: quantityToAdjust,
             siteId: destinationSite.id,
-            lotNumber: null,
+            lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
           })
         })

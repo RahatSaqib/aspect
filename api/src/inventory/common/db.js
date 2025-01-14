@@ -15,6 +15,7 @@ const {
   INVENTORY_ITEM_SORT_FIELDS,
   STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
+  INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY,
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
@@ -184,7 +185,7 @@ async function findInventoryItem({
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
 
   if (!resultId) {
-    // add lot and expiry filters without using strategy
+    // handle operations without strategy (add, remove, and transfer)
     const handler = consumableStrategyModifier.withLotAndExpirationDateStrategy
     handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
   } else {
@@ -434,6 +435,22 @@ function getInventoryItem(inventoryItemId) {
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .where('ii.id', inventoryItemId)
     .first(INVENTORY_ITEM_SELECT)
+}
+
+function getInventoryItemWithoutStrategy(inventoryItemId) {
+  return query('Get Inventory Item')
+    .from('InventoryItem as ii')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .where('ii.id', inventoryItemId)
+    .first(INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------
@@ -856,4 +873,5 @@ module.exports = {
   updateInventoryTransfer,
   getReconciliationList,
   appendSiteConsumables,
+  getInventoryItemWithoutStrategy,
 }
