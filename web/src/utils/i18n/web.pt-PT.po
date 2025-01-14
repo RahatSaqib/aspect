@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
+"POT-Creation-Date: 2025-01-14T04:26:05.358Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -236,14 +236,14 @@ msgstr "AMK-R %"
 msgid "AMK-R Detected"
 msgstr "AMK-R Detectado"
 
-#. [months.april]
+#. [monthsUpperShort.april]
 #. defaultMessage is:
 #. APR
 #: extracted_strings.json
 msgid "APR"
 msgstr "abril"
 
-#. [months.august]
+#. [monthsUpperShort.august]
 #. defaultMessage is:
 #. AUG
 #: extracted_strings.json
@@ -540,6 +540,9 @@ msgstr ""
 #. [pages.resultEdit.AgeFieldi18nKey]
 #. defaultMessage is:
 #. Age
+#. [pages.resultEdit.age]
+#. defaultMessage is:
+#. Age
 #: extracted_strings.json
 msgid "Age"
 msgstr "Idade"
@@ -802,6 +805,20 @@ msgstr "Qualquer"
 #: extracted_strings.json
 msgid "Api Keys"
 msgstr "Chaves de API"
+
+#. [pages.InventoryLog.reconcilationAdjustment]
+#. defaultMessage is:
+#. Applied Consumable Strategy
+#: extracted_strings.json
+msgid "Applied Consumable Strategy"
+msgstr "Estratégia de consumíveis aplicada"
+
+#. [pages.InventoryLog.reconcilationStrategy]
+#. defaultMessage is:
+#. Applied Reconciliation Strategy
+#: extracted_strings.json
+msgid "Applied Reconciliation Strategy"
+msgstr "Estratégia de reconciliação aplicada"
 
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
@@ -1729,13 +1746,6 @@ msgstr "Não pode ser editado"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#. [pages.DeviceDetailEdit.capacity]
-#. defaultMessage is:
-#. Capacity
-#: extracted_strings.json
-msgid "Capacity"
-msgstr "Capacidade"
-
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
 #. defaultMessage is:
 #. Captured
@@ -1746,6 +1756,9 @@ msgstr "Capacidade"
 msgid "Captured"
 msgstr "Capturado"
 
+#. [pages.InventoryLog.withLotStrategy]
+#. defaultMessage is:
+#. Cartridge Lot Number
 #. [pages.Consumable.New.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot Number
@@ -1820,6 +1833,13 @@ msgstr "Categoria I"
 #. Cellphone Number
 #: extracted_strings.json
 msgid "Cellphone Number"
+msgstr "Número de telemóvel"
+
+#. [pages.resultEdit.cellphoneNumber]
+#. defaultMessage is:
+#. Cellphone number
+#: extracted_strings.json
+msgid "Cellphone number"
 msgstr "Número de telemóvel"
 
 #. [pages.NotificationDetail.actionChange]
@@ -2671,6 +2691,27 @@ msgstr "Diagnóstico Atual de RRTB"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Tendências Atuais de Diagnóstico de Resistência à Rifampicina"
 
+#. [pages.InventoryLog.currentSiteAdjustment]
+#. defaultMessage is:
+#. Current Site
+#: extracted_strings.json
+msgid "Current Site"
+msgstr "Sítio atual"
+
+#. [pages.InventoryLog.currentSiteAndProviderAdjustment]
+#. defaultMessage is:
+#. Current Site and Stock Provider
+#: extracted_strings.json
+msgid "Current Site and Stock Provider"
+msgstr "Sítio atual e fornecedor de stock"
+
+#. [pages.InventoryLog.currentSiteAndProviderAndNationalAdjustment]
+#. defaultMessage is:
+#. Current Site, Stock Provider and all Parent Sites
+#: extracted_strings.json
+msgid "Current Site, Stock Provider and all Parent Sites"
+msgstr "Sítio atual, fornecedor de existências e todos os sítios principais"
+
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
 #. Current TB Diagnosis
@@ -2737,7 +2778,7 @@ msgstr "Campos personalizados Conclusão média"
 msgid "DBS"
 msgstr "DBS"
 
-#. [months.december]
+#. [monthsUpperShort.december]
 #. defaultMessage is:
 #. DEC
 #: extracted_strings.json
@@ -2787,6 +2828,9 @@ msgstr "DST"
 msgid "Daily"
 msgstr "Diariamente"
 
+#. [pages.DeviceDetailEdit.dailyTestCapacity]
+#. defaultMessage is:
+#. Daily Capacity
 #. [pages.DeviceDetailProfile.dailyCapacity]
 #. defaultMessage is:
 #. Daily Capacity
@@ -2946,6 +2990,20 @@ msgstr "Data de Recebimento"
 #: extracted_strings.json
 msgid "Date Removed"
 msgstr "Data Removido"
+
+#. [pages.resultEdit.dateSpecimenCollected]
+#. defaultMessage is:
+#. Date Specimen Collected
+#: extracted_strings.json
+msgid "Date Specimen Collected"
+msgstr "Data de colheita do espécime"
+
+#. [pages.resultEdit.dateSpecimenReceived]
+#. defaultMessage is:
+#. Date Specimen Received
+#: extracted_strings.json
+msgid "Date Specimen Received"
+msgstr "Data de receção do espécime"
 
 #. [pages.TransferInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -4307,6 +4365,9 @@ msgstr "A expirar em dias"
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.InventoryLog.withExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date
 #. [pages.Consumable.New.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
@@ -4317,6 +4378,9 @@ msgstr "A expirar em dias"
 msgid "Expiry Date"
 msgstr "Data de validade"
 
+#. [pages.InventoryLog.withLotAndExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date and Cartridge Lot Number
 #. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
 #. defaultMessage is:
 #. Expiry Date and Cartridge Lot Number
@@ -4402,7 +4466,7 @@ msgstr ""
 "Extrair dados para intervalo de datas seleccionado para posterior importação "
 "para o Tableau."
 
-#. [months.february]
+#. [monthsUpperShort.february]
 #. defaultMessage is:
 #. FEB
 #: extracted_strings.json
@@ -4834,6 +4898,9 @@ msgstr "Lavagem gástrica"
 #. defaultMessage is:
 #. Gender
 #. [pages.resultEdit.Genderi18nCaptionKey]
+#. defaultMessage is:
+#. Gender
+#. [pages.resultEdit.gender]
 #. defaultMessage is:
 #. Gender
 #: extracted_strings.json
@@ -5640,9 +5707,6 @@ msgstr "Hepatite C"
 #. [pages.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
-#. [pages.inventoryReconciliation.hierarchicalView]
-#. defaultMessage is:
-#. Hierarchical View
 #: extracted_strings.json
 msgid "Hierarchical View"
 msgstr "Vista hierárquica"
@@ -6250,6 +6314,17 @@ msgstr "Tipos de questões"
 msgid "It might have been deleted or renamed"
 msgstr "Pode ter sido apagado ou renomeado"
 
+#. [p.PkDashboard.consumptionRateTooltip]
+#. defaultMessage is:
+#. Its the average daily consumption of the specific cartridge considering the date range selected
+#: extracted_strings.json
+msgid ""
+"Its the average daily consumption of the specific cartridge considering the "
+"date range selected"
+msgstr ""
+"É o consumo médio diário do cartucho específico considerando o intervalo de "
+"datas selecionado"
+
 #. [pages.InventoryItemsList.dailyConsumptionRateDescription]
 #. defaultMessage is:
 #. Its the average daily consumption of the specific cartridge considering the last 180 day period
@@ -6261,6 +6336,9 @@ msgstr ""
 "É o consumo médio diário do cartucho específico considerando o último "
 "período de 180 dias"
 
+#. [p.PkDashboard.currentQtyTooltip]
+#. defaultMessage is:
+#. Its the current quantity in hand, including the expired quantity.
 #. [pages.InventoryItemsList.quantityOnHandDescription]
 #. defaultMessage is:
 #. Its the current quantity in hand, including the expired quantity.
@@ -6268,21 +6346,40 @@ msgstr ""
 msgid "Its the current quantity in hand, including the expired quantity."
 msgstr "É a quantidade atual disponível, incluindo a quantidade expirada."
 
-#. [months.january]
+#. [p.PkDashboard.usedToolTip]
+#. defaultMessage is:
+#. Its the total cartidges consumed in the date range filter selected
+#: extracted_strings.json
+msgid "Its the total cartidges consumed in the date range filter selected"
+msgstr ""
+"É o total de cartuchos consumidos no filtro de intervalo de datas selecionado"
+
+#. [p.PkDashboard.last6MonthsTooltip]
+#. defaultMessage is:
+#. Its the total cartridges consumed in last 6 months, irrespective of the period selected in filter option
+#: extracted_strings.json
+msgid ""
+"Its the total cartridges consumed in last 6 months, irrespective of the "
+"period selected in filter option"
+msgstr ""
+"É o total de cartuchos consumidos nos últimos 6 meses, independentemente do "
+"período selecionado na opção de filtro"
+
+#. [monthsUpperShort.january]
 #. defaultMessage is:
 #. JAN
 #: extracted_strings.json
 msgid "JAN"
 msgstr "janeiro"
 
-#. [months.july]
+#. [monthsUpperShort.july]
 #. defaultMessage is:
 #. JUL
 #: extracted_strings.json
 msgid "JUL"
 msgstr "julho"
 
-#. [months.june]
+#. [monthsUpperShort.june]
 #. defaultMessage is:
 #. JUN
 #: extracted_strings.json
@@ -6933,14 +7030,14 @@ msgstr "Baixa taxa de conclusão do campo"
 msgid "Low Inventory"
 msgstr "Inventário baixo"
 
-#. [months.march]
+#. [monthsUpperShort.march]
 #. defaultMessage is:
 #. MAR
 #: extracted_strings.json
 msgid "MAR"
 msgstr "março"
 
-#. [months.may]
+#. [monthsUpperShort.may]
 #. defaultMessage is:
 #. MAY
 #: extracted_strings.json
@@ -7579,6 +7676,13 @@ msgstr "Mar"
 msgid "March"
 msgstr "Março"
 
+#. [months.may]
+#. defaultMessage is:
+#. May
+#: extracted_strings.json
+msgid "May"
+msgstr "Maio"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7864,7 +7968,7 @@ msgstr "Deve ser o mais tardar hoje"
 msgid "N/A"
 msgstr "N/D"
 
-#. [months.november]
+#. [monthsUpperShort.november]
 #. defaultMessage is:
 #. NOV
 #: extracted_strings.json
@@ -7914,6 +8018,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.PersonList.personName]
+#. defaultMessage is:
+#. Name
+#. [pages.resultEdit.name]
 #. defaultMessage is:
 #. Name
 #. [pages.SiteDetail.fieldName]
@@ -8736,7 +8843,7 @@ msgstr ""
 msgid "Numbers Included"
 msgstr "Números Incluídos"
 
-#. [months.october]
+#. [monthsUpperShort.october]
 #. defaultMessage is:
 #. OCT
 #: extracted_strings.json
@@ -10295,11 +10402,17 @@ msgstr "Taxas de recuperação por gênero sexual"
 #. [pages.resultEdit.ReferringClinicianI18nkey]
 #. defaultMessage is:
 #. Referring Clinician or Facility Phone Number (if known)
+#. [pages.resultEdit.referringClinicianOrFacilityPhoneNumberIfKnown]
+#. defaultMessage is:
+#. Referring Clinician or Facility Phone Number (if known)
 #: extracted_strings.json
 msgid "Referring Clinician or Facility Phone Number (if known)"
 msgstr "Número de telefone do médico ou unidade de referência (se conhecido)"
 
 #. [pages.resultEdit.ReferringFacilityI18nkey]
+#. defaultMessage is:
+#. Referring Facility
+#. [pages.resultEdit.referringFacility]
 #. defaultMessage is:
 #. Referring Facility
 #: extracted_strings.json
@@ -10386,6 +10499,9 @@ msgid "Repeat Baseline"
 msgstr "Repetição da linha de base"
 
 #. [pages.resultEdit.RepeatTesti18nKey]
+#. defaultMessage is:
+#. Repeat Test
+#. [pages.resultEdit.repeatTest]
 #. defaultMessage is:
 #. Repeat Test
 #: extracted_strings.json
@@ -11043,6 +11159,9 @@ msgstr "Retratamento"
 #. [pages.resultEdit.RetreatCaseFieldi18nKey]
 #. defaultMessage is:
 #. Retreatment Case
+#. [pages.resultEdit.retreatmentCase]
+#. defaultMessage is:
+#. Retreatment Case
 #: extracted_strings.json
 msgid "Retreatment Case"
 msgstr "Caso de retratamento"
@@ -11116,7 +11235,7 @@ msgstr "Roteadores"
 msgid "SARS-CoV-2 (COVID-19)"
 msgstr "SARS-CoV-2 (COVID-19)"
 
-#. [months.september]
+#. [monthsUpperShort.september]
 #. defaultMessage is:
 #. SEP
 #: extracted_strings.json
@@ -12093,7 +12212,7 @@ msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# } "
 "outro {# } }"
 
-#. [pages.ReportIndex.unUsedModulesReport_Description]
+#. [pages.ReportIndex.unusedModulesReport_Description]
 #. defaultMessage is:
 #. Shows all devices that haven't used all available modules in the selected time period.
 #: extracted_strings.json
@@ -12646,6 +12765,13 @@ msgstr "Suprimentos"
 #: extracted_strings.json
 msgid "Supply in Stock"
 msgstr "Fornecimento em estoque"
+
+#. [pages.resultEdit.surename]
+#. defaultMessage is:
+#. Surename
+#: extracted_strings.json
+msgid "Surename"
+msgstr "Surename"
 
 #. [pages.resultEdit.SurenameFieldi18nKey]
 #. defaultMessage is:
@@ -13234,6 +13360,17 @@ msgstr ""
 #: extracted_strings.json
 msgid "The number of contacts in the system."
 msgstr "O número de contatos no sistema."
+
+#. [p.PkDashboard.daysLeftTooltip]
+#. defaultMessage is:
+#. The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges
+#: extracted_strings.json
+msgid ""
+"The number of days left with available and not-expired cartridge and the "
+"daily consumption rate of the cartridges"
+msgstr ""
+"O número de dias restantes com cartucho disponível e não expirado e a taxa "
+"de consumo diário dos cartuchos"
 
 #. [pages.InventoryItemsList.daysStockLeftDescription]
 #. defaultMessage is:
@@ -14447,7 +14584,7 @@ msgstr "Desbloqueado"
 msgid "Unreconciled quantity"
 msgstr "Quantidade não apurada"
 
-#. [pages.ReportIndex.unUsedModulesReport]
+#. [pages.ReportIndex.unusedModulesReport]
 #. defaultMessage is:
 #. Unused Modules
 #: extracted_strings.json
@@ -14627,6 +14764,13 @@ msgstr "Ver registo"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Tensão"
+
+#. [pages.ErrorRate.whoBenchmark]
+#. defaultMessage is:
+#. WHO Benchmark
+#: extracted_strings.json
+msgid "WHO Benchmark"
+msgstr "Referência da OMS"
 
 #. [hierarchicalSiteView.warehouse]
 #. defaultMessage is:
@@ -15911,6 +16055,9 @@ msgstr "{unit} desde a semana passada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
+
+#~ msgid "Capacity"
+#~ msgstr "Capacidade"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Ensaio para MTB Rif Ultra"
