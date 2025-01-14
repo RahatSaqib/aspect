@@ -114,7 +114,7 @@ async function getActualQuantityOnHand(
     lotNumber,
     inTransitFromSiteId: fromSiteId,
     partnerId,
-    operation,
+    resultId,
   })
   const { newQuantityOnHand, isResultPendingReconciliation } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
