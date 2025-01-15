@@ -768,13 +768,19 @@ function baseMissingInventoryLotsQuery() {
 
 async function getReconciliationList(query, dataConstraints) {
   const baseQuery = baseMissingInventoryLotsQuery()
-    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
+    .modify(qb => {
+      if (dataConstraints) {
+        addConstraints(qb, dataConstraints, { result: 'r', geography: 'g' })
+      }
+    })
     .modify(filterDateRangeParams, query, 'm.expirationDate')
+
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
+      siteId: 's.id',
       assayId: 'r.assayId',
       consumableId: 'ca.consumableId',
       lotNumber: 'm.lotNumber',
