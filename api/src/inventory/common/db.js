@@ -175,7 +175,7 @@ async function findInventoryItem({
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
 
   if (!resultId) {
-    // handle operations without strategy (add, remove, and transfer)
+    // handle operations without using strategy (add, remove, and transfer)
     const handler = consumableStrategyModifier.withLotAndExpirationDateStrategy
     handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
   } else {
