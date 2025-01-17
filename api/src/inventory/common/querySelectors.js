@@ -44,32 +44,35 @@ const INVENTORY_COMMON_FIELDS = [
   'st.name as stateName',
   'l.name as lgaName',
 ]
-const INVENTORY_ITEM_SELECT = [
-  ...INVENTORY_COMMON_FIELDS,
-  'ii.quantityOnHand',
-  'ii.updatedOn',
-  'ii.id',
-  knex.raw(
-    `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
-  ),
-  knex.raw(
-    `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
-  ),
 
-  'itfs.name as inTransitFromSiteName',
-  'ii.inTransitFromSiteId',
-]
+function createInventoryItemSelect(includeStrategy = true) {
+  const baseFields = [
+    ...INVENTORY_COMMON_FIELDS,
+    'ii.quantityOnHand',
+    'ii.updatedOn',
+    'ii.id',
+    'itfs.name as inTransitFromSiteName',
+    'ii.inTransitFromSiteId',
+  ]
 
-const INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY = [
-  ...INVENTORY_COMMON_FIELDS,
-  'ii.quantityOnHand',
-  'ii.updatedOn',
-  'ii.id',
-  'ii.lotNumber',
-  'ii.expiresOn',
-  'itfs.name as inTransitFromSiteName',
-  'ii.inTransitFromSiteId',
-]
+  if (includeStrategy) {
+    baseFields.push(
+      knex.raw(
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
+      ),
+      knex.raw(
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
+      )
+    )
+  } else {
+    baseFields.push('ii.lotNumber', 'ii.expiresOn')
+  }
+
+  return baseFields
+}
+
+const INVENTORY_ITEM_SELECT = createInventoryItemSelect(true)
+const INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY = createInventoryItemSelect(false)
 
 const INVENTORY_LOG_LIST = {
   createdOn: 'il.createdOn',
