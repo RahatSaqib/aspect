@@ -15,7 +15,6 @@ const {
   INVENTORY_ITEM_SORT_FIELDS,
   STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
-  INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY,
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')

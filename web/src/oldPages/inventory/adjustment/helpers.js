@@ -133,7 +133,7 @@ export function getValidations(format, actionType, { partner, inventory, allSite
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => withLotNumber(partner, consumable, actionType),
+          is: () => withLotNumber(partner, undefined, actionType),
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })
