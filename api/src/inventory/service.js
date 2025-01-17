@@ -18,7 +18,7 @@ async function autoReconcile(request) {
   const { auth, payload } = request
   const { partnerId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
-  const [data] = await getReconciliationList(payload, dataConstraints)
+  const [, data] = await getReconciliationList(payload, dataConstraints)
   /* eslint-disable no-await-in-loop */
   for (const missingInventoryGroup of data) {
     const {
