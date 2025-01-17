@@ -71,7 +71,7 @@ function createInventoryItemSelect(includeStrategy = true) {
   return baseFields
 }
 
-const INVENTORY_ITEM_SELECT = createInventoryItemSelect(true)
+const INVENTORY_ITEM_SELECT = createInventoryItemSelect()
 const INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY = createInventoryItemSelect(false)
 
 const INVENTORY_LOG_LIST = {
