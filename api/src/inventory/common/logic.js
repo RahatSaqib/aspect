@@ -26,8 +26,8 @@ const {
   logInventoryChange,
   createInventoryTransfer,
   updateInventoryTransfer,
-  getInventoryItemWithoutStrategy,
 } = require('./db')
+const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./querySelectors')
 
 /**
  * use singleton for inventory strategy instance - cache it in a single instance
@@ -324,7 +324,7 @@ async function addInventory({ auth, payload, plugins }) {
   }
   await updateSiteConsumable(toSite.id, { modify: 'add', consumableId })
 
-  return getInventoryItemWithoutStrategy(res.inventoryItemId)
+  return getInventoryItem(res.inventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------
@@ -523,8 +523,8 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
   })
 
   return {
-    existingInventoryItem: await getInventoryItemWithoutStrategy(sourceInventoryItemId),
-    newInventoryItem: await getInventoryItemWithoutStrategy(destinationInventoryItemId),
+    existingInventoryItem: await getInventoryItem(sourceInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY),
+    newInventoryItem: await getInventoryItem(destinationInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY),
   }
 }
 
@@ -611,7 +611,7 @@ async function receiveInventory(request) {
 
     await knex('InventoryItem').where('id', inTransitInventoryItem.id).delete()
   })
-  return getInventoryItemWithoutStrategy(destinationInventoryItemId)
+  return getInventoryItem(destinationInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------

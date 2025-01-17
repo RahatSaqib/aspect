@@ -411,7 +411,7 @@ async function getInventoryBySitesAndConsumable(request, dataConstraints, range)
 }
 
 // ----------------------------------------------------------------------------------
-function getInventoryItem(inventoryItemId) {
+function getInventoryItem(inventoryItemId, selectFields = INVENTORY_ITEM_SELECT) {
   return query('Get Inventory Item')
     .from('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
@@ -424,23 +424,7 @@ function getInventoryItem(inventoryItemId) {
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .where('ii.id', inventoryItemId)
-    .first(INVENTORY_ITEM_SELECT)
-}
-
-function getInventoryItemWithoutStrategy(inventoryItemId) {
-  return query('Get Inventory Item')
-    .from('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .innerJoin('Partner as p', 's.partnerId', 'p.id')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('Country as co', 'g.countryId', 'co.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
-    .where('ii.id', inventoryItemId)
-    .first(INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
+    .first(selectFields)
 }
 
 // ----------------------------------------------------------------------------------
@@ -863,5 +847,4 @@ module.exports = {
   updateInventoryTransfer,
   getReconciliationList,
   appendSiteConsumables,
-  getInventoryItemWithoutStrategy,
 }

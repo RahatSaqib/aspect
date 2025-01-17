@@ -35,7 +35,12 @@ export const withExpirationDate = (partner, consumable) => {
     (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
   )
 }
-export const withLotNumber = (partner, consumable) => {
+export const withLotNumber = (partner, consumable, actionType) => {
+  // Skip lot number requirement for transfer
+  if (actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG) {
+    return false
+  }
+
   return (
     strategyRequireLot(partner?.inventoryStrategy) ||
     (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))
@@ -128,7 +133,7 @@ export function getValidations(format, actionType, { partner, inventory, allSite
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => withLotNumber(partner),
+          is: () => withLotNumber(partner, consumable, actionType),
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })
