@@ -410,10 +410,11 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
   FROM SiteHierarchy`
 
     const unreconciledQuantitySubquery = knex
-      .select('s.id as siteId', 'r.assayId', knex.raw('count(r.id) as unreconciledQuantity'))
+      .select('s.id as siteId', 'r.assayId')
+      .count('r.id as unreconciledQuantity')
       .from('Site as s')
       .join(knex.raw(`(${siteHierarchy}) as sh`), 's.id', 'sh.parentId')
-      .leftJoin('MissingInventoryLots as mil', 'mil.siteId', 's.id')
+      .leftJoin('MissingInventoryLots as mil', 'mil.siteId', 'sh.childId')
       .leftJoin('Result as r', function () {
         this.on('mil.resultId', 'r.id')
       })
@@ -421,7 +422,7 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
       .as('uc')
 
     inventoryQuery
-      .join(unreconciledQuantitySubquery, function () {
+      .leftJoin(unreconciledQuantitySubquery, function () {
         this.on('s.id', 'uc.siteId')
           .andOn('ca.assayId', 'uc.assayId')
       }).select('uc.unreconciledQuantity')
@@ -452,16 +453,7 @@ async function getInventoryBySitesAndConsumable(request, dataConstraints, range)
   // Sorting and pagination
   inventoryQuery = inventoryQuery.modify(sortPageParams, request.query, 'siteName')
 
-  // Fetch the inventory sites
   const inventorySites = await inventoryQuery
-
-  // Add count of unreconciled consumptions to each inventory item
-  // const inventoryWithCounts = await Promise.all(
-  //   inventorySites.map(async item => {
-  //     const unreconciledQuantity = await getUnreconciledCount(item.siteId, item.consumableId)
-  //     return { ...item, unreconciledQuantity }
-  //   })
-  // )
 
   return { data: inventorySites, total }
 }
