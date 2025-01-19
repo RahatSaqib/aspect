@@ -370,7 +370,7 @@ async function getInventoryByLot(request, requestQuery, dataConstraints) {
 }
 
 // ----------------------------------------------------------------------------------
-function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, columns = '*', includeUnreconciledCounts = false) {
+function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, columns = '*', includeUnreconciledCounts = true) {
 
   const inventoryQuery = getInventorySitesQuery(dataConstraints, request)
     .innerJoin('Assay as a', 'ca.assayId', 'a.id')
@@ -394,10 +394,37 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     })
 
   if (includeUnreconciledCounts) {
+    const siteHierarchy = `WITH RECURSIVE SiteHierarchy AS (
+      SELECT
+          id AS parentId,
+          id AS childId
+      FROM Site
+      UNION ALL
+      SELECT
+          sh.parentId,
+          childSite.id AS childId
+      FROM SiteHierarchy as sh
+      JOIN Site as childSite ON childSite.parentWarehouseId = sh.childId
+  )
+  SELECT parentid, childId
+  FROM SiteHierarchy`
+
+    const unreconciledQuantitySubquery = knex
+      .select('s.id as siteId', 'r.assayId', knex.raw('count(r.id) as unreconciledQuantity'))
+      .from('Site as s')
+      .join(knex.raw(`(${siteHierarchy}) as sh`), 's.id', 'sh.parentId')
+      .leftJoin('MissingInventoryLots as mil', 'mil.siteId', 's.id')
+      .leftJoin('Result as r', function () {
+        this.on('mil.resultId', 'r.id')
+      })
+      .groupBy('s.id', 'r.assayId')
+      .as('uc')
+
     inventoryQuery
-      .leftJoin('MissingInventoryLots as mil').on('s.id', 'mil.siteId')
-      .leftJoin('Result as r', 'mil.resultId', 'r.id').andOn('r.assayId', 'ca.assayId')
-      .count('r.id as unreconciledQuantity')
+      .join(unreconciledQuantitySubquery, function () {
+        this.on('s.id', 'uc.siteId')
+          .andOn('ca.assayId', 'uc.assayId')
+      }).select('uc.unreconciledQuantity')
   }
 
   return knex
@@ -429,14 +456,14 @@ async function getInventoryBySitesAndConsumable(request, dataConstraints, range)
   const inventorySites = await inventoryQuery
 
   // Add count of unreconciled consumptions to each inventory item
-  const inventoryWithCounts = await Promise.all(
-    inventorySites.map(async item => {
-      const unreconciledQuantity = await getUnreconciledCount(item.siteId, item.consumableId)
-      return { ...item, unreconciledQuantity }
-    })
-  )
+  // const inventoryWithCounts = await Promise.all(
+  //   inventorySites.map(async item => {
+  //     const unreconciledQuantity = await getUnreconciledCount(item.siteId, item.consumableId)
+  //     return { ...item, unreconciledQuantity }
+  //   })
+  // )
 
-  return { data: inventoryWithCounts, total }
+  return { data: inventorySites, total }
 }
 
 // ----------------------------------------------------------------------------------
