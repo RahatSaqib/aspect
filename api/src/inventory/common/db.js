@@ -327,18 +327,7 @@ function getInventoryLots(request, dataConstraints) {
       }
     })
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
-    .groupBy([
-      knex.raw(CONCATENATED_ID),
-
-      's.name',
-      knex.raw(
-        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN ii.lotNumber ELSE null END`
-      ),
-      knex.raw(
-        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END`
-      ),
-      'ii.inTransitFromSiteId',
-    ])
+    .groupBy([knex.raw(CONCATENATED_ID), 's.name', 'ii.expiresOn', 'ii.lotNumber', 'ii.inTransitFromSiteId'])
     .select(...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
 
   return inventoryItemsQuery

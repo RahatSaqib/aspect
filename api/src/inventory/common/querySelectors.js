@@ -134,18 +134,8 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
     CONCAT(
         c.id, '-', 
         s.id, '-', 
-        IFNULL(
-            (CASE 
-                WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy, 'expirationDate') > 0 THEN ii.expiresOn 
-                ELSE '' 
-            END), '-'
-        ), '-', 
-        IFNULL(
-            (CASE 
-                WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy, 'withlot') > 0 THEN ii.lotNumber 
-                ELSE '' 
-            END), ''
-        ), '-', 
+        ii.expiresOn, '-', 
+        ii.lotNumber, '-', 
         IFNULL(ii.inTransitFromSiteId, '')
     ) AS id
   `),
