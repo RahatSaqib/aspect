@@ -1,4 +1,4 @@
-  const { getConstraints } = require('../../auth/constraints')
+const { getConstraints } = require('../../auth/constraints')
 const getInventoryOverviewList = require('./db')
 const { getAllGeographiesWithNames } = require('../../geography/service')
 
@@ -7,41 +7,17 @@ module.exports = async function (request) {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const inventoryListPromise = getInventoryOverviewList(query, dataConstraints)
+  const inventoryListQuery = getInventoryOverviewList(query, dataConstraints)
 
   const geographiesPromise = getAllGeographiesWithNames(request, dataConstraints)
 
-  const [sites, geographies] = await Promise.all([inventoryListPromise, geographiesPromise])
-
-  aggregateChildrenUnreconciledQtyToWarehouse(sites)
+  const [sites, geographies] = await Promise.all([inventoryListQuery, geographiesPromise])
 
   const country = buildHierarchy(geographies, sites)
 
   fillHierarchicalAggregations(country)
 
   return { ok: true, length: sites.length, data: { country } }
-}
-
-/**
- * Aggregates unreconciled quantities from child sites to their parent warehouses.
- * @param {Array} sites - Array of site objects.
- * @remarks This function mutates the input array.
- * @remarks Note that the relationship between warehouses and their child sites
- * is defined by the site.parentWarehouseId property, which can differ from the geographical
- * relation between 2 sites.
- */
-function aggregateChildrenUnreconciledQtyToWarehouse(sites) {
-  // Iterate over each warehouse
-  const warehouses = sites.filter(site => site.type === 'warehouse')
-  warehouses.forEach(warehouse => {
-    // Calculate the total unreconciled quantity from child sites
-    const totalUnreconciledQty = sites
-      .filter(child => child.parentWarehouseId === warehouse.id)
-      .reduce((total, child) => total + child.unreconciledQuantity, warehouse.unreconciledQuantity)
-
-    // Assign the calculated total to the warehouse's unreconciledQuantity
-    warehouse.unreconciledQuantity = totalUnreconciledQty
-  })
 }
 
 /**

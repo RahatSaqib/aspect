@@ -1,6 +1,6 @@
 const { max, min, subDays, subYears, startOfDay, differenceInDays, parseISO } = require('date-fns')
 const { knex, filterDateRangeParams } = require('../../db')
-
+const { getUnreconciledQuantitiesSubquery } = require('../common/db')
 const { addConstraints } = require('../../auth/constraints')
 
 module.exports = async function (query, constraints) {
@@ -22,7 +22,6 @@ module.exports = async function (query, constraints) {
         .leftJoin('SiteType as stype', 's.siteTypeId', 'stype.id')
         .leftJoin('Geography as g', 's.geographyId', 'g.id')
         .leftJoin('Result as r', 'r.siteId', 's.id')
-        .leftJoin('MissingInventoryLots as mil', 'r.id', 'mil.resultId')
         .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
         .leftJoin('Assay as a', 'a.id', 'ca.assayId')
         .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
@@ -40,6 +39,7 @@ module.exports = async function (query, constraints) {
         .select([
           's.id as id',
           'c.id as consumableId',
+          'ca.assayId as assayId',
           's.name as lab',
           'stype.externalId as type',
           's.parentWarehouseId as parentWarehouseId',
@@ -57,10 +57,10 @@ module.exports = async function (query, constraints) {
           'g.stateId',
           'g.lgaId',
           knex.raw('min(r.endedOn) as firstResultDateInLastSixMonths'),
-          knex.raw('COUNT(CASE WHEN c.id = ? THEN mil.id ELSE NULL END) as unreconciledQuantity', consumableId),
         ])
         .as('site')
     )
+    .join('ConsumableAssay as ca', 'ca.consumableId', consumableId)
     .leftJoin('InventoryItem as ii', builder => {
       builder
         .on('site.id', 'ii.siteId')
@@ -77,12 +77,22 @@ module.exports = async function (query, constraints) {
       'site.countryId',
       'site.stateId',
       'site.lgaId',
+      'site.assayId',
       'site.parentWarehouseId',
       knex.raw('SUM(IFNULL(site.usedLastSixMonths,0)) as usedLastSixMonths'),
       knex.raw('SUM(IFNULL(site.usedInDateRange,0)) as usedInDateRange'),
       knex.raw('MIN(IFNULL(site.firstResultDateInLastSixMonths,0)) as firstResultDateInLastSixMonths'),
-      knex.raw('SUM(IFNULL(site.unreconciledQuantity,0)) as unreconciledQuantity'),
     ])
+
+  // Add unreconciled quantities
+  const unreconciledQuantitiesSubquery = getUnreconciledQuantitiesSubquery('uq')
+
+  overviewQuery
+    .leftJoin(unreconciledQuantitiesSubquery, function () {
+      this.on('site.id', 'uq.siteId')
+        .andOn('ca.assayId', 'uq.assayId')
+    })
+    .select('uq.unreconciledQuantity')
 
   const sites = await overviewQuery
 
@@ -93,8 +103,8 @@ module.exports = async function (query, constraints) {
 
       site.consumptionRateLastSixMonths = site.firstResultDateInLastSixMonths
         ? +(
-            site.usedLastSixMonths / Math.min(180, differenceInDays(now, parseISO(site.firstResultDateInLastSixMonths)))
-          ).toFixed(2)
+          site.usedLastSixMonths / Math.min(180, differenceInDays(now, parseISO(site.firstResultDateInLastSixMonths)))
+        ).toFixed(2)
         : 0
 
       site.daysOfInventoryLeft = Math.round(site.quantity / site.consumptionRateLastSixMonths)

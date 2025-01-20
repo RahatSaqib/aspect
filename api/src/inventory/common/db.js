@@ -70,32 +70,6 @@ function getInventoryItemsRawQuery() {
   `)
 }
 
-async function getUnreconciledCount(siteId, consumableId) {
-  const recursiveQuery = knex.raw(
-    `
-    WITH RECURSIVE site_hierarchy AS (
-      SELECT id, parentWarehouseId
-      FROM Site
-      WHERE id = ?
-      UNION ALL
-      SELECT s.id, s.parentWarehouseId
-      FROM Site s
-      INNER JOIN site_hierarchy sh ON s.parentWarehouseId = sh.id
-    )
-    SELECT id FROM site_hierarchy
-  `,
-    [siteId]
-  )
-  const result = await knex('MissingInventoryLots as mil')
-    .leftJoin('Result as r', 'mil.resultId', 'r.id')
-    .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
-    .whereIn('mil.siteId', knex.raw('(?)', [recursiveQuery]))
-    .andWhere('ca.consumableId', consumableId)
-    .count('r.id as resultCount')
-    .first()
-  return result.resultCount
-}
-
 // ----------------------------------------------------------------------------------
 function getInventorySitesQuery(constraints, request) {
   const inventoryItemsRaw = getInventoryItemsRawQuery() // This will generate the raw SQL for inventory items
@@ -890,6 +864,7 @@ module.exports = {
   getInventoryByLot,
   getInventoryBySitesAndConsumable,
   getGeneXpertInventoryBySitesAndConsumableQuery,
+  getUnreconciledQuantitiesSubquery,
   logInventoryChange,
   getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
   filteredInventoryItemsBase,
