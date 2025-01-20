@@ -394,38 +394,13 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     })
 
   if (includeUnreconciledCounts) {
-    const siteHierarchy = `WITH RECURSIVE SiteHierarchy AS (
-      SELECT
-          id AS parentId,
-          id AS childId
-      FROM Site
-      UNION ALL
-      SELECT
-          sh.parentId,
-          childSite.id AS childId
-      FROM SiteHierarchy as sh
-      JOIN Site as childSite ON childSite.parentWarehouseId = sh.childId
-  )
-  SELECT parentid, childId
-  FROM SiteHierarchy`
-
-    const unreconciledQuantitySubquery = knex
-      .select('s.id as siteId', 'r.assayId')
-      .count('r.id as unreconciledQuantity')
-      .from('Site as s')
-      .join(knex.raw(`(${siteHierarchy}) as sh`), 's.id', 'sh.parentId')
-      .leftJoin('MissingInventoryLots as mil', 'mil.siteId', 'sh.childId')
-      .leftJoin('Result as r', function () {
-        this.on('mil.resultId', 'r.id')
-      })
-      .groupBy('s.id', 'r.assayId')
-      .as('uc')
+    const unreconciledQuantitySubquery = getUnreconciledQuantitiesSubquery('uq')
 
     inventoryQuery
       .leftJoin(unreconciledQuantitySubquery, function () {
-        this.on('s.id', 'uc.siteId')
-          .andOn('ca.assayId', 'uc.assayId')
-      }).select('uc.unreconciledQuantity')
+        this.on('s.id', 'uq.siteId')
+          .andOn('ca.assayId', 'uq.assayId')
+      }).select('uq.unreconciledQuantity')
   }
 
   return knex
@@ -442,6 +417,35 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
       }
     })
     .select(columns, 'assayId')
+}
+
+function getUnreconciledQuantitiesSubquery(alias = 'uq') {
+  const siteHierarchy = `WITH RECURSIVE SiteHierarchy AS (
+    SELECT
+        id AS parentId,
+        id AS childId
+    FROM Site
+    UNION ALL
+    SELECT
+        sh.parentId,
+        childSite.id AS childId
+    FROM SiteHierarchy as sh
+    JOIN Site as childSite ON childSite.parentWarehouseId = sh.childId
+)
+SELECT parentid, childId
+FROM SiteHierarchy`
+
+  return knex
+    .select('s.id as siteId', 'r.assayId')
+    .count('r.id as unreconciledQuantity')
+    .from('Site as s')
+    .join(knex.raw(`(${siteHierarchy}) as sh`), 's.id', 'sh.parentId')
+    .leftJoin('MissingInventoryLots as mil', 'mil.siteId', 'sh.childId')
+    .leftJoin('Result as r', function () {
+      this.on('mil.resultId', 'r.id')
+    })
+    .groupBy('s.id', 'r.assayId')
+    .as(alias)
 }
 
 async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
