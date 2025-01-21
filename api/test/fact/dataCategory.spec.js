@@ -137,6 +137,8 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
         partnerId,
         siteId, // new site id
         deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+        dailyTestCapacity: partner.deviceCapacityFactor * 4,
+        moduleBayCapacity: 0,
         deviceApprovalId: await deviceApprovalToId('approved'),
         name: 'Test Device',
         shortName: 'Test Device',

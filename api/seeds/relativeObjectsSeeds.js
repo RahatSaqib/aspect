@@ -2,7 +2,6 @@ const now = new Date()
 const Promise = require('bluebird')
 const _ = require('lodash')
 const forms = require('./fixtures/forms')
-const timeZones = require('./fixtures/TimeZone').data
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const { getBaseForms } = require('./relatedObjects/forms')
@@ -113,8 +112,8 @@ async function addIssueTypes(
   return true
 }
 
-async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
-  const existingSchemas = await knex('FormDefinitionSchema').select()
+async function addDefaultCustomFieldDefinitions(knex, _partnerId, formsNeeded = Object.keys(forms)) {
+  const existingSchemas = await knex('FormDefinition').select()
   if (!_.isEmpty(existingSchemas)) {
     return
   }
@@ -163,22 +162,7 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
   return true
 }
 
-async function addTimeZones(knex) {
-  const [{ qty }] = await knex('TimeZone as t').count('t.id as qty')
-  if (qty === 0) {
-    try {
-      await knex('TimeZone').insert(timeZones)
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('error inserting TimeZones', e)
-      return false
-    }
-  }
-  return true
-}
-
 module.exports = {
-  addTimeZones,
   addIssueTypes,
-  addForms,
+  addDefaultCustomFieldDefinitions,
 }

@@ -1,9 +1,11 @@
 import { defineMessages } from 'react-intl'
 import { consumableMessages } from '../../../messages'
+import allMessage from '../../../messages/allMessages'
 import { commonDefinitions } from '../../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,
+  ...allMessage,
   ...consumableMessages,
   ...defineMessages({
     date: {
@@ -37,6 +39,38 @@ const messages = {
     notes: {
       id: 'pages.InventoryLog.notes',
       defaultMessage: 'Notes',
+    },
+    reconcilationAdjustment: {
+      id: 'pages.InventoryLog.reconcilationAdjustment',
+      defaultMessage: 'Applied Consumable Strategy',
+    },
+    reconcilationStrategy: {
+      id: 'pages.InventoryLog.reconcilationStrategy',
+      defaultMessage: 'Applied Reconciliation Strategy',
+    },
+    currentSiteAdjustment: {
+      id: 'pages.InventoryLog.currentSiteAdjustment',
+      defaultMessage: 'Current Site',
+    },
+    currentSiteAndProviderAdjustment: {
+      id: 'pages.InventoryLog.currentSiteAndProviderAdjustment',
+      defaultMessage: 'Current Site and Stock Provider',
+    },
+    currentSiteAndProviderAndNationalAdjustment: {
+      id: 'pages.InventoryLog.currentSiteAndProviderAndNationalAdjustment',
+      defaultMessage: 'Current Site, Stock Provider and all Parent Sites',
+    },
+    withLotStrategy: {
+      id: 'pages.InventoryLog.withLotStrategy',
+      defaultMessage: 'Cartridge Lot Number',
+    },
+    withExpirationDateStrategy: {
+      id: 'pages.InventoryLog.withExpirationDateStrategy',
+      defaultMessage: 'Expiry Date',
+    },
+    withLotAndExpirationDateStrategy: {
+      id: 'pages.InventoryLog.withLotAndExpirationDateStrategy',
+      defaultMessage: 'Expiry Date and Cartridge Lot Number',
     },
     notRecorded: {
       id: 'pages.InventoryLog.notRecorded',

@@ -14,7 +14,6 @@ const {
 const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
-const listDeviceCapacity = require('./listDeviceCapacity')
 const { exportDeviceOperationLogReport, getDeviceCoverageReport } = require('./serviceReports')
 const {
   exportWorkloadRequestSchema,
@@ -33,46 +32,6 @@ const getMtbErrorGraph = require('./getErrorGraph')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
 
 const routes = [
-  {
-    method: 'GET',
-    path: '/device/capacity/select-list',
-    handler: asyncHandler(listDeviceCapacity),
-    config: {
-      description: 'Device List',
-      notes: 'Pageable and sortable list of devices',
-      auth: { scope: ['device:view', 'operationalData:view'] },
-      validate: {
-        query: {
-          deviceTypeId: Joi.string().description(
-            'The device type external ID of the device capacity configurations to take'
-          ),
-        },
-      },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool().required().description('False if there was some sort of error'),
-          data: Joi.array()
-            .required()
-            .description('The list of device capacity configurations')
-            .items(
-              Joi.object().keys({
-                id: Joi.number().required().description('The ID of the device capacity configuration'),
-                name: Joi.string().required().description('The name of the device capacity configuration'),
-                dailyCapacity: Joi.number()
-                  .required()
-                  .description('The number of tests that the configuration can perform'),
-                modules: Joi.number().allow(null).description('Number of DeviceCapacity modules'),
-                externalId: Joi.string().allow(null, '').description('Field externalId of DeviceCapacity'),
-                i18nKey: Joi.string().allow(null, '').description('Intl key of DeviceCapacity modules'),
-              })
-            ),
-        }),
-      },
-    },
-  },
   {
     method: 'GET',
     path: '/device',
@@ -183,7 +142,7 @@ const routes = [
             .allow('', null)
             .min(0)
             .description('Number of GX-10C modules on GenExpert device'),
-          deviceCapacityId: Joi.number().allow(null).optional(),
+          dailyTestCapacity: Joi.number().allow(null).optional(),
           moduleBayCapacity: Joi.number()
             .optional()
             .min(0)

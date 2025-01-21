@@ -10,6 +10,13 @@ import getFormConfig from './Forms/editConfig'
 import getValidationSchema from './Forms/validation'
 import messages from './messages'
 
+const toCamelCase = str => {
+  return str
+    .toLowerCase()
+    .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => (index === 0 ? match.toLowerCase() : match.toUpperCase()))
+    .replace(/\s+/g, '')
+}
+
 export const getFormConfigWithData = (intl, isNew, values) => {
   const formSchema = getFormConfig(intl.formatMessage, isNew, values.assay)
 
@@ -54,6 +61,7 @@ function getRowsForCustomFields(values) {
     const baseItem = {
       id: customField.source,
       label: customField.title,
+      labelI18nKey: toCamelCase(customField.title),
       disabledIf: () => !customField.source,
     }
 

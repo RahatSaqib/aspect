@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
+import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryLogFilter } from '../../../cleanComponents'
 import {
@@ -19,6 +20,7 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { getTimezoneById } from '../../../utils/utils/timezone'
 import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
 import messages from './messages'
 import styles from './styles.module.css'
@@ -100,9 +102,21 @@ export const InventoryLogWithProps = ({
       label: intl.formatMessage(messages.notes),
       sortable: true,
     },
+    {
+      key: 'reconcilationStrategy',
+      label: intl.formatMessage(messages.reconcilationStrategy),
+      sortable: true,
+    },
+    {
+      key: 'reconcilationAdjustment',
+      label: intl.formatMessage(messages.reconcilationAdjustment),
+      sortable: true,
+    },
   ]
   const { data: items, total } = data || { data: null }
   const hasItems = items && items.length > 0
+  const { timezoneId } = useSelector(({ user }) => user)
+  const validTimeZone = getTimezoneById(timezoneId)
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack />
@@ -131,7 +145,7 @@ export const InventoryLogWithProps = ({
                   checked={isHierarchicalView}
                   onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
                 />
-                Hierarchical View
+                {intl.formatMessage(messages.hierarchicalView)}
               </Typography>
             </Stack>
             {isLoading ? (
@@ -153,6 +167,7 @@ export const InventoryLogWithProps = ({
                       <InventoryLogTableRow
                         key={`InventoryLog---${location.key}--${index}`}
                         inventoryLogItem={inventoryLogItem}
+                        timeZone={validTimeZone}
                       />
                     ))}
                   </TableBody>

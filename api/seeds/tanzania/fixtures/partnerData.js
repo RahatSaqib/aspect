@@ -35,4 +35,5 @@ module.exports = {
       },
     },
   ],
+  deviceCapacityFactor: 3,
 }
