@@ -88,7 +88,7 @@ const AspectResultDetail = () => {
     } else {
       throw new Error('Can not fetch data for result')
     }
-  }, [isLoading, queryResponse])
+  }, [isLoading, queryResponse, validTimeZone])
 
   const { mutate: submitResult } = useMutation(
     ({ values }) =>
