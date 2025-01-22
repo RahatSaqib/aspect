@@ -1,5 +1,5 @@
-const { bangladeshModuleVersions } = require('./bangladeshModuleVersions');
+const { bangladeshModuleVersions } = require('./bangladeshModuleVersions')
 
 module.exports = {
-  bangladeshModuleVersions
+  bangladeshModuleVersions,
 }

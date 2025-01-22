@@ -82,26 +82,18 @@ async function summaryDashboard(request) {
       const extra = await queryValue(sqlForExtra, dataConstraints, query)
 
       let indicatorQueryResult
-      if (!sqlForIndicator) {
-        const knexFunction = knexWidgets[externalId];
-        indicatorQueryResult = await knexFunction(knex, dataConstraints) || { cnt: null }
+      if (!sqlForIndicator && knexWidgets[externalId]) {
+        const knexFunction = knexWidgets[externalId]
+        const indicatorKnexQuery = knexFunction(knex, dataConstraints) || { cnt: null }
+        indicatorQueryResult = (await indicatorKnexQuery) || { cnt: null }
       } else {
-        indicatorQueryResult = await queryValue(sqlForIndicator, dataConstraints, query) || { cnt: null }
+        indicatorQueryResult = (await queryValue(sqlForIndicator, dataConstraints, query)) || { cnt: null }
       }
 
       const { cnt, ...restCountProps } = indicatorQueryResult
 
-      const widgetData = {
-        count: cnt || 0,
-        unit: unit ? unit.cnt : null,
-        extra: extra ? extra.cnt : null,
-        ...restCountProps,
-      }
-
-      widget = _.assign(_.omit(widget, ['sqlForIndicator', 'sqlForStatUnit', 'sqlForExtra', 'sortOrder']), widgetData);
-
       widget = _.assign(_.omit(widget, ['sqlForIndicator', 'sqlForStatUnit', 'sqlForExtra', 'sortOrder']), {
-        count: countCnt || 0,
+        count: cnt || 0,
         unit: unit ? unit.cnt : null,
         extra: extra ? extra.cnt : null,
         ...restCountProps,
