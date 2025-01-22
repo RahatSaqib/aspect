@@ -1,5 +1,39 @@
 const { INTERNAL_DEVICE_IDS } = require('../../src/shared/constants')
 
+const commonUtilizationRateQuery = (dateCondition, dayCondition) => `
+  SELECT
+  CONCAT(
+    ROUND(
+      IFNULL(
+        SUM(resultCount)
+        /
+        SUM(dailyTestCapacity * GetWeekdaysInRangeCustom(
+          NOW(), 
+          DATE_FORMAT(NOW(), '%Y-%m-01'),
+          CASE 
+            WHEN customWorkingDays IS NOT NULL
+            THEN JSON_UNQUOTE(JSON_EXTRACT(customWorkingDays, '$.excludedDays'))
+            ELSE NULL
+          END
+        )) * 100
+      ,0)
+    ,0)
+  ,'%') AS cnt
+  FROM (
+    SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity, p.customWorkingDays
+      FROM Device AS d
+      INNER JOIN Partner AS p ON d.partnerId = p.id
+      INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
+      INNER JOIN Site AS s ON s.id = d.siteId
+      LEFT OUTER JOIN Result AS r ON d.id = r.deviceId 
+        AND ${dateCondition}
+        AND ${dayCondition}
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+    WHERE dtc.hasResults = 1
+    GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
+  ) AS innerQuery`
+
 // helper funcs and vars
 const partialValidResults = `SELECT
 CASE
@@ -267,48 +301,14 @@ const utilizationRate = {
   titleI18nKey: 'utilizationRateTitle',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: `SELECT
-  CONCAT(
-    ROUND(
-      IFNULL(
-        SUM(resultCount)
-        /
-        SUM(dailyTestCapacity * GetWeekdaysInRange(NOW(), DATE_FORMAT(NOW(), '%Y-%m-01'))) * 100
-      ,0)
-    ,0)
-  ,'%') AS cnt
-  FROM (
-    SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity
-      FROM Device AS d
-      INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
-      INNER JOIN Site AS s ON s.id = d.siteId
-      LEFT OUTER JOIN Result AS r ON d.id= r.deviceId AND DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn) AND DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7
-      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-    WHERE dtc.hasResults = 1
-    GROUP BY d.id, d.dailyTestCapacity
-  ) AS innerQuery`,
-  sqlForStatUnit: `SELECT
-  CONCAT(
-    ROUND(
-      IFNULL(
-        SUM(resultCount)
-        /
-        SUM(dailyTestCapacity * GetWeekdaysInRange(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'))) * 100
-      ,0)
-    ,0)
-  ,'%') AS cnt
-  FROM (
-    SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity
-      FROM Device AS d
-      INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
-      INNER JOIN Site AS s ON s.id = d.siteId
-      LEFT OUTER JOIN Result AS r ON d.id = r.deviceId AND DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') > r.endedOn AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') < r.endedOn AND DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7
-      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-    WHERE dtc.hasResults = 1
-    GROUP BY d.id, d.dailyTestCapacity
-  ) AS innerQuery`,
+  sqlForIndicator: commonUtilizationRateQuery(
+    "DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)",
+    'DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7'
+  ),
+  sqlForStatUnit: commonUtilizationRateQuery(
+    "DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') > r.endedOn AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') < r.endedOn",
+    'DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7'
+  ),
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/device/list',
