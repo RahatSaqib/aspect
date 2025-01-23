@@ -2289,6 +2289,15 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
   }
 }
 
+// ---------------------------------------------------------------------------
+async function getResultsForNtpUse(auth, query, timezone, options) {
+  console.log(`authentication`, auth, query, timezone, options)
+  return {
+    ok: true,
+    data: [],
+  }
+}
+
 module.exports = {
   getDataForReportDrTb10A,
   getDataForReportDrTb10AStool,
@@ -2297,4 +2306,5 @@ module.exports = {
   getReportDrTb10a10bCovidNtpUse,
   getReportCustomFieldsCompletion,
   getDataForReportForNtpUse,
+  getResultsForNtpUse,
 }
