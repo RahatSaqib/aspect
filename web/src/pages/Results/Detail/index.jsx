@@ -56,10 +56,10 @@ const AspectResultDetail = () => {
     if (isLoading || !queryResponse) return
     if (queryResponse?.ok) {
       const { data } = queryResponse
-      data.startedOn = data.startedOn
-        ? formatInTimeZone(new Date(data.startedOn), validTimeZone, 'yyyy-MM-dd HH:mm')
+      const timeOfTheTest = data.endedOn || data.startedOn
+      data.startedOn = timeOfTheTest
+        ? formatInTimeZone(new Date(timeOfTheTest), validTimeZone, 'yyyy-MM-dd HH:mm')
         : 'N/A'
-      data.endedOn = data.endedOn ? formatInTimeZone(new Date(data.endedOn), validTimeZone, 'yyyy-MM-dd HH:mm') : 'N/A'
       data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
       /**
        * This field `allResistances` is displayed in `textArea` component in readOnly mode.
