@@ -58,7 +58,7 @@ const AspectResultDetail = () => {
       const { data } = queryResponse
       const timeOfTheTest = data.endedOn || data.startedOn
       data.startedOn = timeOfTheTest
-        ? formatInTimeZone(new Date(timeOfTheTest), validTimeZone, 'yyyy-MM-dd HH:mm')
+        ? formatInTimeZone(new Date(timeOfTheTest), validTimeZone, 'yyyy-MM-dd  HH:mm')
         : 'N/A'
       data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
       /**
