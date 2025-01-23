@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import { Box, Card, LinearProgress, Stack, Switch, Typography } from '@mui/material'
+import { Box, Card, LinearProgress, Stack, Button, Switch, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
@@ -14,11 +14,13 @@ import {
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton'
+import useAutoReconciliation from '../../../hooks/inventory/useAutoReconciliation'
 import useInventoryReconciliation from '../../../hooks/inventory/useInventoryReconciliation'
 import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { InventoryReconciliationList } from './InventoryReconciliationList'
 import messages from './messages'
@@ -31,6 +33,7 @@ export function InventoryReconciliation() {
   const navigate = useNavigate()
   const [, setSearchParams] = useSearchParams()
   const [filters, setFilters] = usePathFilter()
+  const { mutate: autoReconcile, isLoading: isAutoReconciling } = useAutoReconciliation()
   const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_RECONCILIATION,
   })
@@ -41,6 +44,8 @@ export function InventoryReconciliation() {
   const { data, isLoading } = useInventoryReconciliation(
     omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters }, isNil)
   )
+  const allowed = required => isPermittedUser(user.userPermissions, { required })
+
   const handleExport = useCallback(
     formatType =>
       getExportableFile(omitBy(filters, isNil), formatType, sortCol, sortDir, data?.data?.length, 'reconciliation'),
@@ -97,7 +102,7 @@ export function InventoryReconciliation() {
                 />
               </Stack>
             </Stack>
-            {isLoading ? (
+            {isLoading || isAutoReconciling ? (
               <LinearProgress />
             ) : !data || !data?.data || data?.data?.length === 0 ? (
               <BrowseEmptyList />
@@ -117,6 +122,13 @@ export function InventoryReconciliation() {
                   pageSize={pageSize}
                   navigate={navigate}
                 />
+                {allowed(['admin:edit']) ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                    <Button variant="contained" color="primary" onClick={() => autoReconcile(filters)}>
+                      {formatMessage(messages.autoReconcileNow)}
+                    </Button>
+                  </Box>
+                ) : null}
               </>
             )}
           </Card>

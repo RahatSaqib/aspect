@@ -20,23 +20,30 @@ const getMissingInventoryGroups = () =>
       's.parentWarehouseId',
       'ca.consumableId',
       knex.raw('DATE(m.expirationDate) as expirationDate'),
+      knex.raw('m.lotNumber'),
     ])
     .clone()
 
-const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate) =>
+const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate, lotNumber) =>
   getMissingInventoryBaseQuery()
-    .where(qb =>
-      qb
-        .where('m.siteId', siteId)
-        .andWhere('ca.consumableId', consumableId)
-        .andWhere(knex.raw('DATE(m.expirationDate) <=> DATE(:expirationDate)', { expirationDate }))
-    )
+    .where(qb => {
+      qb.where('m.siteId', siteId).andWhere('ca.consumableId', consumableId)
+      if (expirationDate) {
+        qb.andWhere(knex.raw('DATE(m.expirationDate) <=> DATE(:expirationDate)', { expirationDate }))
+      }
+
+      if (lotNumber) {
+        qb.andWhere('m.lotNumber', lotNumber)
+      }
+    })
     .select([
       'm.id as missingInventoryLotId',
       'r.id as resultId',
       'r.assayId',
       'r.endedOn',
       'r.startedOn',
+      knex.raw('DATE(m.expirationDate) as expirationDate'),
+      knex.raw('m.lotNumber'),
       knex('DeviceLog')
         .where('resultId', knex.ref('r.id'))
         .select('rawMessage')
@@ -50,13 +57,14 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
   const missingInventoryGroups = await getMissingInventoryGroups()
   /* eslint-disable no-await-in-loop */
   for (const missingInventoryGroup of missingInventoryGroups) {
-    const { partnerId, siteId, consumableId, expirationDate } = missingInventoryGroup
+    const { partnerId, siteId, consumableId, lotNumber, expirationDate } = missingInventoryGroup
 
     // We should get all the InventoryMissingLots limited by the quantityToReconcile and ordered by result.endedOn
     const missingInventoryToReconcile = await getMissingInventoryToReconcile(
       siteId,
       consumableId,
-      expirationDate
+      expirationDate,
+      lotNumber
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
@@ -88,4 +96,5 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
 
 module.exports = {
   missingInventoryLotsResolver,
+  getMissingInventoryToReconcile,
 }
