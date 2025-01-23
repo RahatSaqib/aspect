@@ -1,6 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { format, parseISO, addMonths, startOfYear, subYears } = require('date-fns')
+const { format, parseISO, addMonths, startOfYear, subYears, endOfMonth } = require('date-fns')
 const locales = require('date-fns/locale')
 const { knex, filterParams } = require('../../db')
 const { getConstraints, canViewResults, addConstraints } = require('../../auth/constraints')
@@ -20,7 +20,7 @@ const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
     return (
       startDate.getDate() === 1 &&
       endDate.getMonth() === startDate.getMonth() &&
-      endDate.getDate() === new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate()
+      endDate.getDate() === endOfMonth(endDate).getDate()
     )
   }
 
@@ -164,9 +164,9 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
   })
 
   const { partnerId } = await getUser(auth.credentials.name)
-  const PartnerConfig = (await knex('Partner').select('customWorkingDays').where('id', partnerId).first()) || {}
+  const partnerConfig = (await knex('Partner').select('customWorkingDays').where('id', partnerId).first()) || {}
 
-  const customWorkingDaysConfig = PartnerConfig.customWorkingDays ? JSON.parse(PartnerConfig.customWorkingDays) : null
+  const customWorkingDaysConfig = partnerConfig.customWorkingDays ? JSON.parse(partnerConfig.customWorkingDays) : null
 
   const CUSTOM_WORKING_DAYS_IN_YEAR = query.tableData
     ? getWorkingDays(query.minDate, query.maxDate, customWorkingDaysConfig)
