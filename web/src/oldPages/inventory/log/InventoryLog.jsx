@@ -145,7 +145,7 @@ export const InventoryLogWithProps = ({
                   checked={isHierarchicalView}
                   onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
                 />
-                Hierarchical View
+                {intl.formatMessage(messages.hierarchicalView)}
               </Typography>
             </Stack>
             {isLoading ? (

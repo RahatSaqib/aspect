@@ -64,9 +64,13 @@ async function shouldNotifyResult(resultId, notificationTypeId) {
     .innerJoin('Site as s', 'r.siteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .where('r.id', resultId)
-    .where('rt.excluded', false)
-    .select(['g.countryId', 'at.diseaseId', 'r.*'])
+    .select(['g.countryId', 'at.diseaseId', 'rt.excluded', 'r.*'])
     .first()
+
+  // Excluded results should not be notified
+  if (result.excluded) {
+    return false
+  }
 
   const { daysLimitToNotifyResults, hoursNotificationsShouldWaitForCustomFields } = await knex('Partner')
     .where('id', result.partnerId)

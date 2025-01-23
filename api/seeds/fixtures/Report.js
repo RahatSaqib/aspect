@@ -396,7 +396,7 @@ const doNotUseModulesReport = {
 const unusedModulesReport = {
   name: 'Unused Modules',
   description: "Shows all devices that haven't used all available modules in the selected time period..",
-  i18nKey: 'unUseModulesReport',
+  i18nKey: 'unusedModulesReport',
   i18nKeyDescription: 'unusedModulesReport_Description',
   externalId: 'unused_modules_report',
   fileName: 'unusedModulesReport',

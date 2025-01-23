@@ -505,6 +505,32 @@ const messages = {
       id: 'p.PkDashboard.last6Months',
       defaultMessage: 'Last 6 Months',
     },
+    whoBenchmark: {
+      id: 'pages.ErrorRate.whoBenchmark',
+      defaultMessage: 'WHO Benchmark ',
+    },
+    currentQtyTooltip: {
+      id: 'p.PkDashboard.currentQtyTooltip',
+      defaultMessage: 'Its the current quantity in hand, including the expired quantity.',
+    },
+    usedToolTip: {
+      id: 'p.PkDashboard.usedToolTip',
+      defaultMessage: 'Its the total cartidges consumed in the date range filter selected',
+    },
+    daysLeftTooltip: {
+      id: 'p.PkDashboard.daysLeftTooltip',
+      defaultMessage:
+        'The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges',
+    },
+    consumptionRateTooltip: {
+      id: 'p.PkDashboard.consumptionRateTooltip',
+      defaultMessage: 'Its the average daily consumption of the specific cartridge considering the date range selected',
+    },
+    last6MonthsTooltip: {
+      id: 'p.PkDashboard.last6MonthsTooltip',
+      defaultMessage:
+        'Its the total cartridges consumed in last 6 months, irrespective of the period selected in filter option',
+    },
   }),
 }
 
