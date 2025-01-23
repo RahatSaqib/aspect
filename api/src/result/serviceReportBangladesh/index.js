@@ -1198,7 +1198,7 @@ async function getDataForSheet1or2(
   /**
    * cnt_Xdr_Total_Tests = cnt_Xdr_Tested_From_Eligible + (cnt_Xdr_Total_Tests from other sites)
    */
-  item.cnt_Xdr_Total_Tests = item.cnt_Xdr_Tested_From_Eligible
+  item.cnt_Xdr_Total_Tests = item.cnt_Xdr_Tested_From_Eligible || 0
   /**
    * get number of results from other sites which are referring sites in main query
    */
@@ -1206,6 +1206,19 @@ async function getDataForSheet1or2(
     const it = await getQueryForXdrCountsByReferringSiteIds(allSiteIds, sampleType)
     item.cnt_Xdr_Total_Tests += it?.cnt_Xdr_Total_Tests || 0
   }
+
+  /**
+   * Subtract invalid, no result, and error cases from cnt_Xdr_Total_Tests
+   */
+  const invalidNoResultErrorSum =
+    (item.cnt_Presumptive_TB_Cases_Invalid_Xdr || 0) +
+    (item.cnt_Presumptive_TB_Cases_NoResult_Xdr || 0) +
+    (item.cnt_Presumptive_TB_Cases_Error_Xdr || 0) +
+    (item.cnt_Presumptive_DR_TB_Cases_Invalid_Xdr || 0) +
+    (item.cnt_Presumptive_DR_TB_Cases_NoResult_Xdr || 0) +
+    (item.cnt_Presumptive_DR_TB_Cases_Error_Xdr || 0)
+
+  item.cnt_Xdr_Total_Tests -= invalidNoResultErrorSum
 
   let data = item
   if (_.isNil(data)) data = {}
