@@ -4,7 +4,7 @@ const { getConstraints, addConstraints, canViewSites, canViewInventories } = req
 const { getUser } = require('../auth/service')
 const { queryValue } = require('../shared/sql-2-knex')
 const { addExtraData } = require('./options')
-
+const knexWidgets = require('./widgets')
 const resultsTransmittedDashboard = require('./resultsTransmitted')
 const activityOverTimeDashboard = require('./activityOverTime')
 
@@ -76,15 +76,24 @@ async function summaryDashboard(request) {
   const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard, country })
   const data = await Promise.all(
     widgets.map(async widget => {
-      const { sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget
+      const { externalId, sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget
+
       const unit = await queryValue(sqlForStatUnit, dataConstraints, query)
       const extra = await queryValue(sqlForExtra, dataConstraints, query)
-      const { cnt: countCnt, ...restCountProps } = (await queryValue(sqlForIndicator, dataConstraints, query)) || {
-        cnt: null,
+
+      let indicatorQueryResult
+      if (!sqlForIndicator && knexWidgets[externalId]) {
+        const knexFunction = knexWidgets[externalId]
+        const indicatorKnexQuery = knexFunction(knex, dataConstraints) || { cnt: null }
+        indicatorQueryResult = (await indicatorKnexQuery) || { cnt: null }
+      } else {
+        indicatorQueryResult = (await queryValue(sqlForIndicator, dataConstraints, query)) || { cnt: null }
       }
 
+      const { cnt, ...restCountProps } = indicatorQueryResult
+
       widget = _.assign(_.omit(widget, ['sqlForIndicator', 'sqlForStatUnit', 'sqlForExtra', 'sortOrder']), {
-        count: countCnt || 0,
+        count: cnt || 0,
         unit: unit ? unit.cnt : null,
         extra: extra ? extra.cnt : null,
         ...restCountProps,
