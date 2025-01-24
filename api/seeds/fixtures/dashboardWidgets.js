@@ -2128,6 +2128,23 @@ const activeModuleBays = {
   },
 }
 
+const disabledModulesWidget = {
+  jobFunctions: ['all'],
+  icon: 'MdViewModule',
+  title: 'Non functional/Disabled Modules',
+  titleI18nKey: 'disabledModulesWidget',
+  subTitle: null,
+  subTitleI18nKey: null,
+  sqlForIndicator: '',
+  sortOrder: 0,
+  externalId: 'disabledModules',
+  description: 'Count of Distinct Disabled GeneXpert Modules.',
+  descriptionI18nKey: 'countOfDistinctDisabledGeneXpertModules',
+  dashboards: {
+    home: {},
+  },
+}
+
 module.exports = {
   WIDGET_GROUP_KEYS,
   WIDGET_FILTER_KEYS,
@@ -2170,5 +2187,6 @@ module.exports = {
     instrumentsConnected,
     totalModuleBays,
     activeModuleBays,
+    disabledModulesWidget,
   },
 }

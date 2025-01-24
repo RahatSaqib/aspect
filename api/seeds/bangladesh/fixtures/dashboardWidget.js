@@ -22,29 +22,11 @@ const moduleVersionWidget = {
   },
 }
 
-const disabledModulesWidget = {
-  jobFunctions: ['all'],
-  icon: 'MdViewModule',
-  title: 'Non functional/Disabled Modules',
-  titleI18nKey: 'disabledModulesWidget',
-  subTitle: null,
-  subTitleI18nKey: null,
-  sqlForIndicator: '',
-  sortOrder: 0,
-  externalId: 'disabledModules',
-  description: 'Count of Distinct Disabled GeneXpert Modules.',
-  descriptionI18nKey: 'countOfDistinctDisabledGeneXpertModules',
-  dashboards: {
-    home: {},
-  },
-}
-
 module.exports = {
   stat: {
     ...dashboardWidgetsBase,
     totalModuleBays,
     activeModuleBays,
     moduleVersionWidget,
-    disabledModulesWidget,
   },
 }
