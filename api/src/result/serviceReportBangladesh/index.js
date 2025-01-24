@@ -957,7 +957,12 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         ),
         // ------------
         // cell N42
-        cnt_TypeOfPatient_OtherExtraPulm_New_all: andByHistory('Others - Extra Pulmonary', 'New', null, assayMtb),
+        cnt_TypeOfPatient_OtherExtraPulm_New_all: andByHistory(
+          'Others - Extra Pulmonary',
+          'New',
+          excludeNonResultCategories,
+          assayMtb
+        ),
         // cell Q41
         cnt_TypeOfPatient_OtherExtraPulm_New_Mtb: andByHistory(
           'Others - Extra Pulmonary',
