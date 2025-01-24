@@ -381,7 +381,7 @@ const doNotUseModulesReport = {
   externalId: 'do_not_use_modules_report',
   fileName: 'DoNotUseModulesReport',
   availableForNotification: 1,
-  exportCsv: true,
+  exportCsv: false,
   sortOrder: 125,
   validations: [],
   sheets: [

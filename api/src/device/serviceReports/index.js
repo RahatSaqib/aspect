@@ -409,6 +409,12 @@ async function getDoNotUseModulesReport(auth, query, timezone) {
     ok: true,
     data: rows,
     total: rows.length,
+    replacements: [
+      {
+        placeholder: '<countOfDistinctDisabledModules>',
+        value: [...new Set(rows.map(row => row.moduleSerial))].length,
+      },
+    ],
   }
 }
 
