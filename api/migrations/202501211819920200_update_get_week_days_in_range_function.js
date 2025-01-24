@@ -30,6 +30,5 @@ async function up(knex) {
 }
 
 async function down(knex) {
-  // Drop both functions
   await knex.raw('DROP FUNCTION IF EXISTS GetWeekdaysInRangeCustom')
 }
