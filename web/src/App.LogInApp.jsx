@@ -11,6 +11,7 @@ import messages from './messages/allMessages'
 import AspectDialog from './oldComponents/shared/AspectDialog'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import RecordPageViewProvider from './providers/RecordPageViewProvider'
+import { routePaths } from './routes/constants'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
@@ -231,7 +232,7 @@ const LogInApp = () => {
 
                 {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
                 {a(['browse', 'result:edit']) ? (
-                  <Route path="/browse/result/:resultId/*" element={<ResultDetail />} />
+                  <Route path={routePaths.RESULT_DETAILS} element={<ResultDetail />} />
                 ) : null}
 
                 {a(['browse', 'site']) ? (
