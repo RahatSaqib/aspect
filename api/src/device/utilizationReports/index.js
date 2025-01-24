@@ -11,6 +11,13 @@ const WORKING_DAYS_IN_YEAR = 252
 const DEFAULT_MODULES = 4
 const DEFAULT_DAILY_CAPACITY = DEFAULT_MODULES * 3
 
+const getPartnerWorkingDaysConfig = async auth => {
+  const { partnerId } = await getUser(auth.credentials.name)
+  const partnerConfig = (await knex('Partner').select('customWorkingDays').where('id', partnerId).first()) || {}
+
+  return partnerConfig.customWorkingDays ? JSON.parse(partnerConfig.customWorkingDays) : null
+}
+
 const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
   // Parse the input dates and reset time to midnight without considering time zone
   const startDate = new Date(minDate.split('T')[0])
@@ -163,10 +170,7 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
     timeFrame,
   })
 
-  const { partnerId } = await getUser(auth.credentials.name)
-  const partnerConfig = (await knex('Partner').select('customWorkingDays').where('id', partnerId).first()) || {}
-
-  const customWorkingDaysConfig = partnerConfig.customWorkingDays ? JSON.parse(partnerConfig.customWorkingDays) : null
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
 
   const CUSTOM_WORKING_DAYS_IN_YEAR = query.tableData
     ? getWorkingDays(query.minDate, query.maxDate, customWorkingDaysConfig)
@@ -221,6 +225,9 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
     timeFrame,
   })
 
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
+
+  const customWorkingDays = customWorkingDaysConfig ? customWorkingDaysConfig.daysPerYear : WORKING_DAYS_IN_YEAR
   /**
    *
    */
@@ -277,7 +284,7 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
         state.rates = state.rates || []
 
         const totalInPeriod = state.periodMap[periodName]
-        const percent = (totalInPeriod * 100) / Math.max(state.dailyCapacity * WORKING_DAYS_IN_YEAR, 1)
+        const percent = (totalInPeriod * 100) / Math.max(state.dailyCapacity * customWorkingDays, 1)
         const rateItem = { year: periodName, count: totalInPeriod, rate: _.round(percent, 2) }
         state.rates = [...state.rates, rateItem]
       })
