@@ -19,7 +19,7 @@ async function up(knex) {
       SET currentDate = startDate;
       
       WHILE currentDate <= endDate DO
-        IF FIND_IN_SET(WEEKDAY(currentDate), daysToExclude) THEN
+        IF FIND_IN_SET(DAYOFWEEK(currentDate), daysToExclude) THEN
           SET excludedDaysCount = excludedDaysCount + 1;
         END IF;
         SET currentDate = DATE_ADD(currentDate, INTERVAL 1 DAY);

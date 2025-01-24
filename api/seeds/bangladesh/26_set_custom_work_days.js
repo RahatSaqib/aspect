@@ -9,7 +9,7 @@ async function seed(knex) {
     .where({ externalId })
     .update({
       customWorkingDays: JSON.stringify({
-        excludedDays: '4', // Exclude Fridays. To include another day, add a comma and the day number, e.g. '5,6'. MySQL starts from 0=Monday, 1=Tuesday, ..., 6=Sunday
+        excludedDays: '6', // Exclude Fridays. the function DAYOFWEEK starts from Sunday 1-7, where 1 is Sunday and 7 is Saturday
         daysPerMonth: 24,
         daysPerQuarter: 72,
         daysPerYear: 288,

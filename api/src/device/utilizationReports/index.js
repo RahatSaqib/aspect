@@ -5,18 +5,12 @@ const locales = require('date-fns/locale')
 const { knex, filterParams } = require('../../db')
 const { getConstraints, canViewResults, addConstraints } = require('../../auth/constraints')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
-const { getPersonByPersonId, getUser } = require('../../auth/service')
+const { getPersonByPersonId } = require('../../auth/service')
+const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
 
 const WORKING_DAYS_IN_YEAR = 252
 const DEFAULT_MODULES = 4
 const DEFAULT_DAILY_CAPACITY = DEFAULT_MODULES * 3
-
-const getPartnerWorkingDaysConfig = async auth => {
-  const { partnerId } = await getUser(auth.credentials.name)
-  const partnerConfig = (await knex('Partner').select('customWorkingDays').where('id', partnerId).first()) || {}
-
-  return partnerConfig.customWorkingDays ? JSON.parse(partnerConfig.customWorkingDays) : null
-}
 
 const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
   // Parse the input dates and reset time to midnight without considering time zone

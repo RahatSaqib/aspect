@@ -17,7 +17,7 @@ const commonUtilizationRateQuery = (dateCondition, dayCondition) => `
           END
         )) * 100
       ,0)
-    ,0)
+    ,2)
   ,'%') AS cnt
   FROM (
     SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity, p.customWorkingDays
