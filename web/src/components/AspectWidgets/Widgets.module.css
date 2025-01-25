@@ -139,28 +139,27 @@
 }
 
 .Summary__Card__Item__Count__Small {
-  font-size: 26px;
+  font-size: 22px;
 }
-
 
 @media (max-width: 1440px) {
   .Summary__Card__Item__Count,
   .Summary__Card__Item__Count__Small {
-    font-size: 22px;
+    font-size: 20px;
   }
 }
 
 @media (max-width: 1200px) {
   .Summary__Card__Item__Count,
   .Summary__Card__Item__Count__Small {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 900px) {
   .Summary__Card__Item__Count,
   .Summary__Card__Item__Count__Small {
-    font-size: 10px;
+    font-size: 9px;
   }
 }
 
