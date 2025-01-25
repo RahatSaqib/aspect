@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-01-14T04:26:05.358Z\n"
+"POT-Creation-Date: 2025-01-25T04:10:02.389Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1069,6 +1069,13 @@ msgstr "август"
 #: extracted_strings.json
 msgid "August"
 msgstr "август"
+
+#. [pages.inventoryReconciliation.autoReconcileNow]
+#. defaultMessage is:
+#. Auto Reconcile Now
+#: extracted_strings.json
+msgid "Auto Reconcile Now"
+msgstr "Ҳоло худкор оштӣ кунед"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -14011,6 +14018,13 @@ msgstr "Панҷшанбе"
 msgid "Time Zone"
 msgstr "Минтақаи вақт"
 
+#. [forms.formItem.timeOfTheTest]
+#. defaultMessage is:
+#. Time of the Test
+#: extracted_strings.json
+msgid "Time of the Test"
+msgstr "Вақти санҷиш"
+
 #. [pages.NotificationDetail.recurrenceFactor]
 #. defaultMessage is:
 #. Times
@@ -15959,35 +15973,35 @@ msgstr "{entity} лозим аст"
 #. {itemCount, plural, one {# Contact} other {# Contacts} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
-msgstr "{itemCount, plural, one {# Тамос} other {# Тамос} }"
+msgstr "{itemCount, plural, one {# Contact} other {# Contacts} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Job Function} other {# Job Functions} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
-msgstr "{itemCount, plural, one {# Функсияи корӣ} other {# Вазифаҳои корӣ} }"
+msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Name} other {# Names} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Name} other {# Names} }"
-msgstr "{itemCount, plural, one {# Ном} other {# Ном} }"
+msgstr "{itemCount, plural, one {# Name} other {# Names} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCountPersons]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, ҷамъ, як {# Person} дигар {# Persons} }"
+msgstr "{itemCount, plural, one {# Person} other {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
 #. {itemCount} (total)
 #: extracted_strings.json
 msgid "{itemCount} (total)"
-msgstr "{itemCount} (умум)"
+msgstr "{itemCount} (total)"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleResultsReported]
 #. defaultMessage is:
@@ -16008,15 +16022,15 @@ msgid ""
 "{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one "
 "{# day} other {# days} }"
 msgstr ""
-"{maintenanceStatusName} ({totalResults}) барои {daysInSameStatus, plural, "
-"one {# рӯзи other} {# рӯзи other} }"
+"{maintenanceStatusName} ({totalResults}) барои  {daysInSameStatus, plural, "
+"one {# day} other {# days} }"
 
 #. [pages.DeviceDetailProfile.deviceCapacityModules]
 #. defaultMessage is:
 #. {numberOfModules, plural, one {# module} other {# modules} }
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
-msgstr "{numberOfModules, plural, one {# модул} other {# модул} }"
+msgstr "{numberOfModules, plural, one {# module} other {# modules} }"
 
 #. [p.PkDashboard.customPerYear]
 #. defaultMessage is:

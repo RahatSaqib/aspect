@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-01-14T04:26:05.358Z\n"
+"POT-Creation-Date: 2025-01-25T04:10:02.389Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1071,6 +1071,13 @@ msgstr "Авг"
 #: extracted_strings.json
 msgid "August"
 msgstr "Август"
+
+#. [pages.inventoryReconciliation.autoReconcileNow]
+#. defaultMessage is:
+#. Auto Reconcile Now
+#: extracted_strings.json
+msgid "Auto Reconcile Now"
+msgstr "Автоматическое согласование сейчас"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -14009,6 +14016,13 @@ msgstr "Четверг"
 #: extracted_strings.json
 msgid "Time Zone"
 msgstr "Часовой пояс"
+
+#. [forms.formItem.timeOfTheTest]
+#. defaultMessage is:
+#. Time of the Test
+#: extracted_strings.json
+msgid "Time of the Test"
+msgstr "Время проведения теста"
 
 #. [pages.NotificationDetail.recurrenceFactor]
 #. defaultMessage is:

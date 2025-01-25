@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-01-14T04:26:05.358Z\n"
+"POT-Creation-Date: 2025-01-25T04:10:02.389Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -807,6 +807,7 @@ msgstr "Api Keys"
 #. defaultMessage is:
 #. Applied Consumable Strategy
 #: extracted_strings.json
+#| msgid "Consumable Serial"
 msgid "Applied Consumable Strategy"
 msgstr "Applied Consumable Strategy"
 
@@ -814,6 +815,7 @@ msgstr "Applied Consumable Strategy"
 #. defaultMessage is:
 #. Applied Reconciliation Strategy
 #: extracted_strings.json
+#| msgid "Reconciliation Configuration"
 msgid "Applied Reconciliation Strategy"
 msgstr "Applied Reconciliation Strategy"
 
@@ -1069,6 +1071,13 @@ msgstr "Aug"
 #: extracted_strings.json
 msgid "August"
 msgstr "August"
+
+#. [pages.inventoryReconciliation.autoReconcileNow]
+#. defaultMessage is:
+#. Auto Reconcile Now
+#: extracted_strings.json
+msgid "Auto Reconcile Now"
+msgstr "Auto Reconcile Now"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -1833,6 +1842,7 @@ msgstr "Cellphone Number"
 #. defaultMessage is:
 #. Cellphone number
 #: extracted_strings.json
+#| msgid "Cellphone Number"
 msgid "Cellphone number"
 msgstr "Cellphone number"
 
@@ -2685,6 +2695,7 @@ msgstr "Current Rifampicin Resistance Diagnosis Trends"
 #. defaultMessage is:
 #. Current Site
 #: extracted_strings.json
+#| msgid "Create Site"
 msgid "Current Site"
 msgstr "Current Site"
 
@@ -2692,6 +2703,7 @@ msgstr "Current Site"
 #. defaultMessage is:
 #. Current Site and Stock Provider
 #: extracted_strings.json
+#| msgid "Stock Provider"
 msgid "Current Site and Stock Provider"
 msgstr "Current Site and Stock Provider"
 
@@ -2992,6 +3004,7 @@ msgstr "Date Specimen Collected"
 #. defaultMessage is:
 #. Date Specimen Received
 #: extracted_strings.json
+#| msgid "Date Received"
 msgid "Date Specimen Received"
 msgstr "Date Specimen Received"
 
@@ -6302,6 +6315,9 @@ msgstr "It might have been deleted or renamed"
 #. defaultMessage is:
 #. Its the average daily consumption of the specific cartridge considering the date range selected
 #: extracted_strings.json
+#| msgid ""
+#| "Its the average daily consumption of the specific cartridge considering "
+#| "the last 180 day period"
 msgid ""
 "Its the average daily consumption of the specific cartridge considering the "
 "date range selected"
@@ -7660,6 +7676,7 @@ msgstr "March"
 #. defaultMessage is:
 #. May
 #: extracted_strings.json
+#| msgid "Day"
 msgid "May"
 msgstr "May"
 
@@ -12740,6 +12757,7 @@ msgstr "Supply in Stock"
 #. defaultMessage is:
 #. Surename
 #: extracted_strings.json
+#| msgid "Surname"
 msgid "Surename"
 msgstr "Surename"
 
@@ -13331,6 +13349,10 @@ msgstr "The number of contacts in the system."
 #. defaultMessage is:
 #. The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges
 #: extracted_strings.json
+#| msgid ""
+#| "The number of days left with available and not-expired stock, assuming "
+#| "that the cartridges to be consumed are always the ones closer to their "
+#| "expiration"
 msgid ""
 "The number of days left with available and not-expired cartridge and the "
 "daily consumption rate of the cartridges"
@@ -13962,6 +13984,14 @@ msgstr "Thursday"
 #: extracted_strings.json
 msgid "Time Zone"
 msgstr "Time Zone"
+
+#. [forms.formItem.timeOfTheTest]
+#. defaultMessage is:
+#. Time of the Test
+#: extracted_strings.json
+#| msgid "Number of Tests"
+msgid "Time of the Test"
+msgstr "Time of the Test"
 
 #. [pages.NotificationDetail.recurrenceFactor]
 #. defaultMessage is:

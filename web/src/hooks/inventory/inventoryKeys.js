@@ -8,6 +8,7 @@ const INVENTORY_RECONCILIATION_ENDPOINT = '/inventory/reconciliation'
 const INVENTORY_KEY_BY_ID_ENDPOINT = '/inventory/:consumableId'
 const CONSUMABLE_ASSAY_ENDPOINT = '/consumable-assays/:consumableId'
 const UPDATE_CONSUMABLE_KEY = '/inventory/consumable/:consumableId'
+const AUTO_INVENTORY_RECONCILIATION_KEY = '/inventory/auto-reconcile'
 
 export {
   INVENTORY_KEY,
@@ -20,4 +21,5 @@ export {
   INVENTORY_KEY_TYPE_UNIT_ENDPOINT,
   UPDATE_CONSUMABLE_KEY,
   INVENTORY_RECONCILIATION_ENDPOINT,
+  AUTO_INVENTORY_RECONCILIATION_KEY,
 }

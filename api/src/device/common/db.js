@@ -856,19 +856,9 @@ function moduleDisabledIssues(onlyActiveIssues = false) {
     .join('IssueType as it', 'i2.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i2.issueStatusId', 'is.id')
     .where('it.externalId', 'ModuleDisabled')
-    .whereIn('i2.id', function () {
-      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleSerial"')
-    })
     .select(
       'i2.id',
-      'i2.resultId', // notice that for `ModuleDisabled` i.resultId is always `null`
       'i2.deviceId',
-      /**
-       * since awhile ago we store `moduleSerial` instead of `moduleName`,
-       * so return both - `moduleName` for very old `Issue.data`,
-       * and `moduleSerial` for newer Issue.data
-       */
-      knex.raw('i2.data->>"$.moduleName" as moduleName'),
       knex.raw('i2.data->>"$.moduleSerial" as moduleSerial'),
       knex.raw('i2.data->>"$.disabledOn" as dateLastIssue'),
       'it.name as lastIssue'
@@ -882,9 +872,8 @@ function moduleDisabledIssues(onlyActiveIssues = false) {
   return query
 }
 
-function modulesWithLastResultBeforeMinDate(minDate) {
+function modulesWithLastResult() {
   return knex('Result as r')
-    .where('r.endedOn', '<', minDate)
     .select(
       'r.siteId',
       'r.deviceId',
@@ -895,7 +884,6 @@ function modulesWithLastResultBeforeMinDate(minDate) {
       knex.raw('count(r.id) as totalTestsRun')
     )
     .groupBy('r.deviceId', 'r.moduleName', 'r.moduleSerial')
-    .having('endedOn', '<', minDate) // only bays with last result before minDate -> inactive
     .as('r')
 }
 
@@ -981,7 +969,7 @@ module.exports = {
   getFirstAndLastResults,
   getResultCategoryGroupColumns,
   moduleDisabledIssues,
-  modulesWithLastResultBeforeMinDate,
+  modulesWithLastResult,
   getDeviceByIdBaseQuery,
   getLastUploadDateBySites,
   deleteMissingInventoryLots,
