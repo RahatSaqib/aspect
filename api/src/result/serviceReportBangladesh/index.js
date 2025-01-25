@@ -1539,6 +1539,7 @@ async function getDataForReportDrTb10B(auth, query) {
       'lg.name as lgaName',
       'st.name as stateName'
     )
+  console.log("\x1b[1;36m", "🚀 ➜ dataQuery:", dataQuery.toString())
   const data = await dataQuery
 
   return {
