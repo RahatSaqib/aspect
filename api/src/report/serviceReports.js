@@ -70,6 +70,7 @@ async function getSheetData(auth, queryParams, timezone, sheet, sharedResults) {
     dataSelector = null,
     sections = [],
     populator,
+    replacements,
     alreadyCachedSharedData = false,
   } = result
 
@@ -81,7 +82,7 @@ async function getSheetData(auth, queryParams, timezone, sheet, sharedResults) {
   logger.debug(`Worksheet data - total=${total}, list size=${listSize}'`, RELABEL_EXCEL)
 
   if (ok) {
-    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections, populator }
+    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections, populator, replacements }
   }
 
   return Boom.preconditionFailed(`Error in function ${functionName} of module ${moduleName} - ${errorMessage}`)
@@ -183,6 +184,7 @@ async function getAllSheetsData(auth, query, timezone, sheets) {
       dataSelector = null,
       sections,
       populator,
+      replacements,
     } = await getSheetData(auth, query, timezone, sheet, sharedResults)
     if (Boom.isBoom(data)) {
       boomError = data
@@ -199,6 +201,7 @@ async function getAllSheetsData(auth, query, timezone, sheets) {
       // TODO: use i18n string, because `downloadReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
       populator,
+      replacements,
     }
   })
 
@@ -222,6 +225,7 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
     partnerId,
   })
 
+  const sheetReplacements = data.flatMap(({ replacements }) => (_.isArray(replacements) ? replacements : []))
   const replacements = [
     {
       placeholder: '<Dates>',
@@ -265,6 +269,7 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
     },
     ...getMaxLimitPlaceHolders(),
     ...administrativeDivisionLabelPlaceHolders,
+    ...sheetReplacements,
   ]
   /**
    * generate stream or data buffer
