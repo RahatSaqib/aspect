@@ -234,14 +234,14 @@ function InventoryAdjustmentDialog(props) {
                 </FormGroup>
 
                 <TextField
-                  required={withLotNumber(partner, undefined, actionType)}
+                  required={withLotNumber(partner, undefined)}
                   fullWidth
                   type="text"
                   name="lotNumber"
                   label={formatMessage(messages.cartridgeLotNumber)}
                   value={values.lotNumber}
                   onChange={handleChange}
-                  disabled={!!initialValues?.lotNumber || uiTransfer}
+                  disabled={!!initialValues?.lotNumber || uiTransfer || uiRemove}
                   onBlur={handleBlur}
                   margin="normal"
                   FormHelperTextProps={{

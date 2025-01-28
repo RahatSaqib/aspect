@@ -36,8 +36,8 @@ export const withExpirationDate = (partner, consumable) => {
   )
 }
 export const withLotNumber = (partner, consumable, actionType) => {
-  // Skip lot number requirement for transfer
-  if (actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG) {
+  // Skip lot number requirement for transfer and remove operations
+  if (actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG || actionType === types.SHOW_REMOVE_INVENTORY_DIALOG) {
     return false
   }
 
