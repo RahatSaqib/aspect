@@ -1,8 +1,17 @@
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
 
 // ----------------------------------------------------------------------------------
-async function getNewQuantityOnHand(knex, inventoryItem, operation, quantityOnHand, quantity) {
+async function getNewQuantityOnHand(
+  knex,
+  inventoryItem,
+  operation,
+  quantityOnHand,
+  quantity,
+  { resultId, userId, isUnreconciledResult = false } = {}
+) {
   let newQuantityOnHand = inventoryItem?.quantityOnHand || 0
+  let isResultPendingReconciliation = isUnreconciledResult
 
   switch (operation) {
     case 'add':
@@ -17,19 +26,49 @@ async function getNewQuantityOnHand(knex, inventoryItem, operation, quantityOnHa
     case 'transfer':
     case 'transfer sent':
     case 'transfer from':
-      /**
-       * this allows negative numbers for `quantityOnHand` -
-       * see `api/src/plugin/partner/Pakistan/inventoryStrategy.js` for another implementation
-       * which takes into account parent warehouse(s) and doesn't allow negative number
-       */
-      newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
+      if (resultId) {
+        if (inventoryItem && inventoryItem.quantityOnHand >= quantity) {
+          /**
+           * normal mode - deduct `quantity` from current site
+           */
+          newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
+          isResultPendingReconciliation = false
+        } else if (!isUnreconciledResult) {
+          // log missing lots only for results, and not for manual changes
+          await logMissingInventory(knex, resultId, userId)
+          isResultPendingReconciliation = !isUnreconciledResult
+        }
+      } else {
+        /**
+         * normal mode - deduct `quantity` from current site
+         */
+        // case of ui operation
+        if (_.isUndefined(quantityOnHand)) {
+          if (!inventoryItem) {
+            return Boom.notFound('Can not deduct from non-existed inventory item', { errorKeyCode: 'notExisted' })
+          }
+          if (inventoryItem.quantityOnHand < 0) {
+            return Boom.notFound(
+              `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`,
+              { errorKeyCode: 'negativeQuantity' }
+            )
+          }
+          if (inventoryItem.quantityOnHand < quantity) {
+            return Boom.notFound(
+              `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`,
+              { errorKeyCode: 'notEnoughInventory' }
+            )
+          }
+        }
+        newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
+      }
       break
     default: {
       // do not change quantityOnHand
     }
   }
   // return items
-  return newQuantityOnHand
+  return { newQuantityOnHand, isResultPendingReconciliation }
 }
 
 let currentUserId
@@ -39,6 +78,30 @@ function setUserId(userId) {
 
 function getUserId() {
   return currentUserId
+}
+
+// ----------------------------------------------------------------------------------
+async function logMissingInventory(knex, resultId, userId) {
+  const now = new Date()
+  const isResultInReconciliation = await knex('MissingInventoryLots as mil')
+    .where({
+      'mil.resultId': resultId,
+    })
+    .first()
+
+  if (!isResultInReconciliation) {
+    const { siteId, lotNumber, expiresOn } = await knex('Result as r')
+      .where({ id: resultId })
+      .first('siteId', 'consumableLot as lotNumber', 'consumableExpirationDate as expiresOn')
+    await knex('MissingInventoryLots').insert({
+      resultId,
+      expirationDate: expiresOn,
+      lotNumber,
+      siteId,
+      createdOn: now,
+      createdBy: userId,
+    })
+  }
 }
 
 /**

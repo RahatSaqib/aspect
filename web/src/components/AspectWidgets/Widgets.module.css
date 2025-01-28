@@ -138,6 +138,34 @@
   font-size: 30px;
 }
 
+.Summary__Card__Item__Count__Small {
+  font-size: 22px;
+}
+
+@media (max-width: 1440px) {
+  .Summary__Card__Item__Count,
+  .Summary__Card__Item__Count__Small {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .Summary__Card__Item__Count,
+  .Summary__Card__Item__Count__Small {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .Summary__Card__Item__Count,
+  .Summary__Card__Item__Count__Small {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 1440px) {
+}
+
 .Summary__Card__Item__Messages {
   line-height: 20px;
   font-size: var(--aspect-font-size-sm);

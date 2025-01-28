@@ -267,7 +267,6 @@ async function getDeviceCapacityReport(auth, query) {
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
   const monthlyCapacity = deviceQuery
     .clone()
-    .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .leftJoin('Result as r', builder =>
       builder
         .on('d.id', 'r.deviceId')
@@ -282,7 +281,7 @@ async function getDeviceCapacityReport(auth, query) {
       'd.id AS deviceId',
       knex.raw('COUNT(DISTINCT r.id) as resultCount'),
       lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
-      'dcap.dailyCapacity'
+      'd.dailyTestCapacity as dailyCapacity'
     )
     .orderBy('d.name')
 
@@ -391,10 +390,9 @@ async function getGeneXpertOperationLogsReport(auth, query) {
   return dataset
 }
 
-async function getModuleActivityReport(auth, query) {
+async function getModuleActivityReport(auth, query, timezone) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate = subMonths(new Date(), 1) } = query
-  const rows = await getModuleActivityReportData(minDate, dataConstraints, query)
+  const rows = await getModuleActivityReportData(dataConstraints, query, timezone)
 
   return {
     ok: true,
@@ -403,15 +401,20 @@ async function getModuleActivityReport(auth, query) {
   }
 }
 
-async function getDoNotUseModulesReport(auth, query) {
+async function getDoNotUseModulesReport(auth, query, timezone) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate = subMonths(new Date(), 1) } = query
-  const rows = await getDoNotUseModulesReportData(minDate, dataConstraints, query)
+  const rows = await getDoNotUseModulesReportData(dataConstraints, query, timezone)
 
   return {
     ok: true,
     data: rows,
     total: rows.length,
+    replacements: [
+      {
+        placeholder: '<countOfDistinctDisabledModules>',
+        value: [...new Set(rows.map(row => row.moduleSerial))].length,
+      },
+    ],
   }
 }
 

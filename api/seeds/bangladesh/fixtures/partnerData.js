@@ -41,4 +41,5 @@ module.exports = {
   serverUrl: 'https://bangladesh.aspect.id',
   apiUrl: 'https://bangladesh.aspect.id/api',
   excludePattern: '\\b(EQA|VN-XPERT-23-B\\d[\\w]*)\\b',
+  deviceCapacityFactor: 2,
 }

@@ -6,13 +6,7 @@ const { partnerTypeToId } = require('../../src/shared/dictionary')
 const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_functions')
 const upsertPartnerData = require('../common/upsert_partner_data')
 const upsertTags = require('../common/upsert_tags')
-const {
-  addDeviceCapacities,
-  setCapacityForExistingDevices,
-  seedIssueEscalationTrigger,
-  upsertIssueResolutionTrigger,
-  rowsAsObject,
-} = require('../utils')
+const { seedIssueEscalationTrigger, upsertIssueResolutionTrigger, rowsAsObject } = require('../utils')
 const upsertIssueEventTrigger = require('../common/upsert_issue_event_triggers')
 const seedModuleDisabledIssue = require('../common/20200902_add_issue_module_disabled')
 const { commonUpserts, upsertGeneXpertDeviceTypeAndAssays, upsertDashboardWidgets } = require('../common')
@@ -73,8 +67,6 @@ async function seed(knex) {
 
   await upsertDashboardWidgets(knex, partnerId)
   await updateReportsAndJobFunctions(knex, jobFunctionsFixture, partnerExternalId)
-  await addDeviceCapacities(knex)
-  await setCapacityForExistingDevices(knex)
   await upsertTags(knex, partnerExternalId)
   await upsertTags(knex, partnerExternalId)
   await upsertIssueEventTrigger(knex, partnerExternalId)

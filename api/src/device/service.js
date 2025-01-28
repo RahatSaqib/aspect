@@ -256,6 +256,7 @@ async function getDevicePerformance(request) {
       knex.raw(`sum(rc1.externalId = 'Error') as errorCount`),
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthTested', offset),
       lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
+      'd.dailyTestCapacity',
     ])
     .groupBy('monthTested')
 
@@ -279,11 +280,6 @@ async function getDevicePerformance(request) {
   const countryTotalErrorCount = resultsByCategory.find(x => x.resultCategoryId === errorCategoryId)?.resultCount ?? 0
   const countryTotalResult = _.sumBy(resultsByCategory, x => x.resultCount)
 
-  const [deviceCapacity] = await knex('DeviceCapacity as dc')
-    .leftJoin('Device as d', 'd.deviceCapacityId', 'dc.id')
-    .where('d.id', deviceId)
-    .select('dc.dailyCapacity')
-
   let dt = endedOn
 
   while (dt >= startedOn) {
@@ -302,12 +298,15 @@ async function getDevicePerformance(request) {
 
   let utilizationRateAvg = null
   const newData = _.map(devicePerformance, x => {
-    if (deviceCapacity) {
+    if (devicePerformance.dailyTestCapacity) {
       utilizationRateAvg = 80
 
       const minDate = new Date(`${x.monthTested}-01`)
       const workingDays = differenceInBusinessDays(x.lastDayOfMonth, minDate)
-      x.utilizationRate = _.round((x.totalResult * 100) / Math.max(workingDays * deviceCapacity.dailyCapacity, 1), 2)
+      x.utilizationRate = _.round(
+        (x.totalResult * 100) / Math.max(workingDays * devicePerformance.dailyTestCapacity, 1),
+        2
+      )
     } else {
       x.utilizationRate = null
     }

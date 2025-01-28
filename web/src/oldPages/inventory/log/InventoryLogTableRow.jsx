@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatInTimeZone } from 'date-fns-tz'
 import endOfDay from 'date-fns/endOfDay'
 import startOfDay from 'date-fns/startOfDay'
 import isNil from 'lodash/isNil'
@@ -14,7 +15,7 @@ import messages from './messages'
 
 const TEST_CONDUCTED_EXTERNAL_ID = 'used'
 
-const InventoryLogTableRow = ({ inventoryLogItem }) => {
+const InventoryLogTableRow = ({ inventoryLogItem, timeZone }) => {
   const { formatMessage } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
@@ -59,8 +60,12 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
               omitBy(
                 {
                   countryId,
-                  minDate: startOfDay(new Date(inventoryLogItem.resultEndedOn)),
-                  maxDate: endOfDay(new Date(inventoryLogItem.resultEndedOn)),
+                  minDate: startOfDay(
+                    new Date(formatInTimeZone(new Date(inventoryLogItem.resultEndedOn), timeZone, 'yyyy-MM-dd'))
+                  ),
+                  maxDate: endOfDay(
+                    new Date(formatInTimeZone(new Date(inventoryLogItem.resultEndedOn), timeZone, 'yyyy-MM-dd'))
+                  ),
                   assayId: inventoryLogItem.assayId,
                   siteName: inventoryLogItem.siteName,
                 },
@@ -94,6 +99,16 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
+      <TableCell className={styles.TableCell}>
+        {inventoryLogItem.reconcilationAdjustment
+          ? formatMessage(messages[inventoryLogItem.reconcilationStrategy])
+          : ''}
+      </TableCell>
+      <TableCell className={styles.TableCell}>
+        {inventoryLogItem.reconcilationAdjustment
+          ? formatMessage(messages[inventoryLogItem.reconcilationAdjustment])
+          : ''}
+      </TableCell>
     </TableRow>
   )
 }

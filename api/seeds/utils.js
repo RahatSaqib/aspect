@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt')
 const { readJson } = require('fs-extra')
 const path = require('path')
 const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
-const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const {
   allAssayTypeToId,
@@ -95,7 +94,6 @@ const foreignKeys = {
 
 // Helper for seed files. Ru
 let hasSeededStaticData = false
-let commonInserts = false
 
 // Set up the file name of the seed with __filename.
 function seed(seed, fileName, overridedSeeds) {
@@ -128,12 +126,6 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
           throw e
         })
         .then(async () => {
-          if (!commonInserts) {
-            commonInserts = true
-            await Promise.each(Object.keys(relativeObjectsSeeds), async elem => {
-              commonInserts = commonInserts && (await relativeObjectsSeeds[elem](knex))
-            })
-          }
           await knex('AspectSeed').insert({
             fileName,
             success: true,
@@ -2236,88 +2228,6 @@ async function addLicensePersons(knex, personNameToExclude = '') {
   )
 }
 
-async function addDeviceCapacities(knex, data) {
-  const { data: deviceCapacitiesByPartner } = data || (await readJson(`./seeds/fixtures/DeviceCapacity.json`))
-
-  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner')])
-  const [deviceTypes] = await Promise.all([rowsAsObject(knex, 'DeviceType', 'externalId')])
-
-  await Promise.each(
-    deviceCapacitiesByPartner,
-    async ({ deviceTypeExternalId, defaultForDeviceType, name, dailyCapacity, modules }) => {
-      if (deviceTypes[deviceTypeExternalId]) {
-        await upsertItems(
-          knex,
-          'DeviceCapacity', // tableName
-          ['partnerId', 'deviceTypeId', 'name'], // whereKeys
-          _.map(partners, partner => ({
-            partnerId: partner.id,
-            deviceTypeId: deviceTypes[deviceTypeExternalId].id,
-            defaultForDeviceType,
-            name,
-            dailyCapacity,
-            modules,
-          }))
-        )
-      } else {
-        await Promise.resolve()
-      }
-    }
-  )
-}
-
-async function setCapacityForExistingDevices(knex) {
-  const devices = await knex('Device').where('deviceCapacityId', null).distinct('partnerId', 'deviceTypeId')
-
-  const deviceCapacities = await knex('DeviceCapacity').select(
-    'id',
-    'partnerId',
-    'deviceTypeId',
-    'defaultForDeviceType',
-    'name'
-  )
-
-  await Promise.each(devices, ({ partnerId, deviceTypeId }) => {
-    const deviceCapacityByPartnerId = _.find(
-      deviceCapacities,
-      dc => dc.partnerId === partnerId && dc.deviceTypeId === deviceTypeId && dc.defaultForDeviceType === 1
-    )
-    if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
-      return knex('Device')
-        .where({ partnerId })
-        .where({ deviceTypeId })
-        .update({ deviceCapacityId: deviceCapacityByPartnerId.id })
-    }
-  })
-
-  // For GeneXperts, we can go one step further and set the device capacity
-  // based unique modules in historic results
-  const genexpertDevicesWithModules = await knex('Result as r')
-    .join('Device as d', 'd.id', 'r.deviceId')
-    .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .where('r.endedOn', '>', subDays(now, 90))
-    .where('dt.externalId', 'CepheidGeneXpert')
-    .select('d.partnerId', 'r.deviceId', 'd.deviceTypeId')
-    .countDistinct('r.moduleName as modules')
-    .groupBy('d.partnerId', 'r.deviceId', 'd.deviceTypeId')
-    .having('modules', '>', 4)
-
-  await Promise.each(genexpertDevicesWithModules, ({ partnerId, deviceTypeId, deviceId, modules }) => {
-    const deviceCapacityByPartnerId = _.find(
-      deviceCapacities,
-      dc =>
-        dc.partnerId === partnerId &&
-        dc.deviceTypeId === deviceTypeId &&
-        ((dc.name === '8 modules' && modules > 4 && modules <= 8) ||
-          (dc.name === '16 modules' && modules > 8 && modules <= 16) ||
-          (dc.name === '32 modules' && modules > 16 && modules <= 32))
-    )
-    if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
-      return knex('Device').where({ id: deviceId }).update({ deviceCapacityId: deviceCapacityByPartnerId.id })
-    }
-  })
-}
-
 async function getSeedsRan(knex) {
   return knex('AspectSeed as ap')
     .where({ success: true })
@@ -3097,8 +3007,6 @@ module.exports = {
   addLicenses,
   addLicensePersons,
 
-  addDeviceCapacities,
-  setCapacityForExistingDevices,
   seedDeviceMaintenanceType,
 
   updateCategoryAssay,

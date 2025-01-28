@@ -4,7 +4,7 @@ export default defineMessages({
   name: { id: 'pages.DeviceDetailEdit.name', defaultMessage: 'Name' },
   shortName: { id: 'pages.DeviceDetailEdit.shortName', defaultMessage: 'Short Name' },
   location: { id: 'pages.DeviceDetailEdit.location', defaultMessage: 'Site' },
-  capacity: { id: 'pages.DeviceDetailEdit.capacity', defaultMessage: 'Capacity' },
+  dailyTestCapacity: { id: 'pages.DeviceDetailEdit.dailyTestCapacity', defaultMessage: 'Daily Capacity' },
   stickerInstrumentSerial: {
     id: 'pages.DeviceDetailEdit.stickerInstrumentSerial',
     defaultMessage: 'Sticker Instrument Serial',

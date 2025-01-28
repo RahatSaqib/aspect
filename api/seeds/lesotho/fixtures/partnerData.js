@@ -21,6 +21,7 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://lesotho.aspect.id',
   apiUrl: 'https://lesotho.aspect.id/api',
+  deviceCapacityFactor: 3,
   deviceConfiguration: [
     {
       deviceType: 'GeneXpert',

@@ -209,6 +209,9 @@ export function loginStart({ user, password }) {
         if (json.activeStatus === 1) {
           dispatch(showServiceDegradation({ message: json.statusMessage, variant: 'warning' }))
         }
+        if (json.notificationWarningMessage !== null) {
+          dispatch(showServiceDegradation({ message: json.notificationWarningMessage, variant: 'warning' }))
+        }
         dispatch(
           loginSuccess(requestedAt, {
             access: json.access,

@@ -29,6 +29,7 @@ const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const upsertConsumables = require('../common/upsert_consumables')
 const { insertSite } = require('../../src/site/common/db')
+const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -1278,4 +1279,6 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
   ])
+
+  await addDefaultCustomFieldDefinitions(knex)
 }

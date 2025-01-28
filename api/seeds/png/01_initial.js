@@ -6,7 +6,6 @@ const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_fun
 const upsertPartnerData = require('../common/upsert_partner_data')
 const { upsertMessageAndNotificationTypes } = require('../common/upsert_message_and_notification_types')
 const upsertTags = require('../common/upsert_tags')
-const { addDeviceCapacities, setCapacityForExistingDevices } = require('../utils')
 const { upsertFixture } = require('../common/upsert_Fixture')
 const upsertIssueEventTrigger = require('../common/upsert_issue_event_triggers')
 const seedModuleDisabledIssue = require('../common/20200902_add_issue_module_disabled')
@@ -101,8 +100,6 @@ async function seed(knex) {
 
   await upsertDashboardWidgets(knex, partnerId)
   await updateReportsAndJobFunctions(knex, jobFunctionsFixture, partnerExternalId)
-  await addDeviceCapacities(knex)
-  await setCapacityForExistingDevices(knex)
   await upsertMessageAndNotificationTypes(knex, partnerId, adminId)
   await upsertTags(knex, partnerExternalId)
   await upsertFixture(knex, notificationTypeCategories, 'NotificationTypeCategory')

@@ -3,12 +3,13 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
 const { getUser } = require('../../auth/service')
-const { getPartnerPluginName, getDeviceTypePluginName } = require('../../plugin/utils')
 const defaultInventoryStrategy = require('../strategies')
 
 const { knex, transact } = require('../../db')
 const { getSite } = require('../../site/service')
-const { updateSiteConsumable } = require('../../site/common/db')
+const { INVENTORY_ADJUSTMENT, INVENTORY_STRATEGY } = require('../../shared/constants')
+const { updateSiteConsumable, getSiteListModifiedQuery } = require('../../site/common/db')
+const { getPartnerByConstraints } = require('../../partner/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { selectAssayConsumables } = require('../../consumable/assayConsumableService')
 const { findConsumableReason } = require('../../consumable/consumableService')
@@ -23,7 +24,6 @@ const {
   updateInventoryItem,
   insertInventoryItem,
   logInventoryChange,
-  getConsumableStrategy,
   createInventoryTransfer,
   updateInventoryTransfer,
 } = require('./db')
@@ -37,20 +37,11 @@ async function getInventoryStrategy({ partnerId, deviceId, userId }) {
   const inventoryStrategyKey = `partnerId-${partnerId || 0}_deviceId-${deviceId || 0}`
   let inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
   if (!inventoryStrategy) {
-    const partnerPluginName = await getPartnerPluginName({ partnerId })
-    const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
-    const { loadPlugin } = require('../../plugin/loadPlugin')
-    const specificInventoryStrategy = await loadPlugin(partnerPluginName, deviceTypePluginName, 'inventoryStrategy')
     cachedInventoryStrategies[inventoryStrategyKey] = {
       /**
        * first add all exported items for default strategy...
        */
       ...defaultInventoryStrategy,
-      /**
-       * ...and then overwrite those which are defined in
-       * partner or deviceType specific strategy
-       */
-      ...specificInventoryStrategy,
     }
     inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
     inventoryStrategy.setUserId(userId)
@@ -85,7 +76,7 @@ async function upsertInventoryItem({
       updatedOn: now,
       updatedBy: userId,
     })
-  } else {
+  } else if (quantityOnHand > 0) {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
       consumableId,
       inTransitFromSiteId: inTransitFromSiteId || null,
@@ -112,23 +103,34 @@ async function upsertInventoryItem({
 async function getActualQuantityOnHand(
   knex,
   inventoryStrategy,
-  { siteId, consumableId, expiresOn, lotNumber, fromSiteId, resultId },
+  { siteId, consumableId, expiresOn, lotNumber, fromSiteId, resultId, isUnreconciledResult, partnerId },
   operation,
   { quantityOnHand, quantity }
 ) {
-  const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, fromSiteId)
-  const newQuantityOnHand = await inventoryStrategy.getNewQuantityOnHand(
+  const inventoryItem = await findInventoryItem({
+    siteId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    inTransitFromSiteId: fromSiteId,
+    partnerId,
+  })
+  const { newQuantityOnHand, isResultPendingReconciliation } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
     inventoryItem,
     operation,
     quantityOnHand,
     quantity,
-    { resultId, userId: inventoryStrategy.getUserId() }
+    {
+      resultId,
+      userId: inventoryStrategy.getUserId(),
+      isUnreconciledResult,
+    }
   )
   if (Boom.isBoom(newQuantityOnHand)) {
     return newQuantityOnHand
   }
-  return { inventoryItem, quantityOnHand: newQuantityOnHand }
+  return { inventoryItem, quantityOnHand: newQuantityOnHand, isResultPendingReconciliation }
 }
 
 // ----------------------------------------------------------------------------------
@@ -142,6 +144,8 @@ async function upsertInventoryItemAndLog(
      */
     inventoryItemId,
     quantityOnHand,
+    inventoryAdjustment,
+    inventoryStrategy,
     siteId,
     /**
      * common props
@@ -180,6 +184,8 @@ async function upsertInventoryItemAndLog(
     siteId,
     lotNumber,
     expiresOn,
+    reconcilationAdjustment: inventoryAdjustment,
+    reconcilationStrategy: inventoryStrategy,
     createdOn: now,
     createdBy: userId,
     ...logProps,
@@ -202,6 +208,9 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     inTransitFromSiteId,
     now,
     userId,
+    inventoryAdjustment,
+    partnerId,
+    partnerInventoryStrategy,
     logProps,
     resultId,
     /**
@@ -210,37 +219,41 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
      */
     plugins,
     messageContext,
+    isUnreconciledResult,
   } = params
   const getAffectedIds = async knex => {
     const res = await getActualQuantityOnHand(
       knex,
       inventoryStrategy,
-      { siteId, consumableId, expiresOn, lotNumber, resultId },
+      { siteId, consumableId, expiresOn, lotNumber, resultId, isUnreconciledResult, partnerId },
       operation,
       { quantityOnHand, quantity }
     )
     if (Boom.isBoom(res)) {
       return res
     }
+
     /**
      * return object { inventoryItemId, inventoryLogId }
      */
-    return upsertInventoryItemAndLog(knex, {
-      inventoryItemId: res.inventoryItem?.id,
-      quantityOnHand: res.quantityOnHand,
-      siteId: res.inventoryItem?.siteId ?? siteId,
-      consumableId,
-      lotNumber,
-      expiresOn,
-      inTransitFromSiteId,
-      now,
-      userId,
-      logProps: {
-        operation,
-        quantity,
-        ...logProps,
-      },
-    })
+    if (!res.isResultPendingReconciliation)
+      return upsertInventoryItemAndLog(knex, {
+        inventoryItemId: res.inventoryItem?.id,
+        quantityOnHand: res.quantityOnHand,
+        siteId: res.inventoryItem?.siteId ?? siteId,
+        consumableId,
+        lotNumber,
+        ...(resultId && { inventoryAdjustment, inventoryStrategy: partnerInventoryStrategy }),
+        expiresOn,
+        inTransitFromSiteId,
+        now,
+        userId,
+        logProps: {
+          operation,
+          quantity,
+          ...logProps,
+        },
+      })
   }
 
   let res
@@ -259,15 +272,16 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
    * sure that MQ handler for sure is dealing with already committed
    * above transactions
    */
-  await checkOpenedStockIssues({
-    knex: params.knex || knex,
-    siteId,
-    consumableId,
-    now,
-    plugins,
-    messageContext,
-  })
-
+  if (messageContext) {
+    await checkOpenedStockIssues({
+      knex: params.knex || knex,
+      siteId,
+      consumableId,
+      now,
+      plugins,
+      messageContext,
+    })
+  }
   return res
 }
 
@@ -282,7 +296,7 @@ async function addInventory({ auth, payload, plugins }) {
   if (!toSite) {
     return Boom.forbidden('You are not permitted to add inventory to this site')
   }
-  const { id: userId } = await getUser(auth.credentials.name)
+  const { id: userId, partnerId } = await getUser(auth.credentials.name)
   /**
    * take 1st item from returning array of affected items
    */
@@ -295,6 +309,7 @@ async function addInventory({ auth, payload, plugins }) {
     operation: 'add',
     now,
     userId,
+    partnerId,
     plugins, // for getting messageContext
     logProps: {
       consumableReasonId: reasonId,
@@ -333,7 +348,7 @@ async function removeInventory({ auth, payload, plugins }) {
   if (!fromSite) {
     return Boom.forbidden('You are not permitted to remove inventory from this site')
   }
-  const { id: userId } = await getUser(auth.credentials.name)
+  const { id: userId, partnerId } = await getUser(auth.credentials.name)
   /**
    *
    */
@@ -346,6 +361,7 @@ async function removeInventory({ auth, payload, plugins }) {
     operation: 'remove',
     now,
     userId,
+    partnerId,
     plugins, // for getting messageContext
     logProps: {
       consumableReasonId: reasonId,
@@ -363,13 +379,26 @@ async function removeInventory({ auth, payload, plugins }) {
 
 // ----------------------------------------------------------------------------------
 async function transferInventory({ payload, messageContext, partnerId, userId }) {
-  const { fromSiteId, toSiteId, consumableId, expiresOn, lotNumber, quantity, dateAdjusted, notes, logProps, force } =
-    payload
+  const {
+    fromSiteId,
+    toSiteId,
+    resultId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    quantity,
+    dateAdjusted,
+    notes,
+    logProps,
+    force,
+    inventoryAdjustment,
+    partnerInventoryStrategy,
+  } = payload
 
   /**
    * get MQ context and bind few action creators
    */
-  messageContext = messageContext.bindActionCreators({
+  messageContext = messageContext?.bindActionCreators({
     inventoryStockout,
     inventoryStockExpiring,
     resolveIssues,
@@ -384,7 +413,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
   const source = await getActualQuantityOnHand(
     knex,
     inventoryStrategy,
-    { siteId: fromSiteId, consumableId, expiresOn, lotNumber },
+    { siteId: fromSiteId, consumableId, expiresOn, lotNumber, partnerId },
     'transfer from',
     { quantity }
   )
@@ -394,7 +423,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
   const destination = await getActualQuantityOnHand(
     knex,
     inventoryStrategy,
-    { siteId: toSiteId, consumableId, expiresOn, lotNumber, fromSiteId },
+    { siteId: toSiteId, consumableId, expiresOn, lotNumber, fromSiteId, partnerId },
     'receive to',
     { quantity }
   )
@@ -444,6 +473,9 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
       lotNumber,
       expiresOn,
       quantity,
+      resultId,
+      reconcilationAdjustment: inventoryAdjustment,
+      reconcilationStrategy: partnerInventoryStrategy,
       operation: 'transfer from',
       notes,
       adjustedFrom: dateAdjusted,
@@ -465,6 +497,9 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
         lotNumber,
         expiresOn,
         quantity,
+        resultId,
+        reconcilationAdjustment: inventoryAdjustment,
+        reconcilationStrategy: partnerInventoryStrategy,
         operation: 'receive to',
         notes,
         adjustedFrom: dateAdjusted,
@@ -476,14 +511,16 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
     /**
      * check both sites for Stockout/StockExpiring issues
      */
-    const props = {
-      knex,
-      consumableId,
-      now,
-      messageContext,
+    if (messageContext) {
+      const props = {
+        knex,
+        consumableId,
+        now,
+        messageContext,
+      }
+      await checkOpenedStockIssues({ ...props, siteId: fromSiteId })
+      await checkOpenedStockIssues({ ...props, siteId: toSiteId })
     }
-    await checkOpenedStockIssues({ ...props, siteId: fromSiteId })
-    await checkOpenedStockIssues({ ...props, siteId: toSiteId })
   })
 
   return {
@@ -517,7 +554,7 @@ async function receiveInventory(request) {
   const destination = await getActualQuantityOnHand(
     knex,
     inventoryStrategy,
-    { siteId: toSiteId, consumableId, expiresOn, lotNumber },
+    { siteId: toSiteId, consumableId, expiresOn, lotNumber, partnerId },
     'receive to',
     { quantity }
   )
@@ -527,7 +564,14 @@ async function receiveInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inTransitInventoryItem = await findInventoryItem(toSiteId, consumableId, expiresOn, lotNumber, fromSiteId)
+  const inTransitInventoryItem = await findInventoryItem({
+    siteId: toSiteId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    inTransitFromSiteId: fromSiteId,
+    partnerId,
+  })
   if (_.isEmpty(inTransitInventoryItem)) {
     return Boom.notFound('Could not find source item')
   }
@@ -585,7 +629,7 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
     return Boom.forbidden('You are not permitted to add inventory to this site')
   }
 
-  const { id: userId } = await getUser(auth.credentials.name)
+  const { id: userId, partnerId } = await getUser(auth.credentials.name)
 
   const operation = quantity > 0 ? 'add' : 'remove'
 
@@ -614,6 +658,7 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
     operation,
     now,
     userId,
+    partnerId,
     plugins, // for getting messageContext
     logProps: {
       consumableReasonId: reasonId,
@@ -628,8 +673,185 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
   return getInventoryItem(res.inventoryItemId)
 }
 
-// ----------------------------------------------------------------------------------
-async function consumeInventoryForResult(
+// Function to transfer inventory from a source site to a target site
+async function transferInventoryFromSourceToTarget({
+  sourceSiteId,
+  targetSiteId,
+  consumableId,
+  quantity,
+  lotNumber,
+  expiresOn,
+  partnerId,
+  userId,
+  messageContext,
+  inventoryAdjustment,
+  partnerInventoryStrategy,
+}) {
+  const payload = {
+    dateAdjusted: new Date(),
+    quantity,
+    lotNumber,
+    toSiteId: targetSiteId,
+    fromSiteId: sourceSiteId,
+    expiresOn,
+    consumableId,
+    force: true,
+    inventoryAdjustment,
+    partnerInventoryStrategy,
+  }
+
+  const res = await transferInventory({ payload, partnerId, userId, messageContext })
+  if (Boom.isBoom(res)) {
+    return { success: false, error: res }
+  }
+  return { success: true }
+}
+
+// Recursive function to find inventory and transfer if available
+async function findAndTransferInventory({
+  originalSiteId,
+  currentSiteId,
+  consumableId,
+  quantity,
+  expiresOn,
+  lotNumber,
+  partnerId,
+  userId,
+  resultId,
+  messageContext,
+  dataConstraints,
+  inventoryAdjustment,
+  partnerInventoryStrategy,
+  visitedWarehouses = new Set(), // Track visited warehouses to prevent circular dependency
+}) {
+  // If the current site has already been visited, return to avoid circular dependency
+  if (visitedWarehouses.has(currentSiteId)) {
+    return { success: false, message: 'Circular dependency detected in warehouse hierarchy' }
+  }
+
+  visitedWarehouses.add(currentSiteId)
+
+  const site = await getSite(currentSiteId, dataConstraints)
+
+  const inventoryItem = await findInventoryItem({
+    siteId: currentSiteId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    partnerId,
+  })
+
+  if (inventoryItem?.quantityOnHand >= quantity) {
+    if (currentSiteId !== originalSiteId) {
+      return transferInventoryFromSourceToTarget({
+        sourceSiteId: currentSiteId,
+        targetSiteId: originalSiteId,
+        consumableId,
+        quantity,
+        lotNumber,
+        expiresOn,
+        partnerId,
+        userId,
+        resultId,
+        messageContext,
+        inventoryAdjustment,
+        partnerInventoryStrategy,
+      })
+    }
+    return { success: true, message: 'Sufficient inventory found at the original site' }
+  }
+
+  //  based on the adjustment type, terminate the recursion
+  if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
+    return { success: false, message: 'Insufficient inventory and no parent warehouse available' }
+  }
+
+  if (site.parentWarehouseId) {
+    return findAndTransferInventory({
+      originalSiteId,
+      currentSiteId: site.parentWarehouseId,
+      consumableId,
+      quantity,
+      expiresOn,
+      lotNumber,
+      partnerId,
+      userId,
+      messageContext,
+      dataConstraints,
+      visitedWarehouses,
+      resultId,
+      inventoryAdjustment,
+      partnerInventoryStrategy,
+    })
+  }
+
+  return { success: false, message: 'Insufficient inventory and no parent warehouse available' }
+}
+
+async function inventoryTransferByRegion({
+  site,
+  consumableId,
+  quantity,
+  lotNumber,
+  expiresOn,
+  siteId,
+  partnerId,
+  userId,
+  resultId,
+  inventoryAdjustment,
+  partnerInventoryStrategy,
+  messageContext,
+  dataConstraints,
+}) {
+  const filters = { lgaId: site.lgaId, stateId: site.stateId, countryId: site.countryId } // Initial filter criteria based on the site's LGA, state, and country ID
+  const levels = ['lgaId', 'stateId', 'countryId'] // will remove these levels one by one if we don't find the inventory
+  let levelIndex = 0
+
+  while (levelIndex < levels.length) {
+    // eslint-disable-next-line no-await-in-loop
+    const sites = await getSiteListModifiedQuery({ ...filters, siteTypeName: 'Warehouse' }, dataConstraints)
+
+    for (const regionalSite of sites) {
+      // eslint-disable-next-line no-await-in-loop
+      const regionalInventoryItem = await findInventoryItem({
+        siteId: regionalSite.id,
+        consumableId,
+        expiresOn,
+        lotNumber,
+        partnerId,
+      })
+
+      if (regionalInventoryItem?.quantityOnHand >= quantity) {
+        // eslint-disable-next-line no-await-in-loop
+        const transferResponse = await transferInventoryFromSourceToTarget({
+          sourceSiteId: regionalSite.id,
+          targetSiteId: siteId,
+          consumableId,
+          quantity,
+          lotNumber,
+          expiresOn,
+          partnerId,
+          userId,
+          resultId,
+          inventoryAdjustment,
+          partnerInventoryStrategy,
+          messageContext,
+        })
+
+        if (transferResponse.success) {
+          return { success: true }
+        }
+      }
+    }
+
+    filters[levels[levelIndex]] = null // change the current level to null from the filters and use other remaining levels in filters
+    levelIndex += 1
+  }
+
+  return { success: false }
+}
+
+async function consumeInventoryForResult({
   resultId,
   assayId,
   siteId,
@@ -639,24 +861,38 @@ async function consumeInventoryForResult(
   testEndedOn,
   knex, // <--- means we are inside transaction and should use this `knex`
   messageContext,
-  userId
-) {
+  userId,
+  expirationDate,
+  inventoryLotNumber,
+}) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategy({ partnerId })
+  const dataConstraints = {
+    partner: {
+      id: partnerId,
+    },
+  }
+  const { inventoryAdjustment, inventoryStrategy: partnerInventoryStrategy } = await getPartnerByConstraints(
+    dataConstraints
+  )
 
-  const assayConsumables = await selectAssayConsumables(knex, { partner: { id: partnerId } }, assayId)
-
+  const assayConsumables = await selectAssayConsumables(knex, dataConstraints, assayId)
   const { id: testRunConsumableReasonId } = await findConsumableReason('Test Conducted')
+
   return Promise.all(
     assayConsumables.map(async assayConsumable => {
       const { consumableId, quantity } = assayConsumable
-      const existingInventoryLog = await knex('InventoryLog as il')
-        .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
+      const isResultInReconciliation = await knex('MissingInventoryLots as mil')
         .where({
-          'il.resultId': resultId,
-          'ii.consumableId': consumableId,
+          'mil.resultId': resultId,
         })
-        .first('ii.id', 'il.inventoryItemId')
+        .first()
+
+      const { resultCountInDeviceLog } = await knex('DeviceLog as mil')
+        .where({ 'mil.resultId': resultId })
+        .count('mil.resultId as resultCountInDeviceLog')
+        .first()
+
       /**
        * Add consumable to site if not exits
        */
@@ -665,15 +901,70 @@ async function consumeInventoryForResult(
         await updateSiteConsumable(siteId, { modify: 'add', consumableId }, knex)
       }
 
+      const isUnreconciledResult = isResultInReconciliation && resultCountInDeviceLog > 0
+
       /**
-       * Don't double deduct inventory for the same result
+       * Process inventory based on the following conditions:
+       * 1. `isUnreconciledResult`: The result is flagged as unreconciled, requiring inventory processing.
+       * 2. `resultCountInDeviceLog === 0`:
+       *    The result is being processed for the first time (not in missing inventory lots and no prior logs).
        */
-      if (_.isEmpty(existingInventoryLog)) {
-        const consumableStrategy = await getConsumableStrategy(consumableId)
-        const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-        const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))
-          ? _.get(consumablesInResultData, '[0].lot')
-          : undefined
+      if (isUnreconciledResult || resultCountInDeviceLog === 0) {
+        let expiresOn = expirationDate
+        let lotNumber = inventoryLotNumber
+        if (!lotNumber || !expiresOn) {
+          if (partnerInventoryStrategy === INVENTORY_STRATEGY.EXPIRATION_DATE) {
+            expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
+          } else if (partnerInventoryStrategy === INVENTORY_STRATEGY.LOT_NUMBER) {
+            lotNumber = _.get(consumablesInResultData, '[0].lot')
+          } else {
+            expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
+            lotNumber = _.get(consumablesInResultData, '[0].lot')
+          }
+        }
+        const inventoryItem = await findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, partnerId })
+        const site = await getSite(siteId, dataConstraints)
+        if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
+          const commonPayload = {
+            originalSiteId: siteId,
+            consumableId,
+            quantity,
+            expiresOn,
+            lotNumber,
+            partnerId,
+            userId,
+            messageContext,
+            dataConstraints,
+            resultId,
+            inventoryAdjustment,
+            partnerInventoryStrategy,
+          }
+          if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER) {
+            if (site?.parentWarehouseId) {
+              await findAndTransferInventory({
+                ...commonPayload,
+                currentSiteId: site.parentWarehouseId,
+              })
+            }
+          } else if (inventoryAdjustment === INVENTORY_ADJUSTMENT.CURRENT_SITE_AND_PROVIDER_AND_NATIONAL) {
+            let response = { success: false }
+            // find by parentWarehouseId
+            if (site?.parentWarehouseId) {
+              response = await findAndTransferInventory({
+                ...commonPayload,
+                currentSiteId: site.parentWarehouseId,
+              })
+            }
+            // find by Region
+            if (!response.success) {
+              response = await inventoryTransferByRegion({
+                ...commonPayload,
+                site,
+                siteId,
+              })
+            }
+          }
+        }
         return changeInventoryQuantity(inventoryStrategy, {
           knex,
           consumableId,
@@ -684,6 +975,9 @@ async function consumeInventoryForResult(
           operation: 'remove',
           now,
           userId,
+          partnerId,
+          inventoryAdjustment,
+          partnerInventoryStrategy,
           messageContext,
           logProps: {
             consumableReasonId: testRunConsumableReasonId,
@@ -693,44 +987,12 @@ async function consumeInventoryForResult(
             resultId,
             effectiveDate: testEndedOn,
           },
+          isUnreconciledResult,
           resultId,
         })
       }
     })
   )
-}
-
-// ----------------------------------------------------------------------------------
-async function findOrCreateMatchingInventoryItem(
-  knex,
-  siteId,
-  assayConsumable,
-  consumablesInResultData,
-  now,
-  strategy
-) {
-  const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-  const lotNumber = strategy.indexOf('withLot') >= 0 ? _.get(consumablesInResultData, '[0].lot') : undefined
-
-  const { consumableId } = assayConsumable
-  const existingItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, false)
-
-  if (existingItem) {
-    return existingItem
-  }
-
-  await upsertInventoryItem({
-    knex,
-    consumableId,
-    siteId,
-    lotNumber,
-    expiresOn,
-    quantity: 0,
-    now,
-  })
-
-  const newItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, false)
-  return newItem
 }
 
 // ----------------------------------------------------------------------------------
@@ -831,5 +1093,4 @@ module.exports = {
   //
   changeInventoryQuantity,
   consumeInventoryForResult,
-  findOrCreateMatchingInventoryItem,
 }
