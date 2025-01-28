@@ -49,7 +49,7 @@ async function seed(knex) {
   await Promise.each(jobFunctions, async jobFunction => {
     await knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jobFunction.id, widgetId: widgetIds.sites },
-      { jobFunctionId: jobFunction.id, widgetId: widgetIds.devices },
+      { jobFunctionId: jobFunction.id, widgetId: widgetIds.instruments },
       { jobFunctionId: jobFunction.id, widgetId: widgetIds.results },
     ])
   })
