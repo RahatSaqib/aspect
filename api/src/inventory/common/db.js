@@ -307,6 +307,9 @@ function getInventoryLots(request, dataConstraints) {
     .from('Site as s')
     .innerJoin('Consumable as c')
     .innerJoin('Partner as p', 's.partnerId', 'p.id')
+    .innerJoin('SiteConsumable as sc', builder => {
+      builder.on('s.id', 'sc.siteId').andOn('c.id', 'sc.consumableId')
+    })
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
@@ -353,6 +356,9 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
     .innerJoin('Assay as a', 'ca.assayId', 'a.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .innerJoin('SiteConsumable as sc', function () {
+      this.on('s.id', 'sc.siteId').andOn('c.id', 'sc.consumableId')
+    })
     /**
      * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
      * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
@@ -766,13 +772,19 @@ function baseMissingInventoryLotsQuery() {
 
 async function getReconciliationList(query, dataConstraints) {
   const baseQuery = baseMissingInventoryLotsQuery()
-    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
+    .modify(qb => {
+      if (dataConstraints) {
+        addConstraints(qb, dataConstraints, { result: 'r', geography: 'g' })
+      }
+    })
     .modify(filterDateRangeParams, query, 'm.expirationDate')
+
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
+      siteId: 's.id',
       assayId: 'r.assayId',
       consumableId: 'ca.consumableId',
       lotNumber: 'm.lotNumber',
