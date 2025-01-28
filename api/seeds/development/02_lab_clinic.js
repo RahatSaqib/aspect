@@ -257,7 +257,7 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
-      widgetId: _.find(widgets, { title: 'Devices' }).id,
+      widgetId: _.find(widgets, { title: 'Instruments' }).id,
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
@@ -268,10 +268,9 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: _.find(widgets, { title: 'Results' }).id,
     },
-
     {
       jobFunctionId: jobFunctionIdAdmin,
-      widgetId: _.find(widgets, { title: 'Devices' }).id,
+      widgetId: _.find(widgets, { title: 'Instruments' }).id,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,

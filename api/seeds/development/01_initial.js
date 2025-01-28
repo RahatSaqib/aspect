@@ -3333,8 +3333,8 @@ async function seed(knex) {
               name === 'Admin'
                 ? bcrypt.hashSync('test07', saltRounds)
                 : name === 'Bill'
-                ? 'SOMESTRING'
-                : bcrypt.hashSync(name.toLowerCase(), saltRounds),
+                  ? 'SOMESTRING'
+                  : bcrypt.hashSync(name.toLowerCase(), saltRounds),
             legacyPassword: name === 'Bill' ? 1 : 0,
             approved: 1,
             createdOn: now,
@@ -3501,7 +3501,7 @@ async function seed(knex) {
         ).join(''),
       }
 
-      ;[device.id] = await knex('Device').insert(device)
+        ;[device.id] = await knex('Device').insert(device)
       devicesGeneXpert.push(device)
 
       // Create API Keys
@@ -3613,14 +3613,14 @@ async function seed(knex) {
         expiresOn = new Date(
           new Date(now.getTime() + _.random(-millisInNormalYear / 2, millisInNormalYear * 2)).setHours(0, 0, 0, 0)
         )
-        ;[inventoryItemId] = await knex('InventoryItem').insert({
-          consumableId: consumableGxEbolaCartridgeId,
-          siteId: siteData.id,
-          lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][i % 2]}-${(siteData.id + i) * consumableGxEbolaCartridgeId}`,
-          expiresOn,
-          quantityOnHand,
-          ...auditFields,
-        })
+          ;[inventoryItemId] = await knex('InventoryItem').insert({
+            consumableId: consumableGxEbolaCartridgeId,
+            siteId: siteData.id,
+            lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][i % 2]}-${(siteData.id + i) * consumableGxEbolaCartridgeId}`,
+            expiresOn,
+            quantityOnHand,
+            ...auditFields,
+          })
         await knex('InventoryLog').insert({
           expiresOn,
           siteId: siteData.id,
@@ -5033,7 +5033,7 @@ async function seed(knex) {
 
   await knex('JobFunctionDashboardWidget').insert([
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sitesTitle },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devicesTitle },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.instrumentsConnected },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.resultsTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.utilizationRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.activeDevices },
@@ -5073,7 +5073,7 @@ async function seed(knex) {
     },
 
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devicesTitle },
+    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.instrumentsConnected },
     {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.utilizationRate,
@@ -5103,7 +5103,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sitesTitle },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
-      widgetId: widgetIds.devicesTitle,
+      widgetId: widgetIds.instrumentsConnected,
     },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
@@ -5132,7 +5132,7 @@ async function seed(knex) {
     },
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sitesTitle },
-    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devicesTitle },
+    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.instrumentsConnected },
     {
       jobFunctionId: jobFunctionIdClinician,
       widgetId: widgetIds.utilizationRate,

@@ -247,6 +247,7 @@ describe('Parse nested queries', () => {
       'averageRecipientsOfSms',
       'averageLengthOfSms',
       'smsSent',
+      'instrumentsConnected',
       'averageDaysModuleSwap',
       'averageTimeToModuleReplacement',
       'numberOfDevicesExperiencingServiceInterruption',
