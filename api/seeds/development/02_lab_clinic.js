@@ -516,7 +516,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-      ;[sample.id] = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
@@ -714,7 +714,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-      ;[sample.id] = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
