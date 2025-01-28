@@ -94,7 +94,7 @@ const geneXpertDevices = {
   linkParams: {
     deviceType: 'CepheidGeneXpert',
   },
-  sortOrder: 0,
+  sortOrder: 1,
   externalId: 'geneXpertDevices',
   description: 'The number of approved GeneXpert devices (excluding decommissioned devices).',
   descriptionI18nKey: 'geneXpertDevices',
@@ -128,8 +128,8 @@ const devicesTitle = {
 const instrumentsConnected = {
   jobFunctions: ['all'],
   icon: 'MdDesktopWindows',
-  title: 'Instruments',
-  titleI18nKey: 'instrumentsConnectedTitle',
+  title: 'Devices',
+  titleI18nKey: 'instrumentsConnectedTitle2',
   subTitle: null,
   subTitleI18nKey: null,
   /**
@@ -149,9 +149,9 @@ const instrumentsConnected = {
       dt.externalId not in ('${INTERNAL_DEVICE_IDS.join("','")}')
   `,
   link: '/browse/device/list',
-  sortOrder: 1,
+  sortOrder: 2,
   externalId: 'instrumentsConnected',
-  description: 'The number of instruments connected to a single laptop in multi-device connector configuration.',
+  description: 'The number of devices connected.',
   descriptionI18nKey: 'instrumentsConnectedDescription',
   dashboards: {
     home: {},
@@ -170,7 +170,7 @@ const resultsTitle = {
   linkParams: {
     dateRange: WIDGET_FILTER_KEYS.FIXED_LAST_THIRTY_DAYS,
   },
-  sortOrder: 2,
+  sortOrder: 3,
   externalId: 'resultsTitle',
   description: 'The number of results in the last 30 days',
   descriptionI18nKey: 'resultsDescription',
@@ -236,7 +236,7 @@ const dashboardWidgetTestsPerDayTitle = {
   linkParams: {
     dateRange: WIDGET_FILTER_KEYS.FIXED_CURRENT_MONTH,
   },
-  sortOrder: 1,
+  sortOrder: 4,
   externalId: 'dashboardWidgetTestsPerDayTitle',
   description: 'Average number of tests per weekday conducted this month.',
   descriptionI18nKey: 'dashboardWidgetTestsPerDayDescription',
@@ -272,7 +272,7 @@ const dashboardWidgetValidResultsPc = {
     onlyReportableResults: true,
     dateRange: WIDGET_FILTER_KEYS.FIXED_CURRENT_MONTH,
   },
-  sortOrder: 2,
+  sortOrder: 5,
   externalId: 'dashboardWidgetValidResultsPc',
   description:
     'Percentage of valid results reported this month. Valid results includes all results that didn\'t result in "Error", "No Result", or "Invalid".',
@@ -315,7 +315,7 @@ const utilizationRate = {
   linkParams: {
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
-  sortOrder: 0,
+  sortOrder: 6,
   externalId: 'utilizationRate',
   description:
     'The utilization rate is calculated by counting all tests conducted in the month and dividing that number by the total capacity of all devices. This calculation excludes weekends.',
@@ -368,7 +368,7 @@ const activeDevicesCnt = {
   linkParams: {
     deviceMaintenanceStatusId: ['active', 'reportedActive'],
   },
-  sortOrder: 1,
+  sortOrder: 4,
   externalId: 'activeDevicesCnt',
   description: `Scoped to the last 24 hours, shows the number of devices that uploaded at least 1 test or were manually set es 'reported active', compared to the number of devices that pinged to Aspect at least 1 time (active vs online).`,
   descriptionI18nKey: 'activeDevicesCntDescription',
@@ -420,7 +420,7 @@ const activeDevices = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/operational-data#deviceStatus',
-  sortOrder: 1,
+  sortOrder: 5,
   externalId: 'activeDevices',
   description: `The average daily percentage of devices sending results, excluding weekends.`,
   descriptionI18nKey: 'activeDevicesDescription',
@@ -587,7 +587,7 @@ const deviceDaysActive = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/operational-data#deviceStatus',
-  sortOrder: 2,
+  sortOrder: 6,
   externalId: 'deviceDaysActive',
   description: 'Average number of days each device has been active, excluding weekends.',
   descriptionI18nKey: 'deviceDaysActiveDescription',
@@ -660,7 +660,7 @@ const errorRate = {
     workflowStatusId: 2,
     dateRange: WIDGET_FILTER_KEYS.FIXED_CURRENT_MONTH,
   },
-  sortOrder: 3,
+  sortOrder: 6,
   externalId: 'errorRate',
   description:
     'The error rate is calculated by counting all errors in the tests conducted in the month and dividing that number by the total tests carried out of all devices.',
@@ -1585,7 +1585,7 @@ const numberOfDevicesExperiencingServiceInterruption = {
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
   },
-  sortOrder: 0,
+  sortOrder: 30,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
   description: `The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.`,
   descriptionI18nKey: 'numberOfDevicesExperiencingServiceInterruptionDescription',
@@ -1674,7 +1674,7 @@ const averageDurationServiceInterruption = {
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
   },
-  sortOrder: 1,
+  sortOrder: 2,
   externalId: 'averageDurationServiceInterruption',
   description: `The average duration of a service interruption, in days.`,
   descriptionI18nKey: 'averageDurationServiceInterruptionDescription',
@@ -1878,7 +1878,7 @@ const dashboardWidgetTitleTotalRecoveredCases = {
 const serverUptimeTitle = {
   externalId: 'serverUptimeTitle',
   jobFunctions: ['all'],
-  sortOrder: 3,
+  sortOrder: 4,
   icon: 'MdNetworkCheck',
   title: 'Server Uptime',
   titleI18nKey: 'serverUptimeTitle',
@@ -2069,7 +2069,7 @@ const bangladeshAverageCompletion = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: null,
-  sortOrder: 8,
+  sortOrder: 4,
   externalId: 'bangladeshAverageCompletion',
   description: `The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay`,
   descriptionI18nKey: 'bangladeshAverageCompletionDescription',
@@ -2092,7 +2092,7 @@ const totalModuleBays = {
     FROM Device as d
     LEFT JOIN DeviceApproval AS a ON a.id = d.deviceApprovalId
     WHERE a.token = 'approved'`,
-  sortOrder: 0,
+  sortOrder: 5,
   externalId: 'totalModuleBays',
   description: 'Total Number Of Module Bays.',
   descriptionI18nKey: 'totalNoOfModuleBays',
@@ -2119,7 +2119,7 @@ const activeModuleBays = {
         WHERE f.date >= DATE(NOW() - INTERVAL 7 DAY) AND a.token = 'approved'
         GROUP BY f.deviceId
       ) AS g`,
-  sortOrder: 0,
+  sortOrder: 5,
   externalId: 'activeModuleBays',
   description: 'Total Number Of Active Module Bays.',
   descriptionI18nKey: 'totalNoOfActiveModuleBays',
@@ -2136,7 +2136,7 @@ const disabledModulesWidget = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: '',
-  sortOrder: 0,
+  sortOrder: 5,
   externalId: 'disabledModules',
   description: 'Count of Distinct Disabled GeneXpert Modules.',
   descriptionI18nKey: 'countOfDistinctDisabledGeneXpertModules',

@@ -257,7 +257,7 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
-      widgetId: _.find(widgets, { title: 'Instruments' }).id,
+      widgetId: _.find(widgets, { title: 'Devices' }).id,
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
@@ -270,7 +270,7 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      widgetId: _.find(widgets, { title: 'Instruments' }).id,
+      widgetId: _.find(widgets, { title: 'Devices' }).id,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
@@ -516,7 +516,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-    ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
@@ -714,7 +714,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-    ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
