@@ -3333,8 +3333,8 @@ async function seed(knex) {
               name === 'Admin'
                 ? bcrypt.hashSync('test07', saltRounds)
                 : name === 'Bill'
-                  ? 'SOMESTRING'
-                  : bcrypt.hashSync(name.toLowerCase(), saltRounds),
+                ? 'SOMESTRING'
+                : bcrypt.hashSync(name.toLowerCase(), saltRounds),
             legacyPassword: name === 'Bill' ? 1 : 0,
             approved: 1,
             createdOn: now,
@@ -3501,7 +3501,7 @@ async function seed(knex) {
         ).join(''),
       }
 
-        ;[device.id] = await knex('Device').insert(device)
+      ;[device.id] = await knex('Device').insert(device)
       devicesGeneXpert.push(device)
 
       // Create API Keys
@@ -3613,14 +3613,14 @@ async function seed(knex) {
         expiresOn = new Date(
           new Date(now.getTime() + _.random(-millisInNormalYear / 2, millisInNormalYear * 2)).setHours(0, 0, 0, 0)
         )
-          ;[inventoryItemId] = await knex('InventoryItem').insert({
-            consumableId: consumableGxEbolaCartridgeId,
-            siteId: siteData.id,
-            lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][i % 2]}-${(siteData.id + i) * consumableGxEbolaCartridgeId}`,
-            expiresOn,
-            quantityOnHand,
-            ...auditFields,
-          })
+        ;[inventoryItemId] = await knex('InventoryItem').insert({
+          consumableId: consumableGxEbolaCartridgeId,
+          siteId: siteData.id,
+          lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][i % 2]}-${(siteData.id + i) * consumableGxEbolaCartridgeId}`,
+          expiresOn,
+          quantityOnHand,
+          ...auditFields,
+        })
         await knex('InventoryLog').insert({
           expiresOn,
           siteId: siteData.id,
