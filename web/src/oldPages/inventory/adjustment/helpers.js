@@ -35,12 +35,7 @@ export const withExpirationDate = (partner, consumable) => {
     (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
   )
 }
-export const withLotNumber = (partner, consumable, actionType) => {
-  // Skip lot number requirement for transfer and remove operations
-  if (actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG || actionType === types.SHOW_REMOVE_INVENTORY_DIALOG) {
-    return false
-  }
-
+export const withLotNumber = (partner, consumable) => {
   return (
     strategyRequireLot(partner?.inventoryStrategy) ||
     (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))

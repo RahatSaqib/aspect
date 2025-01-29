@@ -224,7 +224,7 @@ function InventoryAdjustmentDialog(props) {
                     fullWidth
                     margin="normal"
                     dateFormat="yyyy-MM-dd"
-                    disabled={!!initialValues?.expiresOn}
+                    disabled={!!initialValues?.expiresOn || uiTransfer || uiRemove}
                     RootProps={{
                       name: 'expiresOn',
                     }}
