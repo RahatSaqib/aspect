@@ -1,13 +1,13 @@
 const jobFunctions = require('./jobFunctions')
 
 module.exports = {
-  adminUserName: 'tb_admin',
+  adminUserName: 'admin',
   adminPassword: 'test07',
   partner: {
-    name: 'Lesotho TB',
-    externalId: 'lesothoTb',
+    name: 'Lesotho',
+    externalId: 'lesotho',
   },
-  plugin: 'lesothoTb',
+  plugin: '',
   fixtures: {
     jobFunctions,
   },
