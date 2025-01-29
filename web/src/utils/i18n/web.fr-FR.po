@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-13T14:17:56.454Z\n"
+"POT-Creation-Date: 2025-01-25T04:10:02.389Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1079,6 +1079,13 @@ msgstr "Août"
 msgid "August"
 msgstr "Août"
 
+#. [pages.inventoryReconciliation.autoReconcileNow]
+#. defaultMessage is:
+#. Auto Reconcile Now
+#: extracted_strings.json
+msgid "Auto Reconcile Now"
+msgstr "Rapprochement automatique maintenant"
+
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
 #. Automatic Logout
@@ -1752,13 +1759,6 @@ msgstr "Ne peut pas être modifié"
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Annuler"
-
-#. [pages.DeviceDetailEdit.capacity]
-#. defaultMessage is:
-#. Capacity
-#: extracted_strings.json
-msgid "Capacity"
-msgstr "Capacité"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
 #. defaultMessage is:
@@ -2842,6 +2842,9 @@ msgstr "TB DST"
 msgid "Daily"
 msgstr "Quotidien"
 
+#. [pages.DeviceDetailEdit.dailyTestCapacity]
+#. defaultMessage is:
+#. Daily Capacity
 #. [pages.DeviceDetailProfile.dailyCapacity]
 #. defaultMessage is:
 #. Daily Capacity
@@ -14055,6 +14058,13 @@ msgstr "Jeudi"
 msgid "Time Zone"
 msgstr "Fuseau horaire"
 
+#. [forms.formItem.timeOfTheTest]
+#. defaultMessage is:
+#. Time of the Test
+#: extracted_strings.json
+msgid "Time of the Test"
+msgstr "Heure du test"
+
 #. [pages.NotificationDetail.recurrenceFactor]
 #. defaultMessage is:
 #. Times
@@ -16121,6 +16131,9 @@ msgstr "{unit} semaine dernière"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total des étalonnages"
+
+#~ msgid "Capacity"
+#~ msgstr "Capacité"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Test pour MTB Rif Ultra"

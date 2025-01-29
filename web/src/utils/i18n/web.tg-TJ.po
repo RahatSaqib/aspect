@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
+"POT-Creation-Date: 2025-01-25T04:10:02.389Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -235,14 +235,14 @@ msgstr "AMK-R %"
 msgid "AMK-R Detected"
 msgstr "AMK-R ошкор карда шуд"
 
-#. [months.april]
+#. [monthsUpperShort.april]
 #. defaultMessage is:
 #. APR
 #: extracted_strings.json
 msgid "APR"
 msgstr "апрел"
 
-#. [months.august]
+#. [monthsUpperShort.august]
 #. defaultMessage is:
 #. AUG
 #: extracted_strings.json
@@ -538,6 +538,9 @@ msgstr ""
 #. [pages.resultEdit.AgeFieldi18nKey]
 #. defaultMessage is:
 #. Age
+#. [pages.resultEdit.age]
+#. defaultMessage is:
+#. Age
 #: extracted_strings.json
 msgid "Age"
 msgstr "Синну сол"
@@ -800,6 +803,20 @@ msgstr "Ягон"
 msgid "Api Keys"
 msgstr "Калидҳои Api"
 
+#. [pages.InventoryLog.reconcilationAdjustment]
+#. defaultMessage is:
+#. Applied Consumable Strategy
+#: extracted_strings.json
+msgid "Applied Consumable Strategy"
+msgstr "Стратегияи истеъмолии татбиқшаванда"
+
+#. [pages.InventoryLog.reconcilationStrategy]
+#. defaultMessage is:
+#. Applied Reconciliation Strategy
+#: extracted_strings.json
+msgid "Applied Reconciliation Strategy"
+msgstr "Стратегияи татбиқи оштӣ"
+
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
 #. Apply Filters
@@ -1052,6 +1069,13 @@ msgstr "август"
 #: extracted_strings.json
 msgid "August"
 msgstr "август"
+
+#. [pages.inventoryReconciliation.autoReconcileNow]
+#. defaultMessage is:
+#. Auto Reconcile Now
+#: extracted_strings.json
+msgid "Auto Reconcile Now"
+msgstr "Ҳоло худкор оштӣ кунед"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -1723,13 +1747,6 @@ msgstr "Таҳрир кардан мумкин нест"
 msgid "Cancel"
 msgstr "Бекор кардан"
 
-#. [pages.DeviceDetailEdit.capacity]
-#. defaultMessage is:
-#. Capacity
-#: extracted_strings.json
-msgid "Capacity"
-msgstr "Иқтидор"
-
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
 #. defaultMessage is:
 #. Captured
@@ -1740,6 +1757,9 @@ msgstr "Иқтидор"
 msgid "Captured"
 msgstr "Забт карда шуд"
 
+#. [pages.InventoryLog.withLotStrategy]
+#. defaultMessage is:
+#. Cartridge Lot Number
 #. [pages.Consumable.New.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot Number
@@ -1814,6 +1834,13 @@ msgstr "Категорияи I"
 #. Cellphone Number
 #: extracted_strings.json
 msgid "Cellphone Number"
+msgstr "Рақами телефони мобилӣ"
+
+#. [pages.resultEdit.cellphoneNumber]
+#. defaultMessage is:
+#. Cellphone number
+#: extracted_strings.json
+msgid "Cellphone number"
 msgstr "Рақами телефони мобилӣ"
 
 #. [pages.NotificationDetail.actionChange]
@@ -2664,6 +2691,27 @@ msgstr "Ташхиси кунунии RRTB"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Тамоюлҳои ташхиси муқовимат ба рифампицин"
 
+#. [pages.InventoryLog.currentSiteAdjustment]
+#. defaultMessage is:
+#. Current Site
+#: extracted_strings.json
+msgid "Current Site"
+msgstr "Сайти ҷорӣ"
+
+#. [pages.InventoryLog.currentSiteAndProviderAdjustment]
+#. defaultMessage is:
+#. Current Site and Stock Provider
+#: extracted_strings.json
+msgid "Current Site and Stock Provider"
+msgstr "Сайти ҷорӣ ва провайдери саҳҳомӣ"
+
+#. [pages.InventoryLog.currentSiteAndProviderAndNationalAdjustment]
+#. defaultMessage is:
+#. Current Site, Stock Provider and all Parent Sites
+#: extracted_strings.json
+msgid "Current Site, Stock Provider and all Parent Sites"
+msgstr "Сайти ҷорӣ, Таъминкунандаи саҳҳомӣ ва ҳама сайтҳои волидайн"
+
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
 #. Current TB Diagnosis
@@ -2730,7 +2778,7 @@ msgstr "Анҷоми миёнаи Майдонҳои фармоишӣ"
 msgid "DBS"
 msgstr "DBS"
 
-#. [months.december]
+#. [monthsUpperShort.december]
 #. defaultMessage is:
 #. DEC
 #: extracted_strings.json
@@ -2780,6 +2828,9 @@ msgstr "DST"
 msgid "Daily"
 msgstr "Ҳар рӯз"
 
+#. [pages.DeviceDetailEdit.dailyTestCapacity]
+#. defaultMessage is:
+#. Daily Capacity
 #. [pages.DeviceDetailProfile.dailyCapacity]
 #. defaultMessage is:
 #. Daily Capacity
@@ -2939,6 +2990,20 @@ msgstr "Санаи қабул"
 #: extracted_strings.json
 msgid "Date Removed"
 msgstr "Санаи хориҷшуда"
+
+#. [pages.resultEdit.dateSpecimenCollected]
+#. defaultMessage is:
+#. Date Specimen Collected
+#: extracted_strings.json
+msgid "Date Specimen Collected"
+msgstr "Санаи ҷамъоваришуда"
+
+#. [pages.resultEdit.dateSpecimenReceived]
+#. defaultMessage is:
+#. Date Specimen Received
+#: extracted_strings.json
+msgid "Date Specimen Received"
+msgstr "Санаи қабули намуна"
 
 #. [pages.TransferInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -4301,6 +4366,9 @@ msgstr "Дар рӯзҳо ба охир мерасад"
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.InventoryLog.withExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date
 #. [pages.Consumable.New.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
@@ -4311,6 +4379,9 @@ msgstr "Дар рӯзҳо ба охир мерасад"
 msgid "Expiry Date"
 msgstr "Санаи поёни бақо"
 
+#. [pages.InventoryLog.withLotAndExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date and Cartridge Lot Number
 #. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
 #. defaultMessage is:
 #. Expiry Date and Cartridge Lot Number
@@ -4396,7 +4467,7 @@ msgstr ""
 "Маълумотро барои диапазони санаи интихобшуда барои воридоти минбаъда ба "
 "Ҷадвали истихроҷ кунед."
 
-#. [months.february]
+#. [monthsUpperShort.february]
 #. defaultMessage is:
 #. FEB
 #: extracted_strings.json
@@ -4829,6 +4900,9 @@ msgstr "Шустани меъда"
 #. defaultMessage is:
 #. Gender
 #. [pages.resultEdit.Genderi18nCaptionKey]
+#. defaultMessage is:
+#. Gender
+#. [pages.resultEdit.gender]
 #. defaultMessage is:
 #. Gender
 #: extracted_strings.json
@@ -5635,9 +5709,6 @@ msgstr "Гепатити С"
 #. [pages.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
-#. [pages.inventoryReconciliation.hierarchicalView]
-#. defaultMessage is:
-#. Hierarchical View
 #: extracted_strings.json
 msgid "Hierarchical View"
 msgstr "Намоиши иерархӣ"
@@ -6246,6 +6317,17 @@ msgstr "Намудҳои масъалаҳо"
 msgid "It might have been deleted or renamed"
 msgstr "Эҳтимол он нест карда шуда бошад ё номашро иваз карда бошад"
 
+#. [p.PkDashboard.consumptionRateTooltip]
+#. defaultMessage is:
+#. Its the average daily consumption of the specific cartridge considering the date range selected
+#: extracted_strings.json
+msgid ""
+"Its the average daily consumption of the specific cartridge considering the "
+"date range selected"
+msgstr ""
+"Он истеъмоли миёнаи ҳаррӯзаи картриджи мушаххас бо назардошти диапазони "
+"санаи интихобшуда мебошад"
+
 #. [pages.InventoryItemsList.dailyConsumptionRateDescription]
 #. defaultMessage is:
 #. Its the average daily consumption of the specific cartridge considering the last 180 day period
@@ -6257,6 +6339,9 @@ msgstr ""
 "Ин истеъмоли миёнаи ҳаррӯзаи картриджи мушаххас бо назардошти давраи 180 "
 "рӯзи охир мебошад"
 
+#. [p.PkDashboard.currentQtyTooltip]
+#. defaultMessage is:
+#. Its the current quantity in hand, including the expired quantity.
 #. [pages.InventoryItemsList.quantityOnHandDescription]
 #. defaultMessage is:
 #. Its the current quantity in hand, including the expired quantity.
@@ -6264,21 +6349,41 @@ msgstr ""
 msgid "Its the current quantity in hand, including the expired quantity."
 msgstr "Миқдори ҷорӣ дар даст, аз ҷумла миқдори гузашта."
 
-#. [months.january]
+#. [p.PkDashboard.usedToolTip]
+#. defaultMessage is:
+#. Its the total cartidges consumed in the date range filter selected
+#: extracted_strings.json
+msgid "Its the total cartidges consumed in the date range filter selected"
+msgstr ""
+"Он маҷмӯи умумии картриджҳои дар филтри диапазони санаи интихобшуда "
+"истеъмолшуда мебошад"
+
+#. [p.PkDashboard.last6MonthsTooltip]
+#. defaultMessage is:
+#. Its the total cartridges consumed in last 6 months, irrespective of the period selected in filter option
+#: extracted_strings.json
+msgid ""
+"Its the total cartridges consumed in last 6 months, irrespective of the "
+"period selected in filter option"
+msgstr ""
+"Он, новобаста аз давраи интихобкардаи филтр, ки дар 6 моҳи охир истеъмол "
+"карда шудааст."
+
+#. [monthsUpperShort.january]
 #. defaultMessage is:
 #. JAN
 #: extracted_strings.json
 msgid "JAN"
 msgstr "январ"
 
-#. [months.july]
+#. [monthsUpperShort.july]
 #. defaultMessage is:
 #. JUL
 #: extracted_strings.json
 msgid "JUL"
 msgstr "июл"
 
-#. [months.june]
+#. [monthsUpperShort.june]
 #. defaultMessage is:
 #. JUN
 #: extracted_strings.json
@@ -6930,14 +7035,14 @@ msgstr "Сатҳи пасти анҷом додани киштзор"
 msgid "Low Inventory"
 msgstr "Инвентаризатсияи паст"
 
-#. [months.march]
+#. [monthsUpperShort.march]
 #. defaultMessage is:
 #. MAR
 #: extracted_strings.json
 msgid "MAR"
 msgstr "марш"
 
-#. [months.may]
+#. [monthsUpperShort.may]
 #. defaultMessage is:
 #. MAY
 #: extracted_strings.json
@@ -7576,6 +7681,13 @@ msgstr "март"
 msgid "March"
 msgstr "март"
 
+#. [months.may]
+#. defaultMessage is:
+#. May
+#: extracted_strings.json
+msgid "May"
+msgstr "май"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7861,7 +7973,7 @@ msgstr "Бояд аз имрӯз дертар бошад"
 msgid "N/A"
 msgstr "Н/А"
 
-#. [months.november]
+#. [monthsUpperShort.november]
 #. defaultMessage is:
 #. NOV
 #: extracted_strings.json
@@ -7911,6 +8023,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.PersonList.personName]
+#. defaultMessage is:
+#. Name
+#. [pages.resultEdit.name]
 #. defaultMessage is:
 #. Name
 #. [pages.SiteDetail.fieldName]
@@ -8737,7 +8852,7 @@ msgstr ""
 msgid "Numbers Included"
 msgstr "Рақамҳо дохил карда шудаанд"
 
-#. [months.october]
+#. [monthsUpperShort.october]
 #. defaultMessage is:
 #. OCT
 #: extracted_strings.json
@@ -10300,11 +10415,17 @@ msgstr "Меъёрҳои барқароршавӣ аз рӯи ҷинс"
 #. [pages.resultEdit.ReferringClinicianI18nkey]
 #. defaultMessage is:
 #. Referring Clinician or Facility Phone Number (if known)
+#. [pages.resultEdit.referringClinicianOrFacilityPhoneNumberIfKnown]
+#. defaultMessage is:
+#. Referring Clinician or Facility Phone Number (if known)
 #: extracted_strings.json
 msgid "Referring Clinician or Facility Phone Number (if known)"
 msgstr "Рақами телефони клиникӣ ё муассиса (агар маълум бошад)"
 
 #. [pages.resultEdit.ReferringFacilityI18nkey]
+#. defaultMessage is:
+#. Referring Facility
+#. [pages.resultEdit.referringFacility]
 #. defaultMessage is:
 #. Referring Facility
 #: extracted_strings.json
@@ -10391,6 +10512,9 @@ msgid "Repeat Baseline"
 msgstr "Сатҳи ибтидоиро такрор кунед"
 
 #. [pages.resultEdit.RepeatTesti18nKey]
+#. defaultMessage is:
+#. Repeat Test
+#. [pages.resultEdit.repeatTest]
 #. defaultMessage is:
 #. Repeat Test
 #: extracted_strings.json
@@ -11048,6 +11172,9 @@ msgstr "Табобат"
 #. [pages.resultEdit.RetreatCaseFieldi18nKey]
 #. defaultMessage is:
 #. Retreatment Case
+#. [pages.resultEdit.retreatmentCase]
+#. defaultMessage is:
+#. Retreatment Case
 #: extracted_strings.json
 msgid "Retreatment Case"
 msgstr "Ҳолати табобат"
@@ -11121,7 +11248,7 @@ msgstr "Роутерҳо"
 msgid "SARS-CoV-2 (COVID-19)"
 msgstr "SARS-CoV-2 (COVID-19)"
 
-#. [months.september]
+#. [monthsUpperShort.september]
 #. defaultMessage is:
 #. SEP
 #: extracted_strings.json
@@ -12101,7 +12228,7 @@ msgstr ""
 "Намоиши {firstItemIndex}-{lastItemIndex} аз {itemCount, ҷамъ, як {# } дигар "
 "{# }}"
 
-#. [pages.ReportIndex.unUsedModulesReport_Description]
+#. [pages.ReportIndex.unusedModulesReport_Description]
 #. defaultMessage is:
 #. Shows all devices that haven't used all available modules in the selected time period.
 #: extracted_strings.json
@@ -12654,6 +12781,13 @@ msgstr "Таъминот"
 #: extracted_strings.json
 msgid "Supply in Stock"
 msgstr "Таъмин дар захира"
+
+#. [pages.resultEdit.surename]
+#. defaultMessage is:
+#. Surename
+#: extracted_strings.json
+msgid "Surename"
+msgstr "Фамилия"
 
 #. [pages.resultEdit.SurenameFieldi18nKey]
 #. defaultMessage is:
@@ -13242,6 +13376,17 @@ msgstr ""
 #: extracted_strings.json
 msgid "The number of contacts in the system."
 msgstr "Шумораи алоқаҳо дар система."
+
+#. [p.PkDashboard.daysLeftTooltip]
+#. defaultMessage is:
+#. The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges
+#: extracted_strings.json
+msgid ""
+"The number of days left with available and not-expired cartridge and the "
+"daily consumption rate of the cartridges"
+msgstr ""
+"Миқдори рӯзҳое, ки бо картриджҳои мавҷуда ва истифоданашуда боқӣ мондаанд ва "
+"меъёри истеъмоли ҳаррӯзаи картриджҳо"
 
 #. [pages.InventoryItemsList.daysStockLeftDescription]
 #. defaultMessage is:
@@ -13873,6 +14018,13 @@ msgstr "Панҷшанбе"
 msgid "Time Zone"
 msgstr "Минтақаи вақт"
 
+#. [forms.formItem.timeOfTheTest]
+#. defaultMessage is:
+#. Time of the Test
+#: extracted_strings.json
+msgid "Time of the Test"
+msgstr "Вақти санҷиш"
+
 #. [pages.NotificationDetail.recurrenceFactor]
 #. defaultMessage is:
 #. Times
@@ -14458,7 +14610,7 @@ msgstr "Қулф кушода шуд"
 msgid "Unreconciled quantity"
 msgstr "Миқдори мувофиқашуда"
 
-#. [pages.ReportIndex.unUsedModulesReport]
+#. [pages.ReportIndex.unusedModulesReport]
 #. defaultMessage is:
 #. Unused Modules
 #: extracted_strings.json
@@ -14638,6 +14790,13 @@ msgstr "Намоиши гузориш"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Шиддат"
+
+#. [pages.ErrorRate.whoBenchmark]
+#. defaultMessage is:
+#. WHO Benchmark
+#: extracted_strings.json
+msgid "WHO Benchmark"
+msgstr "Нишондиҳандаи ТУТ"
 
 #. [hierarchicalSiteView.warehouse]
 #. defaultMessage is:
@@ -15814,35 +15973,35 @@ msgstr "{entity} лозим аст"
 #. {itemCount, plural, one {# Contact} other {# Contacts} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
-msgstr "{itemCount, plural, one {# Тамос} other {# Тамос} }"
+msgstr "{itemCount, plural, one {# Contact} other {# Contacts} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Job Function} other {# Job Functions} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
-msgstr "{itemCount, plural, one {# Функсияи корӣ} other {# Вазифаҳои корӣ} }"
+msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Name} other {# Names} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Name} other {# Names} }"
-msgstr "{itemCount, plural, one {# Ном} other {# Ном} }"
+msgstr "{itemCount, plural, one {# Name} other {# Names} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCountPersons]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, ҷамъ, як {# Person} дигар {# Persons} }"
+msgstr "{itemCount, plural, one {# Person} other {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
 #. {itemCount} (total)
 #: extracted_strings.json
 msgid "{itemCount} (total)"
-msgstr "{itemCount} (умум)"
+msgstr "{itemCount} (total)"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleResultsReported]
 #. defaultMessage is:
@@ -15863,15 +16022,15 @@ msgid ""
 "{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one "
 "{# day} other {# days} }"
 msgstr ""
-"{maintenanceStatusName} ({totalResults}) барои {daysInSameStatus, plural, "
-"one {# рӯзи other} {# рӯзи other} }"
+"{maintenanceStatusName} ({totalResults}) барои  {daysInSameStatus, plural, "
+"one {# day} other {# days} }"
 
 #. [pages.DeviceDetailProfile.deviceCapacityModules]
 #. defaultMessage is:
 #. {numberOfModules, plural, one {# module} other {# modules} }
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
-msgstr "{numberOfModules, plural, one {# модул} other {# модул} }"
+msgstr "{numberOfModules, plural, one {# module} other {# modules} }"
 
 #. [p.PkDashboard.customPerYear]
 #. defaultMessage is:
@@ -15924,6 +16083,9 @@ msgstr "{unit} аз ҳафтаи гузашта"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
+
+#~ msgid "Capacity"
+#~ msgstr "Иқтидор"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Таҳлил барои MTB Rif Ultra"
