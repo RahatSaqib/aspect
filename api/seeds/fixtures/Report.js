@@ -381,7 +381,7 @@ const doNotUseModulesReport = {
   externalId: 'do_not_use_modules_report',
   fileName: 'DoNotUseModulesReport',
   availableForNotification: 1,
-  exportCsv: true,
+  exportCsv: false,
   sortOrder: 125,
   validations: [],
   sheets: [
@@ -396,7 +396,7 @@ const doNotUseModulesReport = {
 const unusedModulesReport = {
   name: 'Unused Modules',
   description: "Shows all devices that haven't used all available modules in the selected time period..",
-  i18nKey: 'unUseModulesReport',
+  i18nKey: 'unusedModulesReport',
   i18nKeyDescription: 'unusedModulesReport_Description',
   externalId: 'unused_modules_report',
   fileName: 'unusedModulesReport',

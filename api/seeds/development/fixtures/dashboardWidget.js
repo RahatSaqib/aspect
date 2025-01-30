@@ -25,7 +25,6 @@ const {
     numberOfDevicesExperiencingServiceInterruption,
     averageDurationServiceInterruption,
     percentageOfDaysWithServiceInterruption,
-    devicesTitle,
     sitesTitle,
     resultsTitle,
     geneXpertDevices,
@@ -76,7 +75,6 @@ module.exports = {
     numberOfDevicesExperiencingServiceInterruption,
     averageDurationServiceInterruption,
     percentageOfDaysWithServiceInterruption,
-    devicesTitle,
     sitesTitle,
     {
       ...dashboardWidgetTitleConfirmedCases,

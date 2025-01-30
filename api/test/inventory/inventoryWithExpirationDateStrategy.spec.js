@@ -105,6 +105,11 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           expiresOn: expiresOn2,
           quantityOnHand: 500,
         })
+        const siteConsumables = [
+          { siteId: site1Id, consumableId },
+          { siteId: site2Id, consumableId },
+        ]
+        await knex('SiteConsumable').insert(siteConsumables)
         await knex('FactInventoryConsumptionRate').insert({
           siteId: site1Id,
           consumableId,
@@ -164,6 +169,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
         await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id, site2Id]).delete()
         await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
+        await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
       })
 
       describe('GET', () => {
@@ -295,7 +301,9 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           const res = await server
             .get(`${path}?siteName=test%20site&sortCol=consumableName`)
             .set('Authorization', `Bearer ${shared.token}`)
-          assert.isTrue(res.body.data[0].consumableName < res.body.data[res.body.data.length - 1].consumableName)
+
+          assert.equal(res.body.data[0].consumableName, res.body.data[1].consumableName)
+          assert.isTrue(res.body.data[0].consumableName <= res.body.data[res.body.data.length - 1].consumableName)
         })
 
         it('should return a list of inventory items, apply post-processing ordering by days stock left', async () => {

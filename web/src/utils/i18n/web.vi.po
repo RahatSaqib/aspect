@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-01-02T04:07:20.439Z\n"
+"POT-Creation-Date: 2025-01-25T04:10:02.389Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -236,14 +236,14 @@ msgstr "AMK-R %"
 msgid "AMK-R Detected"
 msgstr "Đã phát hiện AMK-R"
 
-#. [months.april]
+#. [monthsUpperShort.april]
 #. defaultMessage is:
 #. APR
 #: extracted_strings.json
 msgid "APR"
 msgstr "T4"
 
-#. [months.august]
+#. [monthsUpperShort.august]
 #. defaultMessage is:
 #. AUG
 #: extracted_strings.json
@@ -539,6 +539,9 @@ msgstr ""
 #. [pages.resultEdit.AgeFieldi18nKey]
 #. defaultMessage is:
 #. Age
+#. [pages.resultEdit.age]
+#. defaultMessage is:
+#. Age
 #: extracted_strings.json
 msgid "Age"
 msgstr "Tuổi"
@@ -801,6 +804,20 @@ msgstr "Bất Kỳ"
 msgid "Api Keys"
 msgstr "Khóa API"
 
+#. [pages.InventoryLog.reconcilationAdjustment]
+#. defaultMessage is:
+#. Applied Consumable Strategy
+#: extracted_strings.json
+msgid "Applied Consumable Strategy"
+msgstr "Chiến lược tiêu dùng ứng dụng"
+
+#. [pages.InventoryLog.reconcilationStrategy]
+#. defaultMessage is:
+#. Applied Reconciliation Strategy
+#: extracted_strings.json
+msgid "Applied Reconciliation Strategy"
+msgstr "Chiến lược hòa giải ứng dụng"
+
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
 #. Apply Filters
@@ -1053,6 +1070,13 @@ msgstr "T8"
 #: extracted_strings.json
 msgid "August"
 msgstr "Tháng 8"
+
+#. [pages.inventoryReconciliation.autoReconcileNow]
+#. defaultMessage is:
+#. Auto Reconcile Now
+#: extracted_strings.json
+msgid "Auto Reconcile Now"
+msgstr "Tự động đối chiếu ngay bây giờ"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -1727,13 +1751,6 @@ msgstr "Không thể chỉnh sửa"
 msgid "Cancel"
 msgstr "Hủy"
 
-#. [pages.DeviceDetailEdit.capacity]
-#. defaultMessage is:
-#. Capacity
-#: extracted_strings.json
-msgid "Capacity"
-msgstr "Sức chứa"
-
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
 #. defaultMessage is:
 #. Captured
@@ -1744,6 +1761,9 @@ msgstr "Sức chứa"
 msgid "Captured"
 msgstr "Đã chụp"
 
+#. [pages.InventoryLog.withLotStrategy]
+#. defaultMessage is:
+#. Cartridge Lot Number
 #. [pages.Consumable.New.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot Number
@@ -1818,6 +1838,13 @@ msgstr "Loại I"
 #. Cellphone Number
 #: extracted_strings.json
 msgid "Cellphone Number"
+msgstr "Số điện thoại di động"
+
+#. [pages.resultEdit.cellphoneNumber]
+#. defaultMessage is:
+#. Cellphone number
+#: extracted_strings.json
+msgid "Cellphone number"
 msgstr "Số điện thoại di động"
 
 #. [pages.NotificationDetail.actionChange]
@@ -2667,6 +2694,28 @@ msgstr "Chẩn đoán RRTB hiện tại"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Xu hướng chẩn đoán kháng Rifampicin hiện tại"
 
+#. [pages.InventoryLog.currentSiteAdjustment]
+#. defaultMessage is:
+#. Current Site
+#: extracted_strings.json
+msgid "Current Site"
+msgstr "Trang web hiện tại"
+
+#. [pages.InventoryLog.currentSiteAndProviderAdjustment]
+#. defaultMessage is:
+#. Current Site and Stock Provider
+#: extracted_strings.json
+msgid "Current Site and Stock Provider"
+msgstr "Nhà cung cấp trang web và cổ phiếu hiện tại"
+
+#. [pages.InventoryLog.currentSiteAndProviderAndNationalAdjustment]
+#. defaultMessage is:
+#. Current Site, Stock Provider and all Parent Sites
+#: extracted_strings.json
+msgid "Current Site, Stock Provider and all Parent Sites"
+msgstr ""
+"Trang web hiện tại, Nhà cung cấp chứng khoán và tất cả các trang web mẹ"
+
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
 #. Current TB Diagnosis
@@ -2733,7 +2782,7 @@ msgstr "Mức hoàn thành trung bình của các trường tùy chỉnh"
 msgid "DBS"
 msgstr "DBS"
 
-#. [months.december]
+#. [monthsUpperShort.december]
 #. defaultMessage is:
 #. DEC
 #: extracted_strings.json
@@ -2783,6 +2832,9 @@ msgstr "DST"
 msgid "Daily"
 msgstr "Hàng ngày"
 
+#. [pages.DeviceDetailEdit.dailyTestCapacity]
+#. defaultMessage is:
+#. Daily Capacity
 #. [pages.DeviceDetailProfile.dailyCapacity]
 #. defaultMessage is:
 #. Daily Capacity
@@ -2942,6 +2994,20 @@ msgstr "Ngày nhận"
 #: extracted_strings.json
 msgid "Date Removed"
 msgstr "Ngày bị xóa"
+
+#. [pages.resultEdit.dateSpecimenCollected]
+#. defaultMessage is:
+#. Date Specimen Collected
+#: extracted_strings.json
+msgid "Date Specimen Collected"
+msgstr "Ngày mẫu vật được thu thập"
+
+#. [pages.resultEdit.dateSpecimenReceived]
+#. defaultMessage is:
+#. Date Specimen Received
+#: extracted_strings.json
+msgid "Date Specimen Received"
+msgstr "Ngày mẫu nhận được"
 
 #. [pages.TransferInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -4300,6 +4366,9 @@ msgstr "Hết hạn sau ngày"
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.InventoryLog.withExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date
 #. [pages.Consumable.New.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
@@ -4310,6 +4379,9 @@ msgstr "Hết hạn sau ngày"
 msgid "Expiry Date"
 msgstr "Ngày hết hạn"
 
+#. [pages.InventoryLog.withLotAndExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date and Cartridge Lot Number
 #. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
 #. defaultMessage is:
 #. Expiry Date and Cartridge Lot Number
@@ -4393,7 +4465,7 @@ msgid ""
 "Extract data for selected date range for further importing into Tableau."
 msgstr "Trích xuất dữ liệu cho phạm vi ngày đã chọn để nhập thêm vào Tableau."
 
-#. [months.february]
+#. [monthsUpperShort.february]
 #. defaultMessage is:
 #. FEB
 #: extracted_strings.json
@@ -4825,6 +4897,9 @@ msgstr "Rửa dạ dày"
 #. defaultMessage is:
 #. Gender
 #. [pages.resultEdit.Genderi18nCaptionKey]
+#. defaultMessage is:
+#. Gender
+#. [pages.resultEdit.gender]
 #. defaultMessage is:
 #. Gender
 #: extracted_strings.json
@@ -5630,9 +5705,6 @@ msgstr "Viêm gan C"
 #. [pages.hierarchicalView]
 #. defaultMessage is:
 #. Hierarchical View
-#. [pages.inventoryReconciliation.hierarchicalView]
-#. defaultMessage is:
-#. Hierarchical View
 #: extracted_strings.json
 msgid "Hierarchical View"
 msgstr "Chế độ xem phân cấp"
@@ -6236,6 +6308,17 @@ msgstr "Các loại vấn đề"
 msgid "It might have been deleted or renamed"
 msgstr "Nó có thể đã bị xóa hoặc đổi tên"
 
+#. [p.PkDashboard.consumptionRateTooltip]
+#. defaultMessage is:
+#. Its the average daily consumption of the specific cartridge considering the date range selected
+#: extracted_strings.json
+msgid ""
+"Its the average daily consumption of the specific cartridge considering the "
+"date range selected"
+msgstr ""
+"Đây là mức tiêu thụ trung bình hàng ngày của hộp mực cụ thể khi xét đến phạm "
+"vi ngày đã chọn"
+
 #. [pages.InventoryItemsList.dailyConsumptionRateDescription]
 #. defaultMessage is:
 #. Its the average daily consumption of the specific cartridge considering the last 180 day period
@@ -6247,6 +6330,9 @@ msgstr ""
 "Đây là mức tiêu thụ trung bình hàng ngày của hộp mực cụ thể trong khoảng "
 "thời gian 180 ngày qua"
 
+#. [p.PkDashboard.currentQtyTooltip]
+#. defaultMessage is:
+#. Its the current quantity in hand, including the expired quantity.
 #. [pages.InventoryItemsList.quantityOnHandDescription]
 #. defaultMessage is:
 #. Its the current quantity in hand, including the expired quantity.
@@ -6254,21 +6340,39 @@ msgstr ""
 msgid "Its the current quantity in hand, including the expired quantity."
 msgstr "Đó là số lượng hiện có trong tay, bao gồm cả số lượng đã hết hạn."
 
-#. [months.january]
+#. [p.PkDashboard.usedToolTip]
+#. defaultMessage is:
+#. Its the total cartidges consumed in the date range filter selected
+#: extracted_strings.json
+msgid "Its the total cartidges consumed in the date range filter selected"
+msgstr "Đó là tổng số hộp mực được tiêu thụ trong phạm vi ngày được chọn lọc"
+
+#. [p.PkDashboard.last6MonthsTooltip]
+#. defaultMessage is:
+#. Its the total cartridges consumed in last 6 months, irrespective of the period selected in filter option
+#: extracted_strings.json
+msgid ""
+"Its the total cartridges consumed in last 6 months, irrespective of the "
+"period selected in filter option"
+msgstr ""
+"Đây là tổng số hộp mực đã tiêu thụ trong 6 tháng qua, bất kể khoảng thời "
+"gian được chọn trong tùy chọn bộ lọc"
+
+#. [monthsUpperShort.january]
 #. defaultMessage is:
 #. JAN
 #: extracted_strings.json
 msgid "JAN"
 msgstr "T1"
 
-#. [months.july]
+#. [monthsUpperShort.july]
 #. defaultMessage is:
 #. JUL
 #: extracted_strings.json
 msgid "JUL"
 msgstr "T7"
 
-#. [months.june]
+#. [monthsUpperShort.june]
 #. defaultMessage is:
 #. JUN
 #: extracted_strings.json
@@ -6919,14 +7023,14 @@ msgstr "Tỷ lệ hoàn thành trường thấp"
 msgid "Low Inventory"
 msgstr "Kiểm kê thấp"
 
-#. [months.march]
+#. [monthsUpperShort.march]
 #. defaultMessage is:
 #. MAR
 #: extracted_strings.json
 msgid "MAR"
 msgstr "T3"
 
-#. [months.may]
+#. [monthsUpperShort.may]
 #. defaultMessage is:
 #. MAY
 #: extracted_strings.json
@@ -7565,6 +7669,13 @@ msgstr "T3"
 msgid "March"
 msgstr "Tháng 3"
 
+#. [months.may]
+#. defaultMessage is:
+#. May
+#: extracted_strings.json
+msgid "May"
+msgstr "Tháng 5"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7850,7 +7961,7 @@ msgstr "Phải muộn hơn hôm nay"
 msgid "N/A"
 msgstr "N/A"
 
-#. [months.november]
+#. [monthsUpperShort.november]
 #. defaultMessage is:
 #. NOV
 #: extracted_strings.json
@@ -7900,6 +8011,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.PersonList.personName]
+#. defaultMessage is:
+#. Name
+#. [pages.resultEdit.name]
 #. defaultMessage is:
 #. Name
 #. [pages.SiteDetail.fieldName]
@@ -8721,7 +8835,7 @@ msgstr "Số lần lặp lại kiểm tra và thông báo nếu không hoạt đ
 msgid "Numbers Included"
 msgstr "Bao gồm các số"
 
-#. [months.october]
+#. [monthsUpperShort.october]
 #. defaultMessage is:
 #. OCT
 #: extracted_strings.json
@@ -10280,11 +10394,17 @@ msgstr "Tỷ lệ thu hồi theo giới tính"
 #. [pages.resultEdit.ReferringClinicianI18nkey]
 #. defaultMessage is:
 #. Referring Clinician or Facility Phone Number (if known)
+#. [pages.resultEdit.referringClinicianOrFacilityPhoneNumberIfKnown]
+#. defaultMessage is:
+#. Referring Clinician or Facility Phone Number (if known)
 #: extracted_strings.json
 msgid "Referring Clinician or Facility Phone Number (if known)"
 msgstr "Số điện thoại của bác sĩ hoặc cơ sở giới thiệu (nếu biết)"
 
 #. [pages.resultEdit.ReferringFacilityI18nkey]
+#. defaultMessage is:
+#. Referring Facility
+#. [pages.resultEdit.referringFacility]
 #. defaultMessage is:
 #. Referring Facility
 #: extracted_strings.json
@@ -10371,6 +10491,9 @@ msgid "Repeat Baseline"
 msgstr "Lặp lại đường cơ sở"
 
 #. [pages.resultEdit.RepeatTesti18nKey]
+#. defaultMessage is:
+#. Repeat Test
+#. [pages.resultEdit.repeatTest]
 #. defaultMessage is:
 #. Repeat Test
 #: extracted_strings.json
@@ -11027,6 +11150,9 @@ msgstr "Rút lui"
 #. [pages.resultEdit.RetreatCaseFieldi18nKey]
 #. defaultMessage is:
 #. Retreatment Case
+#. [pages.resultEdit.retreatmentCase]
+#. defaultMessage is:
+#. Retreatment Case
 #: extracted_strings.json
 msgid "Retreatment Case"
 msgstr "Trường hợp rút lui"
@@ -11100,7 +11226,7 @@ msgstr "Bộ định tuyến"
 msgid "SARS-CoV-2 (COVID-19)"
 msgstr "SARS-CoV-2 (COVID-19)"
 
-#. [months.september]
+#. [monthsUpperShort.september]
 #. defaultMessage is:
 #. SEP
 #: extracted_strings.json
@@ -12078,7 +12204,7 @@ msgstr ""
 "Hiển thị {firstItemIndex}-{lastItemIndex} trong số {itemCount, số nhiều, một "
 "{# } khác {# } }"
 
-#. [pages.ReportIndex.unUsedModulesReport_Description]
+#. [pages.ReportIndex.unusedModulesReport_Description]
 #. defaultMessage is:
 #. Shows all devices that haven't used all available modules in the selected time period.
 #: extracted_strings.json
@@ -12630,6 +12756,13 @@ msgstr "Vật tư"
 #: extracted_strings.json
 msgid "Supply in Stock"
 msgstr "Sinh phẩm trong kho"
+
+#. [pages.resultEdit.surename]
+#. defaultMessage is:
+#. Surename
+#: extracted_strings.json
+msgid "Surename"
+msgstr "Họ Tên"
 
 #. [pages.resultEdit.SurenameFieldi18nKey]
 #. defaultMessage is:
@@ -13214,6 +13347,17 @@ msgstr ""
 #: extracted_strings.json
 msgid "The number of contacts in the system."
 msgstr "Số lượng địa chỉ liên hệ trong hệ thống."
+
+#. [p.PkDashboard.daysLeftTooltip]
+#. defaultMessage is:
+#. The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges
+#: extracted_strings.json
+msgid ""
+"The number of days left with available and not-expired cartridge and the "
+"daily consumption rate of the cartridges"
+msgstr ""
+"Số ngày còn lại với hộp mực có sẵn và chưa hết hạn và tỷ lệ tiêu thụ hàng "
+"ngày của hộp mực"
 
 #. [pages.InventoryItemsList.daysStockLeftDescription]
 #. defaultMessage is:
@@ -13835,6 +13979,13 @@ msgstr "Thứ năm"
 msgid "Time Zone"
 msgstr "Múi giờ"
 
+#. [forms.formItem.timeOfTheTest]
+#. defaultMessage is:
+#. Time of the Test
+#: extracted_strings.json
+msgid "Time of the Test"
+msgstr "Thời gian thử nghiệm"
+
 #. [pages.NotificationDetail.recurrenceFactor]
 #. defaultMessage is:
 #. Times
@@ -14418,7 +14569,7 @@ msgstr "Đã mở khóa"
 msgid "Unreconciled quantity"
 msgstr "Số lượng chưa đối chiếu"
 
-#. [pages.ReportIndex.unUsedModulesReport]
+#. [pages.ReportIndex.unusedModulesReport]
 #. defaultMessage is:
 #. Unused Modules
 #: extracted_strings.json
@@ -14599,6 +14750,13 @@ msgstr "Xem Log"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Vôn"
+
+#. [pages.ErrorRate.whoBenchmark]
+#. defaultMessage is:
+#. WHO Benchmark
+#: extracted_strings.json
+msgid "WHO Benchmark"
+msgstr "Tiêu chuẩn của WHO"
 
 #. [hierarchicalSiteView.warehouse]
 #. defaultMessage is:
@@ -15885,6 +16043,9 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
+
+#~ msgid "Capacity"
+#~ msgstr "Sức chứa"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Xét nghiệm MTB Rif Ultra"

@@ -80,7 +80,7 @@ const InventoryOverviewPage = () => {
       key: 'Current Qty.',
       name: formatMessage(messages.currentQty),
       prop: 'quantity',
-      tooltip: 'Its the current quantity in hand, including the expired quantity.',
+      tooltip: formatMessage(messages.currentQtyTooltip),
     },
     {
       name: 'Current Unreconciled Qty.',
@@ -98,27 +98,25 @@ const InventoryOverviewPage = () => {
       key: 'Last 6 Months',
       name: formatMessage(messages.last6Months),
       prop: 'usedLastSixMonths',
-      tooltip:
-        'Its the total cartridges consumed in last 6 months, irrespective of the period selected in filter option',
+      tooltip: formatMessage(messages.last6MonthsTooltip),
     },
     {
       key: 'Used',
       name: formatMessage(messages.used),
       prop: 'usedInDateRange',
-      tooltip: 'Its the total cartidges consumed in the date range filter selected',
+      tooltip: formatMessage(messages.usedToolTip),
     },
     {
       key: 'Consumption Rate',
       name: formatMessage(messages.consumptionRate),
       prop: 'dailyConsumptionRate',
-      tooltip: 'Its the average daily consumption of the specific cartridge considering the date range selected',
+      tooltip: formatMessage(messages.consumptionRateTooltip),
     },
     {
       key: 'Days Left',
       name: formatMessage(messages.daysLeft),
       prop: 'daysOfInventoryLeft',
-      tooltip:
-        'The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges',
+      tooltip: formatMessage(messages.daysLeftTooltip),
     },
   ]
 

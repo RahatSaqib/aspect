@@ -12,10 +12,11 @@ import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
+import { matchPath, useLocation } from 'react-router'
 import useAuthState from '../../../hooks/useAuthState'
+import { routePaths } from '../../../routes/constants'
 import { getDateObject } from '../../../utils/utils/dateFormat'
 import styles from './DatePicker.module.css'
-
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
 const CustomPickersDay = styled(PickersDay, {
@@ -61,6 +62,8 @@ const renderWeekPickerDay = (start, end, date, selectedDates, pickersDayProps) =
 const AspectDatePickerBase = props => {
   const { className, dateFormat, InputProps, onChange, error, placeholder, value } = props
 
+  const location = useLocation()
+
   const optionalProps = omitBy(
     pick(props, [
       'selectsStart',
@@ -88,6 +91,17 @@ const AspectDatePickerBase = props => {
     onChange(newValue)
   }
 
+  const getInputProps = params => {
+    const isMatch = matchPath({ path: routePaths.RESULT_DETAILS }, location.pathname)
+
+    // As part of this HD-6435, we need to alter the date fields on the result page. To achieve it without affecting other pages, we are checking the path and the field id.
+    if (isMatch && ['startedOn', 'endedOn'].includes(props.id)) {
+      return { ...params.inputProps, value: props.value }
+    }
+
+    return params.inputProps
+  }
+
   return (
     <MobileDatePicker
       dateFormat={dateFormat}
@@ -104,6 +118,7 @@ const AspectDatePickerBase = props => {
       renderInput={params => (
         <TextField
           {...params}
+          inputProps={getInputProps(params)}
           {...omit(props, [
             'classNames',
             'dateFormat',

@@ -1,4 +1,5 @@
 const { addConstraints } = require('../../auth/constraints')
+const { getUser } = require('../../auth/service')
 const { knex } = require('../../db')
 
 async function getPartnerByConstraints(dataConstraints) {
@@ -22,4 +23,11 @@ async function getPartnerByConstraints(dataConstraints) {
   return partner
 }
 
-module.exports = { getPartnerByConstraints }
+const getPartnerWorkingDaysConfig = async auth => {
+  const { partnerId } = await getUser(auth.credentials.name)
+  const partnerConfig = (await knex('Partner').select('customWorkingDays').where('id', partnerId).first()) || {}
+
+  return partnerConfig.customWorkingDays ? JSON.parse(partnerConfig.customWorkingDays) : null
+}
+
+module.exports = { getPartnerByConstraints, getPartnerWorkingDaysConfig }

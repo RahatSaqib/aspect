@@ -1,9 +1,11 @@
 import { defineMessages } from 'react-intl'
 import { consumableMessages } from '../../../messages'
+import allMessage from '../../../messages/allMessages'
 import { commonDefinitions } from '../../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,
+  ...allMessage,
   ...consumableMessages,
   ...defineMessages({
     date: {

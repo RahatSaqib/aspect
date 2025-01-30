@@ -89,8 +89,7 @@ module.exports = async function (query, constraints) {
 
   overviewQuery
     .leftJoin(unreconciledQuantitiesSubquery, function () {
-      this.on('site.id', 'uq.siteId')
-        .andOn('ca.assayId', 'uq.assayId')
+      this.on('site.id', 'uq.siteId').andOn('ca.assayId', 'uq.assayId')
     })
     .select('uq.unreconciledQuantity')
 
@@ -103,8 +102,8 @@ module.exports = async function (query, constraints) {
 
       site.consumptionRateLastSixMonths = site.firstResultDateInLastSixMonths
         ? +(
-          site.usedLastSixMonths / Math.min(180, differenceInDays(now, parseISO(site.firstResultDateInLastSixMonths)))
-        ).toFixed(2)
+            site.usedLastSixMonths / Math.min(180, differenceInDays(now, parseISO(site.firstResultDateInLastSixMonths)))
+          ).toFixed(2)
         : 0
 
       site.daysOfInventoryLeft = Math.round(site.quantity / site.consumptionRateLastSixMonths)

@@ -65,6 +65,10 @@ const messagesBase = defineMessages({
     id: 'forms.formItem.endDate',
     defaultMessage: 'End Date',
   },
+  timeOfTheTest: {
+    id: 'forms.formItem.timeOfTheTest',
+    defaultMessage: 'Time of the Test',
+  },
   sampleId: {
     id: 'forms.formItem.sampleId',
     defaultMessage: 'Sample ID',
