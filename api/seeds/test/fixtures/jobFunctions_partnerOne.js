@@ -12,10 +12,6 @@ const adminEnhanced = mergeJobFunctions(admin, {
   permissions: [
     ...admin.permissions,
     {
-      module: 'admin',
-      activity: 'edit',
-    },
-    {
       module: 'dashboard',
       activity: 'inventory',
     },

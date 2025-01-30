@@ -35,6 +35,10 @@ const admin = {
   ],
   permissions: [
     {
+      module: 'admin',
+      activity: 'edit',
+    },
+    {
       module: 'assay',
       activity: 'view',
     },
