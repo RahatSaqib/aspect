@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
+const { startOfDay, endOfDay } = require('date-fns')
 const { getUser } = require('../../auth/service')
 const defaultInventoryStrategy = require('../strategies')
 
@@ -26,6 +27,7 @@ const {
   logInventoryChange,
   createInventoryTransfer,
   updateInventoryTransfer,
+  getReconciliationList,
 } = require('./db')
 
 /**
@@ -68,29 +70,45 @@ async function upsertInventoryItem({
   now,
   userId,
   inTransitFromSiteId,
+  logProps,
 }) {
+  const updateData = {
+    quantityOnHand,
+    inTransitFromSiteId: inTransitFromSiteId || null,
+    updatedOn: now,
+    updatedBy: userId,
+  }
   if (inventoryItemId) {
-    await updateInventoryItem(knex, inventoryItemId, {
-      quantityOnHand,
-      inTransitFromSiteId: inTransitFromSiteId || null,
-      updatedOn: now,
-      updatedBy: userId,
-    })
+    const query = {
+      siteId,
+      consumableId,
+      lotNumber,
+      minDate: startOfDay(expiresOn),
+      maxDate: endOfDay(expiresOn),
+    }
+
+    if (logProps?.operation.includes('modify') && quantityOnHand === 0) {
+      const [{ total }] = await getReconciliationList(query)
+
+      if (total === 0) {
+        updateData.lotNumber = null
+        updateData.expiresOn = null
+        updateData.quantityOnHand = null
+      }
+    }
+
+    await updateInventoryItem(knex, inventoryItemId, updateData)
   } else if (quantityOnHand > 0) {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
+      ...updateData,
       consumableId,
-      inTransitFromSiteId: inTransitFromSiteId || null,
       siteId,
       lotNumber,
       expiresOn,
-      quantityOnHand,
-      updatedOn: now,
-      updatedBy: userId,
       createdOn: now,
       createdBy: userId,
     })
   }
-
   return inventoryItemId
 }
 
@@ -173,6 +191,7 @@ async function upsertInventoryItemAndLog(
     inTransitFromSiteId,
     now,
     userId,
+    logProps,
   })
   /**
    * log changing inventory quantity
