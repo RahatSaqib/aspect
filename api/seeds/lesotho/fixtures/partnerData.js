@@ -7,7 +7,7 @@ module.exports = {
     name: 'Lesotho',
     externalId: 'lesotho',
   },
-  plugin: '',
+  plugin: 'lesotho',
   fixtures: {
     jobFunctions,
   },

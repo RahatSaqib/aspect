@@ -13,6 +13,7 @@ const { cameroonPlugin } = require('./plugins/cameroonPlugin')
 const { aspectresultentryPlugin } = require('./plugins/aspectresultentryPlugin')
 const { philippinesPlugin } = require('./plugins/philippinesPlugin')
 const { pakistanPlugin } = require('./plugins/pakistanPlugin')
+const { lesothoPlugin } = require('./plugins/lesothoPlugin')
 
 /**
  * There are two types of plugins: partner plugins and device type plugins
@@ -32,6 +33,7 @@ const plugins = {
   aspectresultentry: aspectresultentryPlugin,
   philippines: philippinesPlugin,
   pakistan: pakistanPlugin,
+  lesotho: lesothoPlugin,
 }
 
 /**
