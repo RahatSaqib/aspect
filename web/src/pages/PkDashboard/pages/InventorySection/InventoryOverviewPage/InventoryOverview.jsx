@@ -86,7 +86,7 @@ const InventoryOverviewPage = () => {
       name: 'Current Unreconciled Qty.',
       prop: 'unreconciledQuantity',
       cellProp: c =>
-        c.unreconciledQuantity
+        c.unreconciledQuantity && c.type !== 'warehouse'
           ? {
               sx: { cursor: 'pointer', color: 'blue', textDecoration: 'underline' },
               onClick: () => handleUnreconciledClick(c),
