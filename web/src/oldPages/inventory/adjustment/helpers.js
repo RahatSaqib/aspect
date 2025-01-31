@@ -42,7 +42,7 @@ export const withLotNumber = (partner, consumable) => {
   )
 }
 
-export function getValidations(format, actionType, { partner, inventory, allSites }) {
+export function getValidations(format, actionType, { partner, inventory }) {
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
   const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
