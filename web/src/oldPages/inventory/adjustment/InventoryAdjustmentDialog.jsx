@@ -33,6 +33,8 @@ function InventoryAdjustmentDialog(props) {
   const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
+  const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
+
   const now = new Date()
 
   return (
@@ -224,7 +226,7 @@ function InventoryAdjustmentDialog(props) {
                     fullWidth
                     margin="normal"
                     dateFormat="yyyy-MM-dd"
-                    disabled={!!initialValues?.expiresOn || uiTransfer || uiRemove}
+                    disabled={!!initialValues?.expiresOn || uiTransfer || uiRemove || uiReceive}
                     RootProps={{
                       name: 'expiresOn',
                     }}
@@ -241,7 +243,7 @@ function InventoryAdjustmentDialog(props) {
                   label={formatMessage(messages.cartridgeLotNumber)}
                   value={values.lotNumber}
                   onChange={handleChange}
-                  disabled={!!initialValues?.lotNumber || uiTransfer || uiRemove}
+                  disabled={!!initialValues?.lotNumber || uiTransfer || uiRemove || uiReceive}
                   onBlur={handleBlur}
                   margin="normal"
                   FormHelperTextProps={{
