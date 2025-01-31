@@ -220,7 +220,6 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
 async function getCustomFieldsDefinitions() {
   const queryForm = await knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .join('FormDefinitionSchema as fschema', 'fd.formDefinitionSchemaId', 'fschema.id')
     .leftJoin('Disease as d', 'fd.diseaseId', 'd.id')
     .where('fd.partnerId', 1)
     .where('ft.externalId', 'gxConnectForm')
@@ -229,7 +228,7 @@ async function getCustomFieldsDefinitions() {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
+      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
 
   return queryForm.map(qf => ({
