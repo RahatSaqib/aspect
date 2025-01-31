@@ -167,7 +167,6 @@ const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, d
 function getFormsBaseQuery(partnerId, query) {
   const queryForm = knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .join('FormDefinitionSchema as fschema', 'fd.formDefinitionSchemaId', 'fschema.id')
     .where('fd.partnerId', partnerId)
     .modify(filterParams, query, {
       externalsId: 'fd.externalId',
@@ -188,7 +187,7 @@ function getFormsBaseQuery(partnerId, query) {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
+      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
   return queryForm
 }

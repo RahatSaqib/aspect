@@ -2943,10 +2943,6 @@ async function upsertForms(knex, partnerId, forms) {
     const diseaseId = await diseaseToId(diseaseExternalId)
     const assayId = await assayToId(assayExternalId)
 
-    const { id: formDefinitionSchemaId } = await upsertSingle(knex, 'FormDefinitionSchema', {
-      jsonSchemaFile: fileName,
-    })
-
     await upsertSingle(
       knex,
       'FormDefinition',
@@ -2967,7 +2963,7 @@ async function upsertForms(knex, partnerId, forms) {
         description,
         i18nKeyDescription,
         externalId,
-        formDefinitionSchemaId,
+        jsonSchemaFile: fileName,
       }
     )
   })

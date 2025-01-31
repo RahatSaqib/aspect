@@ -1,0 +1,633 @@
+{
+    "fields": [
+        {
+            "id": 76,
+            "name": "LSPatientAge",
+            "title": "Age in years (> 1 year old)",
+            "i18nKey": "LSPatientAgeI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 11,
+            "gxAlertDbColumn": "LSPatientAge",
+            "caption": "Age in years (> 1 year old)",
+            "i18nKeyCaption": "LSPatientAgeI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.76.value",
+            "source": "patientData.LSPatientAge",
+            "mandatory": false,
+            "migrateFromId": -3,
+            "validation": [
+                {
+                    "validationType": "integer",
+                    "min": "1",
+                    "max": "120",
+                    "errorMessage": "The age in years (> 1 year old) should be a number between 1-120",
+                    "errorMessageI18nKey": "LSPatientAgeValidationFieldi18nKey"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": 0,
+                    "operator": ">",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": null,
+                    "operator": ">",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": "",
+                    "operator": ">",
+                    "conjunction": "or"
+                }
+            ]
+        },
+        {
+            "id": 373,
+            "name": "LSNameOfRequestingFacility",
+            "title": "Name of requesting facility",
+            "i18nKey": "LSNameOfRequestingFacilityI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 75,
+            "gxAlertDbColumn": "LSNameOfRequestingFacility",
+            "caption": "Name of requesting facility",
+            "i18nKeyCaption": "LSNameOfRequestingFacilityI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.373.value",
+            "source": "patientData.LSNameOfRequestingFacility",
+            "mandatory": false
+        },
+        {
+            "id": 374,
+            "name": "LSRequestingFacilityDistrict",
+            "title": "LS Requesting facility district",
+            "i18nKey": "LSRequestingFacilityDistrictI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 74,
+            "gxAlertDbColumn": "LSRequestingFacilityDistrict",
+            "caption": "LS Requesting facility district",
+            "i18nKeyCaption": "LSRequestingFacilityDistrictI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.374.value",
+            "source": "patientData.LSRequestingFacilityDistrict",
+            "mandatory": false,
+            "itemsSource": "state"
+        },
+        {
+            "id": 375,
+            "name": "LSDateOfBirth",
+            "title": "Date of birth",
+            "i18nKey": "LSDateOfBirthI18nKey",
+            "fieldType": "datetime",
+            "completionWeight": 10,
+            "order": 15,
+            "gxAlertDbColumn": "LSDateOfBirth",
+            "caption": "Date of birth",
+            "i18nKeyCaption": "LSDateOfBirthI18nCaptionKey",
+            "controlType": "dateTimePicker",
+            "payloadOriginPath": "data.customFieldData.375.value",
+            "source": "patientData.LSDateOfBirth",
+            "mandatory": false
+        },
+        {
+            "id": 376,
+            "name": "LSPatientAgeDays",
+            "title": "Age in days (< 1 year old)",
+            "i18nKey": "LSPatientAgeDaysI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 12,
+            "gxAlertDbColumn": "LSPatientAgeDays",
+            "caption": "Age in days (< 1 year old)",
+            "i18nKeyCaption": "LSPatientAgeDaysI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.376.value",
+            "source": "patientData.LSPatientAgeDays",
+            "mandatory": false,
+            "validation": [
+                {
+                    "validationType": "integer",
+                    "min": "1",
+                    "max": "364",
+                    "errorMessage": "The age in days (< 1 year old) should be a number between 1-364",
+                    "errorMessageI18nKey": "LSPatientAgeDaysValidationFieldi18nKey"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": 0,
+                    "operator": "=",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": null,
+                    "operator": "=",
+                    "conjunction": "or"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": "",
+                    "operator": "=",
+                    "conjunction": "or"
+                }
+            ]
+        },
+        {
+            "id": 377,
+            "name": "LSUnder5ClinicNumber",
+            "title": "Under 5 clinic number",
+            "i18nKey": "LSUnder5ClinicNumberI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 14,
+            "gxAlertDbColumn": "LSUnder5ClinicNumber",
+            "caption": "Under 5 clinic number",
+            "i18nKeyCaption": "LSUnder5ClinicNumberI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.377.value",
+            "source": "patientData.LSUnder5ClinicNumber",
+            "mandatory": false,
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 378,
+            "name": "LSARTNumber",
+            "title": "ART number",
+            "i18nKey": "LSARTNumberI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 14,
+            "gxAlertDbColumn": "LSARTNumber",
+            "caption": "ART number",
+            "i18nKeyCaption": "LSARTNumberI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.378.value",
+            "source": "patientData.LSARTNumber",
+            "mandatory": false,
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 379,
+            "name": "LSInfantBreastfeeding",
+            "title": "Infant breastfeeding?",
+            "i18nKey": "LSInfantBreastfeedingI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 16,
+            "gxAlertDbColumn": "LSInfantBreastfeeding",
+            "caption": "Infant breastfeeding?",
+            "i18nKeyCaption": "LSInfantBreastfeedingI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.379.value",
+            "source": "patientData.LSInfantBreastfeeding",
+            "mandatory": false,
+            "items": [
+                {
+                    "key": "Yes",
+                    "value": "Yes"
+                },
+                {
+                    "key": "No",
+                    "value": "No"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 380,
+            "name": "LSPatientCurrentlyPregnant",
+            "title": "Is patient currently pregnant?",
+            "i18nKey": "LSPatientCurrentlyPregnantI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 16,
+            "gxAlertDbColumn": "LSPatientCurrentlyPregnant",
+            "caption": "Is patient currently pregnant?",
+            "i18nKeyCaption": "LSPatientCurrentlyPregnantI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.380.value",
+            "source": "patientData.LSPatientCurrentlyPregnant",
+            "mandatory": false,
+            "items": [
+                {
+                    "key": "Yes",
+                    "value": "Yes"
+                },
+                {
+                    "key": "No",
+                    "value": "No"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 381,
+            "name": "LSIsPatientCurrentlyBreastfeeding",
+            "title": "Is patient currently breastfeeding?",
+            "i18nKey": "LSIsPatientCurrentlyBreastfeedingI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 17,
+            "gxAlertDbColumn": "LSIsPatientCurrentlyBreastfeeding",
+            "caption": "Is patient currently breastfeeding?",
+            "i18nKeyCaption": "LSIsPatientCurrentlyBreastfeedingI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.381.value",
+            "source": "patientData.LSIsPatientCurrentlyBreastfeeding",
+            "mandatory": false,
+            "items": [
+                {
+                    "key": "Yes",
+                    "value": "Yes"
+                },
+                {
+                    "key": "No",
+                    "value": "No"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 382,
+            "name": "LSDateOfCollection",
+            "title": "Date of collection",
+            "i18nKey": "LSDateOfCollectionI18nKey",
+            "fieldType": "datetime",
+            "completionWeight": 10,
+            "order": 100,
+            "gxAlertDbColumn": "LSDateOfCollection",
+            "caption": "Date of collection",
+            "i18nKeyCaption": "LSDateOfCollectionI18nCaptionKey",
+            "controlType": "dateTimePicker",
+            "payloadOriginPath": "data.customFieldData.382.value",
+            "source": "patientData.LSDateOfCollection",
+            "mandatory": false
+        },
+        {
+            "id": 383,
+            "name": "LSDateOfAnalysis",
+            "title": "Date of analysis",
+            "i18nKey": "LSDateOfAnalysisI18nKey",
+            "fieldType": "datetime",
+            "completionWeight": 10,
+            "order": 110,
+            "gxAlertDbColumn": "LSDateOfAnalysis",
+            "caption": "Date of analysis",
+            "i18nKeyCaption": "LSDateOfAnalysisI18nCaptionKey",
+            "controlType": "dateTimePicker",
+            "payloadOriginPath": "data.customFieldData.383.value",
+            "source": "patientData.LSDateOfAnalysis",
+            "mandatory": false
+        },
+        {
+            "id": 384,
+            "name": "LSEIDSampleType",
+            "title": "Sample type",
+            "i18nKey": "LSEIDSampleTypeI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 90,
+            "gxAlertDbColumn": "LSEIDSampleType",
+            "caption": "Sample type",
+            "i18nKeyCaption": "LSEIDSampleTypeI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.384.value",
+            "source": "patientData.LSEIDSampleType",
+            "mandatory": false,
+            "items": [
+                {
+                    "key": "Capillary EDTA",
+                    "value": "Capillary EDTA"
+                },
+                {
+                    "key": "Venous EDTA",
+                    "value": "Venous EDTA"
+                },
+                {
+                    "key": "DBS",
+                    "value": "DBS"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 386,
+            "name": "LSPCRTestResult",
+            "title": "PCR test result",
+            "i18nKey": "LSPCRTestResultI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 120,
+            "gxAlertDbColumn": "LSPCRTestResult",
+            "caption": "PCR test result",
+            "i18nKeyCaption": "LSPCRTestResultI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.386.value",
+            "source": "patientData.LSPCRTestResult",
+            "mandatory": false,
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 387,
+            "name": "LSVLTestResult",
+            "title": "VL test result",
+            "i18nKey": "LSVLTestResultI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 120,
+            "gxAlertDbColumn": "LSVLTestResult",
+            "caption": "VL test result",
+            "i18nKeyCaption": "LSVLTestResultI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.387.value",
+            "source": "patientData.LSVLTestResult",
+            "mandatory": false,
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 388,
+            "name": "LSReasonForTesting",
+            "title": "Reasons for testing",
+            "i18nKey": "LSReasonForTestingI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 130,
+            "gxAlertDbColumn": "LSReasonForTesting",
+            "caption": "Reasons for testing",
+            "i18nKeyCaption": "LSReasonForTestingI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.388.value",
+            "source": "patientData.LSReasonForTesting",
+            "mandatory": false,
+            "items": [
+                {
+                    "key": "Initial <2 months",
+                    "value": "Initial <2 months"
+                },
+                {
+                    "key": "High risk",
+                    "value": "High risk"
+                },
+                {
+                    "key": "recommended 6-8 weeks",
+                    "value": "recommended 6-8 weeks"
+                },
+                {
+                    "key": "confirmatory test",
+                    "value": "confirmatory test"
+                },
+                {
+                    "key": "following a positive RDT test",
+                    "value": "following a positive RDT test"
+                },
+                {
+                    "key": "Post weaning",
+                    "value": "Post weaning"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAgeDays",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 389,
+            "name": "LSReasonForVLTesting",
+            "title": "Reasons for VL testing",
+            "i18nKey": "LSReasonForVLTestingI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 130,
+            "gxAlertDbColumn": "LSReasonForVLTesting",
+            "caption": "Reasons for VL testing",
+            "i18nKeyCaption": "LSReasonForVLTestingI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.389.value",
+            "source": "patientData.LSReasonForVLTesting",
+            "mandatory": false,
+            "items": [
+                {
+                    "key": "Baseline",
+                    "value": "Baseline"
+                },
+                {
+                    "key": "Routine",
+                    "value": "Routine"
+                },
+                {
+                    "key": "Repeat after elevated VL",
+                    "value": "Repeat after elevated VL"
+                },
+                {
+                    "key": "Targeted clinical failure",
+                    "value": "Targeted clinical failure"
+                },
+                {
+                    "key": "Targeted immunological failure",
+                    "value": "Targeted immunological failure"
+                },
+                {
+                    "key": "Repeat after EAC",
+                    "value": "Repeat after EAC"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        }
+    ],
+    "refForms": []
+}
