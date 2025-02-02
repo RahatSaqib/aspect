@@ -165,7 +165,7 @@ const resultsTitle = {
   titleI18nKey: 'resultsTitle',
   subTitle: 'Last 30 Days',
   subTitleI18nKey: 'last30Days',
-  sqlForIndicator: `select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30`,
+  sqlForIndicator: `select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDeviceByAssay as f inner join Device as d on d.id = f.deviceId inner join Assay as a on a.id = f.assayId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30`,
   link: '/browse/result',
   linkParams: {
     dateRange: WIDGET_FILTER_KEYS.FIXED_LAST_THIRTY_DAYS,

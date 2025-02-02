@@ -16,7 +16,6 @@ const { asyncReportStatusToId } = require('../shared/dictionary')
 async function getReports(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const person = await knex('Person').where('id', auth.credentials.personId).first()
 
   const reportsQuery = knex('Report as r')
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
@@ -24,12 +23,6 @@ async function getReports(request) {
     .innerJoin('JobContext as jc', 'jf.id', 'jc.jobFunctionId')
     .innerJoin('Person as p', 'jc.personId', 'p.id')
     .modify(addConstraints, dataConstraints, { person: 'p' })
-    .modify(queryBuilder => {
-      if (!person?.email?.match(/@systemone\.(id|co)$/)) {
-        // Excluding new `critical_errors_by_module` report from the list to test data in production before releasing it for all.
-        queryBuilder.whereNot('r.externalId', 'critical_errors_by_module')
-      }
-    })
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
   const getItems = reportsQuery
