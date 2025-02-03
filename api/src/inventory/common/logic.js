@@ -29,6 +29,7 @@ const {
   updateInventoryTransfer,
   getReconciliationList,
 } = require('./db')
+const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./querySelectors')
 
 /**
  * use singleton for inventory strategy instance - cache it in a single instance
@@ -132,6 +133,7 @@ async function getActualQuantityOnHand(
     lotNumber,
     inTransitFromSiteId: fromSiteId,
     partnerId,
+    resultId,
   })
   const { newQuantityOnHand, isResultPendingReconciliation } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
@@ -342,7 +344,7 @@ async function addInventory({ auth, payload, plugins }) {
   }
   await updateSiteConsumable(toSite.id, { modify: 'add', consumableId })
 
-  return getInventoryItem(res.inventoryItemId)
+  return getInventoryItem(res.inventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------
@@ -543,8 +545,8 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
   })
 
   return {
-    existingInventoryItem: await getInventoryItem(sourceInventoryItemId),
-    newInventoryItem: await getInventoryItem(destinationInventoryItemId),
+    existingInventoryItem: await getInventoryItem(sourceInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY),
+    newInventoryItem: await getInventoryItem(destinationInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY),
   }
 }
 
@@ -631,8 +633,7 @@ async function receiveInventory(request) {
 
     await knex('InventoryItem').where('id', inTransitInventoryItem.id).delete()
   })
-
-  return getInventoryItem(destinationInventoryItemId)
+  return getInventoryItem(destinationInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------
