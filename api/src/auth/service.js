@@ -154,15 +154,18 @@ async function serviceModification() {
         notificationWarningSendEmails,
       } = data
       // Update the Partner table
-      await query('Update partner active status').from('Partner').where({ id: partnerId }).update({
-        activeStatus,
-        statusMessage,
-        serviceStartDate,
-        serviceEndDate,
-        notificationLimit,
-        notificationWarningMessage,
-        notificationWarningSendEmails,
-      })
+      await query('Update partner active status')
+        .from('Partner')
+        .where({ id: partnerId })
+        .update({
+          activeStatus,
+          statusMessage,
+          serviceStartDate,
+          serviceEndDate,
+          notificationLimit,
+          notificationWarningMessage,
+          notificationWarningSendEmails: JSON.stringify(notificationWarningSendEmails),
+        })
     })
   } catch (error) {
     console.error('Error while updating partner active status:', error)
@@ -193,12 +196,13 @@ async function serviceNotificationInformation() {
         notificationWarningMessage,
         notificationWarningSendEmails,
       } = data
-      if (!serviceStartDate || !serviceEndDate || !notificationWarningSendEmails || notificationLimit) return
+      if (!serviceStartDate || !serviceEndDate || !notificationWarningSendEmails || !notificationLimit) return
       // send notification info based on conditions
-      const emailList = JSON.parse(notificationWarningSendEmails)
+      const emailList = notificationWarningSendEmails
+
       const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId)
       if (
-        smsMessageCount?.count > notificationLimit ||
+        smsMessageCount?.count >= notificationLimit ||
         (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
       ) {
         emailList.forEach(email => {
