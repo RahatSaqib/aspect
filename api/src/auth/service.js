@@ -200,8 +200,8 @@ async function serviceNotificationInformation() {
       // send notification info based on conditions
       const emailList = notificationWarningSendEmails
 
-      const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId);
-      const emailMessageCount = await emailCount({ serviceStartDate, serviceEndDate }, partnerId);
+      const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId)
+      const emailMessageCount = await emailCount({ serviceStartDate, serviceEndDate }, partnerId)
       if (
         smsMessageCount?.count >= notificationLimit ||
         (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
@@ -212,7 +212,7 @@ async function serviceNotificationInformation() {
           )
         })
       }
-      if(
+      if (
         emailMessageCount?.count >= notificationLimit ||
         (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
       ) {
@@ -422,6 +422,7 @@ async function smsCount(partner, partnerId) {
   }
   return smsCountQuery
 }
+
 async function emailCount(partner, partnerId) {
   const pendingMessageStatusId = await messageStatusToId('Pending')
   const sentMessageStatusId = await messageStatusToId('Sent')
