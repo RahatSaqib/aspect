@@ -200,9 +200,20 @@ async function serviceNotificationInformation() {
       // send notification info based on conditions
       const emailList = notificationWarningSendEmails
 
-      const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId)
+      const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId);
+      const emailMessageCount = await emailCount({ serviceStartDate, serviceEndDate }, partnerId);
       if (
         smsMessageCount?.count >= notificationLimit ||
+        (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
+      ) {
+        emailList.forEach(email => {
+          sendEmail(email, 'Notification Limit Exceeded', notificationWarningMessage, ``, []).catch(err =>
+            logger.error(err)
+          )
+        })
+      }
+      if(
+        emailMessageCount?.count >= notificationLimit ||
         (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
       ) {
         emailList.forEach(email => {
@@ -410,6 +421,25 @@ async function smsCount(partner, partnerId) {
     )
   }
   return smsCountQuery
+}
+async function emailCount(partner, partnerId) {
+  const pendingMessageStatusId = await messageStatusToId('Pending')
+  const sentMessageStatusId = await messageStatusToId('Sent')
+  const emailCountQuery = knex('EmailMessage as em')
+    .join('Device as d', 'em.deviceId', 'd.id')
+    .andWhere('d.partnerId', partnerId)
+    .andWhere('em.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
+    .first('*')
+    .count('* as count')
+  if (partner?.serviceStartDate && partner?.serviceEndDate) {
+    emailCountQuery.whereRaw(
+      `em.createdOn > DATE_FORMAT(STR_TO_DATE('${partner.serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`
+    )
+    emailCountQuery.whereRaw(
+      `em.createdOn < DATE_FORMAT(STR_TO_DATE('${partner.serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`
+    )
+  }
+  return emailCountQuery
 }
 
 function setRefreshToken({
