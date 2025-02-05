@@ -216,7 +216,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             ii =>
               ii.siteId === site1Id &&
               ii.consumableId === tbRifConsumableId &&
-              ii.expiresOn === expiresOn3.toISOString()
+              ii.expiresOn === expiresOn1.toISOString()
           )
           assert.isNotNull(inventoryItem2)
           assert.equal(inventoryItem2.quantityOnHand, 250)
