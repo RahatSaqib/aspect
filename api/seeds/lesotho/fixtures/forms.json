@@ -1,0 +1,23 @@
+{
+  "CustomFields_Lesotho": {
+    "fileName": "CustomFields_Lesotho.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Lesotho",
+      "i18nKeyTitle": "CustomFields_Lesotho_i18nkey",
+      "externalId": "CustomFields_Lesotho",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  },
+  "CustomFields_Lesotho_Hiv": {
+    "fileName": "CustomFields_Lesotho_Hiv.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Lesotho_Hiv",
+      "i18nKeyTitle": "CustomFields_Lesotho_Hiv_i18nkey",
+      "externalId": "CustomFields_Lesotho_Hiv",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "hiv"
+    }
+  }
+}

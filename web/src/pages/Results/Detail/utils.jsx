@@ -61,8 +61,15 @@ function getRowsForCustomFields(values) {
     const baseItem = {
       id: customField.source,
       label: customField.title,
-      labelI18nKey: toCamelCase(customField.title),
       disabledIf: () => !customField.source,
+    }
+    // Hack ASP-7604 Custom Fields Translations are broken: I18Key from the custom field
+    // is not received from the backend, so we try to build it from the title and check if
+    // it exists in the messages.
+    // TODO: Refactor this in the future, sending the i18n key from the custom field in the backend.
+    const labelI18nKey = toCamelCase(customField.title)
+    if (messages[labelI18nKey]) {
+      baseItem.labelI18nKey = labelI18nKey
     }
 
     if (customField.controlType === 'comboBox' || customField.controlType === 'autoComplete') {

@@ -5033,7 +5033,7 @@ async function seed(knex) {
 
   await knex('JobFunctionDashboardWidget').insert([
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sitesTitle },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devicesTitle },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.instrumentsConnected },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.resultsTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.utilizationRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.activeDevices },
@@ -5073,7 +5073,7 @@ async function seed(knex) {
     },
 
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devicesTitle },
+    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.instrumentsConnected },
     {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.utilizationRate,
@@ -5103,7 +5103,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sitesTitle },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
-      widgetId: widgetIds.devicesTitle,
+      widgetId: widgetIds.instrumentsConnected,
     },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
@@ -5132,7 +5132,7 @@ async function seed(knex) {
     },
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sitesTitle },
-    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devicesTitle },
+    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.instrumentsConnected },
     {
       jobFunctionId: jobFunctionIdClinician,
       widgetId: widgetIds.utilizationRate,

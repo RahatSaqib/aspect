@@ -11,9 +11,9 @@ const { alereftpconnectorPlugin } = require('./plugins/alereftpconnectorPlugin')
 const { saNhlsPlugin } = require('./plugins/saNhlsPlugin')
 const { cameroonPlugin } = require('./plugins/cameroonPlugin')
 const { aspectresultentryPlugin } = require('./plugins/aspectresultentryPlugin')
-const { lesothoTbPlugin } = require('./plugins/lesothoTbPlugin')
 const { philippinesPlugin } = require('./plugins/philippinesPlugin')
 const { pakistanPlugin } = require('./plugins/pakistanPlugin')
+const { lesothoPlugin } = require('./plugins/lesothoPlugin')
 
 /**
  * There are two types of plugins: partner plugins and device type plugins
@@ -31,9 +31,9 @@ const plugins = {
   saNhls: saNhlsPlugin,
   cameroon: cameroonPlugin,
   aspectresultentry: aspectresultentryPlugin,
-  lesothoTb: lesothoTbPlugin,
   philippines: philippinesPlugin,
   pakistan: pakistanPlugin,
+  lesotho: lesothoPlugin,
 }
 
 /**

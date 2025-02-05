@@ -5,26 +5,8 @@ const CONCATENATED_ID = `CONCAT(
   '-',
   s.id,
   '-',
-  IFNULL(
-    CASE
-      WHEN c.strategy IS NOT NULL
-      AND INSTR(c.strategy, 'expirationDate') > 0
-      THEN ii.expiresOn
-      ELSE ''
-    END,
-    '-'
-  ),
-  '-',
-  IFNULL(
-    CASE
-      WHEN c.strategy IS NOT NULL
-      AND INSTR(c.strategy, 'withlot') > 0
-      THEN ii.lotNumber
-      ELSE ''
-    END,
-    ''
-  ),
-  '-',
+  IFNULL(ii.expiresOn, ''), '-', 
+  IFNULL(ii.lotNumber, ''), '-',
   IFNULL(ii.inTransitFromSiteId, '')
 )`
 
@@ -33,7 +15,7 @@ const INVENTORY_COMMON_FIELDS = [
   'c.name as consumableName',
   'c.manufacturer',
   'c.canExpire',
-  'c.strategy',
+  'p.inventoryStrategy as strategy',
   'u.shortName as unitShortName',
   's.id as siteId',
   's.name as siteName',
@@ -44,21 +26,36 @@ const INVENTORY_COMMON_FIELDS = [
   'st.name as stateName',
   'l.name as lgaName',
 ]
-const INVENTORY_ITEM_SELECT = [
-  ...INVENTORY_COMMON_FIELDS,
-  'ii.quantityOnHand',
-  'ii.updatedOn',
-  'ii.id',
-  knex.raw(
-    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
-  ),
-  knex.raw(
-    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
-  ),
 
-  'itfs.name as inTransitFromSiteName',
-  'ii.inTransitFromSiteId',
-]
+function createInventoryItemSelect(includeStrategy = true) {
+  const baseFields = [
+    ...INVENTORY_COMMON_FIELDS,
+    'ii.quantityOnHand',
+    'ii.updatedOn',
+    'ii.id',
+    'itfs.name as inTransitFromSiteName',
+    'ii.inTransitFromSiteId',
+  ]
+
+  if (includeStrategy) {
+    baseFields.push(
+      knex.raw(
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
+      ),
+      knex.raw(
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
+      )
+    )
+  } else {
+    baseFields.push('ii.lotNumber', 'ii.expiresOn')
+  }
+
+  return baseFields
+}
+
+const INVENTORY_ITEM_SELECT = createInventoryItemSelect()
+const INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY = createInventoryItemSelect(false)
+
 const INVENTORY_LOG_LIST = {
   createdOn: 'il.createdOn',
   consumableName: 'c.name',
@@ -115,11 +112,31 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [...INVENTORY_COMMON_FIELDS, knex.raw(
 
 // Select for inventory split by lot
 const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
-  knex.raw(
-    "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE '' END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE '' END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
-  ),
+  knex.raw(`
+    CONCAT(
+        c.id, '-', 
+        s.id, '-', 
+        IFNULL(ii.expiresOn, ''), '-', 
+        IFNULL(ii.lotNumber, ''), '-',
+        IFNULL(ii.inTransitFromSiteId, '')
+    ) AS id
+  `),
 
-  ...INVENTORY_ITEM_SELECT.filter(field => field !== 'ii.id' && field !== 'ii.quantityOnHand'),
+  // Filter fields from INVENTORY_ITEM_SELECT
+  ...INVENTORY_ITEM_SELECT.filter(field => {
+    if (typeof field === 'string') {
+      return field !== 'ii.id' && field !== 'ii.quantityOnHand'
+    }
+    // For knex objects, convert to string before filtering
+    const fieldString = field.toString()
+    return (
+      !fieldString.includes('CASE WHEN p.inventoryStrategy') &&
+      !fieldString.includes('ii.id') &&
+      !fieldString.includes('ii.quantityOnHand')
+    )
+  }),
+  'ii.lotNumber AS lotNumber',
+  'ii.expiresOn AS expiresOn',
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
 
@@ -221,4 +238,5 @@ module.exports = {
   INVENTORY_COMMON_FIELDS,
   STOCK_LEFT_FILTER_FIELDS,
   CONCATENATED_ID,
+  INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY,
 }

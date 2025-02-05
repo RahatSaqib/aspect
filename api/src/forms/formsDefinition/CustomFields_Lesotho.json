@@ -1,0 +1,273 @@
+{
+    "fields": [
+        {
+            "id": 385,
+            "name": "LSVLSampleType",
+            "title": "Sample type",
+            "i18nKey": "LSVLSampleTypeI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 90,
+            "gxAlertDbColumn": "LSVLSampleType",
+            "caption": "Sample type",
+            "i18nKeyCaption": "LSVLSampleTypeI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.385.value",
+            "source": "patientData.LSVLSampleType",
+            "mandatory": false,
+            "items": [
+                {
+                    "key": "Venous EDTA",
+                    "value": "Venous EDTA"
+                },
+                {
+                    "key": "DBS",
+                    "value": "DBS"
+                }
+            ],
+            "condition": [
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": 0,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": null,
+                    "operator": "!=",
+                    "conjunction": "and"
+                },
+                {
+                    "propToCompare": "LSPatientAge",
+                    "valueToCompare": "",
+                    "operator": "!=",
+                    "conjunction": "and"
+                }
+            ]
+        },
+        {
+            "id": 82,
+            "name": "LSRequestorPhone",
+            "title": "Referring Clinician or Facility Phone Number (if known)",
+            "i18nKey": "LSRequestorPhoneI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 80,
+            "gxAlertDbColumn": "RequestorPhone",
+            "caption": "Referring Clinician or Facility Phone Number (if known)",
+            "i18nKeyCaption": "LSRequestorPhoneI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.82.value",
+            "source": "patientData.RequestorPhone",
+            "mandatory": false,
+            "migrateFromId": -15
+        },
+        {
+            "id": 81,
+            "name": "LSRequestorName",
+            "title": "Name of Person Requesting Test",
+            "i18nKey": "LSRequestorNameI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 70,
+            "gxAlertDbColumn": "RequestorName",
+            "caption": "Name of Person Requesting Test",
+            "i18nKeyCaption": "LSRequestorNameI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.81.value",
+            "source": "patientData.RequestorName",
+            "mandatory": false,
+            "migrateFromId": -14
+        },
+        {
+            "id": 78,
+            "name": "LSPatientPhone",
+            "title": "Patient Phone",
+            "i18nKey": "LSPatientPhoneI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 30,
+            "gxAlertDbColumn": "PatientPhone",
+            "caption": "Patient Phone",
+            "i18nKeyCaption": "LSPatientPhoneI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.78.value",
+            "source": "patientData.PatientPhone",
+            "mandatory": false,
+            "migrateFromId": -13
+        },
+        {
+            "id": 80,
+            "name": "LSPatientStateId",
+            "title": "Patient State",
+            "i18nKey": "LSPatientStateIdI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 50,
+            "gxAlertDbColumn": "PatientStateId",
+            "caption": "Patient State",
+            "i18nKeyCaption": "LSPatientStateIdI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.80.value",
+            "source": "patientData.PatientStateId",
+            "mandatory": false,
+            "migrateFromId": -10,
+            "items": [
+                {
+                    "key": 721,
+                    "value": "Berea",
+                    "order": 0
+                },
+                {
+                    "key": 722,
+                    "value": "Butha-Buthe",
+                    "order": 0
+                },
+                {
+                    "key": 723,
+                    "value": "Leribe",
+                    "order": 0
+                },
+                {
+                    "key": 724,
+                    "value": "Mafeteng",
+                    "order": 0
+                },
+                {
+                    "key": 725,
+                    "value": "Maseru",
+                    "order": 0
+                },
+                {
+                    "key": 726,
+                    "value": "Mohale's Hoek",
+                    "order": 0
+                },
+                {
+                    "key": 727,
+                    "value": "Mokhotlong",
+                    "order": 0
+                },
+                {
+                    "key": 728,
+                    "value": "Qacha's Nek",
+                    "order": 0
+                },
+                {
+                    "key": 729,
+                    "value": "Quthing",
+                    "order": 0
+                },
+                {
+                    "key": 730,
+                    "value": "Thaba-Tseka",
+                    "order": 0
+                }
+            ]
+        },
+        {
+            "id": 79,
+            "name": "LSPatientStreet",
+            "title": "Patient Address",
+            "i18nKey": "LSPatientStreetI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 40,
+            "gxAlertDbColumn": "PatientStreet",
+            "caption": "Patient Address",
+            "i18nKeyCaption": "LSPatientStreetI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.79.value",
+            "source": "patientData.PatientStreet",
+            "mandatory": false,
+            "migrateFromId": -9
+        },
+        {
+            "id": 75,
+            "name": "LSPatientName",
+            "title": "Patient Name",
+            "i18nKey": "LSPatientNameI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 0,
+            "gxAlertDbColumn": "PatientName",
+            "caption": "Patient Name",
+            "i18nKeyCaption": "LSPatientNameI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.75.value",
+            "source": "patientData.PatientName",
+            "mandatory": false,
+            "migrateFromId": -8
+        },
+        {
+            "id": 77,
+            "name": "LSPatientGender",
+            "title": "Gender",
+            "i18nKey": "LSPatientGenderI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 20,
+            "gxAlertDbColumn": "PatientGender",
+            "caption": "Gender",
+            "i18nKeyCaption": "LSPatientGenderI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.77.value",
+            "source": "patientData.PatientGender",
+            "mandatory": false,
+            "migrateFromId": -4,
+            "items": [
+                {
+                    "key": 1,
+                    "value": "Male",
+                    "order": 0
+                },
+                {
+                    "key": 0,
+                    "value": "Female",
+                    "order": 10
+                },
+                {
+                    "key": 2,
+                    "value": "Other",
+                    "order": 20
+                }
+            ]
+        },
+        {
+            "id": 83,
+            "name": "LSHivStatus",
+            "title": "HIV Status",
+            "i18nKey": "LSHivStatusI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 25,
+            "gxAlertDbColumn": "HivStatus",
+            "caption": "HIV Status",
+            "i18nKeyCaption": "LSHivStatusI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.83.value",
+            "source": "patientData.HivStatus",
+            "mandatory": false,
+            "migrateFromId": -1,
+            "items": [
+                {
+                    "key": 1,
+                    "value": "HIV Positive",
+                    "order": 0
+                },
+                {
+                    "key": 0,
+                    "value": "HIV Negative",
+                    "order": 10
+                },
+                {
+                    "key": 2,
+                    "value": "HIV Unknown",
+                    "order": 20
+                }
+            ]
+        }
+    ],
+    "refForms": []
+}
