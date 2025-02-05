@@ -401,7 +401,6 @@ async function renderExcelTemplate({
         const dataRows = wayToFillInData === 'mapping' ? data.rows : sectionDataSource ? data[sectionDataSource] : data
         if (dataRows && dataRows.length > 0) {
           const formulae = []
-          const mergeRanges = worksheet.merges // Capture merged cell ranges
 
           // Step 1: Capture formulas and clear template row values
           patternRows.forEach((templateRow, rowTemplateIndex) => {
@@ -411,7 +410,6 @@ async function renderExcelTemplate({
               }
             })
           })
-
           // Step 2: Insert rows and apply data properly
           dataRows.forEach((dataRow, rowIndex) => {
             patternRows.forEach((templateRow, rowTemplateIndex) => {
@@ -428,12 +426,12 @@ async function renderExcelTemplate({
                 }
 
                 if (templateCell.formula) {
-                  newCell.formula = templateCell.formula.replace(/(\$?[A-Za-z]+)(\$?\d+)/g, (_, colRef, rowRef) => {
-                    if (rowRef.startsWith('$')) return `${colRef}${rowRef}`
-
-                    const originalRow = parseInt(rowRef, 10)
-                    return `${colRef}$${originalRow + position}`
-                  })
+                  newCell.value = {
+                    formula: templateCell.formula.replace(/(\$?[A-Za-z]+)(\$?\d+)/g, (_, colRef, rowRef) => {
+                      if (rowRef.startsWith('$')) return `${colRef}${rowRef}`
+                      return `${colRef}${position}`
+                    }),
+                  }
                 } else {
                   const cellValue = templateCell.value
                   if (typeof cellValue === 'string' && cellValue.startsWith('<') && cellValue.endsWith('>')) {
@@ -447,30 +445,6 @@ async function renderExcelTemplate({
                 }
               })
             })
-          })
-
-          // Step 3: Reapply merged cells to the newly inserted rows
-          mergeRanges?.forEach(range => {
-            const [startCell, endCell] = range.split(':')
-            const startRow = parseInt(startCell.replace(/[^0-9]/g, ''), 10)
-            const endRow = parseInt(endCell.replace(/[^0-9]/g, ''), 10)
-
-            for (let i = 0; i < dataRows.length; i++) {
-              const newStartRow = startRow + i * patternRows.length
-              const newEndRow = endRow + i * patternRows.length
-              worksheet.mergeCells(`${startCell.replace(/\d+/, newStartRow)}:${endCell.replace(/\d+/, newEndRow)}`)
-            }
-          })
-
-          // Step 4: Apply formulas dynamically
-          const firstRow = worksheet.getRow(patternRowStart)
-          formulae.forEach(f => {
-            const masterCell = firstRow.getCell(f.index)
-            const rangeToFillFormula = `${masterCell.address}:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
-              dataRows.length * patternRows.length + masterCell.row - 1
-            }`
-
-            worksheet.fillFormula(rangeToFillFormula, f.formula)
           })
         } else {
           // No data case: Fill pattern row with default message
