@@ -33,6 +33,8 @@ function InventoryAdjustmentDialog(props) {
   const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
+  const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
+
   const now = new Date()
 
   return (
@@ -224,7 +226,7 @@ function InventoryAdjustmentDialog(props) {
                     fullWidth
                     margin="normal"
                     dateFormat="yyyy-MM-dd"
-                    disabled={!!initialValues?.expiresOn}
+                    disabled={!!initialValues?.expiresOn || uiTransfer || uiRemove || uiReceive}
                     RootProps={{
                       name: 'expiresOn',
                     }}
@@ -234,14 +236,14 @@ function InventoryAdjustmentDialog(props) {
                 </FormGroup>
 
                 <TextField
-                  required={withLotNumber(partner, undefined)} // NOTE: `undefined` is passed as `consumable` argument explicitly
+                  required={withLotNumber(partner, undefined)}
                   fullWidth
                   type="text"
                   name="lotNumber"
                   label={formatMessage(messages.cartridgeLotNumber)}
                   value={values.lotNumber}
                   onChange={handleChange}
-                  disabled={!!initialValues?.lotNumber}
+                  disabled={!!initialValues?.lotNumber || uiTransfer || uiRemove || uiReceive}
                   onBlur={handleBlur}
                   margin="normal"
                   FormHelperTextProps={{
