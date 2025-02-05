@@ -98,7 +98,7 @@ const andByRetreatment = (typeOfPatientValue, patientRetreatmentValue, resultCat
   return counter('r.id', condition)
 }
 // ---------------------------------------------------------------------------
-const reportDrTb10ABaseQuery = async (auth, query) => {
+const reportDrTb10ABaseQuery = async (auth, query, groupBySite = false) => {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const dates = getDatesFromQuery(query)
@@ -168,6 +168,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .innerJoin('Assay as a', 'r.assayId', 'a.id')
       .leftOuterJoin('Site as s', 's.id', 'r.siteId')
       .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+      .leftJoin('State as st', 'st.id', 'g.stateId')
+      .leftJoin('Lga as lga', 'lga.id', 'g.lgaId')
       .leftJoin('ResultCategoryAssay as rca1', function () {
         this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
       })
@@ -201,6 +203,10 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       })
       .select(
         'r.deviceId',
+        's.name as siteName',
+        'st.name as stateName',
+        'lga.name as lgaName',
+        'r.deviceId',
         knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         /**
@@ -209,11 +215,15 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * for each device
          */
         knex.raw(`
-          d.moduleBayCapacity as cntModules
-          `),
+      d.moduleBayCapacity as cntModules
+      `),
         knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive`
       )
-      .groupBy('r.deviceId', 'sampleType')
+      .modify(qb => {
+        if (groupBySite) qb.groupBy('r.siteId', 'sampleType')
+        else qb.groupBy('r.deviceId', 'sampleType')
+      })
+
       /**
        * get total results per each device per period
        *
@@ -229,87 +239,87 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_Presumptive_TB_Cases_Invalid_Mtb: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_TB_Cases_Invalid_Xdr: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
         cnt_Presumptive_TB_Cases_NoResult_Mtb: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.NoResult}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_TB_Cases_NoResult_Xdr: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.NoResult}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
         cnt_Presumptive_TB_Cases_Error_Mtb: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_TB_Cases_Error_Xdr: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
 
         cnt_Presumptive_DR_TB_Cases_Invalid_Mtb: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_Invalid_Xdr: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_NoResult_Mtb: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.NoResult}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_NoResult_Xdr: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.NoResult}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_Error_Mtb: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_Error_Xdr: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
 
         cnt_Presumptive_DR_TB_Cases_Invalid: inTypeOfPatient(
@@ -327,80 +337,80 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_Total_Cases_Invalid: counter(
           'r.id',
           `
-          r.resultCategory1 = ${resultCategoryIds.Invalid}`
+      r.resultCategory1 = ${resultCategoryIds.Invalid}`
         ),
         cnt_Total_Cases_NoResult: counter(
           'r.id',
           `
-          r.resultCategory1 = ${resultCategoryIds.NoResult}`
+      r.resultCategory1 = ${resultCategoryIds.NoResult}`
         ),
         cnt_Total_Cases_Error: counter(
           'r.id',
           `
-          r.resultCategory1 = ${resultCategoryIds.Error}`
+      r.resultCategory1 = ${resultCategoryIds.Error}`
         ),
 
         cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
           presumptiveTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds.Detected}
-          and
-          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-        `
+      r.resultCategory1 = ${resultCategoryIds.Detected}
+      and
+      r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+    `
         ),
         cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
           presumptiveDrTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds.Detected}
-          and
-          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-        `
+      r.resultCategory1 = ${resultCategoryIds.Detected}
+      and
+      r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+    `
         ),
         cnt_Presumptive_TB_Cases_MtbDetectedRifTraces: inTypeOfPatient(
           presumptiveTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
-          or
-          r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
-        `
+      r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
+      or
+      r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
+    `
         ),
         cnt_Presumptive_DR_TB_Cases_MtbDetectedRifTraces: inTypeOfPatient(
           presumptiveDrTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
-          or
-          r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
-        `
+      r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
+      or
+      r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
+    `
         ),
         cnt_Total_MtbDetectedRifNotDetected: counter(
           'r.id',
           `
-          r.resultCategory1 IN (${positiveResultCategories})
-          and
-          r.resultCategory2 = ${resultCategoryIds.NotDetected}
-        `
+      r.resultCategory1 IN (${positiveResultCategories})
+      and
+      r.resultCategory2 = ${resultCategoryIds.NotDetected}
+    `
         ),
         cnt_Total_MtbDetectedRifDetected: counter(
           'r.id',
           `
-          r.resultCategory1 IN (${positiveResultCategories})
-          and
-          r.resultCategory2 IN (${positiveResultCategories})
-        `
+      r.resultCategory1 IN (${positiveResultCategories})
+      and
+      r.resultCategory2 IN (${positiveResultCategories})
+    `
         ),
         cnt_Total_MtbDetectedRifIndeterminate: counter(
           'r.id',
           `
-          r.resultCategory1 IN (${positiveResultCategories})
-          and
-          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-        `
+      r.resultCategory1 IN (${positiveResultCategories})
+      and
+      r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+    `
         ),
         cnt_Total_MtbNotDetected: counter(
           'r.id',
           `
-          r.resultCategory1 = ${resultCategoryIds.NotDetected}
-        `
+      r.resultCategory1 = ${resultCategoryIds.NotDetected}
+    `
         ),
         /**
          * ****************************************
@@ -1555,7 +1565,7 @@ async function getDataForReportDrTb10B(auth, query) {
 /**
  * getDataForReportCovid19
  */
-async function getDataForReportCovid19(auth, query) {
+async function getDataForReportCovid19(auth, query, groupBySite = false) {
   const dataConstraints = await getConstraints(auth.credentials)
   const now = new Date()
   const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
@@ -1667,6 +1677,7 @@ async function getDataForReportCovid19(auth, query) {
       assay: 'a',
       result: 'r',
     })
+    .select('r.siteId')
     // apply date range filter
     .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     // apply remaining filters
@@ -1675,6 +1686,9 @@ async function getDataForReportCovid19(auth, query) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
+    })
+    .modify(qb => {
+      if (groupBySite) qb.groupBy('r.siteId')
     })
     .count(fields)
 
@@ -2393,12 +2407,65 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
   }
 }
 
+function transformData(data) {
+  const groupedData = {}
+
+  data.forEach(({ siteIds, sampleType, ...rest }) => {
+    if (!groupedData[siteIds]) {
+      groupedData[siteIds] = {}
+    }
+
+    if (sampleType === 'Pulmonary & Extra-pulmonary') {
+      groupedData[siteIds].main = { siteIds, sampleType, ...rest }
+    } else if (sampleType === 'Stool') {
+      const stoolEntry = Object.fromEntries(Object.entries(rest).map(([key, value]) => [`${key}-stool`, value]))
+
+      groupedData[siteIds].stool = { siteIds, sampleType, ...stoolEntry }
+    }
+  })
+
+  return Object.values(groupedData)
+    .map(({ main, stool }) => ({
+      ...(main || {}),
+      ...(stool || {}),
+    }))
+    .filter(entry => Object.keys(entry).length > 0) // Ensure no empty objects
+}
+
+function mergeDataBySiteId(arr1, arr2) {
+  const mergedData = new Map()
+
+  // Helper function to merge data into the map
+  const mergeIntoMap = data => {
+    data.forEach(({ siteId, ...rest }) => {
+      if (!mergedData.has(siteId)) {
+        mergedData.set(siteId, { siteId })
+      }
+      // Merge new data into the existing object without mutating the original
+      mergedData.set(siteId, { ...mergedData.get(siteId), ...rest })
+    })
+  }
+
+  // Merge both arrays into the map
+  mergeIntoMap(arr1)
+  mergeIntoMap(arr2)
+
+  return Array.from(mergedData.values())
+}
+
 // ---------------------------------------------------------------------------
-async function getResultsForNtpUse(auth, query, timezone, options) {
-  console.log(`authentication`, auth, query, timezone, options)
+async function getResultsForNtpUse(auth, query) {
+  const { drTb10AData } = await reportDrTb10ABaseQuery(auth, query, true)
+  const { data: dataForConvid19 } = await getDataForReportCovid19(auth, query, true)
+
+  const resultData = await drTb10AData
+  const data = transformData(resultData)
+
+  const finalData = mergeDataBySiteId(data, dataForConvid19)
+
   return {
     ok: true,
-    data: [],
+    data: finalData,
   }
 }
 

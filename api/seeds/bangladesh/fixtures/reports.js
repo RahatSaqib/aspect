@@ -59,16 +59,14 @@ const resultsForNTPUse = {
   fileName: 'ReportNtpUse',
   exportCsv: false,
   availableForNotification: 1,
-  sortOrder: 13,
+  sortOrder: 11,
   validations: [],
   sheets: [
     {
       sortOrder: 0,
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getResultsForNtpUse',
-      query: {
-        avoidStreaming: true,
-      },
+      query: {},
     },
   ],
 }
