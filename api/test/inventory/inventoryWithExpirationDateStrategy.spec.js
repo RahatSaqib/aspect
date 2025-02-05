@@ -161,6 +161,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             inventoryItemInTransitId,
             inventoryItem4Id,
             inventoryItem5Id,
+            negativeQoHInventoryItemId
           ])
           .delete()
         await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id, site2Id]).delete()
