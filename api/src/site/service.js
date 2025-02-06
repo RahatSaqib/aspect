@@ -95,7 +95,7 @@ async function showSite(request) {
     return Boom.notFound()
   }
 
-  site.selectedConsumables = [...(site.activeConsumables ? site.activeConsumables.split(',').map(Number) : [])]
+  site.selectedConsumables = site.activeConsumables ? site.activeConsumables.split(',').map(Number) : []
   delete site.activeConsumables
 
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
