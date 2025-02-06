@@ -94,10 +94,8 @@ async function showSite(request) {
   if (!site) {
     return Boom.notFound()
   }
-  const reconciledConsumables = await knex('InventoryItem').where({ siteId: params.siteId }).pluck('consumableId')
 
-  site.unreconciledConsumables = site.unreconciledConsumables ? site.unreconciledConsumables.split(',').map(Number) : []
-  site.selectedConsumables = [...new Set([...site.unreconciledConsumables, ...reconciledConsumables])]
+  site.selectedConsumables = [...(site.activeConsumables ? site.activeConsumables.split(',').map(Number) : [])]
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
 
   site.consumableIds = await getSiteConsumables(site.id)
@@ -105,6 +103,7 @@ async function showSite(request) {
   site.devices = await getNotDecommissionedDevices(dataConstraints)
     .where('siteId', params.siteId)
     .select('d.id', 'd.name', 'd.shortName', 'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'dtc.id as category')
+
   const result = { ok: true, data: { ...site, tags } }
 
   return result
