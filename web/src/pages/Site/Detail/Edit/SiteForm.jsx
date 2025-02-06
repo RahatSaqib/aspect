@@ -78,7 +78,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
         onSettled: () => setSubmitting(false),
       })
     } else {
-      delete editSite.unreconciledConsumables
       delete editSite.selectedConsumables
       updateSite(editSite, {
         onSuccess: navigate(`/browse/site/${site.id}${location.search}`),

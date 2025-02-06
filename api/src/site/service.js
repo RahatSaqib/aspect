@@ -96,6 +96,8 @@ async function showSite(request) {
   }
 
   site.selectedConsumables = [...(site.activeConsumables ? site.activeConsumables.split(',').map(Number) : [])]
+  delete site.activeConsumables
+
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
 
   site.consumableIds = await getSiteConsumables(site.id)
