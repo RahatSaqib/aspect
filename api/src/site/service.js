@@ -70,12 +70,25 @@ async function showSite(request) {
 
   // get item
   const siteQuery = getSite(params.siteId, dataConstraints)
-    .leftOuterJoin('MissingInventoryLots as m', 'm.siteId', 's.id')
-    .leftOuterJoin('Result as r', 'r.id', 'm.resultId')
-    .leftOuterJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
-    .leftOuterJoin('Consumable as c', 'ca.consumableId', 'c.id')
-    .select([knex.raw('GROUP_CONCAT(DISTINCT c.id) as unreconciledConsumables')])
-    .groupBy('m.siteId')
+    // Add active consumables at the site (current or unreconciled)
+    .leftJoin(
+      knex
+        .select('m.siteId', 'ca.consumableId')
+        .from('MissingInventoryLots as m')
+        .leftJoin('Result as r', 'r.id', 'm.resultId')
+        .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
+        .where('m.siteId', params.siteId)
+        .unionAll(function () {
+          this.select('ii.siteid', 'ii.consumableId')
+            .from('InventoryItem as ii')
+            .where('ii.siteId', params.siteId)
+            .where('ii.quantityOnHand', '>', 0)
+        })
+        .as('ac'),
+      'ac.siteId',
+      's.id'
+    )
+    .select([knex.raw('GROUP_CONCAT(DISTINCT ac.consumableId) as activeConsumables')])
 
   const site = await siteQuery
   if (!site) {
