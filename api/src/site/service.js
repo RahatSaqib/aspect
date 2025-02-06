@@ -71,7 +71,7 @@ async function showSite(request) {
   // get item
   const siteQuery = getSite(params.siteId, dataConstraints)
     .leftOuterJoin('MissingInventoryLots as m', 'm.siteId', 's.id')
-    .leftOuterJoin('Result as r', 'r.siteId', 'm.siteId')
+    .leftOuterJoin('Result as r', 'r.id', 'm.resultId')
     .leftOuterJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
     .leftOuterJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .select([knex.raw('GROUP_CONCAT(DISTINCT c.id) as unreconciledConsumables')])
