@@ -91,7 +91,7 @@ async function showSite(request) {
     .select([knex.raw('GROUP_CONCAT(DISTINCT ac.consumableId) as activeConsumables')])
 
   const site = await siteQuery
-  if (!site) {
+  if (!site || site.id === null) {
     return Boom.notFound()
   }
 
