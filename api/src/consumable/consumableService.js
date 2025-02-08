@@ -109,7 +109,10 @@ async function getConsumableDetail(consumableId, dataConstraints) {
       'c.partNumber',
     ])
 
-  const [consumable, siteIds] = await Promise.all([consumableQuery, getSiteIdsByConsumable(consumableId, dataConstraints)])
+  const [consumable, siteIds] = await Promise.all([
+    consumableQuery,
+    getSiteIdsByConsumable(consumableId, dataConstraints),
+  ])
 
   if (!consumable) {
     return Boom.notFound()
@@ -120,10 +123,10 @@ async function getConsumableDetail(consumableId, dataConstraints) {
 
   return consumable
     ? {
-      ...consumable,
-      siteIds: siteIds || [],
-      selectedSites,
-    }
+        ...consumable,
+        siteIds: siteIds || [],
+        selectedSites,
+      }
     : {}
 }
 
