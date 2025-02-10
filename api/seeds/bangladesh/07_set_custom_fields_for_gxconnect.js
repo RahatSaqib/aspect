@@ -10,7 +10,6 @@ async function seed(knex) {
   const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first('id')
 
   await knex('FormDefinition').del()
-  await knex('FormDefinitionSchema').del()
 
   await upsertForms(knex, partnerId, forms)
 }

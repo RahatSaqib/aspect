@@ -2157,7 +2157,6 @@ async function getCustomFieldsCompletion(auth, query) {
 
   const queryForm = await knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .join('FormDefinitionSchema as fschema', 'fd.formDefinitionSchemaId', 'fschema.id')
     .innerJoin('Disease as d', 'fd.diseaseId', 'd.id')
     .where('fd.partnerId', partnerId)
     .where('ft.externalId', 'gxConnectForm')
@@ -2167,7 +2166,7 @@ async function getCustomFieldsCompletion(auth, query) {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
+      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
   /**
    * `forms` is a object with 2 props for 2 forms

@@ -31,12 +31,12 @@ module.exports = {
   consumableStrategies: {
     GxMtbRifCartridge: 'withLotAndExpirationDateStrategy',
     GxMtbRifUltraCartridge: 'withLotAndExpirationDateStrategy',
-    GxHiv1VlCartridge: 'withExpirationDateStrategy',
-    GxHiv1QualCartridge: 'withExpirationDateStrategy',
-    GxEbolaCartridge: 'withExpirationDateStrategy',
-    assayGXCovid19Cartridge: 'withExpirationDateStrategy',
+    GxHiv1VlCartridge: 'withLotAndExpirationDateStrategy',
+    GxHiv1QualCartridge: 'withLotAndExpirationDateStrategy',
+    GxEbolaCartridge: 'withLotAndExpirationDateStrategy',
+    assayGXCovid19Cartridge: 'withLotAndExpirationDateStrategy',
     GxMtbXdrCartridge: 'withLotAndExpirationDateStrategy',
-    GxHCVCartridge: 'withExpirationDateStrategy',
+    GxHCVCartridge: 'withLotAndExpirationDateStrategy',
   },
   fixtures: {
     jobFunctions,

@@ -4,7 +4,7 @@ const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getOffsetFromIsoDateString, startOfMonthUTC, endOfMonthUTC } = require('../shared/date')
 
-const { allResultCategoryToId, allDeviceTypeToId, allMessageStatusToId } = require('../shared/dictionary')
+const { allResultCategoryToId, allMessageStatusToId } = require('../shared/dictionary')
 const { formatDateOrDefault } = require('../shared/date')
 
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
@@ -42,7 +42,6 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
 async function getResultQuery(query, dataConstraints, positiveResultCategories, tz = '+00:00') {
   const { currentMonth = new Date() } = query
   const messageStatusToId = await allMessageStatusToId()
-  const deviceTypeIds = await allDeviceTypeToId()
 
   /**
    * base query which contains all required conditions and joins
@@ -76,7 +75,7 @@ async function getResultQuery(query, dataConstraints, positiveResultCategories, 
      * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
      * in `api/src/auth/constraints.js` where user permitted deviceType is used
      */
-    .whereNot('d.deviceTypeId', deviceTypeIds.GxAlert)
+    .whereNot('dt.externalId', 'GxAlert')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
