@@ -1,6 +1,7 @@
+const Boom = require('@hapi/boom')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConsumableTypes } = require('./common/db')
-const { getConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 async function listConsumableTypes(request) {
   const { query, auth } = request
@@ -49,16 +50,37 @@ async function findConsumableReason(consumableReasonName) {
   return consumableReason
 }
 
-function getConsumableSites(consumableId) {
-  return knex('SiteConsumable').where('consumableId', consumableId).pluck('siteId')
+function getSiteIdsByConsumable(consumableId, dataConstraints) {
+  const consumableSitesQuery = knex('SiteConsumable as sc')
+    .leftJoin('Site as s', 's.id', 'sc.siteId')
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .where('sc.consumableId', consumableId)
+    .pluck('sc.siteId')
+
+  return consumableSitesQuery
 }
 
-async function getConsumableDetail(consumableId) {
+async function getConsumableDetail(consumableId, dataConstraints) {
+  const activeSitesSubQuery = knex
+    .select('m.siteId', 'ca.consumableId')
+    .from('MissingInventoryLots as m')
+    .leftJoin('Result as r', 'r.id', 'm.resultId')
+    .leftJoin('Site as s', 's.id', 'm.siteId')
+    .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .where('ca.consumableId', consumableId)
+    .unionAll(function () {
+      this.select('ii.siteid', 'ii.consumableId')
+        .from('InventoryItem as ii')
+        .leftJoin('Site as s', 's.id', 'ii.siteId')
+        .modify(addConstraints, dataConstraints, { site: 's' })
+        .where('ii.consumableId', consumableId)
+        .where('ii.quantityOnHand', '>', 0)
+    })
+
   const consumableQuery = knex('Consumable as c')
-    .innerJoin('ConsumableAssay as ca', 'ca.consumableId', 'c.id')
-    .leftJoin('Result as r', 'ca.assayId', 'r.assayId')
-    .leftJoin('MissingInventoryLots as m', 'm.siteId', 'r.siteId')
-    .select([
+    .leftJoin(activeSitesSubQuery.as('activeSites'), 'c.id', 'activeSites.consumableId')
+    .first([
       'c.id',
       'c.name',
       'c.i18nKey',
@@ -70,33 +92,51 @@ async function getConsumableDetail(consumableId) {
       'c.price',
       'c.includeLocation',
       'c.partNumber',
-      knex.raw('GROUP_CONCAT(DISTINCT m.siteId) as unreconciledSites'),
+      knex.raw('GROUP_CONCAT(DISTINCT activeSites.siteId) as activeSites'),
     ])
     .where({ 'c.id': consumableId })
-    .groupBy('c.id')
+    .groupBy([
+      'c.id',
+      'c.name',
+      'c.i18nKey',
+      'c.canExpire',
+      'c.manufacturer',
+      'c.strategy',
+      'c.adjustment',
+      'c.unit',
+      'c.price',
+      'c.includeLocation',
+      'c.partNumber',
+    ])
 
-  const reconciledSitesQuery = knex('InventoryItem').where({ consumableId }).pluck('siteId')
-
-  const [consumable, siteIds, reconciledSites] = await Promise.all([
+  const [consumable, siteIds] = await Promise.all([
     consumableQuery,
-    getConsumableSites(consumableId),
-    reconciledSitesQuery,
+    getSiteIdsByConsumable(consumableId, dataConstraints),
   ])
 
-  consumable[0].unreconciledSites = consumable[0].unreconciledSites
-    ? consumable[0].unreconciledSites.split(',').map(Number)
-    : []
+  if (!consumable) {
+    return Boom.notFound()
+  }
 
-  const selectedSites = [...new Set([...consumable[0].unreconciledSites, ...reconciledSites])]
+  const selectedSites = consumable.activeSites ? consumable.activeSites.split(',').map(Number) : []
+  delete consumable.activeSites
 
-  return consumable.length ? { ...consumable[0], siteIds, selectedSites } : {}
+  return consumable
+    ? {
+        ...consumable,
+        siteIds: siteIds || [],
+        selectedSites,
+      }
+    : {}
 }
 
 async function getConsumableById(request) {
   const {
+    auth,
     params: { consumableId },
   } = request
-  const consumable = await getConsumableDetail(consumableId)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const consumable = await getConsumableDetail(consumableId, dataConstraints)
   return consumable
 }
 

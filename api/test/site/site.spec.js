@@ -253,7 +253,6 @@ describe('Site routes', () => {
 
     describe('PUT', () => {
       it('Should update site given a siteId', async () => {
-        delete siteData.unreconciledConsumables
         delete siteData.selectedConsumables
         const originalStreet2 = siteData.street2
         const newStreet2 = '15 New Street'
