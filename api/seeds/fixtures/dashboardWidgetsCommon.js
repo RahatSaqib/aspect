@@ -31,6 +31,7 @@ const {
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
     disabledModulesWidget,
+    errorRateHomeWidget,
   },
 } = require('./dashboardWidgets')
 
@@ -67,5 +68,6 @@ module.exports = {
     instrumentsConnected,
     bangladeshAverageCompletion,
     disabledModulesWidget,
+    errorRateHomeWidget,
   },
 }
