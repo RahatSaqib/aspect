@@ -4,7 +4,6 @@ const Promise = require('bluebird')
 
 const { rowsAsObject, updateUnknownErrorOnModuleMessage } = require('../utils')
 const { upsertIssueResolutionTrigger } = require('../utils')
-const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
 
 async function seed(knex) {
@@ -271,9 +270,6 @@ async function seed(knex) {
   })
 
   await updateUnknownErrorOnModuleMessage(knex)
-
-  // see explanation details in calling function
-  await updateDashboardWidgetQueries(knex)
 
   // correction requested in SD-769
   await updateDataCategoryNotificationTypeForRO(knex, 'MoHS', 'deprecatedMyanmar')

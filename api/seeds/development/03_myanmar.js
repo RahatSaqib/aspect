@@ -9,7 +9,6 @@ const jobFunctionsFixtureMyanmar = require('./fixtures/jobFunctions_myanmar')
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 let patients = require('./fixtures/patients.json')
-const dashboardWidget = require('./fixtures/myanmarDashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { rowsAsObject, seedNotificationTypes, seedIssues } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
@@ -460,94 +459,6 @@ async function seed(knex) {
     })
   )
 
-  // Create DashboardWidget
-  const statWidgets = []
-  await Promise.all(
-    _.map(dashboardWidget.stat, async widget => {
-      const widgetData = _.pick(widget, [
-        'title',
-        'titleI18nKey',
-        'subTitle',
-        'subTitleI18nKey',
-        'sqlForIndicator',
-        'link',
-        'sortOrder',
-        'externalId',
-        'descriptionI18nKey',
-        'description',
-        'dashboards',
-      ])
-      widgetData.dashboards = JSON.stringify(widgetData.dashboards || { home: {} })
-      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
-
-      const statWidgetData = _.pick(widget, [
-        'icon',
-        'sqlForStatUnit',
-        'statUnit',
-        'statUnitI18nKey',
-        'statStatus',
-        'statStatusI18nKey',
-        'sqlForExtra',
-        'extraUnit',
-        'extraUnitI18nKey',
-        'extraLabel',
-        'extraLabelI18nKey',
-      ])
-      await knex('DashboardWidgetStat').insert({
-        dashboardWidgetId: widgetId,
-        ...statWidgetData,
-      })
-      statWidgets.push(widgetId)
-    })
-  )
-
-  const targetWidgets = []
-  await Promise.all(
-    _.map(dashboardWidget.target, async widget => {
-      const widgetData = _.pick(widget, [
-        'title',
-        'titleI18nKey',
-        'subTitle',
-        'subTitleI18nKey',
-        'sqlForIndicator',
-        'link',
-        'sortOrder',
-        'externalId',
-        'description',
-        'descriptionI18nKey',
-        'dashboards',
-      ])
-      widgetData.dashboards = JSON.stringify(widgetData.dashboards || { home: {} })
-      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
-
-      const statWidgetData = _.pick(widget, [
-        'sqlForDataCollection',
-        'thresholdPercentageDataCollection',
-        'targetToken',
-      ])
-      await knex('DashboardWidgetTarget').insert({
-        dashboardWidgetId: widgetId,
-        ...statWidgetData,
-      })
-      targetWidgets.push(widgetId)
-    })
-  )
-
-  await Promise.all(
-    _.map(statWidgets, async widgetId => {
-      await knex('JobFunctionDashboardWidget').insert([
-        { jobFunctionId: jobFunctionIdAdmin, widgetId },
-        { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
-        { jobFunctionId: jobFunctionIdLabUser, widgetId },
-      ])
-    }),
-    _.map(targetWidgets, async widgetId => {
-      await knex('JobFunctionDashboardWidget').insert([
-        { jobFunctionId: jobFunctionIdAdmin, widgetId },
-        { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
-      ])
-    })
-  )
   await addIssueTypes(knex, partnerId, adminId, null)
   // Notification Types
   await seedNotificationTypes(knex, baseProps)
