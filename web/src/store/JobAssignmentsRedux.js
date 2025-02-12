@@ -31,7 +31,7 @@ export function fetchJobAssignmentForCurrentPerson(dispatch, personId) {
   return getAssignment(personId).then(data => dispatch(addJobAssignmentForCurrentPerson(data)))
 }
 
-export const fetchJobAssignment = personId => dispatch => fetchJobAssignmentForCurrentPerson(dispatch, personId)
+export const fetchJobAssignments = personId => dispatch => fetchJobAssignmentForCurrentPerson(dispatch, personId)
 
 const evaluateNationalLevelAdmin = jobAssignment => {
   return (

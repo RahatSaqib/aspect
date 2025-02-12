@@ -14,7 +14,7 @@ import RecordPageViewProvider from './providers/RecordPageViewProvider'
 import { routePaths } from './routes/constants'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchCountries } from './store/GeographyRedux'
-import { adminLevels, fetchJobAssignment } from './store/JobAssignmentsRedux'
+import { adminLevels, fetchJobAssignments } from './store/JobAssignmentsRedux'
 
 const ContactPage = lazy(() => import('./pages/Contact'))
 const DeviceApiKeyList = lazy(() => import('./oldPages/deviceApiKey/list/DeviceApiKeyList'))
@@ -114,7 +114,7 @@ const LogInApp = () => {
 
   useEffect(() => {
     if (personId) {
-      dispatch(fetchJobAssignment(personId))
+      dispatch(fetchJobAssignments(personId))
     }
   }, [personId, dispatch])
 
