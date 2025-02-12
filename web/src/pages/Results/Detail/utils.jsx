@@ -10,6 +10,13 @@ import getFormConfig from './Forms/editConfig'
 import getValidationSchema from './Forms/validation'
 import messages from './messages'
 
+const toCamelCase = str => {
+  return str
+    .toLowerCase()
+    .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => (index === 0 ? match.toLowerCase() : match.toUpperCase()))
+    .replace(/\s+/g, '')
+}
+
 export const getFormConfigWithData = (intl, isNew, values) => {
   const formSchema = getFormConfig(intl.formatMessage, isNew, values.assay)
 
@@ -55,6 +62,14 @@ function getRowsForCustomFields(values) {
       id: customField.source,
       label: customField.title,
       disabledIf: () => !customField.source,
+    }
+    // Hack ASP-7604 Custom Fields Translations are broken: I18Key from the custom field
+    // is not received from the backend, so we try to build it from the title and check if
+    // it exists in the messages.
+    // TODO: Refactor this in the future, sending the i18n key from the custom field in the backend.
+    const labelI18nKey = toCamelCase(customField.title)
+    if (messages[labelI18nKey]) {
+      baseItem.labelI18nKey = labelI18nKey
     }
 
     if (customField.controlType === 'comboBox' || customField.controlType === 'autoComplete') {

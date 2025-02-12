@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt')
 const { readJson } = require('fs-extra')
 const path = require('path')
 const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
-const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const {
   allAssayTypeToId,
@@ -95,7 +94,6 @@ const foreignKeys = {
 
 // Helper for seed files. Ru
 let hasSeededStaticData = false
-let commonInserts = false
 
 // Set up the file name of the seed with __filename.
 function seed(seed, fileName, overridedSeeds) {
@@ -128,12 +126,6 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
           throw e
         })
         .then(async () => {
-          if (!commonInserts) {
-            commonInserts = true
-            await Promise.each(Object.keys(relativeObjectsSeeds), async elem => {
-              commonInserts = commonInserts && (await relativeObjectsSeeds[elem](knex))
-            })
-          }
           await knex('AspectSeed').insert({
             fileName,
             success: true,
@@ -2951,10 +2943,6 @@ async function upsertForms(knex, partnerId, forms) {
     const diseaseId = await diseaseToId(diseaseExternalId)
     const assayId = await assayToId(assayExternalId)
 
-    const { id: formDefinitionSchemaId } = await upsertSingle(knex, 'FormDefinitionSchema', {
-      jsonSchemaFile: fileName,
-    })
-
     await upsertSingle(
       knex,
       'FormDefinition',
@@ -2975,7 +2963,7 @@ async function upsertForms(knex, partnerId, forms) {
         description,
         i18nKeyDescription,
         externalId,
-        formDefinitionSchemaId,
+        jsonSchemaFile: fileName,
       }
     )
   })

@@ -1,16 +1,18 @@
 import React, { useMemo } from 'react'
 import { Table, TableBody, TableRow } from '@mui/material'
-import format from 'date-fns/format'
+import { formatInTimeZone } from 'date-fns-tz'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
 import useAuthState from '../../../hooks/useAuthState'
 import { DataTableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
+import { getTimezoneById } from '../../../utils/utils/timezone'
 import { getColumns } from './tools'
 
 export function InventoryReconciliationList(props) {
   const { items, sortDir, sortCol, breakOutByLot } = props
   const user = useAuthState()
+  const validTimeZone = getTimezoneById(user.timezoneId)
   const { formatMessage } = useIntl()
   const columns = useMemo(
     () => getColumns(formatMessage, [true, 'true'].includes(breakOutByLot), user),
@@ -32,7 +34,9 @@ export function InventoryReconciliationList(props) {
             <DataTableCell>{item.consumableName}</DataTableCell>
             {breakOutByLot ? (
               <>
-                <DataTableCell>{item.expiresOn ? format(new Date(item.expiresOn), 'yyyy-MM-dd') : null}</DataTableCell>
+                <DataTableCell>
+                  {item.expiresOn ? formatInTimeZone(new Date(item.expiresOn), validTimeZone, 'yyyy-MM-dd') : ''}
+                </DataTableCell>
                 <DataTableCell>{item.lotNumber}</DataTableCell>
               </>
             ) : null}

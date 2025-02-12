@@ -70,21 +70,34 @@ async function showSite(request) {
 
   // get item
   const siteQuery = getSite(params.siteId, dataConstraints)
-    .leftOuterJoin('MissingInventoryLots as m', 'm.siteId', 's.id')
-    .leftOuterJoin('Result as r', 'r.siteId', 'm.siteId')
-    .leftOuterJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
-    .leftOuterJoin('Consumable as c', 'ca.consumableId', 'c.id')
-    .select([knex.raw('GROUP_CONCAT(DISTINCT c.id) as unreconciledConsumables')])
-    .groupBy('m.siteId')
+    // Add active consumables at the site (current or unreconciled)
+    .leftJoin(
+      knex
+        .select('m.siteId', 'ca.consumableId')
+        .from('MissingInventoryLots as m')
+        .leftJoin('Result as r', 'r.id', 'm.resultId')
+        .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
+        .where('m.siteId', params.siteId)
+        .unionAll(function () {
+          this.select('ii.siteid', 'ii.consumableId')
+            .from('InventoryItem as ii')
+            .where('ii.siteId', params.siteId)
+            .where('ii.quantityOnHand', '>', 0)
+        })
+        .as('ac'),
+      'ac.siteId',
+      's.id'
+    )
+    .select([knex.raw('GROUP_CONCAT(DISTINCT ac.consumableId) as activeConsumables')])
 
   const site = await siteQuery
-  if (!site) {
+  if (!site || site.id === null) {
     return Boom.notFound()
   }
-  const reconciledConsumables = await knex('InventoryItem').where({ siteId: params.siteId }).pluck('consumableId')
 
-  site.unreconciledConsumables = site.unreconciledConsumables ? site.unreconciledConsumables.split(',').map(Number) : []
-  site.selectedConsumables = [...new Set([...site.unreconciledConsumables, ...reconciledConsumables])]
+  site.selectedConsumables = site.activeConsumables ? site.activeConsumables.split(',').map(Number) : []
+  delete site.activeConsumables
+
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
 
   site.consumableIds = await getSiteConsumables(site.id)
@@ -92,6 +105,7 @@ async function showSite(request) {
   site.devices = await getNotDecommissionedDevices(dataConstraints)
     .where('siteId', params.siteId)
     .select('d.id', 'd.name', 'd.shortName', 'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'dtc.id as category')
+
   const result = { ok: true, data: { ...site, tags } }
 
   return result

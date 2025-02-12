@@ -11,6 +11,7 @@ import messages from './messages/allMessages'
 import AspectDialog from './oldComponents/shared/AspectDialog'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import RecordPageViewProvider from './providers/RecordPageViewProvider'
+import { routePaths } from './routes/constants'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
@@ -103,15 +104,8 @@ const LogInApp = () => {
   useHashAndScroll()
 
   const [showIdleDialog, setShowIdleDialog] = useState(false)
-  const {
-    countryId,
-    countryAbbreviation,
-    hasToAcceptLicenseId,
-    isLoggedOut,
-    loggedOutReason,
-    userPermissions,
-    isPakistan,
-  } = useAuthState()
+  const { countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedOut, loggedOutReason, userPermissions } =
+    useAuthState()
 
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
 
@@ -238,7 +232,7 @@ const LogInApp = () => {
 
                 {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
                 {a(['browse', 'result:edit']) ? (
-                  <Route path="/browse/result/:resultId/*" element={<ResultDetail />} />
+                  <Route path={routePaths.RESULT_DETAILS} element={<ResultDetail />} />
                 ) : null}
 
                 {a(['browse', 'site']) ? (
@@ -261,9 +255,7 @@ const LogInApp = () => {
                     <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
                     <Route path="/browse/inventory/overview" element={<InventoryOverview />} />
                     <Route path="/browse/inventory/reconciliation/form" element={<InventoryReconciliationForm />} />
-                    {isPakistan ? (
-                      <Route path="/browse/inventory/reconciliation" element={<InventoryReconciliation />} />
-                    ) : null}
+                    <Route path="/browse/inventory/reconciliation" element={<InventoryReconciliation />} />
                   </>
                 ) : null}
                 {a(['browse', 'notification']) ? (

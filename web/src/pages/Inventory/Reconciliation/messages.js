@@ -1,8 +1,10 @@
 import { defineMessages } from 'react-intl'
 import { commonDefinitions } from '../../../messages'
+import allMessage from '../../../messages/allMessages'
 
 const messages = {
   ...commonDefinitions,
+  ...allMessage,
   ...defineMessages({
     inventoryReconciliation: {
       id: 'pages.inventoryReconciliation.title',
@@ -28,10 +30,6 @@ const messages = {
       id: 'pages.inventoryReconciliation.lotNumber',
       defaultMessage: 'Lot Number',
     },
-    hierarchicalView: {
-      id: 'pages.inventoryReconciliation.hierarchicalView',
-      defaultMessage: 'Hierarchical View',
-    },
     breakdownByLots: {
       id: 'pages.inventoryReconciliation.breakdownByLots',
       defaultMessage: 'Breakdown by Lots',
@@ -39,6 +37,10 @@ const messages = {
     unreconciledQuantity: {
       id: 'pages.inventoryReconciliation.unreconciledQuantity',
       defaultMessage: 'Unreconciled quantity',
+    },
+    autoReconcileNow: {
+      id: 'pages.inventoryReconciliation.autoReconcileNow',
+      defaultMessage: 'Auto Reconcile Now',
     },
     paginatorStatus: {
       id: 'pages.inventoryReconciliation.paginatorStatus',

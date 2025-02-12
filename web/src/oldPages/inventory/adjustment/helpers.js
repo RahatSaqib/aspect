@@ -42,10 +42,12 @@ export const withLotNumber = (partner, consumable) => {
   )
 }
 
-export function getValidations(format, actionType, { partner, inventory, allSites }) {
-  // const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
+export function getValidations(format, actionType, { partner, inventory }) {
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
+  const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
+
+  const skipValidation = uiTransfer || uiRemove || uiReceive
 
   let schema = object({
     quantity: number()
@@ -55,7 +57,7 @@ export function getValidations(format, actionType, { partner, inventory, allSite
       .integer(format(validationMessages.quantityInteger))
       .when('consumable', {
         is: () => {
-          return !!inventory && (uiTransfer || uiRemove)
+          return !!inventory && (uiTransfer || uiRemove || uiReceive)
         },
         then: sch => sch.max(inventory.quantityOnHand, format(validationMessages.quantityNotMoreThanOnHand)),
       }),
@@ -89,46 +91,13 @@ export function getValidations(format, actionType, { partner, inventory, allSite
       expiresOn: date()
         .nullable()
         .when(['consumable'], {
-          /**
-           * require
-           */
-          is: () => withExpirationDate(partner),
+          is: () => withExpirationDate(partner) && !skipValidation,
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
-        })
-        .when(['toSiteId'], {
-          /**
-           * can Remove expired cartridges only from Warehouse
-           */
-          is: toSiteId => {
-            if (uiRemove) {
-              const site = allSites.find(it => it.id === +toSiteId)
-              const isWarehouse = site?.siteType === 'warehouse'
-              // do return `false` only for Warehouse
-              return !isWarehouse
-            }
-            return false
-          },
-          then: sch => sch.min(new Date(), format(validationMessages.expiryDateAfterToday)),
-        })
-        .when(['toSiteId'], {
-          /**
-           * can Transfer expired cartridges only to Warehouse
-           */
-          is: toSiteId => {
-            if (uiTransfer) {
-              const site = allSites.find(it => it.id === +toSiteId)
-              const isWarehouse = site?.siteType === 'warehouse'
-              // do return `false` only for Warehouse
-              return !isWarehouse
-            }
-            return false
-          },
-          then: sch => sch.min(new Date(), format(validationMessages.expiryDateAfterToday)),
         }),
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => withLotNumber(partner),
+          is: () => withLotNumber(partner, undefined) && !skipValidation,
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })

@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router'
 import useFilterUpdate from '../../hooks/useFilterUpdate'
 import useFilterValues from '../../hooks/useFilterValues'
 import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
-import { formatNumber } from '../../utils/utils/number'
 import IconProvider from '../IconProvider'
 import WidgetAlert from './Alerts'
 import { buildWidgetParams, translate } from './Helpers'
@@ -54,6 +53,8 @@ const AspectWidget = ({
       navigate(link)
     }
   }
+  const maxLengthWithoutLineWrapping = 13
+  const countClass = count.length > maxLengthWithoutLineWrapping ? `${styles.Summary__Card__Item__Count__Small}` : ``
 
   return (
     <span className={styles.Summary}>
@@ -73,7 +74,7 @@ const AspectWidget = ({
         <div className={styles.Summary__Card__Content}>
           <div className={styles.Summary__Card__Item}>
             <div className={styles.Summary__Card__Item__Count}>
-              {formatNumber(count)} {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
+              <span className={countClass}>{count}</span> {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
             </div>
             <div className={styles.Summary__Card__Item__Messages}>
               <div className={styles.Summary__Card__Item__Messages__main}>

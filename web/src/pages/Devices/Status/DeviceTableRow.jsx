@@ -1,11 +1,11 @@
 import React from 'react'
-import { formatDistanceToNow } from 'date-fns'
 import { useIntl } from 'react-intl'
 import ColoredNumber from '../../../oldComponents/shared/ColoredNumber'
 import stylesShared from '../../../oldComponents/shared/DataTableRow.module.css'
 import StatusIcon from '../../../oldComponents/shared/StatusIcon'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
+import { formatRelative } from '../../../utils/utils/dateFormat'
 import styles from './DeviceTableRow.module.css'
 import messages from './messages'
 
@@ -26,7 +26,7 @@ const Rate = ({ it, messageId, threshold }) => {
 }
 
 const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateThreshold }, ...restProps }) => {
-  const { formatMessage, formatNumber } = useIntl()
+  const { formatMessage, formatNumber, formatRelativeTime } = useIntl()
   return (
     <TableRow {...restProps} className={`TableRow ${restProps.className}`}>
       <TableCell>{device.get('name')}</TableCell>
@@ -57,7 +57,7 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
       </TableCell>
       <TableCell>
         {device.get('lastResultConductedOn')
-          ? formatDistanceToNow(new Date(device.get('lastResultConductedOn')), { addSuffix: true })
+          ? formatRelative(device.get('lastResultConductedOn'), formatRelativeTime)
           : null}
       </TableCell>
       <TableCell>
@@ -67,9 +67,7 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
         />
       </TableCell>
       <TableCell>
-        {device.get('lastPingInUtc')
-          ? formatDistanceToNow(new Date(device.get('lastPingInUtc')), { addSuffix: true })
-          : null}
+        {device.get('lastPingInUtc') ? formatRelative(device.get('lastPingInUtc'), formatRelativeTime) : null}
       </TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
@@ -96,9 +94,7 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
         <Rate it={device.get('error').toJS()} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
       </TableCell>
       <TableCell hiddenOn="lg">
-        {device.get('createdOnInUtc')
-          ? formatDistanceToNow(new Date(device.get('createdOnInUtc')), { addSuffix: true })
-          : null}
+        {device.get('createdOnInUtc') ? formatRelative(device.get('createdOnInUtc'), formatRelativeTime) : null}
       </TableCell>
       <TableCell hiddenOn="lg" numeric>
         {formatNumber(device.get('resultCountLastMonth'))}

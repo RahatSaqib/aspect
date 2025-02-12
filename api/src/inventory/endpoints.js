@@ -9,7 +9,7 @@ const removeInventory = require('./removeInventory')
 const transferInventory = require('./transferInventory')
 const receiveInventory = require('./receiveInventory')
 const listInventory = require('./listInventory')
-const { listReconciliation } = require('./service')
+const { listReconciliation, autoReconcile } = require('./service')
 const getInventoryOverview = require('./getInventoryOverview')
 const listInventoryLog = require('./listInventoryLog')
 const listInventoryTransfer = require('./listInventoryTransfer')
@@ -365,6 +365,32 @@ const routes = [
       validate: {
         payload: {
           ...modifyInventoryCommonPayloadFields,
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/inventory/auto-reconcile',
+    handler: asyncHandler(autoReconcile),
+    config: {
+      description: 'Reconcile the Unreconciled Inventory',
+      notes: 'Only Reconcile the filtered inventory',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        payload: {
+          ...inventoryReconciliationFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(
+            'consumableName',
+            'siteName',
+            'stateName',
+            'lgaName',
+            'quantity',
+            'expiresOn',
+            'lotNumber'
+          ),
         },
       },
     },

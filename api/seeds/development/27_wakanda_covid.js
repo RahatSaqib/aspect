@@ -4,7 +4,7 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { subMonths } = require('date-fns')
-const { addForms } = require('../relativeObjectsSeeds')
+const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
 const { resultCategoryToId, allSiteTypeToId } = require('../../src/shared/dictionary')
 const { commonUpserts } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
@@ -329,7 +329,7 @@ async function seed(knex) {
       'dashboardWidgetTitleTotalDeaths',
     ])
     .select('id as widgetId')
-  await addForms(knex, partnerId)
+  await addDefaultCustomFieldDefinitions(knex, partnerId)
   await Promise.each(statWidgets, async elem =>
     knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jobFunctionIdAdmin, widgetId: elem.widgetId },

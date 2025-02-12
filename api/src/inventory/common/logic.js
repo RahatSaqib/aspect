@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
+const { startOfDay, endOfDay } = require('date-fns')
 const { getUser } = require('../../auth/service')
 const defaultInventoryStrategy = require('../strategies')
 
@@ -26,7 +27,9 @@ const {
   logInventoryChange,
   createInventoryTransfer,
   updateInventoryTransfer,
+  getReconciliationList,
 } = require('./db')
+const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./querySelectors')
 
 /**
  * use singleton for inventory strategy instance - cache it in a single instance
@@ -68,29 +71,45 @@ async function upsertInventoryItem({
   now,
   userId,
   inTransitFromSiteId,
+  logProps,
 }) {
+  const updateData = {
+    quantityOnHand,
+    inTransitFromSiteId: inTransitFromSiteId || null,
+    updatedOn: now,
+    updatedBy: userId,
+  }
   if (inventoryItemId) {
-    await updateInventoryItem(knex, inventoryItemId, {
-      quantityOnHand,
-      inTransitFromSiteId: inTransitFromSiteId || null,
-      updatedOn: now,
-      updatedBy: userId,
-    })
+    const query = {
+      siteId,
+      consumableId,
+      lotNumber,
+      minDate: startOfDay(expiresOn),
+      maxDate: endOfDay(expiresOn),
+    }
+
+    if (logProps?.operation.includes('modify') && quantityOnHand === 0) {
+      const [{ total }] = await getReconciliationList(query)
+
+      if (total === 0) {
+        updateData.lotNumber = null
+        updateData.expiresOn = null
+        updateData.quantityOnHand = null
+      }
+    }
+
+    await updateInventoryItem(knex, inventoryItemId, updateData)
   } else if (quantityOnHand > 0) {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
+      ...updateData,
       consumableId,
-      inTransitFromSiteId: inTransitFromSiteId || null,
       siteId,
       lotNumber,
       expiresOn,
-      quantityOnHand,
-      updatedOn: now,
-      updatedBy: userId,
       createdOn: now,
       createdBy: userId,
     })
   }
-
   return inventoryItemId
 }
 
@@ -114,6 +133,7 @@ async function getActualQuantityOnHand(
     lotNumber,
     inTransitFromSiteId: fromSiteId,
     partnerId,
+    resultId,
   })
   const { newQuantityOnHand, isResultPendingReconciliation } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
@@ -173,6 +193,7 @@ async function upsertInventoryItemAndLog(
     inTransitFromSiteId,
     now,
     userId,
+    logProps,
   })
   /**
    * log changing inventory quantity
@@ -272,15 +293,16 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
    * sure that MQ handler for sure is dealing with already committed
    * above transactions
    */
-  await checkOpenedStockIssues({
-    knex: params.knex || knex,
-    siteId,
-    consumableId,
-    now,
-    plugins,
-    messageContext,
-  })
-
+  if (messageContext) {
+    await checkOpenedStockIssues({
+      knex: params.knex || knex,
+      siteId,
+      consumableId,
+      now,
+      plugins,
+      messageContext,
+    })
+  }
   return res
 }
 
@@ -322,7 +344,7 @@ async function addInventory({ auth, payload, plugins }) {
   }
   await updateSiteConsumable(toSite.id, { modify: 'add', consumableId })
 
-  return getInventoryItem(res.inventoryItemId)
+  return getInventoryItem(res.inventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------
@@ -397,7 +419,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
   /**
    * get MQ context and bind few action creators
    */
-  messageContext = messageContext.bindActionCreators({
+  messageContext = messageContext?.bindActionCreators({
     inventoryStockout,
     inventoryStockExpiring,
     resolveIssues,
@@ -510,19 +532,21 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
     /**
      * check both sites for Stockout/StockExpiring issues
      */
-    const props = {
-      knex,
-      consumableId,
-      now,
-      messageContext,
+    if (messageContext) {
+      const props = {
+        knex,
+        consumableId,
+        now,
+        messageContext,
+      }
+      await checkOpenedStockIssues({ ...props, siteId: fromSiteId })
+      await checkOpenedStockIssues({ ...props, siteId: toSiteId })
     }
-    await checkOpenedStockIssues({ ...props, siteId: fromSiteId })
-    await checkOpenedStockIssues({ ...props, siteId: toSiteId })
   })
 
   return {
-    existingInventoryItem: await getInventoryItem(sourceInventoryItemId),
-    newInventoryItem: await getInventoryItem(destinationInventoryItemId),
+    existingInventoryItem: await getInventoryItem(sourceInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY),
+    newInventoryItem: await getInventoryItem(destinationInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY),
   }
 }
 
@@ -609,8 +633,7 @@ async function receiveInventory(request) {
 
     await knex('InventoryItem').where('id', inTransitInventoryItem.id).delete()
   })
-
-  return getInventoryItem(destinationInventoryItemId)
+  return getInventoryItem(destinationInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------
@@ -859,6 +882,8 @@ async function consumeInventoryForResult({
   knex, // <--- means we are inside transaction and should use this `knex`
   messageContext,
   userId,
+  expirationDate,
+  inventoryLotNumber,
 }) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategy({ partnerId })
@@ -901,21 +926,22 @@ async function consumeInventoryForResult({
       /**
        * Process inventory based on the following conditions:
        * 1. `isUnreconciledResult`: The result is flagged as unreconciled, requiring inventory processing.
-       * 2. `!isResultInReconciliation && resultCountInDeviceLog === 0`:
+       * 2. `resultCountInDeviceLog === 0`:
        *    The result is being processed for the first time (not in missing inventory lots and no prior logs).
        */
-      if (isUnreconciledResult || (!isResultInReconciliation && resultCountInDeviceLog === 0)) {
-        let expiresOn
-        let lotNumber
-        if (partnerInventoryStrategy === INVENTORY_STRATEGY.EXPIRATION_DATE) {
-          expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-        } else if (partnerInventoryStrategy === INVENTORY_STRATEGY.LOT_NUMBER) {
-          lotNumber = _.get(consumablesInResultData, '[0].lot')
-        } else {
-          expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-          lotNumber = _.get(consumablesInResultData, '[0].lot')
+      if (isUnreconciledResult || resultCountInDeviceLog === 0) {
+        let expiresOn = expirationDate
+        let lotNumber = inventoryLotNumber
+        if (!lotNumber || !expiresOn) {
+          if (partnerInventoryStrategy === INVENTORY_STRATEGY.EXPIRATION_DATE) {
+            expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
+          } else if (partnerInventoryStrategy === INVENTORY_STRATEGY.LOT_NUMBER) {
+            lotNumber = _.get(consumablesInResultData, '[0].lot')
+          } else {
+            expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
+            lotNumber = _.get(consumablesInResultData, '[0].lot')
+          }
         }
-
         const inventoryItem = await findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, partnerId })
         const site = await getSite(siteId, dataConstraints)
         if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {

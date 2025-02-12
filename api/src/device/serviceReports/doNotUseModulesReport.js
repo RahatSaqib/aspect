@@ -1,14 +1,15 @@
 const { knex } = require('../../db')
 const { filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
-const { modulesWithLastResultBeforeMinDate, moduleDisabledIssues } = require('../common/db')
+const { modulesWithLastResult, moduleDisabledIssues } = require('../common/db')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
-async function getDoNotUseModulesReportData(minDate, dataConstraints, query) {
-  return knex(modulesWithLastResultBeforeMinDate(minDate))
+function getDoNotUseModulesReportData(dataConstraints, query, timezone) {
+  return knex(modulesWithLastResult())
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Partner as p', 'p.id', 'd.partnerId')
-    .innerJoin('Site as s', 's.id', 'r.siteId')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin(moduleDisabledIssues(true), function () {
       this.on('i.deviceId', 'r.deviceId').andOn('i.moduleSerial', 'r.moduleSerial')
@@ -18,11 +19,12 @@ async function getDoNotUseModulesReportData(minDate, dataConstraints, query) {
       'd.name as deviceName',
       knex.raw(`ifnull(r.moduleName, 'N/A') as moduleName`),
       'r.moduleSerial',
-      'i.dateLastIssue',
+      getDateTimeProjectionInTimeZoneIANA(knex, 'i.dateLastIssue', timezone, 'dateLastIssue'),
       'r.totalTestsRun',
+      getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezone, 'lastTestUploadedDate'),
     ])
-    .groupBy('r.deviceId', 'r.moduleName')
-    .orderBy([{ column: 'dateLastIssue', order: 'desc' }, 'r.deviceId', 'r.moduleName'])
+    .groupBy('r.deviceId', 'r.moduleSerial', 'r.moduleName')
+    .orderBy([{ column: 'dateLastIssue', order: 'desc' }, 'r.deviceId', 'r.moduleSerial', 'r.moduleName'])
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
