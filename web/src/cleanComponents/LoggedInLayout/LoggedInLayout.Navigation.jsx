@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import { Link, Menu } from '@mui/material'
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
 import { useIntl } from 'react-intl'
+import { useSelector } from 'react-redux'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import PermissionChecker from '../../components/PermissionChecker'
 import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/allMessages'
+import { adminLevels } from '../../store/JobAssignmentsRedux'
 import styles from './styles.module.css'
 
 const submenuSelected = (href, location) => location.pathname.startsWith(`${href}/`)
@@ -138,6 +140,9 @@ const getRawLinks = (f, user) => [
     href: '/browse/admin',
     label: f(messages.admin),
     perm: ['admin:edit'],
+    overrideFn: level => {
+      return level === adminLevels.NATIONAL
+    },
     submenu: [
       { href: '/browse/admin/states', label: getCustomMessage(f, messages, 'state', user), perm: ['admin', 'edit'] },
       { href: '/browse/admin/lgas', label: getCustomMessage(f, messages, 'lga', user), perm: ['admin', 'edit'] },
@@ -153,12 +158,17 @@ const getRawLinks = (f, user) => [
 const NavigationMenu = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
+  const { adminLevel } = useSelector(({ jobAssignments }) => jobAssignments)
   const rawLinks = getRawLinks(formatMessage, user)
 
   return (
     <nav className={`${styles.Navigation} ${styles.Navigation__horizontal}`}>
       {rawLinks.map(link => (
-        <PermissionChecker permissions={link.perm} key={link.href}>
+        <PermissionChecker
+          permissions={link.perm}
+          extra={link.overrideFn?.(adminLevel) === false ? ['!admin:edit'] : undefined}
+          key={link.href}
+        >
           {link.submenu ? <Submenu link={link} level={0} /> : <MainLink link={link} />}
         </PermissionChecker>
       ))}

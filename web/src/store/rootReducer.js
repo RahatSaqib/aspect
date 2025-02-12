@@ -8,6 +8,7 @@ import deviceOperation from './DeviceOperationRedux'
 import device from './DeviceRedux'
 import geography from './GeographyRedux'
 import inventory from './InventoryRedux'
+import jobAssignments from './JobAssignmentsRedux'
 import jobs from './JobRedux'
 import person from './PersonRedux'
 import result from './ResultRedux'
@@ -23,6 +24,7 @@ const appReducer = combineReducers({
   form: formReducer,
   geography,
   inventory,
+  jobAssignments,
   jobs,
   person,
   result,
@@ -38,6 +40,7 @@ const App = Immutable.Record({
   device: undefined,
   form: undefined,
   geography: undefined,
+  jobAssignments: undefined,
   inventory: undefined,
   jobs: undefined,
   person: undefined,
