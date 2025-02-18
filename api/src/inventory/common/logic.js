@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
+const { startOfDay, endOfDay } = require('date-fns')
 const { getUser } = require('../../auth/service')
 const defaultInventoryStrategy = require('../strategies')
 
@@ -26,7 +27,9 @@ const {
   logInventoryChange,
   createInventoryTransfer,
   updateInventoryTransfer,
+  getReconciliationList,
 } = require('./db')
+const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./querySelectors')
 
 /**
  * use singleton for inventory strategy instance - cache it in a single instance
@@ -68,29 +71,45 @@ async function upsertInventoryItem({
   now,
   userId,
   inTransitFromSiteId,
+  logProps,
 }) {
+  const updateData = {
+    quantityOnHand,
+    inTransitFromSiteId: inTransitFromSiteId || null,
+    updatedOn: now,
+    updatedBy: userId,
+  }
   if (inventoryItemId) {
-    await updateInventoryItem(knex, inventoryItemId, {
-      quantityOnHand,
-      inTransitFromSiteId: inTransitFromSiteId || null,
-      updatedOn: now,
-      updatedBy: userId,
-    })
+    const query = {
+      siteId,
+      consumableId,
+      lotNumber,
+      minDate: startOfDay(expiresOn),
+      maxDate: endOfDay(expiresOn),
+    }
+
+    if (logProps?.operation.includes('modify') && quantityOnHand === 0) {
+      const [{ total }] = await getReconciliationList(query)
+
+      if (total === 0) {
+        updateData.lotNumber = null
+        updateData.expiresOn = null
+        updateData.quantityOnHand = null
+      }
+    }
+
+    await updateInventoryItem(knex, inventoryItemId, updateData)
   } else if (quantityOnHand > 0) {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
+      ...updateData,
       consumableId,
-      inTransitFromSiteId: inTransitFromSiteId || null,
       siteId,
       lotNumber,
       expiresOn,
-      quantityOnHand,
-      updatedOn: now,
-      updatedBy: userId,
       createdOn: now,
       createdBy: userId,
     })
   }
-
   return inventoryItemId
 }
 
@@ -114,6 +133,7 @@ async function getActualQuantityOnHand(
     lotNumber,
     inTransitFromSiteId: fromSiteId,
     partnerId,
+    resultId,
   })
   const { newQuantityOnHand, isResultPendingReconciliation } = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
@@ -173,6 +193,7 @@ async function upsertInventoryItemAndLog(
     inTransitFromSiteId,
     now,
     userId,
+    logProps,
   })
   /**
    * log changing inventory quantity
@@ -323,7 +344,7 @@ async function addInventory({ auth, payload, plugins }) {
   }
   await updateSiteConsumable(toSite.id, { modify: 'add', consumableId })
 
-  return getInventoryItem(res.inventoryItemId)
+  return getInventoryItem(res.inventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------
@@ -524,8 +545,8 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
   })
 
   return {
-    existingInventoryItem: await getInventoryItem(sourceInventoryItemId),
-    newInventoryItem: await getInventoryItem(destinationInventoryItemId),
+    existingInventoryItem: await getInventoryItem(sourceInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY),
+    newInventoryItem: await getInventoryItem(destinationInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY),
   }
 }
 
@@ -612,8 +633,7 @@ async function receiveInventory(request) {
 
     await knex('InventoryItem').where('id', inTransitInventoryItem.id).delete()
   })
-
-  return getInventoryItem(destinationInventoryItemId)
+  return getInventoryItem(destinationInventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
 }
 
 // ----------------------------------------------------------------------------------

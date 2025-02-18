@@ -39,6 +39,7 @@ function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -84,6 +85,7 @@ function getInventorySitesQuery(constraints, request) {
   return query('Search Inventory Sites')
     .from('Site as s')
     .innerJoin('Consumable as c')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
@@ -118,7 +120,7 @@ function getInventorySitesQuery(constraints, request) {
       knex.raw("CONCAT(c.id, '-', s.id) as id"),
       'c.id as consumableId',
       'c.name as consumableName',
-      'c.strategy',
+      'p.inventoryStrategy as strategy',
       'c.i18nKey as consumableNameI18nKey',
       'c.manufacturer',
       'c.canExpire',
@@ -141,10 +143,10 @@ function getInventorySitesQuery(constraints, request) {
         ) as qtyExpired`
       ),
       knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
       ),
       knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
+        `CASE WHEN p.inventoryStrategy IS NOT NULL AND INSTR(p.inventoryStrategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
       ),
       knex.raw(`CASE WHEN IFNULL(ficr.rate, 0) = 0
           THEN null
@@ -160,10 +162,26 @@ function getInventorySitesQuery(constraints, request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
+async function findInventoryItem({
+  siteId,
+  consumableId,
+  expiresOn,
+  lotNumber,
+  inTransitFromSiteId,
+  partnerId,
+  resultId,
+}) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
-  const consumableStrategy = await getStrategy(partnerId)
-  consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+
+  if (!resultId) {
+    // handle operations without using strategy (add, remove, and transfer)
+    const handler = consumableStrategyModifier.withLotAndExpirationDateStrategy
+    handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+  } else {
+    const consumableStrategy = await getStrategy(partnerId)
+    consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+  }
+
   const matchingInventoryItem = await matchingInventoryItemsQuery
     .orderBy('ii.quantityOnHand', 'desc')
     .first(INVENTORY_ITEM_SELECT)
@@ -288,6 +306,10 @@ function getInventoryLots(request, dataConstraints) {
   const inventoryItemsQuery = query('Search Inventory Lots')
     .from('Site as s')
     .innerJoin('Consumable as c')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
+    .innerJoin('SiteConsumable as sc', builder => {
+      builder.on('s.id', 'sc.siteId').andOn('c.id', 'sc.consumableId')
+    })
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
@@ -308,25 +330,8 @@ function getInventoryLots(request, dataConstraints) {
       }
     })
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
-    .groupBy([
-      knex.raw(CONCATENATED_ID),
-
-      's.name',
-      knex.raw(`CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END`),
-      knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END`
-      ),
-      'ii.inTransitFromSiteId',
-    ])
-    .select(
-      ...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
-      knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
-      ),
-      knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
-      )
-    )
+    .groupBy([knex.raw(CONCATENATED_ID), 's.name', 'ii.expiresOn', 'ii.lotNumber', 'ii.inTransitFromSiteId'])
+    .select(...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
 
   return inventoryItemsQuery
 }
@@ -351,6 +356,9 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
     .innerJoin('Assay as a', 'ca.assayId', 'a.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .innerJoin('SiteConsumable as sc', function () {
+      this.on('s.id', 'sc.siteId').andOn('c.id', 'sc.consumableId')
+    })
     /**
      * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
      * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
@@ -397,19 +405,20 @@ async function getInventoryBySitesAndConsumable(request, dataConstraints, range)
 }
 
 // ----------------------------------------------------------------------------------
-function getInventoryItem(inventoryItemId) {
+function getInventoryItem(inventoryItemId, selectFields = INVENTORY_ITEM_SELECT) {
   return query('Get Inventory Item')
     .from('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .where('ii.id', inventoryItemId)
-    .first(INVENTORY_ITEM_SELECT)
+    .first(selectFields)
 }
 
 // ----------------------------------------------------------------------------------
@@ -422,6 +431,7 @@ async function getInventoryItems(inventoryItemIds) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -762,13 +772,19 @@ function baseMissingInventoryLotsQuery() {
 
 async function getReconciliationList(query, dataConstraints) {
   const baseQuery = baseMissingInventoryLotsQuery()
-    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
+    .modify(qb => {
+      if (dataConstraints) {
+        addConstraints(qb, dataConstraints, { result: 'r', geography: 'g' })
+      }
+    })
     .modify(filterDateRangeParams, query, 'm.expirationDate')
+
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
+      siteId: 's.id',
       assayId: 'r.assayId',
       consumableId: 'ca.consumableId',
       lotNumber: 'm.lotNumber',
