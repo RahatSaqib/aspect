@@ -1,6 +1,5 @@
 import React, { memo, useState, useEffect } from 'react'
 import constant from 'lodash/constant'
-import difference from 'lodash/difference'
 import flowRight from 'lodash/flowRight'
 import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
@@ -47,7 +46,7 @@ export function groupByPermissionTypes(permissions) {
   const optionalPermissions = permissions.filter(it => it?.[0] !== '+' && it?.[0] !== '!')
 
   return {
-    required: difference(requiredPermissions, forbiddenPermissions),
+    required: requiredPermissions,
     forbidden: forbiddenPermissions,
     optional: optionalPermissions,
   }

@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { IdleTimerProvider } from 'react-idle-timer'
 import { useIntl } from 'react-intl'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { Loading, ErrorBoundary, LoggedInLayout } from './cleanComponents'
 import config from './config'
@@ -14,7 +14,6 @@ import RecordPageViewProvider from './providers/RecordPageViewProvider'
 import { routePaths } from './routes/constants'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchCountries } from './store/GeographyRedux'
-import { adminLevels, fetchJobAssignments } from './store/JobAssignmentsRedux'
 
 const ContactPage = lazy(() => import('./pages/Contact'))
 const DeviceApiKeyList = lazy(() => import('./oldPages/deviceApiKey/list/DeviceApiKeyList'))
@@ -105,18 +104,10 @@ const LogInApp = () => {
   useHashAndScroll()
 
   const [showIdleDialog, setShowIdleDialog] = useState(false)
-  const { personId } = useSelector(({ user }) => user)
-  const { adminLevel } = useSelector(({ jobAssignments }) => jobAssignments)
   const { countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedOut, loggedOutReason, userPermissions } =
     useAuthState()
 
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
-
-  useEffect(() => {
-    if (personId) {
-      dispatch(fetchJobAssignments(personId))
-    }
-  }, [personId, dispatch])
 
   useEffect(() => {
     // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
@@ -274,7 +265,7 @@ const LogInApp = () => {
                     <Route path="/browse/notification/:notificationId" element={<NotificationDetail />} />
                   </>
                 ) : null}
-                {a(['admin:edit']) && adminLevel === adminLevels.NATIONAL ? (
+                {a(['admin:edit']) ? (
                   <>
                     <Route path="/browse/admin/states" element={<AdminStates />} />
                     <Route path="/browse/admin/lgas" element={<AdminLgas />} />

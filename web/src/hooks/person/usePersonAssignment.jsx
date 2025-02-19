@@ -3,7 +3,7 @@ import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
 import { PERSON_KEY, PERSON_KEY_ASSIGNMENTS_BY_PERSON_ID } from './personKeys.js'
 
-export const getAssignment = async personId =>
+const getAssignment = async personId =>
   fetchWrapperForQueries({ endpoint: replaceRouteParams(PERSON_KEY_ASSIGNMENTS_BY_PERSON_ID, { personId }) }).then(
     r => r.data
   )
