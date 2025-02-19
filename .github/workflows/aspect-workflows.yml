@@ -148,7 +148,8 @@ jobs:
 
       - name: 'Run Server'
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
-        run: yarn start:api:bg
+        # https://github.com/actions/runner/issues/598#issuecomment-721151364
+        run: RUNNER_TRACKING_ID="" yarn start:api:bg
         shell: bash
 
       - name: 'Run API Unit Tests'
@@ -170,7 +171,7 @@ jobs:
 
       - name: 'Stop Server'
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
-        run: yarn stop:api:bg
+        run: yarn stop:api:bg || true
 
   be-contract-chunks:
     name: 'Chunk Contract Tests (API)'
@@ -252,7 +253,8 @@ jobs:
 
       - name: 'Run Server'
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
-        run: yarn start:api:bg
+        # https://github.com/actions/runner/issues/598#issuecomment-721151364
+        run: RUNNER_TRACKING_ID="" yarn start:api:bg
         shell: bash
 
       - name: 'Run API Contract Tests'
@@ -277,7 +279,7 @@ jobs:
 
       - name: 'Stop Server'
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
-        run: yarn stop:api:bg
+        run: yarn stop:api:bg || true
 
 
   check-api-migrations-changes:
