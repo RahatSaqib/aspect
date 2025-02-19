@@ -7,6 +7,7 @@ const {
   remoteHealthWorker,
   technician,
   aspectBeta,
+  manager,
 } = require('../../fixtures/jobFunctionBase')
 
 const withNewReports = jobFunction => ({
@@ -24,6 +25,7 @@ const withNoReporterPermissions = jf => ({
 })
 module.exports = [
   withNoReporterPermissions(withNewReports(admin)),
+  withNoReporterPermissions(withNewReports(manager)),
   withNoReporterPermissions(withNewReports(regionalOfficer)),
   withNoReporterPermissions(labUser),
   withNoReporterPermissions(clinician),

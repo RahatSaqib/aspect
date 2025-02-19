@@ -1,5 +1,6 @@
 const {
   admin,
+  manager,
   clinician,
   labUser,
   regionalOfficer,
@@ -10,6 +11,58 @@ const {
 
 module.exports = [
   mergeJobFunctions(admin, {
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'case',
+        activity: 'edit',
+      },
+      {
+        module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'person',
+        activity: 'edit',
+      },
+      {
+        module: 'reporter',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'site',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(manager, {
     permissions: [
       {
         module: 'account',

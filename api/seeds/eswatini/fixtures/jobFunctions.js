@@ -7,6 +7,7 @@ const {
   technician,
   countryReportsDecorator,
   aspectBeta,
+  manager,
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
@@ -14,6 +15,7 @@ const countryReports = Object.values(reports).map(report => report.externalId)
 
 module.exports = [
   countryReportsDecorator(admin, countryReports),
+  countryReportsDecorator(manager, countryReports),
   countryReportsDecorator(regionalOfficer, countryReports),
   countryReportsDecorator(labUser, countryReports),
   countryReportsDecorator(clinician, countryReports),

@@ -1,3 +1,3 @@
-const { admin, regionalOfficer, labUser, clinician, technician, aspectBeta } = require('./jobFunctionBase')
+const { admin, manager, regionalOfficer, labUser, clinician, technician, aspectBeta } = require('./jobFunctionBase')
 
-module.exports = [admin, regionalOfficer, labUser, clinician, technician, aspectBeta]
+module.exports = [admin, manager, regionalOfficer, labUser, clinician, technician, aspectBeta]

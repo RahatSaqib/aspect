@@ -6,6 +6,7 @@ const {
   remoteHealthWorker,
   technician,
   aspectBeta,
+  manager,
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
@@ -15,6 +16,10 @@ module.exports = [
   {
     ...admin,
     reports: [...admin.reports, ...countryReports],
+  },
+  {
+    ...manager,
+    reports: [...manager.reports, ...countryReports],
   },
   {
     ...regionalOfficer,

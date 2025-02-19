@@ -7,6 +7,7 @@ const {
   remoteHealthWorker,
   technician,
   aspectBeta,
+  manager,
 } = require('../../fixtures/jobFunctionBase')
 
 const ntpLevel = {
@@ -118,6 +119,7 @@ const partners = {
 
 module.exports = [
   admin,
+  manager,
   { ...admin, name: 'Admin - (IT team)' },
   regionalOfficer,
   { ...labManager, name: 'Lab Head' },

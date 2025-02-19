@@ -7,10 +7,55 @@ const {
   mergeJobFunctions,
   technician,
   aspectBeta,
+  manager,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
   mergeJobFunctions(admin, {
+    permissions: [
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'person',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'site',
+        activity: 'edit',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(manager, {
     permissions: [
       {
         module: 'assay',
