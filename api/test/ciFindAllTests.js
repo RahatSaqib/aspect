@@ -3,7 +3,24 @@ const path = require('path')
 const _ = require('lodash')
 
 const tests = []
-const problemTests = ['geneXpertLog', 'geneXpert', 'fact', 'plugin']
+const categoryChunks = [
+  [
+    'dashboard',
+    'inventory',
+    'consumable',
+    'issue',
+    'notification',
+    'pushNotification',
+    'emailMq',
+    'webhookMq',
+    'smsMq',
+    'alertMq',
+  ],
+  ['deviceApiRaw', 'reports', 'report', 'excelReports', 'fact', 'result'],
+  ['gxConnect', 'gxconnect', 'customFields'],
+  ['geneXpert'],
+  ['mobileApi', 'geography', 'deviceApi'],
+]
 const strings = []
 
 function Ignoredchunk(array, parts) {
@@ -40,7 +57,9 @@ function isMocha(context) {
 function arrayAllTests({ path }) {
   if (!isMocha(global)) {
     findAllTests(path)
-    const matches = _.map(problemTests, string => _.remove(tests, test => new RegExp(`${string}\\b`, '').test(test)))
+    const matches = _.map(categoryChunks, categories =>
+      _.remove(tests, test => categories.some(category => new RegExp(`${category}\\b`, '').test(test)))
+    )
     const chunks = _.concat(matches, [tests])
     chunks.map(chunk => strings.push(`test/${chunk.length > 1 ? `{${chunk.join(',')}}` : chunk}`))
     // eslint-disable-next-line no-console

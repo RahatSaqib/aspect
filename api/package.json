@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.52.5",
+  "version": "1.53.0",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
@@ -32,8 +32,9 @@
     "start:background": "forever start -o out.log -e err.log src/server.js",
     "start:background:quiet": "forever start src/server.js",
     "start:fresh": "yarn && yarn db:reseed && yarn start",
-    "start:ci": "yarn && yarn db:reseed",
     "start:doc": "nodemon ./src/_stats",
+    "start:ci": "node src/server.js",
+    "install:ci": "yarn && yarn db:reseed",
     "stop:background:pm2": "pm2 stop src/server.js",
     "stop:background": "forever stop src/server.js",
     "stop:background:quiet": "forever stop src/server.js",
