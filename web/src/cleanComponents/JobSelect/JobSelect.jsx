@@ -10,6 +10,7 @@ const JobSelect = ({ id, name, label, value, onChange, error, helperText, disabl
   // The Super Admin job function cannot be restricted
   useEffect(() => {
     setDisableConstraints(data.length === 0 || (superAdminJobFunction && value === superAdminJobFunction.id))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   return isLoading ? (
