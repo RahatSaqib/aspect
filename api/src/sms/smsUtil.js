@@ -26,37 +26,39 @@ async function sendSmsAdn(cellNumber, message, adnConf) {
   params.append('message_body', message)
   try {
     const response = await fetch(url, { method: 'POST', body: params })
-    const data = await response.json()
-    if (data.api_response_code !== 200)
-      throw new Error(`sending sms throw adn api throw an error ${data.error.error_message}`)
-    else return data
-  } catch (err) {
-    logger.error(err)
-  }
+    if (!response.ok) {
+      const body = await response.text()
+      throw new Error(`sending sms throw adn api throw an error: ${body} status code: ${response.status}`)
+    }
 
-  return null
+    const data = await response.json()
+    return data
+  } catch (e) {
+    logger.error(e)
+    throw e
+  }
 }
 
 async function sendSmsTwilio(cellNumber, message, twilioConf) {
   // These consts are your settings from https://www.twilio.com/console
   const { accountSid, authToken, fromNumber, messagingServiceSid } = twilioConf
-  let clientCreated = null
   logger.info('Sending sms by Twilio provider')
   try {
     const client = twilio(accountSid, authToken)
 
     // send sms - see https://www.twilio.com/docs/api/messaging/send-messages-copilot#sending-messages-with-copilot
-    clientCreated = client.messages.create({
+    const clientCreated = client.messages.create({
       messagingServiceSid,
       from: fromNumber,
       to: cellNumber,
       body: message,
     })
+
+    return clientCreated
   } catch (e) {
     logger.error(e)
     throw e
   }
-  return clientCreated
 }
 
 async function sendSmsTermii(cellNumber, message, termiiConf) {
@@ -81,15 +83,14 @@ async function sendSmsTermii(cellNumber, message, termiiConf) {
     const response = await fetch(termiiConf.url, options)
     if (!response.ok) {
       const body = await response.text()
-      throw new Error(`sending sms throw termii api throw an error: ${body}`)
+      throw new Error(`sending sms throw termii api throw an error: ${body} status code: ${response.status}`)
     }
     const data = await response.json()
     return data
-  } catch (err) {
-    logger.error(err)
+  } catch (e) {
+    logger.error(e)
+    throw e
   }
-
-  return null
 }
 
 module.exports = {
