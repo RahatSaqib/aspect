@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { stringify } = require('flatted')
+const { sendSms } = require('./smsUtil')
 const { smsMessageReadyForSending, smsMessageProcessed } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
@@ -104,27 +104,26 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   logger.debug(` Sending ${smsMessageId} to ${cell} with ${message}`, {
     reLabel: 'aspect:sms:send',
   })
-  // sms handler
-  const { sendSms } = require('./smsUtil')
 
-  // assume status is 'Sent'
-  const { Sent: messageStatusIdSent, Error: messageStatusIdError } = await allMessageStatusToId()
-  let messageStatusId = messageStatusIdSent
-  let errorData = null
   // send sms
+  let errorData = null
   await sendSms(cell, message).catch(ex => {
-    errorData = stringify({ ...ex, cell, message })
-    // set status to 'Error'
-
-    messageStatusId = messageStatusIdError
+    errorData = JSON.stringify({
+      cell,
+      message,
+      error: ex?.message || 'No error message was found in the exception',
+    })
   })
 
   // store status in db
-  await knex('SmsMessage').where({ id: smsMessageId }).update({
-    messageStatusId,
-    updatedOn: new Date(),
-    errorData,
-  })
+  const { Sent: messageStatusIdSent, Error: messageStatusIdError } = await allMessageStatusToId()
+  await knex('SmsMessage')
+    .where({ id: smsMessageId })
+    .update({
+      messageStatusId: errorData ? messageStatusIdError : messageStatusIdSent,
+      updatedOn: new Date(),
+      errorData,
+    })
 
   // dispatch SMS_MESSAGE_PROCESSED to MQ
   context.smsMessageProcessed(smsMessageId)

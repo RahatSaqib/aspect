@@ -3,7 +3,6 @@ const sinon = require('sinon')
 
 const { assert } = chai
 const proxyquire = require('proxyquire')
-const flatted = require('flatted')
 
 describe('doSendSmsMessage', () => {
   let knexStub
@@ -72,58 +71,6 @@ describe('doSendSmsMessage', () => {
     assert(
       contextStub.notificationMessageProcessed.calledWith({ smsMessageId }),
       'contextStub.notificationMessageProcessed called with smsMessageId'
-    )
-  })
-
-  it('should handle SMS sending error response with circular structures', async () => {
-    const smsMessageId = 1
-    const sms = {
-      message: 'Test message',
-      cell: '1234567890',
-    }
-
-    knexStub('SmsMessage as sm').first.resolves(sms)
-    knexStub('SmsMessage').update.resolves()
-
-    const circularError = new Error('Simulated error with circular reference')
-    circularError.name = 'SimulatedError'
-    circularError.cell = sms.cell
-    circularError.message = sms.message
-    circularError.circular = {}
-    circularError.circular.self = circularError
-
-    sendSmsStub.rejects(circularError)
-
-    const stringifiedError = flatted.stringify({
-      ...circularError,
-      cell: sms.cell,
-      message: sms.message,
-    })
-
-    await doSendSmsMessage(contextStub, knexStub, smsMessageId)
-
-    assert(
-      knexStub('SmsMessage as sm').where.calledWith({ 'sm.id': smsMessageId }),
-      'knexStub called with SmsMessage as sm'
-    )
-    assert(knexStub('SmsMessage as sm').first.called, 'knexStub first called')
-    assert(knexStub('SmsMessage').where.calledWith({ id: smsMessageId }), 'knexStub called with SmsMessage')
-    assert(
-      contextStub.smsMessageProcessed.calledWith(smsMessageId),
-      'contextStub.smsMessageProcessed called with smsMessageId'
-    )
-    assert(
-      contextStub.notificationMessageProcessed.calledWith({ smsMessageId }),
-      'contextStub.notificationMessageProcessed called with smsMessageId'
-    )
-    assert(
-      knexStub('SmsMessage').update.calledWith(
-        sinon.match({
-          messageStatusId: 2,
-          errorData: stringifiedError,
-        })
-      ),
-      'knexStub update called with correct arguments'
     )
   })
 })
