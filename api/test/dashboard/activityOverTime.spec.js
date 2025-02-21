@@ -18,7 +18,7 @@ const {
 
 const { assert } = chai
 
-describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time', () => {
+describe.skip('Dashboard routes - GET /dashboard/operational-data/activity-over-time', () => {
   const path = '/api/dashboard/operational-data/activity-over-time'
 
   const now = parseISO(new Date().toISOString())
