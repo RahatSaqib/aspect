@@ -45,7 +45,7 @@ module.exports = {
   stat: [
     {
       ...resultsTitle,
-      jobFunctions: ['admin', 'clinician', 'resultViewerYes', 'ntp'],
+      jobFunctions: ['superAdmin', 'clinician', 'resultViewerYes', 'ntp'],
     },
     {
       ...dashboardWidgetTitleTotalDeaths,

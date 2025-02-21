@@ -5,5 +5,5 @@ const {
 } = require('./fixtures/partnerData')
 
 module.exports = require('../utils').seed(async knex => {
-  await addIssueUnusedModules(knex, ['admin'], partnerExternalId, adminUserName)
+  await addIssueUnusedModules(knex, ['superAdmin'], partnerExternalId, adminUserName)
 }, __filename)

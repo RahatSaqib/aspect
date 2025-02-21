@@ -1,7 +1,7 @@
 const _ = require('lodash')
 
-const admin = {
-  name: 'Admin',
+const superAdmin = {
+  name: 'Super Admin',
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
@@ -137,10 +137,10 @@ const admin = {
   ],
 }
 
-const manager = {
-  name: 'Manager',
-  reports: admin.reports,
-  permissions: admin.permissions.filter(permission => permission.module !== 'admin'),
+const regionalAdmin = {
+  name: 'Regional Admin',
+  reports: superAdmin.reports,
+  permissions: superAdmin.permissions.filter(permission => permission.module !== 'admin'),
 }
 
 const regionalOfficer = {
@@ -1159,7 +1159,7 @@ const dataViewer = {
 }
 
 const systemOne = {
-  ...admin,
+  ...superAdmin,
   name: 'SystemOne',
 }
 
@@ -1217,7 +1217,7 @@ const labAdmin = {
 }
 
 const aspectBeta = {
-  ...admin,
+  ...superAdmin,
   name: 'Aspect Beta',
   permissions: [
     {
@@ -1262,7 +1262,7 @@ const countryReportsDecorator = (jobFunction = {}, countryReports) => ({
 })
 
 module.exports = {
-  admin,
+  superAdmin,
   regionalOfficer,
   labUser,
   clinician,
@@ -1270,7 +1270,7 @@ module.exports = {
   ntp,
   technician,
   donor,
-  manager,
+  regionalAdmin,
   resultViewerNo,
   resultViewerYes,
   remoteHealthWorker,

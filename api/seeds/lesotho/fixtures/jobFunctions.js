@@ -1,5 +1,5 @@
 const {
-  admin,
+  superAdmin,
   clinician,
   labUser,
   regionalOfficer,
@@ -7,11 +7,11 @@ const {
   mergeJobFunctions,
   technician,
   aspectBeta,
-  manager,
+  regionalAdmin,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  mergeJobFunctions(admin, {
+  mergeJobFunctions(superAdmin, {
     permissions: [
       {
         module: 'account',
@@ -91,7 +91,7 @@ module.exports = [
       },
     ],
   }),
-  mergeJobFunctions(manager, {
+  mergeJobFunctions(regionalAdmin, {
     permissions: [
       {
         module: 'account',

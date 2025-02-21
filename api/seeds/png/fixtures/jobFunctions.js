@@ -1,12 +1,21 @@
 const {
-  admin,
+  superAdmin,
   regionalOfficer,
   labUser,
   clinician,
   remoteHealthWorker,
   technician,
   aspectBeta,
-  manager,
+  regionalAdmin,
 } = require('../../fixtures/jobFunctionBase')
 
-module.exports = [admin, manager, regionalOfficer, labUser, clinician, remoteHealthWorker, technician, aspectBeta]
+module.exports = [
+  superAdmin,
+  regionalAdmin,
+  regionalOfficer,
+  labUser,
+  clinician,
+  remoteHealthWorker,
+  technician,
+  aspectBeta,
+]

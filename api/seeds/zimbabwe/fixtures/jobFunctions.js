@@ -1,6 +1,6 @@
 const {
-  admin,
-  manager,
+  superAdmin,
+  regionalAdmin,
   clinician,
   donor,
   ntp,
@@ -18,8 +18,8 @@ const reports = require('./reports')
 const countryReports = Object.values(reports).map(report => report.externalId)
 
 module.exports = [
-  mergeJobFunctions(admin, {
-    reports: [...admin.reports, ...countryReports],
+  mergeJobFunctions(superAdmin, {
+    reports: [...superAdmin.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -75,8 +75,8 @@ module.exports = [
       },
     ],
   }),
-  mergeJobFunctions(manager, {
-    reports: [...manager.reports, ...countryReports],
+  mergeJobFunctions(regionalAdmin, {
+    reports: [...regionalAdmin.reports, ...countryReports],
     permissions: [
       {
         module: 'account',

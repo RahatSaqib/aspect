@@ -49,16 +49,16 @@ async function seed(knex) {
     .where('activity', 'edit')
     .first('id')
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('externalId', 'admin').first('id')
+  const { id: jobFunctionIdSuperAdmin } = await knex('JobFunction').where('externalId', 'superAdmin').first('id')
 
   if (
     !(await knex('JobFunctionPermission')
-      .where('jobFunctionId', jobFunctionIdAdmin)
+      .where('jobFunctionId', jobFunctionIdSuperAdmin)
       .where('permissionId', permissionSiteEditId))
   ) {
     await knex('JobFunctionPermission').insert([
       {
-        jobFunctionId: jobFunctionIdAdmin,
+        jobFunctionId: jobFunctionIdSuperAdmin,
         permissionId: permissionSiteEditId,
       },
     ])

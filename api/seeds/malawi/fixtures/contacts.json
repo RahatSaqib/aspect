@@ -2,7 +2,7 @@
   {
     "personName": "Steve",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "personPhone": "+14133064770",
     "personCell": "+18888452610",
@@ -16,7 +16,7 @@
   },
   {
     "personName": "Chris Macek",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "cmacek@systemone.co",
     "personPhone": "+14135224803",
     "personCell": "+14135224803",
@@ -30,7 +30,7 @@
   },
   {
     "personName": "S1 Admin Test",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "admintest@systemone.co",
     "username": "jtakle",
     "timezone": "Eastern Standard Time",
@@ -42,7 +42,7 @@
   },
   {
     "personName": "Admin Administrator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "aepelman@systemone.co",
     "personCell": "+1 888 8452610",
     "username": "admin",
@@ -55,7 +55,7 @@
   },
   {
     "personName": "Nicolas Boillot",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nboillot@systemone.id",
     "username": "nboillot",
     "timezone": "Eastern Standard Time",
@@ -68,7 +68,7 @@
   {
     "personName": "Ruslan Buiucli",
     "personTitle": "Developer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "rbuiucli@gmail.com",
     "username": "rbuiucli",
     "timezone": "Russian Standard Time",
@@ -80,7 +80,7 @@
   },
   {
     "personName": "Bryan Richards",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "brichards@systemone.id",
     "personCell": "+27833243682",
     "username": "brichards",
@@ -172,7 +172,7 @@
   {
     "personName": "Billy Banda",
     "personTitle": "Lab Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "billk.banda@gmail.com",
     "personCell": "+265999400343",
     "username": "Billy",
@@ -216,7 +216,7 @@
   {
     "personName": "Felix Nyakwawa",
     "personTitle": "Lab Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "felixmn8@gmail.com",
     "personCell": "+265881377807",
     "username": "felixmn8@gmail.com",
@@ -230,7 +230,7 @@
   {
     "personName": "Nelson Nguluwe",
     "personTitle": "ACF Lab officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nelson.nguluwe@kncvtbc.org",
     "personCell": "+265999948559",
     "username": "Nelson",
@@ -244,7 +244,7 @@
   {
     "personName": "Moses Nkunika",
     "personTitle": "IT officer MoH",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nkunikamoses@gmail.com",
     "personCell": "+265999226968",
     "timezone": "South Africa Standard Time",
@@ -257,7 +257,7 @@
   {
     "personName": "Moses Nkunika",
     "personTitle": "IT Officer MoH",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nkunikamoses@gmail.com",
     "personCell": "+265 999 226 968",
     "username": "Moses",
@@ -271,7 +271,7 @@
   {
     "personName": "Amos Maenje",
     "personTitle": "Principal Lab officer NHRL MoH",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "maenjeamo@yahoo.co.uk",
     "personCell": "+265888310435",
     "username": "Amos Maenje",
@@ -285,7 +285,7 @@
   {
     "personName": "Ian Kambwani",
     "personTitle": "Lab Officer, MoH",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "kambwaniian@yahoo.com",
     "personCell": "+265991501204",
     "username": "Ian Kambwani",
@@ -299,7 +299,7 @@
   {
     "personName": "Blessing Marondera",
     "personTitle": "CTB  Diagnostic Network Advisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "blessing.marondera@kncvtbc.org",
     "personCell": "+265 995 135 640",
     "username": "Blessing Marondera",
@@ -325,7 +325,7 @@
   {
     "personName": "Belaineh Girma",
     "personTitle": "M & E TA",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "belaineh@gmail.com",
     "personCell": "+265 993229988",
     "username": "Belaineh",
@@ -366,7 +366,7 @@
   {
     "personName": "Charles Mandambwe",
     "personTitle": "IT Specialist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "cmandambwe@gmail.com",
     "personCell": "+265999302808",
     "username": "Charles M",
@@ -1742,7 +1742,7 @@
   {
     "personName": "Phillip Maiden",
     "personTitle": "Laboratory Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "maidenphillip@gmail.com",
     "personCell": "+265 999 639 825",
     "username": "Phillip Maiden",
@@ -1838,7 +1838,7 @@
   {
     "personName": "bridget Nkhoma",
     "personTitle": "FTMP Lab manaager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "bridget.nkhoma@kncvtbc.org",
     "personCell": "+265 999948548",
     "username": "bridget",
@@ -2163,7 +2163,7 @@
   {
     "personName": "lilian maliro",
     "personTitle": "MDR TB Country Program Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "lilianbeatrice1@gmail.com",
     "personCell": "+265 999 067 603",
     "username": "lilianbeatrice1@gmail.com",
@@ -2177,7 +2177,7 @@
   {
     "personName": "Kuzani Mbendera",
     "personTitle": "Treatment and Care Officer for the NTP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "kuzanimbendera@gmail.com",
     "personCell": "+265 994 087 225",
     "username": "kuzanimbendera@gmail.com",
@@ -2218,7 +2218,7 @@
   {
     "personName": "Stanford Miyango",
     "personTitle": "NTP Pharmacist, Malawi",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "miyangostanford@gmail.com",
     "personPhone": "+265 999 682 004",
     "personCell": "+265 999 682 004",
@@ -2399,7 +2399,7 @@
   {
     "personName": "Dickens Chimatiro",
     "personTitle": "M&E CTB",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "chimatirodick@gmail.com",
     "personPhone": "+265 999332518",
     "username": "chimatirodick@gmail.com",
@@ -2604,7 +2604,7 @@
   {
     "personName": "Yamikani Gumulira",
     "personTitle": "CTB Zonal Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "yamikani.gumulira@kncvtbc.org",
     "personCell": "+265 993 915 704",
     "username": "yamikani.gumulira@kncvtbc.org",
@@ -2618,7 +2618,7 @@
   {
     "personName": "Seraphine Kaminsa",
     "personTitle": "CTB Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "Seraphine.Kaminsa@kncvtbc.org",
     "personCell": "+265 992 778 365",
     "username": "Seraphine Kaminsa",
@@ -2688,7 +2688,7 @@
   {
     "personName": "Dickens Chimatiro",
     "personTitle": "M and E Officer, CTB",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dickens.chimatiro@kncvtbc.org",
     "personCell": "+265 999948562",
     "username": "Dickens Chimatiro",
@@ -2702,7 +2702,7 @@
   {
     "personName": "Yusuf Bhamu",
     "personTitle": "CTB Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ybhamu@gmail.com",
     "personCell": "+265  999119076",
     "username": "Yusuf Bhamu",
@@ -2716,7 +2716,7 @@
   {
     "personName": "Herbert Chafulumira",
     "personTitle": "M & E officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hchafulumira@ymail.com",
     "personCell": "+265 993695713",
     "username": "Herbert Chafulumira",
@@ -3208,7 +3208,7 @@
   {
     "personName": "Chifundo Chomanika",
     "personTitle": "M&E Advisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "chifundo.chomanika@kncvtbc.org",
     "personCell": "+265 993 915 707",
     "username": "Chifundo Chomanika",
@@ -3235,7 +3235,7 @@
   {
     "personName": "jalakaye",
     "personTitle": "MDR TA",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "Johnson.odunayoalakaye@kncvtbc.org",
     "personPhone": "+265 997002791",
     "username": "Johnson.odunayoalakaye@kncvtbc.org",
@@ -3572,7 +3572,7 @@
   {
     "personName": "Frank Chirwa",
     "personTitle": "IT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "fchirwa@systemone.co",
     "personPhone": "+265 996600925",
     "username": "fchirwa@systemone.co",
@@ -4321,7 +4321,7 @@
   {
     "personName": "Andrew Mbwembwe",
     "personTitle": "Lab Tech",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "andrewmbwembwe@gmail.com",
     "personPhone": "+265884411362",
     "username": "andrewmbwembwe@gmail.com",
@@ -4335,7 +4335,7 @@
   {
     "personName": "Racheal Nkhata",
     "personTitle": "Lab Tech",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "vitumbyko@gmail.com",
     "personPhone": "+265995283537",
     "username": "vitumbyko@gmail.com",
@@ -4475,7 +4475,7 @@
   {
     "personName": "Innocent Mwaluka",
     "personTitle": "Data Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "innomwaluka@gmail.com",
     "personCell": "+265 884500500",
     "username": "innomwaluka@gmail.com",
@@ -4725,7 +4725,7 @@
   {
     "personName": "Ibrahim Gambuleni",
     "personTitle": "Lab Tech",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ibrahimgambuleni@gmail.com",
     "personCell": "+265 884382750",
     "username": "ibrahimgambuleni@gmail.com",
@@ -4794,7 +4794,7 @@
   {
     "personName": "Benjamin Mkandawire",
     "personTitle": "It Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "bendonnex@gmail.com",
     "personCell": "+265993778090",
     "username": "benjamin@pihmalawi.com",
@@ -4920,7 +4920,7 @@
   {
     "personName": "Tapson Ndundu",
     "personTitle": "Strategic Information Lead",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "TNdundu@mgic.umaryland.edu",
     "personCell": "+265 991199242",
     "username": "TNdundu@mgic.umaryland.edu",
@@ -4934,7 +4934,7 @@
   {
     "personName": "Ellard Mbiza",
     "personTitle": "LIMS Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ellardbiza@gmail.com",
     "personCell": "+265 999 707 072",
     "username": "ellardbiza@gmail.com",
@@ -4948,7 +4948,7 @@
   {
     "personName": "Pocha Gondwe",
     "personTitle": "HIV LEAD UMB",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "pkamudumuli@gmail.com",
     "personPhone": "+265 997182183",
     "personCell": "+265 997182183",
@@ -5047,7 +5047,7 @@
   {
     "personName": "Samuel Dzunda",
     "personTitle": "Laboratory Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "samueldzundah@gmail.com",
     "personPhone": "+265 888784632",
     "username": "samueldzundah@gmail.com",
@@ -5061,7 +5061,7 @@
   {
     "personName": "Ruth Lipato",
     "personTitle": "Lab Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "rlipato@yahoo.co.uk",
     "personPhone": "+265 995500657",
     "username": "rlipato@yahoo.co.uk",
@@ -5075,7 +5075,7 @@
   {
     "personName": "James Sebastiano",
     "personTitle": "Lab Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jsebastiano1@yahoo.com",
     "personPhone": "+265 881643816",
     "username": "jsebastiano1@yahoo.com",
@@ -5089,7 +5089,7 @@
   {
     "personName": "Simon Utila",
     "personTitle": "Lab Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "simonhenryutila@gmail.com",
     "personCell": "+265 993773820",
     "username": "simonhenryutila@gmail.com",
@@ -5130,7 +5130,7 @@
   {
     "personName": "Sebastian Tobias",
     "personTitle": "Statistical Officer/Data Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sebastianjr2991@gmail.com",
     "personPhone": "+265 993326334",
     "username": "Sebastianjr",
@@ -5158,7 +5158,7 @@
   {
     "personName": "Billy Banda",
     "personTitle": "Laboratory Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "billyk.banda@gmail.com",
     "personCell": "+265 999400343",
     "username": "billyk.banda@gmail.com",
@@ -5172,7 +5172,7 @@
   {
     "personName": "Dr. David Omotayo",
     "personTitle": "MDR specialist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dvdbnj35@gmail.com",
     "personCell": "+265 999107092",
     "username": "Domotayo",
@@ -5488,7 +5488,7 @@
   {
     "personName": "Patrick Chirwa",
     "personTitle": "Acting PMDT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "patrickchirwa67@gmail.com",
     "personCell": "+265 999715497",
     "username": "patrickchirwa67@gmail.com",
@@ -5626,7 +5626,7 @@
   {
     "personName": "Henry Kanyerere",
     "personTitle": "TBHIV Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hkanyerere@gmail.com",
     "personCell": "+265 999566633",
     "username": "hkanyerere@gmail.com",
@@ -5640,7 +5640,7 @@
   {
     "personName": "Lucius Donsa",
     "personTitle": "PPM Technical Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "lucdarbydonsa@gmail.com",
     "personPhone": "+265 999945943",
     "personCell": "+265 880712490",
@@ -5654,7 +5654,7 @@
   },
   {
     "personName": "Mirriam Nyenje",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mirriamnyenje@gmail.com",
     "personCell": "+265 991805678",
     "username": "mirriamnyenje@gmail.com",
@@ -6107,7 +6107,7 @@
   {
     "personName": "Mike Henderson Nyirenda",
     "personTitle": "Deputy Programs Director",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mike@pihmalawi.com",
     "personPhone": "+265 999327196",
     "username": "mike@pihmalawi.com",
@@ -6121,7 +6121,7 @@
   {
     "personName": "Peter Mwamlima",
     "personTitle": "Program Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "petermwamlima@pihmalawi.com",
     "username": "petermwamlima@pihmalawi.com",
     "timezone": "South Africa Standard Time",
@@ -6134,7 +6134,7 @@
   {
     "personName": "Chifundo Chipungu",
     "personTitle": "Diagnostics manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "cchipungu@pihmalawi.com",
     "username": "cchipungu@pihmalawi.com",
     "timezone": "South Africa Standard Time",
@@ -6159,7 +6159,7 @@
   {
     "personName": "Davy Nkosi",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dnkosi@pihmalawi.com",
     "username": "dnkosi@pihmalawi.com",
     "timezone": "South Africa Standard Time",
@@ -6391,7 +6391,7 @@
   {
     "personName": "Anne Mwenye",
     "personTitle": "Data Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "annenthemwe@gmail.com",
     "personCell": "+265 884492057",
     "username": "annenthemwe@gmail.com",
@@ -6587,7 +6587,7 @@
   {
     "personName": "Jones Michongwe",
     "personTitle": "Lab officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "michongwe1967@yahoo.com",
     "personPhone": "+265 884156336",
     "username": "michongwe1967@yahoo.com",
@@ -6683,7 +6683,7 @@
   {
     "personName": "Haldon Njikho",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hnjikho@gmail.com",
     "username": "hnjikho@gmail.com",
     "timezone": "South Africa Standard Time",
@@ -6707,7 +6707,7 @@
   {
     "personName": "Yusuf Kanamazina",
     "personTitle": "NTRL-Quality Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ykanamazina@gmail.com",
     "personCell": "+265 999639825",
     "username": "ykanamazina@yahoo.co.uk",
@@ -6721,7 +6721,7 @@
   {
     "personName": "Yusuf Kanamazina",
     "personTitle": "Quality Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ykanamazina@gmail.com",
     "personCell": "+265 999639825",
     "username": "ykanamazina@gmail.com",
@@ -6735,7 +6735,7 @@
   {
     "personName": "George Talama",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "gtalama@pihmalawi.com",
     "personPhone": "+265 880718501",
     "personCell": "+265 999119057",

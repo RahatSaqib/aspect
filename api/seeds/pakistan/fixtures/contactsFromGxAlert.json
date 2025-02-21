@@ -1,7 +1,7 @@
 [
   {
     "personName": "Admin User",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "personCell": "+1 413 548 5003",
     "username": "admin",
@@ -27,7 +27,7 @@
   {
     "personName": "Mr. Faisal Masood Khanzada",
     "personTitle": "Senior Molecular Biologist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "faisal.masood@ntp.gov.pk",
     "personPhone": "+92 3323997443",
     "personCell": "+92 3323997443",
@@ -72,7 +72,7 @@
   {
     "personName": "Mr. Mehdi Hemani",
     "personTitle": "SystemOne Country Manager Pakistan",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mhemani@systemone.id",
     "personCell": "+92 3365551026",
     "username": "mhemani@systemone.id",
@@ -86,7 +86,7 @@
   {
     "personName": "Bryan Richards",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "brichards@systemone.id",
     "personCell": "+27833243682",
     "timezone": "Pakistan Standard Time",
@@ -142,7 +142,7 @@
   {
     "personName": "GxAlert Support",
     "personTitle": "Troubleshooting",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "timezone": "Pakistan Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -1114,7 +1114,7 @@
   },
   {
     "personName": "API User",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "username": "gxalertapi",
     "timezone": "Pakistan Standard Time",
@@ -1356,7 +1356,7 @@
   {
     "personName": "Dr. Sabira Tahseen",
     "personTitle": "National Technical Advisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sabira.tahseen@gmail.com",
     "personPhone": "+92 3365551024",
     "personCell": "+92 3365551024",
@@ -1618,7 +1618,7 @@
   },
   {
     "personName": "SystemOne",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "rbuiucli@systemone.id",
     "personCell": "+79105818104",
     "username": "SystemOne",
@@ -1632,7 +1632,7 @@
   {
     "personName": "Hassan Rizvi",
     "personTitle": "Focal Person GxAlert Pakistan",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hassan.rizvi@ntp.gov.pk",
     "personPhone": "+923365885846",
     "personCell": "+923365885846",
@@ -1647,7 +1647,7 @@
   {
     "personName": "Kamran Siddiqui",
     "personTitle": "GxAlert Tech Support & Inventory Controller",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "kamransiddiquinrl@hotmail.com",
     "personCell": "+92 3335322153",
     "username": "kamransiddiqui",
@@ -2017,7 +2017,7 @@
   {
     "personName": "Alamdar Hussain",
     "personTitle": "Sr. Microbiologist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "alamdarhr@gmail.com",
     "personCell": "+92 3332267688",
     "timezone": "Pakistan Standard Time",
@@ -3188,7 +3188,7 @@
   },
   {
     "personName": "Brad Cunningham",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "bcunningham@systemone.id",
     "username": "brad_systemone",
     "timezone": "Pakistan Standard Time",
@@ -5483,7 +5483,7 @@
   {
     "personName": "Dr. Abdul Ghafoor",
     "personTitle": "National Adviser MDR-TB",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "drghafoor@ntp.gov.pk",
     "personPhone": "+92 3005934460",
     "personCell": "+92 3005934460",
@@ -5497,7 +5497,7 @@
   {
     "personName": "Dr. Zafar Toor",
     "personTitle": "MDR Specialist (Clinical)",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "drzafartoor@ntp.gov.pk",
     "personPhone": "+92 3009503819",
     "personCell": "+92 3009503819",
@@ -5511,7 +5511,7 @@
   {
     "personName": "Dr. Syed Hussain Hadi",
     "personTitle": "Adviser TB Control (Policy & Strategy)",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hussain.hadi@ntp.gov.pk",
     "personPhone": "+92 3355466619",
     "personCell": "+92 3355466619",
@@ -5824,7 +5824,7 @@
   {
     "personName": "Dr. Sabira Tahseen *",
     "personTitle": "For Tests Notification",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "drsabiratahseen@ntp.gov.pk",
     "personCell": "+923035517214",
     "username": "sabira.tahseen",
@@ -6179,7 +6179,7 @@
   {
     "personName": "Hassan Ali",
     "personTitle": "Assistant to the Country Success Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hassanalijaffri1@gmail.com",
     "personCell": "+92 3125993292",
     "username": "hassanalijaffri1@gmail.com",

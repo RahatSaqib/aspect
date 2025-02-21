@@ -44,25 +44,25 @@ async function seed(knex) {
 
     const issueType = await knex('IssueType').where({ id: issueTypeId }).first()
 
-    const { jobFunctionAdminId } =
+    const { jobFunctionSuperAdminId } =
       (await knex('JobFunction')
         .where({
           externalId: 'systemOne',
           partnerId,
         })
-        .first('id as jobFunctionAdminId')) ||
+        .first('id as jobFunctionSuperAdminId')) ||
       (await knex('JobFunction')
         .where({
-          externalId: 'admin',
+          externalId: 'superAdmin',
           partnerId,
         })
-        .first('id as jobFunctionAdminId'))
+        .first('id as jobFunctionSuperAdminId'))
 
     notifications.push({
       issueTypeId: issueType.id,
       messageTypeId: issueType.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: issueType.name,
       ...auditFields,

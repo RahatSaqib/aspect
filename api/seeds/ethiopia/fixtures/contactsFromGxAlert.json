@@ -1,7 +1,7 @@
 [
   {
     "personName": "SystemOne Admin",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "username": "admin",
     "timezone": "E. Africa Standard Time",
@@ -13,7 +13,7 @@
   {
     "personName": "Endale Mengesha",
     "personTitle": "endale",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "endalemengesha@gmail.com",
     "personCell": "+251901932000",
     "username": "endale",
@@ -38,7 +38,7 @@
   },
   {
     "personName": "Kalechristos",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "kalechristos",
     "timezone": "E. Africa Standard Time",
     "hidePatientId": false,
@@ -1979,7 +1979,7 @@
   {
     "personName": "Administrator Ephrem Tesfaye",
     "personTitle": "National TB Laboratory Advisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ephrem13@gmail.com",
     "personCell": "+251 913143615",
     "username": "ephrem",
@@ -2288,7 +2288,7 @@
   {
     "personName": "Misikir Amare",
     "personTitle": "Assisstant Researcher",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "misikiramare.ma@gmail.com",
     "personCell": "+251 910033176",
     "username": "misikiramare.ma@gmail.com",
@@ -2743,7 +2743,7 @@
   },
   {
     "personName": "Mengistu Tadesse",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mengistutadesse86@gmail.com",
     "personPhone": "+251 911118376",
     "username": "mengistutadesse86@gmail.com",
@@ -2757,7 +2757,7 @@
   {
     "personName": "Muluwork Getahun",
     "personTitle": "National TB lab Researcher",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mimishaget@yahoo.com",
     "personCell": "+251 911893728",
     "username": "mimishaget@yahoo.com",
@@ -4689,7 +4689,7 @@
   {
     "personName": "Lelisa Fikadu",
     "personTitle": "National TB Program Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "lelfekadu@gmail.com",
     "personCell": "+251 922914132",
     "username": "lelfekadu@gmail.com",
@@ -4703,7 +4703,7 @@
   {
     "personName": "Ayinalem Alemu",
     "personTitle": "National TB Reference Laboratory researcher",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ayinalemal@gmail.com",
     "personCell": "+251 912366676",
     "username": "ayinalemal@gmail.com",
@@ -6081,7 +6081,7 @@
   {
     "personName": "Addisalem Yilma",
     "personTitle": "TB Program M&E",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "addisalemy@gmail.com",
     "personCell": "+251 911699341",
     "username": "addisalemy@gmail.com",
@@ -6177,7 +6177,7 @@
   {
     "personName": "Developer",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "personCell": "+1 888 845 2610",
     "username": "developer@systemone.id",
@@ -6228,7 +6228,7 @@
   {
     "personName": "zekarias.Dagne",
     "personTitle": "Lab Advisor-urban",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dagnezekarias@gmail.com",
     "personPhone": "+251 911176812",
     "personCell": "+251 911176812",
@@ -6375,7 +6375,7 @@
   {
     "personName": "Solomon Assefa",
     "personTitle": "Ass Researcher-II",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "solomonas64@gmail.com",
     "personCell": "+251913131052",
     "username": "solomonas64@gmail.com",
@@ -7096,7 +7096,7 @@
   {
     "personName": "Yeshiwork Abebaw",
     "personTitle": "lab",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personCell": "+251 913447415",
     "username": "yeshi",
     "timezone": "E. Africa Standard Time",
@@ -7126,7 +7126,7 @@
   {
     "personName": "gudeta tibesso",
     "personTitle": "lab advisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personCell": "+251 911406597",
     "username": "gudeta tibesso",
     "timezone": "E. Africa Standard Time",
@@ -7174,7 +7174,7 @@
   {
     "personName": "gudeta tibesso",
     "personTitle": "lab advisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personCell": "+251 911406597",
     "username": "gudetatibesso",
     "timezone": "E. Africa Standard Time",
@@ -7222,7 +7222,7 @@
   },
   {
     "personName": "biniyam dagne",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "biniyamd16@gmail.com",
     "personCell": "+251 910181207",
     "username": "biniyamd16@gmail.com",
@@ -7235,7 +7235,7 @@
   },
   {
     "personName": "misikir amare",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personCell": "+251 910033176",
     "username": "misikiramare",
     "timezone": "E. Africa Standard Time",
@@ -7247,7 +7247,7 @@
   },
   {
     "personName": "getachewseid",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "gechgsa@gmail.com",
     "personCell": "+251 912131707",
     "username": "gechgsa@gmail.com",
@@ -7260,7 +7260,7 @@
   },
   {
     "personName": "getachewseid",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personCell": "+251 912131707",
     "username": "getachewseid",
     "timezone": "E. Africa Standard Time",
@@ -7884,7 +7884,7 @@
   },
   {
     "personName": "Mastawesha",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "masttem@gmail.com",
     "personCell": "+251 911835344",
     "username": "mastawesha",
@@ -7997,7 +7997,7 @@
   {
     "personName": "Endale Mengesha",
     "personTitle": "Service",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "endalemengesha@gmail.com",
     "personCell": "+251913208881",
     "username": "tableau_et_go",
@@ -8010,7 +8010,7 @@
   },
   {
     "personName": "Tableau Data Doti",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "getachewntp@gmail.com",
     "username": "tableau_et_do",
     "timezone": "E. Africa Standard Time",
@@ -8345,7 +8345,7 @@
   {
     "personName": "Developer",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.co",
     "personCell": "+1 888 845 2610",
     "username": "developer@systemone.id",
@@ -8492,7 +8492,7 @@
   },
   {
     "personName": "tableau",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "tableau",
     "timezone": "E. Africa Standard Time",
     "hidePatientId": false,
@@ -9107,7 +9107,7 @@
   {
     "personName": "Enanu Hunegnaw",
     "personTitle": "Associate Researcher II",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ehunegnaw@gmail.com",
     "personPhone": "+251 911748144",
     "username": "ehunegnaw@gmail.com",
@@ -9121,7 +9121,7 @@
   {
     "personName": "Waganeh Sinshaw",
     "personTitle": "Associate Researcher",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "wagamels@gmail.com",
     "personCell": "+251 913737808",
     "username": "waganeh",
@@ -9398,7 +9398,7 @@
   {
     "personName": "Kumera Terfa",
     "personTitle": "TB focal",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "kumerat2012@gmail.com",
     "personCell": "+251 922879233",
     "username": "kumerat2012@gmail.com",
@@ -10217,7 +10217,7 @@
   {
     "personName": "Adanech Assefa",
     "personTitle": "Data Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ade_ase@gmail.com",
     "personCell": "+251 0910491522",
     "username": "adanech",
@@ -10723,7 +10723,7 @@
   {
     "personName": "Tsion Samuel",
     "personTitle": "Data Clerk",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "tsiyon.sa@gmail.com",
     "personCell": "+251 921135102",
     "username": "tsiyon.sa@gmail.com",
@@ -13794,7 +13794,7 @@
   {
     "personName": "Yemsrach Reta",
     "personTitle": "Researcher",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "wengiel2005@gmail.com",
     "personCell": "+251 911053665",
     "username": "wengiel2005@gmail.com",
@@ -14055,7 +14055,7 @@
   {
     "personName": "Ashenafi",
     "personTitle": "Biomedical Enginner",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ashenafihabtewold@gmail.com",
     "personCell": "+251911590471",
     "username": "ashenafihabte",
@@ -14154,7 +14154,7 @@
   {
     "personName": "Abebe",
     "personTitle": "Biomedical Engineer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "abebebekele11@yahoo.com",
     "personPhone": "+251 911917134",
     "personCell": "+251 911917134",
@@ -14538,7 +14538,7 @@
   {
     "personName": "Asdesach Tesema",
     "personTitle": "Viral load focal",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "asdesacht@gmail.com",
     "personCell": "+251 912100231",
     "username": "asdesacht@gmail.com",
@@ -14586,7 +14586,7 @@
   {
     "personName": "Dejene Kebede",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personCell": "+1943829566",
     "timezone": "Eastern Standard Time",
     "hidePatientId": false,
@@ -14598,7 +14598,7 @@
   {
     "personName": "Abrham Keraleme",
     "personTitle": "Data Analyst",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "abreseb@gmail.com",
     "personPhone": "+25",
     "personCell": "+251 911989242",
@@ -14834,7 +14834,7 @@
   {
     "personName": "Getachew Aga",
     "personTitle": "NTP Lab",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "getachewntp@gmail.com",
     "personCell": "+251 911809944",
     "username": "getachewntp@gmail.com",
@@ -14882,7 +14882,7 @@
   {
     "personName": "Test",
     "personTitle": "Test",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "Test",
     "timezone": "E. Africa Standard Time",
     "hidePatientId": false,
@@ -14930,7 +14930,7 @@
   {
     "personName": "Adisu Kebede Anbesa",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "adisukebede78@yahoo.com",
     "personPhone": "+251913088587",
     "personCell": "+251 913088587",
@@ -14945,7 +14945,7 @@
   {
     "personName": "Surafel Shewafera",
     "personTitle": "Biomed Enginneer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "surafelnew@gmail.com",
     "personCell": "+251 911822111",
     "username": "surafelnew@gmail.com",
@@ -14993,7 +14993,7 @@
   {
     "personName": "Feven Girmachew",
     "personTitle": "NlCBD TBL Lead",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "fevtiz@yahoo.com",
     "personCell": "+251 911478720",
     "username": "fevtiz@yahoo.com",
@@ -16259,7 +16259,7 @@
   {
     "personName": "Desalegn Addise",
     "personTitle": "Researcher",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "desalegnaddise@gmail.com",
     "personPhone": "+251 913128923",
     "username": "desalegnaddise@gmail.com",
@@ -16565,7 +16565,7 @@
   {
     "personName": "Minel Sead",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "minelsm@gmail.com",
     "personCell": "+251 911057441",
     "username": "Minel",

@@ -56,7 +56,7 @@ describe('Device routes', () => {
 
       daktariManagerUserId = await createUser('Partner One', 'US', daktariManagerUsername, daktariManagerPassword, [
         {
-          jobFunctionExternalId: 'manager',
+          jobFunctionExternalId: 'regionalAdmin',
           deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
         },
       ])

@@ -1,7 +1,7 @@
 [{
   "personName": "Karen Johnson",
   "personTitle": "Laboratory Advisor",
-  "jobFunctions": ["Admin"],
+  "jobFunctions": ["Super Admin"],
   "personEmailAddress": "karen.johnson@hhisp.org",
   "personPhone": "+61 412974393",
   "personCell": "+67571882507",
@@ -16,7 +16,7 @@
   {
     "personName": "Dr. Evelyn Lavu",
     "personTitle": "Director CPHL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "lavuek@gmail.com",
     "personPhone": "+675 70521012",
     "personCell": "+675 70521012",
@@ -145,7 +145,7 @@
   {
     "personName": "Jennifer Banamu",
     "personTitle": "Scientific Officer TB",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "banamuj@gmail.com",
     "personPhone": "+675 72794533",
     "personCell": "+67567572794533",
@@ -273,7 +273,7 @@
   {
     "personName": "Ruth Magaye",
     "personTitle": "TB Laboratory Scientist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "magaye.rr@gmail.com",
     "personPhone": "75364290",
     "username": "magaye.rr@gmail.com",
@@ -828,7 +828,7 @@
   {
     "personName": "Dr. Paul Aia",
     "personTitle": "NTP Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "koltas44@gmail.com",
     "timezone": "West Pacific Standard Time",
     "hidePatientId": false,
@@ -840,7 +840,7 @@
   {
     "personName": "Dr. Robin Yasi",
     "personTitle": "NTP Medical Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "yasirob@gmail.com",
     "personCell": "+675 71148871",
     "timezone": "West Pacific Standard Time",
@@ -976,7 +976,7 @@
   {
     "personName": "Jennifer Dume",
     "personTitle": "TB Scientific Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jenndume@gmail.com",
     "personCell": "+675 70519518",
     "username": "jenndume@gmail.com",
@@ -1597,7 +1597,7 @@
   {
     "personName": "Dr. Margaret Kal",
     "personTitle": "NTP Medical Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "margaretkal1978@gmail.com",
     "personCell": "+675 73600723",
     "timezone": "West Pacific Standard Time",
@@ -1928,7 +1928,7 @@
   {
     "personName": "Vivien Toaniso",
     "personTitle": "M&E Officer NTP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "vtoaniso@gmail.com",
     "personCell": "+675 73159713",
     "timezone": "West Pacific Standard Time",
@@ -2175,7 +2175,7 @@
   {
     "personName": "Ladong Belari",
     "personTitle": "PMDT M&E Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ljmbelari@gmail.com",
     "personPhone": "+675 71162277",
     "timezone": "West Pacific Standard Time",
@@ -2423,7 +2423,7 @@
   {
     "personName": "Daniel Wahawe",
     "personTitle": "Laboratory Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "danielwahawe@gmail.com",
     "personPhone": "+675 70112551",
     "personCell": "+67567570112551",
@@ -2690,7 +2690,7 @@
   {
     "personName": "Dr. Herolyn Nindil",
     "personTitle": "NTP Medical Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "2hnindil@gmail.com",
     "timezone": "West Pacific Standard Time",
     "hidePatientId": false,
@@ -3163,7 +3163,7 @@
   {
     "personName": "Mr. Willie Porau",
     "personTitle": "A/CPHL Director",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "porauw@gmail.com",
     "personCell": "+675 73675177",
     "timezone": "West Pacific Standard Time",
@@ -3176,7 +3176,7 @@
   {
     "personName": "Ms. Janlyn Kumbu",
     "personTitle": "A/Laboratory Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "kumbuj@gmail.com",
     "personPhone": "+675 73041467",
     "personCell": "+675 73041467",
@@ -3190,7 +3190,7 @@
   {
     "personName": "Mr. Ernest Velemu",
     "personTitle": "EQA Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "evelemu@gmail.com",
     "personCell": "+675 74447771",
     "timezone": "West Pacific Standard Time",
@@ -3203,7 +3203,7 @@
   {
     "personName": "Dr. Jacob Kisomb",
     "personTitle": "NTP Medical Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jacob.kisomb101@gmail.com",
     "timezone": "West Pacific Standard Time",
     "hidePatientId": false,
@@ -3215,7 +3215,7 @@
   {
     "personName": "Miss. Davina Vele",
     "personTitle": "Scientist TB Unit CPHL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "veledavina@gmail.com",
     "username": "veledavina@gmail.com",
     "timezone": "West Pacific Standard Time",
@@ -3228,7 +3228,7 @@
   {
     "personName": "Mr. Kevin Isom",
     "personTitle": "Scientist TB Unit CPHL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "kevinisomguna@gmail.com",
     "username": "kevinisomguna@gmail.com",
     "timezone": "West Pacific Standard Time",
@@ -3241,7 +3241,7 @@
   {
     "personName": "Mr. Shane Watakapura",
     "personTitle": "Scientist TB Unit CPHL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "watslepan@gmail.com",
     "personPhone": "+675 73287576",
     "username": "watslepan@gmail.com",
@@ -3255,7 +3255,7 @@
   {
     "personName": "Ms. Imelda Yawenuli",
     "personTitle": "Scientist TB Unit CPHL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "iyawenuli04@gmail.com",
     "personPhone": "+675 72742156",
     "personCell": "+675 72742156",
@@ -3270,7 +3270,7 @@
   {
     "personName": "Mr. Onesi WYCLIFFE",
     "personTitle": "MLT-GeneXpert Network & Maintenance",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "onesiji.wycliffe@gmail.com",
     "personPhone": "+675 73916422",
     "personCell": "+675 73916422",
@@ -5145,7 +5145,7 @@
   {
     "personName": "Mehdi Hemani",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mhemani@systemone.id",
     "username": "mhemani",
     "timezone": "West Pacific Standard Time",
@@ -5192,7 +5192,7 @@
   {
     "personName": "Elizabeth Namba",
     "personTitle": "Scientist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sabethnamba16@gmail.com",
     "personPhone": "+675 79409019",
     "personCell": "+675 79409019",
@@ -5207,7 +5207,7 @@
   {
     "personName": "Niawali Wariambu",
     "personTitle": "Scientist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "twainniawali27@gmail.com",
     "personPhone": "+675 73961319",
     "personCell": "+675 73961319",
@@ -5222,7 +5222,7 @@
   {
     "personName": "Peter Menue",
     "personTitle": "Scientist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "petermenue3@gmail.com",
     "personPhone": "+675 79411602",
     "personCell": "+67579411602",

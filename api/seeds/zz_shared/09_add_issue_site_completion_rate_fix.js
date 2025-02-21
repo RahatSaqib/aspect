@@ -8,9 +8,16 @@ const { partner, adminUserName } = require(`../${process.env['seeds.directory'].
 
 module.exports = require('../utils').seed(
   async knex =>
-    addIssue(knex, 'SiteWithLowFieldCompletionRate', ['admin', 'regionalOfficer'], partner.externalId, adminUserName, {
-      evaluationMethod: 'plugin-function',
-      evaluationParameter: 'resolveIssueSiteWithLowFieldCompletionRate', // The name of the function to evaluate if it should be resolved or not.
-    }),
+    addIssue(
+      knex,
+      'SiteWithLowFieldCompletionRate',
+      ['superAdmin', 'regionalOfficer'],
+      partner.externalId,
+      adminUserName,
+      {
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveIssueSiteWithLowFieldCompletionRate', // The name of the function to evaluate if it should be resolved or not.
+      }
+    ),
   __filename
 )

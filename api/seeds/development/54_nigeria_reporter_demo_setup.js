@@ -85,7 +85,7 @@ async function seed(knex) {
     timezone: 'W. Central Africa Standard Time',
     personEmailAddress: null,
     name: 'Admin Nigeria',
-    jobFunctions: ['Admin'],
+    jobFunctions: ['Super Admin'],
     username: 'nigeria_admin',
     password: 'test07',
   })

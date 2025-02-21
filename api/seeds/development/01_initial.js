@@ -4898,11 +4898,11 @@ async function seed(knex) {
   // Job Functions with permissions
 
   // crate jobs for users
-  const [jobFunctionIdAdmin] = await knex('JobFunction')
-    .where({ partnerId: partnerOneId, externalId: 'admin' })
+  const [jobFunctionIdSuperAdmin] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'superAdmin' })
     .pluck('id')
-  const [jobFunctionIdManager] = await knex('JobFunction')
-    .where({ partnerId: partnerOneId, externalId: 'manager' })
+  const [jobFunctionIdRegionalAdmin] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'regionalAdmin' })
     .pluck('id')
   const [jobFunctionIdClinician] = await knex('JobFunction')
     .where({ partnerId: partnerOneId, externalId: 'clinician' })
@@ -4927,15 +4927,19 @@ async function seed(knex) {
   const siteSample = _.sample(sitesWithResults)
   // Constrain jobs by context
   await knex('JobContext').insert([
-    { personId: personIds.admin, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
-    { personId: personIds.admin_us, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+    { personId: personIds.admin, jobFunctionId: jobFunctionIdSuperAdmin, geographyId: countries.US.geographyId },
+    { personId: personIds.admin_us, jobFunctionId: jobFunctionIdSuperAdmin, geographyId: countries.US.geographyId },
     { personId: personIds.jason, jobFunctionId: jobFunctionIdPartnerTwo, geographyId: countries.US.geographyId },
-    { personId: personIds.sam, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.NG.geographyId },
-    { personId: personIds.ed, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.geographyId },
+    { personId: personIds.sam, jobFunctionId: jobFunctionIdSuperAdmin, geographyId: countries.NG.geographyId },
+    { personId: personIds.ed, jobFunctionId: jobFunctionIdRegionalAdmin, geographyId: countries.US.geographyId },
     { personId: personIds.jim, jobFunctionId: jobFunctionIdPartnerTwo, geographyId: countries.US.geographyId },
     { personId: personIds.jon, jobFunctionId: jobFunctionIdClinician, geographyId: countries.US.geographyId },
     { personId: personIds.steve, jobFunctionId: jobFunctionIdClinician, geographyId: countries.US.geographyId },
-    { personId: personIds.bob, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.states.OH.geographyId },
+    {
+      personId: personIds.bob,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
+      geographyId: countries.US.states.OH.geographyId,
+    },
     {
       personId: personIds.clinician_us,
       jobFunctionId: jobFunctionIdClinician,
@@ -5032,71 +5036,71 @@ async function seed(knex) {
   )
 
   await knex('JobFunctionDashboardWidget').insert([
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sitesTitle },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.instrumentsConnected },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.resultsTitle },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.utilizationRate },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.activeDevices },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockouts },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.deviceDaysActive },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.moduleSwaps },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.errorRate },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockNotRecorded },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.avgTimeToUpload },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.sitesTitle },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.instrumentsConnected },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.resultsTitle },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.utilizationRate },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.activeDevices },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.stockouts },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.deviceDaysActive },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.moduleSwaps },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.errorRate },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.stockNotRecorded },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.avgTimeToUpload },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       widgetId: widgetIds.percentageOfModulesFunctioning,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       widgetId: widgetIds.gxPositiveResultsNotified,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       widgetId: widgetIds.numberOfDevicesExperiencingServiceInterruption,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       widgetId: widgetIds.instrumentsReplaced,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       widgetId: widgetIds.dashboardWidgetTestsPerDayTitle,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       widgetId: widgetIds.dashboardWidgetValidResultsPc,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       widgetId: widgetIds.averageTimeToModuleReplacement,
     },
 
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.instrumentsConnected },
+    { jobFunctionId: jobFunctionIdRegionalAdmin, widgetId: widgetIds.sitesTitle },
+    { jobFunctionId: jobFunctionIdRegionalAdmin, widgetId: widgetIds.instrumentsConnected },
     {
-      jobFunctionId: jobFunctionIdManager,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
       widgetId: widgetIds.utilizationRate,
     },
     {
-      jobFunctionId: jobFunctionIdManager,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
       widgetId: widgetIds.instrumentsReplaced,
     },
     {
-      jobFunctionId: jobFunctionIdManager,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
       widgetId: widgetIds.activeDevices,
     },
 
     {
-      jobFunctionId: jobFunctionIdManager,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
       widgetId: widgetIds.errorRate,
     },
     {
-      jobFunctionId: jobFunctionIdManager,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
       widgetId: widgetIds.stockNotRecorded,
     },
     {
-      jobFunctionId: jobFunctionIdManager,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
       widgetId: widgetIds.averageTimeToModuleReplacement,
     },
 

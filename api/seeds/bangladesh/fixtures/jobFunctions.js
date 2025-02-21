@@ -1,13 +1,13 @@
 const _ = require('lodash')
 const {
-  admin,
+  superAdmin,
   regionalOfficer,
   labUser,
   clinician,
   remoteHealthWorker,
   technician,
   aspectBeta,
-  manager,
+  regionalAdmin,
 } = require('../../fixtures/jobFunctionBase')
 
 const withNewReports = jobFunction => ({
@@ -24,8 +24,8 @@ const withNoReporterPermissions = jf => ({
   permissions: _.filter(jf.permissions, permission => permission.module !== 'reporter'),
 })
 module.exports = [
-  withNoReporterPermissions(withNewReports(admin)),
-  withNoReporterPermissions(withNewReports(manager)),
+  withNoReporterPermissions(withNewReports(superAdmin)),
+  withNoReporterPermissions(withNewReports(regionalAdmin)),
   withNoReporterPermissions(withNewReports(regionalOfficer)),
   withNoReporterPermissions(labUser),
   withNoReporterPermissions(clinician),
