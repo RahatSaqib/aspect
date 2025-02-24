@@ -287,6 +287,7 @@ async function renderExcelTemplate({
   extension, // xlsx
   replacements = [],
   templateFolderPath,
+  dataSelector,
 }) {
   const lang = culture.split('-')[0].toLowerCase()
   // read file into workbook as ExcelWorkbook
@@ -309,6 +310,7 @@ async function renderExcelTemplate({
       data,
       dynamicColumns = [],
       defaultNoDataMessage,
+      dataSelector: dataSelectorSheet,
       // populator is a special function to populate current sheet
       populator,
     } = dataForSheet
@@ -363,7 +365,6 @@ async function renderExcelTemplate({
       const { tableToken, dataSource: sectionDataSource } = section
       // position cell where data table begins
       const tableTokenCells = getCellsByValue(worksheet, tableToken)
-
       if (tableTokenCells.length > 0) {
         // empty cells
         tableTokenCells.forEach(cell => {
@@ -378,8 +379,12 @@ async function renderExcelTemplate({
         const allHeaderRows = getHeaderRows(worksheet, cellTableToken)
         const patternRowStart = cellTableToken.row + 1 + allHeaderRows.length
         const patternRows = []
-        for (let i = 0; i < allHeaderRows.length; i++) {
-          patternRows.push(worksheet.getRow(patternRowStart + i))
+
+        const firstPatternCell = worksheet.getCell(patternRowStart, 1)
+
+        const { rowStart, rowEnd } = getCellDimensions(firstPatternCell)
+        for (let i = rowStart; i <= rowEnd; i++) {
+          patternRows.push(worksheet.getRow(i))
         }
 
         const fieldNamesMap = patternRows.map(row => {
@@ -412,24 +417,41 @@ async function renderExcelTemplate({
           })
           // Step 2: Insert rows and apply data properly
           dataRows.forEach((dataRow, rowIndex) => {
+            const mergesToAdd = []
+
             patternRows.forEach((templateRow, rowTemplateIndex) => {
-              const position = patternRowStart + rowIndex * patternRows.length + rowTemplateIndex
-              const newRow = worksheet.getRow(position)
+              const currentRowIndex = patternRowStart + rowIndex * patternRows.length + rowTemplateIndex
+              const newRow = worksheet.getRow(currentRowIndex)
               newRow.height = templateRow.height // Maintain row height
 
               templateRow.eachCell((templateCell, colIndex) => {
                 const newCell = newRow.getCell(colIndex)
                 setCellStyle(newCell, getCellStyle(templateCell))
 
-                if (templateCell.isMerged && rowTemplateIndex > 0) {
-                  return // Skip merged cells in subsequent rows
+                // Handle merged cells only for first row of each data block
+                if (templateCell.isMerged && patternRowStart !== currentRowIndex && rowTemplateIndex === 0) {
+                  // Only process merge once from the master cell
+                  const { rowStart, rowEnd, colStart, colEnd } = getCellDimensions(templateCell)
+                  const rowSpan = rowEnd - rowStart + 1
+                  const rowOffset = currentRowIndex - templateCell.row
+
+                  const newMergeRange = {
+                    top: rowStart + rowOffset,
+                    left: colStart,
+                    bottom: rowStart + rowOffset + rowSpan - 1,
+                    right: colEnd,
+                  }
+
+                  mergesToAdd.push(newMergeRange)
                 }
 
                 if (templateCell.formula) {
                   newCell.value = {
                     formula: templateCell.formula.replace(/(\$?[A-Za-z]+)(\$?\d+)/g, (_, colRef, rowRef) => {
                       if (rowRef.startsWith('$')) return `${colRef}${rowRef}`
-                      return `${colRef}${position}`
+                      const targetRow = parseInt(rowRef, 10)
+                      const offset = currentRowIndex - templateCell.row
+                      return `${colRef}${targetRow + offset}`
                     }),
                   }
                 } else {
@@ -445,12 +467,17 @@ async function renderExcelTemplate({
                 }
               })
             })
+
+            // Apply merges after all cells are created
+            mergesToAdd.forEach(range => {
+              worksheet.mergeCells(range.top, range.left, range.bottom, range.right)
+            })
           })
         } else {
           // No data case: Fill pattern row with default message
           patternRows.forEach(row => {
             row.eachCell((cell, colIndex) => {
-              cell.value = colIndex === 1 ? defaultNoDataMessage : ''
+              cell.value = colIndex === 1 ? defaultNoDataMessage : '****'
               setCellStyle(cell, getCellStyle(row.getCell(colIndex)))
             })
           })
@@ -648,7 +675,7 @@ async function streamExcelTemplate({
        * prepare table in worksheet, i.e.
        * append dynamic columns, get all predefined field names, get pattern row number
        */
-      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
+      ; ({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
     }
 
     /**
@@ -1079,6 +1106,41 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   })
 
   return merges
+}
+
+/**
+ * Get the area dimensions of a cell range, handling merged cells
+ * @param {Object} range - The cell range to get dimensions for
+ * @typedef {Object} RangeArea
+ * @property {number} colStart - The starting column number of the range
+ * @property {number} colEnd - The ending column number of the range
+ * @property {number} rowStart - The starting row number of the range
+ * @property {number} rowEnd - The ending row number of the range
+ * @property {number} cols - The total number of columns in the range (colEnd - colStart + 1)
+ * @property {number} rows - The total number of rows in the range (rowEnd - rowStart + 1)
+ * @returns {RangeArea} Object containing the dimensions and boundaries of the cell range
+ */
+function getCellDimensions(range) {
+  const startCell = range
+  let endCell = range
+  if (range.isMerged) {
+    const [, { $b$r }] = Object.entries(range.worksheet._merges).find(([, r]) => r.$t$l === range.$col$row)
+    endCell = range.worksheet.getCell($b$r)
+  }
+
+  const colStart = startCell.col
+  const rowStart = startCell.row
+  const colEnd = endCell.col
+  const rowEnd = endCell.row
+
+  return {
+    colStart,
+    colEnd,
+    rowStart,
+    rowEnd,
+    cols: colEnd - colStart + 1,
+    rows: rowEnd - rowEnd + 1,
+  }
 }
 
 // ----------------------------------------------------------------------------------------------
