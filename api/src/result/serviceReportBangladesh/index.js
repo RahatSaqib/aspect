@@ -155,13 +155,6 @@ const reportDrTb10ABaseQuery = async (auth, query, groupBySite = false) => {
           })
           .groupBy('r.deviceId')
       )
-      .select(
-        'r.deviceId',
-        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
-        knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
-        knex.raw(`d.moduleBayCapacity as cntModules`),
-        knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive` from CTE
-      )
       .from('Result as r')
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
       .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
@@ -203,12 +196,13 @@ const reportDrTb10ABaseQuery = async (auth, query, groupBySite = false) => {
       })
       .select(
         'r.deviceId',
+        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
+        knex.raw(`d.moduleBayCapacity as cntModules`),
+        knex.raw('modulesActive.cntModulesActive'), // Use precomputed `cntModulesActive` from CTE
         's.name as siteName',
         'st.name as stateName',
         'lga.name as lgaName',
-        'r.deviceId',
-        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
-        knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         /**
          * Notice that we below group by `deviceId`
          * only because we need to count number of modules
@@ -2414,11 +2408,12 @@ function transformData(data) {
       groupedData[siteIds] = {}
     }
 
-    if (sampleType === 'Pulmonary & Extra-pulmonary') {
+    if (['Pulmonary', 'Extra-pulmonary'].includes(sampleType)) {
       groupedData[siteIds].main = { siteIds, sampleType, ...rest }
     } else if (sampleType === 'Stool') {
-      const stoolEntry = Object.fromEntries(Object.entries(rest).map(([key, value]) => [`${key}-stool`, value]))
-
+      const stoolEntry = Object.fromEntries(
+        Object.entries(rest).map(([key, value]) => [key.startsWith('cnt_') ? `${key}_stool` : key, value])
+      )
       groupedData[siteIds].stool = { siteIds, sampleType, ...stoolEntry }
     }
   })
