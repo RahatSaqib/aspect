@@ -208,10 +208,8 @@ const reportDrTb10ABaseQuery = async (auth, query, groupBySite = false) => {
          * only because we need to count number of modules
          * for each device
          */
-        knex.raw(`
-      d.moduleBayCapacity as cntModules
-      `),
-        knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive`
+        'd.moduleBayCapacity as cntModules',
+        'modulesActive.cntModulesActive' // Use precomputed `cntModulesActive`
       )
       .modify(qb => {
         if (groupBySite) qb.groupBy('r.siteId', 'sampleType')
@@ -2431,12 +2429,12 @@ function mergeDataBySiteId(arr1, arr2) {
 
   // Helper function to merge data into the map
   const mergeIntoMap = data => {
-    data.forEach(({ siteId, ...rest }) => {
-      if (!mergedData.has(siteId)) {
-        mergedData.set(siteId, { siteId })
+    data.forEach(({ siteIds, ...rest }) => {
+      if (!mergedData.has(siteIds)) {
+        mergedData.set(siteIds, { siteIds })
       }
       // Merge new data into the existing object without mutating the original
-      mergedData.set(siteId, { ...mergedData.get(siteId), ...rest })
+      mergedData.set(siteIds, { ...mergedData.get(siteIds), ...rest })
     })
   }
 
