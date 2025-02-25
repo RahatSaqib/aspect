@@ -2,7 +2,7 @@ const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
-const { resultViewerNo, resultViewerYes, clinician } = require('../fixtures/jobFunctionBase')
+const { resultViewerNo, resultViewerYes } = require('../fixtures/jobFunctionBase')
 module.exports = require('../utils').seed(seed, __filename)
 
 const now = new Date()
@@ -101,41 +101,6 @@ async function seed(knex) {
     const jobFunctionId = await upsertJobFunction(knex, jobFunction.name, partnerId, permissionsToUpsert, {
       reports: jobFunction.reports,
     })
-    // --------
-    const jobFunctions = await knex('JobFunction')
-      .where({ partnerId })
-      .select()
-      .then(items =>
-        items.reduce((jobFunctionMap, jobFunction) => {
-          jobFunctionMap[jobFunction.name] = jobFunction.id
-          return jobFunctionMap
-        }, {})
-      )
-    const jobFunctionsClinicianId = jobFunctions[clinician.name]
-    // --------
-
-    const { id: widgetResultsId } = await knex('DashboardWidget').where('title', 'Results').first('id')
-    //
-    // Job Function Widget - if missing then copy items from jobFunction.name = 'Clinician'
-    const jobFunctionWidgets = await knex('JobFunctionDashboardWidget as jfw')
-      .innerJoin('JobFunction as jf', 'jfw.jobFunctionId', 'jf.id')
-      .where('jf.partnerId', partnerId)
-      .select('jfw.*')
-    if (!jobFunctionWidgets.find(x => x.jobFunctionId === jobFunctionId)) {
-      const items = jobFunctionWidgets
-        .filter(x => x.jobFunctionId === jobFunctionsClinicianId && x.widgetId !== widgetResultsId)
-        .map(({ widgetId }) => ({
-          jobFunctionId,
-          widgetId,
-        }))
-      await knex('JobFunctionDashboardWidget').insert([
-        ...items,
-        {
-          jobFunctionId,
-          widgetId: widgetResultsId,
-        },
-      ])
-    }
 
     // --------
     // make sure Job Function ResultViewerYes has permission 'result:view'

@@ -248,36 +248,6 @@ async function seed(knex) {
   const [jobFunctionIdSuperAdmin] = await knex('JobFunction').where({ externalId: 'superAdmin', partnerId }).pluck('id')
   const [jobFunctionIdLabAdmin] = await knex('JobFunction').where({ externalId: 'labAdmin', partnerId }).pluck('id')
 
-  // add widgets
-  const widgets = await knex('DashboardWidget').select('id', 'title')
-  await knex('JobFunctionDashboardWidget').insert([
-    {
-      jobFunctionId: jobFunctionIdLabAdmin,
-      widgetId: _.find(widgets, { title: 'Results' }).id,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabAdmin,
-      widgetId: _.find(widgets, { title: 'Devices' }).id,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabAdmin,
-      widgetId: _.find(widgets, { title: 'Sites' }).id,
-    },
-
-    {
-      jobFunctionId: jobFunctionIdSuperAdmin,
-      widgetId: _.find(widgets, { title: 'Results' }).id,
-    },
-    {
-      jobFunctionId: jobFunctionIdSuperAdmin,
-      widgetId: _.find(widgets, { title: 'Devices' }).id,
-    },
-    {
-      jobFunctionId: jobFunctionIdSuperAdmin,
-      widgetId: _.find(widgets, { title: 'Sites' }).id,
-    },
-  ])
-
   await knex('JobContext').insert({ personId: adminPersonId, jobFunctionId: jobFunctionIdSuperAdmin, geographyId })
 
   const statesByName = malawiStates.reduce((memo, state) => {

@@ -81,11 +81,6 @@ async function seed(knex) {
     }
   )
 
-  const { id: jobFunctionIdSuperAdmin } = await knex('JobFunction')
-    .where('name', 'Super Admin')
-    .where({ partnerId })
-    .first('id')
-
   const { id: jobFunctionIdClinician } = await knex('JobFunction')
     .where('name', 'Clinician')
     .where({ partnerId })
@@ -323,20 +318,5 @@ async function seed(knex) {
 
   // add follow ups
   await utils.upsertFollowUps(knex, followUp, [partnerId])
-
-  const statWidgets = await knex('DashboardWidget')
-    .whereIn('titleI18nKey', [
-      'dashboardWidgetTitleConfirmedCases',
-      'dashboardWidgetTitleTotalActiveCases',
-      'dashboardWidgetTitleTotalRecoveredCases',
-      'dashboardWidgetTitleTotalDeaths',
-    ])
-    .select('id as widgetId')
   await addDefaultCustomFieldDefinitions(knex, partnerId)
-  await Promise.each(statWidgets, async elem =>
-    knex('JobFunctionDashboardWidget').insert([
-      { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: elem.widgetId },
-      { jobFunctionId: jobFunctionIdClinician, widgetId: elem.widgetId },
-    ])
-  )
 }
