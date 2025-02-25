@@ -1,7 +1,7 @@
 [{
   "personName": "BRYCESON MALEWO",
   "personTitle": "CTRL - GeneXpert Focal Team",
-  "jobFunctions": ["Admin"],
+  "jobFunctions": ["Super Admin"],
   "personEmailAddress": "brycesonmalewo2014@gmail.com",
   "personPhone": "+255 752198100",
   "personCell": "+255782434388",
@@ -16,7 +16,7 @@
   {
     "personName": "Amri Kingalu",
     "personTitle": "CTRL Lab Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "amrikingalu@gmail.com",
     "personPhone": "+255 789 545 422",
     "personCell": "+255 789 545 422",
@@ -248,7 +248,7 @@
   {
     "personName": "Beatrice Mutayoba",
     "personTitle": "Program Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "beatricemutayoba@ntlp.go.tz",
     "personCell": "+255 784 311 266",
     "username": "beatrice",
@@ -1182,7 +1182,7 @@
   {
     "personName": "Nicodem Mgina",
     "personTitle": "Deputy GeneXpert Focal Person",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nicodemmgina@ymail.com",
     "personCell": "+255715665560",
     "username": "Nicodem Mgina",
@@ -1284,7 +1284,7 @@
   {
     "personName": "PETER MASHOSHO",
     "personTitle": "Superuser",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "petermashosho@gmail.com",
     "personPhone": "+255 764 238 754",
     "personCell": "+255687914296",
@@ -1339,7 +1339,7 @@
   {
     "personName": "SAIDI MFAUME",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mfaume.saidi45@gmail.com",
     "personPhone": "+255 713 487 472",
     "personCell": "+255753181056",
@@ -1365,7 +1365,7 @@
   {
     "personName": "Samwel Mulungu",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "smulungu@wrp-t.org",
     "personPhone": "+255 753259084",
     "personCell": "+255753259084",
@@ -2333,7 +2333,7 @@
   {
     "personName": "Raymond Shirima",
     "personTitle": "Data Quality",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "rayphlp@yahoo.co.uk",
     "personPhone": "+255 784 288 500",
     "personCell": "+255 784 288 500",
@@ -4508,7 +4508,7 @@
   {
     "personName": "Isack Lekule",
     "personTitle": "MDR TB Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "lekule228@gmail.com",
     "personCell": "+255 754946216",
     "username": "isack",
@@ -4548,7 +4548,7 @@
   {
     "personName": "Haji Msuya",
     "personTitle": "Senior Lab Offficer-EID",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hmsuya@mdh.or.tz",
     "personPhone": "+255 713290774",
     "personCell": "+255 713290774",
@@ -4605,7 +4605,7 @@
   {
     "personName": "GxAlert API Tanzania",
     "personTitle": "TZ-GX-API",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "username": "tz_api_user",
     "timezone": "E. Africa Standard Time",
@@ -4618,7 +4618,7 @@
   {
     "personName": "Fredrick Mrema",
     "personTitle": "Information Advisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "fmrema@thps.or.tz",
     "personPhone": "+255 789230146",
     "personCell": "+255 0655738275",
@@ -4649,7 +4649,7 @@
   {
     "personName": "Richard Buretta",
     "personTitle": "National Sample Referral Coordinator-MDH",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "buretta.richard@gmail.com",
     "personCell": "+255 757 894 894",
     "username": "Buretta",
@@ -6192,7 +6192,7 @@
   {
     "personName": "Saidi Omary Alli",
     "personTitle": "Superuser",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "saidmry@gmail.com",
     "personPhone": "+255755256770",
     "personCell": "+255755256770",
@@ -6825,7 +6825,7 @@
   {
     "personName": "Joseph Mziray",
     "personTitle": "Lab Programme Manager CHAI",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jmziray@clintonhealthaccess.org",
     "personCell": "+255 655605390",
     "username": "Joseph Mziray",
@@ -6856,7 +6856,7 @@
   {
     "personName": "David Kayabu",
     "personTitle": "M&E Officer CHAI",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dkayabu@clintonhealthaccess.org",
     "personCell": "+255 754 049996",
     "username": "David Kayabu",
@@ -7733,7 +7733,7 @@
   {
     "personName": "Anyelwise kabuje",
     "personTitle": "National HVL Laboratory Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "anyelwisyekabuje@gmail.com",
     "personPhone": "+255 688009133",
     "personCell": "+255 764199906",
@@ -8171,7 +8171,7 @@
   {
     "personName": "Paschal Seleman",
     "personTitle": "Laboratory Data Analyst _ NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "paschal.seleman@gmail.com",
     "personPhone": "+255 672095228",
     "personCell": "+255 743416936",
@@ -8528,7 +8528,7 @@
   {
     "personName": "Daphne Mtunga",
     "personTitle": "Deputy Lab Manager CTRL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mtungad@gmail.com",
     "personCell": "+255 754 312 241",
     "username": "mtungad@gmail.com",
@@ -8557,7 +8557,7 @@
   {
     "personName": "Robert Balama",
     "personTitle": "Data Manager-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "balamafidelisrobert@gmail.com",
     "personCell": "+255 679667357",
     "username": "balamafidelisrobert@gmail.com",
@@ -8571,7 +8571,7 @@
   {
     "personName": "Galus Alfredy",
     "personTitle": "Data Quality Officer-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "alfredygalus94@gmail.com",
     "personCell": "+255 713753334",
     "username": "alfredygalus94@gmail.com",
@@ -8585,7 +8585,7 @@
   {
     "personName": "Prisca Jackson",
     "personTitle": "Ass. Data Manager-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "pmwalingo@yahoo.com",
     "personCell": "+255 763323442",
     "username": "pmwalingo@yahoo.com",
@@ -8599,7 +8599,7 @@
   {
     "personName": "Glory Thadei",
     "personTitle": "Ass. M&E-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "gethadei@gmail.com",
     "personCell": "+255 762900233",
     "username": "gethadei@gmail.com",
@@ -8613,7 +8613,7 @@
   {
     "personName": "Collins Minja",
     "personTitle": "ICT Officer-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "franklin.collins02@gmail.com",
     "personCell": "+255 755272324",
     "username": "franklin.collins02@gmail.com",
@@ -8627,7 +8627,7 @@
   {
     "personName": "Winnie Chambo",
     "personTitle": "Data Clerk-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "winniechambo11@gmail.com",
     "personCell": "+255 656597503",
     "username": "winniechambo11@gmail.com",
@@ -8641,7 +8641,7 @@
   {
     "personName": "Erasto Yusto",
     "personTitle": "Data Clerk-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "yustoxxx370@gmail.com",
     "personCell": "+255 768055571",
     "username": "Yusto",
@@ -8655,7 +8655,7 @@
   {
     "personName": "Stella Mwanjute",
     "personTitle": "Ass. Data Manager-CTRL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "smwanjute@gmail.com",
     "personPhone": "+255 753248618",
     "personCell": "+255 753248618",
@@ -8670,7 +8670,7 @@
   {
     "personName": "Khadija Juma",
     "personTitle": "Data Clerk-CTRL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jumakhadija888@gmail.com",
     "personCell": "+255 772930430",
     "username": "jumakhadija888@gmail.com",
@@ -8684,7 +8684,7 @@
   {
     "personName": "Emmanuel Nkiligi",
     "personTitle": "Data Management Officer-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "enkiligi@hotmail.com",
     "personCell": "+255 713604814",
     "username": "enkiligi@hotmail.com",
@@ -8698,7 +8698,7 @@
   {
     "personName": "Dr. Riziki Kisonga",
     "personTitle": "Program Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "kisongariziki@gmail.com",
     "personCell": "+255 755659206",
     "username": "kisongariziki@gmail.com",
@@ -8712,7 +8712,7 @@
   {
     "personName": "Dr. Liberate Mleoh",
     "personTitle": "Deputy Program Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personCell": "+255 784768298",
     "username": "lmlmleoh@gmail.com",
     "timezone": "E. Africa Standard Time",
@@ -8725,7 +8725,7 @@
   {
     "personName": "Agness Richard",
     "personTitle": "Data Clerk-CTRL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "agrich99@gmail.com",
     "personCell": "+255 769489206",
     "username": "wandwalo",
@@ -9621,7 +9621,7 @@
   {
     "personName": "Regan Shayo",
     "personTitle": "Lab Scientist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "shayoregan@gmail.com",
     "personPhone": "+255757 185 046",
     "personCell": "+255757 185 046",
@@ -9985,7 +9985,7 @@
   {
     "personName": "Edgar Kapuka Luhanga",
     "personTitle": "National TB Diagnostic Network Coordinator-NTLP",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "edgarluhanga@gmail.com",
     "personCell": "+255 754340084",
     "username": "edgarluhanga@gmail.com",
@@ -10084,7 +10084,7 @@
   {
     "personName": "Said Seleman",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "saidi5@yahoo.com",
     "personPhone": "+255714508727",
     "username": "Said",
@@ -10098,7 +10098,7 @@
   {
     "personName": "Regan Shayo",
     "personTitle": "Assistance molecular Dx coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "shayoregan@gmail.com",
     "personPhone": "+255 757185046",
     "timezone": "E. Africa Standard Time",
@@ -10126,7 +10126,7 @@
   {
     "personName": "Abdallah buliyani",
     "personTitle": "Lab Scientist/Superuser",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "abdallahburiani12345@gmail.com",
     "personPhone": "+255 657956797",
     "personCell": "+255657956797",
@@ -13045,7 +13045,7 @@
   {
     "personName": "George Laizer",
     "personTitle": "ICT Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "georgelaizer@gmail.com",
     "personPhone": "+255 754039773",
     "username": "glaizer",
@@ -13571,7 +13571,7 @@
   {
     "personName": "Alawi Hamad",
     "personTitle": "Cepheid",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "alawi.hamad@cepheid.com",
     "personPhone": "+255 658550011",
     "timezone": "E. Africa Standard Time",
@@ -13594,7 +13594,7 @@
   },
   {
     "personName": "Stephen Reyes",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sreyes@systemone.id",
     "username": "sreyes",
     "timezone": "E. Africa Standard Time",

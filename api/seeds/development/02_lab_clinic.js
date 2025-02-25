@@ -245,10 +245,10 @@ async function seed(knex) {
   })
 
   await upsertJobFunctionFixture(knex, jobFunctionsFixtureReporter, partnerId)
-  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
+  const [jobFunctionIdSuperAdmin] = await knex('JobFunction').where({ externalId: 'superAdmin', partnerId }).pluck('id')
   const [jobFunctionIdLabAdmin] = await knex('JobFunction').where({ externalId: 'labAdmin', partnerId }).pluck('id')
 
-  await knex('JobContext').insert({ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin, geographyId })
+  await knex('JobContext').insert({ personId: adminPersonId, jobFunctionId: jobFunctionIdSuperAdmin, geographyId })
 
   const statesByName = malawiStates.reduce((memo, state) => {
     memo[state.name.toLowerCase()] = state

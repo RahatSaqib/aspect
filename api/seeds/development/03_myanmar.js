@@ -126,14 +126,14 @@ async function seed(knex) {
   })
 
   await upsertJobFunctionFixture(knex, jobFunctionsFixtureMyanmar, partnerId)
-  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
+  const [jobFunctionIdSuperAdmin] = await knex('JobFunction').where({ externalId: 'superAdmin', partnerId }).pluck('id')
   const [jobFunctionIdLabUser] = await knex('JobFunction').where({ externalId: 'labUser', partnerId }).pluck('id')
   const [jobFunctionIdRegionalOfficer] = await knex('JobFunction')
     .where({ externalId: 'regionalOfficer', partnerId })
     .pluck('id')
 
   const jobFunctionIds = {
-    jobFunctionIdAdmin,
+    jobFunctionIdSuperAdmin,
     jobFunctionIdLabUser,
     jobFunctionIdRegionalOfficer,
   }
@@ -148,7 +148,7 @@ async function seed(knex) {
   // Admin Job
   await knex('JobContext').insert({
     personId: adminPersonId,
-    jobFunctionId: jobFunctionIdAdmin,
+    jobFunctionId: jobFunctionIdSuperAdmin,
     geographyId: myanmarGeographyId,
   })
 

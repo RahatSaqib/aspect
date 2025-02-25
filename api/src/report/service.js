@@ -127,7 +127,7 @@ async function proxyGxReportAsync(request) {
       'jf.partnerId': dataConstraints.partner.id,
     })
     .first('jf.name as jobFunctionName')
-  const isAdmin = jobFunctionName === 'Admin'
+  const isAdmin = jobFunctionName === 'Super Admin'
 
   const sitesQ = knex('Site as s')
     .join('Geography as g', 's.geographyId', 'g.id')

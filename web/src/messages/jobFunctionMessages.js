@@ -1,9 +1,9 @@
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
-  admin: {
-    id: 'jobFunction.admin',
-    defaultMessage: 'Admin',
+  superAdmin: {
+    id: 'jobFunction.superAdmin',
+    defaultMessage: 'Super Admin',
   },
   aspectBeta: {
     id: 'jobFunction.aspectBeta',
@@ -21,9 +21,9 @@ export default defineMessages({
     id: 'jobFunction.donor',
     defaultMessage: 'Donor',
   },
-  manager: {
-    id: 'jobFunction.manager',
-    defaultMessage: 'Manager',
+  regionalAdmin: {
+    id: 'jobFunction.regionalAdmin',
+    defaultMessage: 'Regional Admin',
   },
   ntp: {
     id: 'jobFunction.ntp',

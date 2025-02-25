@@ -215,6 +215,7 @@ const buttonMapping = {
   onlyDownloadedByReporter: ({ remove, blocked }) => <OnlyDownloadedByReporter remove={remove} blocked={blocked} />,
   onlyTreatmentRequired: ({ remove, blocked }) => <OnlyTreatmentRequired remove={remove} blocked={blocked} />,
   showDecommissionedDevices: ({ remove, blocked }) => <ShowDecommissionedDevices remove={remove} blocked={blocked} />,
+  onlyUnreconciled: ({ remove, blocked }) => <OnlyUnreconciled remove={remove} blocked={blocked} />,
   revoked: ({ revoked, remove, blocked }) => <Revoked revoked={revoked} remove={remove} blocked={blocked} />,
   assayOverride: () => null,
   singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
@@ -868,6 +869,16 @@ const OnlyTreatmentRequired = ({ remove, blocked }) => {
     <Btn
       lbl={formatMessage(messages.onlyTreatmentRequired)}
       del={blocked.includes('onlyTreatmentRequired') ? undefined : () => remove(['onlyTreatmentRequired'])}
+    />
+  )
+}
+const OnlyUnreconciled = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.onlyUnreconciled)}
+      del={blocked.includes('onlyUnreconciled') ? undefined : () => remove(['onlyUnreconciled'])}
     />
   )
 }

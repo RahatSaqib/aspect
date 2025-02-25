@@ -1,6 +1,6 @@
 const { stat: dashboardWidgetsBase } = require('../../fixtures/dashboardWidgetsCommon')
 const {
-  stat: { totalModuleBays, activeModuleBays },
+  stat: { totalModuleBays, activeModuleBays, errorRateHomeWidget },
 } = require('../../fixtures/dashboardWidgets')
 
 // This widget is based on the assumption, valid only for Bangladesh,
@@ -28,5 +28,6 @@ module.exports = {
     totalModuleBays,
     activeModuleBays,
     moduleVersionWidget,
+    errorRateHomeWidget,
   },
 }

@@ -109,7 +109,7 @@ SELECT
 CONCAT(
 '{ "personName": "',  person.Name,
 COALESCE(CONCAT('", "personTitle": "', person.Title), ''),
-CASE WHEN role.`Name` IS NOT NULL THEN '", "jobFunctions": [ "' ELSE '",' END, CASE WHEN role.Name = 'National Level' THEN 'Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
+CASE WHEN role.`Name` IS NOT NULL THEN '", "jobFunctions": [ "' ELSE '",' END, CASE WHEN role.Name = 'National Level' THEN 'Super Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
 CASE WHEN role.`Name` IS NOT NULL THEN '" ], ' ELSE '' END, COALESCE(CONCAT('"personEmailAddress": "', person.Email, '", '), ''),
 COALESCE(CONCAT('"personPhone": "', person.Phone, '", '), ''),
 COALESCE(CONCAT('"personCell": "', person.Cell, '", '), ''),

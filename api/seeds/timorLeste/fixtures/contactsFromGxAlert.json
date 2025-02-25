@@ -1,7 +1,7 @@
 [
   {
     "personName": "Timor Leste Administrator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "timor@gxalert.com",
     "username": "timor",
     "timezone": "Tokyo Standard Time",
@@ -12,7 +12,7 @@
   },
   {
     "personName": "Joao Ximenes",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "joaocosta.8625@gmail.com",
     "personPhone": "+670 77065514",
     "username": "Joao Ximenes",
@@ -25,7 +25,7 @@
   {
     "personName": "Endang Soares da Silva",
     "personTitle": "Executive Director",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "Endang",
     "timezone": "Tokyo Standard Time",
     "hidePatientId": false,
@@ -35,7 +35,7 @@
   },
   {
     "personName": "Ian Marr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "Ian_M",
     "timezone": "Tokyo Standard Time",
     "hidePatientId": false,
@@ -46,7 +46,7 @@
   {
     "personName": "Lourenco da Costa Ico",
     "personTitle": "Dr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "enco.dacostaico@menzies.edu.au",
     "personPhone": "+670 +61406184070",
     "username": "Lourencodci",
@@ -59,7 +59,7 @@
   {
     "personName": "Lourenco da Costa Ico",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "lico@css.edu",
     "personCell": "+67077248491",
     "timezone": "Tokyo Standard Time",
@@ -70,7 +70,7 @@
   },
   {
     "personName": "Ismael Barreto",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personPhone": "+670 78113000",
     "personCell": "+670 78113000",
     "username": "Ismael",
@@ -233,7 +233,7 @@
   },
   {
     "personName": "Samuel Amadeu",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personPhone": "+670 74253655",
     "personCell": "+670 74253655",
     "username": "Samuel",
@@ -246,7 +246,7 @@
   {
     "personName": "NHL Adminitrator",
     "personTitle": "National Health Laboratory",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nhl.rdtl04@gmail.com",
     "username": "nhl.rdtl04@gmail.com",
     "timezone": "Tokyo Standard Time",
@@ -257,7 +257,7 @@
   },
   {
     "personName": "Dr Debashish Kundu",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "Debashish",
     "timezone": "Tokyo Standard Time",
     "hidePatientId": false,
@@ -267,7 +267,7 @@
   },
   {
     "personName": "Helder Maria Pereira",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "heldermariapereira@gmail.com",
     "personPhone": "+670 78295899",
     "personCell": "+67078295899",
@@ -298,7 +298,7 @@
   },
   {
     "personName": "Sonio da Costa",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sonicosta231@yahoo.com",
     "personPhone": "+670 77165612",
     "username": "sonio",
@@ -310,7 +310,7 @@
   },
   {
     "personName": "Antonio Salles",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "salles",
     "timezone": "Tokyo Standard Time",
     "hidePatientId": false,

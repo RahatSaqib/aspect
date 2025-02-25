@@ -27,18 +27,18 @@ async function seed(knex) {
 
   const issueTypeModuleObject = await knex('IssueType').where({ id: issueTypeModule }).first()
   const issueTypeLotObject = await knex('IssueType').where({ id: issueTypeLot }).first()
-  const { jobFunctionAdminId } = await knex('JobFunction')
+  const { jobFunctionSuperAdminId } = await knex('JobFunction')
     .where({
-      externalId: 'admin',
+      externalId: 'superAdmin',
       partnerId,
     })
-    .first('id as jobFunctionAdminId')
+    .first('id as jobFunctionSuperAdminId')
   await upsertNotificationTypes(knex, [
     {
       issueTypeId: issueTypeModuleObject.id,
       messageTypeId: issueTypeModuleObject.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: 'Signal Loss Detected in the Amplification Curve - Module',
       ...auditFields,
@@ -47,7 +47,7 @@ async function seed(knex) {
       issueTypeId: issueTypeLotObject.id,
       messageTypeId: issueTypeLotObject.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: 'Signal Loss Detected in the Amplification Curve - Lot',
       ...auditFields,

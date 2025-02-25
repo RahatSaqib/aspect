@@ -3,8 +3,8 @@ const { assert, expect } = require('chai')
 const { mergeJobFunctions } = require('../../seeds/fixtures/jobFunctionBase')
 
 describe('Seed helpers unit functions', () => {
-  const admin = {
-    name: 'admin',
+  const superAdmin = {
+    name: 'Super Admin',
     permissions: [
       { module: 'account', activity: 'view' },
       { module: 'device', activity: 'view' },
@@ -14,8 +14,8 @@ describe('Seed helpers unit functions', () => {
       { module: 'task', activity: 'view' },
     ],
   }
-  const admin2 = {
-    name: 'admin',
+  const superAdmin2 = {
+    name: 'Super Admin',
     permissions: [
       { module: 'account', activity: 'edit' },
       { module: 'report', activity: 'edit' },
@@ -25,12 +25,16 @@ describe('Seed helpers unit functions', () => {
 
   describe('jobFunctions Helpers', () => {
     it('Should throw exception for trying to merge 2 different jobFunctions', () => {
-      expect(() => mergeJobFunctions(admin, { name: 'otherName' })).to.throw('The jobfunction names should be equals')
-      expect(() => mergeJobFunctions({ name: 'otherName' }, admin)).to.throw('The jobfunction names should be equals')
+      expect(() => mergeJobFunctions(superAdmin, { name: 'otherName' })).to.throw(
+        'The jobfunction names should be equals'
+      )
+      expect(() => mergeJobFunctions({ name: 'otherName' }, superAdmin)).to.throw(
+        'The jobfunction names should be equals'
+      )
     })
     it('Should merge 2 different jobFunctions with the same name', () => {
-      assert.deepEqual(mergeJobFunctions(admin, admin2), {
-        name: 'admin',
+      assert.deepEqual(mergeJobFunctions(superAdmin, superAdmin2), {
+        name: 'Super Admin',
         permissions: [
           { module: 'account', activity: 'edit' },
           { module: 'device', activity: 'view' },
@@ -182,7 +186,7 @@ describe('Seed helpers unit functions', () => {
         }
       )
       assert.deepEqual(
-        mergeJobFunctions(admin, {
+        mergeJobFunctions(superAdmin, {
           permissions: [
             {
               module: 'assay',
@@ -191,7 +195,7 @@ describe('Seed helpers unit functions', () => {
           ],
         }),
         {
-          name: 'admin',
+          name: 'Super Admin',
           permissions: [
             { module: 'account', activity: 'view' },
             {

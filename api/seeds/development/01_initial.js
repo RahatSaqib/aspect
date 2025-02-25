@@ -4898,11 +4898,11 @@ async function seed(knex) {
   // Job Functions with permissions
 
   // crate jobs for users
-  const [jobFunctionIdAdmin] = await knex('JobFunction')
-    .where({ partnerId: partnerOneId, externalId: 'admin' })
+  const [jobFunctionIdSuperAdmin] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'superAdmin' })
     .pluck('id')
-  const [jobFunctionIdManager] = await knex('JobFunction')
-    .where({ partnerId: partnerOneId, externalId: 'manager' })
+  const [jobFunctionIdRegionalAdmin] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'regionalAdmin' })
     .pluck('id')
   const [jobFunctionIdClinician] = await knex('JobFunction')
     .where({ partnerId: partnerOneId, externalId: 'clinician' })
@@ -4927,15 +4927,19 @@ async function seed(knex) {
   const siteSample = _.sample(sitesWithResults)
   // Constrain jobs by context
   await knex('JobContext').insert([
-    { personId: personIds.admin, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
-    { personId: personIds.admin_us, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+    { personId: personIds.admin, jobFunctionId: jobFunctionIdSuperAdmin, geographyId: countries.US.geographyId },
+    { personId: personIds.admin_us, jobFunctionId: jobFunctionIdSuperAdmin, geographyId: countries.US.geographyId },
     { personId: personIds.jason, jobFunctionId: jobFunctionIdPartnerTwo, geographyId: countries.US.geographyId },
-    { personId: personIds.sam, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.NG.geographyId },
-    { personId: personIds.ed, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.geographyId },
+    { personId: personIds.sam, jobFunctionId: jobFunctionIdSuperAdmin, geographyId: countries.NG.geographyId },
+    { personId: personIds.ed, jobFunctionId: jobFunctionIdRegionalAdmin, geographyId: countries.US.geographyId },
     { personId: personIds.jim, jobFunctionId: jobFunctionIdPartnerTwo, geographyId: countries.US.geographyId },
     { personId: personIds.jon, jobFunctionId: jobFunctionIdClinician, geographyId: countries.US.geographyId },
     { personId: personIds.steve, jobFunctionId: jobFunctionIdClinician, geographyId: countries.US.geographyId },
-    { personId: personIds.bob, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.states.OH.geographyId },
+    {
+      personId: personIds.bob,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
+      geographyId: countries.US.states.OH.geographyId,
+    },
     {
       personId: personIds.clinician_us,
       jobFunctionId: jobFunctionIdClinician,

@@ -1,5 +1,5 @@
 const {
-  admin,
+  superAdmin,
   clinician,
   labUser,
   regionalOfficer,
@@ -11,10 +11,83 @@ const {
   mergeJobFunctions,
   technician,
   aspectBeta,
+  regionalAdmin,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  mergeJobFunctions(admin, {
+  mergeJobFunctions(superAdmin, {
+    permissions: [
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'person',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'site',
+        activity: 'edit',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'issue',
+        activity: 'edit',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'edit',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'edit',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(regionalAdmin, {
     permissions: [
       {
         module: 'assay',

@@ -2,7 +2,7 @@
   {
     "personName": "pmoscibrodzki@systemone.id",
     "personTitle": "Miss",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "",
     "username": "pmoscibrodzki@systemone.id",
     "timezone": "SE Asia Standard Time",
@@ -14,7 +14,7 @@
   },
   {
     "personName": "Nhan Nguyen",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nhannth80@gmail.com",
     "personPhone": "+84 936085852",
     "personCell": "+84936397638",
@@ -95,7 +95,7 @@
   {
     "personName": "Cuong Nguyen",
     "personTitle": "Admin",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "Cuong@fhi360.org",
     "personCell": "+84 912 608 700",
     "username": "Cuong@fhi360.org",
@@ -476,7 +476,7 @@
   },
   {
     "personName": "Thunghiem",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "thunghiem",
     "timezone": "SE Asia Standard Time",
     "hidePatientId": true,
@@ -487,7 +487,7 @@
   },
   {
     "personName": "Trinh-Da Nang",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "viettrinhlpdn@gmail.com",
     "username": "viettrinh",
     "timezone": "SE Asia Standard Time",
@@ -575,7 +575,7 @@
   },
   {
     "personName": "NGUYỄN THỊ KIM THANH",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nkthanh87@gmail.com",
     "personCell": "+84988099722",
     "username": "gxsinhpham",
@@ -589,7 +589,7 @@
   {
     "personName": "Nguyễn Văn Hưng",
     "personTitle": "Dr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "timezone": "SE Asia Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -599,7 +599,7 @@
   },
   {
     "personName": "Nguyen Van Hung",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hungmtb75@gmail.com",
     "personPhone": "0983060995",
     "personCell": "+84123456789",
@@ -814,7 +814,7 @@
   },
   {
     "personName": "Lê Văn Định",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dinh@smallnet.com.vn",
     "personPhone": "+84 986998277",
     "personCell": "+84 986998277",
@@ -829,7 +829,7 @@
   {
     "personName": "Khiếu Thị Thúy Ngọc",
     "personTitle": "Mrs",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "khieungoc@gmail.com",
     "personPhone": "+84 912785580",
     "personCell": "+84 912785580",
@@ -5842,7 +5842,7 @@
   {
     "personName": "Khieu Thi Thuy Ngoc",
     "personTitle": "National Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "khieungoc@gmail.com",
     "username": "Khieungoc",
     "timezone": "SE Asia Standard Time",
@@ -6355,7 +6355,7 @@
   },
   {
     "personName": "Nhóm PMDT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personPhone": "+84 986329468",
     "personCell": "+84 986329468",
     "username": "gxpmdt",
@@ -6486,7 +6486,7 @@
   },
   {
     "personName": "Nguyen Van Hung",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "hungmtb75@gmail.com",
     "personCell": "+84 983060995",
     "username": "hungmtb75@gmail.com",
@@ -6847,7 +6847,7 @@
   {
     "personName": "Nguyễn Viết Nhung",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "vietnhung@yahoo.com",
     "username": "vietnhung@yahoo.com",
     "timezone": "SE Asia Standard Time",
@@ -6860,7 +6860,7 @@
   {
     "personName": "Nguyễn Bình Hòa",
     "personTitle": "Nguyễn Bình Hòa",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nguyenbinhhoatb@yahoo.com",
     "username": "nguyenbinhhoatb@yahoo.com",
     "timezone": "SE Asia Standard Time",
@@ -6889,7 +6889,7 @@
   {
     "personName": "Đỗ Hoàng Nam",
     "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dohoangnam.no1@gmail.com",
     "username": "dohoangnam.no1@gmail.com",
     "timezone": "SE Asia Standard Time",

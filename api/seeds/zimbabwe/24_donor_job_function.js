@@ -31,12 +31,13 @@ async function seed(knex) {
   // --- Give admin access to notifications
   // --- ----------------------
   const modules = await getPermissionModules(knex)
-  await upsertJobFunction(knex, 'Admin', partnerId, [modules.notification.edit])
+  await upsertJobFunction(knex, 'Super Admin', partnerId, [modules.notification.edit])
 
   // --- ----------------------
   // --- Give all except donor and device maker access to task list
   // --- ----------------------
-  await Promise.each(['Admin', 'Regional Officer', 'Lab User', 'NTP', 'Technician', 'Clinician'], async jobFunction =>
-    upsertJobFunction(knex, jobFunction, partnerId, [modules.task.view, modules.taskMenu.view])
+  await Promise.each(
+    ['Super Admin', 'Regional Officer', 'Lab User', 'NTP', 'Technician', 'Clinician'],
+    async jobFunction => upsertJobFunction(knex, jobFunction, partnerId, [modules.task.view, modules.taskMenu.view])
   )
 }

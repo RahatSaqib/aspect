@@ -6,7 +6,7 @@ module.exports = {
     externalId: 'partnerOne',
   },
   partnerAbbreviation: 'US',
-  jobFunctionsToNotify: ['admin'],
+  jobFunctionsToNotify: ['superAdmin'],
   plugin: '',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,

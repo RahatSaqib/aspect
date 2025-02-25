@@ -120,15 +120,15 @@ describe('Issue based Notifications triggers', () => {
   })
   describe('Filter by Person', () => {
     let adminId
-    let managerId
+    let regionalAdminId
 
     beforeEach(async () => {
       ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
 
-      const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
-      ;[managerId] = await knex('Person').where({ email: config.manager.email }).pluck('id')
+      const [regionalAdminJobFunctionId] = await knex('JobFunction').where({ externalId: 'regionalAdmin' }).pluck('id')
+      ;[regionalAdminId] = await knex('Person').where({ email: config.manager.email }).pluck('id')
 
-      const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
+      const [superAdminJobFunctionId] = await knex('JobFunction').where({ externalId: 'superAdmin' }).pluck('id')
 
       // Notify to the person called "Admin" - Send notification
       // Notify to a person assigned to the job function "Manager" - Send notification
@@ -137,7 +137,7 @@ describe('Issue based Notifications triggers', () => {
       const filterConditions = {
         ..._.omit(filterConditionWithJfForDevice, 'jobFunctions'),
         persons: [{ personId: adminId }],
-        jobFunctions: [{ jobFunctionId: managerJobFunctionId }, { jobFunctionId: adminJobFunctionId }],
+        jobFunctions: [{ jobFunctionId: regionalAdminJobFunctionId }, { jobFunctionId: superAdminJobFunctionId }],
       }
       await createTestContext(filterConditions)
     })
@@ -151,7 +151,7 @@ describe('Issue based Notifications triggers', () => {
         .where({ issueId: insertedIssueId, notificationTypeId: insertedNotificationTypeId })
         .distinct('issueId', 'notificationTypeId', 'personId')
       const notificationToPerson = notifications.filter(n => n.personId === adminId)
-      const notificationToJobFunction = notifications.filter(n => n.personId === managerId)
+      const notificationToJobFunction = notifications.filter(n => n.personId === regionalAdminId)
       assert.isNotEmpty(notificationToPerson)
       assert.isNotEmpty(notificationToJobFunction)
       assert.equal(notifications.length, 2)

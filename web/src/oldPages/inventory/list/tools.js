@@ -19,6 +19,12 @@ export function getColumns(intl, options) {
       tooltip: intl.formatMessage(messages.quantityOnHandDescription),
     },
     {
+      key: 'unreconciledQuantity',
+      label: intl.formatMessage(messages.unreconciledQuantity),
+      tooltip: intl.formatMessage(messages.unreconciledQuantityDescription),
+      isHidden: options.breakOutByLot,
+    },
+    {
       key: 'dailyConsumptionRate',
       label: intl.formatMessage(messages.dailyConsumptionRate),
       sortable: true,
