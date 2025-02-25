@@ -81,7 +81,10 @@ async function seed(knex) {
     }
   )
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').where({ partnerId }).first('id')
+  const { id: jobFunctionIdSuperAdmin } = await knex('JobFunction')
+    .where('name', 'Super Admin')
+    .where({ partnerId })
+    .first('id')
 
   const { id: jobFunctionIdClinician } = await knex('JobFunction')
     .where('name', 'Clinician')
@@ -332,7 +335,7 @@ async function seed(knex) {
   await addDefaultCustomFieldDefinitions(knex, partnerId)
   await Promise.each(statWidgets, async elem =>
     knex('JobFunctionDashboardWidget').insert([
-      { jobFunctionId: jobFunctionIdAdmin, widgetId: elem.widgetId },
+      { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: elem.widgetId },
       { jobFunctionId: jobFunctionIdClinician, widgetId: elem.widgetId },
     ])
   )

@@ -32,18 +32,18 @@ async function seed(knex) {
     .where({ id: issueTypeModule })
     .first()
   const failedToVerifyValidBackgroundErrorForAnalyteLot = await knex('IssueType').where({ id: issueTypeLot }).first()
-  const { jobFunctionAdminId } = await knex('JobFunction')
+  const { jobFunctionSuperAdminId } = await knex('JobFunction')
     .where({
-      externalId: 'admin',
+      externalId: 'superAdmin',
       partnerId,
     })
-    .first('id as jobFunctionAdminId')
+    .first('id as jobFunctionSuperAdminId')
   await upsertNotificationTypes(knex, [
     {
       issueTypeId: failedToVerifyValidBackgroundErrorForAnalyteModule.id,
       messageTypeId: failedToVerifyValidBackgroundErrorForAnalyteModule.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: 'Probe Check Background Error For Analyte Failed - Module',
       ...auditFields,
@@ -52,7 +52,7 @@ async function seed(knex) {
       issueTypeId: failedToVerifyValidBackgroundErrorForAnalyteLot.id,
       messageTypeId: failedToVerifyValidBackgroundErrorForAnalyteLot.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: 'Probe Check Background Error For Analyte Failed - Lot',
       ...auditFields,

@@ -1,4 +1,11 @@
-let { admin, clinician, labUser, regionalOfficer, technician } = require('../../fixtures/jobFunctionBase')
+let {
+  superAdmin,
+  clinician,
+  labUser,
+  regionalOfficer,
+  technician,
+  regionalAdmin,
+} = require('../../fixtures/jobFunctionBase')
 const { aspectBeta, mergeJobFunctions } = require('../../fixtures/jobFunctionBase')
 
 const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
@@ -13,7 +20,8 @@ const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
 })
 
 /* Temporarily disabling  */
-admin = removeInventoryPermissions(admin)
+superAdmin = removeInventoryPermissions(superAdmin)
+regionalAdmin = removeInventoryPermissions(regionalAdmin)
 clinician = removeInventoryPermissions(clinician)
 labUser = removeInventoryPermissions(labUser)
 regionalOfficer = removeInventoryPermissions(regionalOfficer)
@@ -24,7 +32,7 @@ function removeInventoryPermissions(jobFunction) {
 }
 
 module.exports = [
-  mergeJobFunctions(admin, {
+  mergeJobFunctions(superAdmin, {
     permissions: [
       {
         module: 'assay',
@@ -106,9 +114,98 @@ module.exports = [
         module: 'dashboard-v2',
         activity: 'view',
       },
+    ],
+    reports: [
+      'xdr_devices_summary',
+      'device_summary_report',
+      'pk_xpert_site_detailed_report',
+      'pk_xpert_site_summary_site_wise_report',
+      'unreconciled_inventory_report',
+      'pk_xpert_workload_summary_report',
+      'pk_annual_utilization_rates',
+    ],
+  }),
+  mergeJobFunctions(regionalAdmin, {
+    permissions: [
       {
-        module: 'admin',
+        module: 'assay',
         activity: 'edit',
+      },
+      {
+        module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'person',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'site',
+        activity: 'edit',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'issue',
+        activity: 'edit',
+      },
+      {
+        module: 'task',
+        activity: 'edit',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'edit',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'router',
+        activity: 'view',
+      },
+      {
+        module: 'dashboard-v2',
+        activity: 'view',
       },
     ],
     reports: [

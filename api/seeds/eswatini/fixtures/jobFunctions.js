@@ -1,5 +1,5 @@
 const {
-  admin,
+  superAdmin,
   regionalOfficer,
   labUser,
   clinician,
@@ -7,13 +7,15 @@ const {
   technician,
   countryReportsDecorator,
   aspectBeta,
+  regionalAdmin,
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
 const countryReports = Object.values(reports).map(report => report.externalId)
 
 module.exports = [
-  countryReportsDecorator(admin, countryReports),
+  countryReportsDecorator(superAdmin, countryReports),
+  countryReportsDecorator(regionalAdmin, countryReports),
   countryReportsDecorator(regionalOfficer, countryReports),
   countryReportsDecorator(labUser, countryReports),
   countryReportsDecorator(clinician, countryReports),

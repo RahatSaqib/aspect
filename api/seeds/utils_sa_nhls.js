@@ -171,7 +171,9 @@ async function seedNotifications(knex, { partnerId }) {
     issueCategoryId: issueCategoryDataHealthId,
   })
 
-  const { id: adminJobFunctionId } = await knex('JobFunction').where({ name: 'Admin', partnerId }).first('id')
+  const { id: superAdminJobFunctionId } = await knex('JobFunction')
+    .where({ name: 'Super Admin', partnerId })
+    .first('id')
   const { id: regionalOfficerJobFunctionId } = await knex('JobFunction')
     .where({ name: 'Regional Officer', partnerId })
     .first('id')
@@ -239,7 +241,7 @@ async function seedNotifications(knex, { partnerId }) {
     name: 'Admin Positive Result Data Entered',
     partnerId,
     issueTypeId: issueTypeResultDataEnteredId,
-    jobFunctionId: adminJobFunctionId,
+    jobFunctionId: superAdminJobFunctionId,
     level: 2,
     canAcknowledge: 0,
     messageTypeId: positiveResultDataEnteredMessageTypeId,

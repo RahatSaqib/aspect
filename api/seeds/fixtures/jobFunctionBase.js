@@ -1,7 +1,7 @@
 const _ = require('lodash')
 
-const admin = {
-  name: 'Admin',
+const superAdmin = {
+  name: 'Super Admin',
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
@@ -34,6 +34,10 @@ const admin = {
     'unused_modules_report',
   ],
   permissions: [
+    {
+      module: 'admin',
+      activity: 'edit',
+    },
     {
       module: 'assay',
       activity: 'view',
@@ -133,93 +137,10 @@ const admin = {
   ],
 }
 
-const manager = {
-  name: 'Manager',
-  reports: [
-    'mtb_detected_rr_detected',
-    'critical_errors_by_device',
-    'critical_errors_by_module',
-    'unreconciled_inventory_report',
-    'rif_resistance_rate',
-    'results_hiv_not_suppressed',
-    'device_calibration_report',
-    'device_activity',
-    'device_utilization',
-    'device_activity_percent',
-    'genxpert_tb_workload_report',
-    'module_swaps',
-    'all_results',
-    'data_extract',
-    'error_rate',
-    'device_utilization_per_day',
-    'module_activity_report',
-    'do_not_use_modules_report',
-    'report_custom_fields_completion',
-    'tb_workload_summary',
-    'xdr_devices_summary',
-    'usage_statistics_report',
-    'device_and_site_summary_report',
-    'no_stock',
-    'result_notifications',
-  ],
-  permissions: [
-    {
-      module: 'dashboard',
-      activity: 'view',
-    },
-    {
-      module: 'account',
-      activity: 'edit',
-    },
-    {
-      module: 'case',
-      activity: 'edit',
-    },
-    {
-      module: 'device',
-      activity: 'admin',
-    },
-    {
-      module: 'person',
-      activity: 'edit',
-    },
-    {
-      module: 'reporter',
-      activity: 'edit',
-    },
-    {
-      module: 'site',
-      activity: 'edit',
-    },
-    {
-      module: 'dashboard',
-      activity: 'summary',
-    },
-    {
-      module: 'dashboard',
-      activity: 'view',
-    },
-    {
-      module: 'assay',
-      activity: 'view',
-    },
-    {
-      module: 'router',
-      activity: 'view',
-    },
-    {
-      module: 'result',
-      activity: 'edit',
-    },
-    {
-      module: 'dashboard',
-      activity: 'inventory',
-    },
-    {
-      module: 'inventory',
-      activity: 'edit',
-    },
-  ],
+const regionalAdmin = {
+  name: 'Regional Admin',
+  reports: superAdmin.reports,
+  permissions: superAdmin.permissions.filter(permission => permission.module !== 'admin'),
 }
 
 const regionalOfficer = {
@@ -1238,7 +1159,7 @@ const dataViewer = {
 }
 
 const systemOne = {
-  ...admin,
+  ...superAdmin,
   name: 'SystemOne',
 }
 
@@ -1296,7 +1217,7 @@ const labAdmin = {
 }
 
 const aspectBeta = {
-  ...admin,
+  ...superAdmin,
   name: 'Aspect Beta',
   permissions: [
     {
@@ -1341,7 +1262,7 @@ const countryReportsDecorator = (jobFunction = {}, countryReports) => ({
 })
 
 module.exports = {
-  admin,
+  superAdmin,
   regionalOfficer,
   labUser,
   clinician,
@@ -1349,7 +1270,7 @@ module.exports = {
   ntp,
   technician,
   donor,
-  manager,
+  regionalAdmin,
   resultViewerNo,
   resultViewerYes,
   remoteHealthWorker,

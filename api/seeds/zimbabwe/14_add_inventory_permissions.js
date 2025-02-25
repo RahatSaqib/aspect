@@ -10,7 +10,7 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
   const jobFunctions = await knex('JobFunction').where({ partnerId }).select()
   await Promise.each(jobFunctions, async jobFunction => {
-    if (['admin', 'regionalOfficer', 'labUser'].includes(jobFunction.externalId)) {
+    if (['superAdmin', 'regionalOfficer', 'labUser'].includes(jobFunction.externalId)) {
       await upsertJobFunctionPermission(knex, jobFunction.id, [modules.inventory.edit])
     } else {
       await upsertJobFunctionPermission(knex, jobFunction.id, [modules.inventory.view])

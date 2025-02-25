@@ -15,7 +15,7 @@
   {
     "personName": "Tumiso Mutumba",
     "personTitle": "National IT Administrator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "tumrez@yahoo.co.uk",
     "personCell": "+268 78448808",
     "username": "tumrez",
@@ -29,7 +29,7 @@
   {
     "personName": "SystemOne Support",
     "personTitle": "GxAlert Support",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "SystemOne",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
@@ -65,7 +65,7 @@
   {
     "personName": "tafuma zanamwe",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "tz2327@cumc.columbia.edu",
     "personCell": "+26876646399",
     "username": "tafuma",
@@ -130,7 +130,7 @@
   {
     "personName": "Brad Cunningham",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "bcunningham@systemone.co",
     "personCell": "+26827834503052",
     "username": "bcunningham",
@@ -171,7 +171,7 @@
   {
     "personName": "Busizwe Sibandze",
     "personTitle": "DRS Lab Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sibandzedoctor@gmail.com",
     "personCell": "+26878062052",
     "username": "Busizwe",
@@ -185,7 +185,7 @@
   {
     "personName": "Patrick Muyaya",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "patrickmmuyaya@yahoo.fr",
     "personCell": "+26876766979",
     "username": "PatrickM",
@@ -240,7 +240,7 @@
   {
     "personName": "Thando Clinton Mabuza",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mabuzat@ntcp.org.sz",
     "personCell": "+26878062605",
     "username": "tmabuza",
@@ -307,7 +307,7 @@
   },
   {
     "personName": "Sanele Masuku",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sanele.masuku@live.co.za",
     "personPhone": "+268 25057951",
     "personCell": "+268 76046665",
@@ -404,7 +404,7 @@
   {
     "personName": "Pinky Kubheka",
     "personTitle": "Gene Xpert Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "pinky_kubheka@yahoo.com",
     "personCell": "+268 76082151",
     "username": "misskay",
@@ -477,7 +477,7 @@
   {
     "personName": "Sylvester Moyo",
     "personTitle": "Laboratory Systems Associate",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "smoyo@clintonhealthaccess.org",
     "personPhone": "+268 76706982",
     "username": "SylvesterM",
@@ -491,7 +491,7 @@
   {
     "personName": "Derrick TB Khumalo",
     "personTitle": "National TB Lab Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "derricktbkhumalo@yahoo.com",
     "personPhone": "+268 202 4042190",
     "personCell": "+268 76257423",
@@ -506,7 +506,7 @@
   {
     "personName": "Sindisiwe Dlamini",
     "personTitle": "Chief Medical Laboratory Technologist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sindydlamini36@yahoo.com",
     "personPhone": "+268 24042190",
     "personCell": "+268 76046747",
@@ -642,7 +642,7 @@
   },
   {
     "personName": "SystemOne Inventory",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "inventoryapi",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
@@ -880,7 +880,7 @@
   {
     "personName": "Maswati Simelane",
     "personTitle": "DRS Data Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "simelanemaswati86@gmail.com",
     "personCell": "+268 76124423",
     "username": "msimelane",
@@ -938,7 +938,7 @@
   {
     "personName": "Vuli Dlamini",
     "personTitle": "Issuing Clerk",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dlaminivulindlela@yahoo.com",
     "personCell": "+268 76373696",
     "username": "dlaminivulindlela",
@@ -1086,7 +1086,7 @@
   {
     "personName": "Nompumelelo Mzizi",
     "personTitle": "National TB Focal Person",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nompumelelomzizi@yahoo.com",
     "personCell": "+268 78196491",
     "username": "nompumelelomzizi@yahoo.com",
@@ -1100,7 +1100,7 @@
   {
     "personName": "Bongani Brian Dlamini",
     "personTitle": "TB PS Field Laboratory Supervisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mrbrian.dlamini@gmail.com",
     "personPhone": "+268 78062057",
     "username": "Bongani",
@@ -1348,7 +1348,7 @@
   {
     "personName": "Mangaliso Langa",
     "personTitle": "LIS Coordinator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ml3980@cumc.columbia.edu",
     "personCell": "+268 76471635",
     "username": "Mangaliso",
@@ -1362,7 +1362,7 @@
   {
     "personName": "Mangaliso Langa",
     "personTitle": "LIS co-ordinater",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ml3980@cumc.columbia.edu",
     "personCell": "+268 76471635",
     "username": "mlanga",
@@ -1488,7 +1488,7 @@
   {
     "personName": "Ntombizile Dlamini",
     "personTitle": "Research Officer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personCell": "+268 78169553",
     "username": "Ntombizile",
     "timezone": "South Africa Standard Time",
@@ -1661,7 +1661,7 @@
   {
     "personName": "Mzwandile Vilakati",
     "personTitle": "IHM Developer (CMIS)",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mzwandilevilakati@ihmafrica.org",
     "username": "vilakatim",
     "timezone": "South Africa Standard Time",
@@ -1674,7 +1674,7 @@
   {
     "personName": "Dumile Sibandze",
     "personTitle": "Principal Technologist - Quality",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dumilesibandze@yahoo.com",
     "personPhone": "+268 76144933",
     "personCell": "+268 76144933",
@@ -1862,7 +1862,7 @@
   {
     "personName": "Goodwill Matsebula",
     "personTitle": "Lab Focal Person",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "matsebulagood@gmail.com",
     "personCell": "+268 79062598",
     "username": "matsebulag",
@@ -2382,7 +2382,7 @@
   {
     "personName": "THULANI JELE",
     "personTitle": "MR",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "THUJELE@GMAIL.COM",
     "personCell": "+268 79062573",
     "username": "JELET",

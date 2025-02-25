@@ -3,7 +3,7 @@
     "personName": "Country Admin",
     "personTitle": "Country Admin",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "gxalert.ntp.mm@gmail.com",
     "personCell": "+95 9953041365",
@@ -21,7 +21,7 @@
     "personName": "Dr. Si Thu Aung",
     "personTitle": "Program Manager",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "dr.sithuaung.ntp@gmail.com",
     "personPhone": "+95 95188751",
@@ -39,7 +39,7 @@
     "personName": "NTRL",
     "personTitle": "National TB Reference Lab",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personPhone": "+95 01647706",
     "username": "NTRL",
@@ -56,7 +56,7 @@
     "personName": "Dr. Tin Tin Mar",
     "personTitle": "Microbiologist",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "tintinmar189@gmail.com",
     "personCell": "+95 95155437",
@@ -927,7 +927,7 @@
     "personName": "Dr. Thyn Lei Swe",
     "personTitle": "Senior Consultant Microbiologist",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "thynleiswe@gmail.com",
     "personCell": "+9595175218",
@@ -1063,7 +1063,7 @@
     "personName": "Dr. Aung Kaung Khant",
     "personTitle": "Medical Officer (Central NTP)",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "dr.aungkaungkhant@gmail.com",
     "personPhone": "+95 9796149417",
@@ -1243,7 +1243,7 @@
     "personName": "Dr. Moe Hnin Phyu",
     "personTitle": "MO (NTP), Country Focal",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "dr.moehninphyu.mhp@gmail.com",
     "personCell": "+95 9402586265",
@@ -2094,7 +2094,7 @@
     "personName": "Dr. Aye Thida",
     "personTitle": "National Technical Officer",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "ayethida0612@gmail.com",
     "personCell": "+95 95007308",
@@ -3522,7 +3522,7 @@
     "personName": "Dr. Cho Cho San",
     "personTitle": "Deputy Director (NTP)",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "drchochosanmph@gmail.com",
     "personPhone": "+95 9 4207052258",
@@ -3656,7 +3656,7 @@
     "personName": "Zayar Win",
     "personTitle": "Engineer (WHO)",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "zayarwin2015@gmail.com",
     "personCell": "+959450044434",
@@ -4145,7 +4145,7 @@
     "personName": "Dr.Wint Wint Nyunt",
     "personTitle": "Senior Consultant Microbiologist",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "wintwintnyunt@gmail.com",
     "personCell": "+95973199658",
@@ -4773,7 +4773,7 @@
     "personName": "Yar Yar Htun",
     "personTitle": "HA (NTP_Central)",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "yaryarhtun181198@gmail.com",
     "personCell": "+95 9256529737",
@@ -5037,7 +5037,7 @@
     "personName": "Aye Thida Aung",
     "personTitle": "Laboratory Officer",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "dawayethidaaung@gmail.com",
     "personCell": "+95 9261284431",
@@ -5248,7 +5248,7 @@
     "personName": "Dr. Thet Naing Oo",
     "personTitle": "NTO (eR&R)",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "drthetnaing084@gmail.com",
     "personCell": "+95 943077302",
@@ -5266,7 +5266,7 @@
     "personName": "Dr Thet Zaw Tun",
     "personTitle": "NTO",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "n.thetzaw@gmail.com",
     "personPhone": "+95 9458514041",
@@ -5380,7 +5380,7 @@
     "personName": "S1 Admin",
     "personTitle": "Admin",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "username": "s1admin",
     "timezone": "Argentina Standard Time",
@@ -5396,7 +5396,7 @@
     "personName": "imtiaz",
     "personTitle": "Mr",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "imtiaz@gmail.com",
     "personPhone": "+880 01712208209",
@@ -5849,7 +5849,7 @@
     "personName": "U Myat Min Oo",
     "personTitle": "NTO",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "myaoo@who.int",
     "personCell": "+95 9253536157",
@@ -5904,7 +5904,7 @@
     "personName": "Nawazesh Irani",
     "personTitle": "Director - Customer Experience",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "nirani@systemone.co",
     "username": "nawazesh",
@@ -5961,7 +5961,7 @@
     "personName": "Dr. Kyaw Kan Kaung",
     "personTitle": "Deputy Director General",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "kyawkankaungmo@gmail.com",
     "username": "kyawkankaungmo@gmail.com",
@@ -5978,7 +5978,7 @@
     "personName": "sayeed",
     "personTitle": "National",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "imtiazchapai@gmail.com",
     "username": "imtiazchapai@gmail.com",
@@ -6309,7 +6309,7 @@
     "personName": "Dr Than Htike Aung",
     "personTitle": "National Technical Officer",
     "jobFunctions": [
-      "Admin"
+      "Super Admin"
     ],
     "personEmailAddress": "thaung@who.int",
     "personPhone": "+95 9899899901",

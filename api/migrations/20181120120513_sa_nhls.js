@@ -66,7 +66,7 @@ async function down(knex) {
   })
 
   const adminJobFunctionPerPartner = await knex('JobFunction')
-    .where('name', 'Admin')
+    .where('name', 'Super Admin')
     .groupBy('name', 'partnerId')
     .select('id', 'partnerId')
 

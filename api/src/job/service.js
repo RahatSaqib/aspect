@@ -735,9 +735,9 @@ async function removePersonAssignment(request) {
 function getRoleLevel(creatorRoles, personRole) {
   // Object mapping roles to their respective levels
   const roleLevels = {
-    Admin: 5,
+    'Super Admin': 5,
     SystemOne: 5,
-    Manager: 4,
+    'Regional Admin': 4,
     'Regional Officer': 3,
     'Lab User': 2,
     Clinician: 2,

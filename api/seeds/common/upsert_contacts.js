@@ -201,7 +201,7 @@ module.exports = async (knex, partnerData, contacts) => {
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
         if (
-          !['Admin', 'Regional Officer'].includes(jobFunctionName) &&
+          !['Super Admin', 'Regional Officer'].includes(jobFunctionName) &&
           !_.isEmpty(person.sites) &&
           person.sites.some(site => !!siteIds[site.shortName || site.name])
         ) {
@@ -251,7 +251,10 @@ module.exports = async (knex, partnerData, contacts) => {
                 .update({ siteId: null })
           )
         }
-        if (['Admin', 'Regional Officer', 'Data Viewer'].includes(jobFunctionName) && !_.isEmpty(person.geographies)) {
+        if (
+          ['Super Admin', 'Regional Officer', 'Data Viewer'].includes(jobFunctionName) &&
+          !_.isEmpty(person.geographies)
+        ) {
           const jobFunctionId = jobFunctions[jobFunctionName]
           const existingJobContexts = await knex('JobContext')
             .whereNotNull('geographyId')

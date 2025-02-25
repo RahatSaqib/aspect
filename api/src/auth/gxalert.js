@@ -148,12 +148,12 @@ async function upsertUser(gxUser, username, password) {
   // items from 'my_aspnet_roles': readonly, write, inventory, service, report
   // items from 'role': deployment, lga, state, national
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
-    jobFunction = allJobFunctions.find(x => x.externalId === 'admin')
+    jobFunction = allJobFunctions.find(x => x.externalId === 'superAdmin')
   }
   if (!jobFunction && (gxUser.role === 'state' || gxUser.role === 'lga')) {
     jobFunction =
       allJobFunctions.find(x => x.externalId === 'regionalOfficer') ||
-      allJobFunctions.find(x => x.externalId === 'manager')
+      allJobFunctions.find(x => x.externalId === 'regionalAdmin')
   }
   if (!jobFunction) {
     jobFunction =

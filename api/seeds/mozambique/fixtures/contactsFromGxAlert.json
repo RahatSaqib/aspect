@@ -1,7 +1,7 @@
 [
   {
     "personName": "SystemOne Developer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "personPhone": "+14133064770",
     "personCell": "+18888452610",
@@ -15,7 +15,7 @@
   },
   {
     "personName": "Chris Macek",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "cmacek@systemone.co",
     "personPhone": "+14135224803",
     "personCell": "+14135224803",
@@ -29,7 +29,7 @@
   },
   {
     "personName": "Jeff Takle",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "Jeff_Takle@abtassoc.com",
     "personCell": "+18572779050",
     "username": "jtakle",
@@ -42,7 +42,7 @@
   },
   {
     "personName": "Admin Administrator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "personCell": "+1 888 845 2610",
     "username": "admin",
@@ -55,7 +55,7 @@
   },
   {
     "personName": "Nicolas Boillot",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nboillot@systemone.id",
     "username": "nboillot",
     "timezone": "Eastern Standard Time",
@@ -68,7 +68,7 @@
   {
     "personName": "Jamie Cowan",
     "personTitle": "Technical Advisor, Health Alliance International",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jcowan22@gmail.com",
     "personCell": "+258 877362279",
     "username": "jcowan",
@@ -81,7 +81,7 @@
   },
   {
     "personName": "Admin Mozambique",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developermz@systemone.co",
     "username": "mozambique",
     "timezone": "South Africa Standard Time",
@@ -219,7 +219,7 @@
   {
     "personName": "Isabel Pinto",
     "personTitle": "Supervisor - DNL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "isadpinto@yahoo.com.br",
     "personCell": "+258 824872180",
     "username": "ipinto",
@@ -233,7 +233,7 @@
   {
     "personName": "Octavia Benzane",
     "personTitle": "Xpert Punto Focal - DNL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "octaviabenzane@gmail.com",
     "personCell": "+258 843325610",
     "username": "obenzane",
@@ -247,7 +247,7 @@
   {
     "personName": "Mickael Breard",
     "personTitle": "Accesor - DNL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mbreard@usaid.gov",
     "personCell": "+258 84 39 24 304",
     "username": "mbreard",
@@ -261,7 +261,7 @@
   {
     "personName": "Ivan Manhica",
     "personTitle": "Supervisor - Programa Nacional do TB",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ivanmca2004@yahoo.com.br",
     "personCell": "+258 82 39 17 970",
     "username": "imanhica",
@@ -275,7 +275,7 @@
   {
     "personName": "Claudia Mutaquiha",
     "personTitle": "Ponto Focal Nacional de TB MR",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "claudia.c.mutaquiha@gmail.com",
     "personCell": "+258 842838218",
     "username": "cmutaquiha",
@@ -289,7 +289,7 @@
   {
     "personName": "Cathy Michel",
     "personTitle": "Country director e TB projecto coordinadora - HAI",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "cathy.michel@healthallianceinternational.org",
     "personCell": "+258 825010720",
     "username": "cmichiel",
@@ -303,7 +303,7 @@
   {
     "personName": "Stephen Gloyd",
     "personTitle": "Technical Assistante projecto do TB - HAI",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "gloyd@u.washington.edu",
     "personCell": "+1 206-227-0165",
     "username": "sgloyd",
@@ -317,7 +317,7 @@
   {
     "personName": "Jacob Creswell",
     "personTitle": "TB REACH Secretariat",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "creswellj@stoptb.who.int",
     "username": "jcreswell",
     "timezone": "South Africa Standard Time",
@@ -330,7 +330,7 @@
   {
     "personName": "Vishnu Vardhan Kamineni",
     "personTitle": "TB REACH M&E Supervisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "vvkamineni@gmail.com",
     "username": "vkamineni",
     "timezone": "South Africa Standard Time",
@@ -343,7 +343,7 @@
   {
     "personName": "Braimoh Bello",
     "personTitle": "TB REACH M&E Supervisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "braimoh.bello@cesar-africa.com",
     "username": "bbello",
     "timezone": "South Africa Standard Time",
@@ -409,7 +409,7 @@
   {
     "personName": "Alberto Teixeira Chongo",
     "personTitle": "Tec. Superior de Laboratorio",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "betotexmex@gmail.com",
     "personCell": "+258 846207620",
     "username": "betotexmex@gmail.com",
@@ -731,7 +731,7 @@
   {
     "personName": "Jose",
     "personTitle": "Gestor Systemone",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "edsoncastiano@yahoo.com.br",
     "personPhone": "+258 841152346",
     "personCell": "+258847382285",
@@ -775,7 +775,7 @@
   {
     "personName": "Caroline de Schacht",
     "personTitle": "Dr.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "caroline.deschacht@healthallianceinternational.org",
     "personCell": "+258 823393460",
     "username": "caroline.deschacht@healthallianceinternational.org",
@@ -810,7 +810,7 @@
   },
   {
     "personName": "test",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -876,7 +876,7 @@
   {
     "personName": "JASON BESTE",
     "personTitle": "HAI TECHNICAL ADVISOR",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "bestej@uw.edu",
     "username": "bestej@uw.edu",
     "timezone": "South Africa Standard Time",
@@ -889,7 +889,7 @@
   {
     "personName": "Miguel Nhumba",
     "personTitle": "Director de Programas HAI",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "miguel.nhumba@healthallianceinternational.org",
     "personPhone": "+258 823165790",
     "personCell": "+258 844801828",
@@ -904,7 +904,7 @@
   {
     "personName": "Elizabeth Coelho",
     "personTitle": "Coodenadora da rede LAB PNCT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "bethhamene@gmail.com",
     "personPhone": "+258 823105710",
     "personCell": "+258 823105710",
@@ -919,7 +919,7 @@
   {
     "personName": "Ivandra Chirrime",
     "personTitle": "M&E Staff",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mchirrime01@gmail.com",
     "personCell": "+258 826050410",
     "username": "mchirrime01@gmail.com",
@@ -1009,7 +1009,7 @@
   },
   {
     "personName": "mztest1",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "mztest1",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
@@ -1513,7 +1513,7 @@
   {
     "personName": "Ruslan Buiucli",
     "personTitle": "Developer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "rbuiucli@gmail.com",
     "username": "rbuiucli",
     "timezone": "Russian Standard Time",
@@ -2470,7 +2470,7 @@
   },
   {
     "personName": "Sofia Viegas",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "somarviegas@gmail.com",
     "personCell": "+258 82 28 89 379",
     "username": "somarviegas@gmail.com",
@@ -4137,7 +4137,7 @@
   {
     "personName": "Dra Benedita",
     "personTitle": "MDR PNCT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personPhone": "+258 820025907",
     "personCell": "+258 820025907",
     "timezone": "South Africa Standard Time",
@@ -4427,7 +4427,7 @@
   {
     "personName": "Benedita Jose",
     "personTitle": "Punto Focal TB-MR",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "beneditajose1@gmail.com",
     "personCell": "+258 820025907",
     "username": "beneditajose1@gmail.com",
@@ -4440,7 +4440,7 @@
   },
   {
     "personName": "Bryan Richards",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "brichards@systemone.id",
     "personCell": "+27833243682",
     "username": "brichards",
@@ -5358,7 +5358,7 @@
   {
     "personName": "David Macheque",
     "personTitle": "Acessor do Programa Nacional de Controlo da Tuberculose-PNCT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "david.macheque@hotmail.com",
     "personCell": "+258847997769",
     "username": "david.macheque@hotmail.com",
@@ -6155,7 +6155,7 @@
   {
     "personName": "Sureia Hassamo",
     "personTitle": "Assessora para Medicamentos do PNCT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "sureia.ugfg@gmail.com",
     "personPhone": "+258 840486758",
     "personCell": "+258 840486758",
@@ -6638,7 +6638,7 @@
   {
     "personName": "Michael Sidney",
     "personTitle": "THL GeneXpert Contract Supervisor",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "michael.sidney@thl.pt",
     "personCell": "+258 84 350 0012",
     "username": "michael.sidney@thl.pt",
@@ -6932,7 +6932,7 @@
   },
   {
     "personName": "Mauro Jaime Filipe Duvane",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mauroduvane@gmail.com",
     "personCell": "+258 840162225",
     "username": "mauroduvane@gmail.com",
@@ -6946,7 +6946,7 @@
   {
     "personName": "Leslie Tembe",
     "personTitle": "THL Technician",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "leslie.tembe@thl.pt",
     "personCell": "+258 84 369 8486",
     "username": "leslie.tembe@thl.pt",
@@ -6960,7 +6960,7 @@
   {
     "personName": "Flavio Faife",
     "personTitle": "CDC Lab GeneXpert contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "vvw7@cdc.gov",
     "personCell": "+258 84 380 2718",
     "username": "vvw7@cdc.gov",
@@ -6974,7 +6974,7 @@
   {
     "personName": "Albertina Munguambe",
     "personTitle": "Psicologa",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "alrmunguambe@gmail.com",
     "personCell": "+258 842560820",
     "username": "alrmunguambe@gmail.com",
@@ -7438,7 +7438,7 @@
   },
   {
     "personName": "Jamie Cowan no PI",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jcowan22@yahoo.com",
     "username": "jcowan22@yahoo.com",
     "timezone": "South Africa Standard Time",
@@ -7884,7 +7884,7 @@
   {
     "personName": "Wildo Eugenio",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "eugenyow@gmail.com",
     "personCell": "+258820090478",
     "username": "eugenyow@gmail.com",
@@ -7912,7 +7912,7 @@
   {
     "personName": "Departamento Central de Laboratorios",
     "personTitle": "Serviço de Laboratorios",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "misaudnamdcl@gmail.com",
     "personCell": "+258 846207620",
     "timezone": "South Africa Standard Time",
@@ -7936,7 +7936,7 @@
   {
     "personName": "Fracisco Mondlate",
     "personTitle": "DCL Geral",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "F10mandlate@outlook.com",
     "personPhone": "+258 846207620",
     "username": "F10mandlate@outlook.com",
@@ -8004,7 +8004,7 @@
   {
     "personName": "Adelia Muela",
     "personTitle": "Estatística",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "amuela07@gmail.com",
     "personPhone": "+258 820811864",
     "personCell": "+258 820811864",
@@ -8019,7 +8019,7 @@
   {
     "personName": "Jorge Jone",
     "personTitle": "Oficial de M&A",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jorge.zacarias.jone@gmail.com",
     "personCell": "+258 846205605",
     "username": "jorge.zacarias.jone@gmail.com",
@@ -8121,7 +8121,7 @@
   {
     "personName": "Crimildo Mucavel",
     "personTitle": "Ponto focal de Genexpert (laboratorio)",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mucavelcrimildo@gmail.com",
     "personPhone": "+258 844168482",
     "personCell": "+258 844168482",
@@ -9219,7 +9219,7 @@
   },
   {
     "personName": "Pereira Zindoga",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "pzindoga@yahoo.com.br",
     "personCell": "+258 843504221",
     "username": "pzindoga@yahoo.com.br",
@@ -9453,7 +9453,7 @@
   {
     "personName": "Frank Chirwa",
     "personTitle": "Mozambique S1 Account Manager",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "fchirwa@systemone.id",
     "username": "fchirwa@systemone.id",
     "timezone": "South Africa Standard Time",
@@ -9862,7 +9862,7 @@
   {
     "personName": "Abdul Nasser",
     "personTitle": "Ponto Focal THL",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "Abdul.nasser@dt-mz.com",
     "personCell": "+258843834258",
     "username": "Abdul.nasser@dt-mz.com",
@@ -10131,7 +10131,7 @@
   {
     "personName": "Durval Respeito",
     "personTitle": "CCS Parceiro Clinico",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "durvalrespeito@gmail.com",
     "personCell": "+258 825613214",
     "username": "durvalrespeito@gmail.com",
@@ -10145,7 +10145,7 @@
   {
     "personName": "Josefa Melo",
     "personTitle": "CCS Parceiro Lab",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "josefamelo@ccsaude.org.mz",
     "personCell": "+258 824055630",
     "username": "josefamelo@ccsaude.org.mz",
@@ -10159,7 +10159,7 @@
   {
     "personName": "Júlia Magaia",
     "personTitle": "CCS Parceiro Clinico",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "juliamagaia@ccsaude.org.mz",
     "personCell": "+258 827543995",
     "username": "juliamagaia@ccsaude.org.mz",
@@ -10377,7 +10377,7 @@
   {
     "personName": "Hanifa Raman",
     "personTitle": "CDC Nacional",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "HRaman@cdc.gov",
     "personCell": "+258 84 316 4680",
     "username": "HRaman@cdc.gov",
@@ -10574,7 +10574,7 @@
   {
     "personName": "Dinis Jaintilal",
     "personTitle": "ASM",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "dinisjaintilal@hotmail.com",
     "personPhone": "+258 844916030",
     "personCell": "+258 844916030",
@@ -10910,7 +10910,7 @@
   },
   {
     "personName": "Tableau Data Jone",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jorge.zacarias.jone@gmail.com",
     "username": "tableau_mz_jo",
     "timezone": "South Africa Standard Time",
@@ -10922,7 +10922,7 @@
   },
   {
     "personName": "Tableau Data Cowan",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jcowan22@gmail.com",
     "username": "tableau_mz_co",
     "timezone": "South Africa Standard Time",
@@ -11138,7 +11138,7 @@
   {
     "personName": "Crimenia Mutemba",
     "personTitle": "PNCT pediatria",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "kikymbate@gmail.com",
     "personCell": "+258 840383200",
     "username": "kikymbate@gmail.com",
@@ -11152,7 +11152,7 @@
   {
     "personName": "chelso julio laquico",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "chelsojulio@gmail.com",
     "personCell": "+1849498760",
     "username": "chelsojulio@gmail.com",
@@ -11471,7 +11471,7 @@
   {
     "personName": "Isabel Pinto",
     "personTitle": "Chefe do Departamento dos Laboratórios",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "isadpinto@yahoo.com.br",
     "personPhone": "+258 848122909",
     "personCell": "+258 824872180",
@@ -11655,7 +11655,7 @@
   {
     "personName": "Victor Lubuku",
     "personTitle": "SystemOne Customer Support",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "username": "vlubuku",
     "timezone": "South Africa Standard Time",
     "hidePatientId": true,
@@ -12179,7 +12179,7 @@
   },
   {
     "personName": "Rogerio Chiau",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "rogerio.chiau@healthallianceinternational.org",
     "personCell": "+258 82 891 6095‬",
     "timezone": "South Africa Standard Time",
@@ -12456,7 +12456,7 @@
   {
     "personName": "Antoniete Mitchell",
     "personTitle": "System One - Business Administrator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "amitchell@systemone.co",
     "personPhone": "+27 812955204",
     "username": "Antoinete Mitchell",
@@ -13423,7 +13423,7 @@
   {
     "personName": "Cesaria Uassiquete",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "edsoncastiano@yahoo.com.br",
     "personCell": "+258828666460",
     "username": "ecastiano@systemone.co",
@@ -13437,7 +13437,7 @@
   {
     "personName": "Augusto Jorge",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "augustojorge013@gmail.com",
     "personCell": "+258862940516",
     "username": "augustojorge013@gmail.com",
@@ -15318,7 +15318,7 @@
   {
     "personName": "Bachir Macuacua",
     "personTitle": "PNCT Banco Mundial",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "bachir.macuacua@gmail.com",
     "personCell": "+258 8401178532",
     "username": "bachir.macuacua@gmail.com",
@@ -15332,7 +15332,7 @@
   {
     "personName": "Carla Madeira",
     "personTitle": "Responsavel LNRT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "carlamariamadeira@hotmail.com",
     "personPhone": "+258 824848150",
     "personCell": "+258 824848150",
@@ -15347,7 +15347,7 @@
   {
     "personName": "Fábio Ponda",
     "personTitle": "Gestor de Dados",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "ponda276@gmail.com",
     "personPhone": "+258 850323728",
     "personCell": "+258 825544178",
@@ -15362,7 +15362,7 @@
   {
     "personName": "Eva Sucá Muxanga",
     "personTitle": "Coordenadora de EQA / LNRT",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "esmuxanga@gmail.com",
     "personCell": "+258 823608904",
     "username": "esmuxanga@gmail.com",
@@ -15652,7 +15652,7 @@
   {
     "personName": "Mario Patala",
     "personTitle": "Gestor Logistico Laboratorial",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "mariopatala@yahoo.com.br",
     "personCell": "+258 843302816",
     "username": "mariopatala@yahoo.com.br",
@@ -18173,7 +18173,7 @@
   },
   {
     "personName": "TB lab I-Tech",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "tblab@itech-mozambique.org",
     "personPhone": "+258 86 85 55 050",
     "personCell": "+258 86 85 55 050",
@@ -18221,7 +18221,7 @@
   {
     "personName": "Jacinto Nhabanga",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "jacintonhabanga23@gmail.com",
     "personCell": "+258846862561",
     "username": "jacintonhabanga23@gmail.com",

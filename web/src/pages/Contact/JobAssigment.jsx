@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
@@ -37,6 +37,7 @@ const JobAssigment = ({ setStep }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const { isLoading, data: assignment } = usePersonAssignment(personId)
+  const [disableConstraints, setDisableConstraints] = useState(true)
 
   const initialValues = {
     jobFunctionId: '',
@@ -56,6 +57,20 @@ const JobAssigment = ({ setStep }) => {
   const validationSchema = object({
     jobFunctionId: string().required(formatMessage(messages.jobRequired)),
   })
+
+  const handleJobFunctionChange = handleChange => {
+    return data => {
+      // Clear all the form except jobFunctionId
+      Object.keys(initialValues)
+        .filter(key => key !== 'jobFunctionId')
+        .forEach(key => {
+          const initialValue = initialValues[key]
+          handleChange({ target: { name: key, value: initialValue } })
+        })
+      // Update jobFunctionId
+      handleChange(data)
+    }
+  }
 
   return (
     <>
@@ -93,9 +108,10 @@ const JobAssigment = ({ setStep }) => {
                         name="jobFunctionId"
                         label={`${formatMessage(messages.job)} *`}
                         value={values.jobFunctionId}
-                        onChange={handleChange}
+                        onChange={handleJobFunctionChange(handleChange)}
                         error={!!errors.jobFunctionId}
                         helperText={errors.jobFunctionId}
+                        setDisableConstraints={setDisableConstraints}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -120,6 +136,7 @@ const JobAssigment = ({ setStep }) => {
                         error={!!errors.stateId}
                         helperText={errors.stateId}
                         countryId={values.countryId}
+                        disabled={disableConstraints}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -132,6 +149,7 @@ const JobAssigment = ({ setStep }) => {
                         error={!!errors.lgaId}
                         helperText={errors.lgaId}
                         stateId={values.stateId}
+                        disabled={disableConstraints}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -145,6 +163,7 @@ const JobAssigment = ({ setStep }) => {
                         helperText={errors.siteId}
                         stateId={values.stateId}
                         lgaId={values.lgaId}
+                        disabled={disableConstraints}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -163,6 +182,7 @@ const JobAssigment = ({ setStep }) => {
                         }}
                         error={!!errors.diseaseId}
                         helperText={errors.diseaseId}
+                        disabled={disableConstraints}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -180,7 +200,7 @@ const JobAssigment = ({ setStep }) => {
                         }}
                         error={!!errors.deviceTypeId}
                         helperText={errors.deviceTypeId}
-                        disabled={values.diseaseId === ''}
+                        disabled={values.diseaseId === '' || disableConstraints}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -198,7 +218,7 @@ const JobAssigment = ({ setStep }) => {
                         error={!!errors.assayTypeId}
                         helperText={errors.assayTypeId}
                         diseaseId={values.diseaseId}
-                        disabled={values.deviceTypeId === ''}
+                        disabled={values.deviceTypeId === '' || disableConstraints}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -212,7 +232,7 @@ const JobAssigment = ({ setStep }) => {
                         helperText={errors.assayId}
                         assayTypeId={values.assayTypeId || ''}
                         deviceTypeId={values.deviceTypeId}
-                        disabled={values.assayTypeId === ''}
+                        disabled={values.assayTypeId === '' || disableConstraints}
                       />
                     </Grid>
                   </Grid>
