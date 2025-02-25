@@ -100,6 +100,12 @@ module.exports = {
       api_secret: process.env['adn.api_secret'] || null,
       url: process.env['adn.url'] || null,
     },
+    termii: {
+      api_key: process.env['termii.api_key'],
+      from: process.env['termii.from'],
+      channel: process.env['termii.channel'],
+      url: process.env['termii.url'],
+    },
   },
   admin: {
     email: process.env['admin.email'],
