@@ -368,6 +368,8 @@ function listResultsBaseConfig() {
         ),
         onlyDownloadedByReporter: Joi.bool().description('Filter for only results downloaded by the Reporter App'),
         treatmentStatusId: Joi.number().allow(null, '').description('Filter for Result Treatment Status ID'),
+        expiresOn: Joi.date().allow(null).description('Expiration date of inventory item'),
+        lotNumber: Joi.number().allow(null, '').description('Lot number of a inventory item'),
         treatmentStatus: Joi.string().allow(null, '').description('Filter for Result Treatment Status by External ID'),
         onlyEverTransferred: Joi.bool().description('Filter for only results that have been ever transferred'),
         jsonFields: Joi.array()
@@ -399,6 +401,9 @@ function listResultsBaseConfig() {
         onlyReportableResults: Joi.boolean()
           .optional()
           .description('It filters only results with no "Invalid", "No result" or "Error" categories'),
+        onlyUnreconciled: Joi.boolean()
+          .optional()
+          .description('It filters only results that has unreconciled inventories'),
         showUnapprovedDevices: Joi.boolean()
           .default(false)
           .description('If true, will include all the results of unapproved devices'),

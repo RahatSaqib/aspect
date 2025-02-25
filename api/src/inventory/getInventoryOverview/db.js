@@ -1,6 +1,6 @@
-const { max, min, subDays, startOfDay, differenceInDays } = require('date-fns')
+const { max, min, subDays, subYears, startOfDay, differenceInDays, parseISO } = require('date-fns')
 const { knex, filterDateRangeParams } = require('../../db')
-
+const { getUnreconciledQuantitiesSubquery } = require('../common/db')
 const { addConstraints } = require('../../auth/constraints')
 
 module.exports = async function (query, constraints) {
@@ -10,8 +10,10 @@ module.exports = async function (query, constraints) {
     query.maxDate = new Date()
   }
   if (!query?.minDate) {
-    query.minDate = sixMonthsBeforeToday
+    query.minDate = startOfDay(subYears(new Date(), 5))
   }
+
+  const { id: consumableId } = await knex('Consumable').where('externalId', query.consumableExternalId).first()
 
   const overviewQuery = knex
     .from(
@@ -19,43 +21,34 @@ module.exports = async function (query, constraints) {
         .from('Site as s')
         .leftJoin('SiteType as stype', 's.siteTypeId', 'stype.id')
         .leftJoin('Geography as g', 's.geographyId', 'g.id')
-        .leftJoin('Country as co', 'g.countryId', 'co.id')
-        .leftJoin('State as st', 'g.stateId', 'st.id')
-        .leftJoin('Lga as l', 'g.lgaId', 'l.id')
         .leftJoin('Result as r', 'r.siteId', 's.id')
         .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
         .leftJoin('Assay as a', 'a.id', 'ca.assayId')
-        .leftJoin('Consumable as c', q =>
-          q.on('c.id', 'ca.consumableId').andOn('c.externalId', knex.raw(`'${query.consumableExternalId}'`))
-        )
+        .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
         .leftJoin('Unit as u', 'c.unit', 'u.id')
-        .where(q =>
-          q
+        .where(r =>
+          r
             .whereNull('r.id')
-            .orWhere(q2 =>
-              q2.modify(
-                filterDateRangeParams,
-                { minDate: min(sixMonthsBeforeToday, query.minDate), maxDate: query.maxDate },
-                'r.endedOn'
-              )
+            .orWhere(r2 =>
+              r2.modify(filterDateRangeParams, { minDate: query.minDate, maxDate: query.maxDate }, 'r.endedOn')
             )
         )
         .modify(addConstraints, constraints, { geography: 'g', site: 's' })
-        .where(q => q.where('c.externalId', query.consumableExternalId).orWhereNull('c.externalId'))
-        .andWhere(q => q.whereIn('stype.externalId', ['warehouse', 'lab']))
+        .where(q => q.where('c.id', consumableId).orWhereNull('c.externalId'))
         .groupBy('s.id', 'c.id')
         .select([
           's.id as id',
           'c.id as consumableId',
+          'ca.assayId as assayId',
           's.name as lab',
-          's.name as warehouse',
           'stype.externalId as type',
+          's.parentWarehouseId as parentWarehouseId',
           knex.raw(
-            'IFNULL(SUM(CASE WHEN r.endedOn >= ? AND r.endedOn <= ? THEN ca.quantity ELSE 0 END),0) as usedLastSixMonths',
+            'IFNULL(SUM(CASE WHEN r.endedOn BETWEEN ? AND ? THEN ca.quantity ELSE 0 END),0) as usedLastSixMonths',
             [sixMonthsBeforeToday.toISOString(), now.toISOString()]
           ),
           knex.raw(
-            'IFNULL(SUM(CASE WHEN r.endedOn >= ? AND r.endedOn <= ? THEN ca.quantity ELSE 0 END),0) as usedInDateRange',
+            'IFNULL(SUM(CASE WHEN r.endedOn BETWEEN ? AND ? THEN ca.quantity ELSE 0 END),0) as usedInDateRange',
             [query.minDate.toISOString(), query.maxDate.toISOString()]
           ),
           // auxiliar fields
@@ -67,13 +60,38 @@ module.exports = async function (query, constraints) {
         ])
         .as('site')
     )
+    .join('ConsumableAssay as ca', 'ca.consumableId', consumableId)
     .leftJoin('InventoryItem as ii', builder => {
-      builder.on('site.id', 'ii.siteId').andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
+      builder
+        .on('site.id', 'ii.siteId')
+        .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
+        .andOn('ii.consumableId', consumableId)
     })
-    .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .where(q => q.where('c.externalId', knex.raw(`'${query.consumableExternalId}'`)).orWhereNull('c.id'))
-    .groupBy('site.id')
-    .select([knex.raw('SUM(IFNULL(ii.quantityOnHand,0)) as quantity'), 'site.*'])
+    .groupBy('site.id', 'site.lab', 'site.type', 'site.geographyId', 'site.countryId', 'site.stateId', 'site.lgaId')
+    .select([
+      knex.raw('SUM(IFNULL(ii.quantityOnHand,0)) as quantity'),
+      'site.id',
+      'site.lab',
+      'site.type',
+      'site.geographyId',
+      'site.countryId',
+      'site.stateId',
+      'site.lgaId',
+      'site.assayId',
+      'site.parentWarehouseId',
+      knex.raw('SUM(IFNULL(site.usedLastSixMonths,0)) as usedLastSixMonths'),
+      knex.raw('SUM(IFNULL(site.usedInDateRange,0)) as usedInDateRange'),
+      knex.raw('MIN(IFNULL(site.firstResultDateInLastSixMonths,0)) as firstResultDateInLastSixMonths'),
+    ])
+
+  // Add unreconciled quantities
+  const unreconciledQuantitiesSubquery = getUnreconciledQuantitiesSubquery('uq')
+
+  overviewQuery
+    .leftJoin(unreconciledQuantitiesSubquery, function () {
+      this.on('site.id', 'uq.siteId').andOn('ca.assayId', 'uq.assayId')
+    })
+    .select('uq.unreconciledQuantity')
 
   const sites = await overviewQuery
 
@@ -83,9 +101,9 @@ module.exports = async function (query, constraints) {
       addDailyConsumptionRateInDateRange(site, query.minDate, query.maxDate)
 
       site.consumptionRateLastSixMonths = site.firstResultDateInLastSixMonths
-        ? +(site.usedLastSixMonths / Math.min(180, differenceInDays(now, site.firstResultDateInLastSixMonths))).toFixed(
-            2
-          )
+        ? +(
+            site.usedLastSixMonths / Math.min(180, differenceInDays(now, parseISO(site.firstResultDateInLastSixMonths)))
+          ).toFixed(2)
         : 0
 
       site.daysOfInventoryLeft = Math.round(site.quantity / site.consumptionRateLastSixMonths)
@@ -110,7 +128,7 @@ function addDailyConsumptionRateInDateRange(site, minDate, maxDate) {
   // * after maxDate => 0
   const daysToDivideResultCount = differenceInDays(
     maxDate,
-    max([minDate, min([site.firstResultDateInLastSixMonths, maxDate])])
+    max([minDate, min([parseISO(site.firstResultDateInLastSixMonths), maxDate])])
   )
   site.dailyConsumptionRate =
     daysToDivideResultCount > 0 ? +(site.usedInDateRange / daysToDivideResultCount).toFixed(2) : 0
