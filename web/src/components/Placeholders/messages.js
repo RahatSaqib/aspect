@@ -123,6 +123,10 @@ const messages = defineMessages({
     id: 'placeholder.result.placeholderCustomFields',
     defaultMessage: `Custom Fields`,
   },
+  placeholderResultDetectedResistances: {
+    id: 'placeholder.result.detected.resistances',
+    defaultMessage: `Result Detected Resistances`,
+  },
   Genderi18nKey: {
     id: 'pages.resultEdit.Genderi18nKey',
     defaultMessage: 'Gender',

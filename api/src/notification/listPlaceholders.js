@@ -204,6 +204,11 @@ module.exports = async function (request) {
           nameI18nKey: 'placeholderResultPersonName',
           name: 'Person',
         },
+        {
+          id: 'result.detected.resistances',
+          nameI18nKey: 'placeholderResultDetectedResistances',
+          name: 'Result Detected Resistances',
+        },
       ],
     },
   ]

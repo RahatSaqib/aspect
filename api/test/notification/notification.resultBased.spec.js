@@ -365,6 +365,91 @@ describe('Result Notifications triggers', () => {
     })
   })
 
+  describe('XDR result detected resistance – placeholder notification test', () => {
+    let smsTemplateId = null
+    let messageTypeId = null
+    let backupResult = null
+    before(async () => {
+      await createTestContext({
+        ...filterConditionWithJf,
+        result: [
+          {
+            assayId: 'GxMtbXdr',
+            resultCategoryId: [
+              {
+                label: 'MTB Detected Drug Resistance Detected',
+                scope: 'ResultCategoryGroups',
+                value: 'GxMtbXdrMtbDetectedXdrDetected',
+              },
+            ],
+          },
+        ],
+        sendSms: true,
+      })
+      ;[smsTemplateId] = await knex('SmsTemplate').insert({
+        message:
+          'result for this patient is {{result.category1.id}}, {{result.category2.id}} to {{result.detected.resistances}}',
+        createdBy: 1,
+        updatedBy: 1,
+        phoneNumber: '{{ person.cell }}',
+      })
+      ;[messageTypeId] = await knex('MessageType').insert({
+        messageSeverityId: 2,
+        alertTemplateId: null,
+        smsTemplateId,
+        webhookTemplateId: null,
+        pushNotificationTemplateId: null,
+      })
+      backupResult = await knex('Result').where('id', insertedResultDetected).first()
+      await knex('Result')
+        .where('id', insertedResultDetected)
+        .update({
+          assayId: knex('Assay').where('externalId', 'GxMtbXdr').select('id'),
+          resultCategory1: knex('ResultCategory').where('externalId', 'Detected').select('id'),
+          resultCategory2: knex('ResultCategory').where('externalId', 'Detected').select('id'),
+          resultData: JSON.stringify({
+            allResistances: {
+              AMK: 'NotDetected',
+              CAP: 'NotDetected',
+              ETH: 'Detected',
+              FLQ: 'NotDetected',
+              INH: 'Detected',
+              KAN: 'NotDetected',
+            },
+          }),
+        })
+      await knex('NotificationType').where('id', ntId).update({ messageTypeId })
+    })
+    after(async () => {
+      await removeTestContext()
+      await knex('MessageType').where('id', messageTypeId).delete()
+      await knex('SmsMessage').where('smsTemplateId', smsTemplateId).delete()
+      await knex('SmsTemplate').where('id', smsTemplateId).delete()
+      await knex('Result').where('id', insertedResultDetected).update(backupResult)
+    })
+
+    afterEach(async () => knex('Notification').whereIn('resultId', [insertedResultDetected]).delete())
+    it('should create a result based notification for one xdr result', async () => {
+      const resultId = insertedResultDetected
+      assert.isNotNull(resultId)
+      const notificationsBefore = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntId })
+        .distinct('resultId', 'notificationTypeId', 'personId')
+      assert.equal(notificationsBefore.length, 0)
+      await dispatchAndWaitForAction(resultReadyForNotification(resultId, false))
+      await waitForIdle(3000)
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
+      const smsMessages = await knex('SmsMessage').where({ smsTemplateId }).select()
+      assert.equal(notifications.length, 1, 'Only one notification should exists')
+      assert.equal(smsMessages.length, 1, 'Only one sms message should exists')
+      assert.equal(
+        smsMessages[0].message,
+        'result for this patient is Detected, Detected to ETH, INH',
+        'The placeholder must be correct'
+      )
+    })
+  })
+
   describe('Filter by Person', () => {
     let adminId
     let regionalAdminId

@@ -409,6 +409,7 @@ async function getBaseDataSource(data, auth) {
   const d = data || {}
   const { loadPlugin } = require('../plugin/loadPlugin')
   const { displayPreferences = {} } = await loadPlugin(d.partnerPlugin, undefined, 'settings')
+  const resultData = d.resultData ? JSON.parse(d.resultData) : {}
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}
@@ -468,8 +469,8 @@ async function getBaseDataSource(data, auth) {
     },
     result: {
       id: d.id,
-      data: d.resultData ? JSON.parse(d.resultData) : {},
-      resultData: d.resultData ? JSON.parse(d.resultData) : {},
+      data: resultData,
+      resultData,
       formData: d.resultFormData ? JSON.parse(d.resultFormData) : {},
       patient: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
       patientData: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
@@ -508,6 +509,9 @@ async function getBaseDataSource(data, auth) {
       },
       category2: {
         id: d.resultCategory2ExternalId,
+      },
+      detected: {
+        resistances: d.assayExternalId === 'GxMtbXdr' ? getDetectedResistances(resultData) : '',
       },
       reportableSiteName: d.reportableSiteName,
     },
@@ -887,6 +891,13 @@ function coalesce(...rest) {
   //  passed to this call. Handlebars passes the helper
   //  object, with it's options, as the last arg
   return _.dropRight(rest).find(arg => !!arg)
+}
+
+function getDetectedResistances(resultData) {
+  const allResistances = resultData.allResistances || {}
+  return Object.keys(allResistances)
+    .filter(key => allResistances[key] === 'Detected')
+    .join(', ')
 }
 
 module.exports = {
