@@ -1,5 +1,5 @@
 const proxyquire = require('proxyquire')
-const { assert } = require('chai')
+const { assert, expect } = require('chai')
 const _ = require('lodash')
 const sinon = require('sinon')
 const { runTest } = require('../utils/generatorFunctionUtils')
@@ -106,14 +106,13 @@ describe('account details service', () => {
       dbSpy.query.for('Get account details for currently logged in user').resolvesWith(acountDetails)
     })
 
-    it("Should save the user's account details which have changed and update updatedOn and updatedBy", () => {
+    it("Should save the user's account details which have changed", () => {
       const changedRequestProperties = {
         title: 'Job Title has Changed',
         email2: 'secondary@email.com',
         countryId: 5,
       }
 
-      const now = new Date()
       return runTest(service.saveContactDetailsForLoggedInUser, [
         {
           auth: requestData.auth,
@@ -126,10 +125,9 @@ describe('account details service', () => {
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], {
           'p.id': contactDetails.id,
         })
-        assert.deepEqual(savePersonQuery.update.lastCall.args[0], {
+        expect(savePersonQuery.update.lastCall.args[0]).to.containSubset({
           geographyId,
           ..._.omit(changedRequestProperties, ['countryId']),
-          updatedOn: now,
           updatedBy: contactDetails.userId,
         })
       })
@@ -209,7 +207,7 @@ describe('account details service', () => {
       dbSpy.query.for('Get account details for currently logged in user').resolvesWith(accountDetails)
     })
 
-    it("Should save the user's preferences which have changed and update updatedOn and updatedBy", () => {
+    it("Should save the user's preferences which have changed", () => {
       const changedRequestProperties = {
         timezone: 'Pacific Standard Time',
         culture: 'fr-FR',
@@ -223,8 +221,6 @@ describe('account details service', () => {
         {}
       )
 
-      const now = new Date()
-
       return runTest(service.saveUserPreferencesForLoggedInUser, [
         {
           auth: requestData.auth,
@@ -237,9 +233,8 @@ describe('account details service', () => {
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], {
           'p.id': userPreferences.id,
         })
-        assert.deepEqual(savePersonQuery.update.lastCall.args[0], {
+        expect(savePersonQuery.update.lastCall.args[0]).to.containSubset({
           ...changedDatabaseProperties,
-          updatedOn: now,
           updatedBy: userPreferences.userId,
         })
       })

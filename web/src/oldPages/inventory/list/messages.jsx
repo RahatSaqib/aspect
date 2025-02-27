@@ -42,6 +42,14 @@ const messages = {
       id: 'pages.InventoryItemsList.quantityOnHandDescription',
       defaultMessage: 'Its the current quantity in hand, including the expired quantity.',
     },
+    unreconciledQuantity: {
+      id: 'pages.InventoryItemsList.unreconciledQuantity',
+      defaultMessage: 'Unreconciled Quantity',
+    },
+    unreconciledQuantityDescription: {
+      id: 'pages.InventoryItemsList.unreconciledQuantityDescription',
+      defaultMessage: 'Total cartridges consumed and reported under tests but not yet adjusted against the inventory',
+    },
     dailyConsumptionRate: {
       id: 'pages.InventoryItemsList.dailyConsumptionRate',
       defaultMessage: 'Daily Consumption',

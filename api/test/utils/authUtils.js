@@ -26,7 +26,7 @@ async function createUser(
   password,
   jobs = [
     {
-      jobFunctionExternalId: 'admin',
+      jobFunctionExternalId: 'superAdmin',
       stateName: null,
       lgaName: null,
       siteExternalId: null,
@@ -147,7 +147,7 @@ async function createUser(
     await Promise.each(jobFunctionJobs, async jobFunctionJob => {
       let jobGeography = {}
       const job = {
-        jobFunctionExternalId: 'admin',
+        jobFunctionExternalId: 'superAdmin',
         stateName: null,
         lgaName: null,
         siteExternalId: null,

@@ -13,7 +13,7 @@ async function seed(knex) {
   // --- Create new job function for SystemOne admin
   // --- ----------------------
   const jobFunctionSystemOneId = await upsertJobFunction(knex, 'SystemOne', partnerId)
-  await copyPermissionsAndDashboardWidgetsFromJobFunction(knex, 'admin', 'systemOne')
+  await copyPermissionsAndDashboardWidgetsFromJobFunction(knex, 'superAdmin', 'systemOne')
 
   // reassign existing admin user:
   await knex('JobContext').update('jobFunctionId', jobFunctionSystemOneId).where({ personId: adminPersonId })
@@ -37,7 +37,7 @@ async function seed(knex) {
     .join('Person as p', 'jc.personId', 'p.id')
     .join('User as u', 'p.userId', 'u.id')
     .update('jobFunctionId', jobFunctionNtpId)
-    .where('jf.externalId', 'admin')
+    .where('jf.externalId', 'superAdmin')
     .whereNotIn('u.name', [
       'tendainkomo.ak@gmail.com',
       'hmutunzi@gmail.com',

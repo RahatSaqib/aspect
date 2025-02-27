@@ -86,7 +86,7 @@ describe('Inventory Routes', () => {
       let inventoryItem4Id
       let negativeQoHInventoryItemId
       let inventoryItemInTransitId
-      let consumableId
+      let tbRifConsumableId
       const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
       const expiresOn2 = startOfDayUtc(addDays(new Date(), 2))
       const expiresOn3 = startOfDayUtc(addDays(new Date(), 50))
@@ -94,31 +94,37 @@ describe('Inventory Routes', () => {
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
-        const { id } = await knex('Consumable').where('name', 'GeneXpert TB Cartridge').first('id')
-        consumableId = id
+
+        const { id: tbRconsumableId } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
+        tbRifConsumableId = tbRconsumableId
+        // attach a different consumable to test ordering
+        const { id: alereConsumableId } = await knex('Consumable')
+          .where('externalId', 'AlereHivDetectCartridge')
+          .first('id')
+
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           lotNumber: '0000001',
           expiresOn: expiresOn1,
           quantityOnHand: 250,
         })
         ;[inventoryItem2Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           lotNumber: '0000002',
           expiresOn: expiresOn2,
           quantityOnHand: 350,
         })
         ;[inventoryItem3Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           lotNumber: '0000003',
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
         ;[inventoryItemInTransitId] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           inTransitFromSiteId: site2Id,
           lotNumber: '0000002',
@@ -126,26 +132,27 @@ describe('Inventory Routes', () => {
           quantityOnHand: 500,
         })
         const siteConsumables = [
-          { siteId: site1Id, consumableId },
-          { siteId: site2Id, consumableId },
+          { siteId: site1Id, consumableId: tbRifConsumableId },
+          { siteId: site2Id, consumableId: tbRifConsumableId },
+          { siteId: site1Id, consumableId: alereConsumableId },
         ]
         await knex('SiteConsumable').insert(siteConsumables)
         await knex('FactInventoryConsumptionRate').insert({
           siteId: site1Id,
-          consumableId,
+          consumableId: tbRifConsumableId,
           days: 1,
           rate: 200,
           updatedOn: new Date(),
         })
         ;[inventoryItem4Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site2Id,
           lotNumber: '0000003',
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
         ;[negativeQoHInventoryItemId] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site2Id,
           lotNumber: '0000018',
           expiresOn: expiresOn3,
@@ -153,7 +160,7 @@ describe('Inventory Routes', () => {
         })
         await knex('FactInventoryConsumptionRate').insert({
           siteId: site2Id,
-          consumableId,
+          consumableId: tbRifConsumableId,
           days: 1,
           rate: 5,
           updatedOn: new Date(),
@@ -172,6 +179,7 @@ describe('Inventory Routes', () => {
           ])
           .delete()
         await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id, site2Id]).delete()
+        await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
         await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
       })
@@ -214,7 +222,7 @@ describe('Inventory Routes', () => {
           const [inventoryItem1] = res.body.data.filter(
             ii =>
               ii.siteId === site1Id &&
-              ii.consumableId === consumableId &&
+              ii.consumableId === tbRifConsumableId &&
               ii.lotNumber === '0000001' &&
               ii.expiresOn === expiresOn1.toISOString()
           )
@@ -224,7 +232,7 @@ describe('Inventory Routes', () => {
           const [inventoryItem2] = res.body.data.filter(
             ii =>
               ii.siteId === site1Id &&
-              ii.consumableId === consumableId &&
+              ii.consumableId === tbRifConsumableId &&
               ii.lotNumber === '0000002' &&
               ii.expiresOn === expiresOn2.toISOString() &&
               ii.inTransitFromSiteId === null
@@ -235,7 +243,7 @@ describe('Inventory Routes', () => {
           const [inventoryItemInTransit] = res.body.data.filter(
             ii =>
               ii.siteId === site1Id &&
-              ii.consumableId === consumableId &&
+              ii.consumableId === tbRifConsumableId &&
               ii.lotNumber === '0000002' &&
               ii.expiresOn === expiresOn2.toISOString() &&
               ii.inTransitFromSiteId !== null
@@ -273,7 +281,9 @@ describe('Inventory Routes', () => {
 
           assert.equal(res.status, 200)
 
-          const inventoryItems = res.body.data.filter(ii => ii.siteId === site1Id && ii.consumableId === consumableId)
+          const inventoryItems = res.body.data.filter(
+            ii => ii.siteId === site1Id && ii.consumableId === tbRifConsumableId
+          )
 
           // Only one row per site and consumable
           assert.equal(inventoryItems.length, 1)
@@ -305,8 +315,8 @@ describe('Inventory Routes', () => {
             .get(`${path}?siteName=test%20site&sortCol=consumableName`)
             .set('Authorization', `Bearer ${shared.token}`)
 
-          assert.equal(res.body.data[0].consumableName, res.body.data[1].consumableName)
-          assert.isTrue(res.body.data[0].consumableName <= res.body.data[res.body.data.length - 1].consumableName)
+          const sortedData = res.body.data.sort((a, b) => a.consumableName.localeCompare(b.consumableName))
+          assert.deepStrictEqual(sortedData, res.body.data)
         })
 
         it('should return a list of inventory items, apply post-processing ordering by days stock left', async () => {
@@ -387,10 +397,12 @@ describe('Inventory Routes', () => {
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
-        ;({ id: consumableId } = await knex('Consumable').where('name', 'GeneXpert TB Cartridge').first('id'))
+
+        const { id: tbRifConsumableId } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
+        consumableId = tbRifConsumableId
         const siteConsumables = [
-          { siteId: site1Id, consumableId },
-          { siteId: site2Id, consumableId },
+          { siteId: site1Id, consumableId: tbRifConsumableId },
+          { siteId: site2Id, consumableId: tbRifConsumableId },
         ]
         await knex('SiteConsumable').insert(siteConsumables)
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
@@ -435,7 +447,7 @@ describe('Inventory Routes', () => {
         assertBodyAndInventoryItems(res)
         const inventoryItems = res.body.data.filter(ii => ii.siteId === site1Id && ii.consumableId === consumableId)
         // Only one row per site and consumable
-        assert.equal(inventoryItems.length, 1)
+        assert.equal(inventoryItems.length, 1, 'has one inventory item')
         assert.isNotNull(inventoryItems[0])
         // Correct quantity - stock in transit should not be counted
         assert.equal(inventoryItems[0].quantityOnHand, 15)

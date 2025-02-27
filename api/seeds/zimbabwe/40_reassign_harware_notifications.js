@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 
 async function seed(knex) {
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('externalId', 'admin').first('id')
+  const { id: jobFunctionIdSuperAdmin } = await knex('JobFunction').where('externalId', 'superAdmin').first('id')
   const { id: jobFunctionIdSystemOne } = await knex('JobFunction').where('externalId', 'systemOne').first('id')
   const { id: jobFunctionIdDeviceMaker } = await knex('JobFunction').where('externalId', 'deviceMaker').first('id')
 
@@ -11,7 +11,7 @@ async function seed(knex) {
   const notificationTypes = await knex('NotificationType as nt')
     .join('IssueType as it', 'nt.issueTypeId', 'it.id')
     .where('it.externalId', 'like', 'Hardware%')
-    .where('nt.jobFunctionId', jobFunctionIdAdmin)
+    .where('nt.jobFunctionId', jobFunctionIdSuperAdmin)
     .select(
       'nt.id',
       'nt.issueTypeId',

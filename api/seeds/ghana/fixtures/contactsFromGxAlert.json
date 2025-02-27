@@ -2,7 +2,7 @@
     {
         "personName": "Stefan Baumgartner",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "brichards@systemone.id",
         "personPhone": "+14133064770",
@@ -20,7 +20,7 @@
     {
         "personName": "Admin",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "username": "ghana",
         "timezone": "Greenwich Standard Time",
@@ -74,7 +74,7 @@
         "personName": "Nathaniel Ashon",
         "personTitle": "IT Personnel",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "nattyashon@yahoo.com",
         "personCell": "+233273725783",
@@ -149,7 +149,7 @@
         "personName": "Samuel Kudzawu",
         "personTitle": "NTP Lab IT",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "skudzay@yahoo.com",
         "username": "skudzay",
@@ -166,7 +166,7 @@
         "personName": "Michael Amo Omari",
         "personTitle": "Deputy Chief Biomedical Scientist",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "mcyomari@gmail.com",
         "username": "mcyomari@gmail.com",
@@ -183,7 +183,7 @@
         "personName": "Honesty Mensah Ganu",
         "personTitle": "Principal Medical Laboratory Scientist",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "ganumensah@gmail.com",
         "username": "ganumensah",
@@ -200,7 +200,7 @@
         "personName": "Felix Sorvor",
         "personTitle": "Medical Lab Scientist",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "solvolysis@yahoo.com",
         "username": "solvolysis@yahoo.com",
@@ -276,7 +276,7 @@
         "personName": "Mawuko Mensah",
         "personTitle": "NTP IT Admin",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "m.mawuko@gmail.com",
         "personCell": "+233 243017600",
@@ -515,7 +515,7 @@
         "personName": "Admin1",
         "personTitle": "Lab IT",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "skudzay@yahoo.com",
         "personPhone": "+233 208115280",
@@ -533,7 +533,7 @@
         "personName": "Zeleke Alebachew",
         "personTitle": "TB Technical Advisor",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "zalebachew@gmail.com",
         "username": "zalebachew@gmail.com",
@@ -550,7 +550,7 @@
         "personName": "Felix Kwame Afutu",
         "personTitle": "Head, Monitoring & Evaluation",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "kwami.afutu@ghsmail.org",
         "username": "kwami.afutu@ghsmail.org",
@@ -567,7 +567,7 @@
         "personName": "Dr Yaw Adusi-Poku",
         "personTitle": "Programme Manager, NTP",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "togobay@yahoo.com",
         "username": "togobay@yahoo.com",
@@ -584,7 +584,7 @@
         "personName": "Raymond Gockah",
         "personTitle": "Regional Parent",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "gockah@gmail.com",
         "username": "gockah@gmail.com",
@@ -1398,7 +1398,7 @@
         "personName": "Isaac Oboakoh",
         "personTitle": "Lab Contact",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "kboakoh@yahoo.co.uk",
         "personCell": "+233243689983",
@@ -1722,7 +1722,7 @@
         "personName": "Felix Sorvor",
         "personTitle": "Installer",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "sorvolysis@yahoo.com",
         "personCell": "+233208195210",
@@ -1844,7 +1844,7 @@
         "personName": "Oduro-Boakye Kwasi",
         "personTitle": "Lab Contact",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "oduroboakye@yahoo.com",
         "personCell": "+233244436386",
@@ -2977,7 +2977,7 @@
         "personName": "Benjamin Adziwi",
         "personTitle": "Regional Parent",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "badziwi@gmail.com",
         "username": "badziwi@gmail.com",
@@ -3166,7 +3166,7 @@
         "personName": "Francisca Akorfa Zigah",
         "personTitle": "Pharmacist",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "akorfzig@yahoo.com",
         "personCell": "+233 0204957061",
@@ -3202,7 +3202,7 @@
     {
         "personName": "Abraham Adjei",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "olu061@yahoo.com",
         "personPhone": "+233 0208132493",
@@ -3441,7 +3441,7 @@
         "personName": "Bernard Wadie",
         "personTitle": "Data Manager",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "nanawadie01@gmail.com",
         "username": "nanawadie01@gmail.com",
@@ -3999,7 +3999,7 @@
     {
         "personName": "Tableau Extract",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "developer@systemone.id",
         "username": "tableau_gh",
@@ -4107,7 +4107,7 @@
         "personName": "Susuan Bruce",
         "personTitle": "Pharmacist",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "susuanatwerefour@gmail.com",
         "personPhone": "+233 0244878690",
@@ -4465,7 +4465,7 @@
         "personName": "Dr. Akosua Gyimah",
         "personTitle": "National Coordinator",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "aagyimah@yahoo.co.uk",
         "personCell": "+233 244643136",
@@ -4904,7 +4904,7 @@
     {
         "personName": "Brad",
         "jobFunctions": [
-            "Admin"
+            "Super Admin"
         ],
         "personEmailAddress": "bcunningham@systemone.co",
         "username": "brad",

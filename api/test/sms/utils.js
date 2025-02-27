@@ -54,7 +54,10 @@ class SmsTestContext {
     const [notificationTypeCategoryId] = await knex('NotificationTypeCategory')
       .where('externalId', 'resultBased')
       .pluck('id')
-    const [jobFunctionId] = await knex('JobFunction').where({ partnerId }).andWhere('externalId', 'admin').pluck('id')
+    const [jobFunctionId] = await knex('JobFunction')
+      .where({ partnerId })
+      .andWhere('externalId', 'superAdmin')
+      .pluck('id')
     ;[this.notificationTypeId] = await knex('NotificationType').insert({
       notificationTypeCategoryId,
       partnerId,

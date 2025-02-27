@@ -1,7 +1,7 @@
 [
   {
     "personName": "SystemOne Developer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "personPhone": "+14133064770",
     "personCell": "+1 888 845 2610",
@@ -15,7 +15,7 @@
   },
   {
     "personName": "Chris Macek",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "cmacek@systemone.co",
     "personPhone": "+14135224803",
     "personCell": "+14135224803",
@@ -29,7 +29,7 @@
   },
   {
     "personName": "Jeff Takle",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "Jeff_Takle@abtassoc.com",
     "personCell": "+18572779050",
     "username": "jtakle",
@@ -42,7 +42,7 @@
   },
   {
     "personName": "Admin Administrator",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.co",
     "personCell": "+1 888 845 2610",
     "username": "admin",
@@ -55,7 +55,7 @@
   },
   {
     "personName": "Nicolas Boillot",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "nboillot@systemone.id",
     "username": "nboillot",
     "timezone": "Eastern Standard Time",
@@ -68,7 +68,7 @@
   {
     "personName": "Ruslan Buiucli",
     "personTitle": "Developer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "rbuiucli@gmail.com",
     "username": "rbuiucli",
     "timezone": "Russian Standard Time",
@@ -80,7 +80,7 @@
   },
   {
     "personName": "Bryan Richards",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "brichards@systemone.id",
     "personCell": "+27833243682",
     "username": "brichards",
@@ -94,7 +94,7 @@
   {
     "personName": "Admin",
     "personTitle": "Administrator Account for Tajikistan",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "username": "tajikistan",
     "timezone": "West Asia Standard Time",
@@ -124,7 +124,7 @@
   {
     "personName": "Olim Kabirov",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "gxalert.tj@gmail.com",
     "personCell": "+992900007111",
     "username": "Shodmon",
@@ -155,7 +155,7 @@
   {
     "personName": "Olim Kabirov",
     "personTitle": "Laboratory specialist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personPhone": "+992 900094026",
     "personCell": "+992 900007111",
     "username": "olim.kabirov",
@@ -448,7 +448,7 @@
   {
     "personName": "KNCV",
     "personTitle": "KNCV User",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "manuela.rehr@kncvtbc.org",
     "username": "manuela",
     "timezone": "West Asia Standard Time",

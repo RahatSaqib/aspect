@@ -238,7 +238,7 @@ async function seedIssueTypeTemplates(knex, issueTypeExternalId, { partnerId, us
   const issueTypeId = await issueTypeToId(issueTypeExternalId)
   const { id: jobFunctionId } = await knex('JobFunction')
     .where({ partnerId })
-    .whereIn('externalId', ['manager', 'regionalOfficer'])
+    .whereIn('externalId', ['regionalAdmin', 'regionalOfficer'])
     .first('id')
 
   // only Result 1 positive - send email and sms

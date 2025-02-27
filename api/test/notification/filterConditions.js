@@ -83,7 +83,7 @@ const filterConditionWithJf = {
     },
     {
       tags: [],
-      jobFunctionId: 2,
+      jobFunctionId: 4,
     },
   ],
   deviceLevelId: 'lga',

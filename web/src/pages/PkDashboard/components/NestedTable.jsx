@@ -115,7 +115,7 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
                     style={{ paddingLeft: isDetail ? row?.depth * 20 : null }}
                     key={`${row.id}_1_${c.prop}`}
                     align={i !== 0 ? 'right' : undefined}
-                    {...c.cellProp}
+                    {...(c.cellProp?.(row) || {})}
                   >
                     {i === 0 ? (
                       <Box display="flex">

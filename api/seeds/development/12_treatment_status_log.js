@@ -22,7 +22,7 @@ async function seed(knex) {
     const { partnerId } = await setUserPermission(
       knex,
       userName,
-      'Admin', // jobFunctionName
+      'Super Admin', // jobFunctionName
       modules.treatmentStatus.edit // permissionId
     )
 
