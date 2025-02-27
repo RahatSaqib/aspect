@@ -511,7 +511,9 @@ async function getBaseDataSource(data, auth) {
         id: d.resultCategory2ExternalId,
       },
       detected: {
-        resistances: d.assayExternalId === 'GxMtbXdr' ? getDetectedResistances(resultData) : '',
+        resistances: ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'].includes(d.assayExternalId)
+          ? getMtbDetectedResistances(d.resultCategory2ExternalId, resultData)
+          : '',
       },
       reportableSiteName: d.reportableSiteName,
     },
@@ -893,8 +895,12 @@ function coalesce(...rest) {
   return _.dropRight(rest).find(arg => !!arg)
 }
 
-function getDetectedResistances(resultData) {
-  const allResistances = resultData.allResistances || {}
+function getMtbDetectedResistances(resultCategory2ExternalId, resultData) {
+  const xdrResistances = resultData.allResistances || {}
+  const allResistances = {
+    RIF: resultCategory2ExternalId,
+    ...xdrResistances,
+  }
   return Object.keys(allResistances)
     .filter(key => allResistances[key] === 'Detected')
     .join(', ')
