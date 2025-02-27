@@ -206,10 +206,10 @@ export function loginStart({ user, password }) {
       },
     })
       .then(json => {
-        if (json.activeStatus === 1) {
+        if (json.activeStatus === 1 && json.statusMessage) {
           dispatch(showServiceDegradation({ message: json.statusMessage, variant: 'warning' }))
         }
-        if (json.notificationWarningMessage !== null) {
+        if (json.notificationWarningMessage) {
           dispatch(showServiceDegradation({ message: json.notificationWarningMessage, variant: 'warning' }))
         }
         dispatch(
