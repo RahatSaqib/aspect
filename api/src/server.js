@@ -5,6 +5,7 @@ require('../newrelic')
 // =======================
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
+const cron = require('node-cron')
 const Joi = require('@hapi/joi')
 const Sentry = require('@sentry/node')
 const fs = require('fs')
@@ -24,6 +25,7 @@ const { port } = config
 
 const AspectCacheSingleton = require('../aspectCache')
 const { registerMessageQueue } = require('./messageQueue')
+const { serviceNotificationInformation } = require('./auth/service')
 
 // version is cached to indicate the new version only when Aspect api restarts,
 // instead of doing so directly when package.json is updated.
@@ -135,6 +137,7 @@ const messageQueuePlugin = {
 
       addLoggers(server, queue)
       await addSubscriptions(queue)
+      cron.schedule('*/10 * * * *', serviceNotificationInformation) // run every 10 minutes
       if (config.scheduler.enabled) {
         const dispatcher = startScheduler(queue)
         server.app.dispatcher = dispatcher
