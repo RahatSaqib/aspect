@@ -199,7 +199,6 @@ async function serviceNotificationInformation() {
       if (!serviceStartDate || !serviceEndDate || !notificationWarningSendEmails || !notificationLimit) return
       // send notification info based on conditions
       const emailList = notificationWarningSendEmails
-
       const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId)
       const emailMessageCount = await emailCount({ serviceStartDate, serviceEndDate }, partnerId)
       if (
@@ -403,7 +402,7 @@ async function authenticate(request, response) {
   }
 }
 
-async function smsCount(partner, partnerId) {
+async function smsCount({ serviceStartDate, serviceEndDate }, partnerId) {
   const pendingMessageStatusId = await messageStatusToId('Pending')
   const sentMessageStatusId = await messageStatusToId('Sent')
   const smsCountQuery = knex('SmsMessage as sm')
@@ -412,18 +411,14 @@ async function smsCount(partner, partnerId) {
     .andWhere('sm.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
     .first('*')
     .count('* as count')
-  if (partner?.serviceStartDate && partner?.serviceEndDate) {
-    smsCountQuery.whereRaw(
-      `sm.createdOn > DATE_FORMAT(STR_TO_DATE('${partner.serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`
-    )
-    smsCountQuery.whereRaw(
-      `sm.createdOn < DATE_FORMAT(STR_TO_DATE('${partner.serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`
-    )
+  if (serviceStartDate && serviceEndDate) {
+    smsCountQuery.where('sm.createdOn', '>', serviceStartDate)
+    smsCountQuery.where('sm.createdOn', '<', serviceEndDate)
   }
   return smsCountQuery
 }
 
-async function emailCount(partner, partnerId) {
+async function emailCount({ serviceStartDate, serviceEndDate }, partnerId) {
   const pendingMessageStatusId = await messageStatusToId('Pending')
   const sentMessageStatusId = await messageStatusToId('Sent')
   const emailCountQuery = knex('EmailMessage as em')
@@ -432,13 +427,9 @@ async function emailCount(partner, partnerId) {
     .andWhere('em.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
     .first('*')
     .count('* as count')
-  if (partner?.serviceStartDate && partner?.serviceEndDate) {
-    emailCountQuery.whereRaw(
-      `em.createdOn > DATE_FORMAT(STR_TO_DATE('${partner.serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`
-    )
-    emailCountQuery.whereRaw(
-      `em.createdOn < DATE_FORMAT(STR_TO_DATE('${partner.serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`
-    )
+  if (serviceStartDate && serviceEndDate) {
+    emailCountQuery.where('em.createdOn', '>', serviceStartDate)
+    emailCountQuery.where('em.createdOn', '<', serviceEndDate)
   }
   return emailCountQuery
 }
