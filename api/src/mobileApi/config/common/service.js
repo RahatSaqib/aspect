@@ -83,4 +83,18 @@ async function fetchSystemConfigServiceHandler() {
   })
 }
 
-module.exports = { fetchApplicationConfigServiceHandler, fetchSystemConfigServiceHandler }
+async function fetchAppIdFromUniqueDeviceCodeHandler(config) {
+  console.log('What is the config :: ==> ', config)
+  return Promise.resolve({
+    ok: true,
+    data: {
+      appId: '123',
+    },
+  })
+}
+
+module.exports = {
+  fetchApplicationConfigServiceHandler,
+  fetchSystemConfigServiceHandler,
+  fetchAppIdFromUniqueDeviceCodeHandler,
+}
