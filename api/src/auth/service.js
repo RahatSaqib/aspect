@@ -202,8 +202,9 @@ async function serviceNotificationInformation() {
       const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId)
       const emailMessageCount = await emailCount({ serviceStartDate, serviceEndDate }, partnerId)
       if (
-        smsMessageCount?.count >= notificationLimit ||
-        (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
+        smsMessageCount?.count >= notificationLimit &&
+        serviceStartDate &&
+        new Date(serviceEndDate || '2099-01-01') > new Date()
       ) {
         emailList.forEach(email => {
           sendEmail(email, 'Notification Limit Exceeded', notificationWarningMessage, ``, []).catch(err =>
@@ -212,8 +213,9 @@ async function serviceNotificationInformation() {
         })
       }
       if (
-        emailMessageCount?.count >= notificationLimit ||
-        (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
+        emailMessageCount?.count >= notificationLimit &&
+        serviceStartDate &&
+        new Date(serviceEndDate || '2099-01-01') > new Date()
       ) {
         emailList.forEach(email => {
           sendEmail(email, 'Notification Limit Exceeded', notificationWarningMessage, ``, []).catch(err =>
