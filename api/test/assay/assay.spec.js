@@ -80,7 +80,7 @@ describe('Assay routes', () => {
         tbDiseaseManagerPassword,
         [
           {
-            jobFunctionExternalId: 'manager',
+            jobFunctionExternalId: 'regionalAdmin',
             diseaseExternalId: 'tb',
           },
         ]
@@ -94,15 +94,15 @@ describe('Assay routes', () => {
         hivAssaysManagerPassword,
         [
           {
-            jobFunctionExternalId: 'manager',
+            jobFunctionExternalId: 'regionalAdmin',
             assayTypeExternalId: 'assayTypeCD4',
           },
           {
-            jobFunctionExternalId: 'manager',
+            jobFunctionExternalId: 'regionalAdmin',
             assayTypeExternalId: 'assayTypeHivQual',
           },
           {
-            jobFunctionExternalId: 'manager',
+            jobFunctionExternalId: 'regionalAdmin',
             assayTypeExternalId: 'assayTypeHivVl',
           },
         ]

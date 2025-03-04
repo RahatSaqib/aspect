@@ -218,7 +218,7 @@ async function seed(knex) {
   })
 
   await upsertJobFunctionFixture(knex, jobFunctionsFixtureSouthAfrica, partnerId)
-  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
+  const [jobFunctionIdSuperAdmin] = await knex('JobFunction').where({ externalId: 'superAdmin', partnerId }).pluck('id')
   const [jobFunctionIdRegionalOfficer] = await knex('JobFunction')
     .where({ externalId: 'regionalOfficer', partnerId })
     .pluck('id')
@@ -226,7 +226,7 @@ async function seed(knex) {
 
   await knex('JobContext').insert({
     personId: adminPersonId,
-    jobFunctionId: jobFunctionIdAdmin,
+    jobFunctionId: jobFunctionIdSuperAdmin,
     geographyId: southAfricaGeographyId,
   })
 
@@ -990,7 +990,7 @@ async function seed(knex) {
   const saNhlsStaff = [
     {
       personName: 'Sergio Carmona',
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       emailAddress: 'brichards@systemone.id',
       username: 'sergio.carmona@nhls.ac.za',
       password: 'P@$$w0rd',
@@ -1253,7 +1253,7 @@ async function seed(knex) {
     },
     {
       personName: 'Ahmad Haeri',
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       emailAddress: 'brichards@systemone.id',
       username: 'ahmadh@nicd.ac.za',
       password: 'P@$$w0rd',
@@ -1282,7 +1282,7 @@ async function seed(knex) {
     },
     {
       personName: 'Sr Moipone Piliso',
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       emailAddress: 'brichards@systemone.id',
       username: 'moipone.piliso@wits.ac.za',
       password: 'P@$$w0rd',
@@ -1311,7 +1311,7 @@ async function seed(knex) {
     },
     {
       personName: 'Natasha Gous',
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       emailAddress: 'brichards@systemone.id',
       username: 'ngous@systemone.id',
       password: 'P@$$w0rd',
@@ -1437,7 +1437,7 @@ async function seed(knex) {
     },
     {
       personName: 'Auréllie Mukendi',
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       emailAddress: 'brichards@systemone.id',
       username: 'aureliem@nicd.ac.za',
       password: 'P@$$w0rd',
@@ -1772,7 +1772,7 @@ async function seed(knex) {
     },
     {
       personName: 'Gayle Sherman',
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       emailAddress: 'brichards@systemone.id',
       username: 'gayles@nicd.ac.za',
       password: 'P@$$w0rd',
@@ -1790,7 +1790,7 @@ async function seed(knex) {
     },
     {
       personName: 'Tanya Murray',
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       emailAddress: 'brichards@systemone.id',
       username: 'tanyaymurray@gmail.com',
       password: 'P@$$w0rd',

@@ -55,7 +55,8 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
       let inventoryItem4Id
       let inventoryItem5Id
       let inventoryItemInTransitId
-      let consumableId
+      let negativeQoHInventoryItemId
+      let tbRifConsumableId
       const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
       const expiresOn2 = startOfDayUtc(addDays(new Date(), 2))
       const expiresOn3 = startOfDayUtc(addDays(new Date(), 50))
@@ -63,78 +64,93 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
-        const { id } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
-        consumableId = id
+
+        const { id: tbRconsumableId } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
+        tbRifConsumableId = tbRconsumableId
+        // attach a different consumable to test ordering
+        const { id: alereConsumableId } = await knex('Consumable')
+          .where('externalId', 'AlereHivDetectCartridge')
+          .first('id')
+
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           lotNumber: 'SAMELOT1',
           expiresOn: expiresOn1,
           quantityOnHand: 250,
         })
         ;[inventoryItem2Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           lotNumber: 'SAMELOT1',
           expiresOn: expiresOn2,
           quantityOnHand: 350,
         })
         ;[inventoryItem3Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           lotNumber: 'SAMELOT2',
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
         ;[inventoryItemInTransitId] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           inTransitFromSiteId: site2Id,
           lotNumber: 'SAMELOT2',
           expiresOn: expiresOn2,
           quantityOnHand: 500,
         })
+
         const siteConsumables = [
-          { siteId: site1Id, consumableId },
-          { siteId: site2Id, consumableId },
+          { siteId: site1Id, consumableId: tbRifConsumableId },
+          { siteId: site2Id, consumableId: tbRifConsumableId },
+          { siteId: site1Id, consumableId: alereConsumableId },
         ]
         await knex('SiteConsumable').insert(siteConsumables)
         await knex('FactInventoryConsumptionRate').insert({
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
-          consumableId,
           days: 1,
           rate: 200,
           updatedOn: new Date(),
         })
         ;[inventoryItem4Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site1Id,
           lotNumber: 'SAMELOT1',
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
         ;[inventoryItem5Id] = await knex('InventoryItem').insert({
-          consumableId,
+          consumableId: tbRifConsumableId,
           siteId: site2Id,
           lotNumber: 'SAMELOT2',
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
-        await knex('FactInventoryConsumptionRate').insert({
+        ;[negativeQoHInventoryItemId] = await knex('InventoryItem').insert({
+          consumableId: tbRifConsumableId,
           siteId: site2Id,
-          consumableId,
+          lotNumber: '0000018',
+          expiresOn: expiresOn3,
+          quantityOnHand: -1,
+        })
+        await knex('FactInventoryConsumptionRate').insert({
+          consumableId: tbRifConsumableId,
+          siteId: site2Id,
           days: 1,
           rate: 5,
           updatedOn: new Date(),
         })
 
-        await knex('Consumable').where('id', consumableId).update({
+        await knex('Consumable').where('id', tbRifConsumableId).update({
           strategy: 'withExpirationDateStrategy',
         })
       })
 
       after(async () => {
-        await knex('Consumable').where('id', consumableId).update({
+        await knex('Consumable').where('id', tbRifConsumableId).update({
           strategy: 'withLotAndExpirationDateStrategy',
         })
         await knex('InventoryItem')
@@ -145,9 +161,11 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             inventoryItemInTransitId,
             inventoryItem4Id,
             inventoryItem5Id,
+            negativeQoHInventoryItemId,
           ])
           .delete()
         await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id, site2Id]).delete()
+        await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
         await knex('SiteConsumable').whereIn('siteId', [site1Id, site2Id]).delete()
       })
@@ -186,13 +204,19 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.notProperty(inventoryItem0, 'dailyConsumptionRate')
 
           const [inventoryItem1] = res.body.data.filter(
-            ii => ii.siteId === site1Id && ii.consumableId === consumableId && ii.expiresOn === expiresOn3.toISOString()
+            ii =>
+              ii.siteId === site1Id &&
+              ii.consumableId === tbRifConsumableId &&
+              ii.expiresOn === expiresOn3.toISOString()
           )
           assert.isNotNull(inventoryItem1)
           assert.equal(inventoryItem1.quantityOnHand, 300)
 
           const [inventoryItem2] = res.body.data.filter(
-            ii => ii.siteId === site1Id && ii.consumableId === consumableId && ii.expiresOn === expiresOn1.toISOString()
+            ii =>
+              ii.siteId === site1Id &&
+              ii.consumableId === tbRifConsumableId &&
+              ii.expiresOn === expiresOn1.toISOString()
           )
           assert.isNotNull(inventoryItem2)
           assert.equal(inventoryItem2.quantityOnHand, 250)
@@ -214,7 +238,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
 
         it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
           const res = await server
-            .get(`${path}?consumableId=${consumableId}&siteName=test%20site`)
+            .get(`${path}?consumableId=${tbRifConsumableId}&siteName=test%20site`)
             .set('Authorization', `Bearer ${shared.token}`)
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
@@ -274,8 +298,8 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             .get(`${path}?siteName=test%20site&sortCol=consumableName`)
             .set('Authorization', `Bearer ${shared.token}`)
 
-          assert.equal(res.body.data[0].consumableName, res.body.data[1].consumableName)
-          assert.isTrue(res.body.data[0].consumableName <= res.body.data[res.body.data.length - 1].consumableName)
+          const sortedData = res.body.data.sort((a, b) => a.consumableName.localeCompare(b.consumableName))
+          assert.deepStrictEqual(sortedData, res.body.data)
         })
 
         it('should return a list of inventory items, apply post-processing ordering by days stock left', async () => {

@@ -932,8 +932,8 @@ async function seed(knex) {
     cell: config.admin.cell,
   })
 
-  const [managerId] = await knex('User').insert({
-    name: 'manager',
+  const [regionalAdminId] = await knex('User').insert({
+    name: 'regionalAdmin',
     password: bcrypt.hashSync('test07', saltRounds),
     approved: 1,
     createdOn: now,
@@ -941,9 +941,9 @@ async function seed(knex) {
     failedPasswordAttempts: 0,
   })
 
-  const [managerPersonId] = await knex('Person').insert({
-    userId: managerId,
-    name: 'Manager',
+  const [regionalAdminPersonId] = await knex('Person').insert({
+    userId: regionalAdminId,
+    name: 'Regional Admin',
     email: config.manager.email,
     cell: config.manager.cell,
     lastPartnerId: partnerOneId,
@@ -1200,14 +1200,14 @@ async function seed(knex) {
   await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerOne, partnerOneId)
   await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerTwo, partnerTwoId)
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where({ externalId: 'admin', partnerId: partnerOneId })
+  const { id: jobFunctionIdSuperAdmin } = await knex('JobFunction')
+    .where({ externalId: 'superAdmin', partnerId: partnerOneId })
     .first()
   const { id: jobFunctionIdClinician } = await knex('JobFunction')
     .where({ externalId: 'clinician', partnerId: partnerOneId })
     .first()
-  const { id: jobFunctionIdManager } = await knex('JobFunction')
-    .where({ externalId: 'manager', partnerId: partnerOneId })
+  const { id: jobFunctionIdRegionalAdmin } = await knex('JobFunction')
+    .where({ externalId: 'regionalAdmin', partnerId: partnerOneId })
     .first()
   const { id: jobFunctionIdPartnerTwo } = await knex('JobFunction')
     .where({ externalId: 'labManager', partnerId: partnerTwoId })
@@ -1215,11 +1215,15 @@ async function seed(knex) {
 
   // Constrain jobs by context
   await knex('JobContext').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+    { personId: adminPersonId, jobFunctionId: jobFunctionIdSuperAdmin, geographyId: countries.US.geographyId },
   ])
 
   await knex('JobContext').insert([
-    { personId: managerPersonId, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.geographyId },
+    {
+      personId: regionalAdminPersonId,
+      jobFunctionId: jobFunctionIdRegionalAdmin,
+      geographyId: countries.US.geographyId,
+    },
   ])
 
   await knex('JobContext').insert([
@@ -1266,12 +1270,12 @@ async function seed(knex) {
   })
 
   await knex('JobFunctionDashboardWidget').insert([
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sites },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.results },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.sites },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.devices },
+    { jobFunctionId: jobFunctionIdSuperAdmin, widgetId: widgetIds.results },
 
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sites },
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devices },
+    { jobFunctionId: jobFunctionIdRegionalAdmin, widgetId: widgetIds.sites },
+    { jobFunctionId: jobFunctionIdRegionalAdmin, widgetId: widgetIds.devices },
 
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.devices },

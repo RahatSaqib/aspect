@@ -96,14 +96,14 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
+  const jobFunctionIdSuperAdmin = await upsertJobFunction(knex, 'Super Admin', partnerId)
 
   const jobFunctionIdRegionalOfficer = await upsertJobFunction(knex, 'Regional Officer', partnerId)
 
   const jobFunctionIdLabUser = await upsertJobFunction(knex, 'Lab User', partnerId)
 
   const jobFunctionIds = {
-    jobFunctionIdAdmin,
+    jobFunctionIdSuperAdmin,
     jobFunctionIdLabUser,
     jobFunctionIdRegionalOfficer,
   }
@@ -117,51 +117,51 @@ async function seed(knex) {
 
   await knex('JobFunctionPermission').insert([
     // Admin Permissions
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.edit },
+    { jobFunctionId: jobFunctionIdSuperAdmin, permissionId: modules.demo.edit },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.device.edit,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.deviceApiKey.edit,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.person.edit,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.result.edit,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdSuperAdmin, permissionId: modules.site.edit },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.assay.edit,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.issue.edit,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.inventory.edit,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.edit },
+    { jobFunctionId: jobFunctionIdSuperAdmin, permissionId: modules.task.edit },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.dashboard.actionInventoryLevelUpdate,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.dashboard.summary,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.dashboard.report,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.dashboard.siteFilter,
     },
     // Regional Officer Permissions
@@ -243,7 +243,7 @@ async function seed(knex) {
   // Admin JobContext
   await knex('JobContext').insert({
     personId: adminPersonId,
-    jobFunctionId: jobFunctionIdAdmin,
+    jobFunctionId: jobFunctionIdSuperAdmin,
     geographyId: myanmarGeographyId,
   })
 
@@ -440,14 +440,14 @@ async function seed(knex) {
 
   await Promise.each(statWidgets, async widgetId => {
     await knex('JobFunctionDashboardWidget').insert([
-      { jobFunctionId: jobFunctionIdAdmin, widgetId },
+      { jobFunctionId: jobFunctionIdSuperAdmin, widgetId },
       { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
       { jobFunctionId: jobFunctionIdLabUser, widgetId },
     ])
   })
   await Promise.each(targetWidgets, async widgetId => {
     await knex('JobFunctionDashboardWidget').insert([
-      { jobFunctionId: jobFunctionIdAdmin, widgetId },
+      { jobFunctionId: jobFunctionIdSuperAdmin, widgetId },
       { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
     ])
   })

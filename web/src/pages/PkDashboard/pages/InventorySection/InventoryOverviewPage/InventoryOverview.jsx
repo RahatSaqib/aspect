@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { LinearProgress } from '@mui/material'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 import { ConsumableSelector, PeriodSelector } from '../../../../../cleanComponents'
+import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
+import inventoryMessages from '../../../../../oldPages/inventory/list/messages'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
@@ -11,8 +16,12 @@ import useInventoryOverview from './useInventoryOverview'
 const InventoryOverviewPage = () => {
   const { formatMessage } = useIntl()
   const [filters, setFilter] = usePathFilter()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
 
   function getInventoryLabel(item, isState) {
+    if (item.type === 'clinic') return item?.lab
+    if (item.type === 'warehouse') return item?.lab
     if (item.type && item[item.type]) return item.type && item[item.type]
     return isState ? formatMessage(messages.noAssociatedState) : formatMessage(messages.noAssociatedLga)
   }
@@ -31,12 +40,38 @@ const InventoryOverviewPage = () => {
   }
 
   const { isLoading, data } = useInventoryOverview(
-    {
-      consumableExternalId: filters.consumable?.consumableExternalId,
-      minDate: filters.minDate,
-      maxDate: filters.maxDate,
-    },
+    omitBy(
+      {
+        consumableExternalId: filters.consumable?.consumableExternalId,
+        minDate: filters.minDate,
+        maxDate: filters.maxDate,
+      },
+      isNil
+    ),
     { enabled: !!filters.consumable?.consumableExternalId }
+  )
+
+  const handleUnreconciledClick = useCallback(
+    ({ countryId, stateId, lgaId, name, type }) => {
+      addFilter(
+        omitBy(
+          {
+            assayId: filters?.consumable?.assayId,
+            onlyUnreconciled: true,
+            countryId,
+            minDate: filters.minDate,
+            maxDate: filters.maxDate,
+            stateId,
+            lgaId,
+            siteName: type === 'lab' || type === 'clinic' ? name : null,
+          },
+          isNil
+        ),
+        '/browse/result'
+      )
+      navigate('/browse/result')
+    },
+    [addFilter, filters, navigate]
   )
 
   const columns = [
@@ -46,6 +81,18 @@ const InventoryOverviewPage = () => {
       name: formatMessage(messages.currentQty),
       prop: 'quantity',
       tooltip: formatMessage(messages.currentQtyTooltip),
+    },
+    {
+      name: 'Current Unreconciled Qty.',
+      prop: 'unreconciledQuantity',
+      cellProp: c =>
+        c.unreconciledQuantity && c.type !== 'warehouse'
+          ? {
+              sx: { cursor: 'pointer', color: 'blue', textDecoration: 'underline' },
+              onClick: () => handleUnreconciledClick(c),
+            }
+          : {},
+      tooltip: formatMessage(inventoryMessages.unreconciledQuantityDescription),
     },
     {
       key: 'Last 6 Months',

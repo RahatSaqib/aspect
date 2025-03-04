@@ -8,6 +8,6 @@ module.exports = require('../utils').seed(async knex => {
   await seedHardwareIssues(knex, {
     adminUserName,
     partnerExternalId,
-    jobFunctionsToNotify: ['Admin'],
+    jobFunctionsToNotify: ['superAdmin'],
   })
 }, __filename)

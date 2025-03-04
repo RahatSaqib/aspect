@@ -1,7 +1,13 @@
-const { admin, labUser, regionalOfficer, aspectBeta, mergeJobFunctions } = require('../../fixtures/jobFunctionBase')
+const {
+  superAdmin,
+  labUser,
+  regionalOfficer,
+  aspectBeta,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  mergeJobFunctions(admin, {
+  mergeJobFunctions(superAdmin, {
     permissions: [
       {
         module: 'device',

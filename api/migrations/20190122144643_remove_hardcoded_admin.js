@@ -36,7 +36,7 @@ async function down(knex) {
     .join('Person as p', 'j.personId', 'p.id')
     .join('JobContext as jc', 'j.id', 'jc.jobId')
     .join('Geography as g', 'jc.geographyId', 'g.id')
-    .where('jf.name', 'Admin')
+    .where('jf.name', 'Super Admin')
     .whereNull('g.stateId')
     .whereNull('g.lgaId')
     .whereNotNull('g.countryId')

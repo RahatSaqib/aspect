@@ -90,7 +90,7 @@ describe('Result Notifications triggers', () => {
       .whereNotExists(knex('Notification as n').whereRaw('n.resultId = r.id').select())
       .distinct('r.*', 'l.name as lgaName', 'l.id as lgaId')
     assert.isAtLeast(results.length, 1)
-    const fieldsToNotReplicate = ['lgaName', 'lgaId', 'externalId', 'endedOn', 'id', 'resultCategory1']
+    const fieldsToNotReplicate = ['lgaName', 'lgaId', 'id']
     const wayneLgaResult = _.sample(_.filter(results, elem => elem.lgaId === wayneLgaId))
     ;[insertedResultDetected] = await knex('Result').insert({
       ..._.omit(wayneLgaResult, fieldsToNotReplicate),
@@ -253,6 +253,8 @@ describe('Result Notifications triggers', () => {
       messageContext.dispatch(resultReadyForNotification(resultId, false))
       let notifications = await knex('Notification').where({ resultId }).distinct()
       assert.equal(notifications.length, 0)
+      const [superAdminJobFunctionId] = await knex('JobFunction').where({ externalId: 'superAdmin' }).pluck('id')
+      const [labUserJobFunctionId] = await knex('JobFunction').where({ externalId: 'labUser' }).pluck('id')
       await knex('NotificationType')
         .update({
           filterCondition: JSON.stringify({
@@ -260,11 +262,11 @@ describe('Result Notifications triggers', () => {
             jobFunctions: [
               {
                 tags: [{ label: 'oneTag', value: inserted }],
-                jobFunctionId: 1,
+                jobFunctionId: superAdminJobFunctionId,
               },
               {
                 tags: [{ label: 'secondTag', value: inserted + 1 }],
-                jobFunctionId: 2,
+                jobFunctionId: labUserJobFunctionId,
               },
             ],
             resultBasedScope: 'any',
@@ -365,32 +367,32 @@ describe('Result Notifications triggers', () => {
 
   describe('Filter by Person', () => {
     let adminId
-    let managerId
+    let regionalAdminId
     let jobContextToRemoveId
 
     beforeEach(async () => {
       ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
       const adminJobContext = await knex('JobContext').where({ personId: adminId }).first()
 
-      const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
-      ;[managerId] = await knex('Person')
+      ;[regionalAdminId] = await knex('Person')
         .where({ email: config.manager.email || null })
         .pluck('id')
 
-      const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
+      const [superAdminJobFunctionId] = await knex('JobFunction').where({ externalId: 'superAdmin' }).pluck('id')
+      const [regionalAdminJobFunctionId] = await knex('JobFunction').where({ externalId: 'regionalAdmin' }).pluck('id')
 
       // Add an extra job to the Admin user - the system should send notifications by person, and not by job
       ;[jobContextToRemoveId] = await knex('JobContext').insert(_.omit(adminJobContext, 'id'))
 
       // Notify to the person called "Admin" with job Admin - Send notification
-      // Notify to the person called "Admin" with job Manager - DO NOT send notification
-      // Notify to a person assigned to the job function "Manager" - Send notification
+      // Notify to the person called "Admin" with job Regional Admin - DO NOT send notification
+      // Notify to a person assigned to the job function "Regional Admin" - Send notification
       // Notify to a person assigned to the job function "Admin" - DO NOT send notification (the admin user was included as person)
       // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
       const filterConditions = {
         ...filterConditionWithAssay,
         persons: [{ personId: adminId }],
-        jobFunctions: [{ jobFunctionId: managerJobFunctionId }, { jobFunctionId: adminJobFunctionId }],
+        jobFunctions: [{ jobFunctionId: regionalAdminJobFunctionId }, { jobFunctionId: superAdminJobFunctionId }],
       }
       await createTestContext(filterConditions)
     })
@@ -407,7 +409,7 @@ describe('Result Notifications triggers', () => {
       await waitForIdle(3000)
       const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId })
       const notificationToPerson = notifications.filter(n => n.personId === adminId)
-      const notificationToJobFunction = notifications.filter(n => n.personId === managerId)
+      const notificationToJobFunction = notifications.filter(n => n.personId === regionalAdminId)
       assert.equal(notificationToPerson.length, 1)
       assert.equal(notificationToJobFunction.length, 1)
       assert.equal(notifications.length, 2)
@@ -416,6 +418,7 @@ describe('Result Notifications triggers', () => {
 
   describe('Filter by Area Items', () => {
     before(async () => {
+      const [superAdminJobFunctionId] = await knex('JobFunction').where({ externalId: 'superAdmin' }).pluck('id')
       await createTestContext({
         deviceLevelId: 'lga',
         areaItems: [
@@ -427,7 +430,7 @@ describe('Result Notifications triggers', () => {
         jobFunctions: [
           {
             tags: [],
-            jobFunctionId: 1,
+            jobFunctionId: superAdminJobFunctionId,
           },
         ],
       })

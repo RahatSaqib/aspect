@@ -105,7 +105,7 @@ describe('Notification routes', () => {
     assert.isAtLeast(res.body.data.length, 1)
 
     const [{ jobFunctions, jobFunctionsCount }] = res.body.data.filter(n => n.id === ntId)
-    assert.equal(jobFunctions, 'Admin')
+    assert.equal(jobFunctions, 'Super Admin')
     assert.equal(jobFunctionsCount, 1)
   })
 

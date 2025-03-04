@@ -1,5 +1,5 @@
 const { asyncHandler } = require('../routes')
-const { listDeviceTypesForSelectList } = require('./service')
+const { listDeviceTypesForSelectList } = require('./listDeviceTypesForSelectList')
 
 const routes = [
   {

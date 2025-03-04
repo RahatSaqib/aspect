@@ -43,7 +43,7 @@ async function seed(knex) {
   await knex('NotificationType').insert([
     {
       issueTypeId: noResultIssueType.id,
-      jobFunctionId: jobFunctions.admin,
+      jobFunctionId: jobFunctions.superAdmin,
       name: 'Send device no results email to Admin after 7 days',
       messageTypeId: noResultIssueType.defaultMessageTypeId,
       ...escalationLevel2Notifiction,
@@ -57,7 +57,7 @@ async function seed(knex) {
     },
     {
       issueTypeId: deviceOfflineIssueType.id,
-      jobFunctionId: jobFunctions.admin,
+      jobFunctionId: jobFunctions.superAdmin,
       name: 'Send device offline email to Admin after 7 days',
       messageTypeId: deviceOfflineIssueType.defaultMessageTypeId,
       ...escalationLevel2Notifiction,

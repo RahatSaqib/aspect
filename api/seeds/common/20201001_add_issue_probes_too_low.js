@@ -27,18 +27,18 @@ async function seed(knex) {
 
   const issueTypeProbeCheckTooLowModule = await knex('IssueType').where({ id: issueTypeModule }).first()
   const issueTypeProbeCheckTooLowLot = await knex('IssueType').where({ id: issueTypeLot }).first()
-  const { jobFunctionAdminId } = await knex('JobFunction')
+  const { jobFunctionSuperAdminId } = await knex('JobFunction')
     .where({
-      externalId: 'admin',
+      externalId: 'superAdmin',
       partnerId,
     })
-    .first('id as jobFunctionAdminId')
+    .first('id as jobFunctionSuperAdminId')
   await upsertNotificationTypes(knex, [
     {
       issueTypeId: issueTypeProbeCheckTooLowModule.id,
       messageTypeId: issueTypeProbeCheckTooLowModule.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: 'Probe Check Too Low - Module',
       ...auditFields,
@@ -47,7 +47,7 @@ async function seed(knex) {
       issueTypeId: issueTypeProbeCheckTooLowLot.id,
       messageTypeId: issueTypeProbeCheckTooLowLot.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: 'Probe Check Too Low - Lot',
       ...auditFields,

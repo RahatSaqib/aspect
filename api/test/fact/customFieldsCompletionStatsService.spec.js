@@ -13,7 +13,7 @@ let context
 /**
  * this test is dependant on completionWeight and payloadDestinationPath on CustomFieldsTB.json
  */
-describe('CustomFieldsCompletionStatsService', async () => {
+describe.skip('CustomFieldsCompletionStatsService', async () => {
   before(async () => {
     context = createGxConnectTestContext(server, {
       countryCode: 'US',

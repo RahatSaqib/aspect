@@ -1,7 +1,7 @@
 [
   {
     "personName": "Admin User",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Super Admin"],
     "personEmailAddress": "developer@systemone.id",
     "username": "admin",
     "timezone": "Singapore Standard Time",
@@ -618,7 +618,7 @@
   {
     "personName": "Ramon P. Basilio",
     "personTitle": "Dr.",
-    "jobFunctions": ["Admin", "Lab Manager"],
+    "jobFunctions": ["Super Admin", "Lab Manager"],
     "personEmailAddress": "monbasilio@gmail.com",
     "username": "rbasilio",
     "timezone": "Taipei Standard Time",

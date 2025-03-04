@@ -10,7 +10,7 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
 
   const jobFunctions = await knex('JobFunction')
-    .whereIn('externalId', ['admin', 'regionalOfficer', 'labUser'])
+    .whereIn('externalId', ['superAdmin', 'regionalOfficer', 'labUser'])
     .select('id')
 
   await Promise.each(jobFunctions, async jobFunction => {

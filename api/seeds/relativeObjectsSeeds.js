@@ -38,7 +38,7 @@ async function addIssueTypes(
         .join('Person as p', 'u.id', 'p.userId')
         .join('JobContext as jc', 'p.id', 'jc.personId')
         .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
-        .where('jf.name', 'admin')
+        .where('jf.name', 'Super Admin')
         .first('u.id as adminId', 'p.lastPartnerId as partnerId'))
       if (!adminId) return false
       if (!partnerId) {
@@ -126,7 +126,7 @@ async function addDefaultCustomFieldDefinitions(knex, _partnerId, formsNeeded = 
         .join('Person as p', 'u.id', 'p.userId')
         .join('JobContext as jc', 'p.id', 'jc.personId')
         .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
-        .where('jf.name', 'admin')
+        .where('jf.name', 'Super Admin')
         .first('p.lastPartnerId as partnerId'))
       if (!partnerId) {
         ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))

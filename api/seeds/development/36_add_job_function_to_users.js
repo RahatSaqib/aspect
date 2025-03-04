@@ -21,9 +21,9 @@ async function seed(knex) {
     })
     .first('id')
 
-  const jobFunctionManager = await knex('JobFunction')
+  const jobFunctionRegionalAdmin = await knex('JobFunction')
     .where({
-      externalId: 'manager',
+      externalId: 'regionalAdmin',
       partnerId: partnerIdOne.id,
     })
     .first('id')
@@ -45,7 +45,7 @@ async function seed(knex) {
 
   if (checkJobEd.length < 1) {
     await knex('JobContext').insert([
-      { personId: personIds.ed, jobFunctionId: jobFunctionManager.id, geographyId },
+      { personId: personIds.ed, jobFunctionId: jobFunctionRegionalAdmin.id, geographyId },
       { personId: personIds.jim, jobFunctionId: jobFunctionLabManager.id, geographyId },
       { personId: personIds.jon, jobFunctionId: jobFunctionClinical.id, geographyId },
       { personId: personIds.steve, jobFunctionId: jobFunctionClinical.id, geographyId },
