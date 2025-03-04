@@ -83,12 +83,11 @@ async function fetchSystemConfigServiceHandler() {
   })
 }
 
-async function fetchAppIdFromUniqueDeviceCodeHandler(config) {
-  console.log('What is the config :: ==> ', config)
+async function fetchAppIdFromUniqueDeviceCodeHandler({ query: { deviceCode } }) {
   return Promise.resolve({
     ok: true,
     data: {
-      appId: '123',
+      appId: deviceCode,
     },
   })
 }

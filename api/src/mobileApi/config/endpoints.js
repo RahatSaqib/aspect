@@ -1,3 +1,4 @@
+const Joi = require('@hapi/joi')
 const {
   downloadApplicationConfigResponseValidation,
   downloadSystemConfigResponseValidation,
@@ -49,6 +50,11 @@ const routes = [
     handler: asyncHandler(fetchAppIdFromUniqueDeviceCodeHandler),
     config: {
       auth: false,
+      validate: {
+        query: {
+          deviceCode: Joi.string().required(),
+        },
+      },
       description: 'Endpoint for retrieving app-id based on unique device code sent by the mobile app',
       notes: 'Used for syncing Aspect Mobile configuration options',
       response: {
