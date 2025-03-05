@@ -1,3 +1,5 @@
+const crypto = require('crypto')
+
 async function fetchApplicationConfigServiceHandler() {
   return Promise.resolve({
     ok: true,
@@ -84,10 +86,16 @@ async function fetchSystemConfigServiceHandler() {
 }
 
 async function fetchAppIdFromUniqueDeviceCodeHandler({ query: { deviceCode } }) {
+  // Create a SHA-256 hash of the deviceCode
+  const hash = crypto.createHash('sha256').update(deviceCode).digest('hex')
+
+  // Take first 10 characters of the hash - it's already alphanumeric
+  const alphanumericCode = hash.slice(0, 10).toUpperCase()
+
   return Promise.resolve({
     ok: true,
     data: {
-      appId: deviceCode,
+      appId: alphanumericCode,
     },
   })
 }
