@@ -399,15 +399,21 @@ async function renderExcelTemplate({
         const dataRows = wayToFillInData === 'mapping' ? data.rows : sectionDataSource ? data[sectionDataSource] : data
 
         if (dataRows && dataRows.length > 0) {
-          const formulae = []
-
-          // Step 1: Capture formulas
-          patternRows.forEach((templateRow, rowTemplateIndex) => {
-            templateRow.eachCell((cell, index) => {
+          // Step 1: Capture formulas and tokens
+          const patternRowsMetadata = []
+          patternRows.forEach(templateRow => {
+            // Capture formulas, tokens and values, as templateRow will be mutated
+            const rowMetadata = []
+            templateRow.eachCell({ includeEmpty: true }, cell => {
               if (cell.type === excel.ValueType.Formula) {
-                formulae.push({ formula: cell.value.formula, index, rowTemplateIndex })
+                rowMetadata.push({ formula: cell.value.formula })
+              } else if (typeof cell.value === 'string' && /^\s*<.+>\s*$/.test(cell.value)) {
+                rowMetadata.push({ field: cell.value.match(/^<(.+)>$/)[1], isToken: true })
+              } else {
+                rowMetadata.push({ value: cell.value })
               }
             })
+            patternRowsMetadata.push(rowMetadata)
           })
 
           // Step 2: Insert rows and apply data properly
@@ -439,31 +445,26 @@ async function renderExcelTemplate({
 
                   mergesToAdd.push(newMergeRange)
                 }
-
+                const templateCellMetadata = patternRowsMetadata[templateRowIndex][colIndex - 1]
                 // Process formula cells
-                if (templateCell.formula) {
+                if (templateCellMetadata.formula) {
                   newCell.value = {
-                    formula: templateCell.formula.replace(/(\$?[A-Za-z]+)(\$?\d+)/g, (_, colRef, rowRef) => {
+                    formula: templateCellMetadata.formula.replace(/(\$?[A-Za-z]+)(\$?\d+)/g, (_, colRef, rowRef) => {
                       if (rowRef.startsWith('$')) return `${colRef}${rowRef}`
                       const targetRow = parseInt(rowRef, 10)
                       const offset = currentRowIndex - templateCell.row
                       return `${colRef}${targetRow + offset}`
                     }),
                   }
+                }
+                // Process non-formula cells
+                else if (templateCellMetadata.isToken) {
+                  const newValue = getNewCellValue(dataRow, templateCellMetadata.field)
+                  // complete here
+                  newCell.value = newValue
                 } else {
-                  // Process non-formula cells
-                  const cellValue = templateCell.value
-                  // Token mode
-                  const isToken = typeof cellValue === 'string' && /^\s*<.+>\s*$/.test(cellValue)
-                  if (isToken) {
-                    const fieldName = cellValue.match(/^<(.+)>$/)[1]
-                    const newValue = getNewCellValue(dataRow, fieldName)
-                    // complete here
-                    newCell.value = newValue
-                  } else {
-                    // mapping mode
-                    newCell.value = templateCell.value
-                  }
+                  // mapping mode
+                  newCell.value = templateCellMetadata.value
                 }
               })
 
@@ -560,7 +561,7 @@ async function renderExcelTemplate({
     if (fieldName === '#') {
       return dataRow.id
     }
-    let value = fieldName && !_.isNil(dataRow[fieldName]) ? dataRow[fieldName] : '****'
+    let value = fieldName && !_.isNil(dataRow[fieldName]) ? dataRow[fieldName] : ''
 
     if (fieldName === 'patientAge' && value === 'null') {
       value = ''
@@ -755,7 +756,7 @@ async function streamExcelTemplate({
        * prepare table in worksheet, i.e.
        * append dynamic columns, get all predefined field names, get pattern row number
        */
-      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
+      ; ({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
     }
 
     /**
