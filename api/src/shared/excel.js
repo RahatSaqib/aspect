@@ -388,7 +388,7 @@ async function renderExcelTemplate({
         for (let i = firstPatternCellStartRowIndex; i <= firstPatternCellEndRowIndex; i++) {
           patternRows.push(worksheet.getRow(i))
         }
-
+        const fixedColumnsCount = allHeaderRows[0].cellCount
         if (dynamicColumns.length > 0) {
           const dynamicMerges = appendColumnsToHeader(worksheet, dynamicColumns, allHeaderRows[0], allHeaderRows.length)
           _.forEach(dynamicMerges, range => {
@@ -409,10 +409,10 @@ async function renderExcelTemplate({
               }
             })
           })
+
           // Step 2: Insert rows and apply data properly
           dataRows.forEach((dataRow, rowIndex) => {
             const mergesToAdd = []
-            let lastColIndex = 0
             patternRows.forEach((templateRow, templateRowIndex) => {
               const currentRowIndex = patternRowStart + rowIndex * patternRows.length + templateRowIndex
               const newRow = worksheet.getRow(currentRowIndex) // Row creation
@@ -420,7 +420,6 @@ async function renderExcelTemplate({
 
               templateRow.eachCell({ includeEmpty: true }, (templateCell, colIndex) => {
                 const newCell = newRow.getCell(colIndex)
-                lastColIndex = colIndex
                 setCellStyle(newCell, getCellStyle(templateCell))
 
                 // Collect cells to merge, only in the first row of each data block
@@ -511,25 +510,26 @@ async function renderExcelTemplate({
                       cellsStyle: [],
                     }
                   )
-                  // Apply values to dynamic cells for the row
-                  for (let i = 0; i < dymamicColumnsValues.length; i++) {
-                    // fill dynamic columns
-                    lastColIndex += 1
+                  let colIndex = fixedColumnsCount + 1
+                  // Apply values to dynamic colums for the row
+                  for (let i = 0; i < dymamicColumnsValues.rowValues.length; i++) {
+                    // if records spans across multiple rows
                     if (firstPatternCellStartRowIndex !== firstPatternCellEndRowIndex) {
                       const rowSpan = firstPatternCellEndRowIndex - firstPatternCellStartRowIndex + 1
                       const rowOffset = rowIndex * patternRows.length
                       const newMergeRange = {
                         top: firstPatternCellStartRowIndex + rowOffset,
-                        left: lastColIndex,
+                        left: colIndex,
                         bottom: firstPatternCellStartRowIndex + rowOffset + rowSpan - 1,
-                        right: lastColIndex,
+                        right: colIndex,
                       }
-
                       mergesToAdd.push(newMergeRange)
-                      const newCell = newRow.getCell(lastColIndex)
-                      const cellValue = dymamicColumnsValues[lastColIndex]
-                      newCell.value = cellValue
                     }
+
+                    const newCell = newRow.getCell(colIndex)
+                    const cellValue = dymamicColumnsValues.rowValues[colIndex - fixedColumnsCount - 1]
+                    newCell.value = cellValue
+                    colIndex += 1
                   }
                 }
               }
@@ -560,7 +560,7 @@ async function renderExcelTemplate({
     if (fieldName === '#') {
       return dataRow.id
     }
-    let value = fieldName && !_.isNil(dataRow[fieldName]) ? dataRow[fieldName] : ''
+    let value = fieldName && !_.isNil(dataRow[fieldName]) ? dataRow[fieldName] : '****'
 
     if (fieldName === 'patientAge' && value === 'null') {
       value = ''
@@ -755,7 +755,7 @@ async function streamExcelTemplate({
        * prepare table in worksheet, i.e.
        * append dynamic columns, get all predefined field names, get pattern row number
        */
-      ; ({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
+      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
     }
 
     /**
