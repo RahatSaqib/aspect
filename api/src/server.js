@@ -137,7 +137,6 @@ const messageQueuePlugin = {
 
       addLoggers(server, queue)
       await addSubscriptions(queue)
-      cron.schedule('*/10 * * * *', serviceNotificationInformation) // run every 10 minutes
       if (config.scheduler.enabled) {
         const dispatcher = startScheduler(queue)
         server.app.dispatcher = dispatcher
@@ -223,6 +222,8 @@ const start = async () => {
       return h.continue
     })
   }
+
+  cron.schedule('*/3 * * * *', serviceNotificationInformation) // run every 3 minutes
 
   /**
    * Make sure to read and cache some dictionaries
