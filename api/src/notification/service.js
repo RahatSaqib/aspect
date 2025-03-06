@@ -241,10 +241,7 @@ async function createNotifications(knex, notification, context) {
   // The result, issue, or report ID
   const resourceId = getResourceId(notification)
 
-  let shouldNotify = true
-  if (shouldNotifyResource) {
-    shouldNotify = await shouldNotifyResource(resourceId, notificationTypeId)
-  }
+  const shouldNotify = shouldNotifyResource ? await shouldNotifyResource(resourceId, notificationTypeId) : true
 
   if (!shouldNotify) return
 
