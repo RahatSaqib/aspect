@@ -188,11 +188,7 @@ function getCellStyle(cell) {
 
 // ----------------------------------------------------------------------------------------------
 function setCellStyle(cell, style) {
-  if (!_.isEmpty(style)) {
-    _.forEach(style, (styleValue, styleName) => {
-      cell[styleName] = styleValue
-    })
-  }
+  cell.style = cell._mergeStyle(style, {}, {})
 }
 
 // ----------------------------------------------------------------------------------------------
