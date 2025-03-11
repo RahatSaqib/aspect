@@ -1,3 +1,5 @@
+const crypto = require('crypto')
+
 async function fetchApplicationConfigServiceHandler() {
   return Promise.resolve({
     ok: true,
@@ -83,4 +85,45 @@ async function fetchSystemConfigServiceHandler() {
   })
 }
 
-module.exports = { fetchApplicationConfigServiceHandler, fetchSystemConfigServiceHandler }
+/**
+ * Generates a unique app ID from a device code
+ * @param {string} deviceCode - The device code to generate the app ID from
+ * @returns {string} A 12-character uppercase alphanumeric code
+ * @throws {Error} If deviceCode is missing or invalid
+ */
+function generateAppId(deviceCode) {
+  if (!deviceCode || typeof deviceCode !== 'string') {
+    throw new Error('Invalid device code provided')
+  }
+
+  const hash = crypto.createHash('sha256').update(deviceCode).digest('hex')
+  return hash.slice(0, 10).toUpperCase()
+}
+
+/**
+ * Handles the request to generate an app ID from a device code
+ * @param {Object} params - Request parameters
+ * @param {Object} params.query - Query parameters
+ * @param {string} params.query.deviceCode - The device code to generate the app ID from
+ * @returns {Promise<Object>} Response containing the generated app ID or error message
+ */
+async function fetchAppIdFromUniqueDeviceCodeHandler({ query: { deviceCode } }) {
+  try {
+    const appId = generateAppId(deviceCode)
+    return {
+      ok: true,
+      data: { appId },
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      error: error.message || 'Failed to generate app ID',
+    }
+  }
+}
+
+module.exports = {
+  fetchApplicationConfigServiceHandler,
+  fetchSystemConfigServiceHandler,
+  fetchAppIdFromUniqueDeviceCodeHandler,
+}
