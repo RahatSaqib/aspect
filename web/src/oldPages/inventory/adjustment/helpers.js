@@ -14,7 +14,7 @@ export const strategyRequireExpirationDate = strategy => !!strategy?.includes('E
 export const strategyRequireLot = strategy => !!strategy?.includes('Lot')
 
 export function transformValues(values) {
-  const { consumable, reason, ...rest } = values
+  const { consumable, reason, inventoryItem, ...rest } = values
   return omitBy(
     {
       ...rest,
@@ -43,6 +43,7 @@ export const withLotNumber = (partner, consumable) => {
 }
 
 export function getValidations(format, actionType, { partner, inventory }) {
+  const uiAdd = actionType === types.SHOW_NEW_INVENTORY_DIALOG
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
   const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
@@ -74,7 +75,7 @@ export function getValidations(format, actionType, { partner, inventory }) {
      * because value of `consumable` field depend on corresponding toSite.siteConsumables and no need
      * to bother user's eyes with `consumable` validation message when toSite is not selected
      */
-    if (actionType === types.SHOW_NEW_INVENTORY_DIALOG) {
+    if (uiAdd) {
       schema = schema.shape({
         consumable: object()
           .nullable()
@@ -103,13 +104,19 @@ export function getValidations(format, actionType, { partner, inventory }) {
     })
   }
 
+  if (uiTransfer && !inventory?.expiresOn && !inventory?.lotNumber) {
+    schema = schema.shape({
+      inventoryItem: string().required(format(validationMessages.inventoryItemRequired)),
+    })
+  }
+
   if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
     schema = schema.shape({
       toSiteId: string().required(format(validationMessages.siteRequired)),
     })
   }
 
-  if (actionType === types.SHOW_REMOVE_INVENTORY_DIALOG) {
+  if (uiRemove) {
     schema = schema.shape({ reason: object().nullable().required(format(validationMessages.reasonRequired)) })
   }
 
@@ -120,9 +127,13 @@ export function getQuantityOnHand(actionType, inventory, values) {
   let nextQuantity
   switch (actionType) {
     case types.SHOW_REMOVE_INVENTORY_DIALOG:
-    case types.SHOW_TRANSFER_INVENTORY_DIALOG:
-      nextQuantity = inventory.quantityOnHand - Number(values?.quantity ?? 0)
+    case types.SHOW_TRANSFER_INVENTORY_DIALOG: {
+      // If we don’t have a lotNumber or expiresOn, it means we're transferring inventory without specifying an inventory item
+      // (in other words, without using the break-by-lot option).
+      const quantityOnHand = values.lotNumber || values.expiresOn ? inventory.quantityOnHand : 0
+      nextQuantity = quantityOnHand - Number(values?.quantity ?? 0)
       break
+    }
     case types.SHOW_RECEIVE_INVENTORY_DIALOG:
       nextQuantity = values?.quantity
       break

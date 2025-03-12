@@ -57,6 +57,10 @@ const messages = defineMessages({
     id: 'pages.InventoryAdjustmentDialogForm.notes',
     defaultMessage: 'Notes',
   },
+  inventoryItem: {
+    id: 'pages.InventoryAdjustmentDialogForm.inventoryItem',
+    defaultMessage: 'Inventory Item',
+  },
 })
 
 export const validationMessages = defineMessages({
@@ -123,6 +127,10 @@ export const validationMessages = defineMessages({
   dateAdjustedGreaterThanToday: {
     id: 'pages.InventoryAdjustmentDialogForm.dateAdjustedGreaterThanToday',
     defaultMessage: 'Please enter date until today',
+  },
+  inventoryItemRequired: {
+    id: 'pages.InventoryAdjustmentDialogForm.inventoryItemRequired',
+    defaultMessage: 'Please choose an inventory item',
   },
 })
 
