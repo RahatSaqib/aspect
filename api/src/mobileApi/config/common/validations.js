@@ -61,4 +61,17 @@ const downloadSystemConfigResponseValidation = () => {
   })
 }
 
-module.exports = { downloadApplicationConfigResponseValidation, downloadSystemConfigResponseValidation }
+const retrieveAppIdConfigResponseValidation = () => {
+  return Joi.object().keys({
+    ok: Joi.bool().required().description('False if there was some sort of problem'),
+    data: Joi.object().keys({
+      appId: Joi.string().required().description('Unique ID of the application'),
+    }),
+  })
+}
+
+module.exports = {
+  downloadApplicationConfigResponseValidation,
+  downloadSystemConfigResponseValidation,
+  retrieveAppIdConfigResponseValidation,
+}
