@@ -67,6 +67,7 @@ const resultsForNTPUse = {
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getResultsForNtpUse',
       query: {},
+      avoidStreaming: true,
     },
   ],
 }
