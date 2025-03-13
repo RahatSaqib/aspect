@@ -308,8 +308,7 @@ async function getDeviceCapacityReport(auth, query) {
             : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
         )
         deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
-          (filteredMonthlyCapacity.resultCount) /
-          Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
+          filteredMonthlyCapacity.resultCount / Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
           2
         )
       }
