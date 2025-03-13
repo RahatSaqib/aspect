@@ -557,9 +557,9 @@ async function renderExcelTemplate({
     if (fieldName === '#') {
       return dataRow.id
     }
-    let value = fieldName && !_.isNil(dataRow[fieldName]) ? dataRow[fieldName] : ''
+    let value = dataRow[fieldName] || ''
 
-    if (fieldName === 'patientAge' && value === 'null') {
+    if (fieldName === 'patientAge' || value === 'null') {
       value = ''
     }
 
@@ -1047,7 +1047,7 @@ function getNormalizedData({ data, fieldNames, normalizer, dynamicColumns, defau
         let value = fieldName && normalizedValues[fieldName]
         value = _.isNil(value) ? '' : value
         // TODO: think on a better generic way to handle such replacements in dataset
-        if (fieldName === 'patientAge' && value === 'null') {
+        if (fieldName === 'patientAge' || value === 'null') {
           value = ''
         }
         return value
