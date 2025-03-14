@@ -37,9 +37,7 @@ async function listInventoryByLot(request, dataConstraints) {
     }
     requestQuery.sortCol = sortCols.join(',')
   }
-  const { total, data } = await getInventoryByLot(request, requestQuery, dataConstraints)
-
-  return { total, data }
+  return getInventoryByLot(request, requestQuery, dataConstraints)
 }
 
 async function listInventoryBySiteAndConsumable(request, dataConstraints) {
