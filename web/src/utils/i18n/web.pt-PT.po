@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-02-11T15:23:08.208Z\n"
+"POT-Creation-Date: 2025-03-11T11:43:12.268Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -517,9 +517,6 @@ msgid "Adjust Quantity"
 msgstr "Ajustar a quantidade"
 
 #. [browsePage.browseDropdown.admin]
-#. defaultMessage is:
-#. Admin
-#. [jobFunction.admin]
 #. defaultMessage is:
 #. Admin
 #: extracted_strings.json
@@ -7648,13 +7645,6 @@ msgstr "Masculino"
 msgid "Manage"
 msgstr "Gerenciar"
 
-#. [jobFunction.manager]
-#. defaultMessage is:
-#. Manager
-#: extracted_strings.json
-msgid "Manager"
-msgstr "Gestor"
-
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy]
 #. defaultMessage is:
 #. Manually set by {username} ({updatedDate})
@@ -8975,6 +8965,15 @@ msgstr "Apenas resultados descarregados por Repórter"
 #: extracted_strings.json
 msgid "Only Results With Treatment Required"
 msgstr "Apenas resultados com tratamento necessário"
+
+#. [filter.popover.onlyUnreconciled]
+#. defaultMessage is:
+#. Only Results with unreconciled inventories
+#: extracted_strings.json
+#, fuzzy
+#| msgid "List of Unreconciled Inventory"
+msgid "Only Results with unreconciled inventories"
+msgstr "Lista de inventário não reconciliado"
 
 #. [filter.btnGroup.hasStock]
 #. defaultMessage is:
@@ -10440,6 +10439,15 @@ msgstr "Região"
 msgid "Region n"
 msgstr "Região n"
 
+#. [jobFunction.regionalAdmin]
+#. defaultMessage is:
+#. Regional Admin
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Region n"
+msgid "Regional Admin"
+msgstr "Região n"
+
 #. [jobFunction.regionalOfficer]
 #. defaultMessage is:
 #. Regional Officer
@@ -10885,6 +10893,15 @@ msgstr "Detalhes do Resultado"
 #. Result Detected
 #: extracted_strings.json
 msgid "Result Detected"
+msgstr "Resultado Detectado"
+
+#. [placeholder.result.detected.resistances]
+#. defaultMessage is:
+#. Result Detected Resistances
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Result Detected"
+msgid "Result Detected Resistances"
 msgstr "Resultado Detectado"
 
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
@@ -12041,6 +12058,15 @@ msgstr "Mostrar Porcentagem"
 msgid "Show Results From Decommissioned Devices"
 msgstr "Mostrar resultados de dispositivos desactivados"
 
+#. [filter.btnGroup.onlyUnreconciled]
+#. defaultMessage is:
+#. Show Results With Unreconciled Inventories
+#: extracted_strings.json
+#, fuzzy
+#| msgid "List of Unreconciled Inventory"
+msgid "Show Results With Unreconciled Inventories"
+msgstr "Lista de inventário não reconciliado"
+
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
 #. Show line for
@@ -12755,6 +12781,15 @@ msgstr "Tabela de resumo para dispositivos XDR"
 #: extracted_strings.json
 msgid "Sunday"
 msgstr "Domingo"
+
+#. [jobFunction.superAdmin]
+#. defaultMessage is:
+#. Super Admin
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Admin"
+msgid "Super Admin"
+msgstr "Administrador"
 
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
@@ -14227,6 +14262,15 @@ msgstr "Testes totais"
 msgid "Total Triggers"
 msgstr "Acionadores totais"
 
+#. [pages.InventoryItemsList.unreconciledQuantityDescription]
+#. defaultMessage is:
+#. Total cartridges consumed and reported under tests but not yet adjusted against the inventory
+#: extracted_strings.json
+msgid ""
+"Total cartridges consumed and reported under tests but not yet adjusted "
+"against the inventory"
+msgstr ""
+
 #. [legends.Unknown.ResultCategoryTraceDetected]
 #. defaultMessage is:
 #. Trace Detected
@@ -14590,6 +14634,15 @@ msgstr "Desconhecido"
 #: extracted_strings.json
 msgid "Unlocked"
 msgstr "Desbloqueado"
+
+#. [pages.InventoryItemsList.unreconciledQuantity]
+#. defaultMessage is:
+#. Unreconciled Quantity
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Unreconciled quantity"
+msgid "Unreconciled Quantity"
+msgstr "Quantidade não apurada"
 
 #. [pages.inventoryReconciliation.unreconciledQuantity]
 #. defaultMessage is:
@@ -16069,6 +16122,9 @@ msgstr "{unit} desde a semana passada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
+
+#~ msgid "Manager"
+#~ msgstr "Gestor"
 
 #~ msgid "Capacity"
 #~ msgstr "Capacidade"
