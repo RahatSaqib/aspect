@@ -182,37 +182,35 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
           </span>
         )}
       </TableCell>
-      {!breakOutByLot ? (
-        <TableCell
-          onClick={() => {
-            if (inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse') {
-              addFilter(
-                omitBy(
-                  {
-                    onlyUnreconciled: true,
-                    countryId,
-                    assayId: inventoryItem.get('assayId'),
-                    stateId: inventoryItem.get('stateId'),
-                    lgaId: inventoryItem.get('lgaId'),
-                    siteName: inventoryItem.get('siteName'),
-                  },
-                  isNil
-                ),
-                '/browse/result'
-              )
-              navigate('/browse/result')
-            }
-          }}
-          sx={
-            inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse'
-              ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
-              : {}
+      <TableCell
+        onClick={() => {
+          if (inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse') {
+            addFilter(
+              omitBy(
+                {
+                  onlyUnreconciled: true,
+                  countryId,
+                  assayId: inventoryItem.get('assayId'),
+                  stateId: inventoryItem.get('stateId'),
+                  lgaId: inventoryItem.get('lgaId'),
+                  siteName: inventoryItem.get('siteName'),
+                },
+                isNil
+              ),
+              '/browse/result'
+            )
+            navigate('/browse/result')
           }
-          className={styles.TableCell}
-        >
-          {inventoryItem.get('unreconciledQuantity')}
-        </TableCell>
-      ) : null}
+        }}
+        sx={
+          inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse'
+            ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
+            : {}
+        }
+        className={styles.TableCell}
+      >
+        {inventoryItem.get('unreconciledQuantity')}
+      </TableCell>
       {inventoryItem.get('dailyConsumptionRate') !== undefined ? (
         <TableCell className={styles.TableCell} rowSpan={rowSpan('dailyConsumptionRate')}>
           {hasDailyConsumption(inventoryItem.get('dailyConsumptionRate'))}
