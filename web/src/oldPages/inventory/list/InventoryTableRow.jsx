@@ -176,6 +176,11 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
             &nbsp; ({inventoryItem.get('qtyExpired')} {formatMessage(messages.expired)})
           </span>
         ) : null}
+        {inventoryItem.get('unreconciledQuantity') > 0 && (
+          <span className={styles.alert}>
+            &nbsp; ({inventoryItem.get('unreconciledQuantity')} {formatMessage(messages.unreconciled)})
+          </span>
+        )}
       </TableCell>
       {!breakOutByLot ? (
         <TableCell

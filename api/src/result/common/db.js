@@ -228,10 +228,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         queryBuilder
           .innerJoin('MissingInventoryLots as mil', 'r.id', 'mil.resultId') // Join based on resultId
           .whereNotNull('mil.resultId')
-          .modify(filterParams, query, {
-            lotNumber: 'mil.lotNumber',
-            expiresOn: 'mil.expirationDate',
-          })
+          .modify(filterParams, query, {})
       }
       if (query.consumableId)
         queryBuilder.join('InventoryLog as il', 'il.resultId', 'r.id').where('il.consumableId', query.consumableId)

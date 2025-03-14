@@ -37,7 +37,15 @@ async function listInventoryByLot(request, dataConstraints) {
     }
     requestQuery.sortCol = sortCols.join(',')
   }
-  return getInventoryByLot(request, requestQuery, dataConstraints)
+  const { total, data } = await getInventoryByLot(request, requestQuery, dataConstraints)
+
+  // Transform the data to include unreconciledQuantity
+  const transformedData = data.map(item => ({
+    ...item,
+    unreconciledQuantity: item.unreconciledQuantity || 0,
+  }))
+
+  return { total, data: transformedData }
 }
 
 async function listInventoryBySiteAndConsumable(request, dataConstraints) {
