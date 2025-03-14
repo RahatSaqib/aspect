@@ -317,6 +317,7 @@ function getInventoryLots(request, dataConstraints) {
       builder.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
     })
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .leftJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, {
       ...INVENTORY_ITEM_FILTER_FIELDS,

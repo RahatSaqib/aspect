@@ -121,6 +121,7 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
         IFNULL(ii.inTransitFromSiteId, '')
     ) AS id
   `),
+  'ca.assayId as assayId',
 
   // Filter fields from INVENTORY_ITEM_SELECT
   ...INVENTORY_ITEM_SELECT.filter(field => {
