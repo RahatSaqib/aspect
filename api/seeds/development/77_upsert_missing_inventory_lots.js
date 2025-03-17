@@ -12,7 +12,7 @@ async function seed(knex) {
     const insert = knex('MissingInventoryLots').insert({
       resultId: result.id,
       expirationDate: result.consumableExpirationDate,
-      lotNumber: Math.floor(Math.random() * 500),
+      lotNumber: result.consumableLot,
       siteId: result.siteId,
       createdOn: result.createdOn,
       createdBy: adminId,

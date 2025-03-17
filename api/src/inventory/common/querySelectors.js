@@ -143,7 +143,7 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
     (
       SELECT COUNT(*)
       FROM MissingInventoryLots mil
-      INNER JOIN Result r ON mil.resultId = r.id
+      INNER JOIN Result r ON mil.resultId = r.id AND mil.lotNumber = r.consumableLot AND mil.expirationDate = r.consumableExpirationDate
       INNER JOIN ConsumableAssay ca ON r.assayId = ca.assayId
       INNER JOIN Consumable c ON ca.consumableId = c.id
       WHERE mil.siteId = s.id
