@@ -139,17 +139,7 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   'ii.lotNumber AS lotNumber',
   'ii.expiresOn AS expiresOn',
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
-  knex.raw(`
-    (
-      SELECT COUNT(*)
-      FROM MissingInventoryLots mil
-      INNER JOIN Result r ON mil.resultId = r.id AND mil.lotNumber = r.consumableLot AND mil.expirationDate = r.consumableExpirationDate
-      INNER JOIN ConsumableAssay ca ON r.assayId = ca.assayId
-      INNER JOIN Consumable c ON ca.consumableId = c.id
-      WHERE mil.siteId = s.id
-      AND c.id = ii.consumableId
-    ) AS unreconciledQuantity
-  `),
+  knex.raw('IFNULL(unreconciled.unreconciledCount, 0) AS unreconciledQuantity'),
 ]
 
 const INVENTORY_LOG_SORT_FIELDS = {

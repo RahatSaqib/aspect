@@ -318,6 +318,18 @@ function getInventoryLots(request, dataConstraints) {
     })
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .leftJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
+    .leftJoin(
+      knex('MissingInventoryLots as mil')
+        .innerJoin('Result as r', 'mil.resultId', 'r.id')
+        .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+        .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
+        .select('mil.siteId', 'c.id as consumableId', knex.raw('COUNT(*) as unreconciledCount'))
+        .groupBy('mil.siteId', 'c.id')
+        .as('unreconciled'),
+      builder => {
+        builder.on('unreconciled.siteId', 's.id').andOn('unreconciled.consumableId', 'c.id')
+      }
+    )
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, {
       ...INVENTORY_ITEM_FILTER_FIELDS,
