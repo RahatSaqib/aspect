@@ -9,7 +9,6 @@ const { nigeriaPlugin } = require('./plugins/nigeriaPlugin')
 const { alereftpconnectorPlugin } = require('./plugins/alereftpconnectorPlugin')
 const { cameroonPlugin } = require('./plugins/cameroonPlugin')
 const { aspectresultentryPlugin } = require('./plugins/aspectresultentryPlugin')
-const { philippinesPlugin } = require('./plugins/philippinesPlugin')
 const { pakistanPlugin } = require('./plugins/pakistanPlugin')
 const { lesothoPlugin } = require('./plugins/lesothoPlugin')
 
@@ -27,7 +26,6 @@ const plugins = {
   alereftpconnector: alereftpconnectorPlugin,
   cameroon: cameroonPlugin,
   aspectresultentry: aspectresultentryPlugin,
-  philippines: philippinesPlugin,
   pakistan: pakistanPlugin,
   lesotho: lesothoPlugin,
 }
