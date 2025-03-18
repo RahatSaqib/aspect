@@ -252,7 +252,7 @@ describe('GET: /api/inventory', () => {
   it('should return 200 with all inventory items grouped by site and consumable when default query parameters are set', async () => {
     const response = await server.get(endpoint).set('Authorization', `Bearer ${sharedToken.token}`)
     assert.equal(response.status, 200)
-
+    assert.equal(response.body.data.length, 2)
     // Should be aggregated quantity on hand for the consumable under a site and consumable
     assert.equal(response.body.data[0].quantityOnHand, 150)
   })
