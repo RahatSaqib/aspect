@@ -2,8 +2,6 @@ const proxyquire = require('proxyquire')
 const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
-const { knex } = require('../../db')
-const { setupRoute } = require('../utils')
 
 describe('inventory endpoints', () => {
   function setupRoute(method, path, serviceStub) {
