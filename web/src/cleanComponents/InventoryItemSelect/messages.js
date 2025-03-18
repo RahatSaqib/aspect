@@ -1,8 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
-  option: {
-    id: 'inventoryItemSelect.option',
-    defaultMessage: `Lot Number: {lotNumber} | Exp Date: {expiresOn} | Quantity: {quantity}`,
+  lotNumber: {
+    id: 'inventoryItemSelect.lotNumber',
+    defaultMessage: `Lot Number: {lotNumber}`,
+  },
+  expiresOn: {
+    id: 'inventoryItemSelect.expiresOn',
+    defaultMessage: `Exp Date: {expiresOn}`,
+  },
+  quantity: {
+    id: 'inventoryItemSelect.quantity',
+    defaultMessage: `Quantity: {quantity}`,
   },
 })

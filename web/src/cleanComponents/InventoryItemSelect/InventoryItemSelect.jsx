@@ -5,7 +5,7 @@ import { commonDefinitions } from '../../messages'
 import AspectSelect from '../AspectSelect'
 import messages from './messages'
 
-export default function InventoryItemSelect({ inventoryItem, ...props }) {
+export default function InventoryItemSelect({ inventoryItem, showLotNumber, showExpirationDate, ...props }) {
   const { isLoading: isInventoryListLoading, data: { data: inventoryItems = [] } = {} } = useInventoryList({
     siteId: inventoryItem.siteId,
     consumableId: inventoryItem.consumableId,
@@ -14,19 +14,41 @@ export default function InventoryItemSelect({ inventoryItem, ...props }) {
   })
   const { formatMessage } = useIntl()
 
+  const itemToString = item => {
+    const parts = []
+
+    if (showLotNumber) {
+      parts.push(
+        formatMessage(messages.lotNumber, {
+          lotNumber: item.lotNumber || formatMessage(commonDefinitions.notAvailable),
+        })
+      )
+    }
+
+    if (showExpirationDate) {
+      parts.push(
+        formatMessage(messages.expiresOn, {
+          expiresOn: item.expiresOn.split('T')[0] || formatMessage(commonDefinitions.notAvailable),
+        })
+      )
+    }
+
+    parts.push(
+      formatMessage(messages.quantity, {
+        quantity: item.quantityOnHand,
+      })
+    )
+
+    return parts.join(' | ')
+  }
+
   return (
     <AspectSelect
       {...props}
       valueBy="id"
       isLoading={isInventoryListLoading}
       options={inventoryItems}
-      itemToString={item =>
-        formatMessage(messages.option, {
-          lotNumber: item.lotNumber || formatMessage(commonDefinitions.notAvailable),
-          expiresOn: item.expiresOn.split('T')[0] || formatMessage(commonDefinitions.notAvailable),
-          quantity: item.quantityOnHand,
-        })
-      }
+      itemToString={itemToString}
     />
   )
 }

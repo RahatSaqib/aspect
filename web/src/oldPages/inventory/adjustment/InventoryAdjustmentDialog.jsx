@@ -226,6 +226,8 @@ function InventoryAdjustmentDialog(props) {
                     <InventoryItemSelect
                       name="inventoryItem"
                       inventoryItem={inventory}
+                      showExpirationDate={withExpirationDate(partner)}
+                      showLotNumber={withLotNumber(partner)}
                       onChange={(value, options) => {
                         const inventoryItem = options.find(o => o.id === value)
                         setFieldValue('expiresOn', inventoryItem?.expiresOn)
