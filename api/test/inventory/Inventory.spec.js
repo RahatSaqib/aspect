@@ -155,10 +155,16 @@ describe('GET: /api/inventory', () => {
     await testContext.beforeRegisterAndSetDevice()
 
     const {
-      site: { id: siteId },
+      device: { partnerId, siteId },
     } = testContext
 
     const { assayId, consumableId } = await knex('ConsumableAssay').where({}).first()
+
+    await knex('SiteConsumable').insert({
+      siteId,
+      consumableId,
+    })
+
     // Create inventory items
     await knex('InventoryItem').insert([
       {
@@ -182,7 +188,7 @@ describe('GET: /api/inventory', () => {
     const [resultId1] = await knex('Result').insert({
       resultSourceId: 1,
       resultTypeId: 1,
-      partnerId: 1,
+      partnerId,
       assayId,
       deviceId: 1,
       sampleId: 1,
@@ -198,7 +204,7 @@ describe('GET: /api/inventory', () => {
       resultTypeId: 1,
       sampleId: 1,
       reportableSiteId: 1,
-      partnerId: 1,
+      partnerId,
       assayId,
       deviceId: 1,
       siteId,
@@ -239,6 +245,7 @@ describe('GET: /api/inventory', () => {
     await knex('MissingInventoryLots').where('siteId', testData.siteId).delete()
     await knex('Result').where('siteId', testData.siteId).delete()
     await knex('InventoryItem').where('siteId', testData.siteId).delete()
+    await knex('SiteConsumable').where({ siteId: testData.siteId, consumableId: testData.consumableId }).delete()
     await testContext.cleanUp()
   })
 
@@ -268,14 +275,17 @@ describe('GET: /api/inventory', () => {
           page: 0,
           size: 10,
           hasStock: true,
-          breakoutByLot: true,
+          breakOutByLot: true,
         })
         .set('Authorization', `Bearer ${sharedToken.token}`),
     ])
     assert.equal(withoutBreakoutByLotOption.body.data.length, 1)
     assert.equal(withBreakoutByLotOption.body.data.length, 2)
-    assert.equal(withoutBreakoutByLotOption.body.data[0].unreconciledQuantity, 1)
-    assert.equal(withBreakoutByLotOption.body.data[0].unreconciledQuantity, 1)
+    assert.equal(withoutBreakoutByLotOption.body.data[0].unreconciledQuantity, 2)
+    assert.equal(withBreakoutByLotOption.body.data[0].unreconciledQuantity, 2)
+    assert.equal(withBreakoutByLotOption.body.data[0].lotNumber, 'LOT001')
+    // The second item is the same consumable with different lot number
+    assert.equal(withBreakoutByLotOption.body.data[1].lotNumber, 'LOT002')
     assert.equal(withBreakoutByLotOption.body.data[1].unreconciledQuantity, 0)
   })
 })
