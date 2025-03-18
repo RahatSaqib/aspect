@@ -7,6 +7,7 @@ const sharedToken = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
 const { addConstraints, getConstraints } = require('../../src/auth/constraints')
+const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 
 describe('Add Inventory', () => {
   const path = '/api/inventory/add'
@@ -138,59 +139,28 @@ describe('Add Inventory', () => {
   })
 })
 
-describe('GET: /inventory', () => {
+describe('GET: /api/inventory', () => {
   const endpoint = '/api/inventory'
   let testData
+  const testContext = createGxConnectTestContext(server, {
+    countryCode: 'US',
+    adminUsername: 'admin',
+    adminPassword: 'test07',
+    deviceName: 'New GeneXpert Laboratory',
+    macAddress: 'MAC00000000FAKE',
+    deviceSerialNumber: 'Cepheid-PC-BLH',
+  })
 
   before(async () => {
-    // Create test data
-    const [siteId] = await knex('Site').insert({
-      name: 'Test Site',
-      partnerId: 1,
-      siteTypeId: 1,
-      externalId: 'TEST_SITE_001',
-      institutionGuid: 'TEST_INST_001',
-      guid: 'TEST_SITE_GUID_001',
-    })
+    await testContext.beforeRegisterAndSetDevice()
 
-    const [consumableId] = await knex('Consumable').insert({
-      name: 'Test Consumable',
-      manufacturer: 'Test Manufacturer',
-      unit: 1,
-      externalId: `TEST_CONSUMABLE_${Date.now()}`,
-      i18nKey: `TEST_CONSUMABLE_KEY_${Date.now()}`,
-    })
+    const {
+      site: { id: siteId },
+    } = testContext
 
-    // Get a valid assayTypeId
-    const [assayType] = await knex('AssayType').select('id').limit(1)
-
-    if (!assayType) {
-      throw new Error('No active assay type found in the database')
-    }
-
-    const [assayId] = await knex('Assay').insert({
-      name: 'Test Assay',
-      deviceTypeId: 1,
-      assayTypeId: assayType.id,
-      resultSourceId: 1,
-      abbreviation: 'TEST',
-      externalId: `TEST_ASSAY_${Date.now()}`,
-      i18nKey: `TEST_ASSAY_KEY_${Date.now()}`,
-    })
-
-    await knex('ConsumableAssay').insert({
-      consumableId,
-      assayId,
-      quantity: 1,
-    })
-
-    await knex('SiteConsumable').insert({
-      siteId,
-      consumableId,
-    })
-
+    const { assayId, consumableId } = await knex('ConsumableAssay').where({}).first()
     // Create inventory items
-    const [inventoryItem1] = await knex('InventoryItem').insert([
+    await knex('InventoryItem').insert([
       {
         siteId,
         consumableId,
@@ -207,6 +177,7 @@ describe('GET: /inventory', () => {
       },
     ])
 
+    const [inventoryItem1, inventoryItem2] = await knex('InventoryItem').where({ siteId, consumableId })
     // Create results with missing inventory lots
     const [resultId1] = await knex('Result').insert({
       resultSourceId: 1,
@@ -259,18 +230,16 @@ describe('GET: /inventory', () => {
       assayId,
       resultId1,
       resultId2,
+      inventoryItemIds: [inventoryItem1, inventoryItem2].map(item => item.id),
     }
   })
 
   after(async () => {
     // Clean up test data
     await knex('MissingInventoryLots').where('siteId', testData.siteId).delete()
-    await knex('Result').whereIn('id', [testData.resultId1, testData.resultId2]).delete()
+    await knex('Result').where('siteId', testData.siteId).delete()
     await knex('InventoryItem').where('siteId', testData.siteId).delete()
-    await knex('SiteConsumable').where('siteId', testData.siteId).delete()
-    await knex('ConsumableAssay').where('consumableId', testData.consumableId).delete()
-    await knex('Consumable').where('id', testData.consumableId).delete()
-    await knex('Site').where('id', testData.siteId).delete()
+    await testContext.cleanUp()
   })
 
   it('should return 200 with empty response when no inventory items are present', async () => {
