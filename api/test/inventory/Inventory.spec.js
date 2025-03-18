@@ -152,7 +152,7 @@ describe('GET: /api/inventory', () => {
   })
 
   before(async () => {
-    await testContext.beforeRegisterAndSetDevice()
+    await testContext.registerAndSetDevice()
 
     const {
       device: { partnerId, siteId, id: deviceId },
@@ -270,7 +270,7 @@ describe('GET: /api/inventory', () => {
         })
         .set('Authorization', `Bearer ${sharedToken.token}`),
       server
-        .get('/api/inventory')
+        .get(endpoint)
         .query({
           sortCol: 'siteName',
           sortDir: 'asc',
