@@ -137,3 +137,176 @@ describe('Add Inventory', () => {
     assertResponse(res2, 200, 400) // 200 + 200
   })
 })
+
+describe('GET: /inventory', () => {
+  const endpoint = '/api/inventory'
+  let testData
+
+  before(async () => {
+    // Create test data
+    const [siteId] = await knex('Site').insert({
+      name: 'Test Site',
+      partnerId: 1,
+      siteTypeId: 1,
+      externalId: 'TEST_SITE_001',
+      institutionGuid: 'TEST_INST_001',
+      guid: 'TEST_SITE_GUID_001',
+    })
+
+    const [consumableId] = await knex('Consumable').insert({
+      name: 'Test Consumable',
+      manufacturer: 'Test Manufacturer',
+      unit: 1,
+      externalId: `TEST_CONSUMABLE_${Date.now()}`,
+      i18nKey: `TEST_CONSUMABLE_KEY_${Date.now()}`,
+    })
+
+    // Get a valid assayTypeId
+    const [assayType] = await knex('AssayType').select('id').limit(1)
+
+    if (!assayType) {
+      throw new Error('No active assay type found in the database')
+    }
+
+    const [assayId] = await knex('Assay').insert({
+      name: 'Test Assay',
+      deviceTypeId: 1,
+      assayTypeId: assayType.id,
+      resultSourceId: 1,
+      abbreviation: 'TEST',
+      externalId: `TEST_ASSAY_${Date.now()}`,
+      i18nKey: `TEST_ASSAY_KEY_${Date.now()}`,
+    })
+
+    await knex('ConsumableAssay').insert({
+      consumableId,
+      assayId,
+      quantity: 1,
+    })
+
+    await knex('SiteConsumable').insert({
+      siteId,
+      consumableId,
+    })
+
+    // Create inventory items
+    const [inventoryItem1] = await knex('InventoryItem').insert([
+      {
+        siteId,
+        consumableId,
+        lotNumber: 'LOT001',
+        expiresOn: '2024-12-31',
+        quantityOnHand: 100,
+      },
+      {
+        siteId,
+        consumableId,
+        lotNumber: 'LOT002',
+        expiresOn: '2024-12-31',
+        quantityOnHand: 50,
+      },
+    ])
+
+    // Create results with missing inventory lots
+    const [resultId1] = await knex('Result').insert({
+      resultSourceId: 1,
+      resultTypeId: 1,
+      partnerId: 1,
+      assayId,
+      deviceId: 1,
+      sampleId: 1,
+      reportableSiteId: 1,
+      siteId,
+      consumableLot: inventoryItem1.lotNumber,
+      consumableExpirationDate: inventoryItem1.expiresOn,
+      endedOn: new Date(),
+    })
+
+    const [resultId2] = await knex('Result').insert({
+      resultSourceId: 1,
+      resultTypeId: 1,
+      sampleId: 1,
+      reportableSiteId: 1,
+      partnerId: 1,
+      assayId,
+      deviceId: 1,
+      siteId,
+      consumableLot: inventoryItem1.lotNumber,
+      consumableExpirationDate: inventoryItem1.expiresOn,
+      endedOn: new Date(),
+    })
+
+    await knex('MissingInventoryLots').insert([
+      {
+        siteId,
+        resultId: resultId1,
+        lotNumber: inventoryItem1.lotNumber,
+        expirationDate: inventoryItem1.expiresOn,
+        createdOn: new Date(),
+      },
+      {
+        siteId,
+        resultId: resultId2,
+        lotNumber: inventoryItem1.lotNumber,
+        expirationDate: inventoryItem1.expiresOn,
+        createdOn: new Date(),
+      },
+    ])
+
+    testData = {
+      siteId,
+      consumableId,
+      assayId,
+      resultId1,
+      resultId2,
+    }
+  })
+
+  after(async () => {
+    // Clean up test data
+    await knex('MissingInventoryLots').where('siteId', testData.siteId).delete()
+    await knex('Result').whereIn('id', [testData.resultId1, testData.resultId2]).delete()
+    await knex('InventoryItem').where('siteId', testData.siteId).delete()
+    await knex('SiteConsumable').where('siteId', testData.siteId).delete()
+    await knex('ConsumableAssay').where('consumableId', testData.consumableId).delete()
+    await knex('Consumable').where('id', testData.consumableId).delete()
+    await knex('Site').where('id', testData.siteId).delete()
+  })
+
+  it('should return 200 with empty response when no inventory items are present', async () => {
+    const res = await server.get(endpoint).set('Authorization', `Bearer ${sharedToken.token}`)
+    assert.equal(res.status, 200)
+    assert.equal(res.body.data.length, 0)
+  })
+
+  it('should return the inventory items with correct unreconciled quantity despite duplicate consumables with different lot numbers', async () => {
+    const [withoutBreakoutByLotOption, withBreakoutByLotOption] = await Promise.all([
+      server
+        .get(endpoint)
+        .query({
+          sortCol: 'siteName',
+          sortDir: 'asc',
+          page: 0,
+          size: 10,
+          hasStock: true,
+        })
+        .set('Authorization', `Bearer ${sharedToken.token}`),
+      server
+        .get('/api/inventory')
+        .query({
+          sortCol: 'siteName',
+          sortDir: 'asc',
+          page: 0,
+          size: 10,
+          hasStock: true,
+          breakoutByLot: true,
+        })
+        .set('Authorization', `Bearer ${sharedToken.token}`),
+    ])
+    assert.equal(withoutBreakoutByLotOption.body.data.length, 1)
+    assert.equal(withBreakoutByLotOption.body.data.length, 2)
+    assert.equal(withoutBreakoutByLotOption.body.data[0].unreconciledQuantity, 1)
+    assert.equal(withBreakoutByLotOption.body.data[0].unreconciledQuantity, 1)
+    assert.equal(withBreakoutByLotOption.body.data[1].unreconciledQuantity, 0)
+  })
+})
