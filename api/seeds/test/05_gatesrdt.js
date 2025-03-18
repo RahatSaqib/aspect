@@ -117,29 +117,29 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
+  const jobFunctionIdSuperAdmin = await upsertJobFunction(knex, 'Super Admin', partnerId)
 
   await knex('JobFunctionPermission').insert([
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.browse.view,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.result.edit,
     },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.device.edit,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdSuperAdmin, permissionId: modules.site.edit },
     {
-      jobFunctionId: jobFunctionIdAdmin,
+      jobFunctionId: jobFunctionIdSuperAdmin,
       permissionId: modules.deviceApiKey.edit,
     },
   ])
 
-  await knex('JobContext').insert({ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin, geographyId })
+  await knex('JobContext').insert({ personId: adminPersonId, jobFunctionId: jobFunctionIdSuperAdmin, geographyId })
 
   // Issue Escalation Triggers
   await knex('IssueEscalationTrigger').insert([

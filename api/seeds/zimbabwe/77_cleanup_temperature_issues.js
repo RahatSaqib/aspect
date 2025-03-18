@@ -27,7 +27,7 @@ module.exports = require('../utils').seed(async knex => {
     ])
     .pluck('id')
   const jobFunctions = await knex('JobFunction')
-    .whereIn('externalId', ['admin', 'systemOne', 'deviceMaker'])
+    .whereIn('externalId', ['superAdmin', 'systemOne', 'deviceMaker'])
     .pluck('id')
   await knex('NotificationType').update({ enabled: false }).whereIn('issueTypeId', issuesToRemoveTrigger)
   const defaultMessageTypes = await getDefaultMessageTypes(knex)

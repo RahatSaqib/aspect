@@ -81,21 +81,21 @@ module.exports = async function cleanIssueTypes(knex, adminUserName, partnerExte
       await knex('IssueType').where({ id: issueType.id }).delete()
     }
   })
-  const { jobFunctionAdminId } =
+  const { jobFunctionSuperAdminId } =
     (await knex('JobFunction')
       .where({
         externalId: 'systemOne',
         partnerId,
       })
-      .first('id as jobFunctionAdminId')) ||
+      .first('id as jobFunctionSuperAdminId')) ||
     (await knex('JobFunction')
       .where({
-        externalId: 'admin',
+        externalId: 'superAdmin',
         partnerId,
       })
-      .first('id as jobFunctionAdminId'))
+      .first('id as jobFunctionSuperAdminId'))
 
   await Promise.each(Object.values(configuredIssues), async externalId => {
-    return addIssue(knex, externalId, [jobFunctionAdminId], partnerExternalId, adminUserName)
+    return addIssue(knex, externalId, [jobFunctionSuperAdminId], partnerExternalId, adminUserName)
   })
 }

@@ -16,7 +16,7 @@ module.exports = async (knex, partnerExternalId) => {
     .innerJoin('JobContext as jc', 'p.id', 'jc.personId')
     .innerJoin('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
     .where('p.lastPartnerId', partnerId)
-    .andWhere('jf.externalId', 'admin')
+    .andWhere('jf.externalId', 'superAdmin')
     .pluck('p.id')
 
   const notificationTypes = await knex('NotificationType as nt')

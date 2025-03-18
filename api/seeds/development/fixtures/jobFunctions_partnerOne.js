@@ -1,9 +1,9 @@
 const {
-  admin,
+  superAdmin,
   clinician,
   deviceMaker,
   donor,
-  manager,
+  regionalAdmin,
   ntp,
   resultViewerNo,
   resultViewerYes,
@@ -12,16 +12,9 @@ const {
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
-const adminEnhanced = mergeJobFunctions(admin, {
-  permissions: [
-    ...admin.permissions,
-    ...aspectBeta.permissions,
-    {
-      module: 'admin',
-      activity: 'edit',
-    },
-  ],
-  reports: [...admin.reports, 'genexpert_issues', 'device_summary_report', 'unreconciled_inventory_report'],
+const adminEnhanced = mergeJobFunctions(superAdmin, {
+  permissions: [...superAdmin.permissions, ...aspectBeta.permissions],
+  reports: [...superAdmin.reports, 'genexpert_issues', 'device_summary_report', 'unreconciled_inventory_report'],
 })
 
 const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
@@ -39,7 +32,7 @@ module.exports = [
   clinician,
   deviceMaker,
   donor,
-  manager,
+  regionalAdmin,
   ntp,
   resultViewerNo,
   resultViewerYes,

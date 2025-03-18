@@ -14,6 +14,7 @@ const StateSelect = ({
   countryId,
   returnAll,
   onlyAssociatedSites,
+  disabled,
 }) => {
   const { isLoading: isStateLoading, data: states } = useStatesByCountry(
     { countryId, returnAll, onlyAssociatedSites },
@@ -32,14 +33,14 @@ const StateSelect = ({
       select
       value={value || ''}
       onChange={onChange}
-      disabled={(states || []).length === 0}
+      disabled={(states || []).length === 0 || disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
         endAdornment: (
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
             onClick={() => onChange({ target: { name, value: null } })}
-            disabled={(states || []).length === 0}
+            disabled={(states || []).length === 0 || disabled}
           >
             <ClearIcon />
           </IconButton>

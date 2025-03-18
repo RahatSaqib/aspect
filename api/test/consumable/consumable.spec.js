@@ -94,7 +94,7 @@ describe('Assay Consumable Routes', () => {
             tbDiseaseManagerPassword,
             [
               {
-                jobFunctionExternalId: 'manager',
+                jobFunctionExternalId: 'regionalAdmin',
                 diseaseExternalId: 'tb',
               },
             ]
@@ -103,15 +103,15 @@ describe('Assay Consumable Routes', () => {
 
           hivManagerUserId = await createUser('Partner One', 'US', hivManagerUsername, hivManagerPassword, [
             {
-              jobFunctionExternalId: 'manager',
+              jobFunctionExternalId: 'regionalAdmin',
               assayTypeExternalId: 'assayTypeCD4',
             },
             {
-              jobFunctionExternalId: 'manager',
+              jobFunctionExternalId: 'regionalAdmin',
               assayTypeExternalId: 'assayTypeHivQual',
             },
             {
-              jobFunctionExternalId: 'manager',
+              jobFunctionExternalId: 'regionalAdmin',
               assayTypeExternalId: 'assayTypeHivVl',
             },
           ])

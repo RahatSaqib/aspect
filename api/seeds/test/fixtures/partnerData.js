@@ -5,7 +5,7 @@ module.exports = {
     name: 'Partner One',
     externalId: 'partnerOne',
   },
-  jobFunctionsToNotify: ['admin'],
+  jobFunctionsToNotify: ['superAdmin'],
   serverUrl: 'http://localhost:8000',
   dueDaysCalibrationIssue: 90,
   apiUrl: 'http://localhost:8080',

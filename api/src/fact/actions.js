@@ -165,18 +165,6 @@ function siteWithLowCompletionRateIssue({ siteId, geographyId, partnerId, comple
 }
 
 /**
- * Creates an action to notify that it is time to check uptime robot stats for Aspect
- *
- * sourceName is required.
- */
-function factExternalSourceCheck({ sourceName }) {
-  return {
-    type: types.FACT_CHECK_EXTERNAL_FACT_SOURCE,
-    sourceName,
-  }
-}
-
-/**
  * Creates an action to fill custom fields completions
  * for last 30 days
  */
@@ -196,7 +184,6 @@ module.exports = {
   factDataCategoryLow,
   factNewResultsAvailableCheck,
   factNewResultsAvailable,
-  factExternalSourceCheck,
   factCheckCompletionRatePerSite,
   siteWithLowCompletionRateIssue,
   factFillCustomFieldsCompletionStatsLast30Days,

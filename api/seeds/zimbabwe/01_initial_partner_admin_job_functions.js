@@ -85,12 +85,12 @@ async function seed(knex) {
   const jobFunctionsById = await allJobFunctionToId()
   await knex('JobContext').insert({
     personId: adminPersonId,
-    jobFunctionId: jobFunctionsById.admin,
+    jobFunctionId: jobFunctionsById.superAdmin,
     geographyId,
   })
   await knex('JobContext').insert({
     personId: adminPersonId,
-    jobFunctionId: jobFunctionsById.admin,
+    jobFunctionId: jobFunctionsById.superAdmin,
     geographyId,
   })
   await addIssueTypes(knex)

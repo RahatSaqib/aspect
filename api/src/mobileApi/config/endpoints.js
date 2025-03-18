@@ -1,8 +1,14 @@
+const Joi = require('@hapi/joi')
 const {
   downloadApplicationConfigResponseValidation,
   downloadSystemConfigResponseValidation,
+  retrieveAppIdConfigResponseValidation,
 } = require('./common/validations')
-const { fetchApplicationConfigServiceHandler, fetchSystemConfigServiceHandler } = require('./common/service')
+const {
+  fetchApplicationConfigServiceHandler,
+  fetchSystemConfigServiceHandler,
+  fetchAppIdFromUniqueDeviceCodeHandler,
+} = require('./common/service')
 const { asyncHandler } = require('../../routes')
 
 // -----------------------------------------------------
@@ -35,6 +41,25 @@ const routes = [
       response: {
         options: { allowUnknown: false },
         schema: downloadSystemConfigResponseValidation(),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/v4/config/retrieve-app-id',
+    handler: asyncHandler(fetchAppIdFromUniqueDeviceCodeHandler),
+    config: {
+      auth: false,
+      validate: {
+        query: {
+          deviceCode: Joi.string().required(),
+        },
+      },
+      description: 'Endpoint for retrieving app-id based on unique device code sent by the mobile app',
+      notes: 'Used for syncing Aspect Mobile configuration options',
+      response: {
+        options: { allowUnknown: false },
+        schema: retrieveAppIdConfigResponseValidation(),
       },
     },
   },

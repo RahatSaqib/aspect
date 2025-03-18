@@ -34,6 +34,32 @@ const commonUtilizationRateQuery = (dateCondition, dayCondition) => `
     GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
   ) AS innerQuery`
 
+const errorRateQueryLast30Days = `SELECT
+  CONCAT(
+    ROUND(
+      IFNULL(
+        SUM(errorCount)
+        /
+        SUM(resultCount) * 100
+      ,0)
+    ,0)
+  ,'%') AS cnt
+  FROM (
+    SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, d.dailyTestCapacity
+      FROM Result AS r
+      INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
+      INNER JOIN Device AS d ON d.id = r.deviceId
+      INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
+      INNER JOIN Site AS s ON s.id = d.siteId
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+    WHERE DATE(r.endedOn)
+          BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
+          AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
+          AND dtc.hasResults = 1
+    GROUP BY r.deviceId, d.dailyTestCapacity
+  ) AS innerQuery`
+
 // helper funcs and vars
 const partialValidResults = `SELECT
 CASE
@@ -628,31 +654,7 @@ const errorRate = {
         AND dtc.hasResults = 1
         GROUP BY r.deviceId
       ) AS innerQuery`,
-  sqlForStatUnit: `SELECT
-      CONCAT(
-        ROUND(
-          IFNULL(
-            SUM(errorCount)
-            /
-            SUM(resultCount) * 100
-          ,0)
-        ,0)
-      ,'%') AS cnt
-      FROM (
-        SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, d.dailyTestCapacity
-          FROM Result AS r
-          INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
-          INNER JOIN Device AS d ON d.id = r.deviceId
-          INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
-          INNER JOIN Site AS s ON s.id = d.siteId
-          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-        WHERE DATE(r.endedOn)
-              BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
-              AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
-              AND dtc.hasResults = 1
-        GROUP BY r.deviceId, d.dailyTestCapacity
-      ) AS innerQuery`,
+  sqlForStatUnit: errorRateQueryLast30Days,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
@@ -680,6 +682,21 @@ const errorRate = {
       },
     },
   },
+}
+
+const errorRateHomeWidget = {
+  ...errorRate,
+  subTitle: 'Last 30 Days',
+  subTitleI18nKey: 'last30Days',
+  externalId: 'errorRateHome',
+  sqlForIndicator: errorRateQueryLast30Days,
+  sqlForStatUnit: null,
+  statUnit: null,
+  statUnitI18nKey: null,
+  dashboards: {
+    home: {},
+  },
+  options: {},
 }
 
 const stockNotRecorded = {
@@ -1875,58 +1892,6 @@ const dashboardWidgetTitleTotalRecoveredCases = {
   },
 }
 
-const serverUptimeTitle = {
-  externalId: 'serverUptimeTitle',
-  jobFunctions: ['all'],
-  sortOrder: 4,
-  icon: 'MdNetworkCheck',
-  title: 'Server Uptime',
-  titleI18nKey: 'serverUptimeTitle',
-  sqlForIndicator: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '-') AS cnt
-  FROM (
-    SELECT fdes.data ->> '$.monitors[0].custom_uptime_ranges' AS uptime_last_2_months
-      FROM DeviceType AS dt
-      LEFT JOIN Device AS d ON dt.id = d.deviceTypeId
-      LEFT JOIN Site AS s ON s.id = d.siteId
-      LEFT JOIN Geography AS g ON s.geographyId = g.id
-      LEFT JOIN FactDeviceExternalSource AS fdes ON d.id = fdes.deviceId AND fdes.sourceName = 'uptimeRobot'
-      WHERE dt.externalId = 'Aspect'
-      LIMIT 1
-  ) AS innerQuery`,
-  sqlForStatUnit: `
-  SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1) AS UNSIGNED) AS CHAR), '%'), '-') AS cnt
-  FROM (
-    SELECT fdes.data ->> '$.monitors[0].custom_uptime_ranges' AS uptime_last_2_months
-      FROM DeviceType AS dt
-      LEFT JOIN Device AS d ON dt.id = d.deviceTypeId
-      LEFT JOIN Site AS s ON s.id = d.siteId
-      LEFT JOIN Geography AS g ON s.geographyId = g.id
-      LEFT JOIN FactDeviceExternalSource AS fdes ON d.id = fdes.deviceId AND fdes.sourceName = 'uptimeRobot'
-      WHERE dt.externalId = 'Aspect'
-      LIMIT 1
-  ) AS innerQuery`,
-  statUnit: '{unit} last month',
-  statUnitI18nKey: 'lastMonth',
-  description: `The average uptime of the Aspect server this month.`,
-  descriptionI18nKey: 'serverUptimeDescription',
-  link: 'https://stats.uptimerobot.com/R6WjlCrRW4',
-  dashboards: {
-    operational: {
-      groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
-    },
-  },
-  options: {
-    extraFields: {
-      alert: {
-        dependsOn: 'count',
-        whenIs: 'lessThan',
-        comparedTo: '95%',
-        representing: 'percentageOfServerUptime',
-      },
-    },
-  },
-}
-
 sqlSnippets.deviceCalibrationPastDue = {
   sum: `
     SUM(CASE
@@ -2180,7 +2145,6 @@ module.exports = {
     dashboardWidgetTitleConfirmedCases,
     dashboardWidgetTitleTotalActiveCases,
     dashboardWidgetTitleTotalRecoveredCases,
-    serverUptimeTitle,
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
@@ -2188,5 +2152,6 @@ module.exports = {
     totalModuleBays,
     activeModuleBays,
     disabledModulesWidget,
+    errorRateHomeWidget,
   },
 }

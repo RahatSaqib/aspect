@@ -1405,7 +1405,7 @@ async function upsertIssueEscalationTrigger(knex, items) {
 }
 
 // ***********************************************************************
-async function seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields }) {
+async function seedIssueEscalationTrigger(knex, { partnerId, auditFields }) {
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
 
@@ -1421,23 +1421,6 @@ async function seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFi
       ...auditDates,
     },
     {
-      issueTypeId: issueTypes.DeviceOffline.id,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'issue-age',
-            evaluationParameter: { days: 30 },
-          }),
-      ...auditDates,
-    },
-    {
       issueTypeId: issueTypes.DeviceNoResults.id,
       partnerId,
       escalateToLevel: 2,
@@ -1445,23 +1428,6 @@ async function seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFi
         evaluationMethod: 'issue-age',
         evaluationParameter: { days: 7 },
       }),
-      ...auditDates,
-    },
-    {
-      issueTypeId: issueTypes.DeviceNoResults.id,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'issue-age',
-            evaluationParameter: { days: 7 },
-          }),
       ...auditDates,
     },
     {
@@ -1582,43 +1548,11 @@ async function upsertIssueResolutionTrigger(knex, items) {
 }
 
 // ***********************************************************************
-async function seedIssueResolutionTrigger(knex, { partnerId, pluginName, auditFields }) {
+async function seedIssueResolutionTrigger(knex, { partnerId, auditFields }) {
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
 
   await upsertIssueResolutionTrigger(knex, [
-    {
-      issueTypeId: issueTypes.DeviceOffline.id,
-      partnerId,
-      resolutionConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldResolveDeviceOffline.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'plugin-function',
-            evaluationParameter: 'resolveDeviceOfflineError',
-          }),
-      ...auditDates,
-    },
-    {
-      issueTypeId: issueTypes.DeviceNoResults.id,
-      partnerId,
-      resolutionConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldResolveDeviceNoResults.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'plugin-function',
-            evaluationParameter: 'resolveDeviceNoResultsError',
-          }),
-      ...auditDates,
-    },
     {
       issueTypeId: issueTypes.ModuleFailureError.id,
       partnerId,
@@ -2024,10 +1958,7 @@ async function updateUnknownErrorOnModuleMessage(knex) {
 }
 
 // ***********************************************************************
-async function seedIssues(
-  knex,
-  { partnerId, pluginName, auditFields, issueTypeBlacklist = [], issueTypeWhitelist = [] }
-) {
+async function seedIssues(knex, { partnerId, auditFields, issueTypeBlacklist = [], issueTypeWhitelist = [] }) {
   await seedStockIssues(knex)
   await seedStockIssuesUpdate(knex, 'mohs')
   await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
@@ -2037,8 +1968,8 @@ async function seedIssues(
   })
 
   // issue triggers
-  await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
-  await seedIssueResolutionTrigger(knex, { partnerId, pluginName, auditFields })
+  await seedIssueEscalationTrigger(knex, { partnerId, auditFields })
+  await seedIssueResolutionTrigger(knex, { partnerId, auditFields })
 }
 
 // ***********************************************************************
@@ -2910,7 +2841,7 @@ async function upsertForms(knex, partnerId, forms) {
         .join('Person as p', 'u.id', 'p.userId')
         .join('JobContext as jc', 'p.id', 'jc.personId')
         .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
-        .where('jf.name', 'admin')
+        .where('jf.name', 'Super Admin')
         .first('p.lastPartnerId as partnerId'))
       if (!partnerId) {
         ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
@@ -2994,7 +2925,6 @@ module.exports = {
   seedIssueEscalationTrigger,
   upsertIssueEscalationTrigger,
 
-  seedIssueResolutionTrigger,
   upsertIssueResolutionTrigger,
 
   seedUnknownErrorsIssue,

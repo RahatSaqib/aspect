@@ -154,15 +154,18 @@ async function serviceModification() {
         notificationWarningSendEmails,
       } = data
       // Update the Partner table
-      await query('Update partner active status').from('Partner').where({ id: partnerId }).update({
-        activeStatus,
-        statusMessage,
-        serviceStartDate,
-        serviceEndDate,
-        notificationLimit,
-        notificationWarningMessage,
-        notificationWarningSendEmails,
-      })
+      await query('Update partner active status')
+        .from('Partner')
+        .where({ id: partnerId })
+        .update({
+          activeStatus,
+          statusMessage,
+          serviceStartDate,
+          serviceEndDate,
+          notificationLimit,
+          notificationWarningMessage,
+          notificationWarningSendEmails: JSON.stringify(notificationWarningSendEmails),
+        })
     })
   } catch (error) {
     console.error('Error while updating partner active status:', error)
@@ -193,13 +196,26 @@ async function serviceNotificationInformation() {
         notificationWarningMessage,
         notificationWarningSendEmails,
       } = data
-      if (!serviceStartDate || !serviceEndDate || !notificationWarningSendEmails || notificationLimit) return
+      if (!serviceStartDate || !serviceEndDate || !notificationWarningSendEmails || !notificationLimit) return
       // send notification info based on conditions
-      const emailList = JSON.parse(notificationWarningSendEmails)
+      const emailList = notificationWarningSendEmails
       const smsMessageCount = await smsCount({ serviceStartDate, serviceEndDate }, partnerId)
+      const emailMessageCount = await emailCount({ serviceStartDate, serviceEndDate }, partnerId)
       if (
-        smsMessageCount?.count > notificationLimit ||
-        (serviceStartDate && new Date(serviceEndDate || '2099-01-01') > new Date())
+        smsMessageCount?.count >= notificationLimit &&
+        serviceStartDate &&
+        new Date(serviceEndDate || '2099-01-01') > new Date()
+      ) {
+        emailList.forEach(email => {
+          sendEmail(email, 'Notification Limit Exceeded', notificationWarningMessage, ``, []).catch(err =>
+            logger.error(err)
+          )
+        })
+      }
+      if (
+        emailMessageCount?.count >= notificationLimit &&
+        serviceStartDate &&
+        new Date(serviceEndDate || '2099-01-01') > new Date()
       ) {
         emailList.forEach(email => {
           sendEmail(email, 'Notification Limit Exceeded', notificationWarningMessage, ``, []).catch(err =>
@@ -388,7 +404,7 @@ async function authenticate(request, response) {
   }
 }
 
-async function smsCount(partner, partnerId) {
+async function smsCount({ serviceStartDate, serviceEndDate }, partnerId) {
   const pendingMessageStatusId = await messageStatusToId('Pending')
   const sentMessageStatusId = await messageStatusToId('Sent')
   const smsCountQuery = knex('SmsMessage as sm')
@@ -397,15 +413,27 @@ async function smsCount(partner, partnerId) {
     .andWhere('sm.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
     .first('*')
     .count('* as count')
-  if (partner?.serviceStartDate && partner?.serviceEndDate) {
-    smsCountQuery.whereRaw(
-      `sm.createdOn > DATE_FORMAT(STR_TO_DATE('${partner.serviceStartDate}', '%d-%m-%Y'), '%Y-%m-%d')`
-    )
-    smsCountQuery.whereRaw(
-      `sm.createdOn < DATE_FORMAT(STR_TO_DATE('${partner.serviceEndDate}', '%d-%m-%Y'), '%Y-%m-%d')`
-    )
+  if (serviceStartDate && serviceEndDate) {
+    smsCountQuery.where('sm.createdOn', '>', serviceStartDate)
+    smsCountQuery.where('sm.createdOn', '<', serviceEndDate)
   }
   return smsCountQuery
+}
+
+async function emailCount({ serviceStartDate, serviceEndDate }, partnerId) {
+  const pendingMessageStatusId = await messageStatusToId('Pending')
+  const sentMessageStatusId = await messageStatusToId('Sent')
+  const emailCountQuery = knex('EmailMessage as em')
+    .join('Device as d', 'em.deviceId', 'd.id')
+    .andWhere('d.partnerId', partnerId)
+    .andWhere('em.messageStatusId', 'in', [pendingMessageStatusId, sentMessageStatusId])
+    .first('*')
+    .count('* as count')
+  if (serviceStartDate && serviceEndDate) {
+    emailCountQuery.where('em.createdOn', '>', serviceStartDate)
+    emailCountQuery.where('em.createdOn', '<', serviceEndDate)
+  }
+  return emailCountQuery
 }
 
 function setRefreshToken({

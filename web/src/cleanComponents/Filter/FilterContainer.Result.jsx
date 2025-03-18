@@ -54,9 +54,13 @@ const ResultFilter = () => {
                 valueBy="id"
                 value={state?.assayId ?? []}
                 onChange={val => setState({ ...state, assayId: val, resultCategoryGroupId: null })}
-                filters={{
-                  hasResults: true,
-                }}
+                filters={
+                  ![true, 'true'].includes(state.onlyUnreconciled)
+                    ? {
+                        hasResults: true,
+                      }
+                    : undefined
+                }
               />
             </Grid>
 
@@ -189,7 +193,6 @@ const ResultFilter = () => {
                 />
               }
               label={formatMessage(messages.onlyReportableResults)}
-              sx={{ m: 2 }}
             />
           </Grid>
         ) : null}
@@ -202,7 +205,6 @@ const ResultFilter = () => {
               />
             }
             label={formatMessage(messages.onlyDownloadedByReporter)}
-            sx={{ m: 2 }}
           />
         </Grid>
         <Grid item xs={3}>
@@ -214,7 +216,6 @@ const ResultFilter = () => {
               />
             }
             label={formatMessage(messages.onlyTreatmentRequired)}
-            sx={{ m: 2 }}
           />
         </Grid>
         <Grid item xs={3}>
@@ -226,7 +227,17 @@ const ResultFilter = () => {
               />
             }
             label={formatMessage(messages.showDecommissionedDevices)}
-            sx={{ m: 2 }}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={[true, 'true'].includes(state.onlyUnreconciled)}
+                onChange={e => setState({ ...state, onlyUnreconciled: e.target.checked || null })}
+              />
+            }
+            label={formatMessage(messages.onlyUnreconciled)}
           />
         </Grid>
       </Grid>

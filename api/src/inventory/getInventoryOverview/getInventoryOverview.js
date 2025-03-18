@@ -1,21 +1,21 @@
 const { getConstraints } = require('../../auth/constraints')
 const getInventoryOverviewList = require('./db')
-const { getAllWithNames } = require('../../geography/service')
+const { getAllGeographiesWithNames } = require('../../geography/service')
 
 module.exports = async function (request) {
   const { auth, query } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const inventoryListPromise = getInventoryOverviewList(query, dataConstraints)
+  const inventoryListQuery = getInventoryOverviewList(query, dataConstraints)
 
-  const geographiesPromise = getAllWithNames(request, dataConstraints)
+  const geographiesPromise = getAllGeographiesWithNames(request, dataConstraints)
 
-  const [sites, geographies] = await Promise.all([inventoryListPromise, geographiesPromise])
+  const [sites, geographies] = await Promise.all([inventoryListQuery, geographiesPromise])
 
   const country = buildHierarchy(geographies, sites)
 
-  addAggregations(country)
+  fillHierarchicalAggregations(country)
 
   return { ok: true, length: sites.length, data: { country } }
 }
@@ -51,7 +51,7 @@ function buildHierarchy(geo, sites) {
   sites = sites.sort((a, b) => {
     if (a.type === b.type) return 0
 
-    if (a.type === 'warehouse' && b.type === 'lab') return -1
+    if (a.type === 'warehouse' && b.type === 'lab' && b.type === 'clinic') return -1
 
     return 1
   })
@@ -63,7 +63,7 @@ function buildHierarchy(geo, sites) {
       s =>
         s.lgaId === g.lgaId &&
         s.stateId === g.stateId &&
-        (s.type === 'lab' ||
+        (['lab', 'clinic'].includes(s.type) ||
           // Only lga-level warehouses are going to be included in the site-level
           (s.type === 'warehouse' && s.lgaId !== 'NO_LGA' && s.lgaId !== `STATE_${s.stateId}_NO_LGA`))
     )
@@ -92,7 +92,7 @@ function buildHierarchy(geo, sites) {
   return reduceItemAuxiliarProperties(country)
 }
 
-function addAggregations(item) {
+function fillHierarchicalAggregations(item) {
   switch (item.type) {
     case 'country':
     case 'state':
@@ -101,26 +101,30 @@ function addAggregations(item) {
       item.usedLastSixMonths = 0
       item.usedInDateRange = 0
       item.dailyConsumptionRate = 0
+      item.unreconciledQuantity = 0
 
-      item.children.forEach(child => {
-        addAggregations(child)
-        item.quantity += child.quantity
-        if (child.usedLastSixMonths) {
-          item.usedLastSixMonths = parseFloat((item.usedLastSixMonths + child.usedLastSixMonths).toFixed(2))
-        }
-        if (child.usedInDateRange) {
-          item.usedInDateRange = parseFloat((item.usedInDateRange + child.usedInDateRange).toFixed(2))
-        }
-        if (child.dailyConsumptionRate) {
-          item.dailyConsumptionRate = parseFloat((item.dailyConsumptionRate + child.dailyConsumptionRate).toFixed(2))
-        }
-        if (child.daysOfInventoryLeft) {
-          item.daysOfInventoryLeft = Math.min(
-            (item.daysOfInventoryLeft = parseFloat(item.daysOfInventoryLeft + child.daysOfInventoryLeft.toFixed(2))),
-            child.daysOfInventoryLeft
-          )
-        }
-      })
+      item.children
+        .filter(site => site.type !== 'warehouse')
+        .forEach(child => {
+          fillHierarchicalAggregations(child)
+          item.quantity += child.quantity
+          item.unreconciledQuantity += child.unreconciledQuantity
+          if (child.usedLastSixMonths) {
+            item.usedLastSixMonths = parseFloat((item.usedLastSixMonths + child.usedLastSixMonths).toFixed(2))
+          }
+          if (child.usedInDateRange) {
+            item.usedInDateRange = parseFloat((item.usedInDateRange + child.usedInDateRange).toFixed(2))
+          }
+          if (child.dailyConsumptionRate) {
+            item.dailyConsumptionRate = parseFloat((item.dailyConsumptionRate + child.dailyConsumptionRate).toFixed(2))
+          }
+          if (child.daysOfInventoryLeft) {
+            item.daysOfInventoryLeft = Math.min(
+              (item.daysOfInventoryLeft = parseFloat(item.daysOfInventoryLeft + child.daysOfInventoryLeft.toFixed(2))),
+              child.daysOfInventoryLeft
+            )
+          }
+        })
       if (!item.daysOfInventoryLeft) {
         item.daysOfInventoryLeft = 0
       }
@@ -140,9 +144,6 @@ function reduceItemAuxiliarProperties(item) {
   const reduced = { ...item }
   delete reduced.consumableId
   delete reduced.geographyId
-  delete reduced.stateId
-  delete reduced.countryId
-  delete reduced.lgaId
   delete reduced.firstResultDateInLastSixMonths
   if (reduced.type === 'warehouse') {
     delete reduced.usedLastSixMonths

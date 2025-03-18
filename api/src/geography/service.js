@@ -228,7 +228,7 @@ async function lgaSelectList(request) {
   return { ok: true, data: lgas }
 }
 
-async function getAllWithNames(request) {
+async function getAllGeographiesWithNames(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -281,5 +281,5 @@ module.exports = {
   stateSelectListForUser,
   lgaSelectList,
   transformGeographyFromUpdates,
-  getAllWithNames,
+  getAllGeographiesWithNames,
 }

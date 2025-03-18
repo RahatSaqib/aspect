@@ -27,18 +27,18 @@ async function seed(knex) {
 
   const issueTypeTooManyInvalidResultsModule = await knex('IssueType').where({ id: issueTypeModule }).first()
   const issueTypeTooManyInvalidResultsLot = await knex('IssueType').where({ id: issueTypeLot }).first()
-  const { jobFunctionAdminId } = await knex('JobFunction')
+  const { jobFunctionSuperAdminId } = await knex('JobFunction')
     .where({
-      externalId: 'admin',
+      externalId: 'superAdmin',
       partnerId,
     })
-    .first('id as jobFunctionAdminId')
+    .first('id as jobFunctionSuperAdminId')
   await upsertNotificationTypes(knex, [
     {
       issueTypeId: issueTypeTooManyInvalidResultsModule.id,
       messageTypeId: issueTypeTooManyInvalidResultsModule.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: 'Too Many Invalid Results - Module',
       ...auditFields,
@@ -47,7 +47,7 @@ async function seed(knex) {
       issueTypeId: issueTypeTooManyInvalidResultsLot.id,
       messageTypeId: issueTypeTooManyInvalidResultsLot.defaultMessageTypeId,
       partnerId,
-      jobFunctionId: jobFunctionAdminId,
+      jobFunctionId: jobFunctionSuperAdminId,
       level: 1,
       name: 'Too Many Invalid Results - Lot',
       ...auditFields,

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-01-25T04:10:02.389Z\n"
+"POT-Creation-Date: 2025-03-11T11:43:12.268Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -517,9 +517,6 @@ msgstr "Adjust Quantity"
 #. [browsePage.browseDropdown.admin]
 #. defaultMessage is:
 #. Admin
-#. [jobFunction.admin]
-#. defaultMessage is:
-#. Admin
 #: extracted_strings.json
 msgid "Admin"
 msgstr "Admin"
@@ -807,7 +804,6 @@ msgstr "Api Keys"
 #. defaultMessage is:
 #. Applied Consumable Strategy
 #: extracted_strings.json
-#| msgid "Consumable Serial"
 msgid "Applied Consumable Strategy"
 msgstr "Applied Consumable Strategy"
 
@@ -815,7 +811,6 @@ msgstr "Applied Consumable Strategy"
 #. defaultMessage is:
 #. Applied Reconciliation Strategy
 #: extracted_strings.json
-#| msgid "Reconciliation Configuration"
 msgid "Applied Reconciliation Strategy"
 msgstr "Applied Reconciliation Strategy"
 
@@ -1842,7 +1837,6 @@ msgstr "Cellphone Number"
 #. defaultMessage is:
 #. Cellphone number
 #: extracted_strings.json
-#| msgid "Cellphone Number"
 msgid "Cellphone number"
 msgstr "Cellphone number"
 
@@ -2695,7 +2689,6 @@ msgstr "Current Rifampicin Resistance Diagnosis Trends"
 #. defaultMessage is:
 #. Current Site
 #: extracted_strings.json
-#| msgid "Create Site"
 msgid "Current Site"
 msgstr "Current Site"
 
@@ -2703,7 +2696,6 @@ msgstr "Current Site"
 #. defaultMessage is:
 #. Current Site and Stock Provider
 #: extracted_strings.json
-#| msgid "Stock Provider"
 msgid "Current Site and Stock Provider"
 msgstr "Current Site and Stock Provider"
 
@@ -3004,7 +2996,6 @@ msgstr "Date Specimen Collected"
 #. defaultMessage is:
 #. Date Specimen Received
 #: extracted_strings.json
-#| msgid "Date Received"
 msgid "Date Specimen Received"
 msgstr "Date Specimen Received"
 
@@ -6315,9 +6306,6 @@ msgstr "It might have been deleted or renamed"
 #. defaultMessage is:
 #. Its the average daily consumption of the specific cartridge considering the date range selected
 #: extracted_strings.json
-#| msgid ""
-#| "Its the average daily consumption of the specific cartridge considering "
-#| "the last 180 day period"
 msgid ""
 "Its the average daily consumption of the specific cartridge considering the "
 "date range selected"
@@ -7637,13 +7625,6 @@ msgstr "Male"
 msgid "Manage"
 msgstr "Manage"
 
-#. [jobFunction.manager]
-#. defaultMessage is:
-#. Manager
-#: extracted_strings.json
-msgid "Manager"
-msgstr "Manager"
-
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy]
 #. defaultMessage is:
 #. Manually set by {username} ({updatedDate})
@@ -7676,7 +7657,6 @@ msgstr "March"
 #. defaultMessage is:
 #. May
 #: extracted_strings.json
-#| msgid "Day"
 msgid "May"
 msgstr "May"
 
@@ -8964,6 +8944,15 @@ msgstr "Only Results Downloaded By Reporter"
 #: extracted_strings.json
 msgid "Only Results With Treatment Required"
 msgstr "Only Results With Treatment Required"
+
+#. [filter.popover.onlyUnreconciled]
+#. defaultMessage is:
+#. Only Results with unreconciled inventories
+#: extracted_strings.json
+#, fuzzy
+#| msgid "List of Unreconciled Inventory"
+msgid "Only Results with unreconciled inventories"
+msgstr "List of Unreconciled Inventory"
 
 #. [filter.btnGroup.hasStock]
 #. defaultMessage is:
@@ -10425,6 +10414,15 @@ msgstr "Region"
 msgid "Region n"
 msgstr "Region n"
 
+#. [jobFunction.regionalAdmin]
+#. defaultMessage is:
+#. Regional Admin
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Region n"
+msgid "Regional Admin"
+msgstr "Region n"
+
 #. [jobFunction.regionalOfficer]
 #. defaultMessage is:
 #. Regional Officer
@@ -10868,6 +10866,15 @@ msgstr "Result Details"
 #. Result Detected
 #: extracted_strings.json
 msgid "Result Detected"
+msgstr "Result Detected"
+
+#. [placeholder.result.detected.resistances]
+#. defaultMessage is:
+#. Result Detected Resistances
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Result Detected"
+msgid "Result Detected Resistances"
 msgstr "Result Detected"
 
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
@@ -12023,6 +12030,15 @@ msgstr "Show Percentage"
 msgid "Show Results From Decommissioned Devices"
 msgstr "Show Results From Decommissioned Devices"
 
+#. [filter.btnGroup.onlyUnreconciled]
+#. defaultMessage is:
+#. Show Results With Unreconciled Inventories
+#: extracted_strings.json
+#, fuzzy
+#| msgid "List of Unreconciled Inventory"
+msgid "Show Results With Unreconciled Inventories"
+msgstr "List of Unreconciled Inventory"
+
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
 #. Show line for
@@ -12736,6 +12752,15 @@ msgstr "Summary table for XDR devices"
 msgid "Sunday"
 msgstr "Sunday"
 
+#. [jobFunction.superAdmin]
+#. defaultMessage is:
+#. Super Admin
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Admin"
+msgid "Super Admin"
+msgstr "Admin"
+
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
 #. Supplies
@@ -12757,7 +12782,6 @@ msgstr "Supply in Stock"
 #. defaultMessage is:
 #. Surename
 #: extracted_strings.json
-#| msgid "Surname"
 msgid "Surename"
 msgstr "Surename"
 
@@ -13349,10 +13373,6 @@ msgstr "The number of contacts in the system."
 #. defaultMessage is:
 #. The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges
 #: extracted_strings.json
-#| msgid ""
-#| "The number of days left with available and not-expired stock, assuming "
-#| "that the cartridges to be consumed are always the ones closer to their "
-#| "expiration"
 msgid ""
 "The number of days left with available and not-expired cartridge and the "
 "daily consumption rate of the cartridges"
@@ -13989,7 +14009,6 @@ msgstr "Time Zone"
 #. defaultMessage is:
 #. Time of the Test
 #: extracted_strings.json
-#| msgid "Number of Tests"
 msgid "Time of the Test"
 msgstr "Time of the Test"
 
@@ -14204,6 +14223,15 @@ msgstr "Total Tests"
 #: extracted_strings.json
 msgid "Total Triggers"
 msgstr "Total Triggers"
+
+#. [pages.InventoryItemsList.unreconciledQuantityDescription]
+#. defaultMessage is:
+#. Total cartridges consumed and reported under tests but not yet adjusted against the inventory
+#: extracted_strings.json
+msgid ""
+"Total cartridges consumed and reported under tests but not yet adjusted "
+"against the inventory"
+msgstr ""
 
 #. [legends.Unknown.ResultCategoryTraceDetected]
 #. defaultMessage is:
@@ -14568,6 +14596,15 @@ msgstr "Unknown"
 #: extracted_strings.json
 msgid "Unlocked"
 msgstr "Unlocked"
+
+#. [pages.InventoryItemsList.unreconciledQuantity]
+#. defaultMessage is:
+#. Unreconciled Quantity
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Unreconciled quantity"
+msgid "Unreconciled Quantity"
+msgstr "Unreconciled quantity"
 
 #. [pages.inventoryReconciliation.unreconciledQuantity]
 #. defaultMessage is:
@@ -16037,6 +16074,9 @@ msgstr "{unit} since last week"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total calibrations"
+
+#~ msgid "Manager"
+#~ msgstr "Manager"
 
 #~ msgid "Capacity"
 #~ msgstr "Capacity"

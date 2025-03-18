@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-02-11T15:23:08.208Z\n"
+"POT-Creation-Date: 2025-03-11T11:43:12.268Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -516,9 +516,6 @@ msgid "Adjust Quantity"
 msgstr "Миқдорро танзим кунед"
 
 #. [browsePage.browseDropdown.admin]
-#. defaultMessage is:
-#. Admin
-#. [jobFunction.admin]
 #. defaultMessage is:
 #. Admin
 #: extracted_strings.json
@@ -7646,13 +7643,6 @@ msgstr "Мард"
 msgid "Manage"
 msgstr "Идора кардан"
 
-#. [jobFunction.manager]
-#. defaultMessage is:
-#. Manager
-#: extracted_strings.json
-msgid "Manager"
-msgstr "Менеҷер"
-
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy]
 #. defaultMessage is:
 #. Manually set by {username} ({updatedDate})
@@ -8977,6 +8967,15 @@ msgstr "Танҳо натиҷаҳое, ки аз ҷониби хабарниго
 #: extracted_strings.json
 msgid "Only Results With Treatment Required"
 msgstr "Танҳо натиҷаҳое, ки табобат лозим аст"
+
+#. [filter.popover.onlyUnreconciled]
+#. defaultMessage is:
+#. Only Results with unreconciled inventories
+#: extracted_strings.json
+#, fuzzy
+#| msgid "List of Unreconciled Inventory"
+msgid "Only Results with unreconciled inventories"
+msgstr "Рӯйхати инвентаризатсияи мувофиқашуда"
 
 #. [filter.btnGroup.hasStock]
 #. defaultMessage is:
@@ -10446,6 +10445,15 @@ msgstr "Вилоят"
 msgid "Region n"
 msgstr "Минтақаи н"
 
+#. [jobFunction.regionalAdmin]
+#. defaultMessage is:
+#. Regional Admin
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Region n"
+msgid "Regional Admin"
+msgstr "Минтақаи н"
+
 #. [jobFunction.regionalOfficer]
 #. defaultMessage is:
 #. Regional Officer
@@ -10891,6 +10899,15 @@ msgstr "Тафсилоти натиҷа"
 #. Result Detected
 #: extracted_strings.json
 msgid "Result Detected"
+msgstr "Натиҷа муайян карда шуд"
+
+#. [placeholder.result.detected.resistances]
+#. defaultMessage is:
+#. Result Detected Resistances
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Result Detected"
+msgid "Result Detected Resistances"
 msgstr "Натиҷа муайян карда шуд"
 
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
@@ -12050,6 +12067,15 @@ msgstr "Нишон додани фоиз"
 msgid "Show Results From Decommissioned Devices"
 msgstr "Натиҷаҳоро аз дастгоҳҳои аз кор баромада нишон диҳед"
 
+#. [filter.btnGroup.onlyUnreconciled]
+#. defaultMessage is:
+#. Show Results With Unreconciled Inventories
+#: extracted_strings.json
+#, fuzzy
+#| msgid "List of Unreconciled Inventory"
+msgid "Show Results With Unreconciled Inventories"
+msgstr "Рӯйхати инвентаризатсияи мувофиқашуда"
+
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
 #. Show line for
@@ -12764,6 +12790,15 @@ msgstr "Ҷадвали ҷамъбастӣ барои дастгоҳҳои XDR"
 #: extracted_strings.json
 msgid "Sunday"
 msgstr "Якшанбе"
+
+#. [jobFunction.superAdmin]
+#. defaultMessage is:
+#. Super Admin
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Admin"
+msgid "Super Admin"
+msgstr "Админ"
 
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
@@ -14239,6 +14274,15 @@ msgstr "Санҷишҳои умумӣ"
 msgid "Total Triggers"
 msgstr "Ҳама триггерҳо"
 
+#. [pages.InventoryItemsList.unreconciledQuantityDescription]
+#. defaultMessage is:
+#. Total cartridges consumed and reported under tests but not yet adjusted against the inventory
+#: extracted_strings.json
+msgid ""
+"Total cartridges consumed and reported under tests but not yet adjusted "
+"against the inventory"
+msgstr ""
+
 #. [legends.Unknown.ResultCategoryTraceDetected]
 #. defaultMessage is:
 #. Trace Detected
@@ -14602,6 +14646,15 @@ msgstr "Номаълум"
 #: extracted_strings.json
 msgid "Unlocked"
 msgstr "Қулф кушода шуд"
+
+#. [pages.InventoryItemsList.unreconciledQuantity]
+#. defaultMessage is:
+#. Unreconciled Quantity
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Unreconciled quantity"
+msgid "Unreconciled Quantity"
+msgstr "Миқдори мувофиқашуда"
 
 #. [pages.inventoryReconciliation.unreconciledQuantity]
 #. defaultMessage is:
@@ -16083,6 +16136,9 @@ msgstr "{unit} аз ҳафтаи гузашта"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
+
+#~ msgid "Manager"
+#~ msgstr "Менеҷер"
 
 #~ msgid "Capacity"
 #~ msgstr "Иқтидор"

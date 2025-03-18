@@ -145,10 +145,12 @@ async function commonUpserts(
   // upsertJobFunctionFixture by using the job functions set at
   await upsertJobFunctionFixture(knex, _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture, partnerId)
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId }).first()
+  const { id: jobFunctionIdSuperAdmin } = await knex('JobFunction')
+    .where({ externalId: 'superAdmin', partnerId })
+    .first()
   await utils.upsertSingle(knex, 'JobContext', {
     personId: adminPersonId,
-    jobFunctionId: jobFunctionIdAdmin,
+    jobFunctionId: jobFunctionIdSuperAdmin,
     geographyId,
   })
 
@@ -203,7 +205,7 @@ async function upsertDemoUsersPerJobFunction(
   }
 
   const jobFunctions = await knex('JobFunction')
-    .whereNotIn('externalId', [...excludedJobFunctions, 'admin'])
+    .whereNotIn('externalId', [...excludedJobFunctions, 'superAdmin'])
     .andWhere({
       partnerId,
     })
@@ -858,7 +860,7 @@ SELECT ']}' AS countryJSON;
 SELECT CONCAT(
 '{ "personName": "',  person.Name,
 COALESCE(CONCAT('", "personTitle": "', person.Title), ''),
-'", "jobFunctions": [ "', CASE WHEN role.Name = 'National Level' THEN 'Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
+'", "jobFunctions": [ "', CASE WHEN role.Name = 'National Level' THEN 'Super Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
 '" ], ', COALESCE(CONCAT('"personEmailAddress": "', person.Email, '", '), ''),
 COALESCE(CONCAT('"personPhone": "', person.Phone, '", '), ''),
 COALESCE(CONCAT('"personCell": "', person.Cell, '", '), ''),
