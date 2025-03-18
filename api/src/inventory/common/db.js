@@ -323,11 +323,21 @@ function getInventoryLots(request, dataConstraints) {
         .innerJoin('Result as r', 'mil.resultId', 'r.id')
         .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
         .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
-        .select('mil.siteId', 'c.id as consumableId', knex.raw('COUNT(*) as unreconciledCount'))
+        .select(
+          'mil.siteId',
+          'c.id as consumableId',
+          'mil.lotNumber as lotNumber',
+          'mil.expirationDate as expiresOn',
+          knex.raw('COUNT(*) as unreconciledCount')
+        )
         .groupBy('mil.siteId', 'c.id')
         .as('unreconciled'),
       builder => {
-        builder.on('unreconciled.siteId', 's.id').andOn('unreconciled.consumableId', 'c.id')
+        builder
+          .on('unreconciled.siteId', 's.id')
+          .andOn('unreconciled.consumableId', 'c.id')
+          .andOn('unreconciled.lotNumber', 'ii.lotNumber')
+          .andOn('unreconciled.expiresOn', 'ii.expiresOn')
       }
     )
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
