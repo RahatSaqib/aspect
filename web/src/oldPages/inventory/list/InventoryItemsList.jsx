@@ -5,7 +5,7 @@ import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryItemsFilter } from '../../../cleanComponents'
@@ -16,9 +16,8 @@ import {
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
-import fetchWrapperForQueries from '../../../components/QueryFetch'
-import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
+import useInventoryList from '../../../hooks/inventory/useInventoryList'
 import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -120,15 +119,7 @@ export default function InventoryItemsList() {
     },
     isNil
   )
-  const {
-    isError,
-    isLoading: isLoadingData,
-    data = false,
-    error,
-    refetch,
-  } = useQuery([INVENTORY_LIST.KEY, params], async () =>
-    fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
-  )
+  const { isError, isLoading: isLoadingData, data = false, error, refetch } = useInventoryList(params)
 
   const onSuccess = () => {
     refetch()

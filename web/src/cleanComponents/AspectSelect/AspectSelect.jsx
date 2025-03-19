@@ -50,9 +50,10 @@ export default function AspectSelect(props) {
       multiple={multiple}
       disabled={!options?.length}
       {...rest}
-      onChange={(_, newValue) =>
-        onChange(valueBy ? (multiple ? map(newValue, i => get(i, valueBy, i)) : newValue?.[valueBy]) : newValue)
-      }
+      onChange={(_, newValue) => {
+        const value = valueBy ? (multiple ? map(newValue, i => get(i, valueBy, i)) : newValue?.[valueBy]) : newValue
+        return onChange(value, options)
+      }}
     />
   )
 }
