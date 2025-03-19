@@ -215,7 +215,7 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {uiTransfer && !initialValues?.expiresOn && !initialValues?.lotNumber ? (
+                {(uiTransfer || uiRemove) && !initialValues?.expiresOn && !initialValues?.lotNumber ? (
                   // Transfer inventory without expiration date and lot number (Break out by lot unchecked)
                   <FormGroup
                     labelProps={{ required: true }}
