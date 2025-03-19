@@ -532,17 +532,6 @@ async function onFactNewResultsAvailableCheck(action, { messageContext }) {
   })
 }
 
-// ----------------------------------------------
-// This function is triggered by scheduler, and checks external sources to update fact tables
-// ----------------------------------------------
-async function onFactExternalSourceCheck({ sourceName }, context) {
-  // eslint-disable-next-line import/no-dynamic-require
-  const externalSourceHandler = require(`./externalSourceHandlers/${sourceName}`)
-  if (externalSourceHandler) {
-    return externalSourceHandler(context)
-  }
-}
-
 async function onFactCompletionRatePerSite(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     siteWithLowCompletionRateIssue,
@@ -580,6 +569,5 @@ module.exports = {
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
   MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
   onFactNewResultsAvailableCheck,
-  onFactExternalSourceCheck,
   onFactCompletionRatePerSite,
 }

@@ -5,13 +5,10 @@ const { malawiPlugin } = require('./plugins/malawiPlugin')
 const { gxconnectPlugin } = require('./plugins/gxconnectPlugin')
 const { gxalertPlugin } = require('./plugins/gxalertPlugin')
 const { myanmarPlugin } = require('./plugins/myanmarPlugin')
-const { deprecatedMyanmarPlugin } = require('./plugins/deprecatedMyanmarPlugin')
 const { nigeriaPlugin } = require('./plugins/nigeriaPlugin')
 const { alereftpconnectorPlugin } = require('./plugins/alereftpconnectorPlugin')
-const { saNhlsPlugin } = require('./plugins/saNhlsPlugin')
 const { cameroonPlugin } = require('./plugins/cameroonPlugin')
 const { aspectresultentryPlugin } = require('./plugins/aspectresultentryPlugin')
-const { philippinesPlugin } = require('./plugins/philippinesPlugin')
 const { pakistanPlugin } = require('./plugins/pakistanPlugin')
 const { lesothoPlugin } = require('./plugins/lesothoPlugin')
 
@@ -25,13 +22,10 @@ const plugins = {
   gxconnect: gxconnectPlugin,
   gxalert: gxalertPlugin,
   myanmar: myanmarPlugin,
-  deprecatedMyanmar: deprecatedMyanmarPlugin,
   nigeria: nigeriaPlugin,
   alereftpconnector: alereftpconnectorPlugin,
-  saNhls: saNhlsPlugin,
   cameroon: cameroonPlugin,
   aspectresultentry: aspectresultentryPlugin,
-  philippines: philippinesPlugin,
   pakistan: pakistanPlugin,
   lesotho: lesothoPlugin,
 }

@@ -103,7 +103,6 @@ describe('Merge Devices', () => {
     await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceOperation').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     const deleteFactTablesPromises = [
-      knex('FactDeviceExternalSource').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
       knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
       knex('FactResultsDevice').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
       knex('FactResultsDeviceByAssay').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
@@ -175,9 +174,6 @@ describe('Merge Devices', () => {
 })
 
 async function assertFactTables(deviceId) {
-  const dataInFactDeviceExternalSource = await knex('FactDeviceExternalSource').where({ deviceId }).select('deviceId')
-  assert.equal(dataInFactDeviceExternalSource.length, 0, 'FactDeviceExternalSource should be empty')
-
   const dataInFactDeviceFlag = await knex('FactDeviceFlag').where({ deviceId }).select('deviceId')
   assert.equal(dataInFactDeviceFlag.length, 0, 'FactDeviceFlag should be empty')
 
