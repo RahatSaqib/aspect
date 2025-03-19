@@ -3,6 +3,7 @@ import { Button, DialogActions, LinearProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
+import InventoryItemSelect from '../../../cleanComponents/InventoryItemSelect'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
 import usePartner from '../../../hooks/partner/usePartner'
 import useSiteList from '../../../hooks/site/useSiteList'
@@ -214,54 +215,80 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                <FormGroup
-                  labelProps={{
-                    required: withExpirationDate(partner), // NOTE: `undefined` is passed as `partner` argument explicitly to avoid using inventory strategy from consumables
-                  }}
-                  label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
-                  error={!!errors.expiresOn}
-                  helperText={errors.expiresOn}
-                >
-                  <DateTimeInput
-                    fullWidth
-                    margin="normal"
-                    dateFormat="yyyy-MM-dd"
-                    disabled={!!initialValues?.expiresOn || uiTransfer || uiRemove || uiReceive}
-                    RootProps={{
-                      name: 'expiresOn',
-                    }}
-                    onChange={onExpiresChange}
-                    value={values.expiresOn}
-                  />
-                </FormGroup>
+                {uiTransfer && !initialValues?.expiresOn && !initialValues?.lotNumber ? (
+                  // Transfer inventory without expiration date and lot number (Break out by lot unchecked)
+                  <FormGroup
+                    labelProps={{ required: true }}
+                    label={formatMessage(messages.inventoryItem)}
+                    error={!!errors.inventoryItem}
+                    helperText={errors.inventoryItem}
+                  >
+                    <InventoryItemSelect
+                      name="inventoryItem"
+                      inventoryItem={inventory}
+                      showExpirationDate={withExpirationDate(partner)}
+                      showLotNumber={withLotNumber(partner)}
+                      onChange={(value, options) => {
+                        const inventoryItem = options.find(o => o.id === value)
+                        setFieldValue('expiresOn', inventoryItem?.expiresOn)
+                        setFieldValue('lotNumber', inventoryItem?.lotNumber)
+                        inventory.quantityOnHand = inventoryItem?.quantityOnHand
+                        handleChange({ target: { name: 'inventoryItem', value } })
+                      }}
+                    />
+                  </FormGroup>
+                ) : (
+                  <>
+                    <FormGroup
+                      labelProps={{
+                        required: withExpirationDate(partner), // NOTE: `undefined` is passed as `partner` argument explicitly to avoid using inventory strategy from consumables
+                      }}
+                      label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
+                      error={!!errors.expiresOn}
+                      helperText={errors.expiresOn}
+                    >
+                      <DateTimeInput
+                        fullWidth
+                        margin="normal"
+                        dateFormat="yyyy-MM-dd"
+                        disabled={!!initialValues?.expiresOn || uiTransfer || uiRemove || uiReceive}
+                        RootProps={{
+                          name: 'expiresOn',
+                        }}
+                        onChange={onExpiresChange}
+                        value={values.expiresOn}
+                      />
+                    </FormGroup>
 
-                <TextField
-                  required={withLotNumber(partner, undefined)}
-                  fullWidth
-                  type="text"
-                  name="lotNumber"
-                  label={formatMessage(messages.cartridgeLotNumber)}
-                  value={values.lotNumber}
-                  onChange={handleChange}
-                  disabled={!!initialValues?.lotNumber || uiTransfer || uiRemove || uiReceive}
-                  onBlur={handleBlur}
-                  margin="normal"
-                  FormHelperTextProps={{
-                    margin: 'dense',
-                    classes: {
-                      error: styles.Field__error__message,
-                    },
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                    classes: {
-                      error: styles.Field__label__when__error,
-                    },
-                  }}
-                  inputProps={{ maxLength: 100 }}
-                  error={!!errors.lotNumber}
-                  helperText={errors.lotNumber}
-                />
+                    <TextField
+                      required={withLotNumber(partner, undefined)}
+                      fullWidth
+                      type="text"
+                      name="lotNumber"
+                      label={formatMessage(messages.cartridgeLotNumber)}
+                      value={values.lotNumber}
+                      onChange={handleChange}
+                      disabled={!!initialValues?.lotNumber || uiTransfer || uiRemove || uiReceive}
+                      onBlur={handleBlur}
+                      margin="normal"
+                      FormHelperTextProps={{
+                        margin: 'dense',
+                        classes: {
+                          error: styles.Field__error__message,
+                        },
+                      }}
+                      InputLabelProps={{
+                        shrink: true,
+                        classes: {
+                          error: styles.Field__label__when__error,
+                        },
+                      }}
+                      inputProps={{ maxLength: 100 }}
+                      error={!!errors.lotNumber}
+                      helperText={errors.lotNumber}
+                    />
+                  </>
+                )}
 
                 {uiTransfer ? (
                   <SiteAutoCompleteField

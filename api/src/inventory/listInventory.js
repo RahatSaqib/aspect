@@ -9,20 +9,16 @@ module.exports = async function (request) {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  let data
-  let total
+  const { total, data } = breakOutByLot
+    ? await listInventoryByLot(request, dataConstraints)
+    : await listInventoryBySiteAndConsumable(request, dataConstraints)
 
-  if (breakOutByLot) {
-    ;({ total, data } = await listInventoryByLot(request, dataConstraints))
-  } else {
-    ;({ total, data } = await listInventoryBySiteAndConsumable(request, dataConstraints))
-  }
   /**
    * for each site - get array of consumableId's from SiteConsumable table
    */
-  data = await appendSiteConsumables(data)
+  const dataWithSiteConsumables = await appendSiteConsumables(data)
 
-  return { ok: true, total, length: data.length, data }
+  return { ok: true, total, length: dataWithSiteConsumables.length, data: dataWithSiteConsumables }
 }
 
 async function listInventoryByLot(request, dataConstraints) {
