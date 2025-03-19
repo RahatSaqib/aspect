@@ -16,7 +16,6 @@ const {
   factCalculateInventoryConsumptionRates,
   factDataCategoryLowCheck,
   factNewResultsAvailableCheck,
-  factExternalSourceCheck,
   factFillCustomFieldsCompletionStatsLast30Days,
   factCheckCompletionRatePerSite,
 } = require('../fact/actions')
@@ -40,7 +39,6 @@ function startScheduler(queue) {
     factDataCategoryLowCheck,
     factCalculateInventoryConsumptionRates,
     factNewResultsAvailableCheck,
-    factExternalSourceCheck,
     factFillCustomFieldsCompletionStatsLast30Days,
     factCheckCompletionRatePerSite,
     logDeviceMaintenanceStatus,
@@ -99,18 +97,6 @@ function startScheduler(queue) {
   cron.schedule('0 */2 * * *', serviceModification) // run every 2 hours
   cron.schedule('* */1 * * *', unlinkAsyncReports) // run every 1 hour
   cron.schedule('0 0 * * *', serviceNotificationInformation) // run in every 24 hrs
-
-  if (_.get(config, 'uptimerobot.api.key')) {
-    const dispatchCheckUptimeRobot = () => {
-      dispatchActionToQueue(
-        queue,
-        'aspect_scheduler_factExternalSourceCheck_uptimeRobot',
-        factExternalSourceCheck({ sourceName: 'uptimeRobot' })
-      )
-    }
-    cron.schedule('30 7,19 * * *', dispatchCheckUptimeRobot) // twice a day at 7:30am & 7:30pm
-    dispatchCheckUptimeRobot()
-  }
 
   cron.schedule(config.scheduler.cron.logDeviceMaintenanceStatus, dispatcher.logDeviceMaintenanceStatus) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
 
