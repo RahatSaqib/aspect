@@ -213,6 +213,19 @@ describe('GET: /api/inventory', () => {
       endedOn: new Date(),
     })
 
+    const [resultId3] = await knex('Result').insert({
+      resultSourceId: 1,
+      resultTypeId: 1,
+      sampleId: 1,
+      reportableSiteId: 1,
+      partnerId,
+      assayId,
+      deviceId,
+      siteId,
+      consumableLot: inventoryItem1.lotNumber,
+      endedOn: new Date(),
+    })
+
     await knex('MissingInventoryLots').insert([
       {
         siteId,
@@ -228,6 +241,12 @@ describe('GET: /api/inventory', () => {
         expirationDate: inventoryItem1.expiresOn,
         createdOn: new Date(),
       },
+      {
+        siteId,
+        resultId: resultId3,
+        lotNumber: inventoryItem1.lotNumber,
+        createdOn: new Date(),
+      },
     ])
 
     testData = {
@@ -236,6 +255,7 @@ describe('GET: /api/inventory', () => {
       assayId,
       resultId1,
       resultId2,
+      resultId3,
       inventoryItemIds: [inventoryItem1, inventoryItem2].map(item => item.id),
     }
   })
@@ -252,7 +272,7 @@ describe('GET: /api/inventory', () => {
   it('should return 200 with all inventory items grouped by site and consumable when default query parameters are set', async () => {
     const response = await server.get(endpoint).set('Authorization', `Bearer ${sharedToken.token}`)
     assert.equal(response.status, 200)
-    assert.equal(response.body.data.length, 2)
+    assert.equal(response.body.data.length, 1)
     // Should be aggregated quantity on hand for the consumable under a site and consumable
     assert.equal(response.body.data[0].quantityOnHand, 150)
   })
@@ -285,13 +305,13 @@ describe('GET: /api/inventory', () => {
     assert.equal(withoutBreakoutByLotOption.body.data.length, 1)
     assert.equal(withBreakoutByLotOption.body.data.length, 2)
 
-    assert.equal(withoutBreakoutByLotOption.body.data[0].unreconciledQuantity, 2)
+    assert.equal(withoutBreakoutByLotOption.body.data[0].unreconciledQuantity, 3)
     assert.equal(withoutBreakoutByLotOption.body.data[0].quantityOnHand, 150)
     assert.equal(withoutBreakoutByLotOption.body.data[0].siteId, testData.siteId)
     assert.equal(withoutBreakoutByLotOption.body.data[0].consumableId, testData.consumableId)
 
     assert.equal(withBreakoutByLotOption.body.data[0].lotNumber, 'LOT001')
-    assert.equal(withBreakoutByLotOption.body.data[0].unreconciledQuantity, 2)
+    assert.equal(withBreakoutByLotOption.body.data[0].unreconciledQuantity, 3)
     assert.equal(withBreakoutByLotOption.body.data[0].quantityOnHand, 100)
     assert.equal(withBreakoutByLotOption.body.data[0].siteId, testData.siteId)
     assert.equal(withBreakoutByLotOption.body.data[0].consumableId, testData.consumableId)
@@ -302,5 +322,28 @@ describe('GET: /api/inventory', () => {
     assert.equal(withBreakoutByLotOption.body.data[1].quantityOnHand, 50)
     assert.equal(withBreakoutByLotOption.body.data[1].siteId, testData.siteId)
     assert.equal(withBreakoutByLotOption.body.data[1].consumableId, testData.consumableId)
+  })
+
+  it('should return 200 with inventory items when breakout by lot is selected and inventory strategy is expire date only', async () => {
+    const response = await server
+      .get(endpoint)
+      .query({
+        sortCol: 'siteName',
+        sortDir: 'asc',
+        page: 0,
+        size: 10,
+        hasStock: true,
+        breakOutByLot: true,
+      })
+      .set('Authorization', `Bearer ${sharedToken.token}`)
+
+    assert.equal(response.status, 200)
+    assert.equal(response.body.data.length, 2)
+    assert.equal(response.body.data[0].quantityOnHand, 100)
+    assert.equal(response.body.data[0].unreconciledQuantity, 3)
+    assert.equal(response.body.data[0].lotNumber, 'LOT001')
+    assert.equal(response.body.data[1].quantityOnHand, 50)
+    assert.equal(response.body.data[1].unreconciledQuantity, 0)
+    assert.equal(response.body.data[1].lotNumber, 'LOT002')
   })
 })
