@@ -336,8 +336,19 @@ function getInventoryLots(request, dataConstraints) {
         builder
           .on('unreconciled.siteId', 's.id')
           .andOn('unreconciled.consumableId', 'c.id')
-          .andOn(knex.raw('unreconciled.lotNumber <=> ii.lotNumber'))
-          .andOn(knex.raw('unreconciled.expiresOn <=> ii.expiresOn'))
+          .andOn(
+            knex.raw(`
+            CASE
+              WHEN p.inventoryStrategy = 'withLotAndExpirationDateStrategy' THEN
+                unreconciled.lotNumber <=> ii.lotNumber AND unreconciled.expiresOn <=> ii.expiresOn
+              WHEN p.inventoryStrategy = 'withExpirationDateStrategy' THEN
+                unreconciled.expiresOn <=> ii.expiresOn
+              WHEN p.inventoryStrategy = 'withLotStrategy' THEN
+                unreconciled.lotNumber <=> ii.lotNumber
+              ELSE NULL
+            END
+          `)
+          )
       }
     )
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')

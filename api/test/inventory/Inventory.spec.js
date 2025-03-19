@@ -250,6 +250,7 @@ describe('GET: /api/inventory', () => {
     ])
 
     testData = {
+      partnerId,
       siteId,
       consumableId,
       assayId,
@@ -258,6 +259,12 @@ describe('GET: /api/inventory', () => {
       resultId3,
       inventoryItemIds: [inventoryItem1, inventoryItem2].map(item => item.id),
     }
+  })
+
+  beforeEach(async () => {
+    await knex('Partner').where('id', testData.partnerId).update({
+      inventoryStrategy: 'withLotAndExpirationDateStrategy',
+    })
   })
 
   after(async () => {
@@ -325,6 +332,37 @@ describe('GET: /api/inventory', () => {
   })
 
   it('should return 200 with inventory items when breakout by lot is selected and inventory strategy is expire date only', async () => {
+    await knex('Partner').where('id', testData.partnerId).update({
+      inventoryStrategy: 'withExpirationDateStrategy',
+    })
+
+    const response = await server
+      .get(endpoint)
+      .query({
+        sortCol: 'siteName',
+        sortDir: 'asc',
+        page: 0,
+        size: 10,
+        hasStock: true,
+        breakOutByLot: true,
+      })
+      .set('Authorization', `Bearer ${sharedToken.token}`)
+
+    assert.equal(response.status, 200)
+    assert.equal(response.body.data.length, 2)
+    assert.equal(response.body.data[0].quantityOnHand, 100)
+    assert.equal(response.body.data[0].unreconciledQuantity, 3)
+    assert.equal(response.body.data[0].lotNumber, 'LOT001')
+    assert.equal(response.body.data[1].quantityOnHand, 50)
+    assert.equal(response.body.data[1].unreconciledQuantity, 3)
+    assert.equal(response.body.data[1].lotNumber, 'LOT002')
+  })
+
+  it('should return 200 with inventory items when breakout by lot is selected and inventory strategy is lot only', async () => {
+    await knex('Partner').where('id', testData.partnerId).update({
+      inventoryStrategy: 'withLotStrategy',
+    })
+
     const response = await server
       .get(endpoint)
       .query({
