@@ -317,6 +317,40 @@ function getInventoryLots(request, dataConstraints) {
       builder.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
     })
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .leftJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
+    .leftJoin(
+      knex('MissingInventoryLots as mil')
+        .innerJoin('Result as r', 'mil.resultId', 'r.id')
+        .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+        .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
+        .select(
+          'mil.siteId',
+          'c.id as consumableId',
+          'mil.lotNumber as lotNumber',
+          'mil.expirationDate as expiresOn',
+          knex.raw('COUNT(*) as unreconciledCount')
+        )
+        .groupBy('mil.siteId', 'c.id')
+        .as('unreconciled'),
+      builder => {
+        builder
+          .on('unreconciled.siteId', 's.id')
+          .andOn('unreconciled.consumableId', 'c.id')
+          .andOn(
+            knex.raw(`
+            CASE
+              WHEN p.inventoryStrategy = 'withLotAndExpirationDateStrategy' THEN
+                unreconciled.lotNumber <=> ii.lotNumber AND unreconciled.expiresOn <=> ii.expiresOn
+              WHEN p.inventoryStrategy = 'withExpirationDateStrategy' THEN
+                unreconciled.expiresOn <=> ii.expiresOn
+              WHEN p.inventoryStrategy = 'withLotStrategy' THEN
+                unreconciled.lotNumber <=> ii.lotNumber
+              ELSE NULL
+            END
+          `)
+          )
+      }
+    )
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, {
       ...INVENTORY_ITEM_FILTER_FIELDS,

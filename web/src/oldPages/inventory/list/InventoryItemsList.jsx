@@ -223,19 +223,6 @@ export default function InventoryItemsList() {
                 {intl.formatMessage(messages.hierarchicalView)}
               </Typography>
               <Stack sx={{ flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={[true, 'true'].includes(filter.breakOutByLot)}
-                      onChange={e => {
-                        setFilter(prv => ({ ...prv, breakOutByLot: e.target.checked || null }))
-                        setInventoryOnField(false)
-                      }}
-                    />
-                  }
-                  label={intl.formatMessage(messages.breakOutByLot)}
-                  sx={{ m: 2 }}
-                />
                 {filter.breakOutByLot ? (
                   <PermissionChecker permissions={['inventory:edit']}>
                     <FormControlLabel
@@ -250,6 +237,19 @@ export default function InventoryItemsList() {
                     />
                   </PermissionChecker>
                 ) : null}
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={[true, 'true'].includes(filter.breakOutByLot)}
+                      onChange={e => {
+                        setFilter(prv => ({ ...prv, breakOutByLot: e.target.checked || null }))
+                        setInventoryOnField(false)
+                      }}
+                    />
+                  }
+                  label={intl.formatMessage(messages.breakOutByLot)}
+                  sx={{ m: 2 }}
+                />
                 <AspectExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
               </Stack>
             </Stack>
