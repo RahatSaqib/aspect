@@ -131,7 +131,7 @@ async function getActualQuantityOnHand(
     consumableId,
     expiresOn,
     lotNumber,
-    inTransitFromSiteId: fromSiteId,
+    inTransitFromSiteId: inventoryStrategy.transferInPendingMode ? fromSiteId : null,
     partnerId,
     resultId,
   })
