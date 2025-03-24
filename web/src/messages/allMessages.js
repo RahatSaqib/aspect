@@ -465,6 +465,10 @@ const messages = {
     supplies: { id: 'browsePage.browseDropdown.supplies', defaultMessage: 'Supplies' },
     inventoryOnHand: { id: 'browsePage.browseDropdown.inventoryOnHand', defaultMessage: 'Inventory on Hand' },
     inventoryItems: { id: 'browsePage.browseDropdown.inventoryItems', defaultMessage: 'Inventory Items' },
+    inventoryManagementConfiguration: {
+      id: 'browsePage.browseDropdown.inventoryManagementConfiguration',
+      defaultMessage: 'Inventory Management Configuration',
+    },
     inventoryLog: { id: 'browsePage.browseDropdown.inventoryLog', defaultMessage: 'Inventory Log' },
     inventoryTransfers: { id: 'browsePage.browseDropdown.inventoryTransfers', defaultMessage: 'Transfers' },
     InventoryOverview: { id: 'browsePage.browseDropdown.inventoryOverview', defaultMessage: 'Inventory Overview' },

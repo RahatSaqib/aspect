@@ -29,9 +29,9 @@ export default defineMessages({
     id: 'pages.Consumable.New.reconciliationTitle',
     defaultMessage: 'Set the below configurations to manage Inventory across the sites',
   },
-  cartridgesManagedThrough: {
-    id: 'pages.Consumable.New.cartridgesManagedThrough',
-    defaultMessage: 'Cartridges are managed through',
+  cartridgeBatchManagement: {
+    id: 'pages.Consumable.New.cartridgeBatchManagement',
+    defaultMessage: 'Cartridge batch is managed by their',
   },
   expiryDate: {
     id: 'pages.Consumable.New.expiryDate',
@@ -66,9 +66,9 @@ export default defineMessages({
     id: 'pages.Consumable.New.partNumber',
     defaultMessage: 'Part Number',
   },
-  trackByExpirationDate: {
-    id: 'pages.Consumable.New.trackByExpirationDate',
-    defaultMessage: 'Track by expiration date',
+  trackByBatch: {
+    id: 'pages.Consumable.New.trackByBatch',
+    defaultMessage: 'Track by batch',
   },
   includeLocation: {
     id: 'pages.Consumable.New.includeLocation',

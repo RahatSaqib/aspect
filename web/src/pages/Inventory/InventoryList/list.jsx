@@ -48,13 +48,6 @@ const InventoryList = () => {
 
   return (
     <>
-      <DetailHeader name={formatMessage(messages.inventoryItems)} disableBack>
-        {permissions?.hasPermission ? (
-          <Button onClick={() => navigate('/browse/inventory/reconciliation/form')}>
-            {formatMessage(messages.reconciliationConfiguration)}
-          </Button>
-        ) : null}
-      </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.inventoryItems)} />
         <Card>
