@@ -565,7 +565,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
 
     describe('/inventory/transfer', () => {
       describe('PUT', () => {
-        it('should add an inventory item in transit to the destination site', async () => {
+        it('should add an inventory item to the destination site, transfer must identify the right Inventory Item', async () => {
           let res = await server
             .put(`${transferInventoryPath}`)
             .send({
@@ -593,12 +593,12 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.deepEqual(transitItem, {
             ...transitItem,
             quantityOnHand: quantityToAdjust,
-            inTransitFromSiteId: inventoryItem.siteId,
+            inTransitFromSiteId: null,
             siteId: destinationSite.id,
             lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
           })
-
+          // a second transfer of the same lot
           res = await server
             .put(`${transferInventoryPath}`)
             .send({
@@ -621,11 +621,12 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             res.body.data.existingInventoryItem.quantityOnHand,
             inventoryItem.quantityOnHand - quantityToAdjust * 2
           )
-          const updatedTransitItem = res.body.data.newInventoryItem
-          assert.deepEqual(updatedTransitItem, {
-            ...updatedTransitItem,
+          const targetInventoryItem = res.body.data.newInventoryItem
+          assert.equal(targetInventoryItem.id, transitItem.id)
+          assert.deepEqual(targetInventoryItem, {
+            ...targetInventoryItem,
             quantityOnHand: transitItem.quantityOnHand + quantityToAdjust,
-            inTransitFromSiteId: inventoryItem.siteId,
+            inTransitFromSiteId: null,
             siteId: destinationSite.id,
             lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
