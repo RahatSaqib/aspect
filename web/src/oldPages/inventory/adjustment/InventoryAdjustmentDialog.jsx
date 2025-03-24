@@ -7,7 +7,6 @@ import InventoryItemSelect from '../../../cleanComponents/InventoryItemSelect'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
 import usePartner from '../../../hooks/partner/usePartner'
 import useSiteList from '../../../hooks/site/useSiteList'
-import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
@@ -362,7 +361,7 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {values?.reason?.i18nKey === testConductedReasonI18nKey ? (
+                {values?.reason?.i18nKey === 'ConsumableReason_TestConducted' ? (
                   <>
                     <FormGroup label={formatMessage(messages.testsRunBetween)}>
                       <DateTimeInput

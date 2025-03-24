@@ -22,7 +22,6 @@ import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
@@ -133,7 +132,7 @@ export default function InventoryItemsList() {
   const { mutate: onRemoveInventorySubmit } = useMutation(
     values => {
       const selectedAdjustmentReason = consumableReasons?.find(reason => reason?.id === values.reasonId)
-      if (selectedAdjustmentReason?.i18nKey === testConductedReasonI18nKey) {
+      if (selectedAdjustmentReason?.i18nKey === 'ConsumableReason_TestConducted') {
         return removeInventory(omit(values, ['canExpire', 'dateAdjusted']), dispatch, inventory).then(
           onAdjustInventorySucceeded
         )
