@@ -3,12 +3,9 @@ import { Person, PersonOff } from '@mui/icons-material'
 import { Button, IconButton } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useMutation } from 'react-query'
-import { useDispatch } from 'react-redux'
-import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { DataTableCell as TableCell } from '../../../../oldComponents/shared/tableBody'
-import { fetchPersons } from '../../../../store/PersonRedux'
 import { FormAction } from './FormSubmit'
 import messages from './messages'
 
@@ -18,16 +15,11 @@ const IconContainer = ({ icon: Icon, style, action }) => (
   </IconButton>
 )
 
-const AccountEnableDisable = props => {
+const AccountEnableDisable = ({ onSuccess, ...props }) => {
   const { person } = props
   const { formatMessage } = useIntl()
-  const location = useLocation()
-  const [params] = useSearchParams()
-  const navigate = useNavigate()
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [confirmationData, setConfirmationData] = useState(false)
-
-  const dispatch = useDispatch()
 
   const mutation = useMutation(
     ({ values, endpoint, method }) => {
@@ -37,20 +29,8 @@ const AccountEnableDisable = props => {
       onError: error => {
         throw new Error(error)
       },
-      onSuccess: ({ ok }) => {
-        if (ok) {
-          const searchParams = new URLSearchParams(location.search)
-          const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-          const pageAt = params.get('pageAt') || 0
-          const pageSize = params.get('pageSize') || 25
-          const sortCol = params.get('sortCol') || 'name'
-          const sortDir = params.get('sortDir') || 'asc'
-          if (confirmationData?.type === 'button') {
-            navigate(0)
-          } else {
-            dispatch(fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize))
-          }
-        }
+      onSuccess: () => {
+        onSuccess()
       },
     }
   )
