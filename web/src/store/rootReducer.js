@@ -8,7 +8,6 @@ import device from './DeviceRedux'
 import geography from './GeographyRedux'
 import inventory from './InventoryRedux'
 import jobs from './JobRedux'
-import person from './PersonRedux'
 import result from './ResultRedux'
 import serviceDegradation from './ServiceDegradation'
 
@@ -21,7 +20,6 @@ const appReducer = combineReducers({
   geography,
   inventory,
   jobs,
-  person,
   result,
   serviceDegradation,
 })
@@ -35,7 +33,6 @@ const App = Immutable.Record({
   geography: undefined,
   inventory: undefined,
   jobs: undefined,
-  person: undefined,
   result: undefined,
   serviceDegradation: undefined,
 })
