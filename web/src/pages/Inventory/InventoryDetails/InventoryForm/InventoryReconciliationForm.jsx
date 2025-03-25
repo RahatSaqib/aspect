@@ -56,7 +56,7 @@ export default function InventoryReconciliationForm() {
                   <>
                     <FormControl sx={{ mt: '15px' }}>
                       <FormLabel id="strategy-radio-buttons-group-label">
-                        {formatMessage(messages.cartridgesManagedThrough)}
+                        {formatMessage(messages.cartridgeBatchManagement)}
                       </FormLabel>
                       <RadioGroup
                         value={values?.strategy}

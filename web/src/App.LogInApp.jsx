@@ -250,12 +250,13 @@ const LogInApp = () => {
 
                 {a(['browse', 'inventory']) ? (
                   <>
-                    <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
-                    <Route path="/browse/inventory/log" element={<InventoryLog />} />
-                    <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
-                    <Route path="/browse/inventory/overview" element={<InventoryOverview />} />
-                    <Route path="/browse/inventory/reconciliation/form" element={<InventoryReconciliationForm />} />
-                    <Route path="/browse/inventory/reconciliation" element={<InventoryReconciliation />} />
+                    <Route path={routePaths.INVENTORY_SUPPLIES} element={<InventoryItemsList />} />
+                    <Route path={routePaths.INVENTORY_LOG} element={<InventoryLog />} />
+                    <Route path={routePaths.INVENTORY_TRANSFERS} element={<InventoryTransfers />} />
+                    <Route path={routePaths.INVENTORY_OVERVIEW} element={<InventoryOverview />} />
+                    {/** The below path is deprecated, but keeping it here for now to avoid breaking changes. It will be removed in the upcoming releases. */}
+                    <Route path={routePaths.INVENTORY_RECONCILIATION_FORM} element={<InventoryReconciliationForm />} />
+                    <Route path={routePaths.INVENTORY_RECONCILIATION} element={<InventoryReconciliation />} />
                   </>
                 ) : null}
                 {a(['browse', 'notification']) ? (
@@ -271,6 +272,10 @@ const LogInApp = () => {
                     <Route path="/browse/admin/lgas" element={<AdminLgas />} />
                     <Route path="/browse/admin/inventory-list" element={<InventoryList />} />
                     <Route path="/browse/admin/inventory-list/:cartridgeId/*" element={<InventoryDetails />} />
+                    <Route
+                      path={routePaths.ADMIN_INVENTORY_RECONCILIATION_FORM}
+                      element={<InventoryReconciliationForm />}
+                    />
                   </>
                 ) : null}
 

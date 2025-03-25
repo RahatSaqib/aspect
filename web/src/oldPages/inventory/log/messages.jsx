@@ -42,11 +42,11 @@ const messages = {
     },
     reconcilationAdjustment: {
       id: 'pages.InventoryLog.reconcilationAdjustment',
-      defaultMessage: 'Applied Consumable Strategy',
+      defaultMessage: 'Applied Consumption strategy',
     },
     reconcilationStrategy: {
       id: 'pages.InventoryLog.reconcilationStrategy',
-      defaultMessage: 'Applied Reconciliation Strategy',
+      defaultMessage: 'Applied Cartridge Batch strategy',
     },
     currentSiteAdjustment: {
       id: 'pages.InventoryLog.currentSiteAdjustment',
