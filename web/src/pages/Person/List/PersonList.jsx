@@ -37,6 +37,7 @@ export const PersonList = () => {
     isLoading: tableLoading,
     data = { data: [] },
     total,
+    refetch,
   } = usePersons({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
 
   useEffect(() => {
@@ -108,6 +109,7 @@ export const PersonList = () => {
                         onClick={e =>
                           gotoWithReturnUrl(`/browse/person/${e.currentTarget.dataset.personId}`, navigate, location)
                         }
+                        onUpdateRecord={refetch}
                         data-person-id={person.id}
                         personEditPermission={isEditAllow && user?.userId !== person.id}
                       />
