@@ -216,23 +216,24 @@ describe('Missing inventory lot resolver', () => {
 
     await waitForCreated
     await waitForIdle(5000)
-
-    const missingInventoryLotsCount = await knex('MissingInventoryLots')
+    const missingInventoryLots = await knex('MissingInventoryLots').where('siteId', sitesToRemove[0]).select()
+    // eslint-disable-next-line no-console
+    console.log(missingInventoryLots)
+    const { missingInventoryLotsCount } = await knex('MissingInventoryLots')
       .where('siteId', sitesToRemove[0])
-      .count()
+      .count('* as missingInventoryLotsCount')
       .first()
-    assert.equal(missingInventoryLotsCount['count(*)'], 1)
+    assert.equal(missingInventoryLotsCount, 1)
 
-    const transfersCount = await knex('InventoryTransfer as it')
+    const { transfersCount } = await knex('InventoryTransfer as it')
       .leftJoin('InventoryLog as il', 'il.id', 'it.incomeInventoryLogId')
       .where('il.siteId', sitesToRemove[0])
-      .count()
+      .count('* as transfersCount')
       .first()
-    assert.equal(transfersCount['count(*)'], 1)
+    assert.equal(transfersCount, 1)
 
     const { id: consumableId } = await knex('Consumable').where('name', consumableName).first('id')
     const { total: totalSite1 } = await knex('InventoryItem')
-      .whereNull('inTransitFromSiteId')
       .andWhere('siteId', sitesToRemove[0])
       .andWhere('consumableId', consumableId)
       .andWhere('expiresOn', expiryDate)
@@ -241,7 +242,6 @@ describe('Missing inventory lot resolver', () => {
       })
       .first()
     const { total: totalSite2 } = await knex('InventoryItem')
-      .whereNull('inTransitFromSiteId')
       .andWhere('siteId', sitesToRemove[1])
       .andWhere('consumableId', consumableId)
       .andWhere('expiresOn', expiryDate)
