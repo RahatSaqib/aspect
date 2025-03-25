@@ -211,19 +211,28 @@ describe('Missing inventory lot resolver', () => {
     const actionCreated = missingInventoryLotsResolver()
     const waitForCreated = waitForAction(actionCreated)
 
+    const missingInventoryLotsBefore = await knex('MissingInventoryLots').where('siteId', sitesToRemove[0]).select()
+    // eslint-disable-next-line no-console
+    console.log('\x1b[1;36m', '🚀 ➜ missingInventoryLots before:', missingInventoryLotsBefore)
+    const inventoryItems = await knex('InventoryItem').where('siteId', sitesToRemove[0]).select()
+    // eslint-disable-next-line no-console
+    console.log('\x1b[1;36m', '🚀 ➜ inventoryItems:', inventoryItems)
+
     // dispatch to MQ a messageId (generated in AlertMessage)
     messageContext.missingInventoryLotsResolver()
 
     await waitForCreated
     await waitForIdle(5000)
-    const missingInventoryLots = await knex('MissingInventoryLots').where('siteId', sitesToRemove[0]).select()
+
+    const missingInventoryLotsAfter = await knex('MissingInventoryLots').where('siteId', sitesToRemove[0]).select()
     // eslint-disable-next-line no-console
-    console.log(missingInventoryLots)
+    console.log('\x1b[1;36m', '🚀 ➜ missingInventoryLots After:', missingInventoryLotsAfter)
+
     const { missingInventoryLotsCount } = await knex('MissingInventoryLots')
       .where('siteId', sitesToRemove[0])
       .count('* as missingInventoryLotsCount')
       .first()
-    assert.equal(missingInventoryLotsCount, 1)
+    assert.equal(missingInventoryLotsCount, 1, 'The quantity of unreconciled consumptions should be 1')
 
     const { transfersCount } = await knex('InventoryTransfer as it')
       .leftJoin('InventoryLog as il', 'il.id', 'it.incomeInventoryLogId')

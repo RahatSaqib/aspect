@@ -2,7 +2,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
-const { startOfDay, endOfDay } = require('date-fns')
+const { startOfDay, endOfDay, parseISO } = require('date-fns')
 const { getUser } = require('../../auth/service')
 const defaultInventoryStrategy = require('../strategies')
 
@@ -84,8 +84,8 @@ async function upsertInventoryItem({
       siteId,
       consumableId,
       lotNumber,
-      minDate: startOfDay(expiresOn),
-      maxDate: endOfDay(expiresOn),
+      minDate: startOfDay(parseISO(expiresOn)),
+      maxDate: endOfDay(parseISO(expiresOn)),
     }
 
     if (logProps?.operation.includes('modify') && quantityOnHand === 0) {
