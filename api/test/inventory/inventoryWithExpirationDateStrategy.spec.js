@@ -4,7 +4,6 @@ const _ = require('lodash')
 const addYears = require('date-fns/addYears')
 const { addDays } = require('date-fns')
 const shared = require('../utils/sharedToken')
-const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { knex } = require('../../src/db')
 
@@ -415,11 +414,9 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
     const quantityToAdjust = 11
     const initialQuantityOnHand = 500
     const testLotNumber = 'TEST-LOT'
-    // const getAllInventoryPath = '/api/inventory/group-by-site'
     const addInventoryPath = '/api/inventory/add'
     const removeInventoryPath = '/api/inventory/remove'
     const transferInventoryPath = '/api/inventory/transfer'
-    const receiveInventoryPath = '/api/inventory/receive'
     let inventoryItem
     let destinationSite
     let siteId
@@ -627,74 +624,6 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             ...targetInventoryItem,
             quantityOnHand: transitItem.quantityOnHand + quantityToAdjust,
             inTransitFromSiteId: null,
-            siteId: destinationSite.id,
-            lotNumber: inventoryItem.lotNumber,
-            expiresOn: inventoryItem.expiresOn.toISOString(),
-          })
-        })
-      })
-    })
-
-    describe.skip('/inventory/receive', () => {
-      describe('PUT', () => {
-        before(async () => knex('Partner').update({ inventoryStrategy: 'withExpirationDateStrategy' }))
-        after(async () =>
-          knex('Partner').update({
-            inventoryStrategy: 'withLotAndExpirationDateStrategy',
-          })
-        )
-        let receivedItem
-        afterEach(async () =>
-          run(async knex => {
-            const inventoryLogsToRemove = await knex('InventoryLog')
-              .where({ inventoryItemId: receivedItem.id })
-              .pluck('id')
-            await knex('InventoryTransfer')
-              .whereIn('outcomeInventoryLogId', inventoryLogsToRemove)
-              .orWhereIn('incomeInventoryLogId', inventoryLogsToRemove)
-              .orWhere({ tempInventoryItemId: receivedItem.id })
-              .delete()
-            await knex('InventoryLog').whereIn('id', inventoryLogsToRemove).delete()
-            await knex('InventoryItem').where({ id: receivedItem.id }).delete()
-          })
-        )
-
-        it('should add an inventory item to the site', async () => {
-          let res = await server
-            .put(`${transferInventoryPath}`)
-            .send({
-              consumableId: inventoryItem.consumableId,
-              lotNumber: inventoryItem.lotNumber,
-              expiresOn: inventoryItem.expiresOn,
-              quantity: quantityToAdjust,
-              notes: 'Creating a transfer to test receiving an item',
-              fromSiteId: inventoryItem.siteId,
-              toSiteId: destinationSite.id,
-              dateAdjusted: new Date().toISOString(),
-            })
-            .set('Authorization', `Bearer ${shared.token}`)
-
-          assert.equal(res.status, 200)
-          transitItem = res.body.data.newInventoryItem
-          res = await server
-            .put(`${receiveInventoryPath}`)
-            .send({
-              consumableId: transitItem.consumableId,
-              lotNumber: transitItem.lotNumber,
-              expiresOn: transitItem.expiresOn,
-              quantity: transitItem.quantityOnHand,
-              notes: 'Testing receiving a lot in transit',
-              fromSiteId: inventoryItem.siteId,
-              toSiteId: destinationSite.id,
-              dateAdjusted: new Date().toISOString(),
-            })
-            .set('Authorization', `Bearer ${shared.token}`)
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          receivedItem = res.body.data
-          assert.deepEqual(receivedItem, {
-            ...res.body.data,
-            quantityOnHand: quantityToAdjust,
             siteId: destinationSite.id,
             lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
