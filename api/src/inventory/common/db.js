@@ -106,7 +106,10 @@ function getInventorySitesQuery(constraints, request) {
       ...SUM_STOCK_LEFT_FILTER_FIELDS,
     })
     .modify(builder => {
-      if (request.query.daysStockLeft === 'noConsumption') builder.where('ficr.rate', 0).orWhereNull('ficr.rate')
+      if (request.query.daysStockLeft === 'noConsumption')
+        builder.where(qb => {
+          qb.where('ficr.rate', 0).orWhereNull('ficr.rate')
+        })
       else if (request.query.daysStockLeft === 'notRecorded') builder.whereNull('ii.id')
     })
     .modify(addConstraints, constraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
