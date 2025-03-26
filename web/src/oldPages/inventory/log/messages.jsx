@@ -129,11 +129,11 @@ const messages = {
     },
     ConsumableReason_TransferSent: {
       id: 'pages.InventoryLog.ConsumableReason_TransferSent',
-      defaultMessage: 'Tranfer sent to {refSiteName}',
+      defaultMessage: 'Transfer sent to {refSiteName}',
     },
     ConsumableReason_TransferReceived: {
       id: 'pages.InventoryLog.ConsumableReason_TransferReceived',
-      defaultMessage: 'Tranfer received from {refSiteName}',
+      defaultMessage: 'Transfer received from {refSiteName}',
     },
     ConsumableReason_AssertedZeroInventory: {
       id: 'pages.InventoryLog.ConsumableReason_AssertedZeroInventory',

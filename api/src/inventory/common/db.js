@@ -12,7 +12,6 @@ const {
   INVENTORY_TRANSFER,
   INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
   CONCATENATED_ID,
-  INVENTORY_ITEM_SORT_FIELDS,
   STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
@@ -106,7 +105,10 @@ function getInventorySitesQuery(constraints, request) {
       ...SUM_STOCK_LEFT_FILTER_FIELDS,
     })
     .modify(builder => {
-      if (request.query.daysStockLeft === 'noConsumption') builder.where('ficr.rate', 0).orWhereNull('ficr.rate')
+      if (request.query.daysStockLeft === 'noConsumption')
+        builder.where(qb => {
+          qb.where('ficr.rate', 0).orWhereNull('ficr.rate')
+        })
       else if (request.query.daysStockLeft === 'notRecorded') builder.whereNull('ii.id')
     })
     .modify(addConstraints, constraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
@@ -369,20 +371,6 @@ function getInventoryLots(request, dataConstraints) {
 }
 
 // ----------------------------------------------------------------------------------
-async function getInventoryByLot(request, requestQuery, dataConstraints) {
-  const inventoryQuery = getInventoryLots(request, dataConstraints)
-
-  const getCount = knex.from(inventoryQuery.clone().as('q')).count({ count: 'q.id' }).first()
-
-  const getItems = inventoryQuery
-    .clone()
-    .modify(sortPageParams, requestQuery, INVENTORY_ITEM_SORT_FIELDS.siteName, INVENTORY_ITEM_SORT_FIELDS)
-
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-  return { total, data }
-}
-
-// ----------------------------------------------------------------------------------
 function getGeneXpertInventoryBySitesAndConsumableQuery(
   request,
   dataConstraints,
@@ -464,20 +452,6 @@ FROM SiteHierarchy`
     })
     .groupBy('s.id', 'r.assayId')
     .as(alias)
-}
-
-async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
-  let inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, '*', true)
-
-  // Get the total count of all items
-  const [{ total }] = await inventoryQuery.clone().count('id as total')
-
-  // Sorting and pagination
-  inventoryQuery = inventoryQuery.modify(sortPageParams, request.query, 'siteName')
-
-  const inventorySites = await inventoryQuery
-
-  return { data: inventorySites, total }
 }
 
 // ----------------------------------------------------------------------------------
@@ -911,8 +885,6 @@ module.exports = {
   getInventorySitesQuery,
   getInventoryLog,
   getInventoryLots,
-  getInventoryByLot,
-  getInventoryBySitesAndConsumable,
   getGeneXpertInventoryBySitesAndConsumableQuery,
   getUnreconciledQuantitiesSubquery,
   logInventoryChange,
