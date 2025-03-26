@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-03-11T11:43:12.268Z\n"
+"POT-Creation-Date: 2025-03-26T09:22:26.164Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -803,19 +803,23 @@ msgstr "Будь-який"
 msgid "Api Keys"
 msgstr "Api ключі"
 
-#. [pages.InventoryLog.reconcilationAdjustment]
-#. defaultMessage is:
-#. Applied Consumable Strategy
-#: extracted_strings.json
-msgid "Applied Consumable Strategy"
-msgstr "Застосована стратегія використання витратних матеріалів"
-
 #. [pages.InventoryLog.reconcilationStrategy]
 #. defaultMessage is:
-#. Applied Reconciliation Strategy
+#. Applied Cartridge Batch strategy
 #: extracted_strings.json
-msgid "Applied Reconciliation Strategy"
-msgstr "Прикладна стратегія примирення"
+#, fuzzy
+#| msgid "Applied Consumable Strategy"
+msgid "Applied Cartridge Batch strategy"
+msgstr "Застосована стратегія використання витратних матеріалів"
+
+#. [pages.InventoryLog.reconcilationAdjustment]
+#. defaultMessage is:
+#. Applied Consumption strategy
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Applied Consumable Strategy"
+msgid "Applied Consumption strategy"
+msgstr "Застосована стратегія використання витратних матеріалів"
 
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
@@ -1774,11 +1778,13 @@ msgstr "Номер партії картриджа"
 msgid "Cartridge Lot number"
 msgstr "Номер партії картриджа"
 
-#. [pages.Consumable.New.cartridgesManagedThrough]
+#. [pages.Consumable.New.cartridgeBatchManagement]
 #. defaultMessage is:
-#. Cartridges are managed through
+#. Cartridge batch is managed by their
 #: extracted_strings.json
-msgid "Cartridges are managed through"
+#, fuzzy
+#| msgid "Cartridges are managed through"
+msgid "Cartridge batch is managed by their"
 msgstr "Керування картриджами здійснюється через"
 
 #. [forms.formItem.caseId]
@@ -4251,6 +4257,13 @@ msgstr "Виключені результати"
 msgid "Execute"
 msgstr "Виконати"
 
+#. [inventoryItemSelect.expiresOn]
+#. defaultMessage is:
+#. Exp Date: {expiresOn}
+#: extracted_strings.json
+msgid "Exp Date: {expiresOn}"
+msgstr ""
+
 #. [filter.btnGroup.expDateFrom]
 #. defaultMessage is:
 #. Exp. since {date}
@@ -6133,6 +6146,9 @@ msgstr "Закінчується термін зберігання запасі�
 #. [pages.NewInventoryDialogForm.defaultConsumableName]
 #. defaultMessage is:
 #. Inventory Item
+#. [pages.InventoryAdjustmentDialogForm.inventoryItem]
+#. defaultMessage is:
+#. Inventory Item
 #: extracted_strings.json
 msgid "Inventory Item"
 msgstr "Тип картриджу"
@@ -6176,6 +6192,15 @@ msgstr "Інвентарні позиції"
 #: extracted_strings.json
 msgid "Inventory Log"
 msgstr "Журнал інвентаризації"
+
+#. [browsePage.browseDropdown.inventoryManagementConfiguration]
+#. defaultMessage is:
+#. Inventory Management Configuration
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Inventory Reconciliation"
+msgid "Inventory Management Configuration"
+msgstr "Звірка інвентаризації"
 
 #. [browsePage.browseDropdown.inventoryOverview]
 #. defaultMessage is:
@@ -6833,27 +6858,6 @@ msgstr ""
 "Показує кількість активних/вимкнених модулів, а також кількість модулів, "
 "замінених за період часу, визначений фільтрами"
 
-#. [errorResponseMessages.fetchConsumableReasons.GET.default.title]
-#. defaultMessage is:
-#. Loading Consumable Reasons Failed
-#: extracted_strings.json
-msgid "Loading Consumable Reasons Failed"
-msgstr "Не вдалося завантажити причини витратних матеріалів"
-
-#. [errorResponseMessages.fetchConsumables.GET.default.title]
-#. defaultMessage is:
-#. Loading Consumables Failed
-#: extracted_strings.json
-msgid "Loading Consumables Failed"
-msgstr "Помилка завантаження витратних матеріалів"
-
-#. [errorResponseMessages.fetchPersons.GET.default.title]
-#. defaultMessage is:
-#. Loading Contacts Failed
-#: extracted_strings.json
-msgid "Loading Contacts Failed"
-msgstr "Помилка завантаження контактів"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
 #. defaultMessage is:
 #. Loading DeviceOperations Failed
@@ -6867,13 +6871,6 @@ msgstr "Помилка завантаження пристрою"
 #: extracted_strings.json
 msgid "Loading Devices Failed"
 msgstr "Помилка завантаження пристроїв"
-
-#. [errorResponseMessages.fetchTreatmentStatuses.GET.default.title]
-#. defaultMessage is:
-#. Loading Result Treatment Statuses Failed
-#: extracted_strings.json
-msgid "Loading Result Treatment Statuses Failed"
-msgstr "Завантаження статусів лікування результатів не вдалося"
 
 #. [errorResponseMessages.fetchResults.GET.default.title]
 #. defaultMessage is:
@@ -7008,6 +7005,15 @@ msgstr "Лот"
 #: extracted_strings.json
 msgid "Lot Number"
 msgstr "Номер партії"
+
+#. [inventoryItemSelect.lotNumber]
+#. defaultMessage is:
+#. Lot Number: {lotNumber}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "lot number includes \"{lotNumber}\""
+msgid "Lot Number: {lotNumber}"
+msgstr "номер лоту включає “{lotNumber}”"
 
 #. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
 #. defaultMessage is:
@@ -9378,6 +9384,15 @@ msgstr "Будь ласка, перевірте, чи все ще існує"
 msgid "Please choose a date later or equal to from date"
 msgstr "Будь ласка, виберіть дату пізніше або дорівнюйте даті"
 
+#. [pages.InventoryAdjustmentDialogForm.inventoryItemRequired]
+#. defaultMessage is:
+#. Please choose an inventory item
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Please choose a different site"
+msgid "Please choose an inventory item"
+msgstr "Виберіть інший сайт"
+
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
 #. Please confirm new password
@@ -10190,6 +10205,15 @@ msgstr "Кількість для видалення"
 #: extracted_strings.json
 msgid "Quantity to Transfer"
 msgstr "Кількість для переказу"
+
+#. [inventoryItemSelect.quantity]
+#. defaultMessage is:
+#. Quantity: {quantity}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Quantity on Hand"
+msgid "Quantity: {quantity}"
+msgstr "Кількість на руках"
 
 #. [pages.dateRangeSelector.quarter]
 #. defaultMessage is:
@@ -11464,33 +11488,12 @@ msgstr ""
 msgid "Screen is not yet complete"
 msgstr "Екран ще не завершено"
 
-#. [errorResponseMessages.fetchConsumables.GET.400.title]
-#. defaultMessage is:
-#. Searching Consumables Failed
-#: extracted_strings.json
-msgid "Searching Consumables Failed"
-msgstr "Помилка пошуку витратних матеріалів"
-
-#. [errorResponseMessages.fetchPersons.GET.400.title]
-#. defaultMessage is:
-#. Searching Contacts Failed
-#: extracted_strings.json
-msgid "Searching Contacts Failed"
-msgstr "Помилка пошуку контактів"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
 #. defaultMessage is:
 #. Searching DeviceOperations Failed
 #: extracted_strings.json
 msgid "Searching DeviceOperations Failed"
 msgstr "Не вдалося здійснити пошук пристрою"
-
-#. [errorResponseMessages.fetchTreatmentStatuses.GET.400.title]
-#. defaultMessage is:
-#. Searching Result Treatment Statuses Failed
-#: extracted_strings.json
-msgid "Searching Result Treatment Statuses Failed"
-msgstr "Пошук статусів лікування результатів не вдався"
 
 #. [errorResponseMessages.fetchResults.GET.400.title]
 #. defaultMessage is:
@@ -14277,12 +14280,14 @@ msgstr "Виявлено слід"
 msgid "Track By Location"
 msgstr "Відстежувати за місцем розташування"
 
-#. [pages.Consumable.New.trackByExpirationDate]
+#. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
-#. Track by expiration date
+#. Track by batch
 #: extracted_strings.json
-msgid "Track by expiration date"
-msgstr "Відстежувати за терміном придатності"
+#, fuzzy
+#| msgid "Track by expiry date"
+msgid "Track by batch"
+msgstr "Відстежуйте за терміном придатності"
 
 #. [pages.inventoryList.trackByDate]
 #. defaultMessage is:
@@ -14297,20 +14302,6 @@ msgstr "Відстежуйте за терміном придатності"
 #: extracted_strings.json
 msgid "Training"
 msgstr "Навчання"
-
-#. [pages.InventoryLog.ConsumableReason_TransferReceived]
-#. defaultMessage is:
-#. Tranfer received from {refSiteName}
-#: extracted_strings.json
-msgid "Tranfer received from {refSiteName}"
-msgstr "Отримано переказ від {refSiteName}"
-
-#. [pages.InventoryLog.ConsumableReason_TransferSent]
-#. defaultMessage is:
-#. Tranfer sent to {refSiteName}
-#: extracted_strings.json
-msgid "Tranfer sent to {refSiteName}"
-msgstr "Переказ надіслано до {refSiteName}"
 
 #. [pages.InventoryLog.transactionDate]
 #. defaultMessage is:
@@ -14363,6 +14354,24 @@ msgstr "Помилка результату передачі"
 #: extracted_strings.json
 msgid "Transfer Sent"
 msgstr "Передача відправлена"
+
+#. [pages.InventoryLog.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Transfer received from {refSiteName}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tranfer received from {refSiteName}"
+msgid "Transfer received from {refSiteName}"
+msgstr "Отримано переказ від {refSiteName}"
+
+#. [pages.InventoryLog.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Transfer sent to {refSiteName}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tranfer sent to {refSiteName}"
+msgid "Transfer sent to {refSiteName}"
+msgstr "Переказ надіслано до {refSiteName}"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
@@ -16113,6 +16122,33 @@ msgstr "{unit} з минулого тижня"
 msgid "{unit} total calibrations"
 msgstr "{unit} всього калібрувань"
 
+#~ msgid "Applied Reconciliation Strategy"
+#~ msgstr "Прикладна стратегія примирення"
+
+#~ msgid "Loading Consumable Reasons Failed"
+#~ msgstr "Не вдалося завантажити причини витратних матеріалів"
+
+#~ msgid "Loading Consumables Failed"
+#~ msgstr "Помилка завантаження витратних матеріалів"
+
+#~ msgid "Loading Contacts Failed"
+#~ msgstr "Помилка завантаження контактів"
+
+#~ msgid "Loading Result Treatment Statuses Failed"
+#~ msgstr "Завантаження статусів лікування результатів не вдалося"
+
+#~ msgid "Searching Consumables Failed"
+#~ msgstr "Помилка пошуку витратних матеріалів"
+
+#~ msgid "Searching Contacts Failed"
+#~ msgstr "Помилка пошуку контактів"
+
+#~ msgid "Searching Result Treatment Statuses Failed"
+#~ msgstr "Пошук статусів лікування результатів не вдався"
+
+#~ msgid "Track by expiration date"
+#~ msgstr "Відстежувати за терміном придатності"
+
 #~ msgid "Manager"
 #~ msgstr "Менеджер"
 
@@ -16221,9 +16257,6 @@ msgstr "{unit} всього калібрувань"
 
 #~ msgid "Tests performed in last 24 hours"
 #~ msgstr "Тести, проведені за останні 24 години"
-
-#~ msgid "Please choose a different site"
-#~ msgstr "Виберіть інший сайт"
 
 #~ msgid "Please specify the quantity to add"
 #~ msgstr "Будь ласка, вкажіть кількість для додавання"

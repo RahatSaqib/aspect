@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-03-11T11:43:12.268Z\n"
+"POT-Creation-Date: 2025-03-26T09:22:26.164Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -800,19 +800,23 @@ msgstr "Beliebig"
 msgid "Api Keys"
 msgstr "Api-Schlüssel"
 
-#. [pages.InventoryLog.reconcilationAdjustment]
-#. defaultMessage is:
-#. Applied Consumable Strategy
-#: extracted_strings.json
-msgid "Applied Consumable Strategy"
-msgstr "Angewandte Verbrauchsgüterstrategie"
-
 #. [pages.InventoryLog.reconcilationStrategy]
 #. defaultMessage is:
-#. Applied Reconciliation Strategy
+#. Applied Cartridge Batch strategy
 #: extracted_strings.json
-msgid "Applied Reconciliation Strategy"
-msgstr "Angewandte Versöhnungsstrategie"
+#, fuzzy
+#| msgid "Applied Consumable Strategy"
+msgid "Applied Cartridge Batch strategy"
+msgstr "Angewandte Verbrauchsgüterstrategie"
+
+#. [pages.InventoryLog.reconcilationAdjustment]
+#. defaultMessage is:
+#. Applied Consumption strategy
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Applied Consumable Strategy"
+msgid "Applied Consumption strategy"
+msgstr "Angewandte Verbrauchsgüterstrategie"
 
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
@@ -1782,11 +1786,13 @@ msgstr "Kartuschen-Losnummer"
 msgid "Cartridge Lot number"
 msgstr "Patrone Losnummer"
 
-#. [pages.Consumable.New.cartridgesManagedThrough]
+#. [pages.Consumable.New.cartridgeBatchManagement]
 #. defaultMessage is:
-#. Cartridges are managed through
+#. Cartridge batch is managed by their
 #: extracted_strings.json
-msgid "Cartridges are managed through"
+#, fuzzy
+#| msgid "Cartridges are managed through"
+msgid "Cartridge batch is managed by their"
 msgstr "Kassetten werden verwaltet durch"
 
 #. [forms.formItem.caseId]
@@ -4258,6 +4264,13 @@ msgstr "Ausgeschlossene Ergebnisse"
 msgid "Execute"
 msgstr "Ausführen"
 
+#. [inventoryItemSelect.expiresOn]
+#. defaultMessage is:
+#. Exp Date: {expiresOn}
+#: extracted_strings.json
+msgid "Exp Date: {expiresOn}"
+msgstr ""
+
 #. [filter.btnGroup.expDateFrom]
 #. defaultMessage is:
 #. Exp. since {date}
@@ -6146,6 +6159,9 @@ msgstr "Auslaufende Bestände"
 #. [pages.NewInventoryDialogForm.defaultConsumableName]
 #. defaultMessage is:
 #. Inventory Item
+#. [pages.InventoryAdjustmentDialogForm.inventoryItem]
+#. defaultMessage is:
+#. Inventory Item
 #: extracted_strings.json
 msgid "Inventory Item"
 msgstr "Inventarartikel"
@@ -6189,6 +6205,15 @@ msgstr "Lagerartikel"
 #: extracted_strings.json
 msgid "Inventory Log"
 msgstr "Bericht"
+
+#. [browsePage.browseDropdown.inventoryManagementConfiguration]
+#. defaultMessage is:
+#. Inventory Management Configuration
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Inventory Reconciliation"
+msgid "Inventory Management Configuration"
+msgstr "Abstimmung der Bestände"
 
 #. [browsePage.browseDropdown.inventoryOverview]
 #. defaultMessage is:
@@ -6851,27 +6876,6 @@ msgstr ""
 "Anzahl der Module, die in einem durch Filter definierten Zeitraum ersetzt "
 "wurden"
 
-#. [errorResponseMessages.fetchConsumableReasons.GET.default.title]
-#. defaultMessage is:
-#. Loading Consumable Reasons Failed
-#: extracted_strings.json
-msgid "Loading Consumable Reasons Failed"
-msgstr "Laden von Verbrauchsmaterial-Gründen fehlgeschlagen"
-
-#. [errorResponseMessages.fetchConsumables.GET.default.title]
-#. defaultMessage is:
-#. Loading Consumables Failed
-#: extracted_strings.json
-msgid "Loading Consumables Failed"
-msgstr "Laden von Verbrauchsmaterial fehlgeschlagen"
-
-#. [errorResponseMessages.fetchPersons.GET.default.title]
-#. defaultMessage is:
-#. Loading Contacts Failed
-#: extracted_strings.json
-msgid "Loading Contacts Failed"
-msgstr "Laden von Kontakten fehlgeschlagen"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
 #. defaultMessage is:
 #. Loading DeviceOperations Failed
@@ -6885,13 +6889,6 @@ msgstr "Laden von Gerätevorgängen fehlgeschlagen"
 #: extracted_strings.json
 msgid "Loading Devices Failed"
 msgstr "Laden von Geräten"
-
-#. [errorResponseMessages.fetchTreatmentStatuses.GET.default.title]
-#. defaultMessage is:
-#. Loading Result Treatment Statuses Failed
-#: extracted_strings.json
-msgid "Loading Result Treatment Statuses Failed"
-msgstr "Laden von Ergebnis-Behandlungszuständen fehlgeschlagen"
 
 #. [errorResponseMessages.fetchResults.GET.default.title]
 #. defaultMessage is:
@@ -7026,6 +7023,15 @@ msgstr "Charge"
 #: extracted_strings.json
 msgid "Lot Number"
 msgstr "Losnummer"
+
+#. [inventoryItemSelect.lotNumber]
+#. defaultMessage is:
+#. Lot Number: {lotNumber}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "lot number includes \"{lotNumber}\""
+msgid "Lot Number: {lotNumber}"
+msgstr "Chargennummer enthält “{lotNumber}”"
 
 #. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
 #. defaultMessage is:
@@ -9399,6 +9405,15 @@ msgstr "Bitte prüfen Sie, ob es noch existiert"
 msgid "Please choose a date later or equal to from date"
 msgstr "Bitte wählen Sie ein Datum größer oder gleich dem Datum von"
 
+#. [pages.InventoryAdjustmentDialogForm.inventoryItemRequired]
+#. defaultMessage is:
+#. Please choose an inventory item
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Please choose a different site"
+msgid "Please choose an inventory item"
+msgstr "Bitte wählen Sie einen anderen Standort"
+
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
 #. Please confirm new password
@@ -10217,6 +10232,15 @@ msgstr "Zu entfernende Menge"
 #: extracted_strings.json
 msgid "Quantity to Transfer"
 msgstr "Zu übertragende Menge"
+
+#. [inventoryItemSelect.quantity]
+#. defaultMessage is:
+#. Quantity: {quantity}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Quantity on Hand"
+msgid "Quantity: {quantity}"
+msgstr "Vorrätige Menge"
 
 #. [pages.dateRangeSelector.quarter]
 #. defaultMessage is:
@@ -11499,33 +11523,12 @@ msgstr ""
 msgid "Screen is not yet complete"
 msgstr "Bildschirm ist noch nicht vollständig"
 
-#. [errorResponseMessages.fetchConsumables.GET.400.title]
-#. defaultMessage is:
-#. Searching Consumables Failed
-#: extracted_strings.json
-msgid "Searching Consumables Failed"
-msgstr "Suche nach Verbrauchsmaterial fehlgeschlagen"
-
-#. [errorResponseMessages.fetchPersons.GET.400.title]
-#. defaultMessage is:
-#. Searching Contacts Failed
-#: extracted_strings.json
-msgid "Searching Contacts Failed"
-msgstr "Suche nach Kontakten fehlgeschlagen"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
 #. defaultMessage is:
 #. Searching DeviceOperations Failed
 #: extracted_strings.json
 msgid "Searching DeviceOperations Failed"
 msgstr "Suche nach Geräteoperationen fehlgeschlagen"
-
-#. [errorResponseMessages.fetchTreatmentStatuses.GET.400.title]
-#. defaultMessage is:
-#. Searching Result Treatment Statuses Failed
-#: extracted_strings.json
-msgid "Searching Result Treatment Statuses Failed"
-msgstr "Suchergebnis Behandlungszustände fehlgeschlagen"
 
 #. [errorResponseMessages.fetchResults.GET.400.title]
 #. defaultMessage is:
@@ -14346,11 +14349,13 @@ msgstr "Spur erkannt"
 msgid "Track By Location"
 msgstr "Track nach Standort"
 
-#. [pages.Consumable.New.trackByExpirationDate]
+#. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
-#. Track by expiration date
+#. Track by batch
 #: extracted_strings.json
-msgid "Track by expiration date"
+#, fuzzy
+#| msgid "Track by expiry date"
+msgid "Track by batch"
 msgstr "Verfolgung nach Verfallsdatum"
 
 #. [pages.inventoryList.trackByDate]
@@ -14366,20 +14371,6 @@ msgstr "Verfolgung nach Verfallsdatum"
 #: extracted_strings.json
 msgid "Training"
 msgstr "Schulung"
-
-#. [pages.InventoryLog.ConsumableReason_TransferReceived]
-#. defaultMessage is:
-#. Tranfer received from {refSiteName}
-#: extracted_strings.json
-msgid "Tranfer received from {refSiteName}"
-msgstr "Überweisung empfangen von {refSiteName}"
-
-#. [pages.InventoryLog.ConsumableReason_TransferSent]
-#. defaultMessage is:
-#. Tranfer sent to {refSiteName}
-#: extracted_strings.json
-msgid "Tranfer sent to {refSiteName}"
-msgstr "Überweisung gesendet an {refSiteName}"
 
 #. [pages.InventoryLog.transactionDate]
 #. defaultMessage is:
@@ -14432,6 +14423,24 @@ msgstr "Ergebnis übertragen Fehler"
 #: extracted_strings.json
 msgid "Transfer Sent"
 msgstr "Ergebnis übertragen"
+
+#. [pages.InventoryLog.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Transfer received from {refSiteName}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tranfer received from {refSiteName}"
+msgid "Transfer received from {refSiteName}"
+msgstr "Überweisung empfangen von {refSiteName}"
+
+#. [pages.InventoryLog.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Transfer sent to {refSiteName}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tranfer sent to {refSiteName}"
+msgid "Transfer sent to {refSiteName}"
+msgstr "Überweisung gesendet an {refSiteName}"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
@@ -16189,6 +16198,33 @@ msgstr "{unit} seit letzter Woche"
 msgid "{unit} total calibrations"
 msgstr "{unit} gesamt kalibrierungen"
 
+#~ msgid "Applied Reconciliation Strategy"
+#~ msgstr "Angewandte Versöhnungsstrategie"
+
+#~ msgid "Loading Consumable Reasons Failed"
+#~ msgstr "Laden von Verbrauchsmaterial-Gründen fehlgeschlagen"
+
+#~ msgid "Loading Consumables Failed"
+#~ msgstr "Laden von Verbrauchsmaterial fehlgeschlagen"
+
+#~ msgid "Loading Contacts Failed"
+#~ msgstr "Laden von Kontakten fehlgeschlagen"
+
+#~ msgid "Loading Result Treatment Statuses Failed"
+#~ msgstr "Laden von Ergebnis-Behandlungszuständen fehlgeschlagen"
+
+#~ msgid "Searching Consumables Failed"
+#~ msgstr "Suche nach Verbrauchsmaterial fehlgeschlagen"
+
+#~ msgid "Searching Contacts Failed"
+#~ msgstr "Suche nach Kontakten fehlgeschlagen"
+
+#~ msgid "Searching Result Treatment Statuses Failed"
+#~ msgstr "Suchergebnis Behandlungszustände fehlgeschlagen"
+
+#~ msgid "Track by expiration date"
+#~ msgstr "Verfolgung nach Verfallsdatum"
+
 #~ msgid "Manager"
 #~ msgstr "Manager"
 
@@ -16292,9 +16328,6 @@ msgstr "{unit} gesamt kalibrierungen"
 
 #~ msgid "Dashboard v2"
 #~ msgstr "Dashboard"
-
-#~ msgid "Please choose a different site"
-#~ msgstr "Bitte wählen Sie einen anderen Standort"
 
 #~ msgid "Please specify the quantity to add"
 #~ msgstr "Bitte geben Sie die Menge an, die Sie hinzufügen möchten"
