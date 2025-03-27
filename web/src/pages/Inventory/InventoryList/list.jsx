@@ -7,7 +7,7 @@ import { useConsumable } from '../../../hooks/inventory/useConsumable'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
@@ -30,7 +30,7 @@ const InventoryList = () => {
 
   const tableColumns = [
     { key: 'name', label: formatMessage(messages.inventoryItemName), sortable: true },
-    { key: 'trackByDate', label: formatMessage(messages.trackByDate), sortable: false },
+    { key: 'trackByBatch', label: formatMessage(messages.trackByBatch), sortable: false },
     { key: 'locationTracking', label: formatMessage(messages.locationTracking), sortable: false },
     { key: 'quantityOnHand', label: formatMessage(messages.totalOnHand), sortable: true },
     { key: 'unit', label: formatMessage(messages.unit), sortable: true },
