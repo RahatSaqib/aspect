@@ -213,12 +213,7 @@ describe('Missing inventory lot resolver', () => {
     const actionCreated = missingInventoryLotsResolver()
     const waitForCreated = waitForAction(actionCreated)
 
-    const missingInventoryLotsBefore = await knex('MissingInventoryLots').where('siteId', sitesToRemove[0]).select()
-    // eslint-disable-next-line no-console
-    console.log('\x1b[1;36m', '🚀 ➜ missingInventoryLots before:', missingInventoryLotsBefore)
     const inventoryItems = await knex('InventoryItem').where('siteId', sitesToRemove[0]).select()
-    // eslint-disable-next-line no-console
-    console.log('\x1b[1;36m', '🚀 ➜ inventoryItems:', inventoryItems)
 
     // dispatch to MQ a messageId (generated in AlertMessage)
     messageContext.missingInventoryLotsResolver()
@@ -227,8 +222,6 @@ describe('Missing inventory lot resolver', () => {
     await waitForIdle(5000)
 
     const missingInventoryLotsAfter = await knex('MissingInventoryLots').where('siteId', sitesToRemove[0]).select()
-    // eslint-disable-next-line no-console
-    console.log('\x1b[1;36m', '🚀 ➜ missingInventoryLots After:', missingInventoryLotsAfter)
 
     const { missingInventoryLotsCount } = await knex('MissingInventoryLots')
       .where('siteId', sitesToRemove[0])

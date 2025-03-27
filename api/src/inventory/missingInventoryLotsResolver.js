@@ -62,7 +62,8 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
-      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, lotNumber, expirationDate } = missingInventory
+      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, lotNumber, expirationDate } =
+        missingInventory
 
       await transact(async knex => {
         const consumableResults = await consumeInventoryForResult({
