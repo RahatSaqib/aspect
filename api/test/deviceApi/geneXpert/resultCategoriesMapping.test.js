@@ -240,7 +240,7 @@ describe('Result Category Mapping', () => {
 })
 
 describe('Result Text Parsing', () => {
-  it('Should parse MTB Rif/Ultra result', () => {
+  it('Should parse MTB Rif/Ultra result #1', () => {
     assert.deepEqual(parseResultText('|MTB @label_result_detected||Rif Resistance @label_result_not_detected'), {
       MTB: 'Detected',
       'RIF RESISTANCE': 'NotDetected',
@@ -296,21 +296,70 @@ describe('Result Text Parsing', () => {
     })
   })
 
-  it('Should parse detected HIV results', () => {
+  it('Should include all the COVID results', () => {
+    assert.deepEqual(parseResultText('SARS-CoV-2 POSITIVE'), {
+      'SARS-COV-2': 'Positive',
+    })
+  })
+})
+
+describe('[HIV] Result Text Parsing', () => {
+  it('Should parse detected HIV results #1', () => {
     assert.deepEqual(parseResultText('HIV-1 DETECTED < 40 copies/mL (log 1.60)'), {
       'HIV-1': 'LessThan40',
     })
   })
 
-  it('Should parse not detected HIV results', () => {
-    assert.deepEqual(parseResultText('HIV-1 NOT DETECTED'), {
-      'HIV-1': 'NotDetected',
+  it('Should parse detected HIV results #2', () => {
+    assert.deepEqual(parseResultText('HIV-1 DÉTECTÉ 6,61E03 copies/mL'), {
+      'HIV-1': 'MoreThan1000',
     })
   })
 
-  it('Should include all the COVID results', () => {
-    assert.deepEqual(parseResultText('SARS-CoV-2 POSITIVE'), {
-      'SARS-COV-2': 'Positive',
+  it('Should parse detected HIV results #3', () => {
+    assert.deepEqual(parseResultText('HIV-1 DETECTED 4.16E06 copies/mL (log 6.62)'), {
+      'HIV-1': 'MoreThan1000',
+    })
+  })
+
+  it('Should parse detected HIV results #4', () => {
+    assert.deepEqual(parseResultText('HIV-1 DÉTECTÉ 701 copies/mL (log 2,85)'), {
+      'HIV-1': 'LessThan1000',
+    })
+  })
+
+  it('Should parse detected HIV results #5', () => {
+    assert.deepEqual(
+      parseResultText('HIV-1 @label_quant1_result_normal_log,@label_result_detected,#452,copies/mL,@label_log,#2.66'),
+      {
+        'HIV-1': 'LessThan1000',
+      }
+    )
+  })
+
+  it('Should parse detected HIV results #6', () => {
+    assert.deepEqual(
+      parseResultText('HIV-1 @label_quant1_result_normal_log,@label_result_detected,#707,copies/mL,@label_log,#2.85'),
+      {
+        'HIV-1': 'LessThan1000',
+      }
+    )
+  })
+
+  it('Should parse detected HIV results #7', () => {
+    assert.deepEqual(
+      parseResultText(
+        'HIV-1 @label_quant1_result_normal_log,@label_result_detected,#4.23E05,copies/mL,@label_log,#5.63'
+      ),
+      {
+        'HIV-1': 'MoreThan1000',
+      }
+    )
+  })
+
+  it('Should parse not detected HIV results', () => {
+    assert.deepEqual(parseResultText('HIV-1 NOT DETECTED'), {
+      'HIV-1': 'NotDetected',
     })
   })
 })
