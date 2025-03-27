@@ -247,6 +247,13 @@ describe('Result Text Parsing', () => {
     })
   })
 
+  it('Should parse MTB Rif/Ultra result #2', () => {
+    assert.deepEqual(parseResultText('|MTB Trace DÉTECTÉ|RIF Resistance INDÉTERMINÉ'), {
+      MTB: 'Trace Detected',
+      'RIF RESISTANCE': 'Indeterminate',
+    })
+  })
+
   it('Should parse Ebola result', () => {
     assert.deepEqual(parseResultText('|EBOLA GP @label_result_not_detected|||EBOLA NP @label_result_not_detected||'), {
       'EBOLA GP': 'NotDetected',

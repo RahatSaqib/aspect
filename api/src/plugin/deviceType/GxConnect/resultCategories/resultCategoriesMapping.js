@@ -122,6 +122,7 @@ const result1CategoryMapping = {
   'trace detectado': 'Trace Detected',
   'trace обнаружен': 'Trace Detected',
   'trace @label_result_detected': 'Trace Detected',
+  'trace détecté': 'Trace Detected',
 }
 
 const result2CategoryMapping = {
