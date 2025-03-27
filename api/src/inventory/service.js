@@ -15,10 +15,11 @@ async function listReconciliation(request) {
 }
 
 async function autoReconcile(request) {
-  const { auth, payload } = request
+  const { auth, payload, plugins } = request
   const { partnerId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
   const [, data] = await getReconciliationList(payload, dataConstraints)
+  const messageContext = plugins?.messageContext || messageContext
   /* eslint-disable no-await-in-loop */
   for (const missingInventoryGroup of data) {
     const {
@@ -39,9 +40,8 @@ async function autoReconcile(request) {
     for (const missingInventory of missingInventoryToReconcile) {
       const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, lotNumber, expirationDate } =
         missingInventory
-      const consumables = get(JSON.parse(payload), 'result.consumable') || []
-      // eslint-disable-next-line no-loop-func
 
+      // eslint-disable-next-line no-loop-func
       await transact(async knex => {
         const consumableResults = await consumeInventoryForResult({
           knex,
