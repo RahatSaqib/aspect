@@ -44,12 +44,6 @@ const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate, lo
       'r.startedOn',
       knex.raw('DATE(m.expirationDate) as expirationDate'),
       knex.raw('m.lotNumber'),
-      knex('DeviceLog')
-        .where('resultId', knex.ref('r.id'))
-        .select('rawMessage')
-        .orderBy('createdOn', 'desc')
-        .limit(1)
-        .as('payload'),
     ])
     .clone()
 
@@ -68,19 +62,19 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
-      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, payload } = missingInventory
-      const consumables = get(JSON.parse(payload), 'result.consumable') || []
+      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, lotNumber, expirationDate } = missingInventory
 
       await transact(async knex => {
         const consumableResults = await consumeInventoryForResult({
+          knex,
           resultId,
           assayId,
           siteId,
-          consumablesInResultData: consumables,
           partnerId,
+          lotNumber,
+          expirationDate,
           testStartedOn: startedOn,
           testEndedOn: endedOn,
-          knex,
           messageContext,
           userId: null,
         })

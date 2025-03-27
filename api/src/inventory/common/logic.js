@@ -872,18 +872,17 @@ async function inventoryTransferByRegion({
 }
 
 async function consumeInventoryForResult({
+  knex, // <--- means we are inside transaction and should use this `knex`
   resultId,
   assayId,
   siteId,
-  consumablesInResultData,
+  lotNumber,
+  expirationDate: expiresOn,
   partnerId,
   testStartedOn,
   testEndedOn,
-  knex, // <--- means we are inside transaction and should use this `knex`
   messageContext,
   userId,
-  expirationDate,
-  inventoryLotNumber,
 }) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategy({ partnerId })
@@ -930,18 +929,6 @@ async function consumeInventoryForResult({
        *    The result is being processed for the first time (not in missing inventory lots and no prior logs).
        */
       if (isUnreconciledResult || resultCountInDeviceLog === 0) {
-        let expiresOn = expirationDate
-        let lotNumber = inventoryLotNumber
-        if (!lotNumber || !expiresOn) {
-          if (partnerInventoryStrategy === INVENTORY_STRATEGY.EXPIRATION_DATE) {
-            expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-          } else if (partnerInventoryStrategy === INVENTORY_STRATEGY.LOT_NUMBER) {
-            lotNumber = _.get(consumablesInResultData, '[0].lot')
-          } else {
-            expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-            lotNumber = _.get(consumablesInResultData, '[0].lot')
-          }
-        }
         const inventoryItem = await findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, partnerId })
         const site = await getSite(siteId, dataConstraints)
         if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {

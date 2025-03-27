@@ -37,26 +37,27 @@ async function autoReconcile(request) {
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
-      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, payload, lotNumber, expirationDate } =
+      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, lotNumber, expirationDate } =
         missingInventory
       const consumables = get(JSON.parse(payload), 'result.consumable') || []
       // eslint-disable-next-line no-loop-func
+
       await transact(async knex => {
         const consumableResults = await consumeInventoryForResult({
+          knex,
           resultId,
           assayId,
           siteId,
-          consumablesInResultData: consumables,
           partnerId,
+          lotNumber,
+          expirationDate,
           testStartedOn: startedOn,
           testEndedOn: endedOn,
-          knex,
+          messageContext,
           userId: null,
-          inventoryLotNumber: lotNumber,
-          expirationDate,
         })
 
-        if (consumableResults.every(s => s && !Boom.isBoom(s))) {
+        if (!consumableResults.some(s => Boom.isBoom(s) || !s)) {
           // Delete missingInventoryLots entry
           await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
         }
