@@ -161,7 +161,9 @@ describe('Missing inventory lot resolver', () => {
     await knex('DeviceLog')
       .whereIn('deviceId', await knex('Device').whereIn('siteId', sitesToRemove).pluck('id'))
       .delete()
+
     await knex('MissingInventoryLots').whereIn('siteId', sitesToRemove).delete()
+    await knex('FactInventoryConsumptionRate').whereIn('siteId', sitesToRemove).delete()
     const inventoryItemsToRemove = await knex('InventoryItem').whereIn('siteId', sitesToRemove).pluck('id')
     const inventoryLogsToRemove = await knex('InventoryLog')
       .whereIn('inventoryItemId', inventoryItemsToRemove)
