@@ -8,7 +8,7 @@ const defaultInventoryStrategy = require('../strategies')
 
 const { knex, transact } = require('../../db')
 const { getSite } = require('../../site/service')
-const { INVENTORY_ADJUSTMENT, INVENTORY_STRATEGY } = require('../../shared/constants')
+const { INVENTORY_ADJUSTMENT } = require('../../shared/constants')
 const { updateSiteConsumable, getSiteListModifiedQuery } = require('../../site/common/db')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 const { getConstraints } = require('../../auth/constraints')

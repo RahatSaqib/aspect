@@ -213,15 +213,11 @@ describe('Missing inventory lot resolver', () => {
     const actionCreated = missingInventoryLotsResolver()
     const waitForCreated = waitForAction(actionCreated)
 
-    const inventoryItems = await knex('InventoryItem').where('siteId', sitesToRemove[0]).select()
-
     // dispatch to MQ a messageId (generated in AlertMessage)
     messageContext.missingInventoryLotsResolver()
 
     await waitForCreated
     await waitForIdle(5000)
-
-    const missingInventoryLotsAfter = await knex('MissingInventoryLots').where('siteId', sitesToRemove[0]).select()
 
     const { missingInventoryLotsCount } = await knex('MissingInventoryLots')
       .where('siteId', sitesToRemove[0])

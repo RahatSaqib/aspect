@@ -1,4 +1,3 @@
-const { get } = require('lodash')
 const Boom = require('@hapi/boom')
 const { knex, transact } = require('../db')
 const { consumeInventoryForResult } = require('./common/logic')

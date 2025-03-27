@@ -1,4 +1,3 @@
-const { get } = require('lodash')
 const Boom = require('@hapi/boom')
 const { getConstraints } = require('../auth/constraints')
 const { getReconciliationList } = require('./common/db')
