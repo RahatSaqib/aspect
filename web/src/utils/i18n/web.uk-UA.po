@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-03-26T09:22:26.164Z\n"
+"POT-Creation-Date: 2025-03-27T07:03:09.643Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -807,19 +807,15 @@ msgstr "Api ключі"
 #. defaultMessage is:
 #. Applied Cartridge Batch strategy
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Applied Consumable Strategy"
 msgid "Applied Cartridge Batch strategy"
-msgstr "Застосована стратегія використання витратних матеріалів"
+msgstr "Застосована стратегія партії картриджів"
 
 #. [pages.InventoryLog.reconcilationAdjustment]
 #. defaultMessage is:
 #. Applied Consumption strategy
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Applied Consumable Strategy"
 msgid "Applied Consumption strategy"
-msgstr "Застосована стратегія використання витратних матеріалів"
+msgstr "Прикладна стратегія споживання"
 
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
@@ -1782,10 +1778,8 @@ msgstr "Номер партії картриджа"
 #. defaultMessage is:
 #. Cartridge batch is managed by their
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Cartridges are managed through"
 msgid "Cartridge batch is managed by their"
-msgstr "Керування картриджами здійснюється через"
+msgstr "Партією картриджів керує їх"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -4262,7 +4256,7 @@ msgstr "Виконати"
 #. Exp Date: {expiresOn}
 #: extracted_strings.json
 msgid "Exp Date: {expiresOn}"
-msgstr ""
+msgstr "Дата закінчення: {expiresOn}"
 
 #. [filter.btnGroup.expDateFrom]
 #. defaultMessage is:
@@ -6197,10 +6191,8 @@ msgstr "Журнал інвентаризації"
 #. defaultMessage is:
 #. Inventory Management Configuration
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Inventory Reconciliation"
 msgid "Inventory Management Configuration"
-msgstr "Звірка інвентаризації"
+msgstr "Конфігурація управління запасами"
 
 #. [browsePage.browseDropdown.inventoryOverview]
 #. defaultMessage is:
@@ -7010,10 +7002,8 @@ msgstr "Номер партії"
 #. defaultMessage is:
 #. Lot Number: {lotNumber}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "lot number includes \"{lotNumber}\""
 msgid "Lot Number: {lotNumber}"
-msgstr "номер лоту включає “{lotNumber}”"
+msgstr "Номер лоту: {lotNumber}"
 
 #. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
 #. defaultMessage is:
@@ -8974,10 +8964,8 @@ msgstr "Тільки результати з необхідним лікуван
 #. defaultMessage is:
 #. Only Results with unreconciled inventories
 #: extracted_strings.json
-#, fuzzy
-#| msgid "List of Unreconciled Inventory"
 msgid "Only Results with unreconciled inventories"
-msgstr "Перелік неузгоджених інвентаризацій"
+msgstr "Тільки результати з незвіреними запасами"
 
 #. [filter.btnGroup.hasStock]
 #. defaultMessage is:
@@ -9388,10 +9376,8 @@ msgstr "Будь ласка, виберіть дату пізніше або д�
 #. defaultMessage is:
 #. Please choose an inventory item
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Please choose a different site"
 msgid "Please choose an inventory item"
-msgstr "Виберіть інший сайт"
+msgstr "Будь ласка, оберіть інвентарну позицію"
 
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
@@ -10210,10 +10196,8 @@ msgstr "Кількість для переказу"
 #. defaultMessage is:
 #. Quantity: {quantity}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Quantity on Hand"
 msgid "Quantity: {quantity}"
-msgstr "Кількість на руках"
+msgstr "Кількість: {quantity}"
 
 #. [pages.dateRangeSelector.quarter]
 #. defaultMessage is:
@@ -10464,10 +10448,8 @@ msgstr "Регіон n"
 #. defaultMessage is:
 #. Regional Admin
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Region n"
 msgid "Regional Admin"
-msgstr "Регіон n"
+msgstr "Регіональний адміністратор"
 
 #. [jobFunction.regionalOfficer]
 #. defaultMessage is:
@@ -10917,10 +10899,8 @@ msgstr "Результат виявлено"
 #. defaultMessage is:
 #. Result Detected Resistances
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Result Detected"
 msgid "Result Detected Resistances"
-msgstr "Результат виявлено"
+msgstr "Результат Виявлені опори"
 
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
 #. defaultMessage is:
@@ -12059,10 +12039,8 @@ msgstr "Показати результати з виведених з експ�
 #. defaultMessage is:
 #. Show Results With Unreconciled Inventories
 #: extracted_strings.json
-#, fuzzy
-#| msgid "List of Unreconciled Inventory"
 msgid "Show Results With Unreconciled Inventories"
-msgstr "Перелік неузгоджених інвентаризацій"
+msgstr "Показати результати з неузгодженими запасами"
 
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
@@ -12783,10 +12761,8 @@ msgstr "Неділя"
 #. defaultMessage is:
 #. Super Admin
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Admin"
 msgid "Super Admin"
-msgstr "Адміністратор"
+msgstr "Суперадміністратор"
 
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
@@ -14265,6 +14241,8 @@ msgid ""
 "Total cartridges consumed and reported under tests but not yet adjusted "
 "against the inventory"
 msgstr ""
+"Загальна кількість витрачених картриджів, про які було повідомлено під час "
+"тестування, але які ще не було скориговано з запасами"
 
 #. [legends.Unknown.ResultCategoryTraceDetected]
 #. defaultMessage is:
@@ -14283,18 +14261,12 @@ msgstr "Відстежувати за місцем розташування"
 #. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
 #. Track by batch
-#: extracted_strings.json
-#, fuzzy
-#| msgid "Track by expiry date"
-msgid "Track by batch"
-msgstr "Відстежуйте за терміном придатності"
-
-#. [pages.inventoryList.trackByDate]
+#. [pages.inventoryList.New.trackByBatch]
 #. defaultMessage is:
-#. Track by expiry date
+#. Track by batch
 #: extracted_strings.json
-msgid "Track by expiry date"
-msgstr "Відстежуйте за терміном придатності"
+msgid "Track by batch"
+msgstr "Відстеження за партіями"
 
 #. [pages.resultEdit.Training]
 #. defaultMessage is:
@@ -14359,8 +14331,6 @@ msgstr "Передача відправлена"
 #. defaultMessage is:
 #. Transfer received from {refSiteName}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tranfer received from {refSiteName}"
 msgid "Transfer received from {refSiteName}"
 msgstr "Отримано переказ від {refSiteName}"
 
@@ -14368,10 +14338,8 @@ msgstr "Отримано переказ від {refSiteName}"
 #. defaultMessage is:
 #. Transfer sent to {refSiteName}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tranfer sent to {refSiteName}"
 msgid "Transfer sent to {refSiteName}"
-msgstr "Переказ надіслано до {refSiteName}"
+msgstr "Переказ відправлено на рахунок {refSiteName}"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
@@ -14640,8 +14608,6 @@ msgstr "Блокування користувача"
 #. defaultMessage is:
 #. Unreconciled Quantity
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Unreconciled quantity"
 msgid "Unreconciled Quantity"
 msgstr "Неузгоджена кількість"
 
@@ -16121,6 +16087,9 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} всього калібрувань"
+
+#~ msgid "Track by expiry date"
+#~ msgstr "Відстежуйте за терміном придатності"
 
 #~ msgid "Applied Reconciliation Strategy"
 #~ msgstr "Прикладна стратегія примирення"

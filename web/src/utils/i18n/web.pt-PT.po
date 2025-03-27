@@ -807,19 +807,15 @@ msgstr "Chaves de API"
 #. defaultMessage is:
 #. Applied Cartridge Batch strategy
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Applied Consumable Strategy"
 msgid "Applied Cartridge Batch strategy"
-msgstr "Estratégia de consumíveis aplicada"
+msgstr "Estratégia de lote de cartucho aplicada"
 
 #. [pages.InventoryLog.reconcilationAdjustment]
 #. defaultMessage is:
 #. Applied Consumption strategy
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Applied Consumable Strategy"
 msgid "Applied Consumption strategy"
-msgstr "Estratégia de consumíveis aplicada"
+msgstr "Estratégia de consumo aplicada"
 
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
@@ -1785,10 +1781,8 @@ msgstr "Cartucho Número de lote"
 #. defaultMessage is:
 #. Cartridge batch is managed by their
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Cartridges are managed through"
 msgid "Cartridge batch is managed by their"
-msgstr "Os cartuchos são geridos através de"
+msgstr "O lote de cartuchos é gerido pelo seu"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -4265,7 +4259,7 @@ msgstr "Executar"
 #. Exp Date: {expiresOn}
 #: extracted_strings.json
 msgid "Exp Date: {expiresOn}"
-msgstr ""
+msgstr "Data de expiração: {expiresOn}"
 
 #. [filter.btnGroup.expDateFrom]
 #. defaultMessage is:
@@ -6202,10 +6196,8 @@ msgstr "Log de inventário"
 #. defaultMessage is:
 #. Inventory Management Configuration
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Inventory Reconciliation"
 msgid "Inventory Management Configuration"
-msgstr "Reconciliação de inventário"
+msgstr "Configuração da gestão de inventário"
 
 #. [browsePage.browseDropdown.inventoryOverview]
 #. defaultMessage is:
@@ -7015,10 +7007,8 @@ msgstr "Número do lote"
 #. defaultMessage is:
 #. Lot Number: {lotNumber}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "lot number includes \"{lotNumber}\""
 msgid "Lot Number: {lotNumber}"
-msgstr "o número do lote inclui “{lotNumber}”"
+msgstr "Número do lote: {lotNumber}"
 
 #. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
 #. defaultMessage is:
@@ -8976,10 +8966,8 @@ msgstr "Apenas resultados com tratamento necessário"
 #. defaultMessage is:
 #. Only Results with unreconciled inventories
 #: extracted_strings.json
-#, fuzzy
-#| msgid "List of Unreconciled Inventory"
 msgid "Only Results with unreconciled inventories"
-msgstr "Lista de inventário não reconciliado"
+msgstr "Apenas resultados com inventários não reconciliados"
 
 #. [filter.btnGroup.hasStock]
 #. defaultMessage is:
@@ -9391,10 +9379,8 @@ msgstr "Por favor escolha uma data posterior ou igual a partir da data"
 #. defaultMessage is:
 #. Please choose an inventory item
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Please choose a different site"
 msgid "Please choose an inventory item"
-msgstr "Por favor, escolha um site diferente"
+msgstr "Escolha um item de inventário"
 
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
@@ -10213,10 +10199,8 @@ msgstr "Quantidade a transferir"
 #. defaultMessage is:
 #. Quantity: {quantity}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Quantity on Hand"
 msgid "Quantity: {quantity}"
-msgstr "Quantidade em Mãos"
+msgstr "Quantidade: {quantity}"
 
 #. [pages.dateRangeSelector.quarter]
 #. defaultMessage is:
@@ -10467,10 +10451,8 @@ msgstr "Região n"
 #. defaultMessage is:
 #. Regional Admin
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Region n"
 msgid "Regional Admin"
-msgstr "Região n"
+msgstr "Administrador Regional"
 
 #. [jobFunction.regionalOfficer]
 #. defaultMessage is:
@@ -10923,10 +10905,8 @@ msgstr "Resultado Detectado"
 #. defaultMessage is:
 #. Result Detected Resistances
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Result Detected"
 msgid "Result Detected Resistances"
-msgstr "Resultado Detectado"
+msgstr "Resultado Resistências detectadas"
 
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
 #. defaultMessage is:
@@ -12065,10 +12045,8 @@ msgstr "Mostrar resultados de dispositivos desactivados"
 #. defaultMessage is:
 #. Show Results With Unreconciled Inventories
 #: extracted_strings.json
-#, fuzzy
-#| msgid "List of Unreconciled Inventory"
 msgid "Show Results With Unreconciled Inventories"
-msgstr "Lista de inventário não reconciliado"
+msgstr "Mostrar resultados com estoques não reconciliados"
 
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
@@ -12789,10 +12767,8 @@ msgstr "Domingo"
 #. defaultMessage is:
 #. Super Admin
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Admin"
 msgid "Super Admin"
-msgstr "Administrador"
+msgstr "Super Admin"
 
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
@@ -14273,6 +14249,8 @@ msgid ""
 "Total cartridges consumed and reported under tests but not yet adjusted "
 "against the inventory"
 msgstr ""
+"Total de cartuchos consumidos e registados em testes, mas ainda não "
+"ajustados em relação ao inventário"
 
 #. [legends.Unknown.ResultCategoryTraceDetected]
 #. defaultMessage is:
@@ -14292,10 +14270,8 @@ msgstr "Seguimento por localização"
 #. defaultMessage is:
 #. Track by batch
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Track by expiry date"
 msgid "Track by batch"
-msgstr "Seguir por data de expiração"
+msgstr "Seguimento por lote"
 
 #. [pages.inventoryList.trackByDate]
 #. defaultMessage is:
@@ -14367,19 +14343,15 @@ msgstr "Transferência Enviada"
 #. defaultMessage is:
 #. Transfer received from {refSiteName}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tranfer received from {refSiteName}"
 msgid "Transfer received from {refSiteName}"
-msgstr "Tranferência recebida de {refSiteName}"
+msgstr "Transferência recebida de {refSiteName}"
 
 #. [pages.InventoryLog.ConsumableReason_TransferSent]
 #. defaultMessage is:
 #. Transfer sent to {refSiteName}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tranfer sent to {refSiteName}"
 msgid "Transfer sent to {refSiteName}"
-msgstr "Tranferência enviada para {refSiteName}"
+msgstr "Transferência enviada para {refSiteName}"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
@@ -14648,10 +14620,8 @@ msgstr "Desbloqueado"
 #. defaultMessage is:
 #. Unreconciled Quantity
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Unreconciled quantity"
 msgid "Unreconciled Quantity"
-msgstr "Quantidade não apurada"
+msgstr "Quantidade não reconciliada"
 
 #. [pages.inventoryReconciliation.unreconciledQuantity]
 #. defaultMessage is:
