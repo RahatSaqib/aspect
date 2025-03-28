@@ -834,6 +834,11 @@ async function getReconciliationList(query, dataConstraints) {
       consumableId: 'ca.consumableId',
       lotNumber: 'm.lotNumber',
     })
+    .modify(queryBuilder => {
+      if (query.siteIds) {
+        queryBuilder.whereIn('s.id', query.siteIds.split(','))
+      }
+    })
     .groupBy(['s.id', 'c.id', ...(query.breakOutByLot ? ['m.lotNumber'] : [])])
     .count('* as quantity')
 

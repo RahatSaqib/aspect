@@ -34,7 +34,14 @@ export function InventoryReconciliation() {
   const [, setSearchParams] = useSearchParams()
   const [filters, setFilters] = usePathFilter()
   const { mutate: autoReconcile, isLoading: isAutoReconciling } = useAutoReconciliation()
-  const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
+  const {
+    isHierarchicalView,
+    setIsHierarchicalView,
+    isWarehouseView,
+    setIsWarehouseView,
+    selectedSiteIds,
+    setSelectedSiteIds,
+  } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_RECONCILIATION,
   })
   const { sortCol, sortDir, pageAt, pageSize } = useMemo(
@@ -42,7 +49,17 @@ export function InventoryReconciliation() {
     [location]
   )
   const { data, isLoading } = useInventoryReconciliation(
-    omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters }, isNil)
+    omitBy(
+      {
+        sortCol,
+        sortDir,
+        page: pageAt,
+        size: pageSize,
+        ...filters,
+        ...(selectedSiteIds?.length > 0 ? { siteIds: selectedSiteIds.join(',') } : {}),
+      },
+      isNil
+    )
   )
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
@@ -74,10 +91,12 @@ export function InventoryReconciliation() {
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
           {isHierarchicalView ? (
             <HierarchicalView
-              onlyGeographical
               countryId={user.countryId}
               filters={filters}
               pathname={location.pathname}
+              isWarehouseView={isWarehouseView}
+              setIsWarehouseView={setIsWarehouseView}
+              setSelectedSiteIds={setSelectedSiteIds}
             />
           ) : null}
           <Card sx={{ p: '20px', flex: 1 }}>
