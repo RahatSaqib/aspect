@@ -643,9 +643,6 @@ async function assignGxUnknownAssayIfNotExists(knex, payload) {
 }
 
 function getResultCategories(payload) {
-  const payloadCategories = _.get(payload, 'category')
-  if (!_.isEmpty(payloadCategories)) return payloadCategories
-
   const categories = []
   const assayId = _.get(payload, 'assay.id')
   const text = _.get(payload, 'data.resultText')
