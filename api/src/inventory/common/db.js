@@ -162,25 +162,11 @@ function getInventorySitesQuery(constraints, request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function findInventoryItem({
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  inTransitFromSiteId,
-  partnerId,
-  resultId,
-}) {
+async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
 
-  if (!resultId) {
-    // handle operations without using strategy (add, remove, and transfer)
-    const handler = consumableStrategyModifier.withLotAndExpirationDateStrategy
-    handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
-  } else {
-    const consumableStrategy = await getStrategy(partnerId)
-    consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
-  }
+  const consumableStrategy = await getStrategy(partnerId)
+  consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
 
   const matchingInventoryItem = await matchingInventoryItemsQuery
     .orderBy('ii.quantityOnHand', 'desc')
