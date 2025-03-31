@@ -56,32 +56,6 @@ function createInventoryItemSelect(includeStrategy = true) {
 const INVENTORY_ITEM_SELECT = createInventoryItemSelect()
 const INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY = createInventoryItemSelect(false)
 
-const INVENTORY_LOG_LIST = {
-  createdOn: 'il.createdOn',
-  consumableName: 'c.name',
-  assayId: 'ca.assayId',
-  consumableNameI18nKey: 'c.i18nKey',
-  lotNumber: 'il.lotNumber',
-  reconcilationAdjustment: 'il.reconcilationAdjustment',
-  reconcilationStrategy: 'il.reconcilationStrategy',
-  expirationDate: 'il.expiresOn',
-  siteName: 's.name',
-  quantity: knex.raw('CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE il.quantity END'),
-  consumableReason: 'cr.name',
-  refSiteName: 'refSite.name',
-  movementReason: knex.raw(`
-      CASE
-        WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
-        WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
-        ELSE cr.name
-      END`),
-  notes: knex.raw(`case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`),
-  consumableReasonI18nKey: 'cr.i18nKey',
-  consumableReasonExternalId: 'cr.externalId',
-  transactionDate: 'il.adjustedFrom',
-  resultEndedOn: 'r.endedOn',
-}
-
 const INVENTORY_TRANSFER = {
   consumableName: 'c.name',
   consumableNameI18nKey: 'c.i18nKey',
@@ -129,24 +103,6 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
   knex.raw('IFNULL(unreconciled.unreconciledCount, 0) AS unreconciledQuantity'),
 ]
-
-const INVENTORY_LOG_SORT_FIELDS = {
-  consumableName: 'c.name',
-  siteName: 's.name',
-  countryName: 'co.name',
-  stateName: 'st.name',
-  lgaName: 'l.name',
-  quantityOnHand: 'il.quantity',
-  expiresOn: 'il.expiresOn',
-  lotNumber: 'il.lotNumber',
-  movementReason: knex.raw(`
-  CASE
-    WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
-    WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
-    ELSE cr.name
-  END`),
-  transactionDate: 'il.adjustedFrom',
-}
 
 const INVENTORY_ITEM_SORT_FIELDS = {
   consumableName: 'c.name',
@@ -213,13 +169,11 @@ const SUPPLY_IN_STOCK_FIELDS = [
 ]
 
 module.exports = {
-  INVENTORY_LOG_LIST,
   INVENTORY_TRANSFER,
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
   INVENTORY_ITEM_SELECT_LIST_FIELDS,
   INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
-  INVENTORY_LOG_SORT_FIELDS,
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,

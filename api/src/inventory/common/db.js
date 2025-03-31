@@ -1,4 +1,3 @@
-const subDays = require('date-fns/subDays')
 const _ = require('lodash')
 
 const logger = require('../../shared/logger')
@@ -8,8 +7,6 @@ const {
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
-  INVENTORY_LOG_LIST,
-  INVENTORY_LOG_SORT_FIELDS,
   INVENTORY_TRANSFER,
   INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
   CONCATENATED_ID,
@@ -842,7 +839,7 @@ module.exports = {
   getInventoryItem,
   getInventoryItems,
   getInventorySitesQuery,
-  getInventoryLog,
+  getInventoryLogBaseQuery,
   getInventoryLots,
   getGeneXpertInventoryBySitesAndConsumableQuery,
   getUnreconciledQuantitiesSubquery,
