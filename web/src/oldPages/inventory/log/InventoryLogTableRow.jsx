@@ -1,9 +1,9 @@
-import React from 'react'
 import { formatInTimeZone } from 'date-fns-tz'
 import endOfDay from 'date-fns/endOfDay'
 import startOfDay from 'date-fns/startOfDay'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useAuthState from '../../../hooks/useAuthState'
@@ -99,16 +99,6 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone }) => {
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
-      <TableCell className={styles.TableCell}>
-        {inventoryLogItem.reconcilationAdjustment
-          ? formatMessage(messages[inventoryLogItem.reconcilationStrategy])
-          : ''}
-      </TableCell>
-      <TableCell className={styles.TableCell}>
-        {inventoryLogItem.reconcilationAdjustment
-          ? formatMessage(messages[inventoryLogItem.reconcilationAdjustment])
-          : ''}
-      </TableCell>
     </TableRow>
   )
 }

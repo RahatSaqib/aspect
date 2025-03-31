@@ -1,19 +1,23 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
+const { getDateTimeProjectionInTimeZoneIANA } = require(`../shared/date`)
 const { getConstraints } = require('../auth/constraints')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../db')
 const { getInventoryLogBaseQuery } = require('./common/db')
+const { getUserFromCredentials } = require('../auth/constraints')
 
 async function listInventoryLog(request) {
   const { auth, query } = request
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timeZoneIANA } = user
 
   const dataConstraints = await getConstraints(auth.credentials)
-  const { total, data } = await getInventoryLog(query, dataConstraints)
+  const { total, data } = await getInventoryLog(query, dataConstraints, getInventoryLogListProjection(knex, timeZoneIANA))
 
   return { ok: true, total, length: data.length, data }
 }
 
-async function getInventoryLog(requestQuery, dataConstraints, querySelector = getInventoryLogListProjection()) {
+async function getInventoryLog(requestQuery, dataConstraints, querySelector) {
   if (_.isNil(requestQuery.maxDate)) {
     requestQuery.maxDate = new Date()
   }
@@ -47,6 +51,7 @@ async function getInventoryLog(requestQuery, dataConstraints, querySelector = ge
         queryBuilder.whereIn('s.id', requestQuery.siteIds.split(','))
       }
     })
+  // .groupBy('createdOn')
   const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
 
   const data = await inventoryLogQuery
@@ -55,18 +60,16 @@ async function getInventoryLog(requestQuery, dataConstraints, querySelector = ge
   return { data, total }
 }
 
-function getInventoryLogListProjection() {
+function getInventoryLogListProjection(knex, timeZoneIANA) {
   return {
-    createdOn: 'il.createdOn',
+    createdOn: knex.raw(`min(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)})`),
     consumableName: 'c.name',
     assayId: 'ca.assayId',
     consumableNameI18nKey: 'c.i18nKey',
     lotNumber: 'il.lotNumber',
-    reconcilationAdjustment: 'il.reconcilationAdjustment',
-    reconcilationStrategy: 'il.reconcilationStrategy',
     expirationDate: 'il.expiresOn',
     siteName: 's.name',
-    quantity: knex.raw('CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE il.quantity END'),
+    quantity: knex.raw('CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE sum(il.quantity) END'),
     consumableReason: 'cr.name',
     refSiteName: 'refSite.name',
     movementReason: knex.raw(`
