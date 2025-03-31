@@ -29,7 +29,7 @@ const formatTags = tagsStr => {
     </span>
   ))
 }
-const PersonTableRow = ({ person, personEditPermission, ...restProps }) => {
+const PersonTableRow = ({ person, personEditPermission, onUpdateRecord, ...restProps }) => {
   const rowClickHandler = (evt, onClick) => {
     const tagName = evt.target.tagName.toLowerCase()
     if (['svg', 'button', 'path'].includes(tagName)) {
@@ -50,7 +50,7 @@ const PersonTableRow = ({ person, personEditPermission, ...restProps }) => {
       <TableCell>{person.lga}</TableCell>
       <TableCell>{formatTags(person.tags)}</TableCell>
       {personEditPermission ? (
-        <AccountEnableDisable type="icon" person={person} />
+        <AccountEnableDisable type="icon" person={person} onSuccess={onUpdateRecord} />
       ) : (
         <TableCell>
           <div style={{ height: '38px' }} />

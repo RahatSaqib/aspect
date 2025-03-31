@@ -5,7 +5,7 @@ const CONCATENATED_ID = `CONCAT(
   '-',
   s.id,
   '-',
-  IFNULL(ii.expiresOn, ''), '-', 
+  IFNULL(ii.expiresOn, ''), '-',
   IFNULL(ii.lotNumber, ''), '-',
   IFNULL(ii.inTransitFromSiteId, '')
 )`
@@ -114,13 +114,14 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [...INVENTORY_COMMON_FIELDS, knex.raw(
 const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   knex.raw(`
     CONCAT(
-        c.id, '-', 
-        s.id, '-', 
-        IFNULL(ii.expiresOn, ''), '-', 
+        c.id, '-',
+        s.id, '-',
+        IFNULL(ii.expiresOn, ''), '-',
         IFNULL(ii.lotNumber, ''), '-',
         IFNULL(ii.inTransitFromSiteId, '')
     ) AS id
   `),
+  'ca.assayId as assayId',
 
   // Filter fields from INVENTORY_ITEM_SELECT
   ...INVENTORY_ITEM_SELECT.filter(field => {
@@ -138,6 +139,7 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   'ii.lotNumber AS lotNumber',
   'ii.expiresOn AS expiresOn',
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
+  knex.raw('IFNULL(unreconciled.unreconciledCount, 0) AS unreconciledQuantity'),
 ]
 
 const INVENTORY_LOG_SORT_FIELDS = {

@@ -42,11 +42,11 @@ const messages = {
     },
     reconcilationAdjustment: {
       id: 'pages.InventoryLog.reconcilationAdjustment',
-      defaultMessage: 'Applied Consumable Strategy',
+      defaultMessage: 'Applied Consumption strategy',
     },
     reconcilationStrategy: {
       id: 'pages.InventoryLog.reconcilationStrategy',
-      defaultMessage: 'Applied Reconciliation Strategy',
+      defaultMessage: 'Applied Cartridge Batch strategy',
     },
     currentSiteAdjustment: {
       id: 'pages.InventoryLog.currentSiteAdjustment',
@@ -129,11 +129,11 @@ const messages = {
     },
     ConsumableReason_TransferSent: {
       id: 'pages.InventoryLog.ConsumableReason_TransferSent',
-      defaultMessage: 'Tranfer sent to {refSiteName}',
+      defaultMessage: 'Transfer sent to {refSiteName}',
     },
     ConsumableReason_TransferReceived: {
       id: 'pages.InventoryLog.ConsumableReason_TransferReceived',
-      defaultMessage: 'Tranfer received from {refSiteName}',
+      defaultMessage: 'Transfer received from {refSiteName}',
     },
     ConsumableReason_AssertedZeroInventory: {
       id: 'pages.InventoryLog.ConsumableReason_AssertedZeroInventory',

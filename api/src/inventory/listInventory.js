@@ -1,7 +1,14 @@
 const { getConstraints } = require('../auth/constraints')
-const { getInventoryBySitesAndConsumable, getInventoryByLot, appendSiteConsumables } = require('./common/db')
+const {
+  appendSiteConsumables,
+  getGeneXpertInventoryBySitesAndConsumableQuery,
+  getInventoryLots,
+} = require('./common/db')
+const { knex, sortPageParams } = require('../db')
+
 const { splitCsvWithTrim } = require('../shared/string')
 const { DAYS_STOCK_LEFT_RANGES } = require('../shared/constants')
+const { INVENTORY_ITEM_SORT_FIELDS } = require('./common/querySelectors')
 
 module.exports = async function (request) {
   const { auth, query } = request
@@ -9,20 +16,16 @@ module.exports = async function (request) {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  let data
-  let total
+  const { total, data } = breakOutByLot
+    ? await listInventoryByLot(request, dataConstraints)
+    : await listInventoryBySiteAndConsumable(request, dataConstraints)
 
-  if (breakOutByLot) {
-    ;({ total, data } = await listInventoryByLot(request, dataConstraints))
-  } else {
-    ;({ total, data } = await listInventoryBySiteAndConsumable(request, dataConstraints))
-  }
   /**
    * for each site - get array of consumableId's from SiteConsumable table
    */
-  data = await appendSiteConsumables(data)
+  const dataWithSiteConsumables = await appendSiteConsumables(data)
 
-  return { ok: true, total, length: data.length, data }
+  return { ok: true, total, length: dataWithSiteConsumables.length, data: dataWithSiteConsumables }
 }
 
 async function listInventoryByLot(request, dataConstraints) {
@@ -37,11 +40,29 @@ async function listInventoryByLot(request, dataConstraints) {
     }
     requestQuery.sortCol = sortCols.join(',')
   }
-  return getInventoryByLot(request, requestQuery, dataConstraints)
+
+  const inventoryQuery = getInventoryLots(request, dataConstraints)
+
+  const getCount = knex.from(inventoryQuery.clone().as('q')).count({ count: 'q.id' }).first()
+  const getItems = inventoryQuery
+    .clone()
+    .modify(sortPageParams, requestQuery, INVENTORY_ITEM_SORT_FIELDS.siteName, INVENTORY_ITEM_SORT_FIELDS)
+
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  return { total, data }
 }
 
 async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const { query } = request
   const range = DAYS_STOCK_LEFT_RANGES[query.daysStockLeft] || null
-  return getInventoryBySitesAndConsumable(request, dataConstraints, range)
+
+  const inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, '*', true)
+
+  const getCount = inventoryQuery.clone().count('id as count').first()
+  const getItems = inventoryQuery.clone().modify(sortPageParams, request.query, 'siteName')
+
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  return { data, total }
 }

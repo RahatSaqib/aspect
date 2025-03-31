@@ -22,7 +22,6 @@ export function getColumns(intl, options) {
       key: 'unreconciledQuantity',
       label: intl.formatMessage(messages.unreconciledQuantity),
       tooltip: intl.formatMessage(messages.unreconciledQuantityDescription),
-      isHidden: options.breakOutByLot,
     },
     {
       key: 'dailyConsumptionRate',

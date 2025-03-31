@@ -13,7 +13,7 @@ import {
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
+import { INVENTORY_KEY, INVENTORY_KEY_TYPE_LOG_ENDPOINT } from '../../../hooks/inventory/inventoryKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -239,7 +239,8 @@ const InventoryLog = () => {
     error,
   } = useQuery(
     [
-      INVENTORY_LOG.KEY,
+      INVENTORY_KEY,
+      'inventory_logs',
       {
         sortCol,
         sortDir,
@@ -250,7 +251,7 @@ const InventoryLog = () => {
     ],
     async () =>
       fetchWrapperForQueries({
-        endpoint: INVENTORY_LOG.ENDPOINT,
+        endpoint: INVENTORY_KEY_TYPE_LOG_ENDPOINT,
         params: {
           sortCol,
           sortDir,
