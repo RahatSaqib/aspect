@@ -82,18 +82,6 @@ const INVENTORY_LOG_LIST = {
   resultEndedOn: 'r.endedOn',
 }
 
-const INVENTORY_LOG_UILIST = {
-  createdOn: 'il.createdOn',
-  consumableName: 'c.name',
-  lotNumber: 'il.lotNumber',
-  expirationDate: 'il.expiresOn',
-  siteName: 's.name',
-  quantity: knex.raw('CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE il.quantity END'),
-  consumableReasonI18nKey: 'cr.i18nKey',
-  refSiteName: 'refSite.name',
-  notes: knex.raw(`case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`),
-}
-
 const INVENTORY_TRANSFER = {
   consumableName: 'c.name',
   consumableNameI18nKey: 'c.i18nKey',
@@ -226,7 +214,6 @@ const SUPPLY_IN_STOCK_FIELDS = [
 
 module.exports = {
   INVENTORY_LOG_LIST,
-  INVENTORY_LOG_UILIST,
   INVENTORY_TRANSFER,
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
