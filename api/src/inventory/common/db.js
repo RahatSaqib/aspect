@@ -834,7 +834,7 @@ async function getReconciliationList(query, dataConstraints) {
       consumableId: 'ca.consumableId',
       lotNumber: 'm.lotNumber',
     })
-    .groupBy(['s.id', 'c.id', ...(query.breakOutByLot ? ['m.lotNumber'] : [])])
+    .groupBy(['s.id', 'c.id', ...(query.breakOutByLot ? ['m.expirationDate', 'm.lotNumber'] : [])])
     .count('* as quantity')
 
   const getItems = baseQuery
@@ -851,8 +851,7 @@ async function getReconciliationList(query, dataConstraints) {
       'g.lgaId',
       'st.name as stateName',
       'l.name as lgaName',
-      ...(query.breakOutByLot ? ['m.lotNumber'] : []),
-      ...(query.breakOutByLot ? ['m.expirationDate as expiresOn'] : []),
+      ...(query.breakOutByLot ? ['m.expirationDate as expiresOn', 'm.lotNumber'] : []),
     ])
 
   const getCount = knex.from(baseQuery.clone().as('q')).count('* as total').first()
