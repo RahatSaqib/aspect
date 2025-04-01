@@ -18,13 +18,6 @@ const InventoryReconciliationFilter = props => {
 
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
-  // Clear state when disabled
-  React.useEffect(() => {
-    if (disabled) {
-      setState({})
-    }
-  }, [disabled, setState])
-
   return (
     <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>

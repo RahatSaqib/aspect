@@ -52,7 +52,7 @@ export function InventoryReconciliation() {
         breakOutByLot: filters.breakOutByLot,
       })
     }
-  }, [isHierarchicalView, isWarehouseView, setFilters, setSearchParams, filters.breakOutByLot])
+  }, [isHierarchicalView, isWarehouseView, setFilters, filters.breakOutByLot])
 
   const { sortCol, sortDir, pageAt, pageSize } = useMemo(
     () => makeSortPageSelector({ sortCol: 'siteName' })({ location }),
@@ -82,13 +82,14 @@ export function InventoryReconciliation() {
   const handleBreakOutByLot = useCallback(
     e => {
       const value = e.target.checked || null
+      setSearchParams([])
       setFilters(prev => ({
         ...prev,
         ...(!value ? { minDate: null, maxDate: null, lotNumber: null } : {}),
         breakOutByLot: value,
       }))
     },
-    [setFilters]
+    [setFilters, setSearchParams]
   )
 
   return (
