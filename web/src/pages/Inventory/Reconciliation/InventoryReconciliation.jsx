@@ -44,6 +44,16 @@ export function InventoryReconciliation() {
   } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_RECONCILIATION,
   })
+
+  // Clear filters when warehouse view is selected
+  React.useEffect(() => {
+    if (isHierarchicalView && isWarehouseView) {
+      setFilters({
+        breakOutByLot: filters.breakOutByLot,
+      })
+    }
+  }, [isHierarchicalView, isWarehouseView, setFilters, setSearchParams, filters.breakOutByLot])
+
   const { sortCol, sortDir, pageAt, pageSize } = useMemo(
     () => makeSortPageSelector({ sortCol: 'siteName' })({ location }),
     [location]
@@ -72,14 +82,13 @@ export function InventoryReconciliation() {
   const handleBreakOutByLot = useCallback(
     e => {
       const value = e.target.checked || null
-      setSearchParams([])
       setFilters(prev => ({
         ...prev,
         ...(!value ? { minDate: null, maxDate: null, lotNumber: null } : {}),
         breakOutByLot: value,
       }))
     },
-    [setFilters, setSearchParams]
+    [setFilters]
   )
 
   return (
@@ -87,7 +96,7 @@ export function InventoryReconciliation() {
       <DetailHeader name={formatMessage(messages.inventoryReconciliation)} disableBack />
       <Helmet title={formatMessage(messages.inventoryReconciliation)} />
       <Box sx={{ width: '100%', p: '10px' }}>
-        <InventoryReconciliationFilter />
+        <InventoryReconciliationFilter disabled={isHierarchicalView && isWarehouseView} />
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
           {isHierarchicalView ? (
             <HierarchicalView
@@ -143,7 +152,12 @@ export function InventoryReconciliation() {
                 />
                 {allowed(['admin:edit']) ? (
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                    <Button variant="contained" color="primary" onClick={() => autoReconcile(filters)}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => autoReconcile(filters)}
+                      disabled={isHierarchicalView && isWarehouseView}
+                    >
                       {formatMessage(messages.autoReconcileNow)}
                     </Button>
                   </Box>
