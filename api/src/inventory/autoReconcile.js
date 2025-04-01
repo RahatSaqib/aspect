@@ -7,13 +7,6 @@ const { consumeInventoryForResult } = require('./common/logic')
 const { getMissingInventoryToReconcile } = require('./missingInventoryLotsResolver')
 const { transact } = require('../db')
 
-async function listReconciliation(request) {
-  const { auth, query } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-  const [{ total }, data] = await getReconciliationList(query, dataConstraints)
-  return { data, total, ok: true }
-}
-
 async function autoReconcile(request) {
   const { auth, payload } = request
   const { partnerId } = await getUser(auth.credentials.name)
@@ -67,6 +60,5 @@ async function autoReconcile(request) {
 }
 
 module.exports = {
-  listReconciliation,
   autoReconcile,
 }
