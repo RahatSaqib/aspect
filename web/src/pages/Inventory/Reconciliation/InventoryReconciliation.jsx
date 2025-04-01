@@ -153,12 +153,7 @@ export function InventoryReconciliation() {
                 />
                 {allowed(['admin:edit']) ? (
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => autoReconcile(filters)}
-                      disabled={isHierarchicalView && isWarehouseView}
-                    >
+                    <Button variant="contained" color="primary" onClick={() => autoReconcile(filters)}>
                       {formatMessage(messages.autoReconcileNow)}
                     </Button>
                   </Box>
