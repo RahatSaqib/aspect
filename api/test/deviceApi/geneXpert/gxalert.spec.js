@@ -404,11 +404,17 @@ describe('Device API routes for GxAlert Device', () => {
         payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
           result: {
             id: dateFormat(new Date(), 'T'),
-            data: { a: 'b', c: 2, d: false, e: { f: 'g' }, assay: 'Xpert MTB-RIF' },
+            data: {
+              a: 'b',
+              c: 2,
+              d: false,
+              e: { f: 'g' },
+              assay: 'Xpert MTB-RIF',
+              resultText: '|MTB @label_result_detected||Rif Resistance @label_result_indeterminate',
+            },
             type: { id: 'Study' },
             source: { id: 'EnteredByHand' },
             workflow: { status: { id: 'Acknowledged' } },
-            category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
             assay: {
               id: 'GxMtbRif',
               version: '1a.c1',
