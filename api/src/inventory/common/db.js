@@ -1,6 +1,7 @@
 const subDays = require('date-fns/subDays')
 const _ = require('lodash')
 
+const logger = require('../../shared/logger')
 const { knex, filterDateRangeParams, query, filterParams, sortPageParams } = require('../../db')
 const {
   INVENTORY_ITEM_SELECT,
@@ -17,7 +18,7 @@ const {
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
-const consumableStrategyModifier = require('./consumableStrategyModifier')
+const consumableStrategyFactory = require('./consumableStrategyFactory')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 
 // ----------------------------------------------------------------------------------
@@ -29,7 +30,8 @@ async function getStrategy(partnerId) {
   })
 
   inventoryStrategy = _.trim(inventoryStrategy)
-  return { name: inventoryStrategy, handler: consumableStrategyModifier[inventoryStrategy] }
+  const { modifier: modifyConsumableQuery, validate } = consumableStrategyFactory[inventoryStrategy]
+  return { name: inventoryStrategy, modifyConsumableQuery, validate }
 }
 
 // ----------------------------------------------------------------------------------
@@ -166,7 +168,19 @@ async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, i
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
 
   const consumableStrategy = await getStrategy(partnerId)
-  consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+
+  if (!consumableStrategy.validate({ lotNumber, expiresOn })) {
+    logger.error('Invalid consumable values according to consumable strategy', {
+      siteId,
+      consumableId,
+      expiresOn,
+      lotNumber,
+      partnerId,
+      consumableStrategy,
+    })
+  }
+
+  consumableStrategy.modifyConsumableQuery(matchingInventoryItemsQuery, { lotNumber, expiresOn })
 
   const matchingInventoryItem = await matchingInventoryItemsQuery
     .orderBy('ii.quantityOnHand', 'desc')
