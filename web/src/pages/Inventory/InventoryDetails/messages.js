@@ -94,4 +94,12 @@ export default defineMessages({
     id: 'pages.NotificationDetail.New.no',
     defaultMessage: 'No',
   },
+  updateInventoryConfigurationSuccessMessage: {
+    id: 'pages.InventoryReconciliationForm.SucessMessage',
+    defaultMessage: 'Inventory settings updated successfully.',
+  },
+  updateInventoryConfigurationFailedMessage: {
+    id: 'pages.InventoryReconciliationForm.ErrorMessage',
+    defaultMessage: 'Failed to update inventory settings. Please try again later.',
+  },
 })

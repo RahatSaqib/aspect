@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
+import { toast } from 'react-toastify'
 import { DetailHeader } from '../../../../cleanComponents'
 import usePartner from '../../../../hooks/partner/usePartner'
 import { useUpdatePartnerInventory } from '../../../../hooks/partner/useUpdatePartnerInventory'
@@ -45,8 +46,9 @@ export default function InventoryReconciliationForm() {
                     })
                     await refetch()
                     resetForm({ values: { strategy, adjustment } })
-                    // eslint-disable-next-line no-empty
+                    toast.success(formatMessage(messages.updateInventoryConfigurationSuccessMessage))
                   } catch (e) {
+                    toast.error(formatMessage(messages.updateInventoryConfigurationFailedMessage))
                   } finally {
                     setSubmitting(false)
                   }
