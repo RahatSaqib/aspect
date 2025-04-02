@@ -25,7 +25,7 @@ export default function InventoryReconciliationForm() {
   const { mutateAsync: updatePartnerInventory } = useUpdatePartnerInventory()
   return (
     <>
-      <DetailHeader name={formatMessage(messages.reconciliationConfiguration)} />
+      <DetailHeader name={formatMessage(messages.inventoryManagementConfiguration)} />
       <Card sx={{ width: '100%', margin: '10px' }}>
         {isLoading ? (
           <LinearProgress />

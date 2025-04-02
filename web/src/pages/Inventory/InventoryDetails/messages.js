@@ -21,9 +21,9 @@ export default defineMessages({
     id: 'pages.Consumable.New.inventoryDetail',
     defaultMessage: 'Inventory Detail',
   },
-  reconciliationConfiguration: {
-    id: 'pages.Consumable.New.reconciliationConfiguration',
-    defaultMessage: 'Reconciliation Configuration',
+  inventoryManagementConfiguration: {
+    id: 'pages.Inventory.Management.Configuration',
+    defaultMessage: 'Inventory Management Configuration',
   },
   reconciliationTitle: {
     id: 'pages.Consumable.New.reconciliationTitle',
