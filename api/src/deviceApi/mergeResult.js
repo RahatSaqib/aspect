@@ -2,15 +2,10 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { mergeResultWithPayload } = require('../result/common/logic')
 const { convertStringToFloat } = require('../shared/string')
-const {
-  resultSourceToId,
-  resultCategoryToId,
-  resultTypeToId,
-  resultWorkflowStatusToId,
-  sampleTypeToId,
-} = require('../shared/dictionary')
+const { resultSourceToId, resultTypeToId, resultWorkflowStatusToId, sampleTypeToId } = require('../shared/dictionary')
 const { insertSite } = require('../site/common/db')
 const { getLatestResultWorkflowLog } = require('./result')
+const { getResultCategoriesFromPayload } = require('./utils')
 
 async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId = null } = {}, context) {
   const sampleExternalId = _.get(payload, 'sample.id', null)
@@ -25,13 +20,13 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   const resultWorkflowStatusId = await getResultWorkflowStatusId(knex, payload, existingResult)
 
   // Categories if specified, otherwise Error or Success depending on error payload
-  const { categoryIds, resultCategory1, resultCategory2 } = await getResultCategories(payload, existingResult)
+  const { resultCategory1, resultCategory2 } = await getResultCategoriesFromPayload(payload, existingResult)
 
   // Gets the site that is linked to the device as well as the valid types of assays that can be used on the device
   const { assays, site } = await getSiteAndAssays(knex, payload, existingResult, deviceId)
 
   // Exit on any error
-  const requestErrors = await getResultErrors({ site, resultTypeId, resultCategory1, assays, categoryIds, payload })
+  const requestErrors = await getResultErrors({ site, resultTypeId, resultCategory1, assays, payload })
   if (!_.isEmpty(requestErrors)) {
     throw Boom.badRequest(`Cannot find ${requestErrors.join(', ')}`)
   }
@@ -225,28 +220,7 @@ async function getResultWorkflowStatusId(knex, payload, existingResult) {
   return resultWorkflowStatusId
 }
 
-async function getResultCategories(payload, existingResult) {
-  const categoryIds = _.map(payload.category, 'id')
-  let resultCategory1 = null
-  let resultCategory2 = null
-  if (categoryIds.length > 0 && categoryIds[0]) {
-    resultCategory1 = await resultCategoryToId(categoryIds[0])
-  } else if (payload.error) {
-    resultCategory1 = await resultCategoryToId('Error')
-  } else if (existingResult && existingResult.resultCategory1) {
-    ;({ resultCategory1 } = existingResult)
-  } else {
-    resultCategory1 = await resultCategoryToId('Success')
-  }
-  if (categoryIds.length > 1 && categoryIds[1]) {
-    resultCategory2 = await resultCategoryToId(categoryIds[1])
-  } else if (existingResult && existingResult.resultCategory2) {
-    resultCategory2 = null
-  }
-  return { categoryIds, resultCategory1, resultCategory2 }
-}
-
-async function getResultErrors({ site, resultTypeId, resultCategory1, assays, categoryIds, payload }) {
+async function getResultErrors({ site, resultTypeId, resultCategory1, assays, payload }) {
   const requestErrors = []
   if (!site) {
     requestErrors.push('assigned site for device')
@@ -255,7 +229,7 @@ async function getResultErrors({ site, resultTypeId, resultCategory1, assays, ca
     requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
   }
   if (!resultCategory1) {
-    requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
+    requestErrors.push(`result category 1 with categories with ids ${JSON.stringify(_.get(payload, 'category'))}}`)
   }
   if (assays?.length !== 1) {
     requestErrors.push(`assay with id ${_.get(payload, 'assay.id')}`)

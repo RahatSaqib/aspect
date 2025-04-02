@@ -122,6 +122,7 @@ const result1CategoryMapping = {
   'trace detectado': 'Trace Detected',
   'trace обнаружен': 'Trace Detected',
   'trace @label_result_detected': 'Trace Detected',
+  'trace détecté': 'Trace Detected',
 }
 
 const result2CategoryMapping = {
@@ -295,11 +296,11 @@ const mapResultCategory2 = (assayExternalId, resultTextValues) => {
 
 function getVLCopies(result1Text) {
   if (result1Text && !result1Text.includes('< 40')) {
-    const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
+    const regex = /(\d+([.,]\d*)?([eE][+-]?\d+)?|[.,]\d+([eE][+-]?\d+)?)/
     const text = result1Text.replace('HIV-1', '').replace('@label_quant1_result_normal_log', '')
     const arr = regex.exec(text)
 
-    return arr ? parseFloat(arr[0]) : null
+    return arr ? parseFloat(arr[0].replace(',', '.')) : null
   }
   return null
 }

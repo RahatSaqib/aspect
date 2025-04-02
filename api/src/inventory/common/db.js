@@ -835,6 +835,11 @@ async function getReconciliationList(query, dataConstraints) {
       lotNumber: 'm.lotNumber',
     })
     .groupBy(['s.id', 'c.id', ...(query.breakOutByLot ? ['m.expirationDate', 'm.lotNumber'] : [])])
+    .modify(queryBuilder => {
+      if (query.siteIds) {
+        queryBuilder.whereIn('s.id', query.siteIds.split(','))
+      }
+    })
     .count('* as quantity')
 
   const getItems = baseQuery
