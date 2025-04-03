@@ -517,10 +517,22 @@ describe.only('POST: /api/inventory/auto-reconcile', () => {
   afterEach(async () => {
     // Clean up test data
     await knex('MissingInventoryLots').where('siteId', testData.siteId).delete()
+
+    // Delete InventoryTransfer records that reference InventoryLog through incomeInventoryLogId
+    await knex('InventoryTransfer')
+      .whereIn('incomeInventoryLogId', function () {
+        this.select('id')
+          .from('InventoryLog')
+          .whereIn('siteId', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
+      })
+      .delete()
+
+    // Delete InventoryTransfer records that reference tempInventoryItemId
+    await knex('InventoryTransfer').whereIn('tempInventoryItemId', testData.inventoryItemIds).delete()
+
     await knex('InventoryLog')
       .whereIn('siteId', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
       .delete()
-    await knex('InventoryTransfer').whereIn('tempInventoryItemId', testData.inventoryItemIds).delete()
     await knex('Result').where('siteId', testData.siteId).delete()
     await knex('InventoryItem')
       .whereIn('siteId', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
@@ -596,7 +608,7 @@ describe.only('POST: /api/inventory/auto-reconcile', () => {
     })
   })
 
-  describe.only('Inventory Adjustment = Stock Provider Site Adjustment', () => {
+  describe('Inventory Adjustment = Stock Provider Site Adjustment', () => {
     it('should use inventory at current provider site when inventory adjustment set is current site and stock provider adjustment', async () => {
       await knex('Partner').where('id', testData.partnerId).update({
         inventoryAdjustment: 'currentSiteAndProviderAdjustment',
