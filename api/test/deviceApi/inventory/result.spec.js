@@ -242,11 +242,7 @@ describe('admin result updates', () => {
           inventoryItem.expiresOn.toISOString() === randomExpiryDate.toISOString()
       )
 
-      assert.equal(
-        cartridgeAtSiteAfter.quantityOnHand,
-
-        cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest
-      )
+      assert.equal(cartridgeAtSiteAfter.quantityOnHand, cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest)
 
       resultDetails = {
         lotNumber: 'ABC123',

@@ -1,4 +1,3 @@
-const { get } = require('lodash')
 const Boom = require('@hapi/boom')
 const { getConstraints } = require('../auth/constraints')
 const { getReconciliationList } = require('./common/db')
@@ -8,10 +7,11 @@ const { getMissingInventoryToReconcile } = require('./missingInventoryLotsResolv
 const { transact } = require('../db')
 
 async function autoReconcile(request) {
-  const { auth, payload } = request
+  const { auth, payload, plugins } = request
   const { partnerId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
   const [, data] = await getReconciliationList(payload, dataConstraints)
+  const messageContext = plugins?.messageContext || messageContext
   /* eslint-disable no-await-in-loop */
   for (const missingInventoryGroup of data) {
     const {
@@ -30,26 +30,26 @@ async function autoReconcile(request) {
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
-      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, payload, lotNumber, expirationDate } =
+      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, lotNumber, expirationDate } =
         missingInventory
-      const consumables = get(JSON.parse(payload), 'result.consumable') || []
+
       // eslint-disable-next-line no-loop-func
       await transact(async knex => {
         const consumableResults = await consumeInventoryForResult({
+          knex,
           resultId,
           assayId,
           siteId,
-          consumablesInResultData: consumables,
           partnerId,
+          lotNumber,
+          expirationDate,
           testStartedOn: startedOn,
           testEndedOn: endedOn,
-          knex,
+          messageContext,
           userId: null,
-          inventoryLotNumber: lotNumber,
-          expirationDate,
         })
 
-        if (consumableResults.every(s => s && !Boom.isBoom(s))) {
+        if (!consumableResults.some(s => Boom.isBoom(s) || !s)) {
           // Delete missingInventoryLots entry
           await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
         }

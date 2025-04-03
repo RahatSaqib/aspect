@@ -3,7 +3,6 @@ const _ = require('lodash')
 const addYears = require('date-fns/addYears')
 const { addDays } = require('date-fns')
 const shared = require('../utils/sharedToken')
-const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { knex } = require('../../src/db')
 
@@ -37,8 +36,6 @@ const assertBodyAndInventoryItems = res => {
     assert.property(inventoryItem, 'id')
     assert.notProperty(inventoryItem, 'lotNumber')
     assert.notProperty(inventoryItem, 'expiresOn')
-    assert.notProperty(inventoryItem, 'inTransitFromSiteId')
-    assert.notProperty(inventoryItem, 'inTransitFromSiteName')
   })
 }
 
@@ -85,7 +82,6 @@ describe('Inventory Routes', () => {
       let inventoryItem3Id
       let inventoryItem4Id
       let negativeQoHInventoryItemId
-      let inventoryItemInTransitId
       let tbRifConsumableId
       const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
       const expiresOn2 = startOfDayUtc(addDays(new Date(), 2))
@@ -123,14 +119,7 @@ describe('Inventory Routes', () => {
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
-        ;[inventoryItemInTransitId] = await knex('InventoryItem').insert({
-          consumableId: tbRifConsumableId,
-          siteId: site1Id,
-          inTransitFromSiteId: site2Id,
-          lotNumber: '0000002',
-          expiresOn: expiresOn2,
-          quantityOnHand: 500,
-        })
+
         const siteConsumables = [
           { siteId: site1Id, consumableId: tbRifConsumableId },
           { siteId: site2Id, consumableId: tbRifConsumableId },
@@ -173,7 +162,6 @@ describe('Inventory Routes', () => {
             inventoryItem1Id,
             inventoryItem2Id,
             inventoryItem3Id,
-            inventoryItemInTransitId,
             inventoryItem4Id,
             negativeQoHInventoryItemId,
           ])
@@ -213,8 +201,6 @@ describe('Inventory Routes', () => {
             assert.property(inventoryItem, 'countryName')
             assert.property(inventoryItem, 'stateName')
             assert.property(inventoryItem, 'lgaName')
-            assert.property(inventoryItem, 'inTransitFromSiteId')
-            assert.property(inventoryItem, 'inTransitFromSiteName')
             assert.notProperty(inventoryItem, 'stockLeft')
             assert.notProperty(inventoryItem, 'dailyConsumptionRate')
           })
@@ -234,22 +220,10 @@ describe('Inventory Routes', () => {
               ii.siteId === site1Id &&
               ii.consumableId === tbRifConsumableId &&
               ii.lotNumber === '0000002' &&
-              ii.expiresOn === expiresOn2.toISOString() &&
-              ii.inTransitFromSiteId === null
+              ii.expiresOn === expiresOn2.toISOString()
           )
           assert.isNotNull(inventoryItem2)
           assert.equal(inventoryItem2.quantityOnHand, 350)
-
-          const [inventoryItemInTransit] = res.body.data.filter(
-            ii =>
-              ii.siteId === site1Id &&
-              ii.consumableId === tbRifConsumableId &&
-              ii.lotNumber === '0000002' &&
-              ii.expiresOn === expiresOn2.toISOString() &&
-              ii.inTransitFromSiteId !== null
-          )
-          assert.isNotNull(inventoryItemInTransit)
-          assert.equal(inventoryItemInTransit.quantityOnHand, 500)
 
           // We should filter empty inventories
           const emptyInventoryItems = res.body.data.filter(ii => ii.quantityOnHand === 0)
@@ -289,7 +263,7 @@ describe('Inventory Routes', () => {
           assert.equal(inventoryItems.length, 1)
           assert.isNotNull(inventoryItems[0])
 
-          // Correct quantity - stock in transit should not be counted
+          // Correct quantity
           assert.equal(inventoryItems[0].quantityOnHand, 900)
 
           // - We have 900 cartridges
@@ -516,11 +490,9 @@ describe('Inventory Routes', () => {
     const quantityToAdjust = 11
     const initialQuantityOnHand = 500
     const testLotNumber = 'TEST-LOT'
-    // const getAllInventoryPath = '/api/inventory/group-by-site'
     const addInventoryPath = '/api/inventory/add'
     const removeInventoryPath = '/api/inventory/remove'
     const transferInventoryPath = '/api/inventory/transfer'
-    const receiveInventoryPath = '/api/inventory/receive'
     let inventoryItem
     let destinationSite
     let siteId
@@ -693,7 +665,6 @@ describe('Inventory Routes', () => {
           assert.deepEqual(transitItem, {
             ...transitItem,
             quantityOnHand: quantityToAdjust,
-            inTransitFromSiteId: inventoryItem.siteId,
             siteId: destinationSite.id,
             lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
@@ -725,70 +696,6 @@ describe('Inventory Routes', () => {
           assert.deepEqual(updatedTransitItem, {
             ...updatedTransitItem,
             quantityOnHand: transitItem.quantityOnHand + quantityToAdjust,
-            inTransitFromSiteId: inventoryItem.siteId,
-            siteId: destinationSite.id,
-            lotNumber: inventoryItem.lotNumber,
-            expiresOn: inventoryItem.expiresOn.toISOString(),
-          })
-        })
-      })
-    })
-
-    describe('/inventory/receive', () => {
-      describe('PUT', () => {
-        let receivedItem
-        afterEach(async () =>
-          run(async knex => {
-            const inventoryLogsToRemove = await knex('InventoryLog')
-              .where({ inventoryItemId: receivedItem.id })
-              .pluck('id')
-            await knex('InventoryTransfer')
-              .whereIn('outcomeInventoryLogId', inventoryLogsToRemove)
-              .orWhereIn('incomeInventoryLogId', inventoryLogsToRemove)
-              .orWhere({ tempInventoryItemId: receivedItem.id })
-              .delete()
-            await knex('InventoryLog').whereIn('id', inventoryLogsToRemove).delete()
-            await knex('InventoryItem').where({ id: receivedItem.id }).delete()
-          })
-        )
-
-        it('should add an inventory item to the site', async () => {
-          const transferResult = await server
-            .put(`${transferInventoryPath}`)
-            .send({
-              consumableId: inventoryItem.consumableId,
-              lotNumber: inventoryItem.lotNumber,
-              expiresOn: inventoryItem.expiresOn,
-              quantity: quantityToAdjust,
-              notes: 'Creating a transfer to test receiving an item',
-              fromSiteId: inventoryItem.siteId,
-              toSiteId: destinationSite.id,
-              dateAdjusted: new Date().toISOString(),
-            })
-            .set('Authorization', `Bearer ${shared.token}`)
-
-          assert.equal(transferResult.status, 200)
-          transitItem = transferResult.body.data.newInventoryItem
-
-          const receiveInventoryResult = await server
-            .put(`${receiveInventoryPath}`)
-            .send({
-              consumableId: transitItem.consumableId,
-              lotNumber: transitItem.lotNumber,
-              expiresOn: transitItem.expiresOn,
-              quantity: transitItem.quantityOnHand,
-              notes: 'Testing receiving a lot in transit',
-              fromSiteId: inventoryItem.siteId,
-              toSiteId: destinationSite.id,
-              dateAdjusted: new Date().toISOString(),
-            })
-            .set('Authorization', `Bearer ${shared.token}`)
-          assert.equal(receiveInventoryResult.status, 200)
-          assert.typeOf(receiveInventoryResult.body, 'Object')
-          receivedItem = receiveInventoryResult.body.data
-          assert.deepEqual(receivedItem, {
-            ...receiveInventoryResult.body.data,
-            quantityOnHand: quantityToAdjust,
             siteId: destinationSite.id,
             lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
