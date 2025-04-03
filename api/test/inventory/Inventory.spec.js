@@ -386,7 +386,7 @@ describe('GET: /api/inventory', () => {
   })
 })
 
-describe.only('POST: /api/inventory/auto-reconcile', () => {
+describe('POST: /api/inventory/auto-reconcile', () => {
   const endpoint = '/api/inventory/auto-reconcile'
   let testData
   const testContext = createGxConnectTestContext(server, {
