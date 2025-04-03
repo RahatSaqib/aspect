@@ -1,6 +1,6 @@
-import React from 'react'
-import { LinearProgress, Switch, TableBody, Typography, Stack } from '@mui/material'
+import { LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
+import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -100,16 +100,6 @@ export const InventoryLogWithProps = ({
     {
       key: 'notes',
       label: intl.formatMessage(messages.notes),
-      sortable: true,
-    },
-    {
-      key: 'reconcilationStrategy',
-      label: intl.formatMessage(messages.reconcilationStrategy),
-      sortable: true,
-    },
-    {
-      key: 'reconcilationAdjustment',
-      label: intl.formatMessage(messages.reconcilationAdjustment),
       sortable: true,
     },
   ]

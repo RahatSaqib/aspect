@@ -9,15 +9,15 @@ const { getUserFromCredentials } = require('../auth/constraints')
 async function listInventoryLog(request) {
   const { auth, query } = request
   const user = await getUserFromCredentials(auth.credentials)
-  const { timeZoneIANA } = user
+  const { timezoneIANA: timeZoneIANA } = user
 
   const dataConstraints = await getConstraints(auth.credentials)
-  const { total, data } = await getInventoryLog(query, dataConstraints, getInventoryLogListProjection(knex, timeZoneIANA))
+  const { total, data } = await getInventoryLog(query, dataConstraints, getInventoryLogListProjection(knex, timeZoneIANA), timeZoneIANA)
 
   return { ok: true, total, length: data.length, data }
 }
 
-async function getInventoryLog(requestQuery, dataConstraints, querySelector) {
+async function getInventoryLog(requestQuery, dataConstraints, querySelector, timeZoneIANA) {
   if (_.isNil(requestQuery.maxDate)) {
     requestQuery.maxDate = new Date()
   }
@@ -51,10 +51,24 @@ async function getInventoryLog(requestQuery, dataConstraints, querySelector) {
         queryBuilder.whereIn('s.id', requestQuery.siteIds.split(','))
       }
     })
-  // .groupBy('createdOn')
   const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
 
   const data = await inventoryLogQuery
+    .groupBy(
+      // knex.raw(`date(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)})`),
+      'c.name',
+      'ca.assayId',
+      'c.i18nKey',
+      'il.lotNumber',
+      'il.expiresOn',
+      's.name',
+      'cr.name',
+      'refSite.name',
+      'cr.i18nKey',
+      'cr.externalId',
+      'il.adjustedFrom',
+      'r.endedOn'
+    )
     .select(querySelector)
     .modify(sortPageParams, requestQuery, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
   return { data, total }
@@ -62,7 +76,7 @@ async function getInventoryLog(requestQuery, dataConstraints, querySelector) {
 
 function getInventoryLogListProjection(knex, timeZoneIANA) {
   return {
-    createdOn: knex.raw(`min(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)})`),
+    createdOn: knex.raw(`date(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)})`),
     consumableName: 'c.name',
     assayId: 'ca.assayId',
     consumableNameI18nKey: 'c.i18nKey',
@@ -78,9 +92,7 @@ function getInventoryLogListProjection(knex, timeZoneIANA) {
         WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
         ELSE cr.name
       END`),
-    notes: knex.raw(
-      `case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`
-    ),
+    notes: knex.raw('FIRST_VALUE(il.notes) OVER (PARTITION BY il.id ORDER BY il.createdOn)'),
     consumableReasonI18nKey: 'cr.i18nKey',
     consumableReasonExternalId: 'cr.externalId',
     transactionDate: 'il.adjustedFrom',
