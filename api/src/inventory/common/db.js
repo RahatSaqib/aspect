@@ -1,6 +1,7 @@
 const subDays = require('date-fns/subDays')
 const _ = require('lodash')
 
+const logger = require('../../shared/logger')
 const { knex, filterDateRangeParams, query, filterParams, sortPageParams } = require('../../db')
 const {
   INVENTORY_ITEM_SELECT,
@@ -17,19 +18,18 @@ const {
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
 const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
-const consumableStrategyModifier = require('./consumableStrategyModifier')
+const consumableStrategyFactory = require('./consumableStrategies/consumableStrategyFactory')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 
 // ----------------------------------------------------------------------------------
-async function getStrategy(partnerId) {
-  let { inventoryStrategy } = await getPartnerByConstraints({
+async function getConsumableStrategy(partnerId) {
+  const { inventoryStrategy } = await getPartnerByConstraints({
     partner: {
       id: partnerId,
     },
   })
 
-  inventoryStrategy = _.trim(inventoryStrategy)
-  return { name: inventoryStrategy, handler: consumableStrategyModifier[inventoryStrategy] }
+  return consumableStrategyFactory.getConsumableStrategy(inventoryStrategy)
 }
 
 // ----------------------------------------------------------------------------------
@@ -162,25 +162,23 @@ function getInventorySitesQuery(constraints, request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function findInventoryItem({
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  inTransitFromSiteId,
-  partnerId,
-  resultId,
-}) {
+async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
 
-  if (!resultId) {
-    // handle operations without using strategy (add, remove, and transfer)
-    const handler = consumableStrategyModifier.withLotAndExpirationDateStrategy
-    handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
-  } else {
-    const consumableStrategy = await getStrategy(partnerId)
-    consumableStrategy.handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+  const consumableStrategy = await getConsumableStrategy(partnerId)
+
+  if (!consumableStrategy.isValidLotIdentifier({ lotNumber, expiresOn })) {
+    logger.error('Invalid consumable values according to consumable strategy', {
+      siteId,
+      consumableId,
+      expiresOn,
+      lotNumber,
+      partnerId,
+      consumableStrategy: consumableStrategy.name,
+    })
   }
+
+  consumableStrategy.modifyConsumableMatching(matchingInventoryItemsQuery, { lotNumber, expiresOn })
 
   const matchingInventoryItem = await matchingInventoryItemsQuery
     .orderBy('ii.quantityOnHand', 'desc')

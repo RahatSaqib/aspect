@@ -2,13 +2,13 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
-const { startOfDay, endOfDay } = require('date-fns')
+const { startOfDay, endOfDay, parseISO } = require('date-fns')
 const { getUser } = require('../../auth/service')
 const defaultInventoryStrategy = require('../strategies')
 
 const { knex, transact } = require('../../db')
 const { getSite } = require('../../site/service')
-const { INVENTORY_ADJUSTMENT, INVENTORY_STRATEGY } = require('../../shared/constants')
+const { INVENTORY_ADJUSTMENT } = require('../../shared/constants')
 const { updateSiteConsumable, getSiteListModifiedQuery } = require('../../site/common/db')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 const { getConstraints } = require('../../auth/constraints')
@@ -84,8 +84,8 @@ async function upsertInventoryItem({
       siteId,
       consumableId,
       lotNumber,
-      minDate: startOfDay(expiresOn),
-      maxDate: endOfDay(expiresOn),
+      minDate: startOfDay(parseISO(expiresOn)),
+      maxDate: endOfDay(parseISO(expiresOn)),
     }
 
     if (logProps?.operation.includes('modify') && quantityOnHand === 0) {
@@ -131,7 +131,7 @@ async function getActualQuantityOnHand(
     consumableId,
     expiresOn,
     lotNumber,
-    inTransitFromSiteId: fromSiteId,
+    inTransitFromSiteId: inventoryStrategy.transferInPendingMode ? fromSiteId : null,
     partnerId,
     resultId,
   })
@@ -872,18 +872,17 @@ async function inventoryTransferByRegion({
 }
 
 async function consumeInventoryForResult({
+  knex, // <--- means we are inside transaction and should use this `knex`
   resultId,
   assayId,
   siteId,
-  consumablesInResultData,
+  lotNumber,
+  expirationDate: expiresOn,
   partnerId,
   testStartedOn,
   testEndedOn,
-  knex, // <--- means we are inside transaction and should use this `knex`
   messageContext,
   userId,
-  expirationDate,
-  inventoryLotNumber,
 }) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategy({ partnerId })
@@ -930,18 +929,6 @@ async function consumeInventoryForResult({
        *    The result is being processed for the first time (not in missing inventory lots and no prior logs).
        */
       if (isUnreconciledResult || resultCountInDeviceLog === 0) {
-        let expiresOn = expirationDate
-        let lotNumber = inventoryLotNumber
-        if (!lotNumber || !expiresOn) {
-          if (partnerInventoryStrategy === INVENTORY_STRATEGY.EXPIRATION_DATE) {
-            expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-          } else if (partnerInventoryStrategy === INVENTORY_STRATEGY.LOT_NUMBER) {
-            lotNumber = _.get(consumablesInResultData, '[0].lot')
-          } else {
-            expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-            lotNumber = _.get(consumablesInResultData, '[0].lot')
-          }
-        }
         const inventoryItem = await findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, partnerId })
         const site = await getSite(siteId, dataConstraints)
         if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
