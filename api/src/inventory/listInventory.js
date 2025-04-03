@@ -1,7 +1,7 @@
 const { getConstraints } = require('../auth/constraints')
 const {
   appendSiteConsumables,
-  getGeneXpertInventoryBySitesAndConsumableQuery,
+  getInventoryBySitesAndConsumableQuery,
   getInventoryLots,
   getConsumableStrategy,
 } = require('./common/db')
@@ -60,7 +60,7 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const { query } = request
   const range = DAYS_STOCK_LEFT_RANGES[query.daysStockLeft] || null
 
-  const inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, '*', true)
+  const inventoryQuery = getInventoryBySitesAndConsumableQuery(request, dataConstraints, range, '*', true)
 
   const getCount = inventoryQuery.clone().count('id as count').first()
   const getItems = inventoryQuery.clone().modify(sortPageParams, request.query, 'siteName')

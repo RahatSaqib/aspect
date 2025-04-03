@@ -368,7 +368,7 @@ function getInventoryLots(request, dataConstraints, consumableStrategy) {
 }
 
 // ----------------------------------------------------------------------------------
-function getGeneXpertInventoryBySitesAndConsumableQuery(
+function getInventoryBySitesAndConsumableQuery(
   request,
   dataConstraints,
   range,
@@ -903,7 +903,7 @@ module.exports = {
   getInventorySitesQuery,
   getInventoryLog,
   getInventoryLots,
-  getGeneXpertInventoryBySitesAndConsumableQuery,
+  getInventoryBySitesAndConsumableQuery,
   getUnreconciledQuantitiesSubquery,
   logInventoryChange,
   getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
