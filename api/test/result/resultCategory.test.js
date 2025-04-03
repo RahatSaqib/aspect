@@ -44,7 +44,10 @@ describe('Extracting data from Result Text and categorize them', async () => {
 
     it(`should obtain  ${key} proper result categories base on it result text property`, async () => {
       getPayloadsCollection(assayTypeResults).forEach(result => {
-        const payloadCategory = getResultCategories(_.assign({}, result.payload.result))
+        const payload = _.assign({}, result.payload.result)
+        const assayExternalId = _.get(payload, 'assay.id')
+        const resultText = _.get(payload, 'data.resultText')
+        const payloadCategory = getResultCategories(assayExternalId, resultText)
         const expected = {
           resultCategory1Id: result.expectedCategory1,
           resultCategory2Id: result.expectedCategory2,

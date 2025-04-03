@@ -96,7 +96,8 @@ async function preProcessMergeResult(context) {
   _.set(payload, 'assay.id', mappedAssayExternalId)
 
   if (!_.isEmpty(payload.data)) {
-    payload.category = getResultCategories(payload)
+    const resultText = _.get(payload, 'data.resultText')
+    payload.category = getResultCategories(mappedAssayExternalId, resultText)
   } else {
     payload.data = {}
   }
@@ -642,22 +643,17 @@ async function assignGxUnknownAssayIfNotExists(knex, payload) {
   }
 }
 
-function getResultCategories(payload) {
-  const payloadCategories = _.get(payload, 'category')
-  if (!_.isEmpty(payloadCategories)) return payloadCategories
-
+function getResultCategories(assayExternalId, resultText) {
   const categories = []
-  const assayId = _.get(payload, 'assay.id')
-  const text = _.get(payload, 'data.resultText')
 
-  if (text) {
-    const parts = splitResultTextValues(text)
+  if (resultText) {
+    const parts = splitResultTextValues(resultText)
 
     if (parts.length === 0) return categories
 
     let status = sanitizeResultTextValue(parts[0])
 
-    if (assayId === 'GxHiv1Vl') {
+    if (assayExternalId === 'GxHiv1Vl') {
       const hivCategory = getResultCategoriesHivVL(status)
       if (hivCategory) categories.push({ id: hivCategory })
     }
@@ -667,14 +663,14 @@ function getResultCategories(payload) {
       if (category1) categories.push({ id: category1 })
     }
 
-    const category2 = mapResultCategory2(assayId, parts)
+    const category2 = mapResultCategory2(assayExternalId, parts)
     if (category2) categories.push({ id: category2 })
 
     // fallback logic
     if (categories.length === 0) {
-      if (assayId === 'GxHcv') {
+      if (assayExternalId === 'GxHcv') {
         const regexp = /^([\w\s]+)\s*\d/g
-        const matches = regexp.exec(text)
+        const matches = regexp.exec(resultText)
         if (matches && matches.length > 1) {
           const rawStatus = matches[1]
           status = sanitizeResultTextValue(rawStatus)
@@ -683,7 +679,7 @@ function getResultCategories(payload) {
         }
       }
     }
-  } else if (assayId === 'GxHiv1Vl') categories.push({ id: 'NoResult' })
+  } else if (assayExternalId === 'GxHiv1Vl') categories.push({ id: 'NoResult' })
 
   return categories
 }
