@@ -14,8 +14,14 @@ function modifyConsumableMatching(knexQuery, { expiresOn = null }, inventoryItem
 const isValidLotIdentifier = ({ expiresOn }) =>
   expiresOn instanceof Date || (typeof expiresOn === 'string' && isValid(parseISO(expiresOn)))
 
+const getInventoryFields = fields => {
+  const { expiresOnField } = fields
+  return [expiresOnField]
+}
+
 module.exports = {
   name,
   modifyConsumableMatching,
   isValidLotIdentifier,
+  getInventoryFields,
 }

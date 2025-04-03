@@ -3,6 +3,7 @@ const {
   appendSiteConsumables,
   getGeneXpertInventoryBySitesAndConsumableQuery,
   getInventoryLots,
+  getConsumableStrategy,
 } = require('./common/db')
 const { knex, sortPageParams } = require('../db')
 
@@ -41,7 +42,9 @@ async function listInventoryByLot(request, dataConstraints) {
     requestQuery.sortCol = sortCols.join(',')
   }
 
-  const inventoryQuery = getInventoryLots(request, dataConstraints)
+  const partnerId = dataConstraints.partner.id
+  const consumableStrategy = await getConsumableStrategy(partnerId)
+  const inventoryQuery = getInventoryLots(request, dataConstraints, consumableStrategy)
 
   const getCount = knex.from(inventoryQuery.clone().as('q')).count({ count: 'q.id' }).first()
   const getItems = inventoryQuery

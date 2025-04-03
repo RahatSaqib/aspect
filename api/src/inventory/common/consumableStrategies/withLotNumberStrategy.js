@@ -14,8 +14,14 @@ function modifyConsumableMatching(knexQuery, { lotNumber }, inventoryItemAlias =
 
 const isValidLotIdentifier = ({ lotNumber }) => typeof lotNumber === 'number' || typeof lotNumber === 'string'
 
+const getInventoryFields = fields => {
+  const { lotNumberField } = fields
+  return [lotNumberField]
+}
+
 module.exports = {
   name,
   modifyConsumableMatching,
   isValidLotIdentifier,
+  getInventoryFields,
 }
