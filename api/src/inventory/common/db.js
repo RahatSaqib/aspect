@@ -300,7 +300,7 @@ async function getInventoryTransferForExport(query, dataConstraints, offset) {
 }
 
 // ----------------------------------------------------------------------------------
-function getInventoryLots(request, dataConstraints, consumableStrategy) {
+function getInventoryByLotQuery(request, dataConstraints, consumableStrategy) {
   const inventoryItemsQuery = query('Search Inventory Lots')
     .from('Site as s')
     .innerJoin('Consumable as c')
@@ -902,7 +902,7 @@ module.exports = {
   getInventoryItems,
   getInventorySitesQuery,
   getInventoryLog,
-  getInventoryLots,
+  getInventoryByLotQuery,
   getInventoryBySitesAndConsumableQuery,
   getUnreconciledQuantitiesSubquery,
   logInventoryChange,
