@@ -36,7 +36,7 @@ import {
   types,
 } from '../../../store/InventoryRedux'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import PakistanInventoryAdjustmentDialog from '../adjustment/InventoryAdjustmentDialog'
+import InventoryAdjustmentDialog from '../adjustment/InventoryAdjustmentDialog'
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
 import styles from './InventoryItemsList.module.css'
 import getExportableFile from './InventoryItemsQueries'
@@ -297,7 +297,7 @@ export default function InventoryItemsList() {
         </Stack>
 
         {inventoryAdjustment.get('actionType') ? (
-          <PakistanInventoryAdjustmentDialog
+          <InventoryAdjustmentDialog
             actionType={inventoryAdjustment.get('actionType')}
             inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], undefined)}
             onCancel={() => dispatch(hideAdjustInventoryDialog())}
