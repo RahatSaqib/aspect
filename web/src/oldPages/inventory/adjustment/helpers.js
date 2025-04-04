@@ -25,23 +25,6 @@ export function transformValues(values) {
   )
 }
 
-/**
- * helper funcs
- * Check if partner has defined this strategy, then see in consumable
- */
-export const withExpirationDate = (partner, consumable) => {
-  return (
-    strategyRequireExpirationDate(partner?.inventoryStrategy) ||
-    (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
-  )
-}
-export const withLotNumber = (partner, consumable) => {
-  return (
-    strategyRequireLot(partner?.inventoryStrategy) ||
-    (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))
-  )
-}
-
 export function getValidations(format, actionType, { partner, inventory }) {
   const uiAdd = actionType === types.SHOW_NEW_INVENTORY_DIALOG
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
@@ -92,13 +75,13 @@ export function getValidations(format, actionType, { partner, inventory }) {
       expiresOn: date()
         .nullable()
         .when(['consumable'], {
-          is: () => withExpirationDate(partner) && !skipValidation,
+          is: () => strategyRequireExpirationDate(partner?.inventoryStrategy) && !skipValidation,
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         }),
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => withLotNumber(partner, undefined) && !skipValidation,
+          is: () => strategyRequireLot(partner?.inventoryStrategy) && !skipValidation,
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })

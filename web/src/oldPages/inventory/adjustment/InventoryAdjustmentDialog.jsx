@@ -17,8 +17,8 @@ import {
   getValidations,
   transformInitialValue,
   transformValues,
-  withExpirationDate,
-  withLotNumber,
+  strategyRequireExpirationDate,
+  strategyRequireLot,
 } from './helpers'
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages, { validationMessages } from './messages'
@@ -225,8 +225,8 @@ function InventoryAdjustmentDialog(props) {
                     <InventoryItemSelect
                       name="inventoryItem"
                       inventoryItem={inventory}
-                      showExpirationDate={withExpirationDate(partner)}
-                      showLotNumber={withLotNumber(partner)}
+                      showExpirationDate={strategyRequireExpirationDate(partner?.inventoryStrategy)}
+                      showLotNumber={strategyRequireLot(partner?.inventoryStrategy)}
                       onChange={(value, options) => {
                         const inventoryItem = options.find(o => o.id === value)
                         setFieldValue('expiresOn', inventoryItem?.expiresOn)
@@ -240,7 +240,7 @@ function InventoryAdjustmentDialog(props) {
                   <>
                     <FormGroup
                       labelProps={{
-                        required: withExpirationDate(partner), // NOTE: `undefined` is passed as `partner` argument explicitly to avoid using inventory strategy from consumables
+                        required: strategyRequireExpirationDate(partner?.inventoryStrategy), // NOTE: `undefined` is passed as `partner` argument explicitly to avoid using inventory strategy from consumables
                       }}
                       label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
                       error={!!errors.expiresOn}
@@ -260,7 +260,7 @@ function InventoryAdjustmentDialog(props) {
                     </FormGroup>
 
                     <TextField
-                      required={withLotNumber(partner, undefined)}
+                      required={strategyRequireLot(partner?.inventoryStrategy)}
                       fullWidth
                       type="text"
                       name="lotNumber"
