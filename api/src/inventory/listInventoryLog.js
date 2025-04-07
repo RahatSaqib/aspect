@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
-const { getDateTimeProjectionInTimeZoneIANA } = require(`../shared/date`)
+const { getDateTimeProjectionInTimeZoneIANA, getDateTimeExpressionInTimeZone } = require(`../shared/date`)
 const { getConstraints } = require('../auth/constraints')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../db')
 const { getInventoryLogBaseQuery } = require('./common/db')
@@ -51,71 +51,92 @@ async function getInventoryLog(requestQuery, dataConstraints, querySelector, tim
         queryBuilder.whereIn('s.id', requestQuery.siteIds.split(','))
       }
     })
-  const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
 
-  const data = await inventoryLogQuery
-    .groupBy(
-      // knex.raw(`date(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)})`),
-      'c.name',
-      'ca.assayId',
-      'c.i18nKey',
-      'il.lotNumber',
-      'il.expiresOn',
-      's.name',
-      'cr.name',
-      'refSite.name',
-      'cr.i18nKey',
-      'cr.externalId',
-      'il.adjustedFrom',
-      'r.endedOn'
-    )
-    .select(querySelector)
-    .modify(sortPageParams, requestQuery, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
+  const ilogQuery = knex
+    .from(inventoryLogQuery.select(querySelector).as('ilog'))
+    .select([
+      'createdOn',
+      'consumableName',
+      'assayId',
+      'consumableNameI18nKey',
+      'lotNumber',
+      'expirationDate',
+      'siteName',
+      knex.raw('sum(CASE WHEN IFNULL(ilog.decrease, 0) = 1 THEN -ilog.quantity ELSE ilog.quantity END) as quantity'),
+      'movementReason',
+      knex.raw('first_value(ilog.notes) over (partition by ilog.id order by ilog.createdOn) as notes'),
+      'consumableReason',
+      'refSiteName',
+      'movementReason',
+      'consumableReasonI18nKey',
+      'consumableReasonExternalId',
+      'transactionDate',
+      knex.raw('max(resultEndedOn) as resultEndedOn')
+    ])
+    .groupBy([
+      'createdOn',
+      'consumableName',
+      'assayId',
+      'consumableNameI18nKey',
+      'lotNumber',
+      'expirationDate',
+      'siteName',
+      'movementReason',
+      'consumableReason',
+      'refSiteName',
+      'movementReason',
+      'consumableReasonI18nKey',
+      'consumableReasonExternalId',
+      'transactionDate',
+    ])
+
+  const { total } = await ilogQuery.clone().count('* as total').first()
+
+  ilogQuery.modify(sortPageParams, requestQuery, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
+
+  const data = await ilogQuery
   return { data, total }
 }
 
 function getInventoryLogListProjection(knex, timeZoneIANA) {
   return {
-    createdOn: knex.raw(`date(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)})`),
+    id: 'il.id',
+    createdOn: knex.raw(`${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)}`),
     consumableName: 'c.name',
     assayId: 'ca.assayId',
     consumableNameI18nKey: 'c.i18nKey',
     lotNumber: 'il.lotNumber',
     expirationDate: 'il.expiresOn',
+    decrease: 'cr.decrease',
     siteName: 's.name',
-    quantity: knex.raw('CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE sum(il.quantity) END'),
     consumableReason: 'cr.name',
     refSiteName: 'refSite.name',
+    quantity: 'il.quantity',
     movementReason: knex.raw(`
       CASE
         WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
         WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
         ELSE cr.name
       END`),
-    notes: knex.raw('FIRST_VALUE(il.notes) OVER (PARTITION BY il.id ORDER BY il.createdOn)'),
+    notes: 'il.notes',
     consumableReasonI18nKey: 'cr.i18nKey',
     consumableReasonExternalId: 'cr.externalId',
-    transactionDate: 'il.adjustedFrom',
+    transactionDate: getDateTimeExpressionInTimeZone(knex, 'il.adjustedFrom', timeZoneIANA),
     resultEndedOn: 'r.endedOn',
   }
 }
 
-const INVENTORY_LOG_SORT_FIELDS = {
-  consumableName: 'c.name',
-  siteName: 's.name',
-  countryName: 'co.name',
-  stateName: 'st.name',
-  lgaName: 'l.name',
-  quantityOnHand: 'il.quantity',
-  expiresOn: 'il.expiresOn',
-  lotNumber: 'il.lotNumber',
-  movementReason: knex.raw(`
-  CASE
-    WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
-    WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
-    ELSE cr.name
-  END`),
-  transactionDate: 'il.adjustedFrom',
-}
+const INVENTORY_LOG_SORT_FIELDS = [
+  'consumableName',
+  'siteName',
+  'countryName',
+  'stateName',
+  'lgaName',
+  'quantityOnHand',
+  'expiresOn',
+  'lotNumber',
+  'movementReason',
+  'transactionDate'
+]
 
 module.exports = listInventoryLog
