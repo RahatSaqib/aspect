@@ -385,3 +385,436 @@ describe('GET: /api/inventory', () => {
     assert.equal(response.body.data[1].lotNumber, 'LOT002')
   })
 })
+
+describe('POST: /api/inventory/auto-reconcile', () => {
+  const endpoint = '/api/inventory/auto-reconcile'
+  let testData
+  const testContext = createGxConnectTestContext(server, {
+    countryCode: 'US',
+    adminUsername: 'admin',
+    adminPassword: 'test07',
+    deviceName: 'New GeneXpert Laboratory',
+    macAddress: 'MAC00000000FAKE',
+    deviceSerialNumber: 'Cepheid-PC-BLH',
+  })
+
+  beforeEach(async () => {
+    await testContext.registerAndSetDevice()
+
+    const {
+      device: { partnerId, siteId, id: deviceId },
+    } = testContext
+
+    const { assayId, consumableId } = await knex('ConsumableAssay').where({}).first()
+
+    const site = await knex('Site')
+      .where({
+        id: siteId,
+      })
+      .first()
+
+    const [nationalWarehouseId] = await knex('Site').insert({
+      name: 'National Warehouse',
+      siteTypeId: (await knex('SiteType').where('externalId', 'warehouse').select('id').first()).id,
+      geographyId: site.geographyId,
+      partnerId,
+      externalId: 'national-warehouse-external-id',
+      institutionGuid: site.institutionGuid,
+      guid: site.guid,
+    })
+
+    const [stockProviderSiteId] = await knex('Site').insert({
+      name: 'Stock Provider',
+      siteTypeId: (await knex('SiteType').where('externalId', 'clinic').select('id').first()).id,
+      geographyId: site.geographyId,
+      partnerId,
+      parentWarehouseId: nationalWarehouseId,
+      externalId: 'stock-provider-external-id',
+      institutionGuid: site.institutionGuid,
+      guid: site.guid,
+    })
+
+    await knex('Site').where('id', siteId).update({
+      parentWarehouseId: stockProviderSiteId,
+    })
+    await knex('SiteConsumable').insert([
+      {
+        siteId,
+        consumableId,
+      },
+      {
+        siteId: stockProviderSiteId,
+        consumableId,
+      },
+      {
+        siteId: nationalWarehouseId,
+        consumableId,
+      },
+    ])
+
+    // Create inventory items
+    await knex('InventoryItem').insert([
+      {
+        siteId,
+        consumableId,
+        lotNumber: 'LOT001',
+        expiresOn: '2024-12-31',
+        quantityOnHand: 100,
+      },
+      {
+        siteId,
+        consumableId,
+        lotNumber: 'LOT002',
+        expiresOn: '2024-12-31',
+        quantityOnHand: 50,
+      },
+    ])
+
+    const [inventoryItem1, inventoryItem2] = await knex('InventoryItem').where({ siteId, consumableId })
+
+    // Create results with missing inventory lots
+    const [resultId1] = await knex('Result').insert({
+      resultSourceId: 1,
+      resultTypeId: 1,
+      partnerId,
+      assayId,
+      deviceId,
+      sampleId: 1,
+      reportableSiteId: 1,
+      siteId,
+      consumableLot: inventoryItem1.lotNumber,
+      consumableExpirationDate: inventoryItem1.expiresOn,
+      endedOn: new Date(),
+    })
+
+    const [missingInventoryLotId] = await knex('MissingInventoryLots').insert([
+      {
+        siteId,
+        resultId: resultId1,
+        lotNumber: inventoryItem1.lotNumber,
+        expirationDate: inventoryItem1.expiresOn,
+        createdOn: new Date(),
+      },
+    ])
+
+    testData = {
+      partnerId,
+      siteId,
+      consumableId,
+      assayId,
+      resultId1,
+      inventoryItemIds: [inventoryItem1, inventoryItem2].map(item => item.id),
+      missingInventoryLotId,
+      nationalWarehouseId,
+      stockProviderSiteId,
+    }
+
+    await knex('Partner').where('id', partnerId).update({
+      inventoryStrategy: 'withLotAndExpirationDateStrategy',
+    })
+  })
+
+  afterEach(async () => {
+    // Clean up test data
+    await knex('MissingInventoryLots').where('siteId', testData.siteId).delete()
+
+    // Delete InventoryTransfer records that reference InventoryLog through incomeInventoryLogId
+    await knex('InventoryTransfer')
+      .whereIn('incomeInventoryLogId', function () {
+        this.select('id')
+          .from('InventoryLog')
+          .whereIn('siteId', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
+      })
+      .delete()
+
+    // Delete InventoryTransfer records that reference tempInventoryItemId
+    await knex('InventoryTransfer').whereIn('tempInventoryItemId', testData.inventoryItemIds).delete()
+
+    await knex('InventoryLog')
+      .whereIn('siteId', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
+      .delete()
+    await knex('Result').where('siteId', testData.siteId).delete()
+    await knex('InventoryItem')
+      .whereIn('siteId', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
+      .delete()
+    await knex('SiteConsumable').where({ consumableId: testData.consumableId }).delete()
+    await testContext.cleanUp()
+  })
+
+  describe('Inventory Adjustment = Current Site Adjustment', () => {
+    it('should use inventory at current site when inventory adjustment is current site adjustment', async () => {
+      await knex('Partner').where('id', testData.partnerId).update({
+        inventoryAdjustment: 'currentSiteAdjustment',
+      })
+      const missingLotsBeforeReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      const inventoryItemBeforeReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+
+      const response = await server.post(endpoint).set('Authorization', `Bearer ${sharedToken.token}`).send({})
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.ok, true)
+
+      // Verify that the missing inventory lots were reconciled
+      assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
+      const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      assert.equal(missingLotsAfterReconcile.length, 0, 'All missing inventory lots should be reconciled')
+
+      // Verify that the inventory item quantity on hand was updated
+      assert.equal(
+        inventoryItemBeforeReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand before reconcile'
+      )
+      const inventoryItemAfterReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+      assert.equal(
+        inventoryItemAfterReconcile.quantityOnHand,
+        99,
+        'Inventory item should have 99 quantity on hand after reconcile'
+      )
+    })
+
+    it('should not reconcile inventory when inventory adjustment is current site adjustment and there is no inventory at current site', async () => {
+      await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).update({
+        siteId: testData.stockProviderSiteId,
+      })
+      await knex('Partner').where('id', testData.partnerId).update({
+        inventoryAdjustment: 'currentSiteAdjustment',
+      })
+      const missingLotsBeforeReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      const inventoryItemBeforeReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+
+      const response = await server.post(endpoint).set('Authorization', `Bearer ${sharedToken.token}`).send({})
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.ok, true)
+
+      // Verify that the missing inventory lots were reconciled
+      assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
+      const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      assert.equal(missingLotsAfterReconcile.length, 1, 'No missing inventory lots should be reconciled')
+
+      // Verify that the inventory item quantity on hand was updated
+      assert.equal(
+        inventoryItemBeforeReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand before reconcile'
+      )
+      const inventoryItemAfterReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+      assert.equal(
+        inventoryItemAfterReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand after reconcile'
+      )
+    })
+  })
+
+  describe('Inventory Adjustment = Stock Provider Site Adjustment', () => {
+    it('should use inventory at current provider site when inventory adjustment set is current site and stock provider adjustment', async () => {
+      await knex('Partner').where('id', testData.partnerId).update({
+        inventoryAdjustment: 'currentSiteAndProviderAdjustment',
+      })
+
+      const inventoryItemBeforeReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+
+      const missingLotsBeforeReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+
+      const response = await server.post(endpoint).set('Authorization', `Bearer ${sharedToken.token}`).send({})
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.ok, true)
+
+      assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
+      // Verify that the missing inventory lots were reconciled
+      const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      assert.equal(missingLotsAfterReconcile.length, 0, 'All missing inventory lots should be reconciled')
+
+      // Verify that the inventory item quantity on hand was updated
+      assert.equal(
+        inventoryItemBeforeReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand before reconcile'
+      )
+      const inventoryItemAfterReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+      assert.equal(
+        inventoryItemAfterReconcile.quantityOnHand,
+        99,
+        'Inventory item should have 99 quantity on hand after reconcile'
+      )
+    })
+
+    it('should use inventory at stock provider site when inventory adjustment set is current site and stock provider adjustment', async () => {
+      await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).update({
+        siteId: testData.stockProviderSiteId,
+      })
+      await knex('Partner').where('id', testData.partnerId).update({
+        inventoryAdjustment: 'currentSiteAndProviderAdjustment',
+      })
+
+      const inventoryItemBeforeReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+
+      const missingLotsBeforeReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+
+      const response = await server.post(endpoint).set('Authorization', `Bearer ${sharedToken.token}`).send({})
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.ok, true)
+
+      assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
+      // Verify that the missing inventory lots were reconciled
+      const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      assert.equal(missingLotsAfterReconcile.length, 0, 'All missing inventory lots should be reconciled')
+
+      // Verify that the inventory item quantity on hand was updated
+      assert.equal(
+        inventoryItemBeforeReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand before reconcile'
+      )
+      const inventoryItemAfterReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+      assert.equal(
+        inventoryItemAfterReconcile.quantityOnHand,
+        99,
+        'Inventory item should have 99 quantity on hand after reconcile'
+      )
+    })
+
+    it('should not reconcile inventory when inventory adjustment set is current site and stock provider adjustment and there is no inventory at stock provider site, but exists at national warehouse', async () => {
+      await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).update({
+        siteId: testData.nationalWarehouseId,
+      })
+      await knex('Partner').where('id', testData.partnerId).update({
+        inventoryAdjustment: 'currentSiteAndProviderAdjustment',
+      })
+
+      const inventoryItemBeforeReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+
+      const missingLotsBeforeReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+
+      const response = await server.post(endpoint).set('Authorization', `Bearer ${sharedToken.token}`).send({})
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.ok, true)
+
+      assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
+      const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      assert.equal(missingLotsAfterReconcile.length, 1, 'No missing inventory lots should be reconciled')
+
+      const inventoryItemAfterReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+      assert.equal(
+        inventoryItemBeforeReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand before reconcile'
+      )
+      assert.equal(
+        inventoryItemAfterReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand after reconcile'
+      )
+    })
+  })
+
+  describe('Inventory Adjustment = National Level Adjustment', () => {
+    it('should use inventory at current provider site when inventory adjustment set is current site, stock provider and national level adjustment', async () => {
+      await knex('Partner').where('id', testData.partnerId).update({
+        inventoryAdjustment: 'currentSiteAndProviderAndNationalAdjustment',
+      })
+
+      const inventoryItemBeforeReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+
+      const missingLotsBeforeReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+
+      const response = await server.post(endpoint).set('Authorization', `Bearer ${sharedToken.token}`).send({})
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.ok, true)
+
+      assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
+      // Verify that the missing inventory lots were reconciled
+      const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      assert.equal(missingLotsAfterReconcile.length, 0, 'All missing inventory lots should be reconciled')
+
+      // Verify that the inventory item quantity on hand was updated
+      assert.equal(
+        inventoryItemBeforeReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand before reconcile'
+      )
+      const inventoryItemAfterReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+      assert.equal(
+        inventoryItemAfterReconcile.quantityOnHand,
+        99,
+        'Inventory item should have 99 quantity on hand after reconcile'
+      )
+    })
+
+    it('should use inventory at stock provider site when inventory adjustment set is current site, stock provider and national level adjustment', async () => {
+      await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).update({
+        siteId: testData.stockProviderSiteId,
+      })
+      await knex('Partner').where('id', testData.partnerId).update({
+        inventoryAdjustment: 'currentSiteAndProviderAndNationalAdjustment',
+      })
+
+      const inventoryItemBeforeReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+
+      const missingLotsBeforeReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+
+      const response = await server.post(endpoint).set('Authorization', `Bearer ${sharedToken.token}`).send({})
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.ok, true)
+
+      assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
+      const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      assert.equal(missingLotsAfterReconcile.length, 0, 'All missing inventory lots should be reconciled')
+
+      // Verify that the inventory item quantity on hand was updated
+      assert.equal(
+        inventoryItemBeforeReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand before reconcile'
+      )
+      const inventoryItemAfterReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+      assert.equal(
+        inventoryItemAfterReconcile.quantityOnHand,
+        99,
+        'Inventory item should have 99 quantity on hand after reconcile'
+      )
+    })
+
+    it('should use inventory at national warehouse when inventory adjustment set is current site, stock provider and national level adjustment and there is no inventory at current site or stock provider site', async () => {
+      await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).update({
+        siteId: testData.nationalWarehouseId,
+      })
+      await knex('Partner').where('id', testData.partnerId).update({
+        inventoryAdjustment: 'currentSiteAndProviderAndNationalAdjustment',
+      })
+
+      const inventoryItemBeforeReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+
+      const missingLotsBeforeReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+
+      const response = await server.post(endpoint).set('Authorization', `Bearer ${sharedToken.token}`).send({})
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.ok, true)
+
+      assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
+      const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
+      assert.equal(missingLotsAfterReconcile.length, 0, 'All missing inventory lots should be reconciled')
+
+      // Verify that the inventory item quantity on hand was updated
+      assert.equal(
+        inventoryItemBeforeReconcile.quantityOnHand,
+        100,
+        'Inventory item should have 100 quantity on hand before reconcile'
+      )
+      const inventoryItemAfterReconcile = await knex('InventoryItem').where('id', testData.inventoryItemIds[0]).first()
+      assert.equal(
+        inventoryItemAfterReconcile.quantityOnHand,
+        99,
+        'Inventory item should have 99 quantity on hand after reconcile'
+      )
+    })
+  })
+})
