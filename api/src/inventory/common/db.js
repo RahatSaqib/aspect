@@ -254,7 +254,7 @@ async function getInventoryTransferForExport(query, dataConstraints, offset) {
 }
 
 // ----------------------------------------------------------------------------------
-function getInventoryLots(request, dataConstraints) {
+function getInventoryByLotQuery(request, dataConstraints, consumableStrategy) {
   const inventoryItemsQuery = query('Search Inventory Lots')
     .from('Site as s')
     .innerJoin('Consumable as c')
@@ -287,22 +287,13 @@ function getInventoryLots(request, dataConstraints) {
         .groupBy('mil.siteId', 'c.id')
         .as('unreconciled'),
       builder => {
-        builder
-          .on('unreconciled.siteId', 's.id')
-          .andOn('unreconciled.consumableId', 'c.id')
-          .andOn(
-            knex.raw(`
-            CASE
-              WHEN p.inventoryStrategy = 'withLotAndExpirationDateStrategy' THEN
-                unreconciled.lotNumber <=> ii.lotNumber AND unreconciled.expiresOn <=> ii.expiresOn
-              WHEN p.inventoryStrategy = 'withExpirationDateStrategy' THEN
-                unreconciled.expiresOn <=> ii.expiresOn
-              WHEN p.inventoryStrategy = 'withLotStrategy' THEN
-                unreconciled.lotNumber <=> ii.lotNumber
-              ELSE NULL
-            END
-          `)
-          )
+        builder.on('unreconciled.siteId', 's.id').andOn('unreconciled.consumableId', 'c.id')
+        consumableStrategy
+          .filterFields({
+            lotNumberField: 'unreconciled.lotNumber <=> ii.lotNumber',
+            expiresOnField: 'unreconciled.expiresOn <=> ii.expiresOn',
+          })
+          .forEach(field => builder.andOn(knex.raw(field)))
       }
     )
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
@@ -316,14 +307,22 @@ function getInventoryLots(request, dataConstraints) {
       }
     })
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
-    .groupBy([knex.raw(CONCATENATED_ID), 's.name', 'ii.expiresOn', 'ii.lotNumber', 'ii.inTransitFromSiteId'])
+    .groupBy([
+      knex.raw(CONCATENATED_ID),
+      's.name',
+      'ii.inTransitFromSiteId',
+      ...consumableStrategy.filterFields({
+        lotNumberField: 'ii.lotNumber',
+        expiresOnField: 'ii.expiresOn',
+      }),
+    ])
     .select(...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
 
   return inventoryItemsQuery
 }
 
 // ----------------------------------------------------------------------------------
-function getGeneXpertInventoryBySitesAndConsumableQuery(
+function getInventoryBySitesAndConsumableQuery(
   request,
   dataConstraints,
   range,
@@ -773,6 +772,9 @@ function baseMissingInventoryLotsQuery() {
 }
 
 async function getReconciliationList(query, dataConstraints) {
+  const partnerId = dataConstraints.partner.id
+  const consumableStrategy = await getConsumableStrategy(partnerId)
+
   const baseQuery = baseMissingInventoryLotsQuery()
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
     .modify(filterDateRangeParams, query, 'm.expirationDate')
@@ -786,7 +788,16 @@ async function getReconciliationList(query, dataConstraints) {
       consumableId: 'ca.consumableId',
       lotNumber: 'm.lotNumber',
     })
-    .groupBy(['s.id', 'c.id', ...(query.breakOutByLot ? ['m.expirationDate', 'm.lotNumber'] : [])])
+    .groupBy([
+      's.id',
+      'c.id',
+      ...(query.breakOutByLot
+        ? consumableStrategy.filterFields({
+            lotNumberField: 'm.lotNumber',
+            expiresOnField: 'm.expirationDate',
+          })
+        : []),
+    ])
     .modify(queryBuilder => {
       if (query.siteIds) {
         queryBuilder.whereIn('s.id', query.siteIds.split(','))
@@ -808,7 +819,12 @@ async function getReconciliationList(query, dataConstraints) {
       'g.lgaId',
       'st.name as stateName',
       'l.name as lgaName',
-      ...(query.breakOutByLot ? ['m.expirationDate as expiresOn', 'm.lotNumber'] : []),
+      ...(query.breakOutByLot
+        ? consumableStrategy.filterFields({
+            lotNumberField: 'm.lotNumber',
+            expiresOnField: 'm.expirationDate as expiresOn',
+          })
+        : []),
     ])
 
   const getCount = knex.from(baseQuery.clone().as('q')).count('* as total').first()
@@ -840,8 +856,8 @@ module.exports = {
   getInventoryItems,
   getInventorySitesQuery,
   getInventoryLogBaseQuery,
-  getInventoryLots,
-  getGeneXpertInventoryBySitesAndConsumableQuery,
+  getInventoryByLotQuery,
+  getInventoryBySitesAndConsumableQuery,
   getUnreconciledQuantitiesSubquery,
   logInventoryChange,
   getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
@@ -852,4 +868,5 @@ module.exports = {
   updateInventoryTransfer,
   getReconciliationList,
   appendSiteConsumables,
+  getConsumableStrategy,
 }

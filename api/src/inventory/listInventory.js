@@ -1,8 +1,9 @@
 const { getConstraints } = require('../auth/constraints')
 const {
   appendSiteConsumables,
-  getGeneXpertInventoryBySitesAndConsumableQuery,
-  getInventoryLots,
+  getInventoryBySitesAndConsumableQuery,
+  getInventoryByLotQuery,
+  getConsumableStrategy,
 } = require('./common/db')
 const { knex, sortPageParams } = require('../db')
 
@@ -41,7 +42,9 @@ async function listInventoryByLot(request, dataConstraints) {
     requestQuery.sortCol = sortCols.join(',')
   }
 
-  const inventoryQuery = getInventoryLots(request, dataConstraints)
+  const partnerId = dataConstraints.partner.id
+  const consumableStrategy = await getConsumableStrategy(partnerId)
+  const inventoryQuery = getInventoryByLotQuery(request, dataConstraints, consumableStrategy)
 
   const getCount = knex.from(inventoryQuery.clone().as('q')).count({ count: 'q.id' }).first()
   const getItems = inventoryQuery
@@ -57,7 +60,7 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const { query } = request
   const range = DAYS_STOCK_LEFT_RANGES[query.daysStockLeft] || null
 
-  const inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, '*', true)
+  const inventoryQuery = getInventoryBySitesAndConsumableQuery(request, dataConstraints, range, '*', true)
 
   const getCount = inventoryQuery.clone().count('id as count').first()
   const getItems = inventoryQuery.clone().modify(sortPageParams, request.query, 'siteName')

@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { knex, sortPageParams, filterDateRangeParams, filterParams } = require('../../db')
-const { getGeneXpertInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
+const { getInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { getBasicsForDevicesReport } = require('../common/db')
@@ -108,7 +108,7 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
 async function getInventoryData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const dataQuery = getGeneXpertInventoryBySitesAndConsumableQuery(
+  const dataQuery = getInventoryBySitesAndConsumableQuery(
     { query: _.omit(query, ['minDate', 'maxDate']), auth },
     dataConstraints,
     null,

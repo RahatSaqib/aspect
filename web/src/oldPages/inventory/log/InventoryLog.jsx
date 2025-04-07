@@ -22,7 +22,7 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { getTimezoneById } from '../../../utils/utils/timezone'
-import { withExpirationDate, withLotNumber } from '../helpers'
+import { strategyRequireExpirationDate, strategyRequireLot } from '../adjustment/helpers'
 import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
 import messages from './messages'
 import styles from './styles.module.css'
@@ -60,6 +60,10 @@ export const InventoryLogWithProps = ({
   disableFilters,
 }) => {
   const user = useAuthState()
+  const { isLoadingPartner, data: partner } = usePartner()
+  const requireExpirationDate = strategyRequireExpirationDate(partner?.inventoryStrategy)
+  const requireLotNumber = strategyRequireLot(partner?.inventoryStrategy)
+
   const columns = [
     {
       key: 'createdOn',
@@ -80,13 +84,13 @@ export const InventoryLogWithProps = ({
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
       sortable: true,
-      isHidden: !showLotNumber,
+      isHidden: !requireLotNumber,
     },
     {
       key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
-      isHidden: !showExpirationDate,
+      isHidden: !requireExpirationDate,
     },
     {
       key: 'quantity',
@@ -118,7 +122,11 @@ export const InventoryLogWithProps = ({
       <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack />
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
-        <InventoryLogFilter disabled={disableFilters} />
+        <InventoryLogFilter
+          disabled={disableFilters}
+          requireLotNumber={requireLotNumber}
+          requireExpirationDate={requireExpirationDate}
+        />
         <Stack sx={{ flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
             <HierarchicalView
@@ -144,7 +152,7 @@ export const InventoryLogWithProps = ({
                 {intl.formatMessage(messages.hierarchicalView)}
               </Typography>
             </Stack>
-            {isLoading ? (
+            {isLoading || isLoadingPartner ? (
               <LinearProgress />
             ) : !hasItems ? (
               <BrowseEmptyList />
@@ -164,8 +172,8 @@ export const InventoryLogWithProps = ({
                         key={`InventoryLog---${location.key}--${index}`}
                         inventoryLogItem={inventoryLogItem}
                         timeZone={validTimeZone}
-                        showExpirationDate={showExpirationDate}
-                        showLotNumber={showLotNumber}
+                        requireExpirationDate={requireExpirationDate}
+                        requireLotNumber={requireLotNumber}
                       />
                     ))}
                   </TableBody>

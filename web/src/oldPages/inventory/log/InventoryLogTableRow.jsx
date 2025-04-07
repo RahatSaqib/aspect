@@ -16,7 +16,7 @@ import messages from './messages'
 
 const TEST_CONDUCTED_EXTERNAL_ID = 'used'
 
-const InventoryLogTableRow = ({ inventoryLogItem, timeZone, showExpirationDate, showLotNumber }) => {
+const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDate, requireLotNumber }) => {
   const { formatMessage } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
@@ -35,12 +35,13 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, showExpirationDate, 
           : inventoryLogItem.consumableName}
       </TableCell>
 
-      {showLotNumber && inventoryLogItem.lotNumber !== undefined ? (
+      {requireLotNumber ? (
         <TableCell className={styles.TableCell}>
           {inventoryLogItem.lotNumber ? inventoryLogItem.lotNumber : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
-      {showExpirationDate && (
+
+      {requireExpirationDate ? (
         <TableCell className={styles.TableCell}>
           <span
             className={
@@ -54,7 +55,8 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, showExpirationDate, 
               : formatMessage(messages.notAvailable)}
           </span>
         </TableCell>
-      )}
+      ) : null}
+
       <TableCell
         className={styles.TableCell}
         onClick={() => {

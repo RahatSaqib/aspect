@@ -18,6 +18,7 @@ import AspectExportListButton from '../../../components/AspectExportListButton/i
 import PermissionChecker from '../../../components/PermissionChecker'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
 import useInventoryList from '../../../hooks/inventory/useInventoryList'
+import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -36,7 +37,8 @@ import {
   types,
 } from '../../../store/InventoryRedux'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import PakistanInventoryAdjustmentDialog from '../adjustment/InventoryAdjustmentDialog'
+import { strategyRequireExpirationDate, strategyRequireLot } from '../adjustment/helpers'
+import InventoryAdjustmentDialog from '../adjustment/InventoryAdjustmentDialog'
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
 import styles from './InventoryItemsList.module.css'
 import getExportableFile from './InventoryItemsQueries'
@@ -79,9 +81,19 @@ export default function InventoryItemsList() {
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LIST,
   })
   const enableInventoryOnHandField = filter.breakOutByLot && inventoryOnField
+  const { isLoadingPartner, data: partner } = usePartner()
+  const requireExpirationDate = strategyRequireExpirationDate(partner?.inventoryStrategy)
+  const requireLotNumber = strategyRequireLot(partner?.inventoryStrategy)
+
   const columns = useMemo(
-    () => getColumns(intl, { breakOutByLot: filter.breakOutByLot, enableInventoryOnHandField }),
-    [enableInventoryOnHandField, filter.breakOutByLot, intl]
+    () =>
+      getColumns(intl, {
+        breakOutByLot: filter.breakOutByLot,
+        enableInventoryOnHandField,
+        requireExpirationDate,
+        requireLotNumber,
+      }),
+    [enableInventoryOnHandField, filter.breakOutByLot, requireExpirationDate, requireLotNumber, intl]
   )
   const location = useLocation()
   const navigate = useNavigate()
@@ -196,7 +208,12 @@ export default function InventoryItemsList() {
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-        <InventoryItemsFilter disabled={disableFilters} />
+        <InventoryItemsFilter
+          disabled={disableFilters}
+          breakOutByLot={filter.breakOutByLot}
+          requireExpirationDate={requireExpirationDate}
+          requireLotNumber={requireLotNumber}
+        />
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
           {isHierarchicalView && (
             <HierarchicalView
@@ -252,7 +269,7 @@ export default function InventoryItemsList() {
                 <AspectExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
               </Stack>
             </Stack>
-            {isLoadingData || isExporting ? (
+            {isLoadingData || isLoadingPartner || isExporting ? (
               <LinearProgress />
             ) : items.currentIdList.length === 0 ? (
               <BrowseEmptyList />
@@ -274,6 +291,8 @@ export default function InventoryItemsList() {
                           key={inventoryItem.get('id')}
                           inventoryItem={inventoryItem}
                           breakOutByLot={filter.breakOutByLot}
+                          requireExpirationDate={requireExpirationDate}
+                          requireLotNumber={requireLotNumber}
                           inventoryOnHand={enableInventoryOnHandField}
                           refetch={onSuccess}
                           navigate={navigate}
@@ -297,11 +316,14 @@ export default function InventoryItemsList() {
         </Stack>
 
         {inventoryAdjustment.get('actionType') ? (
-          <PakistanInventoryAdjustmentDialog
+          <InventoryAdjustmentDialog
             actionType={inventoryAdjustment.get('actionType')}
             inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], undefined)}
             onCancel={() => dispatch(hideAdjustInventoryDialog())}
             onSubmit={handleSubmit}
+            breakOutByLot={filter.breakOutByLot}
+            requireExpirationDate={requireExpirationDate}
+            requireLotNumber={requireLotNumber}
           />
         ) : null}
       </div>
