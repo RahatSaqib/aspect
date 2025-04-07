@@ -335,7 +335,7 @@ function getInventoryByLotQuery(request, dataConstraints, consumableStrategy) {
       builder => {
         builder.on('unreconciled.siteId', 's.id').andOn('unreconciled.consumableId', 'c.id')
         consumableStrategy
-          .getInventoryFields({
+          .filterFields({
             lotNumberField: 'unreconciled.lotNumber <=> ii.lotNumber',
             expiresOnField: 'unreconciled.expiresOn <=> ii.expiresOn',
           })
@@ -357,7 +357,7 @@ function getInventoryByLotQuery(request, dataConstraints, consumableStrategy) {
       knex.raw(CONCATENATED_ID),
       's.name',
       'ii.inTransitFromSiteId',
-      ...consumableStrategy.getInventoryFields({
+      ...consumableStrategy.filterFields({
         lotNumberField: 'ii.lotNumber',
         expiresOnField: 'ii.expiresOn',
       }),
@@ -838,7 +838,7 @@ async function getReconciliationList(query, dataConstraints) {
       's.id',
       'c.id',
       ...(query.breakOutByLot
-        ? consumableStrategy.getInventoryFields({
+        ? consumableStrategy.filterFields({
             lotNumberField: 'm.lotNumber',
             expiresOnField: 'm.expirationDate',
           })
@@ -866,7 +866,7 @@ async function getReconciliationList(query, dataConstraints) {
       'st.name as stateName',
       'l.name as lgaName',
       ...(query.breakOutByLot
-        ? consumableStrategy.getInventoryFields({
+        ? consumableStrategy.filterFields({
             lotNumberField: 'm.lotNumber',
             expiresOnField: 'm.expirationDate as expiresOn',
           })
