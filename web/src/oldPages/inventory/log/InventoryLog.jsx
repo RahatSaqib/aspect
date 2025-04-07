@@ -1,6 +1,6 @@
+import React from 'react'
 import { LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
-import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -14,6 +14,7 @@ import {
 } from '../../../cleanComponents/HierarchicalSiteView'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_KEY, INVENTORY_KEY_TYPE_LOG_ENDPOINT } from '../../../hooks/inventory/inventoryKeys'
+import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -21,6 +22,7 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { getTimezoneById } from '../../../utils/utils/timezone'
+import { withExpirationDate, withLotNumber } from '../helpers'
 import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
 import messages from './messages'
 import styles from './styles.module.css'
@@ -48,6 +50,8 @@ export const InventoryLogWithProps = ({
   pageAt,
   pageSize,
   filters,
+  showExpirationDate,
+  showLotNumber,
   isHierarchicalView,
   setIsHierarchicalView,
   isWarehouseView,
@@ -76,11 +80,13 @@ export const InventoryLogWithProps = ({
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
       sortable: true,
+      isHidden: !showLotNumber,
     },
     {
       key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
+      isHidden: !showExpirationDate,
     },
     {
       key: 'quantity',
@@ -158,6 +164,8 @@ export const InventoryLogWithProps = ({
                         key={`InventoryLog---${location.key}--${index}`}
                         inventoryLogItem={inventoryLogItem}
                         timeZone={validTimeZone}
+                        showExpirationDate={showExpirationDate}
+                        showLotNumber={showLotNumber}
                       />
                     ))}
                   </TableBody>
@@ -184,6 +192,10 @@ export const InventoryLogWithProps = ({
 const InventoryLog = () => {
   const location = useLocation()
   const navigate = useNavigate()
+  const { data: partner } = usePartner()
+  const showExpirationDate = withExpirationDate(partner)
+  const showLotNumber = withLotNumber(partner)
+
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({
     sortCol: 'createdOn',
@@ -262,6 +274,8 @@ const InventoryLog = () => {
     isLoading,
     data,
     filters,
+    showExpirationDate,
+    showLotNumber,
     isHierarchicalView,
     setIsHierarchicalView,
     isWarehouseView,
