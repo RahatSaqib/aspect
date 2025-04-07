@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
+
 const { getDateTimeProjectionInTimeZoneIANA, getDateTimeExpressionInTimeZone } = require(`../shared/date`)
 const { getConstraints } = require('../auth/constraints')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../db')
@@ -12,12 +13,16 @@ async function listInventoryLog(request) {
   const { timezoneIANA: timeZoneIANA } = user
 
   const dataConstraints = await getConstraints(auth.credentials)
-  const { total, data } = await getInventoryLog(query, dataConstraints, getInventoryLogListProjection(knex, timeZoneIANA), timeZoneIANA)
+  const { total, data } = await getInventoryLog(
+    query,
+    dataConstraints,
+    getInventoryLogListProjection(knex, timeZoneIANA)
+  )
 
   return { ok: true, total, length: data.length, data }
 }
 
-async function getInventoryLog(requestQuery, dataConstraints, querySelector, timeZoneIANA) {
+async function getInventoryLog(requestQuery, dataConstraints, querySelector) {
   if (_.isNil(requestQuery.maxDate)) {
     requestQuery.maxDate = new Date()
   }
@@ -71,7 +76,7 @@ async function getInventoryLog(requestQuery, dataConstraints, querySelector, tim
       'consumableReasonI18nKey',
       'consumableReasonExternalId',
       'transactionDate',
-      knex.raw('max(resultEndedOn) as resultEndedOn')
+      knex.raw('max(resultEndedOn) as resultEndedOn'),
     ])
     .groupBy([
       'createdOn',
@@ -136,7 +141,7 @@ const INVENTORY_LOG_SORT_FIELDS = [
   'expiresOn',
   'lotNumber',
   'movementReason',
-  'transactionDate'
+  'transactionDate',
 ]
 
 module.exports = listInventoryLog
