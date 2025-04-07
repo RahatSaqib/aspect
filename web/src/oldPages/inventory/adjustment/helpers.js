@@ -25,7 +25,7 @@ export function transformValues(values) {
   )
 }
 
-export function getValidations(format, actionType, { partner, inventory }) {
+export function getValidations(format, actionType, { requireExpirationDate, requireLotNumber, inventory }) {
   const uiAdd = actionType === types.SHOW_NEW_INVENTORY_DIALOG
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
@@ -75,13 +75,13 @@ export function getValidations(format, actionType, { partner, inventory }) {
       expiresOn: date()
         .nullable()
         .when(['consumable'], {
-          is: () => strategyRequireExpirationDate(partner?.inventoryStrategy) && !skipValidation,
+          is: () => requireExpirationDate && !skipValidation,
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         }),
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => strategyRequireLot(partner?.inventoryStrategy) && !skipValidation,
+          is: () => requireLotNumber && !skipValidation,
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })
@@ -162,7 +162,7 @@ export function transformInitialValue(inventory, actionType) {
       consumable: {
         id: inventory.consumableId,
         name: inventory.consumableName,
-        showExpirationDate: inventory.showExpirationDate,
+        requireExpirationDate: inventory.requireExpirationDate,
         showLot: inventory.showLot,
         unitShortName: inventory.unitShortName,
         i18nKey: inventory.consumableNameI18nKey,

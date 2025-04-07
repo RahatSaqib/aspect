@@ -25,7 +25,14 @@ import {
 } from '../../../store/InventoryRedux'
 import messages from './messages'
 
-const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refetch }) => {
+const InventoryTableRow = ({
+  inventoryItem,
+  breakOutByLot,
+  inventoryOnHand,
+  requireExpirationDate,
+  requireLotNumber,
+  refetch,
+}) => {
   const { formatMessage, formatNumber } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
@@ -171,7 +178,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
             </small>
           </span>
         )}
-        {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
+        {!breakOutByLot && requireExpirationDate && inventoryItem.get('qtyExpired') !== 0 ? (
           <span className={styles.alert}>
             &nbsp; ({inventoryItem.get('qtyExpired')} {formatMessage(messages.expired)})
           </span>
@@ -211,12 +218,12 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
           {hasDailyConsumption(inventoryItem.get('dailyConsumptionRate'))}
         </TableCell>
       ) : null}
-      {inventoryItem.get('lotNumber') !== undefined ? (
+      {requireLotNumber && inventoryItem.get('lotNumber') !== undefined ? (
         <TableCell className={styles.TableCell} rowSpan={rowSpan('lotNumber')}>
           {inventoryItem.get('lotNumber') ? inventoryItem.get('lotNumber') : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
-      {inventoryItem.get('expiresOn') !== undefined ? (
+      {requireExpirationDate && inventoryItem.get('expiresOn') !== undefined ? (
         <TableCell className={styles.TableCell} rowSpan={rowSpan('expiresOn')}>
           <span
             className={
