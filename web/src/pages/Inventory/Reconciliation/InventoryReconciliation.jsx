@@ -103,6 +103,7 @@ export function InventoryReconciliation() {
       <Box sx={{ width: '100%', p: '10px' }}>
         <InventoryReconciliationFilter
           disabled={isHierarchicalView && isWarehouseView}
+          breakOutByLot={filters.breakOutByLot}
           requireLotNumber={requireLotNumber}
           requireExpirationDate={requireExpirationDate}
         />

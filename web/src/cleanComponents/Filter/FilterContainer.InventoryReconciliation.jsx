@@ -11,7 +11,7 @@ import { ConsumableSelect, LgaSelect, PeriodSelector, StateSelect } from '../ind
 import FilterContainer from './FilterContainer'
 
 const InventoryReconciliationFilter = props => {
-  const { disabled, requireLotNumber, requireExpirationDate } = props
+  const { disabled, breakOutByLot, requireLotNumber, requireExpirationDate } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [state, setState] = useFilterSync()
@@ -60,7 +60,7 @@ const InventoryReconciliationFilter = props => {
           </Grid>
         ) : null}
 
-        {state.breakOutByLot ? (
+        {breakOutByLot ? (
           <>
             {requireExpirationDate ? (
               <Grid item xs={3}>
