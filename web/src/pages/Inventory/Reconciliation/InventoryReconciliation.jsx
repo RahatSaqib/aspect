@@ -130,7 +130,7 @@ export function InventoryReconciliation() {
               <Stack sx={{ flexDirection: 'row', gap: 1 }}>
                 <Typography variant="subtitle2" color="textSecondary">
                   <Switch checked={[true, 'true'].includes(filters.breakOutByLot)} onChange={handleBreakOutByLot} />
-                  {formatMessage(messages.breakdownByLots)}
+                  {formatMessage(messages.breakOutByLot)}
                 </Typography>
                 <AspectExportListButton
                   onExport={handleExport}
