@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react'
-import { FormControlLabel, Switch, TableBody, LinearProgress, Stack, Typography } from '@mui/material'
+import React, { useEffect, useMemo, useState } from 'react'
+import { FormControlLabel, LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
@@ -10,9 +10,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryItemsFilter } from '../../../cleanComponents'
 import {
-  useHierarchicalSwitch,
-  hierarchicalToggleSettingsLocalStorageKey,
   HierarchicalView,
+  hierarchicalToggleSettingsLocalStorageKey,
+  useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
@@ -37,8 +37,8 @@ import {
   types,
 } from '../../../store/InventoryRedux'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import { strategyRequireExpirationDate, strategyRequireLot } from '../adjustment/helpers'
 import InventoryAdjustmentDialog from '../adjustment/InventoryAdjustmentDialog'
+import { strategyRequireExpirationDate, strategyRequireLot } from '../strategyHelper'
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
 import styles from './InventoryItemsList.module.css'
 import getExportableFile from './InventoryItemsQueries'

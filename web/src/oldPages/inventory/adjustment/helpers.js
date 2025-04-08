@@ -10,9 +10,6 @@ import {
   validationMessages,
 } from './messages'
 
-export const strategyRequireExpirationDate = strategy => !!strategy?.includes('ExpirationDate')
-export const strategyRequireLot = strategy => !!strategy?.includes('Lot')
-
 export function transformValues(values) {
   const { consumable, reason, inventoryItem, ...rest } = values
   return omitBy(
