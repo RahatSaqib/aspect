@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-03-26T09:22:26.164Z\n"
+"POT-Creation-Date: 2025-04-08T12:16:40.019Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -14269,16 +14269,12 @@ msgstr "Seguimento por localização"
 #. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
 #. Track by batch
+#. [pages.inventoryList.New.trackByBatch]
+#. defaultMessage is:
+#. Track by batch
 #: extracted_strings.json
 msgid "Track by batch"
 msgstr "Seguimento por lote"
-
-#. [pages.inventoryList.trackByDate]
-#. defaultMessage is:
-#. Track by expiry date
-#: extracted_strings.json
-msgid "Track by expiry date"
-msgstr "Seguir por data de expiração"
 
 #. [pages.resultEdit.Training]
 #. defaultMessage is:
@@ -16101,6 +16097,9 @@ msgstr "{unit} desde a semana passada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
+
+#~ msgid "Track by expiry date"
+#~ msgstr "Seguir por data de expiração"
 
 #~ msgid "Applied Reconciliation Strategy"
 #~ msgstr "Estratégia de reconciliação aplicada"
