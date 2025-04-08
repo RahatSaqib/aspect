@@ -30,9 +30,9 @@ const messages = {
       id: 'pages.inventoryReconciliation.lotNumber',
       defaultMessage: 'Lot Number',
     },
-    breakdownByLots: {
-      id: 'pages.inventoryReconciliation.breakdownByLots',
-      defaultMessage: 'Breakdown by Lots',
+    breakOutByLot: {
+      id: 'pages.inventoryReconciliation.breakOutByLot',
+      defaultMessage: 'Break out by lot',
     },
     unreconciledQuantity: {
       id: 'pages.inventoryReconciliation.unreconciledQuantity',
