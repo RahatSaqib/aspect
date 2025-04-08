@@ -1,17 +1,17 @@
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { date, number, object, string } from 'yup'
-import { types } from '../../store/InventoryRedux'
+import { types } from '../../../store/InventoryRedux'
 import {
   newInventoryMessages,
   receiveInventoryMessages,
   removeInventoryMessages,
   transformInventoryMessages,
   validationMessages,
-} from './adjustment/messages'
+} from './messages'
 
-const strategyRequireExpirationDate = strategy => !!strategy?.includes('ExpirationDate')
-const strategyRequireLot = strategy => !!strategy?.includes('Lot')
+export const strategyRequireExpirationDate = strategy => !!strategy?.includes('ExpirationDate')
+export const strategyRequireLot = strategy => !!strategy?.includes('Lot')
 
 export function transformValues(values) {
   const { consumable, reason, inventoryItem, ...rest } = values

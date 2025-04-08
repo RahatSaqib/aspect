@@ -50,8 +50,6 @@ export const InventoryLogWithProps = ({
   pageAt,
   pageSize,
   filters,
-  showExpirationDate,
-  showLotNumber,
   isHierarchicalView,
   setIsHierarchicalView,
   isWarehouseView,
@@ -200,10 +198,6 @@ export const InventoryLogWithProps = ({
 const InventoryLog = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { data: partner } = usePartner()
-  const showExpirationDate = withExpirationDate(partner)
-  const showLotNumber = withLotNumber(partner)
-
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({
     sortCol: 'createdOn',
@@ -282,8 +276,6 @@ const InventoryLog = () => {
     isLoading,
     data,
     filters,
-    showExpirationDate,
-    showLotNumber,
     isHierarchicalView,
     setIsHierarchicalView,
     isWarehouseView,
@@ -294,5 +286,4 @@ const InventoryLog = () => {
   }
   return <InventoryLogWithProps {...props} />
 }
-
 export default InventoryLog
