@@ -51,7 +51,7 @@ describe('Add Inventory', () => {
   afterEach(async () => {
     // Clean up inventory items and related records
     await knex('InventoryItem').whereIn('id', [inventoryItem1, inventoryItem2].filter(Boolean)).delete()
-
+    await knex('InventoryLog').where('siteId', site.id).delete()
     await knex('FactInventoryConsumptionRate').where('siteId', site.id).delete()
   })
 
