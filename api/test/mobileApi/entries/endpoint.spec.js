@@ -60,6 +60,7 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
   afterEach(async () => {
     await knex('ResultFollowUp').whereIn('resultId', _.map(results, 'id')).delete()
     await knex('ResultDownloadLog').whereIn('resultId', _.map(results, 'id')).delete()
+    await knex('ResultWorkflowLog').whereIn('resultId', _.map(results, 'id')).delete()
     await knex('Result').whereIn('id', _.map(results, 'id')).delete()
   })
 
@@ -97,22 +98,22 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
         .post(`${clinicalResponsePath}/${resultId}`)
         .send([
           {
-            clientTime: twoDayBefore,
+            clientTime: new Date().toISOString(),
             fieldName: 'confirmed',
             value: false,
           },
           {
-            clientTime: oneDayBefore,
+            clientTime: new Date().toISOString(),
             fieldName: 'treatment',
-            value: 'drtb-bbsr',
+            value: 'drtb-bxdr',
           },
           {
-            clientTime: treatmentOccurredDate,
+            clientTime: new Date().toISOString(),
             fieldName: 'treatmentOccurred',
             value: treatmentOccurredDate,
           },
           {
-            clientTime: oneDayAfter,
+            clientTime: new Date().toISOString(),
             fieldName: 'outcome',
             value: 'cured',
           },
@@ -142,31 +143,33 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
         'OnTreatment',
         'Treatment status should be updated to OnTreatment'
       )
-      const updatedOnOne = updatedEntryOne.history.find(({ type }) => type === 'Treatment').updatedOn
-      expect(Math.abs(new Date(updatedOnOne).getTime() - new Date(treatmentOccurredDate).getTime())).to.be.lessThan(
-        1000
-      )
+      const updatedOnOneTreatment = updatedEntryOne.history.find(({ type }) => type === 'Treatment')
+      expect(
+        Math.abs(new Date(updatedOnOneTreatment.updatedOn).getTime() - new Date(treatmentOccurredDate).getTime())
+      ).to.be.lessThan(1000)
+
+      // await new Promise(resolve => setTimeout(resolve, 1000))
 
       const clinicalResponseResponseTwo = await server
         .post(`${clinicalResponsePath}/${resultId}`)
         .send([
           {
-            clientTime: twoDayBefore,
+            clientTime: new Date().toISOString(),
             fieldName: 'confirmed',
             value: false,
           },
           {
-            clientTime: oneDayBefore,
+            clientTime: new Date().toISOString(),
             fieldName: 'treatment',
-            value: 'drtb-bbsr',
+            value: 'drtb-bxdr',
           },
           {
-            clientTime: oneDayAfter,
+            clientTime: new Date().toISOString(),
             fieldName: 'treatmentOccurred',
             value: oneDayAfter,
           },
           {
-            clientTime: oneDayAfter,
+            clientTime: new Date().toISOString(),
             fieldName: 'outcome',
             value: 'cured',
           },
@@ -194,9 +197,12 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
         'OnTreatment',
         'Treatment status should be updated to OnTreatment'
       )
-      const updatedOnTwo = updatedEntryTwo.history.find(({ type }) => type === 'Treatment').updatedOn
 
-      expect(Math.abs(new Date(updatedOnTwo).getTime() - new Date(oneDayAfter).getTime())).to.be.lessThan(1000)
+      const updatedOnTwoTreatment = updatedEntryTwo.history.filter(({ type }) => type === 'Treatment')
+      expect(updatedOnTwoTreatment.length).to.equal(1)
+      expect(
+        Math.abs(new Date(updatedOnTwoTreatment[0].updatedOn).getTime() - new Date(oneDayAfter).getTime())
+      ).to.be.lessThan(1000)
     })
   })
 })
