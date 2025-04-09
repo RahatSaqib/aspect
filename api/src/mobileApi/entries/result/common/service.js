@@ -21,6 +21,7 @@ const {
   updateResultWorkflowLogQuery,
 } = require('../../../result/common/db')
 const { getSitesQuery } = require('../../../../site/service')
+const logger = require('../../../../shared/logger')
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
@@ -119,6 +120,13 @@ async function fetchEntriesServiceHandler(request) {
   )
 
   const awaitingTreatment = _.countBy(entries, 'requiresFollowUp')
+
+  logger.info(
+    { query, dataConstraints, results, samples },
+    {
+      reLabel: 'fetch entries service handler',
+    }
+  )
 
   return {
     ok: !!entries,
