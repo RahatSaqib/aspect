@@ -143,7 +143,6 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
         'Treatment status should be updated to OnTreatment'
       )
       const updatedOnOne = updatedEntryOne.history.find(({ type }) => type === 'Treatment').updatedOn
-      console.log('updatedEntryOne.history ', updatedEntryOne.history)
       expect(Math.abs(new Date(updatedOnOne).getTime() - new Date(treatmentOccurredDate).getTime())).to.be.lessThan(
         1000
       )
@@ -195,12 +194,9 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
         'OnTreatment',
         'Treatment status should be updated to OnTreatment'
       )
-      console.log('updatedEntryTwo.history ', updatedEntryTwo.history)
       const updatedOnTwo = updatedEntryTwo.history.find(({ type }) => type === 'Treatment').updatedOn
 
-      expect(Math.abs(new Date(updatedOnTwo).getTime() - new Date(treatmentOccurredDate).getTime())).to.be.lessThan(
-        1000
-      )
+      expect(Math.abs(new Date(updatedOnTwo).getTime() - new Date(oneDayAfter).getTime())).to.be.lessThan(1000)
     })
   })
 })

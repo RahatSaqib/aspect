@@ -592,7 +592,7 @@ const updateMostRecentResultFollowUp = async (resultId, followUpExternalId, date
   let { id: resultFollowUpId } =
     (await knex('ResultFollowUp as rfu')
       .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
-      .whereNull('rfu.date')
+      // .whereNull('rfu.date')
       .andWhere('rfu.resultId', resultId)
       .andWhere('fu.externalId', followUpExternalId)
       .andWhere('isDeleted', false)
