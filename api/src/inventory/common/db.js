@@ -8,8 +8,6 @@ const {
   SUM_STOCK_LEFT_FILTER_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
   INVENTORY_TRANSFER,
-  INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
-  CONCATENATED_ID,
   STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
@@ -251,74 +249,6 @@ async function getInventoryTransferForExport(query, dataConstraints, offset) {
     receivedOn: getDateTimeProjectionInUserTimeZone(knex, 'iil.createdOn', offset),
   }
   return getInventoryTransfer(query, dataConstraints, querySelector)
-}
-
-// ----------------------------------------------------------------------------------
-function getInventoryByLotQuery(request, dataConstraints, consumableStrategy) {
-  const inventoryItemsQuery = query('Search Inventory Lots')
-    .from('Site as s')
-    .innerJoin('Consumable as c')
-    .innerJoin('Partner as p', 's.partnerId', 'p.id')
-    .innerJoin('SiteConsumable as sc', builder => {
-      builder.on('s.id', 'sc.siteId').andOn('c.id', 'sc.consumableId')
-    })
-    .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('Country as co', 'g.countryId', 'co.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('InventoryItem as ii', builder => {
-      builder.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
-    })
-    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
-    .leftJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
-    .leftJoin(
-      knex('MissingInventoryLots as mil')
-        .innerJoin('Result as r', 'mil.resultId', 'r.id')
-        .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
-        .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
-        .select(
-          'mil.siteId',
-          'c.id as consumableId',
-          'mil.lotNumber as lotNumber',
-          'mil.expirationDate as expiresOn',
-          knex.raw('COUNT(*) as unreconciledCount')
-        )
-        .groupBy('mil.siteId', 'c.id')
-        .as('unreconciled'),
-      builder => {
-        builder.on('unreconciled.siteId', 's.id').andOn('unreconciled.consumableId', 'c.id')
-        consumableStrategy
-          .filterFields({
-            lotNumberField: 'unreconciled.lotNumber <=> ii.lotNumber',
-            expiresOnField: 'unreconciled.expiresOn <=> ii.expiresOn',
-          })
-          .forEach(field => builder.andOn(knex.raw(field)))
-      }
-    )
-    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
-    .modify(filterParams, request.query, {
-      ...INVENTORY_ITEM_FILTER_FIELDS,
-      ...SUM_STOCK_LEFT_FILTER_FIELDS,
-    })
-    .modify(queryBuilder => {
-      if (request.query.siteIds) {
-        queryBuilder.whereIn('s.id', request.query.siteIds.split(','))
-      }
-    })
-    .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
-    .groupBy([
-      knex.raw(CONCATENATED_ID),
-      's.name',
-      'ii.inTransitFromSiteId',
-      ...consumableStrategy.filterFields({
-        lotNumberField: 'ii.lotNumber',
-        expiresOnField: 'ii.expiresOn',
-      }),
-    ])
-    .select(...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
-
-  return inventoryItemsQuery
 }
 
 // ----------------------------------------------------------------------------------
@@ -856,7 +786,6 @@ module.exports = {
   getInventoryItems,
   getInventorySitesQuery,
   getInventoryLogBaseQuery,
-  getInventoryByLotQuery,
   getInventoryBySitesAndConsumableQuery,
   getUnreconciledQuantitiesSubquery,
   logInventoryChange,

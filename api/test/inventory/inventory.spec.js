@@ -349,13 +349,10 @@ describe('GET: /api/inventory', () => {
       .set('Authorization', `Bearer ${sharedToken.token}`)
 
     assert.equal(response.status, 200)
-    assert.equal(response.body.data.length, 2)
-    assert.equal(response.body.data[0].quantityOnHand, 100)
+    assert.equal(response.body.data.length, 1)
+    assert.equal(response.body.data[0].quantityOnHand, 150)
     assert.equal(response.body.data[0].unreconciledQuantity, 3)
-    assert.equal(response.body.data[0].lotNumber, 'LOT001')
-    assert.equal(response.body.data[1].quantityOnHand, 50)
-    assert.equal(response.body.data[1].unreconciledQuantity, 3)
-    assert.equal(response.body.data[1].lotNumber, 'LOT002')
+    assert.equal(response.body.data[0].lotNumber, undefined)
   })
 
   it('should return 200 with inventory items when breakout by lot is selected and inventory strategy is lot only', async () => {
@@ -380,9 +377,11 @@ describe('GET: /api/inventory', () => {
     assert.equal(response.body.data[0].quantityOnHand, 100)
     assert.equal(response.body.data[0].unreconciledQuantity, 3)
     assert.equal(response.body.data[0].lotNumber, 'LOT001')
+    assert.equal(response.body.data[0].expiresOn, undefined)
     assert.equal(response.body.data[1].quantityOnHand, 50)
     assert.equal(response.body.data[1].unreconciledQuantity, 0)
     assert.equal(response.body.data[1].lotNumber, 'LOT002')
+    assert.equal(response.body.data[1].expiresOn, undefined)
   })
 })
 

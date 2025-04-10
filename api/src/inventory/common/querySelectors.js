@@ -1,15 +1,5 @@
 const { knex } = require('../../db')
 
-const CONCATENATED_ID = `CONCAT(
-  c.id,
-  '-',
-  s.id,
-  '-',
-  IFNULL(ii.expiresOn, ''), '-',
-  IFNULL(ii.lotNumber, ''), '-',
-  IFNULL(ii.inTransitFromSiteId, '')
-)`
-
 const INVENTORY_COMMON_FIELDS = [
   'c.id as consumableId',
   'c.name as consumableName',
@@ -68,41 +58,6 @@ const INVENTORY_TRANSFER = {
   sentOn: 'oil.createdOn',
   receivedOn: 'iil.createdOn',
 }
-
-// Select for inventory grouped by site and consumable
-const INVENTORY_ITEM_SELECT_LIST_FIELDS = [...INVENTORY_COMMON_FIELDS, knex.raw('SUM(ii.quantityOnHand)')]
-
-// Select for inventory split by lot
-const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
-  knex.raw(`
-    CONCAT(
-        c.id, '-',
-        s.id, '-',
-        IFNULL(ii.expiresOn, ''), '-',
-        IFNULL(ii.lotNumber, ''), '-',
-        IFNULL(ii.inTransitFromSiteId, '')
-    ) AS id
-  `),
-  'ca.assayId as assayId',
-
-  // Filter fields from INVENTORY_ITEM_SELECT
-  ...INVENTORY_ITEM_SELECT.filter(field => {
-    if (typeof field === 'string') {
-      return field !== 'ii.id' && field !== 'ii.quantityOnHand'
-    }
-    // For knex objects, convert to string before filtering
-    const fieldString = field.toString()
-    return (
-      !fieldString.includes('CASE WHEN p.inventoryStrategy') &&
-      !fieldString.includes('ii.id') &&
-      !fieldString.includes('ii.quantityOnHand')
-    )
-  }),
-  'ii.lotNumber AS lotNumber',
-  'ii.expiresOn AS expiresOn',
-  knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
-  knex.raw('IFNULL(unreconciled.unreconciledCount, 0) AS unreconciledQuantity'),
-]
 
 const INVENTORY_ITEM_SORT_FIELDS = {
   consumableName: 'c.name',
@@ -172,14 +127,11 @@ module.exports = {
   INVENTORY_TRANSFER,
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
-  INVENTORY_ITEM_SELECT_LIST_FIELDS,
-  INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
   INVENTORY_ITEM_SELECT,
   INVENTORY_COMMON_FIELDS,
   STOCK_LEFT_FILTER_FIELDS,
-  CONCATENATED_ID,
   INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY,
 }
