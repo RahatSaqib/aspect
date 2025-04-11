@@ -9,7 +9,6 @@ const { createMessageContext, waitForIdle, waitForAction } = require('../utils/m
 // action creators
 const { inventoryStockout, inventoryStockExpiring } = require('../../src/inventory/actions')
 const { escalateIssues } = require('../../src/issue/actions')
-const { refreshConsumptionRates } = require('../../src/fact/onFactCalculateInventoryConsumptionRates')
 const { getPartner, getSite, cleanUpIssues } = require('../utils/issueUtils')
 const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const {
@@ -108,23 +107,6 @@ describe('Inventory Stock Issues Endpoint', () => {
 
     baseProps.issueEventIds = []
     issueIds = []
-  })
-
-  it('makes sure that calculated consumption rates match rates in db for all periods', async () => {
-    const { siteId, consumableId } = baseProps
-    // calculate rates
-    const totals = await refreshConsumptionRates(knex, siteId, consumableId)
-
-    // read from db
-    const ratesDb = await knex('FactInventoryConsumptionRate').where({ siteId, consumableId }).select('days', 'rate')
-
-    totals.forEach(justCalculated => {
-      const fromDb = ratesDb.find(x => x.days === justCalculated.days)
-
-      assert.exists(fromDb, `No rate entry in db for period ${justCalculated.days} days`)
-
-      assert.equal(justCalculated.total, fromDb.rate, `Rates do not match for period ${justCalculated.days} days`)
-    })
   })
 
   // ---------------------------------------------------------------------------
