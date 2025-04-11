@@ -1574,15 +1574,6 @@ describe('Device Result API routes', () => {
           .select('deviceId', 'assayId', 'resultCategory1', 'days', 'resultCount', 'calculatedOn')
       }
 
-      function getFactResultsDeviceByCategory1And2(knex, deviceId, assayId, resultCategory1, resultCategory2) {
-        return knex('FactResultsDeviceByCategory1And2')
-          .where({ deviceId })
-          .andWhere({ assayId })
-          .andWhere({ resultCategory1 })
-          .andWhere({ resultCategory2 })
-          .select('deviceId', 'assayId', 'resultCategory1', 'resultCategory2', 'days', 'resultCount', 'calculatedOn')
-      }
-
       it('should update the result counts in the facts-tables when a new result is reported', () =>
         runTest(async knex => {
           const resultDetails = {
@@ -1596,10 +1587,6 @@ describe('Device Result API routes', () => {
 
           const { id: resultCategory1 } = await knex('ResultCategory')
             .where('externalId', resultDetails.resultCategory1ExternalId)
-            .first('id')
-
-          const { id: resultCategory2 } = await knex('ResultCategory')
-            .where('externalId', resultDetails.resultCategory2ExternalId)
             .first('id')
 
           await server
@@ -1629,14 +1616,6 @@ describe('Device Result API routes', () => {
             context.deviceId,
             assayId,
             resultCategory1
-          )
-
-          const factResultsDeviceByCategory1And2Before = await getFactResultsDeviceByCategory1And2(
-            knex,
-            context.deviceId,
-            assayId,
-            resultCategory1,
-            resultCategory2
           )
 
           assert.equal(factResultsDeviceBefore.length, 7, 'There should be one entry per day in the device count table')
@@ -1669,14 +1648,6 @@ describe('Device Result API routes', () => {
             context.deviceId,
             assayId,
             resultCategory1
-          )
-
-          const factResultsDeviceByCategory1And2After = await getFactResultsDeviceByCategory1And2(
-            knex,
-            context.deviceId,
-            assayId,
-            resultCategory1,
-            resultCategory2
           )
 
           factResultsDeviceBefore.forEach(countBefore => {
@@ -1721,23 +1692,6 @@ describe('Device Result API routes', () => {
                 countAfter.resultCount,
                 countBefore.resultCount + 1,
                 'Count in device category 1 fact-table should have increased by one after posting a result'
-              )
-            }
-          })
-
-          factResultsDeviceByCategory1And2Before.forEach(countBefore => {
-            const countAfter = _.find(factResultsDeviceByCategory1And2After, {
-              days: countBefore.days,
-              resultCategory1: countBefore.resultCategory1,
-              resultCategory2: countBefore.resultCategory2,
-            })
-
-            // compare before and after counts
-            if (countAfter) {
-              assert.equal(
-                countAfter.resultCount,
-                countBefore.resultCount + 1,
-                'Count in device category 1 and 2 fact-table should have increased by one after posting a result'
               )
             }
           })
