@@ -156,14 +156,30 @@ async function clinicalResponse(request) {
             mostRecentTreatmentInPayload.updatedOn
           )
         } else {
+          const mostRecentTreatmentOccurredCaptured = _.sortBy(
+            payload.filter(fuv => fuv.fieldName === 'treatmentOccurred'),
+            fuv => fuv.clientTime
+          ).reverse()[0]
           await updateMostRecentResultFollowUp(
             mostRecentTreatmentInPayload.resultId,
             mostRecentTreatmentInPayload.externalId,
-            mostRecentTreatmentInPayload.date,
+            mostRecentTreatmentOccurredCaptured.value || mostRecentTreatmentInPayload.date,
             mostRecentTreatmentInPayload.updatedBy,
-            mostRecentTreatmentInPayload.updatedOn
+            mostRecentTreatmentInPayload.updatedOn || mostRecentTreatmentOccurredCaptured.value
           )
         }
+      } else {
+        const mostRecentTreatmentOccurredCaptured = _.sortBy(
+          payload.filter(fuv => fuv.fieldName === 'treatmentOccurred'),
+          fuv => fuv.clientTime
+        ).reverse()[0]
+        await updateMostRecentResultFollowUp(
+          mostRecentTreatmentInPayload.resultId,
+          mostRecentTreatmentInPayload.externalId,
+          mostRecentTreatmentOccurredCaptured.value || mostRecentTreatmentInPayload.date,
+          mostRecentTreatmentInPayload.updatedBy,
+          mostRecentTreatmentInPayload.updatedOn || mostRecentTreatmentOccurredCaptured.value
+        )
       }
     }
     const mostRecentOutcomeInPayload = _.sortBy(
