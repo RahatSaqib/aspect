@@ -5,7 +5,6 @@ const shared = require('../../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../../seeds/commonGenerateResults')
 const patients = require('../../../seeds/test/fixtures/patients.json')
-const { getBaseQueryForResults } = require('../../../src/result/common/db')
 
 const { knex } = require('../../../src/db')
 const { resultCategoryToId, resultWorkflowStatusToId } = require('../../../src/shared/dictionary')
@@ -88,8 +87,6 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
 
       const dateNow = Date.now()
 
-      const twoDayBefore = new Date(dateNow - 2 * 24 * 60 * 60 * 1000).toISOString()
-      const oneDayBefore = new Date(dateNow - 1 * 24 * 60 * 60 * 1000).toISOString()
       const treatmentOccurredDate = new Date(dateNow - 60 * 60 * 1000).toISOString()
       const oneDayAfter = new Date(dateNow + 1 * 24 * 60 * 60 * 1000).toISOString()
 
