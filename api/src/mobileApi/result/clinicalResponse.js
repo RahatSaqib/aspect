@@ -337,7 +337,6 @@ async function clinicalResponse(request) {
     }
     resultEntry = await showResult(resultId, dataConstraints)
   }
-  logger.info({ resultEntry, payload, params, dataConstraints }, { reLabel: 'clinical response' })
   return {
     ok: !!resultEntry,
     data: resultEntry,
