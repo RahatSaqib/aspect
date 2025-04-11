@@ -37,7 +37,6 @@ const {
   deleteResultFollowUpTreatment,
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
-const logger = require('../../shared/logger')
 
 const ACKNOWLEDGED_FIELD_NAME = 'confirmed'
 const NOT_POSSIBLE_FIELD_NAME = 'followUpNotPossible'
