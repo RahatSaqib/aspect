@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const cron = require('node-cron')
 const { startUp: reportBasedCronStartUp } = require('../notification/reportBased/reportBasedCronHandler')
 const { resultAnalyzeTimeout, deviceInactiveNotificationAnalysis } = require('../notification/actions')
@@ -105,9 +104,9 @@ function startScheduler(queue) {
 
 function createActionDispatcher(queue, actionCreators) {
   const dispatcher = {}
-  _.each(actionCreators, (creator, name) => {
+  for (const [name, creator] of Object.entries(actionCreators)) {
     dispatcher[name] = () => dispatchActionToQueue(queue, `aspect_scheduler_${name}`, creator())
-  })
+  }
   return dispatcher
 }
 
