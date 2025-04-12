@@ -105,17 +105,22 @@ function fillHierarchicalAggregations(item) {
 }
 
 function processGeographies(geographies) {
-  const [{ countryId }] = geographies
-  const states = geographies.filter(g => g.stateId && !g.lgaId)
+  const [country] = geographies
+  const states = geographies.reduce((acc, g) => {
+    if (!acc.some(item => item.stateId === g.stateId)) {
+      acc.push({ countryId: g.countryId, state: g.state, stateId: g.stateId })
+    }
+    return acc
+  }, [])
   const lgas = geographies.filter(g => g.lgaId)
 
   // Add extra unique states and lgas to match sites with no state or lga associated
   return {
-    country: geographies.find(g => g.countryId && !g.stateId && !g.lgaId),
-    states: [...states, { stateId: 'NO_STATE', countryId }],
+    country: { countryId: country.countryId, country: country.country },
+    states: [...states, { stateId: 'NO_STATE', countryId: country.countryId }],
     lgas: [
       ...lgas,
-      { lgaId: 'NO_LGA', stateId: 'NO_STATE', countryId },
+      { lgaId: 'NO_LGA', stateId: 'NO_STATE', countryId: country.countryId },
       ...states.map(s => ({ lgaId: `STATE_${s.stateId}_NO_LGA`, stateId: s.stateId })),
     ],
   }
@@ -130,9 +135,7 @@ function processSites(sites) {
 
   return sitesWithDefaults.sort((a, b) => {
     if (a.type === b.type) return 0
-    // TODO: CHECK ME
-    if (a.type === 'warehouse' && b.type === 'lab' && b.type === 'clinic') return -1
-
+    if (a.type === 'warehouse') return -1
     return 1
   })
 }

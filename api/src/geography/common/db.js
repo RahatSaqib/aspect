@@ -10,7 +10,6 @@ async function getAllGeographiesWithNames(dataConstraints) {
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .orderBy(['c.name', 's.name', 'l.name'], 'asc')
     .select(
-      'g.id',
       'c.id as countryId',
       'c.name as country',
       's.id as stateId',
