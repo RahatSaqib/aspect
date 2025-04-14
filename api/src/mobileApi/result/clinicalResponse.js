@@ -162,9 +162,9 @@ async function clinicalResponse(request) {
           await updateMostRecentResultFollowUp(
             mostRecentTreatmentInPayload.resultId,
             mostRecentTreatmentInPayload.externalId,
-            mostRecentTreatmentOccurredCaptured.value || mostRecentTreatmentInPayload.date,
+            mostRecentTreatmentOccurredCaptured?.value || mostRecentTreatmentInPayload.date,
             mostRecentTreatmentInPayload.updatedBy,
-            mostRecentTreatmentInPayload.updatedOn || mostRecentTreatmentOccurredCaptured.value
+            mostRecentTreatmentInPayload.updatedOn || mostRecentTreatmentOccurredCaptured?.value
           )
         }
       } else {
@@ -175,9 +175,9 @@ async function clinicalResponse(request) {
         await updateMostRecentResultFollowUp(
           mostRecentTreatmentInPayload.resultId,
           mostRecentTreatmentInPayload.externalId,
-          mostRecentTreatmentOccurredCaptured.value || mostRecentTreatmentInPayload.date,
+          mostRecentTreatmentOccurredCaptured?.value || mostRecentTreatmentInPayload.date,
           mostRecentTreatmentInPayload.updatedBy,
-          mostRecentTreatmentInPayload.updatedOn || mostRecentTreatmentOccurredCaptured.value
+          mostRecentTreatmentInPayload.updatedOn || mostRecentTreatmentOccurredCaptured?.value
         )
       }
     }
