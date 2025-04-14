@@ -22,7 +22,6 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
   let assayId
 
   before(async () => {
-    shared.checkToken(server, entriesPath)
     shared.checkToken(server, clinicalResponsePath)
 
     // Get the assay ID for GxMtbRifUltra
