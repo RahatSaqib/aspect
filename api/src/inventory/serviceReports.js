@@ -5,7 +5,7 @@ const { INVENTORY_LOG_LIST } = require('./common/querySelectors')
 const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
 const listInventoryLog = require('./listInventoryLog')
 const listInventory = require('./listInventory')
-const { listReconciliation } = require('./service')
+const { listReconciliation } = require('./listReconciliation')
 const { getConstraints } = require('../auth/constraints')
 const { getUnreconciledInventoryReport } = require('./unreconciledInventoryReport')
 

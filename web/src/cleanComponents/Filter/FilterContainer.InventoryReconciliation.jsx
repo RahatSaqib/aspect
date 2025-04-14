@@ -10,7 +10,8 @@ import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 
-const InventoryReconciliationFilter = () => {
+const InventoryReconciliationFilter = props => {
+  const { disabled } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [state, setState] = useFilterSync()
@@ -18,7 +19,7 @@ const InventoryReconciliationFilter = () => {
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
-    <FilterContainer state={state} setState={setState}>
+    <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect

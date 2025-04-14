@@ -109,7 +109,7 @@ async function logMissingInventory(knex, resultId, userId) {
  * - process `transferInventory` and set `inTransitFromSiteId` for inventory for `toSiteId`
  * - process `receiveInventory` and update both `fromSite` and `toSite` and release `inTransitFromSiteId`
  */
-const transferInPendingMode = true
+const transferInPendingMode = false
 
 module.exports = {
   getNewQuantityOnHand,
