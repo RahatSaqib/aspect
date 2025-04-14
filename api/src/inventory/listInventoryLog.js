@@ -73,7 +73,6 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
       knex.raw('first_value(ilog.notes) over (partition by ilog.id order by ilog.createdOn) as notes'),
       'consumableReason',
       'refSiteName',
-      'movementReason',
       'consumableReasonI18nKey',
       'consumableReasonExternalId',
       'transactionDate',
@@ -89,7 +88,6 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
         expiresOnField: 'expiresOn',
       }),
       'siteName',
-      'movementReason',
       'consumableReason',
       'refSiteName',
       'movementReason',
@@ -122,7 +120,7 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
 function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
   return [
     'il.id as id',
-    knex.raw(`${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)} as createdOn`),
+    knex.raw(`date(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)}) as createdOn`),
     'c.name as consumableName',
     'ca.assayId as assayId',
     'c.i18nKey as consumableNameI18nKey',
@@ -145,7 +143,7 @@ function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
     'il.notes as notes',
     'cr.i18nKey as consumableReasonI18nKey',
     'cr.externalId as consumableReasonExternalId',
-    knex.raw(`${getDateTimeExpressionInTimeZone(knex, 'il.adjustedFrom', timeZoneIANA)} as transactionDate`),
+    knex.raw(`date(${getDateTimeExpressionInTimeZone(knex, 'il.adjustedFrom', timeZoneIANA)}) as transactionDate`),
     'r.endedOn as resultEndedOn',
   ]
 }
