@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useEffect, useCallback, useMemo } from 'react'
 import { Box, Button, Card, LinearProgress, Stack, Switch, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
@@ -48,7 +48,7 @@ export function InventoryReconciliation() {
   })
 
   // Clear filters when warehouse view is selected
-  React.useEffect(() => {
+  useEffect(() => {
     if (isHierarchicalView && isWarehouseView) {
       setFilters({
         breakOutByLot: filters.breakOutByLot,

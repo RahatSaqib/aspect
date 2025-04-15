@@ -31,10 +31,7 @@ export function InventoryReconciliationList(props) {
       <DataTableHead location={location} sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
       <TableBody>
         {items.map((item, index) => (
-          <TableRow
-            sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }}
-            key={`${item.siteName}-${item.consumableName}${item.lotNumber ? `-${item.lotNumber}` : ''}`}
-          >
+          <TableRow key={index} sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }}>
             <DataTableCell>{item.stateName}</DataTableCell>
             <DataTableCell>{item.lgaName}</DataTableCell>
             <DataTableCell>{item.siteName}</DataTableCell>
