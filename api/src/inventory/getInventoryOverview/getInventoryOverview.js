@@ -121,7 +121,7 @@ function processGeographies(geographies) {
     lgas: [
       ...lgas,
       { lgaId: 'NO_LGA', stateId: 'NO_STATE', countryId: country.countryId },
-      ...states.map(s => ({ lgaId: `STATE_${s.stateId}_NO_LGA`, stateId: s.stateId })),
+      ...states.map(s => ({ lgaId: `STATE_${s.stateId}_NO_LGA`, stateId: s.stateId, countryId: s.countryId })),
     ],
   }
 }
