@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-03-26T09:22:26.164Z\n"
+"POT-Creation-Date: 2025-04-08T12:16:40.019Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -7015,10 +7015,8 @@ msgstr "Номер партии"
 #. defaultMessage is:
 #. Lot Number: {lotNumber}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "lot number includes \"{lotNumber}\""
 msgid "Lot Number: {lotNumber}"
-msgstr "номер лота включает “{lotNumber}”"
+msgstr "номер лота включает: {lotNumber}"
 
 #. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
 #. defaultMessage is:
@@ -10217,10 +10215,8 @@ msgstr "Количество для передачи"
 #. defaultMessage is:
 #. Quantity: {quantity}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Quantity on Hand"
 msgid "Quantity: {quantity}"
-msgstr "Количество на руках"
+msgstr "Количество: {quantity}"
 
 #. [pages.dateRangeSelector.quarter]
 #. defaultMessage is:
@@ -14301,17 +14297,13 @@ msgstr "Отслеживать по местоположению"
 #. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
 #. Track by batch
+#. [pages.inventoryList.New.trackByBatch]
+#. defaultMessage is:
+#. Track by batch
 #: extracted_strings.json
 #, fuzzy
 #| msgid "Track by expiry date"
 msgid "Track by batch"
-msgstr "Отслеживать по срокам годности"
-
-#. [pages.inventoryList.trackByDate]
-#. defaultMessage is:
-#. Track by expiry date
-#: extracted_strings.json
-msgid "Track by expiry date"
 msgstr "Отслеживать по срокам годности"
 
 #. [pages.resultEdit.Training]
@@ -16144,6 +16136,9 @@ msgstr "{unit} с прошлой недели"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} суммарные калибровки"
+
+#~ msgid "Track by expiry date"
+#~ msgstr "Отслеживать по срокам годности"
 
 #~ msgid "Applied Reconciliation Strategy"
 #~ msgstr "Прикладная стратегия примирения"

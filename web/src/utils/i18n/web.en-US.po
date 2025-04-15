@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-03-27T07:03:09.643Z\n"
+"POT-Creation-Date: 2025-04-08T12:16:40.019Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -804,7 +804,6 @@ msgstr "Api Keys"
 #. defaultMessage is:
 #. Applied Cartridge Batch strategy
 #: extracted_strings.json
-#| msgid "Applied Consumable Strategy"
 msgid "Applied Cartridge Batch strategy"
 msgstr "Applied Cartridge Batch strategy"
 
@@ -812,7 +811,6 @@ msgstr "Applied Cartridge Batch strategy"
 #. defaultMessage is:
 #. Applied Consumption strategy
 #: extracted_strings.json
-#| msgid "Applied Consumable Strategy"
 msgid "Applied Consumption strategy"
 msgstr "Applied Consumption strategy"
 
@@ -1777,7 +1775,6 @@ msgstr "Cartridge Lot number"
 #. defaultMessage is:
 #. Cartridge batch is managed by their
 #: extracted_strings.json
-#| msgid "Cartridges are managed through"
 msgid "Cartridge batch is managed by their"
 msgstr "Cartridge batch is managed by their"
 
@@ -6184,7 +6181,6 @@ msgstr "Inventory Log"
 #. defaultMessage is:
 #. Inventory Management Configuration
 #: extracted_strings.json
-#| msgid "Inventory Reconciliation"
 msgid "Inventory Management Configuration"
 msgstr "Inventory Management Configuration"
 
@@ -6991,7 +6987,6 @@ msgstr "Lot Number"
 #. defaultMessage is:
 #. Lot Number: {lotNumber}
 #: extracted_strings.json
-#| msgid "lot number includes \"{lotNumber}\""
 msgid "Lot Number: {lotNumber}"
 msgstr "Lot Number: {lotNumber}"
 
@@ -8950,7 +8945,6 @@ msgstr "Only Results With Treatment Required"
 #. defaultMessage is:
 #. Only Results with unreconciled inventories
 #: extracted_strings.json
-#| msgid "List of Unreconciled Inventory"
 msgid "Only Results with unreconciled inventories"
 msgstr "Only Results with unreconciled inventories"
 
@@ -9360,7 +9354,6 @@ msgstr "Please choose a date later or equal to from date"
 #. defaultMessage is:
 #. Please choose an inventory item
 #: extracted_strings.json
-#| msgid "Please choose a different site"
 msgid "Please choose an inventory item"
 msgstr "Please choose an inventory item"
 
@@ -10181,7 +10174,6 @@ msgstr "Quantity to Transfer"
 #. defaultMessage is:
 #. Quantity: {quantity}
 #: extracted_strings.json
-#| msgid "Quantity on Hand"
 msgid "Quantity: {quantity}"
 msgstr "Quantity: {quantity}"
 
@@ -10434,7 +10426,6 @@ msgstr "Region n"
 #. defaultMessage is:
 #. Regional Admin
 #: extracted_strings.json
-#| msgid "Region n"
 msgid "Regional Admin"
 msgstr "Regional Admin"
 
@@ -10887,7 +10878,6 @@ msgstr "Result Detected"
 #. defaultMessage is:
 #. Result Detected Resistances
 #: extracted_strings.json
-#| msgid "Result Detected"
 msgid "Result Detected Resistances"
 msgstr "Result Detected Resistances"
 
@@ -12027,7 +12017,6 @@ msgstr "Show Results From Decommissioned Devices"
 #. defaultMessage is:
 #. Show Results With Unreconciled Inventories
 #: extracted_strings.json
-#| msgid "List of Unreconciled Inventory"
 msgid "Show Results With Unreconciled Inventories"
 msgstr "Show Results With Unreconciled Inventories"
 
@@ -12748,7 +12737,6 @@ msgstr "Sunday"
 #. defaultMessage is:
 #. Super Admin
 #: extracted_strings.json
-#| msgid "Admin"
 msgid "Super Admin"
 msgstr "Super Admin"
 
@@ -14247,7 +14235,6 @@ msgstr "Track By Location"
 #. defaultMessage is:
 #. Track by batch
 #: extracted_strings.json
-#| msgid "Track by expiry date"
 msgid "Track by batch"
 msgstr "Track by batch"
 
@@ -14314,7 +14301,6 @@ msgstr "Transfer Sent"
 #. defaultMessage is:
 #. Transfer received from {refSiteName}
 #: extracted_strings.json
-#| msgid "Tranfer received from {refSiteName}"
 msgid "Transfer received from {refSiteName}"
 msgstr "Transfer received from {refSiteName}"
 
@@ -14322,7 +14308,6 @@ msgstr "Transfer received from {refSiteName}"
 #. defaultMessage is:
 #. Transfer sent to {refSiteName}
 #: extracted_strings.json
-#| msgid "Tranfer sent to {refSiteName}"
 msgid "Transfer sent to {refSiteName}"
 msgstr "Transfer sent to {refSiteName}"
 
@@ -14593,7 +14578,6 @@ msgstr "Unlocked"
 #. defaultMessage is:
 #. Unreconciled Quantity
 #: extracted_strings.json
-#| msgid "Unreconciled quantity"
 msgid "Unreconciled Quantity"
 msgstr "Unreconciled Quantity"
 
