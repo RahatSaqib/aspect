@@ -96,7 +96,8 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
       'transactionDate',
     ])
 
-  const { total } = await ilogQuery.clone().count('* as total').first()
+  const { total } = await knex.from(ilogQuery.clone().as('q')).count('* as total').first()
+
   const INVENTORY_LOG_SORT_FIELDS = [
     'consumableName',
     'siteName',
@@ -111,7 +112,7 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
     'movementReason',
     'transactionDate',
   ]
-  ilogQuery.modify(sortPageParams, requestQuery, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
+  ilogQuery.modify(sortPageParams, requestQuery, 'iLog.createdOn', INVENTORY_LOG_SORT_FIELDS)
 
   const data = await ilogQuery
   return { data, total }
