@@ -106,12 +106,12 @@ function fillHierarchicalAggregations(item) {
 
 function processGeographies(geographies) {
   const [country] = geographies
-  const states = geographies.reduce((acc, g) => {
-    if (!acc.some(item => item.stateId === g.stateId)) {
-      acc.push({ countryId: g.countryId, state: g.state, stateId: g.stateId })
+  const states = []
+  geographies.forEach(g => {
+    if (!states.some(item => item.stateId === g.stateId)) {
+      states.push({ countryId: g.countryId, state: g.state, stateId: g.stateId })
     }
-    return acc
-  }, [])
+  })
   const lgas = geographies.filter(g => g.lgaId)
 
   // Add extra unique states and lgas to match sites with no state or lga associated
