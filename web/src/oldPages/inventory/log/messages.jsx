@@ -143,6 +143,10 @@ const messages = {
       id: 'pages.InventoryLog.ConsumableReason_TestConducted',
       defaultMessage: 'Test conducted',
     },
+    ConsumableReason_ManualAddition: {
+      id: 'pages.InventoryLog.ConsumableReason_ManualAddition',
+      defaultMessage: 'Manual Addition',
+    },
     ConsumableReason_Expired: {
       id: 'pages.InventoryLog.ConsumableReason_Expired',
       defaultMessage: 'Expired',
