@@ -1,6 +1,6 @@
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
-import { object, string, number, date } from 'yup'
+import { date, number, object, string } from 'yup'
 import { types } from '../../../store/InventoryRedux'
 import {
   newInventoryMessages,
@@ -9,9 +9,6 @@ import {
   transformInventoryMessages,
   validationMessages,
 } from './messages'
-
-export const strategyRequireExpirationDate = strategy => !!strategy?.includes('ExpirationDate')
-export const strategyRequireLot = strategy => !!strategy?.includes('Lot')
 
 export function transformValues(values) {
   const { consumable, reason, inventoryItem, ...rest } = values
@@ -25,24 +22,7 @@ export function transformValues(values) {
   )
 }
 
-/**
- * helper funcs
- * Check if partner has defined this strategy, then see in consumable
- */
-export const withExpirationDate = (partner, consumable) => {
-  return (
-    strategyRequireExpirationDate(partner?.inventoryStrategy) ||
-    (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
-  )
-}
-export const withLotNumber = (partner, consumable) => {
-  return (
-    strategyRequireLot(partner?.inventoryStrategy) ||
-    (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))
-  )
-}
-
-export function getValidations(format, actionType, { partner, inventory }) {
+export function getValidations(format, actionType, { requireExpirationDate, requireLotNumber, inventory }) {
   const uiAdd = actionType === types.SHOW_NEW_INVENTORY_DIALOG
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
@@ -92,13 +72,13 @@ export function getValidations(format, actionType, { partner, inventory }) {
       expiresOn: date()
         .nullable()
         .when(['consumable'], {
-          is: () => withExpirationDate(partner) && !skipValidation,
+          is: () => requireExpirationDate && !skipValidation,
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         }),
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => withLotNumber(partner, undefined) && !skipValidation,
+          is: () => requireLotNumber && !skipValidation,
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })
@@ -179,7 +159,7 @@ export function transformInitialValue(inventory, actionType) {
       consumable: {
         id: inventory.consumableId,
         name: inventory.consumableName,
-        showExpirationDate: inventory.showExpirationDate,
+        requireExpirationDate: inventory.requireExpirationDate,
         showLot: inventory.showLot,
         unitShortName: inventory.unitShortName,
         i18nKey: inventory.consumableNameI18nKey,

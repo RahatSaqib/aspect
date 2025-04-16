@@ -17,8 +17,14 @@ function modifyConsumableMatching(knexQuery, { lotNumber, expiresOn }, inventory
 const isValidLotIdentifier = ({ lotNumber, expiresOn }) =>
   lotNumberValidator({ lotNumber }) && expirationDateValidator({ expiresOn })
 
+const filterFields = fields => {
+  const { lotNumberField, expiresOnField } = fields
+  return [lotNumberField, expiresOnField]
+}
+
 module.exports = {
   name,
   modifyConsumableMatching,
   isValidLotIdentifier,
+  filterFields,
 }

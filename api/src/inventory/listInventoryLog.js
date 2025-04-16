@@ -1,11 +1,152 @@
+const _ = require('lodash')
+const subDays = require('date-fns/subDays')
+
+const { getDateTimeProjectionInTimeZoneIANA, getDateTimeExpressionInTimeZone } = require(`../shared/date`)
 const { getConstraints } = require('../auth/constraints')
+const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../db')
+const { getInventoryLogBaseQuery, getConsumableStrategy } = require('./common/db')
+const { getUserFromCredentials } = require('../auth/constraints')
 
-const { getInventoryLog } = require('./common/db')
-
-module.exports = async function (request) {
+async function listInventoryLog(request) {
   const { auth, query } = request
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA: timeZoneIANA } = user
 
   const dataConstraints = await getConstraints(auth.credentials)
-  const { total, data } = await getInventoryLog(query, dataConstraints)
+
+  const { total, data } = await getInventoryLog(query, dataConstraints, timeZoneIANA)
+
   return { ok: true, total, length: data.length, data }
 }
+
+async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
+  if (_.isNil(requestQuery.maxDate)) {
+    requestQuery.maxDate = new Date()
+  }
+  if (_.isNil(requestQuery.minDate)) {
+    requestQuery.minDate = subDays(new Date(requestQuery.maxDate), 30).toISOString()
+  }
+
+  const partnerId = dataConstraints.partner.id
+  const consumableStrategy = await getConsumableStrategy(partnerId)
+  const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
+    .modify(filterDateRangeParams, requestQuery, 'il.createdOn')
+    .modify(
+      filterDateRangeParams,
+      { minDate: requestQuery.minExpirationDate, maxDate: requestQuery.maxExpirationDate },
+      'il.expiresOn'
+    )
+    .modify(filterParams, requestQuery, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      consumableId: 'c.id',
+      consumableExternalId: 'c.externalId',
+      siteName: 's.name',
+      siteId: 's.id',
+      lotNumber: 'il.lotNumber',
+    })
+    .modify(queryBuilder => {
+      if (requestQuery.onlyTransfers)
+        queryBuilder.whereIn('cr.i18nKey', ['ConsumableReason_TransferReceived', 'ConsumableReason_TransferSent'])
+    })
+    .modify(queryBuilder => {
+      if (requestQuery.siteIds) {
+        queryBuilder.whereIn('s.id', requestQuery.siteIds.split(','))
+      }
+    })
+  const querySelector = getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy)
+  const ilogQuery = knex
+    .from(inventoryLogQuery.select(querySelector).as('ilog'))
+    .select([
+      'createdOn',
+      'consumableName',
+      'assayId',
+      'consumableNameI18nKey',
+      ...consumableStrategy.filterFields({
+        lotNumberField: 'lotNumber',
+        expiresOnField: 'expiresOn as expirationDate',
+      }),
+      'siteName',
+      knex.raw('sum(CASE WHEN IFNULL(ilog.decrease, 0) = 1 THEN -ilog.quantity ELSE ilog.quantity END) as quantity'),
+      'movementReason',
+      knex.raw('first_value(ilog.notes) over (partition by ilog.id order by ilog.createdOn) as notes'),
+      'consumableReason',
+      'refSiteName',
+      'consumableReasonI18nKey',
+      'consumableReasonExternalId',
+      'transactionDate',
+      knex.raw('max(resultEndedOn) as resultEndedOn'),
+    ])
+    .groupBy([
+      'createdOn',
+      'consumableName',
+      'assayId',
+      'consumableNameI18nKey',
+      ...consumableStrategy.filterFields({
+        lotNumberField: 'lotNumber',
+        expiresOnField: 'expiresOn',
+      }),
+      'siteName',
+      'consumableReason',
+      'refSiteName',
+      'movementReason',
+      'consumableReasonI18nKey',
+      'consumableReasonExternalId',
+      'transactionDate',
+    ])
+
+  const { total } = await knex.from(ilogQuery.clone().as('q')).count('* as total').first()
+
+  const INVENTORY_LOG_SORT_FIELDS = [
+    'consumableName',
+    'siteName',
+    'countryName',
+    'stateName',
+    'lgaName',
+    'quantityOnHand',
+    ...consumableStrategy.filterFields({
+      lotNumberField: 'lotNumber',
+      expiresOnField: 'expiresOn',
+    }),
+    'movementReason',
+    'transactionDate',
+  ]
+  ilogQuery.modify(sortPageParams, requestQuery, 'iLog.createdOn', INVENTORY_LOG_SORT_FIELDS)
+
+  const data = await ilogQuery
+  return { data, total }
+}
+
+function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
+  return [
+    'il.id as id',
+    knex.raw(`date(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)}) as createdOn`),
+    'c.name as consumableName',
+    'ca.assayId as assayId',
+    'c.i18nKey as consumableNameI18nKey',
+    ...consumableStrategy.filterFields({
+      lotNumberField: 'il.lotNumber as lotNumber',
+      expiresOnField: 'il.expiresOn',
+    }),
+    'cr.decrease as decrease',
+    's.name as siteName',
+    'cr.name as consumableReason',
+    'refSite.name as refSiteName',
+    'il.quantity as quantity',
+    knex.raw(`
+      CASE
+        WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
+        WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
+        ELSE cr.name
+      END as movementReason
+    `),
+    'il.notes as notes',
+    'cr.i18nKey as consumableReasonI18nKey',
+    'cr.externalId as consumableReasonExternalId',
+    knex.raw(`date(${getDateTimeExpressionInTimeZone(knex, 'il.adjustedFrom', timeZoneIANA)}) as transactionDate`),
+    'r.endedOn as resultEndedOn',
+  ]
+}
+
+module.exports = listInventoryLog

@@ -12,7 +12,7 @@ import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector } from '../ind
 import FilterContainer from './FilterContainer'
 
 const InventoryLogFilter = props => {
-  const { disabled } = props
+  const { disabled, requireLotNumber, requireExpirationDate } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [state, setState] = useFilterSync()
@@ -73,26 +73,30 @@ const InventoryLogFilter = props => {
             onChange={dateValues => setState({ ...state, ...dateValues })}
           />
         </Grid>
-        <Grid item xs={3}>
-          <PeriodSelector
-            label={formatMessage(messages.expirationDate)}
-            minDate={state.minExpirationDate || null}
-            maxDate={state.maxExpirationDate || null}
-            onChange={dv => setState({ ...state, minExpirationDate: dv.minDate, maxExpirationDate: dv.maxDate })}
-            customMaxYear={addYears(new Date(), 3)}
-            noDay
-            noWeek
-            noQuarter
-            noMonth
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <TextField
-            label={formatMessage(messages.lotNumber)}
-            value={state.lotNumber || ''}
-            onChange={e => setState({ ...state, lotNumber: e.target.value ? e.target.value : null })}
-          />
-        </Grid>
+        {requireExpirationDate ? (
+          <Grid item xs={3}>
+            <PeriodSelector
+              label={formatMessage(messages.expirationDate)}
+              minDate={state.minExpirationDate || null}
+              maxDate={state.maxExpirationDate || null}
+              onChange={dv => setState({ ...state, minExpirationDate: dv.minDate, maxExpirationDate: dv.maxDate })}
+              customMaxYear={addYears(new Date(), 3)}
+              noDay
+              noWeek
+              noQuarter
+              noMonth
+            />
+          </Grid>
+        ) : null}
+        {requireLotNumber ? (
+          <Grid item xs={3}>
+            <TextField
+              label={formatMessage(messages.lotNumber)}
+              value={state.lotNumber || ''}
+              onChange={e => setState({ ...state, lotNumber: e.target.value ? e.target.value : null })}
+            />
+          </Grid>
+        ) : null}
         <Grid item xs={3}>
           <FormControlLabel
             control={
