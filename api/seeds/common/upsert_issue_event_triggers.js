@@ -1,6 +1,5 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const { upsertSingle } = require('../utils')
 const { data: issueEventTrigger } = require('../fixtures/IssueEventTrigger.json')
 
 module.exports = upsertIssueEventTrigger
