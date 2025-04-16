@@ -479,7 +479,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
       inTransitFromSiteId: transferInPendingMode ? fromSiteId : null,
     })
 
-    const { id: transferSentConsumableReasonId } = await findConsumableReason('sent')
+    const { id: transferSentConsumableReasonId } = await findConsumableReason('Transfer Sent')
 
     sourceInventoryItemId = await upsertInventoryItem({
       knex,
@@ -516,7 +516,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
 
     await createInventoryTransfer(knex, outcomeInventoryLogId, destinationInventoryItemId)
     if (!transferInPendingMode) {
-      const { id: transferReceivedConsumableReasonId } = await findConsumableReason('received')
+      const { id: transferReceivedConsumableReasonId } = await findConsumableReason('ransfer Received')
       const incomeInventoryLogId = await logInventoryChange({
         knex,
         inventoryItemId: destinationInventoryItemId,
@@ -620,7 +620,7 @@ async function receiveInventory(request) {
     })
     await updateSiteConsumable(toSiteId, { modify: 'add', consumableId }, knex)
 
-    const { id: transferReceivedConsumableReasonId } = await findConsumableReason('received')
+    const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
 
     const incomeInventoryLogId = await logInventoryChange({
       knex,
@@ -905,7 +905,7 @@ async function consumeInventoryForResult({
   )
 
   const assayConsumables = await selectAssayConsumables(knex, dataConstraints, assayId)
-  const { id: testRunConsumableReasonId } = await findConsumableReason('used')
+  const { id: testRunConsumableReasonId } = await findConsumableReason('Test Conducted')
 
   return Promise.all(
     assayConsumables.map(async assayConsumable => {
