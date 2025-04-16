@@ -12,28 +12,28 @@
       "i18nKey": "ConsumableReason_AssertedZeroInventory",
       "decrease": 0,
       "reset": 1,
-      "externalId": "zero"
+      "externalId": "asserted_zero_inventory"
     },
     {
       "name": "Test Conducted",
       "i18nKey": "ConsumableReason_TestConducted",
       "decrease": 1,
       "reset": 0,
-      "externalId": "used"
+      "externalId": "test_conducted"
     },
     {
       "name": "Transfer Sent",
       "i18nKey": "ConsumableReason_TransferSent",
       "decrease": 1,
       "reset": 0,
-      "externalId": "sent"
+      "externalId": "transfer_sent"
     },
     {
       "name": "Transfer Received",
       "i18nKey": "ConsumableReason_TransferReceived",
       "decrease": 0,
       "reset": 0,
-      "externalId": "received"
+      "externalId": "transfer_received"
     },
     {
       "name": "Expired",
@@ -67,28 +67,28 @@
       "name": "Captured",
       "i18nKey": "ConsumableReason_Captured",
       "decrease": 0,
-      "reset": 1,      
+      "reset": 1,
       "externalId": "captured"
     },
     {
       "name": "Damage",
       "i18nKey": "ConsumableReason_Damage",
       "decrease": 1,
-      "reset": 0,      
-      "externalId": "deteriorated"
+      "reset": 0,
+      "externalId": "damage"
     },
     {
       "name": "Asserted Inventory On Hand Increase",
       "i18nKey": "ConsumableReason_AssertedInventoryOnHandAdd",
       "decrease": 0,
-      "reset": 1,      
+      "reset": 1,
       "externalId": "asserted_increase"
     },
     {
       "name": "Asserted Inventory On Hand Decrease",
       "i18nKey": "ConsumableReason_AssertedInventoryOnHandRemove",
       "decrease": 1,
-      "reset": 1,      
+      "reset": 1,
       "externalId": "asserted_decrease"
     }
   ]
