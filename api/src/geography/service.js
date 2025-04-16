@@ -228,30 +228,6 @@ async function lgaSelectList(request) {
   return { ok: true, data: lgas }
 }
 
-async function getAllGeographiesWithNames(request) {
-  const { auth } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const data = await query('Get all geographies with country, state and lga names')
-    .from('Geography as g')
-    .innerJoin('Country as c', 'c.id', 'g.countryId')
-    .leftJoin('State as s', 's.id', 'g.stateId')
-    .leftJoin('Lga as l', 'l.id', 'g.lgaId')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
-    .orderBy(['c.name', 's.name', 'l.name'], 'asc')
-    .select(
-      'g.id',
-      'c.id as countryId',
-      'c.name as country',
-      's.id as stateId',
-      's.name as state',
-      'l.id as lgaId',
-      'l.name as lga'
-    )
-
-  return data
-}
-
 /**
  * Adds geographyId field to @see {updates}, searching in DB for a record matching countryId, stateId and lgaId
  * @param {Object} updates - Object with countryId, stateId and lgaId data.
@@ -281,5 +257,4 @@ module.exports = {
   stateSelectListForUser,
   lgaSelectList,
   transformGeographyFromUpdates,
-  getAllGeographiesWithNames,
 }

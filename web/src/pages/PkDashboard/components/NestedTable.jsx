@@ -106,21 +106,21 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
         {rows.map((row, i) => {
           const hasChildren = row?.children?.length > 0 ?? false
           return (
-            <Fragment key={row.id}>
-              <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
+            <Fragment key={i}>
+              <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === i ? -1 : i)}>
                 {columns.map((c, i) => (
                   <TableCell
                     width="10%"
                     scope={i === 0 ? 'row' : undefined}
                     style={{ paddingLeft: isDetail ? row?.depth * 20 : null }}
-                    key={`${row.id}_1_${c.prop}`}
+                    key={`${i}_1_${c.prop}`}
                     align={i !== 0 ? 'right' : undefined}
                     {...(c.cellProp?.(row) || {})}
                   >
                     {i === 0 ? (
                       <Box display="flex">
                         <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
-                          {open === row.id ? <ExpandLess /> : <ExpandMore />}
+                          {open === i ? <ExpandLess /> : <ExpandMore />}
                         </Box>
                         <span>{row?.[c.prop] ?? 'N/A'}</span>
                       </Box>
@@ -133,7 +133,7 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
               {hasChildren ? (
                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                   <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
-                    <Collapse in={open === row.id} timeout="auto" unmountOnExit>
+                    <Collapse in={open === i} timeout="auto" unmountOnExit>
                       <Box sx={{ backgroundColor: colors[i % 2] }}>
                         <NestedTable
                           perPage={rowsPerPage}
