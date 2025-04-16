@@ -1,32 +1,23 @@
 import React, { memo } from 'react'
-import { Button, DialogActions, LinearProgress, TextField } from '@mui/material'
+import { Button, DialogActions, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
-import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
+import { ConsumableReasonSelect, ConsumableSelect, SiteSelect } from '../../../cleanComponents'
 import InventoryItemSelect from '../../../cleanComponents/InventoryItemSelect'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
-import usePartner from '../../../hooks/partner/usePartner'
 import useSiteList from '../../../hooks/site/useSiteList'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { types } from '../../../store/InventoryRedux'
-import {
-  getLabels,
-  getQuantityOnHand,
-  getValidations,
-  transformInitialValue,
-  transformValues,
-  withExpirationDate,
-  withLotNumber,
-} from './helpers'
+import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, transformValues } from './helpers'
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages, { validationMessages } from './messages'
 
 function InventoryAdjustmentDialog(props) {
   const { data: allSites = [] } = useSiteList()
-  const { isLoading, data: partner } = usePartner()
-  const { onCancel, onSubmit, inventoryItem, actionType } = props
+  const { onCancel, onSubmit, inventoryItem, actionType, requireExpirationDate, requireLotNumber, breakOutByLot } =
+    props
   const { formatMessage, ...intl } = useIntl()
   const inventory = inventoryItem?.toJS?.() ?? undefined
   const labels = getLabels(actionType)
@@ -39,7 +30,9 @@ function InventoryAdjustmentDialog(props) {
 
   return (
     <Formik
-      validationSchema={() => getValidations(formatMessage, actionType, { inventory, partner, allSites })}
+      validationSchema={() =>
+        getValidations(formatMessage, actionType, { inventory, requireExpirationDate, requireLotNumber, allSites })
+      }
       initialValues={transformInitialValue(inventory, actionType)}
       onSubmit={values => onSubmit(transformValues(values))}
     >
@@ -128,7 +121,6 @@ function InventoryAdjustmentDialog(props) {
             })}
           >
             <form className={styles.Form}>
-              {isLoading ? <LinearProgress /> : null}
               <div className={styles.Form__Content}>
                 {initialValues?.fromSiteId ? (
                   <SiteSelect
@@ -214,8 +206,8 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {(uiTransfer || uiRemove) && !initialValues?.expiresOn && !initialValues?.lotNumber ? (
-                  // Transfer inventory without expiration date and lot number (Break out by lot unchecked)
+                {(uiTransfer || uiRemove) && !breakOutByLot ? (
+                  // Transfer or remove inventory with break out by lot option unchecked
                   <FormGroup
                     labelProps={{ required: true }}
                     label={formatMessage(messages.inventoryItem)}
@@ -225,8 +217,8 @@ function InventoryAdjustmentDialog(props) {
                     <InventoryItemSelect
                       name="inventoryItem"
                       inventoryItem={inventory}
-                      showExpirationDate={withExpirationDate(partner)}
-                      showLotNumber={withLotNumber(partner)}
+                      requireExpirationDate={requireExpirationDate}
+                      requireLotNumber={requireLotNumber}
                       onChange={(value, options) => {
                         const inventoryItem = options.find(o => o.id === value)
                         setFieldValue('expiresOn', inventoryItem?.expiresOn)
@@ -238,54 +230,58 @@ function InventoryAdjustmentDialog(props) {
                   </FormGroup>
                 ) : (
                   <>
-                    <FormGroup
-                      labelProps={{
-                        required: withExpirationDate(partner), // NOTE: `undefined` is passed as `partner` argument explicitly to avoid using inventory strategy from consumables
-                      }}
-                      label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
-                      error={!!errors.expiresOn}
-                      helperText={errors.expiresOn}
-                    >
-                      <DateTimeInput
-                        fullWidth
-                        margin="normal"
-                        dateFormat="yyyy-MM-dd"
-                        disabled={!!initialValues?.expiresOn || uiTransfer || uiRemove || uiReceive}
-                        RootProps={{
-                          name: 'expiresOn',
+                    {requireExpirationDate && (
+                      <FormGroup
+                        labelProps={{
+                          required: true,
                         }}
-                        onChange={onExpiresChange}
-                        value={values.expiresOn}
-                      />
-                    </FormGroup>
+                        label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
+                        error={!!errors.expiresOn}
+                        helperText={errors.expiresOn}
+                      >
+                        <DateTimeInput
+                          fullWidth
+                          margin="normal"
+                          dateFormat="yyyy-MM-dd"
+                          disabled={!!initialValues?.expiresOn || uiTransfer || uiRemove || uiReceive}
+                          RootProps={{
+                            name: 'expiresOn',
+                          }}
+                          onChange={onExpiresChange}
+                          value={values.expiresOn}
+                        />
+                      </FormGroup>
+                    )}
 
-                    <TextField
-                      required={withLotNumber(partner, undefined)}
-                      fullWidth
-                      type="text"
-                      name="lotNumber"
-                      label={formatMessage(messages.cartridgeLotNumber)}
-                      value={values.lotNumber}
-                      onChange={handleChange}
-                      disabled={!!initialValues?.lotNumber || uiTransfer || uiRemove || uiReceive}
-                      onBlur={handleBlur}
-                      margin="normal"
-                      FormHelperTextProps={{
-                        margin: 'dense',
-                        classes: {
-                          error: styles.Field__error__message,
-                        },
-                      }}
-                      InputLabelProps={{
-                        shrink: true,
-                        classes: {
-                          error: styles.Field__label__when__error,
-                        },
-                      }}
-                      inputProps={{ maxLength: 100 }}
-                      error={!!errors.lotNumber}
-                      helperText={errors.lotNumber}
-                    />
+                    {requireLotNumber && (
+                      <TextField
+                        required
+                        fullWidth
+                        type="text"
+                        name="lotNumber"
+                        label={formatMessage(messages.cartridgeLotNumber)}
+                        value={values.lotNumber}
+                        onChange={handleChange}
+                        disabled={!!initialValues?.lotNumber || uiTransfer || uiRemove || uiReceive}
+                        onBlur={handleBlur}
+                        margin="normal"
+                        FormHelperTextProps={{
+                          margin: 'dense',
+                          classes: {
+                            error: styles.Field__error__message,
+                          },
+                        }}
+                        InputLabelProps={{
+                          shrink: true,
+                          classes: {
+                            error: styles.Field__label__when__error,
+                          },
+                        }}
+                        inputProps={{ maxLength: 100 }}
+                        error={!!errors.lotNumber}
+                        helperText={errors.lotNumber}
+                      />
+                    )}
                   </>
                 )}
 

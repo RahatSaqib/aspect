@@ -34,13 +34,13 @@ export function getColumns(intl, options) {
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
       sortable: true,
-      isHidden: !options.breakOutByLot,
+      isHidden: !(options.breakOutByLot && options.requireLotNumber),
     },
     {
       key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
-      isHidden: !options.breakOutByLot,
+      isHidden: !(options.breakOutByLot && options.requireExpirationDate),
     },
     {
       key: 'newQuantity',

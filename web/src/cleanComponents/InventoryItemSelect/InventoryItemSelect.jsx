@@ -5,7 +5,7 @@ import { commonDefinitions } from '../../messages'
 import AspectSelect from '../AspectSelect'
 import messages from './messages'
 
-export default function InventoryItemSelect({ inventoryItem, showLotNumber, showExpirationDate, ...props }) {
+export default function InventoryItemSelect({ inventoryItem, requireLotNumber, requireExpirationDate, ...props }) {
   const { isLoading: isInventoryListLoading, data: { data: inventoryItems = [] } = {} } = useInventoryList({
     siteId: inventoryItem.siteId,
     consumableId: inventoryItem.consumableId,
@@ -17,7 +17,7 @@ export default function InventoryItemSelect({ inventoryItem, showLotNumber, show
   const itemToString = item => {
     const parts = []
 
-    if (showLotNumber) {
+    if (requireLotNumber) {
       parts.push(
         formatMessage(messages.lotNumber, {
           lotNumber: item.lotNumber || formatMessage(commonDefinitions.notAvailable),
@@ -25,7 +25,7 @@ export default function InventoryItemSelect({ inventoryItem, showLotNumber, show
       )
     }
 
-    if (showExpirationDate) {
+    if (requireExpirationDate) {
       parts.push(
         formatMessage(messages.expiresOn, {
           expiresOn: item.expiresOn.split('T')[0] || formatMessage(commonDefinitions.notAvailable),

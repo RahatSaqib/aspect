@@ -125,7 +125,7 @@ describe('Device API routes for GxConnect Devices', () => {
         } = reply
         const inventoryItem = _.find(
           data,
-          elem => elem.consumableId === consumableAssay.consumableId && elem.lotNumber === null
+          elem => elem.consumableId === consumableAssay.consumableId && elem.lotNumber === undefined
         )
 
         assert.equal(inventoryItem.quantityOnHand, initialQuantityOnHand - consumableAssay.quantity)

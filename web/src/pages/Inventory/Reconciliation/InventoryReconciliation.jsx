@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from 'react'
-import { Box, Card, LinearProgress, Stack, Button, Switch, Typography } from '@mui/material'
+import React, { useEffect, useCallback, useMemo } from 'react'
+import { Box, Button, Card, LinearProgress, Stack, Switch, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
@@ -9,18 +9,20 @@ import { useSearchParams } from 'react-router-dom'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import { InventoryReconciliationFilter } from '../../../cleanComponents/Filter'
 import {
-  hierarchicalToggleSettingsLocalStorageKey,
   HierarchicalView,
+  hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import useAutoReconciliation from '../../../hooks/inventory/useAutoReconciliation'
 import useInventoryReconciliation from '../../../hooks/inventory/useInventoryReconciliation'
+import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
+import { strategyRequireExpirationDate, strategyRequireLot } from '../../../oldPages/inventory/strategyHelper'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { InventoryReconciliationList } from './InventoryReconciliationList'
 import messages from './messages'
@@ -46,7 +48,7 @@ export function InventoryReconciliation() {
   })
 
   // Clear filters when warehouse view is selected
-  React.useEffect(() => {
+  useEffect(() => {
     if (isHierarchicalView && isWarehouseView) {
       setFilters({
         breakOutByLot: filters.breakOutByLot,
@@ -91,13 +93,20 @@ export function InventoryReconciliation() {
     },
     [setFilters, setSearchParams]
   )
-
+  const { isLoadingPartner, data: partner } = usePartner()
+  const requireExpirationDate = strategyRequireExpirationDate(partner?.inventoryStrategy)
+  const requireLotNumber = strategyRequireLot(partner?.inventoryStrategy)
   return (
     <>
       <DetailHeader name={formatMessage(messages.inventoryReconciliation)} disableBack />
       <Helmet title={formatMessage(messages.inventoryReconciliation)} />
       <Box sx={{ width: '100%', p: '10px' }}>
-        <InventoryReconciliationFilter disabled={isHierarchicalView && isWarehouseView} />
+        <InventoryReconciliationFilter
+          disabled={isHierarchicalView && isWarehouseView}
+          breakOutByLot={filters.breakOutByLot}
+          requireLotNumber={requireLotNumber}
+          requireExpirationDate={requireExpirationDate}
+        />
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
           {isHierarchicalView ? (
             <HierarchicalView
@@ -122,7 +131,7 @@ export function InventoryReconciliation() {
               <Stack sx={{ flexDirection: 'row', gap: 1 }}>
                 <Typography variant="subtitle2" color="textSecondary">
                   <Switch checked={[true, 'true'].includes(filters.breakOutByLot)} onChange={handleBreakOutByLot} />
-                  {formatMessage(messages.breakdownByLots)}
+                  {formatMessage(messages.breakOutByLot)}
                 </Typography>
                 <AspectExportListButton
                   onExport={handleExport}
@@ -131,7 +140,7 @@ export function InventoryReconciliation() {
                 />
               </Stack>
             </Stack>
-            {isLoading || isAutoReconciling ? (
+            {isLoading || isLoadingPartner || isAutoReconciling ? (
               <LinearProgress />
             ) : !data || !data?.data || data?.data?.length === 0 ? (
               <BrowseEmptyList />
@@ -142,6 +151,8 @@ export function InventoryReconciliation() {
                   sortDir={sortDir}
                   sortCol={sortCol}
                   breakOutByLot={filters.breakOutByLot}
+                  requireLotNumber={requireLotNumber}
+                  requireExpirationDate={requireExpirationDate}
                 />
                 <BrowseTablePaginator
                   location={location}

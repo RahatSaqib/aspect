@@ -14,36 +14,36 @@ import { getTimezoneById } from '../../../utils/utils/timezone'
 import { getColumns } from './tools'
 
 export function InventoryReconciliationList(props) {
-  const { items, sortDir, sortCol, breakOutByLot } = props
+  const { items, sortDir, sortCol, breakOutByLot, requireLotNumber, requireExpirationDate } = props
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
   const user = useAuthState()
   const validTimeZone = getTimezoneById(user.timezoneId)
   const { formatMessage } = useIntl()
   const columns = useMemo(
-    () => getColumns(formatMessage, [true, 'true'].includes(breakOutByLot), user),
-    [formatMessage, breakOutByLot, user]
+    () => getColumns(formatMessage, { breakOutByLot, requireLotNumber, requireExpirationDate, user }),
+    [formatMessage, breakOutByLot, requireLotNumber, requireExpirationDate, user]
   )
   const location = useLocation()
+
   return (
     <Table>
       <DataTableHead location={location} sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
       <TableBody>
         {items.map((item, index) => (
-          <TableRow
-            sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }}
-            key={`${item.siteName}-${item.consumableName}${item.lotNumber ? `-${item.lotNumber}` : ''}`}
-          >
+          <TableRow key={index} sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }}>
             <DataTableCell>{item.stateName}</DataTableCell>
             <DataTableCell>{item.lgaName}</DataTableCell>
             <DataTableCell>{item.siteName}</DataTableCell>
             <DataTableCell>{item.consumableName}</DataTableCell>
             {breakOutByLot ? (
               <>
-                <DataTableCell>
-                  {item.expiresOn ? formatInTimeZone(new Date(item.expiresOn), validTimeZone, 'yyyy-MM-dd') : ''}
-                </DataTableCell>
-                <DataTableCell>{item.lotNumber}</DataTableCell>
+                {requireExpirationDate ? (
+                  <DataTableCell>
+                    {item.expiresOn ? formatInTimeZone(new Date(item.expiresOn), validTimeZone, 'yyyy-MM-dd') : ''}
+                  </DataTableCell>
+                ) : null}
+                {requireLotNumber ? <DataTableCell>{item.lotNumber}</DataTableCell> : null}
               </>
             ) : null}
             <DataTableCell
