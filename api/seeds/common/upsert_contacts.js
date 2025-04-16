@@ -195,7 +195,12 @@ module.exports = async (knex, partnerData, contacts) => {
 
       // Insert all the PersonTag records
       tags = await knex('Tag').where({ partnerId }).whereIn('title', person.tags)
-      await Promise.each(tags, async t => knex('PersonTag').insert({ tagId: t.id, personId }))
+      await knex('PersonTag').insert(
+        tags.map(t => ({
+          tagId: t.id,
+          personId,
+        }))
+      )
     }
 
     if (!_.isEmpty(person.jobFunctions)) {

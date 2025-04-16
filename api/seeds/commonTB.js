@@ -91,14 +91,14 @@ async function upsertMGITDeviceTypeAndAssays(
         _.map(resultCategoryId, category => category.resultCategoryId),
         elem
       )
-  )
+  ).map(resultCategoryId => ({
+    resultCategoryId,
+    assayId: assayBdMgitAstId,
+  }))
 
-  await Promise.each(categoriesToInsert, elem =>
-    knex('ResultCategoryAssay').insert({
-      resultCategoryId: elem,
-      assayId: assayBdMgitAstId,
-    })
-  )
+  if (categoriesToInsert.length > 0) {
+    await knex('ResultCategoryAssay').insert(categoriesToInsert)
+  }
 
   const assayBdMgitGnd = {
     name: 'BD MGIT GND',
@@ -133,13 +133,14 @@ async function upsertMGITDeviceTypeAndAssays(
         _.map(resultCategoryBdMgitGndId, category => category.resultCategoryId),
         elem
       )
-  )
-  await Promise.each(valuesToInsert, elem =>
-    knex('ResultCategoryAssay').insert({
-      resultCategoryId: elem,
-      assayId: assayBdMgitGndId,
-    })
-  )
+  ).map(resultCategoryId => ({
+    resultCategoryId,
+    assayId: assayBdMgitGndId,
+  }))
+
+  if (valuesToInsert.length > 0) {
+    await knex('ResultCategoryAssay').insert(valuesToInsert)
+  }
 
   await seedPartnerAssay(knex)
   await seedPartnerDisease(knex)
@@ -253,14 +254,14 @@ async function upsertCultureAssays(
         _.map(resultCategoryId, category => category.resultCategoryId),
         elem
       )
-  )
+  ).map(resultCategoryId => ({
+    resultCategoryId,
+    assayId: assayGenericDstId,
+  }))
 
-  await Promise.each(categoriesToInsert, elem =>
-    knex('ResultCategoryAssay').insert({
-      resultCategoryId: elem,
-      assayId: assayGenericDstId,
-    })
-  )
+  if (categoriesToInsert.length > 0) {
+    await knex('ResultCategoryAssay').insert(categoriesToInsert)
+  }
 
   const assayGenericCulture = {
     name: 'Culture',
@@ -297,13 +298,14 @@ async function upsertCultureAssays(
         _.map(resultCategoryCultureId, category => category.resultCategoryId),
         elem
       )
-  )
-  await Promise.each(valuesToInsert, elem =>
-    knex('ResultCategoryAssay').insert({
-      resultCategoryId: elem,
-      assayId: assayGenericCultureId,
-    })
-  )
+  ).map(resultCategoryId => ({
+    resultCategoryId,
+    assayId: assayGenericCultureId,
+  }))
+
+  if (valuesToInsert.length > 0) {
+    await knex('ResultCategoryAssay').insert(valuesToInsert)
+  }
 
   await knex('ResultCategoryAssay')
     .update({ requiresTreatment: 1 })
