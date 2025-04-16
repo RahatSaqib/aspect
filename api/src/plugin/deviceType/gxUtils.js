@@ -4,7 +4,7 @@ const Promise = require('bluebird')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const { isNil } = require('lodash')
 const { insertSite } = require('../../site/common/db')
-const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
+const { findConsumables, findConsumableReasonByName } = require('../../consumable/consumableService')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
@@ -249,7 +249,7 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
         })
         if (matchingConsumables.length === 1) {
           const matchingConsumable = matchingConsumables[0]
-          const matchingConsumableReason = await findConsumableReason(inventoryChange.consumableReasonName)
+          const matchingConsumableReason = await findConsumableReasonByName(inventoryChange.consumableReasonName)
           if (matchingConsumableReason) {
             const absoluteQuantity = Math.abs(inventoryChange.quantity)
             const isDecrease =

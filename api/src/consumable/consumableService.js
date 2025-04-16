@@ -41,7 +41,12 @@ async function findConsumables(knownConsumableDetails) {
   return consumables
 }
 
-async function findConsumableReason(consumableReasonName) {
+async function findConsumableReason(externalId) {
+  const consumableReason = await knex('ConsumableReason').where({ externalId }).first()
+  return consumableReason
+}
+
+async function findConsumableReasonByName(consumableReasonName) {
   const consumableReason = await knex('ConsumableReason')
     .where({
       name: consumableReasonName,
@@ -174,6 +179,7 @@ module.exports = {
   listConsumableReasons,
   findConsumables,
   findConsumableReason,
+  findConsumableReasonByName,
   getConsumableById,
   getUnits,
   updateConsumable,

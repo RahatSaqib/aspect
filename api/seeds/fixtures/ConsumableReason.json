@@ -1,6 +1,13 @@
 {
   "data": [
     {
+      "name": "Manual Addition",
+      "i18nKey": "ConsumableReason_ManualAddition",
+      "decrease": 0,
+      "reset": 0,
+      "externalId": "manual_addition"
+    },
+    {
       "name": "Asserted Zero Inventory",
       "i18nKey": "ConsumableReason_AssertedZeroInventory",
       "decrease": 0,

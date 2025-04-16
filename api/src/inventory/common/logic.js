@@ -171,6 +171,7 @@ async function upsertInventoryItemAndLog(
      * common props
      */
     consumableId,
+    consumableReasonId,
     lotNumber,
     expiresOn,
     inTransitFromSiteId,
@@ -202,6 +203,7 @@ async function upsertInventoryItemAndLog(
     knex,
     inventoryItemId,
     consumableId,
+    consumableReasonId,
     siteId,
     lotNumber,
     expiresOn,
@@ -227,6 +229,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     quantity, // is positive and works with `operation` to add/remove/transfer/receive
     operation,
     inTransitFromSiteId,
+    consumableReasonId,
     now,
     userId,
     inventoryAdjustment,
@@ -263,6 +266,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
         quantityOnHand: res.quantityOnHand,
         siteId: res.inventoryItem?.siteId ?? siteId,
         consumableId,
+        consumableReasonId,
         lotNumber,
         ...(resultId && { inventoryAdjustment, inventoryStrategy: partnerInventoryStrategy }),
         expiresOn,
@@ -318,6 +322,11 @@ async function addInventory({ auth, payload, plugins }) {
     return Boom.forbidden('You are not permitted to add inventory to this site')
   }
   const { id: userId, partnerId } = await getUser(auth.credentials.name)
+  let consumableReasonId = reasonId
+  if (!consumableReasonId) {
+    const { id: manualAddConsumableReasonId } = await findConsumableReason('manual_addition')
+    consumableReasonId = manualAddConsumableReasonId
+  }
   /**
    * take 1st item from returning array of affected items
    */
@@ -333,7 +342,7 @@ async function addInventory({ auth, payload, plugins }) {
     partnerId,
     plugins, // for getting messageContext
     logProps: {
-      consumableReasonId: reasonId,
+      consumableReasonId,
       adjustedFrom: dateAdjusted,
       notes,
     },
@@ -470,7 +479,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
       inTransitFromSiteId: transferInPendingMode ? fromSiteId : null,
     })
 
-    const { id: transferSentConsumableReasonId } = await findConsumableReason('Transfer Sent')
+    const { id: transferSentConsumableReasonId } = await findConsumableReason('sent')
 
     sourceInventoryItemId = await upsertInventoryItem({
       knex,
@@ -507,7 +516,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
 
     await createInventoryTransfer(knex, outcomeInventoryLogId, destinationInventoryItemId)
     if (!transferInPendingMode) {
-      const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
+      const { id: transferReceivedConsumableReasonId } = await findConsumableReason('received')
       const incomeInventoryLogId = await logInventoryChange({
         knex,
         inventoryItemId: destinationInventoryItemId,
@@ -611,7 +620,7 @@ async function receiveInventory(request) {
     })
     await updateSiteConsumable(toSiteId, { modify: 'add', consumableId }, knex)
 
-    const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
+    const { id: transferReceivedConsumableReasonId } = await findConsumableReason('received')
 
     const incomeInventoryLogId = await logInventoryChange({
       knex,
@@ -896,7 +905,7 @@ async function consumeInventoryForResult({
   )
 
   const assayConsumables = await selectAssayConsumables(knex, dataConstraints, assayId)
-  const { id: testRunConsumableReasonId } = await findConsumableReason('Test Conducted')
+  const { id: testRunConsumableReasonId } = await findConsumableReason('used')
 
   return Promise.all(
     assayConsumables.map(async assayConsumable => {
