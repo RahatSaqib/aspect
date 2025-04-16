@@ -1,6 +1,6 @@
 const chai = require('chai')
 const _ = require('lodash')
-const { format } = require('date-fns')
+const { format, addDays, subHours } = require('date-fns')
 const shared = require('../../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../../seeds/commonGenerateResults')
@@ -86,30 +86,31 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
 
       const dateNow = Date.now()
 
-      const treatmentOccurredDate = new Date(dateNow - 60 * 60 * 1000).toISOString()
-      const oneDayAfter = new Date(dateNow + 1 * 24 * 60 * 60 * 1000).toISOString()
+      const treatmentOccurredDate = subHours(new Date(dateNow), 1).toISOString()
+      const oneDayAfter = addDays(new Date(dateNow), 1).toISOString()
+      const timeNow = new Date().toISOString()
 
       // POST clinical response to record treatment
       const clinicalResponseResponseOne = await server
         .post(`${clinicalResponsePath}/${resultId}`)
         .send([
           {
-            clientTime: new Date().toISOString(),
+            clientTime: timeNow,
             fieldName: 'confirmed',
             value: false,
           },
           {
-            clientTime: new Date().toISOString(),
+            clientTime: timeNow,
             fieldName: 'treatment',
             value: 'drtb-bxdr',
           },
           {
-            clientTime: new Date().toISOString(),
+            clientTime: timeNow,
             fieldName: 'treatmentOccurred',
             value: treatmentOccurredDate,
           },
           {
-            clientTime: new Date().toISOString(),
+            clientTime: timeNow,
             fieldName: 'outcome',
             value: 'cured',
           },
@@ -150,22 +151,22 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
         .post(`${clinicalResponsePath}/${resultId}`)
         .send([
           {
-            clientTime: new Date().toISOString(),
+            clientTime: timeNow,
             fieldName: 'confirmed',
             value: false,
           },
           {
-            clientTime: new Date().toISOString(),
+            clientTime: timeNow,
             fieldName: 'treatment',
             value: 'drtb-bxdr',
           },
           {
-            clientTime: new Date().toISOString(),
+            clientTime: timeNow,
             fieldName: 'treatmentOccurred',
             value: oneDayAfter,
           },
           {
-            clientTime: new Date().toISOString(),
+            clientTime: timeNow,
             fieldName: 'outcome',
             value: 'cured',
           },
