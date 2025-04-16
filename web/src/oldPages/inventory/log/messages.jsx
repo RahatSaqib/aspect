@@ -8,9 +8,9 @@ const messages = {
   ...allMessage,
   ...consumableMessages,
   ...defineMessages({
-    date: {
-      id: 'pages.InventoryLog.date',
-      defaultMessage: 'Date',
+    registrationDate: {
+      id: 'pages.InventoryLog.registrationDate',
+      defaultMessage: 'Registration Date',
     },
     inventoryLogTitle: {
       id: 'pages.InventoryLog.inventoryLogTitle',

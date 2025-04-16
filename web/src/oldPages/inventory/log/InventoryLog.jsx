@@ -1,6 +1,6 @@
-import React from 'react'
 import { LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
+import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -64,8 +64,8 @@ export const InventoryLogWithProps = ({
 
   const columns = [
     {
-      key: 'createdOn',
-      label: intl.formatMessage(messages.date),
+      key: 'transactionDate',
+      label: intl.formatMessage(messages.transactionDate),
       sortable: true,
     },
     {
@@ -101,13 +101,13 @@ export const InventoryLogWithProps = ({
       sortable: true,
     },
     {
-      key: 'transactionDate',
-      label: intl.formatMessage(messages.transactionDate),
+      key: 'notes',
+      label: intl.formatMessage(messages.notes),
       sortable: true,
     },
     {
-      key: 'notes',
-      label: intl.formatMessage(messages.notes),
+      key: 'createdOn',
+      label: intl.formatMessage(messages.registrationDate),
       sortable: true,
     },
   ]
@@ -200,7 +200,7 @@ const InventoryLog = () => {
   const navigate = useNavigate()
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({
-    sortCol: 'createdOn',
+    sortCol: 'transactionDate',
     sortDir: 'desc',
     pageSize: 50,
   })({

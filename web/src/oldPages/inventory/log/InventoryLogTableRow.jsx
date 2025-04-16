@@ -24,8 +24,8 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
   return (
     <TableRow className={styles.TableRow}>
       <TableCell className={styles.TableCell}>
-        {inventoryLogItem.createdOn
-          ? formatDate(new Date(inventoryLogItem.createdOn))
+        {inventoryLogItem.transactionDate
+          ? formatDate(inventoryLogItem.transactionDate)
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.siteName}</TableCell>
@@ -96,12 +96,12 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
             })
           : ''}
       </TableCell>
+      <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
       <TableCell className={styles.TableCell}>
-        {inventoryLogItem.transactionDate
-          ? formatDate(inventoryLogItem.transactionDate)
+        {inventoryLogItem.createdOn
+          ? formatDate(new Date(inventoryLogItem.createdOn))
           : formatMessage(messages.notAvailable)}
       </TableCell>
-      <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
     </TableRow>
   )
 }
