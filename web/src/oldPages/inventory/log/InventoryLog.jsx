@@ -1,6 +1,6 @@
+import React from 'react'
 import { LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
-import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
