@@ -516,7 +516,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
 
     await createInventoryTransfer(knex, outcomeInventoryLogId, destinationInventoryItemId)
     if (!transferInPendingMode) {
-      const { id: transferReceivedConsumableReasonId } = await findConsumableReason('ransfer Received')
+      const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
       const incomeInventoryLogId = await logInventoryChange({
         knex,
         inventoryItemId: destinationInventoryItemId,
