@@ -1,6 +1,7 @@
 import React from 'react'
 import { formatInTimeZone } from 'date-fns-tz'
 import endOfDay from 'date-fns/endOfDay'
+import parse from 'date-fns/parse'
 import startOfDay from 'date-fns/startOfDay'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
@@ -10,12 +11,12 @@ import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
-import { formatDate, formatDateTime } from '../../../utils/utils/dateFormat'
+import { formatDate } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
 const TEST_CONDUCTED_EXTERNAL_ID = 'used'
 
-const InventoryLogTableRow = ({ inventoryLogItem, timeZone }) => {
+const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDate, requireLotNumber }) => {
   const { formatMessage } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
@@ -23,7 +24,9 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone }) => {
   return (
     <TableRow className={styles.TableRow}>
       <TableCell className={styles.TableCell}>
-        {inventoryLogItem.createdOn ? formatDateTime(inventoryLogItem.createdOn) : formatMessage(messages.notAvailable)}
+        {inventoryLogItem.createdOn
+          ? formatDate(new Date(inventoryLogItem.createdOn))
+          : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.siteName}</TableCell>
       <TableCell className={styles.TableCell}>
@@ -32,40 +35,40 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone }) => {
           : inventoryLogItem.consumableName}
       </TableCell>
 
-      {inventoryLogItem.lotNumber !== undefined ? (
+      {requireLotNumber ? (
         <TableCell className={styles.TableCell}>
           {inventoryLogItem.lotNumber ? inventoryLogItem.lotNumber : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
 
-      <TableCell className={styles.TableCell}>
-        <span
-          className={
-            inventoryLogItem.expirationDate !== null && new Date(inventoryLogItem.expirationDate) < new Date()
-              ? styles.alert
-              : null
-          }
-        >
-          {inventoryLogItem.expirationDate
-            ? inventoryLogItem.expirationDate.split('T')[0]
-            : formatMessage(messages.notAvailable)}
-        </span>
-      </TableCell>
+      {requireExpirationDate ? (
+        <TableCell className={styles.TableCell}>
+          <span
+            className={
+              inventoryLogItem.expirationDate !== null && new Date(inventoryLogItem.expirationDate) < new Date()
+                ? styles.alert
+                : null
+            }
+          >
+            {inventoryLogItem.expirationDate
+              ? inventoryLogItem.expirationDate.split('T')[0]
+              : formatMessage(messages.notAvailable)}
+          </span>
+        </TableCell>
+      ) : null}
 
       <TableCell
         className={styles.TableCell}
         onClick={() => {
           if (inventoryLogItem.consumableReasonExternalId === TEST_CONDUCTED_EXTERNAL_ID) {
+            const formattedDate = formatInTimeZone(new Date(inventoryLogItem.resultEndedOn), timeZone, 'yyyy-MM-dd')
+            const parsedDate = parse(formattedDate, 'yyyy-MM-dd', new Date())
             addFilter(
               omitBy(
                 {
                   countryId,
-                  minDate: startOfDay(
-                    new Date(formatInTimeZone(new Date(inventoryLogItem.resultEndedOn), timeZone, 'yyyy-MM-dd'))
-                  ),
-                  maxDate: endOfDay(
-                    new Date(formatInTimeZone(new Date(inventoryLogItem.resultEndedOn), timeZone, 'yyyy-MM-dd'))
-                  ),
+                  minDate: startOfDay(parsedDate),
+                  maxDate: endOfDay(parsedDate),
                   assayId: inventoryLogItem.assayId,
                   siteName: inventoryLogItem.siteName,
                 },
@@ -99,16 +102,6 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone }) => {
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
-      <TableCell className={styles.TableCell}>
-        {inventoryLogItem.reconcilationAdjustment
-          ? formatMessage(messages[inventoryLogItem.reconcilationStrategy])
-          : ''}
-      </TableCell>
-      <TableCell className={styles.TableCell}>
-        {inventoryLogItem.reconcilationAdjustment
-          ? formatMessage(messages[inventoryLogItem.reconcilationAdjustment])
-          : ''}
-      </TableCell>
     </TableRow>
   )
 }
