@@ -10,7 +10,7 @@ const Sentry = require('@sentry/node')
 const fs = require('fs')
 const config = require('./config')
 const { version } = require('../package.json')
-const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes, asyncHandler } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
@@ -115,6 +115,24 @@ const rawPayloadPlugin = {
       request.plugins.rawPayload = request.payload
       if (request.payload) Sentry.setContext('payload', request.payload)
       return h.continue
+    })
+
+    // Add test route for Sentry error reporting
+    server.route({
+      method: 'GET',
+      path: '/api/test-sentry-error',
+      config: {
+        auth: false,
+        handler: () => {
+          const error = new Error('Test handled error for Sentry')
+          error.data = {
+            customField: 'test value',
+            timestamp: new Date().toISOString(),
+          }
+          error.name = 'TestSentryError'
+          throw error
+        },
+      },
     })
   },
 }

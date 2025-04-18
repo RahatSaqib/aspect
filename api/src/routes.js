@@ -155,8 +155,23 @@ function asyncHandler(handler) {
     handler(request, reply)
       .then(reply)
       .catch(err => {
-        // Log err stack and Rethrow to Hapi handles error case and Boom.500
-        logger.error(err)
+        // Add request context to the error
+        const errorContext = {
+          method: request.method,
+          path: request.path,
+          payload: request.payload,
+          params: request.params,
+          query: request.query,
+        }
+
+        // Log error with full context
+        logger.error(err, {
+          error: err,
+          stack: err.stack,
+          context: errorContext,
+          ...err.data, // Spread any additional error data
+        })
+
         throw err
       })
 }

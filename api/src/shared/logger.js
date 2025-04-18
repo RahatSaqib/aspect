@@ -94,11 +94,15 @@ if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel)
         environment: config.environment,
         ignoreErrors: config.sentry.ignoreErrors,
         sanitizeKeys: config.sentry.sanitizeKeys,
+        attachStacktrace: true,
+        includeLocalVariables: true,
+        captureUnhandledRejections: true,
       },
       tags: {
         country: config.countryName,
       },
       level: config.sentry.logLevel,
+      // format: format.combine(format.timestamp(), format.json(), errors({ stack: true })),
     })
   )
 
