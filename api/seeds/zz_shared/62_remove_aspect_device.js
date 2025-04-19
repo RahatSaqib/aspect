@@ -15,7 +15,6 @@ module.exports = require('../utils').seed(async knex => {
     await knex('FactResultsDevice').whereIn('deviceId', aspectDeviceIds).delete()
     await knex('FactResultsDeviceByAssay').whereIn('deviceId', aspectDeviceIds).delete()
     await knex('FactResultsDeviceByCategory1').whereIn('deviceId', aspectDeviceIds).delete()
-    await knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', aspectDeviceIds).delete()
 
     const issueIds = await knex('Issue').whereIn('deviceId', aspectDeviceIds).pluck('id')
     await knex('IssueEvent').whereIn('issueId', issueIds).delete()

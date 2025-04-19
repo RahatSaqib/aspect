@@ -1,11 +1,12 @@
 const { startOfToday, addDays, format } = require('date-fns')
-const { Promise } = require('bluebird')
 const _ = require('lodash')
 const { getArrayOfDaysInRange, slideDateToTimeZone } = require('../shared/date')
 const { knex } = require('../db')
 const formDictionary = require('../forms/formsFileDictionary')
 const { factCheckCompletionRatePerSite } = require('./actions')
 const config = require('../config')
+
+const bulkInsertThreshold = 1000
 
 /**
  * Clean and fills FactCustomFieldCompletion table with stats for last 30 days
@@ -30,7 +31,6 @@ const factFillCustomFieldsCompletionStatsLast30Days = async (_, { messageContext
  * @returns Quantity of rows inserted
  */
 async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
-  let insertedStats = 0
   let days = getArrayOfDaysInRange(dateFrom, dateTo)
 
   const definitions = await getCustomFieldsDefinitions()
@@ -53,20 +53,17 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   const selectColumnClauses = convertCustomFieldsToColumnKnexClauses(definitions)
 
   const allFields = definitions.map(d => d.fields).flat()
-  await knex.raw('delete from FactCustomFieldCompletion where date >= ?', dateFrom)
+  await knex('FactCustomFieldCompletion').whereRaw('date >= ?', dateFrom).delete()
 
-  const allUpdatedRecords = await Promise.map(
-    days,
-    async day => {
-      const startOfDay = slideDateToTimeZone(day, timeZone)
-      const endOfDay = slideDateToTimeZone(addDays(day, 1), timeZone)
-      const updatedRecords = await getUpdatedRecords(startOfDay, endOfDay, dateFrom, dateTo)
-      return updatedRecords
-    },
-    {
-      concurrency: 5,
-    }
-  )
+  const allUpdatedRecords = []
+
+  for (const day of days) {
+    const startOfDay = slideDateToTimeZone(day, timeZone)
+    const endOfDay = slideDateToTimeZone(addDays(day, 1), timeZone)
+    // eslint-disable-next-line no-await-in-loop
+    const updatedRecords = await getUpdatedRecords(startOfDay, endOfDay, dateFrom, dateTo)
+    allUpdatedRecords.push(updatedRecords)
+  }
 
   const flatUpdatedRecords = allUpdatedRecords.flat()
 
@@ -86,22 +83,30 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   const sortedDate = outOfRangeRecords.sort((a, b) => new Date(a) - new Date(b))
 
   days = [...sortedDate, ...days]
+  let insertedStats = 0
+  let records = []
 
-  await Promise.each(days, async day => {
+  for (const day of days) {
     const startOfDay = slideDateToTimeZone(new Date(day), timeZone)
     const endOfDay = slideDateToTimeZone(addDays(new Date(day), 1), timeZone)
+    // eslint-disable-next-line no-await-in-loop
     const results = await getResultsCustomFields(selectColumnClauses, startOfDay, endOfDay)
     const stats = generateStatsResult(allFields, results)
-    const batchSize = 10
-    for (let i = 0; i < stats.length; i += batchSize) {
-      const batch = stats.slice(i, i + batchSize)
-
-      // eslint-disable-next-line no-await-in-loop
-      await knex('FactCustomFieldCompletion').insert(batch).onConflict(['siteId', 'assayId', 'date']).merge()
-    }
 
     insertedStats += stats.length
-  })
+
+    records.push(...stats)
+
+    if (records.length > bulkInsertThreshold) {
+      // eslint-disable-next-line no-await-in-loop
+      await knex('FactCustomFieldCompletion').insert(records).onConflict(['siteId', 'assayId', 'date']).merge()
+      records = []
+    }
+  }
+
+  if (records.length > 0) {
+    await knex('FactCustomFieldCompletion').insert(records).onConflict(['siteId', 'assayId', 'date']).merge()
+  }
 
   return insertedStats
 }
