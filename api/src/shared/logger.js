@@ -1,7 +1,8 @@
-const Sentry = require('winston-sentry-log')
+const SentryTransport = require('winston-transport-sentry-node').default
 
 const { createLogger, format, transports, config: winstonConfig } = require('winston')
 const { Mail } = require('winston-mail')
+const { Sentry } = require('./sentry')
 
 const config = require('../config')
 
@@ -86,24 +87,20 @@ if (config.log.mail.logLevel) {
   )
 }
 
-if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel)
-  logger.add(
-    new Sentry({
-      config: {
-        dsn: config.sentry.dsn,
-        environment: config.environment,
-        ignoreErrors: config.sentry.ignoreErrors,
-        sanitizeKeys: config.sentry.sanitizeKeys,
-        attachStacktrace: true,
-        includeLocalVariables: true,
-        captureUnhandledRejections: true,
-      },
-      tags: {
-        country: config.countryName,
-      },
-      level: config.sentry.logLevel,
-      // format: format.combine(format.timestamp(), format.json(), errors({ stack: true })),
-    })
-  )
+if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel) {
+  const options = {
+    sentry: Sentry,
+    level: config.sentry.logLevel,
+    format: combine(format.timestamp(), format.errors({ stack: true }), format.metadata(), format.json()),
+    filterDataKeys: config.sentry.sanitizeKeys || [],
+    ignoreErrors: config.sentry.ignoreErrors || [],
+    tags: {
+      country: config.countryName,
+      version: require('../../package.json').version,
+    },
+  }
+
+  logger.add(new SentryTransport(options))
+}
 
 module.exports = logger

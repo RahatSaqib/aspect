@@ -1,14 +1,19 @@
 // eslint-disable-next-line import/order
 require('../newrelic')
-// =======================
-// configuration =========
-// =======================
+
+const fs = require('fs')
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
-const Sentry = require('@sentry/node')
-const fs = require('fs')
+const { Sentry, initSentry } = require('./shared/sentry')
 const config = require('./config')
+
+// Initialize Sentry before creating the server
+initSentry()
+
+// =======================
+// configuration =========
+// =======================
 const { version } = require('../package.json')
 const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes, asyncHandler } = require('./routes')
 const { createMessageQueue } = require('./mq')
@@ -123,7 +128,7 @@ const rawPayloadPlugin = {
       path: '/api/test-sentry-error',
       config: {
         auth: false,
-        handler: () => {
+        handler: async (request, h) => {
           const error = new Error('Test handled error for Sentry')
           error.data = {
             customField: 'test value',
@@ -131,6 +136,7 @@ const rawPayloadPlugin = {
           }
           error.name = 'TestSentryError'
           throw error
+          // return h.continue
         },
       },
     })
@@ -210,6 +216,9 @@ const start = async () => {
       mobileApiPath: '/mobile/api/',
     },
   })
+  if (config.sentry && !config.isDevelopment) {
+    Sentry.setupHapiErrorHandler(server)
+  }
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     // ==========================================================================
     // ==========================================================================
