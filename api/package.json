@@ -78,6 +78,7 @@
     "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^7.0.1",
     "@sentry/node": "8.54.0",
+    "@sentry/profiling-node": "7.120.3",
     "@sentry/tracing": "7.120.3",
     "@slack/web-api": "^6.9.1",
     "adm-zip": "^0.5.10",
