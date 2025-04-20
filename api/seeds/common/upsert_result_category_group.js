@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const groupBy = require('lodash/groupBy')
 const omit = require('lodash/omit')
 
@@ -60,18 +59,6 @@ module.exports = async function upsertResultCategoryGroups(knex, fixture, assayW
     }
   )
 
-  await Promise.each(groups, async group => {
-    group = omit(group, ['assayExternalId'])
-    const resultCategoryGroupToUpdate = await knex('ResultCategoryGroup')
-      .where({ externalId: group.externalId })
-      .first()
-
-    if (resultCategoryGroupToUpdate) {
-      // Update
-      await knex('ResultCategoryGroup').where({ externalId: group.externalId }).update(group)
-    } else {
-      // Create
-      await knex('ResultCategoryGroup').insert(group)
-    }
-  })
+  const rows = groups.map(group => omit(group, ['assayExternalId']))
+  await knex('ResultCategoryGroup').insert(rows).onConflict('externalId').merge()
 }

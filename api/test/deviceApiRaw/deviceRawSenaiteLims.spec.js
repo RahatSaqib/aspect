@@ -120,7 +120,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     await knex('FactResultsDevice').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
-    await knex('FactResultsDeviceByCategory1And2').where('deviceId', deviceId).delete()
     await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
     await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
     const inventoryItemIds = await knex('InventoryItem as ii')
