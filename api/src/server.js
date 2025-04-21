@@ -205,7 +205,7 @@ const start = async () => {
   })
   if (config.sentry?.dsn && !config.isDevelopment) {
     logger.info('Sentry is enabled')
-    Sentry.setupHapiErrorHandler(server)
+    Sentry.hapiIntegration({ server })
   }
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     // ==========================================================================

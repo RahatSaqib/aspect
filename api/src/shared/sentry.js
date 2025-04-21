@@ -35,18 +35,11 @@ function initSentry() {
       debug: true,
 
       integrations: [
-        Sentry.onUncaughtExceptionIntegration,
-        Sentry.onUnhandledRejectionIntegration,
-        Sentry.nodeContextIntegration,
-        Sentry.amqplibIntegration,
-        Sentry.genericPoolIntegration,
-        Sentry.childProcessIntegration,
-        Sentry.captureConsoleIntegration,
-        Sentry.hapiIntegration,
-        Sentry.httpIntegration,
-        Sentry.fsIntegration,
-        Sentry.knexIntegration,
-        Sentry.mysqlIntegration,
+        new Sentry.Integrations.OnUncaughtException(),
+        new Sentry.Integrations.OnUnhandledRejection(),
+        new Sentry.Integrations.Hapi(),
+        new Sentry.Integrations.Http(),
+        new Sentry.Integrations.Mysql(),
       ],
     })
 
