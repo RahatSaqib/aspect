@@ -1,21 +1,22 @@
 // eslint-disable-next-line import/order
 require('../newrelic')
+// eslint-disable-next-line import/order
+const { Sentry, initSentry } = require('./shared/sentry')
+// Initialize Sentry before creating the server
+initSentry()
 
 const fs = require('fs')
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
-const { Sentry, initSentry } = require('./shared/sentry')
-const config = require('./config')
 
-// Initialize Sentry before creating the server
-initSentry()
+const config = require('./config')
 
 // =======================
 // configuration =========
 // =======================
 const { version } = require('../package.json')
-const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes, asyncHandler } = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
@@ -129,13 +130,18 @@ const rawPayloadPlugin = {
       config: {
         auth: false,
         handler: async (request, h) => {
-          const error = new Error('Test handled error for Sentry')
-          error.data = {
-            customField: 'test value',
-            timestamp: new Date().toISOString(),
+          try {
+            const error = new Error('Test handled error for Sentry')
+            error.data = {
+              customField: 'test value',
+              timestamp: new Date().toISOString(),
+            }
+            error.name = 'TestSentryError'
+            throw error
+          } catch (err) {
+            logger.error(err)
+            // throw err
           }
-          error.name = 'TestSentryError'
-          throw error
           // return h.continue
         },
       },
@@ -204,7 +210,7 @@ const plugins = [
   messageQueuePlugin,
   // bullMessageQueuePlugin,
   // Set sentry hapi plugin
-  ...sentryPlugins,
+  // ...sentryPlugins,
 ]
 
 const start = async () => {
@@ -216,7 +222,8 @@ const start = async () => {
       mobileApiPath: '/mobile/api/',
     },
   })
-  if (config.sentry && !config.isDevelopment) {
+  if (config.sentry?.dsn && !config.isDevelopment) {
+    logger.info('Sentry is enabled')
     Sentry.setupHapiErrorHandler(server)
   }
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -231,18 +238,13 @@ const start = async () => {
         logger.error(`-------------------\n${error || event}\n-------------------`)
       }
     })
+
     server.ext('onPreResponse', function (request, h) {
       const { response } = request
       // https://stackoverflow.com/questions/27463322/hapi-does-not-return-data-attribute-from-boom-error
       // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
       if (response && response.isBoom) {
         response.output.payload = { ...response.output.payload, ...response.data }
-      }
-
-      // if error, pass it through server.log
-      // FYI - response.isServer indicates status code >= 500
-      if (response && response.isBoom && response.isServer) {
-        server.log(['error'], response)
       }
       return h.continue
     })

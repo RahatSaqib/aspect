@@ -1,8 +1,5 @@
-const SentryTransport = require('winston-transport-sentry-node').default
-
 const { createLogger, format, transports, config: winstonConfig } = require('winston')
 const { Mail } = require('winston-mail')
-const { Sentry } = require('./sentry')
 
 const config = require('../config')
 
@@ -85,22 +82,6 @@ if (config.log.mail.logLevel) {
       level: config.log.mail.logLevel,
     })
   )
-}
-
-if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel) {
-  const options = {
-    sentry: Sentry,
-    level: config.sentry.logLevel,
-    format: combine(format.timestamp(), format.errors({ stack: true }), format.metadata(), format.json()),
-    filterDataKeys: config.sentry.sanitizeKeys || [],
-    ignoreErrors: config.sentry.ignoreErrors || [],
-    tags: {
-      country: config.countryName,
-      version: require('../../package.json').version,
-    },
-  }
-
-  logger.add(new SentryTransport(options))
 }
 
 module.exports = logger
