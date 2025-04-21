@@ -226,7 +226,7 @@ const start = async () => {
       // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
       if (response && response.isBoom && response.isServer) {
         response.output.payload = { ...response.output.payload, ...response.data }
-        Sentry.captureException(response)
+        // Sentry.captureException(response)
       }
       return h.continue
     })
