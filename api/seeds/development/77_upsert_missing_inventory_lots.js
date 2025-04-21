@@ -9,7 +9,7 @@ async function seed(knex) {
   const inserts = []
   for (let i = 0; i < results.length; i += 2) {
     const result = results[i]
-    const insert = knex('MissingInventoryLots').insert({
+    inserts.push({
       resultId: result.id,
       expirationDate: result.consumableExpirationDate,
       lotNumber: result.consumableLot,
@@ -17,7 +17,8 @@ async function seed(knex) {
       createdOn: result.createdOn,
       createdBy: adminId,
     })
-    inserts.push(insert)
   }
-  await Promise.all(inserts)
+  if (inserts.length) {
+    await knex('MissingInventoryLots').insert(inserts)
+  }
 }

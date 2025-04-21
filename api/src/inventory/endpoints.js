@@ -1,7 +1,6 @@
 const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
-const listInventoryGroupedBySite = require('./listInventoryGroupedBySite')
 const getDaysByLocation = require('./getDaysByLocation')
 const modifyInventoryOnHand = require('./modifyInventoryOnHand')
 const addInventory = require('./addInventory')
@@ -153,16 +152,6 @@ const routes = [
           maxDate: Joi.date().iso().allow(null).description('To Date'),
         },
       },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/inventory/group-by-site',
-    handler: asyncHandler(listInventoryGroupedBySite),
-    config: {
-      description: 'List of Consumables on Hand Grouped by Site',
-      notes: 'Pageable and sortable list of inventory items grouped by site',
-      ...listSuppliesBaseConfig(),
     },
   },
   {

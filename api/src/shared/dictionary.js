@@ -11,7 +11,10 @@ const cacheConfig = {
     keyColumn: 'name',
   },
   AsyncReportStatus: {},
-  Consumable: {},
+  Consumable: {
+    keyColumn: 'externalId',
+    additionalColumns: ['includeLocation'],
+  },
   ConsumableReason: {
     keyColumn: 'name',
   },

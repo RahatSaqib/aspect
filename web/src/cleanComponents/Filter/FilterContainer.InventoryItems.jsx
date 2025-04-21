@@ -10,7 +10,7 @@ import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector, DaysStockLeftSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
-const InventoryItemsFilter = props => {
+const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, requireLotNumber }) => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [state, setState] = useFilterSync()
@@ -18,7 +18,7 @@ const InventoryItemsFilter = props => {
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
-    <FilterContainer state={state} setState={setState} disabled={props.disabled}>
+    <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
@@ -58,25 +58,26 @@ const InventoryItemsFilter = props => {
             />
           </Grid>
         ) : null}
-        {state.breakOutByLot ? (
-          <>
-            <Grid item xs={3}>
-              <PeriodSelector
-                label={formatMessage(messages.expiresOn)}
-                minDate={state.minDate || null}
-                maxDate={state.maxDate || null}
-                onChange={dateValues => setState({ ...state, ...dateValues })}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <TextField
-                label={formatMessage(messages.lotNumber)}
-                value={state.lotNumber || ''}
-                onChange={e => setState({ ...state, lotNumber: e.target.value })}
-              />
-            </Grid>
-          </>
-        ) : (
+        {breakOutByLot && requireExpirationDate ? (
+          <Grid item xs={3}>
+            <PeriodSelector
+              label={formatMessage(messages.expiresOn)}
+              minDate={state.minDate || null}
+              maxDate={state.maxDate || null}
+              onChange={dateValues => setState({ ...state, ...dateValues })}
+            />
+          </Grid>
+        ) : null}
+        {breakOutByLot && requireLotNumber ? (
+          <Grid item xs={3}>
+            <TextField
+              label={formatMessage(messages.lotNumber)}
+              value={state.lotNumber || ''}
+              onChange={e => setState({ ...state, lotNumber: e.target.value })}
+            />
+          </Grid>
+        ) : null}
+        {!breakOutByLot ? (
           <Grid item xs={3}>
             <DaysStockLeftSelect
               label={formatMessage(messages.daysStockLeft)}
@@ -84,7 +85,7 @@ const InventoryItemsFilter = props => {
               onChange={e => setState({ ...state, daysStockLeft: e.target.value })}
             />
           </Grid>
-        )}
+        ) : null}
         <Grid item xs={3}>
           <FormControlLabel
             control={

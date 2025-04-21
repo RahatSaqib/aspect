@@ -504,10 +504,20 @@ async function seedTable(knex, fixtureItem, overridedSeeds = { seedsFolder: null
   if (_.isFunction(keyColumn)) {
     await keyColumn(knex, fixture)
   } else {
-    await Promise.each(fixture.data || [], async datum => {
-      const existingDatum = await knex(table).where(keyColumn, datum[keyColumn]).first('id')
-      if (existingDatum == null) {
-        const elementToInsert = _.reduce(
+    const data = fixture.data || []
+
+    const existingRows = await knex(table)
+      .whereIn(
+        keyColumn,
+        data.map(d => d[keyColumn])
+      )
+      .select(keyColumn)
+
+    const existingKeys = new Set(existingRows.map(row => row[keyColumn]))
+    const elementsToInsert = data
+      .filter(datum => !existingKeys.has(datum[keyColumn]))
+      .map(datum => {
+        return _.reduce(
           _.keys(datum),
           (result, key) => {
             result[key] = _.isObject(datum[key]) ? JSON.stringify(datum[key]) : datum[key]
@@ -515,9 +525,11 @@ async function seedTable(knex, fixtureItem, overridedSeeds = { seedsFolder: null
           },
           {}
         )
-        await knex(table).insert(elementToInsert)
-      }
-    })
+      })
+    if (elementsToInsert.length > 0) {
+      await knex(table).insert(elementsToInsert)
+    }
+
     await Promise.each(fixture.relationships || [], async relationship => {
       const updates = {}
       const existingDatum = await knex(table)
@@ -623,6 +635,7 @@ async function upsertFollowUps(knex, fixture, partnerIds = [], assaysWhitelist =
     }
     const assaysWithFollowUp = _.isNil(assays) ? assaysWhitelist : assays
     /* eslint-disable no-await-in-loop */
+    const followUpAssaysToInsert = []
     for (const partnerId of partnerIds) {
       if (assaysWithFollowUp && assaysWithFollowUp.length > 0) {
         for (const assay of assaysWithFollowUp) {
@@ -633,30 +646,21 @@ async function upsertFollowUps(knex, fixture, partnerIds = [], assaysWhitelist =
             followUpId,
             assayId: assayDb.id,
           }
-          const existingFollowUpAssay = await knex('FollowUpAssay')
-            .where(followUpAssay)
-            .whereNull('resultCategory1')
-            .whereNull('resultCategory2')
-            .first('assayId')
-          if (existingFollowUpAssay == null) {
-            await knex('FollowUpAssay').insert(followUpAssay)
-          }
+          followUpAssaysToInsert.push(followUpAssay)
         }
       } else {
         const followUpAssay = {
           partnerId,
           followUpId,
         }
-        const existingFollowUpAssay = await knex('FollowUpAssay')
-          .where(followUpAssay)
-          .whereNull('assayId')
-          .whereNull('resultCategory1')
-          .whereNull('resultCategory2')
-          .first('assayId')
-        if (existingFollowUpAssay == null) {
-          await knex('FollowUpAssay').insert(followUpAssay)
-        }
+        followUpAssaysToInsert.push(followUpAssay)
       }
+    }
+    if (followUpAssaysToInsert.length > 0) {
+      await knex('FollowUpAssay')
+        .insert(followUpAssaysToInsert)
+        .onConflict(['partnerId', 'followUpId', 'assayId'])
+        .ignore()
     }
   }
 }
@@ -2392,24 +2396,22 @@ async function seedPartnerAssay(knex) {
   const partnerIds = await knex('Partner').pluck('id')
   const assays = await knex('Assay').select('id', 'assayTypeId')
 
-  // for all Partners ...
-  await Promise.each(partnerIds, async partnerId =>
-    Promise.each(assays, async ({ id: assayId, assayTypeId }) => {
-      const isCovid19 = assayTypeId === assayTypeCovid19Id
-      // ... upsert entry to PartnerAssay
-      const partnerAssay = await knex('PartnerAssay').where({ partnerId, assayId }).first()
-      if (!partnerAssay) {
-        await knex('PartnerAssay').insert({
-          partnerId,
-          assayId,
+  const partnerAssayEntries = []
 
-          canCreate: isCovid19,
-          canDelete: isCovid19,
-          canEdit: isCovid19,
-        })
-      }
+  partnerIds.forEach(partnerId => {
+    assays.forEach(({ id: assayId, assayTypeId }) => {
+      const isCovid19 = assayTypeId === assayTypeCovid19Id
+      partnerAssayEntries.push({
+        partnerId,
+        assayId,
+        canCreate: isCovid19,
+        canDelete: isCovid19,
+        canEdit: isCovid19,
+      })
     })
-  )
+  })
+
+  await knex('PartnerAssay').insert(partnerAssayEntries).onConflict(['partnerId', 'assayId']).merge()
 }
 
 async function seedPartnerDisease(knex) {

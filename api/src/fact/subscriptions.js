@@ -8,7 +8,7 @@ const {
   onFactNewResultsAvailableCheck,
   onFactCompletionRatePerSite,
 } = require('./service')
-const onFactGenerateResultCounts = require('./onFactGenerateResultCounts')
+const { onFactGenerateResultCounts } = require('./onFactGenerateResultCounts')
 const { onFactCalculateInventoryConsumptionRates } = require('./onFactCalculateInventoryConsumptionRates')
 const { factFillCustomFieldsCompletionStatsLast30Days } = require('./customFieldsCompletionStatsService')
 
