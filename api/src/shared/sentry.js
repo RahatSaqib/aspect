@@ -67,11 +67,6 @@ function initSentry() {
       logLevel: config.log?.logLevel,
       sentryLogLevel: config.sentry?.logLevel,
     })
-  } else {
-    console.log('Sentry not initialized:', {
-      hasDsn: !!config.sentry?.dsn,
-      isDevelopment: config.isDevelopment,
-    })
   }
 }
 
