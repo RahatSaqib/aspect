@@ -26,7 +26,6 @@ function initSentry() {
       normalizeDepth: 3,
 
       // Backend-specific settings
-      serverName: config.countryName,
       enableTracing: true,
 
       // Automatically instrument Node.js libraries
