@@ -120,8 +120,8 @@ const rawPayloadPlugin = {
             throw error
           } catch (err) {
             logger.error(err)
-            Sentry.captureException(err)
-            throw err
+            // Sentry.captureException(err)
+            // throw err
           }
           return h.continue
         },
