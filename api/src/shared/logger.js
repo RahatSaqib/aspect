@@ -1,6 +1,7 @@
 const { createLogger, format, transports, config: winstonConfig } = require('winston')
 const { Mail } = require('winston-mail')
 
+const { default: SentryTransport } = require('winston-transport-sentry-node')
 const config = require('../config')
 
 const { combine, timestamp, label, printf, errors } = format
@@ -80,6 +81,20 @@ if (config.log.mail.logLevel) {
       password: config.email.password,
       subject: `Aspect Error in ${config.countryName}: "{{msg}}"`,
       level: config.log.mail.logLevel,
+    })
+  )
+}
+
+if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel) {
+  logger.add(
+    new SentryTransport({
+      sentry: {
+        dsn: config.sentry.dsn,
+        environment: config.environment,
+        ignoreErrors: config.sentry.ignoreErrors,
+        sanitizeKeys: config.sentry.sanitizeKeys,
+      },
+      level: config.sentry.logLevel,
     })
   )
 }

@@ -142,7 +142,7 @@ const rawPayloadPlugin = {
             logger.error(err)
             // throw err
           }
-          // return h.continue
+          return h.continue
         },
       },
     })
@@ -243,8 +243,9 @@ const start = async () => {
       const { response } = request
       // https://stackoverflow.com/questions/27463322/hapi-does-not-return-data-attribute-from-boom-error
       // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
-      if (response && response.isBoom) {
+      if (response && response.isBoom && response.isServer) {
         response.output.payload = { ...response.output.payload, ...response.data }
+        Sentry.captureException(response)
       }
       return h.continue
     })
