@@ -63,26 +63,6 @@ const {
   swagger: { enabled: swaggerEnabled },
 } = config
 
-const sentryPlugins =
-  config.sentry && !config.isDevelopment
-    ? [
-        {
-          plugin: require('hapi-sentry'),
-          options: {
-            client: {
-              dsn: config.sentry.dsn,
-              environment: config.environment,
-              ignoreErrors: config.sentry.ignoreErrors,
-              sanitizeKeys: config.sentry.sanitizeKeys,
-            },
-            scope: {
-              tags: [{ name: 'Country', value: config.countryName }],
-            },
-          },
-        },
-      ]
-    : []
-
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
   ? [
@@ -140,7 +120,8 @@ const rawPayloadPlugin = {
             throw error
           } catch (err) {
             logger.error(err)
-            // throw err
+            Sentry.captureException(err)
+            throw err
           }
           return h.continue
         },
