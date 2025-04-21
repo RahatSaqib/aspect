@@ -165,8 +165,6 @@ const plugins = [
   // Set message queue
   messageQueuePlugin,
   // bullMessageQueuePlugin,
-  // Set sentry hapi plugin
-  // ...sentryPlugins,
 ]
 
 const start = async () => {
