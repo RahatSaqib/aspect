@@ -102,31 +102,6 @@ const rawPayloadPlugin = {
       if (request.payload) Sentry.setContext('payload', request.payload)
       return h.continue
     })
-
-    // Add test route for Sentry error reporting
-    server.route({
-      method: 'GET',
-      path: '/api/test-sentry-error',
-      config: {
-        auth: false,
-        handler: async (request, h) => {
-          try {
-            const error = new Error('Test handled error for Sentry')
-            error.data = {
-              customField: 'test value',
-              timestamp: new Date().toISOString(),
-            }
-            error.name = 'TestSentryError'
-            throw error
-          } catch (err) {
-            logger.error(err)
-            // Sentry.captureException(err)
-            // throw err
-          }
-          return h.continue
-        },
-      },
-    })
   },
 }
 
