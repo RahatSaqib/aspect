@@ -1,5 +1,6 @@
 const Sentry = require('@sentry/node')
 const config = require('../config')
+const { version } = require('../../package.json')
 
 function initSentry() {
   if (config.sentry?.dsn && !config.isDevelopment) {
@@ -47,7 +48,7 @@ function initSentry() {
       // Environment and deployment info
       environment: config.environment,
       countryName: config.countryName,
-      version: require('../../package.json').version,
+      version,
       nodeEnv: process.env.NODE_ENV,
 
       gxAlertApi: config.gxAlertApi,
