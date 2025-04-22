@@ -3528,52 +3528,53 @@ async function seed(knex) {
       const operationNumber = _.random(3, 11)
 
       // Create DeviceOperation (calibrations and errors)
-      await Promise.each(_.range(operationNumber), async () => {
+      const operations = _.range(operationNumber).map(() => {
         const bayNumber = _.random(1, 4, false)
-        await knex('DeviceOperation').insert({
+        const data = _.sample([
+          {
+            type: 'gx-log',
+            details: {
+              Errors: [],
+              RawText: `<ModuleStartCalibrationTask>Site A${bayNumber}: calibration was successful`,
+              Calibrations: [
+                {
+                  Site: `Site A${bayNumber}`,
+                  Source: 'ModuleStartCalibrationTask',
+                  Message: 'calibration was successful',
+                },
+              ],
+            },
+            logLevel: 'INFO',
+            logFileName: 'C:\\GeneXpert\\XpertCal\\log\\XpertCal-2015.11.05_12.33.00.000-0.log',
+          },
+          {
+            type: 'gx-log',
+            details: {
+              Errors: [
+                {
+                  Message:
+                    'Operation terminated during test at B1: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
+                  ErrorCode: '2034',
+                },
+              ],
+              RawText:
+                '<_e>Operation terminated during test at B1:\r\nError 2034: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
+              Calibrations: [],
+            },
+            logLevel: 'ERROR',
+            logFileName: 'C:\\GeneXpert\\log\\genexpert-2020.11.23_08.57.21.741-0.log',
+          },
+        ])
+
+        return {
           deviceId: device.id,
-          data: JSON.stringify(
-            _.sample([
-              {
-                type: 'gx-log',
-                details: {
-                  Errors: [],
-                  RawText: `<ModuleStartCalibrationTask>Site A${bayNumber}: calibration was successful`,
-                  Calibrations: [
-                    {
-                      Site: `Site A${bayNumber}`,
-                      Source: 'ModuleStartCalibrationTask',
-                      Message: 'calibration was successful',
-                    },
-                  ],
-                },
-                logLevel: 'INFO',
-                logFileName: 'C:\\GeneXpert\\XpertCal\\log\\XpertCal-2015.11.05_12.33.00.000-0.log',
-              },
-              {
-                type: 'gx-log',
-                details: {
-                  Errors: [
-                    {
-                      Message:
-                        'Operation terminated during test at B1: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
-                      ErrorCode: '2034',
-                    },
-                  ],
-                  RawText:
-                    '<_e>Operation terminated during test at B1:\r\nError 2034: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
-                  Calibrations: [],
-                },
-                logLevel: 'ERROR',
-                logFileName: 'C:\\GeneXpert\\log\\genexpert-2020.11.23_08.57.21.741-0.log',
-              },
-            ])
-          ),
+          data: JSON.stringify(data),
           startedOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
           guid: uuid.v4(),
-        })
+        }
       })
+      await knex('DeviceOperation').insert(operations)
     })
 
     // Insert Inventory Items
@@ -4977,20 +4978,23 @@ async function seed(knex) {
   const tagIds = [tagOneId, tagTwoId, tagThreeId]
 
   const results = await knex('Result').select('id').limit(20)
-  await Promise.all(
-    _.map(results, async result => {
-      await Promise.all(
-        _.map(tagIds, async tagId => {
-          if (_.random(2) === 0) {
-            await knex('ResultTag').insert({
-              resultId: result.id,
-              tagId,
-            })
-          }
+  const resultTagsToInsert = []
+
+  for (const result of results) {
+    for (const tagId of tagIds) {
+      if (_.random(2) === 0) {
+        resultTagsToInsert.push({
+          resultId: result.id,
+          tagId,
         })
-      )
-    })
-  )
+      }
+    }
+  }
+
+  if (resultTagsToInsert.length > 0) {
+    await knex('ResultTag').insert(resultTagsToInsert)
+  }
+
   // Create DashboardWidget
   await upsertDashboardWidgets(knex, partnerOneId, dashboardWidget)
 }

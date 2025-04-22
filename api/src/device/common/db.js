@@ -603,7 +603,6 @@ async function deleteDeviceFromFactTables(deviceId, trknex) {
   await trknex('FactResultsDevice').where({ deviceId }).del()
   await trknex('FactResultsDeviceByAssay').where({ deviceId }).del()
   await trknex('FactResultsDeviceByCategory1').where({ deviceId }).del()
-  await trknex('FactResultsDeviceByCategory1And2').where({ deviceId }).del()
   await trknex('FactResultsDeviceByTimeFrame').where({ deviceId }).del()
 }
 

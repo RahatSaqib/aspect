@@ -26,8 +26,6 @@ async function deleteDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', deviceIds).delete()
-
   await knex('Device').whereIn('id', deviceIds).delete()
 
   await knex('RefreshToken').where({ clientId }).delete()
@@ -79,8 +77,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, alereDeviceSerialNumbe
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
-
-  await knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
 

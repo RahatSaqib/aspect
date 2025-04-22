@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const { partner } = require('./fixtures/partnerData')
 const upsertTags = require('../common/upsert_tags')
 
@@ -22,5 +21,5 @@ module.exports = require('../utils').seed(async knex => {
   const { id: tagId } = await knex('Tag').where('title', 'Reportable Site').first()
 
   // Set the 'Reportable Site' tag to reportable sites
-  await Promise.each(siteIds, async siteId => knex('SiteTag').insert({ siteId, tagId }))
+  await knex('SiteTag').insert(siteIds.map(siteId => ({ siteId, tagId })))
 }, __filename)
