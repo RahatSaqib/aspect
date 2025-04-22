@@ -8,9 +8,9 @@ const messages = {
   ...allMessage,
   ...consumableMessages,
   ...defineMessages({
-    date: {
-      id: 'pages.InventoryLog.date',
-      defaultMessage: 'Date',
+    registrationDate: {
+      id: 'pages.InventoryLog.registrationDate',
+      defaultMessage: 'Registration Date',
     },
     inventoryLogTitle: {
       id: 'pages.InventoryLog.inventoryLogTitle',
@@ -142,6 +142,10 @@ const messages = {
     ConsumableReason_TestConducted: {
       id: 'pages.InventoryLog.ConsumableReason_TestConducted',
       defaultMessage: 'Test conducted',
+    },
+    ConsumableReason_ManualAddition: {
+      id: 'pages.InventoryLog.ConsumableReason_ManualAddition',
+      defaultMessage: 'Manual Addition',
     },
     ConsumableReason_Expired: {
       id: 'pages.InventoryLog.ConsumableReason_Expired',
