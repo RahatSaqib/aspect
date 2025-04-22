@@ -325,8 +325,7 @@ async function addInventory({ auth, payload, plugins }) {
   const { id: userId, partnerId } = await getUser(auth.credentials.name)
   let consumableReasonId = reasonId
   if (!consumableReasonId) {
-    const { id: manualAddConsumableReasonId } = await consumableReasonToId('Manual Addition')
-    consumableReasonId = manualAddConsumableReasonId
+    consumableReasonId = await consumableReasonToId('Manual Addition')
   }
   /**
    * take 1st item from returning array of affected items
