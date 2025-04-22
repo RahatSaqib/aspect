@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-04-08T12:16:40.019Z\n"
+"POT-Creation-Date: 2025-04-22T10:46:34.725Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1373,16 +1373,12 @@ msgstr "Break Out by Lot"
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
+#. [pages.inventoryReconciliation.breakOutByLot]
+#. defaultMessage is:
+#. Break out by lot
 #: extracted_strings.json
 msgid "Break out by lot"
 msgstr "Break out by lot"
-
-#. [pages.inventoryReconciliation.breakdownByLots]
-#. defaultMessage is:
-#. Breakdown by Lots
-#: extracted_strings.json
-msgid "Breakdown by Lots"
-msgstr "Breakdown by Lots"
 
 #. [header.link.browse.title]
 #. defaultMessage is:
@@ -2939,9 +2935,6 @@ msgstr "Data Visualisation for XDR Resistance"
 #. defaultMessage is:
 #. Date
 #. [component.DateTimeInput.date.placeholder]
-#. defaultMessage is:
-#. Date
-#. [pages.InventoryLog.date]
 #. defaultMessage is:
 #. Date
 #. [pages.Notifications.table.dateHeader]
@@ -4574,6 +4567,13 @@ msgstr ""
 "\"{errorMessage}\". Please, try again in a few minutes. If the error "
 "persists, contact your administrator for support."
 
+#. [pages.InventoryReconciliationForm.ErrorMessage]
+#. defaultMessage is:
+#. Failed to update inventory settings. Please try again later.
+#: extracted_strings.json
+msgid "Failed to update inventory settings. Please try again later."
+msgstr ""
+
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
 #. Failures of Category I
@@ -6180,6 +6180,9 @@ msgstr "Inventory Log"
 #. [browsePage.browseDropdown.inventoryManagementConfiguration]
 #. defaultMessage is:
 #. Inventory Management Configuration
+#. [pages.Inventory.Management.Configuration]
+#. defaultMessage is:
+#. Inventory Management Configuration
 #: extracted_strings.json
 msgid "Inventory Management Configuration"
 msgstr "Inventory Management Configuration"
@@ -6247,6 +6250,15 @@ msgstr "Inventory levels have been adjusted successfully"
 #: extracted_strings.json
 msgid "Inventory on Hand"
 msgstr "Inventory on Hand"
+
+#. [pages.InventoryReconciliationForm.SucessMessage]
+#. defaultMessage is:
+#. Inventory settings updated successfully.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Inventory levels have been adjusted successfully"
+msgid "Inventory settings updated successfully."
+msgstr "Inventory levels have been adjusted successfully"
 
 #. [pages.DeviceDetailEdit.isDaisyChained]
 #. defaultMessage is:
@@ -7620,6 +7632,13 @@ msgstr "Male"
 #: extracted_strings.json
 msgid "Manage"
 msgstr "Manage"
+
+#. [pages.InventoryLog.ConsumableReason_ManualAddition]
+#. defaultMessage is:
+#. Manual Addition
+#: extracted_strings.json
+msgid "Manual Addition"
+msgstr ""
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy]
 #. defaultMessage is:
@@ -10364,9 +10383,6 @@ msgstr "Receiving Inventory Failed"
 msgid "Recepient Name"
 msgstr "Recepient Name"
 
-#. [pages.Consumable.New.reconciliationConfiguration]
-#. defaultMessage is:
-#. Reconciliation Configuration
 #. [pages.inventoryList.reconciliationConfiguration]
 #. defaultMessage is:
 #. Reconciliation Configuration
@@ -10435,6 +10451,15 @@ msgstr "Regional Admin"
 #: extracted_strings.json
 msgid "Regional Officer"
 msgstr "Regional Officer"
+
+#. [pages.InventoryLog.registrationDate]
+#. defaultMessage is:
+#. Registration Date
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Expiration Date"
+msgid "Registration Date"
+msgstr "Expiration Date"
 
 #. [legends.Unknown.resultCategoryRejected]
 #. defaultMessage is:
@@ -16049,6 +16074,9 @@ msgstr "{unit} since last week"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total calibrations"
+
+#~ msgid "Breakdown by Lots"
+#~ msgstr "Breakdown by Lots"
 
 #~ msgid "Applied Reconciliation Strategy"
 #~ msgstr "Applied Reconciliation Strategy"
