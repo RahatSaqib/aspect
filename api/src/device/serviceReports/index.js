@@ -606,6 +606,7 @@ async function getDevicesForTBReachReport(auth, query) {
       xpertErrorInvalid: TBReachDevice?.xpertErrorInvalid ?? 0,
       xpertRIFPositive: TBReachDevice?.xpertRIFPositive ?? 0,
       xpertRIFIndeterminate: TBReachDevice?.xpertRIFIndeterminate ?? 0,
+      xpertPlusTreated: 'n/d',
       xpertPerDay: TBReachDevice ? TBReachDevice.totalXpertTests / workingDays : 0,
     }
   })
