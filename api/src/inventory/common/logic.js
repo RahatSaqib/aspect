@@ -172,6 +172,7 @@ async function upsertInventoryItemAndLog(
      * common props
      */
     consumableId,
+    consumableReasonId,
     lotNumber,
     expiresOn,
     inTransitFromSiteId,
@@ -203,6 +204,7 @@ async function upsertInventoryItemAndLog(
     knex,
     inventoryItemId,
     consumableId,
+    consumableReasonId,
     siteId,
     lotNumber,
     expiresOn,
@@ -228,6 +230,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     quantity, // is positive and works with `operation` to add/remove/transfer/receive
     operation,
     inTransitFromSiteId,
+    consumableReasonId,
     now,
     userId,
     inventoryAdjustment,
@@ -264,6 +267,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
         quantityOnHand: res.quantityOnHand,
         siteId: res.inventoryItem?.siteId ?? siteId,
         consumableId,
+        consumableReasonId,
         lotNumber,
         ...(resultId && { inventoryAdjustment, inventoryStrategy: partnerInventoryStrategy }),
         expiresOn,
@@ -319,6 +323,10 @@ async function addInventory({ auth, payload, plugins }) {
     return Boom.forbidden('You are not permitted to add inventory to this site')
   }
   const { id: userId, partnerId } = await getUser(auth.credentials.name)
+  let consumableReasonId = reasonId
+  if (!consumableReasonId) {
+    consumableReasonId = await consumableReasonToId('Manual Addition')
+  }
   /**
    * take 1st item from returning array of affected items
    */
@@ -334,7 +342,7 @@ async function addInventory({ auth, payload, plugins }) {
     partnerId,
     plugins, // for getting messageContext
     logProps: {
-      consumableReasonId: reasonId,
+      consumableReasonId,
       adjustedFrom: dateAdjusted,
       notes,
     },
