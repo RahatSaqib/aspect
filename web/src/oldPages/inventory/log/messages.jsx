@@ -167,9 +167,9 @@ const messages = {
       id: 'pages.InventoryLog.ConsumableReason_Captured',
       defaultMessage: 'Captured',
     },
-    ConsumableReason_Damage: {
-      id: 'pages.InventoryLog.ConsumableReason_Damage',
-      defaultMessage: 'Damage',
+    ConsumableReason_Damaged: {
+      id: 'pages.InventoryLog.ConsumableReason_Damaged',
+      defaultMessage: 'Damaged',
     },
     ConsumableReason_AssertedInventoryOnHandAdd: {
       id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd',

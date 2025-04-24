@@ -45,8 +45,8 @@ export default defineMessages({
     id: `filter.ConsumableReasonSelectField.ConsumableReason_TestConducted`,
     defaultMessage: 'Test Conducted',
   },
-  ConsumableReason_Damage: {
-    id: `filter.ConsumableReasonSelectField.ConsumableReason_Damage`,
-    defaultMessage: 'Damage',
+  ConsumableReason_Damaged: {
+    id: `filter.ConsumableReasonSelectField.ConsumableReason_Damaged`,
+    defaultMessage: 'Damaged',
   },
 })

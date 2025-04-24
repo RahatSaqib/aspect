@@ -1,9 +1,16 @@
-module.exports = require('../utils').seed(async knex => {
-  // Fetch the necessary ConsumableReason IDs based on externalId
-  const consumableReasons = await knex('ConsumableReason')
-    .select('id', 'externalId')
-    .whereIn('externalId', ['manual_addition', 'Other', 'Captured'])
+const { upsertConsumableReasons } = require('../common/upsert_consumable_reason')
 
+module.exports = require('../utils').seed(async knex => {
+  // Delete the automatic seed for 'damaged', as it's now duplicated
+  await knex('ConsumableReason').where('externalId', 'damaged').del()
+  // Update externalId from 'damage' to 'damaged', as externalId is the key in upsertConsumableReasons
+  await knex('ConsumableReason').where('externalId', 'damage').update({ externalId: 'damaged' })
+
+  // Only add the new ones
+  await upsertConsumableReasons(knex, { skipDeletes: true, skipUpdates: true })
+
+  // Fetch the ConsumableReason IDs
+  const consumableReasons = await knex('ConsumableReason').select('id', 'externalId')
   const reasonMap = consumableReasons.reduce((map, reason) => {
     map[reason.externalId] = reason.id
     return map
@@ -27,4 +34,6 @@ module.exports = require('../utils').seed(async knex => {
     consumableReasonId: reasonMap.Captured,
     quantity: 0,
   })
+
+  await upsertConsumableReasons(knex, { skipInserts: true })
 }, __filename)
