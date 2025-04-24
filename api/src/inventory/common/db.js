@@ -163,7 +163,7 @@ async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, i
   const consumableStrategy = await getConsumableStrategy(partnerId)
 
   if (!consumableStrategy.isValidLotIdentifier({ lotNumber, expiresOn })) {
-    logger.error('Invalid consumable values according to consumable strategy', {
+    logger.warning('Invalid consumable values according to consumable strategy', {
       siteId,
       consumableId,
       expiresOn,
