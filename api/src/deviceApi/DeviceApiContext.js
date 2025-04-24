@@ -385,7 +385,7 @@ async function notifyPerson({ name, email, cell }, deviceName, routerNumber, noI
   }
 
   if (cell) {
-    await sendSms(cell, generatedTemplate.text).catch(err => logger.error(err))
+    await sendSms(cell, generatedTemplate.text).catch(err => logger.warning(err))
   }
 }
 
