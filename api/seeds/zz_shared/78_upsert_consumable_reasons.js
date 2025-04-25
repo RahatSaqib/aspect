@@ -1,13 +1,11 @@
-const { upsertConsumableReasons } = require('../common/upsert_consumable_reason')
+const fixture = require('../fixtures/consumableReason.json')
 
 module.exports = require('../utils').seed(async knex => {
-  // Delete the automatic seed for 'damaged', as it's now duplicated
+  // Automatic static seeds in Utils don't support change the extenralId
+  // So we need to delete the automatic seeded record for the 'damaged' reason...
   await knex('ConsumableReason').where('externalId', 'damaged').del()
-  // Update externalId from 'damage' to 'damaged', as externalId is the key in upsertConsumableReasons
+  // ...and change the existing one from 'damage' to 'damaged'.
   await knex('ConsumableReason').where('externalId', 'damage').update({ externalId: 'damaged' })
-
-  // Only add the new ones
-  await upsertConsumableReasons(knex, { skipDeletes: true, skipUpdates: true })
 
   // Fetch the ConsumableReason IDs
   const consumableReasons = await knex('ConsumableReason').select('id', 'externalId')
@@ -35,5 +33,10 @@ module.exports = require('../utils').seed(async knex => {
     quantity: 0,
   })
 
-  await upsertConsumableReasons(knex, { skipInserts: true })
+  await knex('ConsumableReason')
+    .whereNotIn(
+      'externalId',
+      fixture.data.map(f => f.externalId)
+    )
+    .del()
 }, __filename)
