@@ -135,10 +135,6 @@ const messages = {
       id: 'pages.InventoryLog.ConsumableReason_TransferReceived',
       defaultMessage: 'Transfer received from {refSiteName}',
     },
-    ConsumableReason_AssertedZeroInventory: {
-      id: 'pages.InventoryLog.ConsumableReason_AssertedZeroInventory',
-      defaultMessage: 'Asserted zero inventory',
-    },
     ConsumableReason_TestConducted: {
       id: 'pages.InventoryLog.ConsumableReason_TestConducted',
       defaultMessage: 'Test conducted',
@@ -170,14 +166,6 @@ const messages = {
     ConsumableReason_Damaged: {
       id: 'pages.InventoryLog.ConsumableReason_Damaged',
       defaultMessage: 'Damaged',
-    },
-    ConsumableReason_AssertedInventoryOnHandAdd: {
-      id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd',
-      defaultMessage: 'Asserted inventory on hand decrease',
-    },
-    ConsumableReason_AssertedInventoryOnHandRemove: {
-      id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove',
-      defaultMessage: 'Asserted inventory on hand increase',
     },
   }),
 }
