@@ -1,18 +1,20 @@
 const fixture = require('../fixtures/consumableReason.json')
 
 module.exports = require('../utils').seed(async knex => {
-  // Automatic static seeds in Utils don't support change the extenralId
-  // So we need to delete the automatic seeded record for the 'damaged' reason...
-  await knex('ConsumableReason').where('externalId', 'damaged').del()
-  // ...and change the existing one from 'damage' to 'damaged'.
-  await knex('ConsumableReason').where('externalId', 'damage').update({ externalId: 'damaged' })
-
   // Fetch the ConsumableReason IDs
   const consumableReasons = await knex('ConsumableReason').select('id', 'externalId')
   const reasonMap = consumableReasons.reduce((map, reason) => {
     map[reason.externalId] = reason.id
     return map
   }, {})
+
+  // Default seeding doesn't support changing the externalId then
+  // Move all InventoryLog records to the new 'damaged' Id
+  await knex('InventoryLog')
+    .where('consumableReasonId', reasonMap.damage)
+    .update({ consumableReasonId: reasonMap.damaged })
+  // Delete the old record with externalId 'damage'
+  await knex('ConsumableReason').where('externalId', 'damage').del()
 
   // Update "asserted_increase" and "imported" to "manual_addition"
   await knex('InventoryLog')
