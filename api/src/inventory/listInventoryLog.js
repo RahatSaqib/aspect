@@ -68,7 +68,9 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
         expiresOnField: 'expiresOn as expirationDate',
       }),
       'siteName',
-      knex.raw('sum(CASE WHEN IFNULL(ilog.decrease, 0) = 1 THEN -ilog.quantity ELSE ilog.quantity END) as quantity'),
+      knex.raw(
+        'sum(CASE WHEN IFNULL(ilog.increaseDecrease, 1) < 0 THEN -ilog.quantity ELSE ilog.quantity END) as quantity'
+      ),
       'movementReason',
       knex.raw('first_value(ilog.notes) over (partition by ilog.id order by ilog.createdOn) as notes'),
       'consumableReason',
@@ -129,7 +131,7 @@ function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
       lotNumberField: 'il.lotNumber as lotNumber',
       expiresOnField: 'il.expiresOn',
     }),
-    'cr.decrease as decrease',
+    'cr.increaseDecrease as increaseDecrease',
     's.name as siteName',
     'cr.name as consumableReason',
     'refSite.name as refSiteName',

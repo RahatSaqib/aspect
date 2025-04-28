@@ -33,10 +33,6 @@ export default defineMessages({
     id: 'filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived',
     defaultMessage: 'Transfer Received',
   },
-  ConsumableReason_Imported: {
-    id: 'filter.ConsumableReasonSelectField.ConsumableReasonImported',
-    defaultMessage: 'Imported',
-  },
   ConsumableReason_Captured: {
     id: 'filter.ConsumableReasonSelectField.ConsumableReason_Captured',
     defaultMessage: 'Captured',

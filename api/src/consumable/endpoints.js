@@ -81,7 +81,7 @@ const routes = [
               id: Joi.number().integer().required(),
               name: Joi.string().max(255).allow('', null),
               i18nKey: Joi.string().max(255).allow('', null),
-              decrease: Joi.number().integer(),
+              increaseDecrease: Joi.number().integer(),
               reset: Joi.number().integer(),
             })
           ),

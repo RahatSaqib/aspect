@@ -147,10 +147,6 @@ const messages = {
       id: 'pages.InventoryLog.ConsumableReason_Expired',
       defaultMessage: 'Expired',
     },
-    ConsumableReason_Imported: {
-      id: 'pages.InventoryLog.ConsumableReason_Imported',
-      defaultMessage: 'Imported',
-    },
     ConsumableReason_Stolen: {
       id: 'pages.InventoryLog.ConsumableReason_Stolen',
       defaultMessage: 'Stolen',

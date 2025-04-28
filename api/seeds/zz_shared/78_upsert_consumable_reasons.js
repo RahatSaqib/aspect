@@ -2,7 +2,7 @@ const fixture = require('../fixtures/consumableReason.json')
 const { buildUpdates } = require('../utils')
 
 module.exports = require('../utils').seed(async knex => {
-  // Fetch the ConsumableReasons)
+  // Fetch the ConsumableReasons
   const consumableReasons = await knex('ConsumableReason').select('*')
   const reasonMap = consumableReasons.reduce((map, reason) => {
     map[reason.externalId] = reason.id
@@ -16,9 +16,9 @@ module.exports = require('../utils').seed(async knex => {
   await removeDeletedReasons(knex)
 }, __filename)
 
-async function removeDeletedReasons(knex) {
+function removeDeletedReasons(knex) {
   // Delete any ConsumableReason records that are not in the fixture
-  await knex('ConsumableReason')
+  return knex('ConsumableReason')
     .whereNotIn(
       'externalId',
       fixture.data.map(f => f.externalId)
@@ -26,7 +26,7 @@ async function removeDeletedReasons(knex) {
     .del()
 }
 
-async function updateConsumableReasonValues(knex, consumableReasons) {
+function updateConsumableReasonValues(knex, consumableReasons) {
   // Update all the changed values in the fixture
   const changesToUpdate = buildUpdates(fixture, consumableReasons, 'externalId')
   const updatePromises = []

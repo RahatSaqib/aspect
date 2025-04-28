@@ -253,7 +253,8 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
           if (matchingConsumableReason) {
             const absoluteQuantity = Math.abs(inventoryChange.quantity)
             const isDecrease =
-              (matchingConsumableReason.reset && inventoryChange.quantity < 0) || matchingConsumableReason.decrease
+              (matchingConsumableReason.reset && inventoryChange.quantity < 0) ||
+              matchingConsumableReason.increaseDecrease < 0
             if (!device.siteId && device.id) {
               const deviceData = await getDevice(device.id)
               device.siteId = deviceData.siteId
