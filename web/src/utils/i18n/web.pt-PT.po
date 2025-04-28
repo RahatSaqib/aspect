@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-04-08T12:16:40.019Z\n"
+"POT-Creation-Date: 2025-04-22T10:46:34.725Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1379,16 +1379,12 @@ msgstr "Distribuição por lote"
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
+#. [pages.inventoryReconciliation.breakOutByLot]
+#. defaultMessage is:
+#. Break out by lot
 #: extracted_strings.json
 msgid "Break out by lot"
 msgstr "Sair por lote"
-
-#. [pages.inventoryReconciliation.breakdownByLots]
-#. defaultMessage is:
-#. Breakdown by Lots
-#: extracted_strings.json
-msgid "Breakdown by Lots"
-msgstr "Repartição por lotes"
 
 #. [header.link.browse.title]
 #. defaultMessage is:
@@ -2949,9 +2945,6 @@ msgstr "Visualização de dados para a resistência XDR"
 #. defaultMessage is:
 #. Date
 #. [component.DateTimeInput.date.placeholder]
-#. defaultMessage is:
-#. Date
-#. [pages.InventoryLog.date]
 #. defaultMessage is:
 #. Date
 #. [pages.Notifications.table.dateHeader]
@@ -4588,6 +4581,13 @@ msgstr ""
 "\"{errorMessage}\". Por favor, tente novamente dentro de alguns minutos. Se "
 "o erro persistir, contacte o seu administrador para obter apoio."
 
+#. [pages.InventoryReconciliationForm.ErrorMessage]
+#. defaultMessage is:
+#. Failed to update inventory settings. Please try again later.
+#: extracted_strings.json
+msgid "Failed to update inventory settings. Please try again later."
+msgstr ""
+
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
 #. Failures of Category I
@@ -6195,6 +6195,9 @@ msgstr "Log de inventário"
 #. [browsePage.browseDropdown.inventoryManagementConfiguration]
 #. defaultMessage is:
 #. Inventory Management Configuration
+#. [pages.Inventory.Management.Configuration]
+#. defaultMessage is:
+#. Inventory Management Configuration
 #: extracted_strings.json
 msgid "Inventory Management Configuration"
 msgstr "Configuração da gestão de inventário"
@@ -6263,6 +6266,15 @@ msgstr "Os níveis de estoque foram ajustados com sucesso"
 #: extracted_strings.json
 msgid "Inventory on Hand"
 msgstr "Estoque em mãos"
+
+#. [pages.InventoryReconciliationForm.SucessMessage]
+#. defaultMessage is:
+#. Inventory settings updated successfully.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Inventory levels have been adjusted successfully"
+msgid "Inventory settings updated successfully."
+msgstr "Os níveis de estoque foram ajustados com sucesso"
 
 #. [pages.DeviceDetailEdit.isDaisyChained]
 #. defaultMessage is:
@@ -7640,6 +7652,13 @@ msgstr "Masculino"
 #: extracted_strings.json
 msgid "Manage"
 msgstr "Gerenciar"
+
+#. [pages.InventoryLog.ConsumableReason_ManualAddition]
+#. defaultMessage is:
+#. Manual Addition
+#: extracted_strings.json
+msgid "Manual Addition"
+msgstr ""
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy]
 #. defaultMessage is:
@@ -10389,9 +10408,6 @@ msgstr "Recebimento de inventário falhado"
 msgid "Recepient Name"
 msgstr "Nome do destinatário"
 
-#. [pages.Consumable.New.reconciliationConfiguration]
-#. defaultMessage is:
-#. Reconciliation Configuration
 #. [pages.inventoryList.reconciliationConfiguration]
 #. defaultMessage is:
 #. Reconciliation Configuration
@@ -10460,6 +10476,15 @@ msgstr "Administrador Regional"
 #: extracted_strings.json
 msgid "Regional Officer"
 msgstr "Oficial Regional"
+
+#. [pages.InventoryLog.registrationDate]
+#. defaultMessage is:
+#. Registration Date
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Expiration Date"
+msgid "Registration Date"
+msgstr "Data de Expiração"
 
 #. [legends.Unknown.resultCategoryRejected]
 #. defaultMessage is:
@@ -16097,6 +16122,9 @@ msgstr "{unit} desde a semana passada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
+
+#~ msgid "Breakdown by Lots"
+#~ msgstr "Repartição por lotes"
 
 #~ msgid "Track by expiry date"
 #~ msgstr "Seguir por data de expiração"

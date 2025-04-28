@@ -107,7 +107,6 @@ describe('Merge Devices', () => {
       knex('FactResultsDevice').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
       knex('FactResultsDeviceByAssay').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
       knex('FactResultsDeviceByCategory1').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
       knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
     ]
     await Promise.all(deleteFactTablesPromises)
@@ -187,11 +186,6 @@ async function assertFactTables(deviceId) {
     .where({ deviceId })
     .select('deviceId')
   assert.equal(dataInFactResultsDeviceByCategory1.length, 0, 'FactResultsDeviceByCategory1 should be empty')
-
-  const dataInFactResultsDeviceByCategory1And2 = await knex('FactResultsDeviceByCategory1And2')
-    .where({ deviceId })
-    .select('deviceId')
-  assert.equal(dataInFactResultsDeviceByCategory1And2.length, 0, 'FactResultsDeviceByCategory1And2 should be empty')
 
   const dataInFactResultsDeviceByTimeFrame = await knex('FactResultsDeviceByTimeFrame')
     .where({ deviceId })

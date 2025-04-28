@@ -267,12 +267,12 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
 }
 
 async function calculateFactResultsDeviceByTimeFrame(
+  knex,
   deviceId,
   assayId,
   resultCategory1,
   resultCategory2,
-  endedOn,
-  knex
+  endedOn
 ) {
   const device = await knex('Device as d')
     .join('Site as s', 's.id', 'd.siteId')

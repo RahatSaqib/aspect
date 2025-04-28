@@ -23,12 +23,14 @@ import {
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import useInventoryTransferDownload from '../../../hooks/inventory/useInventoryTransferDownload'
 import useInventoryTransferList from '../../../hooks/inventory/useInventoryTransferList'
+import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
 import consumables from '../../../messages/consumableMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
+import { strategyRequireExpirationDate, strategyRequireLot } from '../../../oldPages/inventory/strategyHelper'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
@@ -40,6 +42,11 @@ const InventoryTransfers = () => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
   const filter = useFilterValues(location.pathname)
+
+  const { isLoadingPartner, data: partner } = usePartner()
+  const requireExpirationDate = strategyRequireExpirationDate(partner?.inventoryStrategy)
+  const requireLotNumber = strategyRequireLot(partner?.inventoryStrategy)
+
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const {
     isHierarchicalView,
@@ -78,8 +85,13 @@ const InventoryTransfers = () => {
     { key: 'sentQuantity', label: formatMessage(messages.sentQuantity), sortable: true },
     { key: 'originSiteName', label: formatMessage(messages.originSiteName), sortable: true },
     { key: 'destinationSiteName', label: formatMessage(messages.destinationSiteName), sortable: true },
-    { key: 'lotNumber', label: formatMessage(messages.lotNumber), sortable: true },
-    { key: 'expirationDate', label: formatMessage(messages.expirationDate), sortable: true },
+    { key: 'lotNumber', label: formatMessage(messages.lotNumber), sortable: true, isHidden: !requireLotNumber },
+    {
+      key: 'expirationDate',
+      label: formatMessage(messages.expirationDate),
+      sortable: true,
+      isHidden: !requireExpirationDate,
+    },
   ]
 
   const onExcelClick = formatType => {
@@ -116,7 +128,7 @@ const InventoryTransfers = () => {
                 </Typography>
                 <AspectExportListButton onExport={onExcelClick} visible />
               </Stack>
-              {isLoading ? (
+              {isLoading || isLoadingPartner ? (
                 <LinearProgress />
               ) : data.data.length === 0 ? (
                 <BrowseEmptyList />
@@ -142,12 +154,16 @@ const InventoryTransfers = () => {
                           <TableCell>{row.sentQuantity}</TableCell>
                           <TableCell>{row.originSiteName}</TableCell>
                           <TableCell>{row.destinationSiteName || formatMessage(messages.notAvailable)}</TableCell>
-                          <TableCell>{row.lotNumber || formatMessage(messages.notAvailable)}</TableCell>
-                          <TableCell style={{ color: new Date(row.expirationDate) < new Date() ? 'red' : undefined }}>
-                            {row.expirationDate
-                              ? row.expirationDate.split('T')[0]
-                              : formatMessage(messages.notAvailable)}
-                          </TableCell>
+                          {requireLotNumber ? (
+                            <TableCell>{row.lotNumber || formatMessage(messages.notAvailable)}</TableCell>
+                          ) : null}
+                          {requireExpirationDate ? (
+                            <TableCell style={{ color: new Date(row.expirationDate) < new Date() ? 'red' : undefined }}>
+                              {row.expirationDate
+                                ? row.expirationDate.split('T')[0]
+                                : formatMessage(messages.notAvailable)}
+                            </TableCell>
+                          ) : null}
                         </TableRow>
                       ))}
                     </TableBody>

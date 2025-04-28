@@ -21,9 +21,9 @@ export default defineMessages({
     id: 'pages.Consumable.New.inventoryDetail',
     defaultMessage: 'Inventory Detail',
   },
-  reconciliationConfiguration: {
-    id: 'pages.Consumable.New.reconciliationConfiguration',
-    defaultMessage: 'Reconciliation Configuration',
+  inventoryManagementConfiguration: {
+    id: 'pages.Inventory.Management.Configuration',
+    defaultMessage: 'Inventory Management Configuration',
   },
   reconciliationTitle: {
     id: 'pages.Consumable.New.reconciliationTitle',
@@ -93,5 +93,13 @@ export default defineMessages({
   no: {
     id: 'pages.NotificationDetail.New.no',
     defaultMessage: 'No',
+  },
+  updateInventoryConfigurationSuccessMessage: {
+    id: 'pages.InventoryReconciliationForm.SucessMessage',
+    defaultMessage: 'Inventory settings updated successfully.',
+  },
+  updateInventoryConfigurationFailedMessage: {
+    id: 'pages.InventoryReconciliationForm.ErrorMessage',
+    defaultMessage: 'Failed to update inventory settings. Please try again later.',
   },
 })

@@ -1,52 +1,61 @@
-const Promise = require('bluebird')
 const { subDays } = require('date-fns')
 const { daysToCalculate } = require('./common/constants')
 const { replaceOffset, startOfDayUtc } = require('../shared/date')
+
+const bulkInsertThreshold = 1000
 
 async function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
   return messageContext.run(async knex => {
     const items = await knex('InventoryItem').groupBy('siteId', 'consumableId').select('siteId', 'consumableId')
 
-    // loop through all sites/consumables and refresh rate
-    return Promise.map(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId), {
-      concurrency: 5,
-    })
+    let inventoryConsumptionRates = []
+    for (const { siteId, consumableId } of items) {
+      // eslint-disable-next-line no-await-in-loop
+      const rates = await getConsumptionRates(knex, siteId, consumableId)
+      inventoryConsumptionRates.push(...rates)
+
+      if (inventoryConsumptionRates.length > bulkInsertThreshold) {
+        // eslint-disable-next-line no-await-in-loop
+        await upsertConsumptionRates(knex, inventoryConsumptionRates)
+        inventoryConsumptionRates = []
+      }
+    }
+
+    if (inventoryConsumptionRates.length > 0) {
+      await upsertConsumptionRates(knex, inventoryConsumptionRates)
+    }
   })
+}
+
+function upsertConsumptionRates(knex, inventoryConsumptionRates) {
+  return knex('FactInventoryConsumptionRate')
+    .insert(inventoryConsumptionRates)
+    .onConflict(['siteId', 'consumableId', 'days'])
+    .merge()
 }
 
 /** Recalculates rates for provided siteId and consumableId
  * @param {Object} knex - knex object
  * @param {Number} siteId - Site Id to recalculate
  * @param {Number} consumableId - Consumable Id to recalculate
- * @returns - Total of records recalculated
  */
-async function refreshConsumptionRates(knex, siteId, consumableId) {
+async function getConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
   const consumptionTotals = await getConsumptions(knex, siteId, consumableId)
-  await Promise.each(consumptionTotals, async consumptionTotal => {
-    const factInventoryConsumptionRate = await knex('FactInventoryConsumptionRate')
-      .where({ siteId, consumableId, days: consumptionTotal.days })
-      .first()
-    if (factInventoryConsumptionRate) {
-      await knex('FactInventoryConsumptionRate').where({ siteId, consumableId, days: consumptionTotal.days }).update({
-        // in GxAlert we stored totals in field 'rate', so same here.
-        // to get actual rate - do rate/days
-        rate: consumptionTotal.total,
-        updatedOn,
-      })
-    } else {
-      await knex('FactInventoryConsumptionRate').insert({
-        siteId,
-        consumableId,
-        days: consumptionTotal.days,
-        // in GxAlert we stored totals in field 'rate', so same here.
-        // to get actual rate - do rate/days
-        rate: consumptionTotal.total,
-        updatedOn,
-      })
-    }
-  })
-  return consumptionTotals
+  const inventoryConsumptionRates = consumptionTotals.map(consumptionTotal => ({
+    siteId,
+    consumableId,
+    days: consumptionTotal.days,
+    /*
+     * TODO: Rename column rate to total
+     * in GxAlert we stored totals in field 'rate', so same here.
+     * to get actual rate - do rate/days
+     */
+    rate: consumptionTotal.total,
+    updatedOn,
+  }))
+
+  return inventoryConsumptionRates
 }
 
 async function getConsumptions(knex, siteId, consumableId) {
@@ -127,5 +136,4 @@ async function getConsumptions(knex, siteId, consumableId) {
 }
 module.exports = {
   onFactCalculateInventoryConsumptionRates,
-  refreshConsumptionRates, // Exported for testing purposes
 }

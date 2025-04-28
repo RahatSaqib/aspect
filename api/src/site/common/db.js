@@ -1,6 +1,5 @@
 const uuid = require('node-uuid')
 const Boom = require('@hapi/boom')
-const Promise = require('bluebird')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
@@ -143,17 +142,17 @@ const getSites = (dataConstraints, query) => {
     })
 }
 
-const insertSiteConsumables = (siteId, consumableIds) => {
-  return Promise.each(consumableIds, async consumableId => {
-    await knex('SiteConsumable')
-      .insert({
-        siteId,
-        consumableId,
-      })
-      .onConflict(['siteId', 'consumableId'])
-      .ignore()
-  })
+const insertSiteConsumables = async (siteId, consumableIds) => {
+  if (!consumableIds || consumableIds.length === 0) return
+
+  const rows = consumableIds.map(consumableId => ({
+    siteId,
+    consumableId,
+  }))
+
+  await knex('SiteConsumable').insert(rows).onConflict(['siteId', 'consumableId']).ignore()
 }
+
 const insertSite = (knex, site) => {
   if (!site.guid) site.guid = uuid.v4()
   if (!site.institutionGuid) site.institutionGuid = uuid.v4()

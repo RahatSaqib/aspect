@@ -120,7 +120,7 @@ const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
  * @param {string} field - Name of the field to select.
  * @param {string} timeZoneIANA - Timezone name in IANA format (e.g. 'Asia/Karachi')
  * @param {string=} alias - Optional. name to be returned if you don't want the field name. If it's not provided,
- * it will be infered from the field expression. (e.g. 'd.lastSeenOn' will use 'lastSeen' as alias)
+ * no alias will be added.
  * @returns Expression to be added to a Knex query, returning plain datetime value converted a specified TZ
  * @example
  * e.g.:
