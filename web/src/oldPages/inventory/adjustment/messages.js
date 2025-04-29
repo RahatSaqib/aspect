@@ -137,6 +137,10 @@ export const validationMessages = defineMessages({
     id: 'pages.InventoryAdjustmentDialogForm.inventoryItemRequired',
     defaultMessage: 'Please choose an inventory item',
   },
+  notesRequired: {
+    id: 'pages.InventoryAdjustmentDialogForm.notesRequired',
+    defaultMessage: 'Please enter notes to explain the reason',
+  },
 })
 
 export const newInventoryMessages = defineMessages({

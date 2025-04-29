@@ -1,6 +1,6 @@
+import React, { memo } from 'react'
 import { Button, DialogActions, TextField } from '@mui/material'
 import { Formik } from 'formik'
-import React, { memo } from 'react'
 import { useIntl } from 'react-intl'
 import { ConsumableReasonSelect, ConsumableSelect, SiteSelect } from '../../../cleanComponents'
 import InventoryItemSelect from '../../../cleanComponents/InventoryItemSelect'
@@ -102,11 +102,15 @@ function InventoryAdjustmentDialog(props) {
             errors.quantity = formatMessage(validationMessages.quantityMissingToRemove)
           }
         }
+        if (values.reason?.externalId === 'other' && !values.notes) {
+          errors.notes = formatMessage(validationMessages.notesRequired)
+        }
 
         const isFormValid =
           !Object.keys(errors).length &&
           Object.keys(touched).length > 0 &&
-          (!uiTransfer || (uiTransfer && values.quantity && values.toSiteId))
+          (!uiTransfer || (values.quantity && values.toSiteId)) &&
+          (values.reason?.externalId !== 'other' || !!values.notes?.trim())
 
         return (
           <AspectDialog
@@ -404,6 +408,7 @@ function InventoryAdjustmentDialog(props) {
 
                 <TextField
                   fullWidth
+                  required={values.reason?.externalId === 'other'} // Mark as required if reason is 'other'
                   type="notes"
                   name="notes"
                   label={formatMessage(messages.notes)}
@@ -412,6 +417,8 @@ function InventoryAdjustmentDialog(props) {
                   multiline
                   rows={2}
                   margin="normal"
+                  error={!!errors.notes}
+                  helperText={errors.notes}
                   FormHelperTextProps={{
                     margin: 'dense',
                   }}

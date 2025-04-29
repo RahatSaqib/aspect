@@ -236,6 +236,7 @@ const routes = [
           ...adjustInventoryCommonPayloadFields,
           toSiteId: Joi.number().integer().positive().required(),
           dateAdjusted: Joi.date().iso().required(),
+          reasonId: Joi.number().integer().positive().required(),
         },
       },
     },

@@ -27,7 +27,7 @@ async function listConsumableReasons(request) {
   const getItems = consumableReasonQuery
     .clone()
     .modify(sortPageParams, query, 'name')
-    .select(['id', 'name', 'i18nKey', 'increaseDecrease', 'reset', 'userSelectable'])
+    .select(['id', 'name', 'i18nKey', 'increaseDecrease', 'reset', 'userSelectable', 'externalId'])
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 

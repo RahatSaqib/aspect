@@ -84,6 +84,7 @@ const routes = [
               increaseDecrease: Joi.number().integer(),
               userSelectable: Joi.number().integer(),
               reset: Joi.number().integer(),
+              externalId: Joi.string(),
             })
           ),
         },
