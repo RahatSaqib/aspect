@@ -5,6 +5,9 @@
     },
     {
       "jsonSchemaFile": "HIVCaseForm.json"
+    },
+    {
+      "jsonSchemaFile": "ClinicalResponse.json"
     }
   ]
 }
