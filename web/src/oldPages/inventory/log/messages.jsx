@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { consumableMessages } from '../../../messages'
+import { consumableMessages, consumableReasonMessages } from '../../../messages'
 import allMessage from '../../../messages/allMessages'
 import { commonDefinitions } from '../../../messages/customMessages'
 
@@ -7,6 +7,7 @@ const messages = {
   ...commonDefinitions,
   ...allMessage,
   ...consumableMessages,
+  ...consumableReasonMessages,
   ...defineMessages({
     registrationDate: {
       id: 'pages.InventoryLog.registrationDate',
@@ -126,42 +127,6 @@ const messages = {
     projectedWaste: {
       id: 'pages.InventoryLog.projectedWaste',
       defaultMessage: 'Projected stock waste',
-    },
-    ConsumableReason_TransferSent: {
-      id: 'pages.InventoryLog.ConsumableReason_TransferSent',
-      defaultMessage: 'Transfer sent to {refSiteName}',
-    },
-    ConsumableReason_TransferReceived: {
-      id: 'pages.InventoryLog.ConsumableReason_TransferReceived',
-      defaultMessage: 'Transfer received from {refSiteName}',
-    },
-    ConsumableReason_TestConducted: {
-      id: 'pages.InventoryLog.ConsumableReason_TestConducted',
-      defaultMessage: 'Test conducted',
-    },
-    ConsumableReason_ManualAddition: {
-      id: 'pages.InventoryLog.ConsumableReason_ManualAddition',
-      defaultMessage: 'Manual Addition',
-    },
-    ConsumableReason_Expired: {
-      id: 'pages.InventoryLog.ConsumableReason_Expired',
-      defaultMessage: 'Expired',
-    },
-    ConsumableReason_Stolen: {
-      id: 'pages.InventoryLog.ConsumableReason_Stolen',
-      defaultMessage: 'Stolen',
-    },
-    ConsumableReason_Lost: {
-      id: 'pages.InventoryLog.ConsumableReason_Lost',
-      defaultMessage: 'Lost',
-    },
-    ConsumableReason_Captured: {
-      id: 'pages.InventoryLog.ConsumableReason_Captured',
-      defaultMessage: 'Captured',
-    },
-    ConsumableReason_Damaged: {
-      id: 'pages.InventoryLog.ConsumableReason_Damaged',
-      defaultMessage: 'Damaged',
     },
   }),
 }

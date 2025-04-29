@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
+  ConsumableReason_ManualAddition: {
+    id: 'filter.ConsumableReasonSelectField.ConsumableReason_ManualAddition',
+    defaultMessage: 'Manual Addition',
+  },
   ConsumableReason_Expired: {
     id: 'filter.ConsumableReasonSelectField.ConsumableReason_Expired',
     defaultMessage: 'Expired',
@@ -12,18 +16,6 @@ export default defineMessages({
   ConsumableReason_Stolen: {
     id: 'filter.ConsumableReasonSelectField.ConsumableReason_Stolen',
     defaultMessage: 'Stolen',
-  },
-  ConsumableReason_AssertedZeroInventory: {
-    id: 'filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory',
-    defaultMessage: 'Asserted zero inventory',
-  },
-  ConsumableReason_AssertedInventoryOnHandRemove: {
-    id: 'filter.ConsumableReasonSelectField.ConsumableReason_AssertedInventoryOnHandRemove',
-    defaultMessage: 'Asserted inventory on hand increase ( Remove )',
-  },
-  ConsumableReason_AssertedInventoryOnHandAdd: {
-    id: 'filter.ConsumableReasonSelectField.ConsumableReason_AssertedInventoryOnHandAdd',
-    defaultMessage: 'Asserted inventory on hand increase ( Add )',
   },
   ConsumableReason_TransferSent: {
     id: 'filter.ConsumableReasonSelectField.ConsumableReason_TransferSent',

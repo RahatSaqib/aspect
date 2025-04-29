@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
 import { Button, DialogActions, TextField } from '@mui/material'
 import { Formik } from 'formik'
+import React, { memo } from 'react'
 import { useIntl } from 'react-intl'
 import { ConsumableReasonSelect, ConsumableSelect, SiteSelect } from '../../../cleanComponents'
 import InventoryItemSelect from '../../../cleanComponents/InventoryItemSelect'
@@ -347,15 +347,14 @@ function InventoryAdjustmentDialog(props) {
                   </p>
                 ) : null}
 
-                {actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ? (
-                  <ConsumableReasonSelect
-                    name="reasonId"
-                    error={errors?.reason}
-                    label={formatMessage(messages.reason)}
-                    value={values?.reason ?? null}
-                    onChange={reason => setFieldValue('reason', reason)}
-                  />
-                ) : null}
+                <ConsumableReasonSelect
+                  name="reasonId"
+                  error={errors?.reason}
+                  label={formatMessage(messages.reason)}
+                  value={values?.reason ?? null}
+                  onChange={reason => setFieldValue('reason', reason)}
+                  filterType={actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ? 'decrease' : 'increase'} // Map actionType to filterType
+                />
 
                 {values?.reason?.i18nKey === 'ConsumableReason_TestConducted' ? (
                   <>
