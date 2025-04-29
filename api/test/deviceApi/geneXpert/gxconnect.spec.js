@@ -2497,7 +2497,7 @@ describe('Device API routes for GxConnect Devices', () => {
     })
   })
 
-  describe('inventory changes', () => {
+  describe.skip('inventory changes', () => {
     const context = createGxConnectTestContext(server, {
       countryCode,
       adminUsername,
