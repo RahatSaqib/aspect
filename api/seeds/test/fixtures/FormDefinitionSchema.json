@@ -2,6 +2,9 @@
   "data": [
     {
       "jsonSchemaFile": "PatientDefinition.json"
+    },
+    {
+      "jsonSchemaFile": "ClinicalResponse.json"
     }
   ]
 }

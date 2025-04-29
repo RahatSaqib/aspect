@@ -28,7 +28,7 @@ async function getForms(request) {
     partner: { id: partnerId },
   } = await getConstraints(auth.credentials)
   const formQuery = await getFormsBaseQuery(partnerId, query)
-
+  console.log('formQuery', formQuery, query)
   return createFormObject(formQuery)
 }
 
@@ -189,6 +189,7 @@ function getFormsBaseQuery(partnerId, query) {
       'ft.externalId as formTypeId',
       knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
+  console.log('queryForm', queryForm.toQuery())
   return queryForm
 }
 
