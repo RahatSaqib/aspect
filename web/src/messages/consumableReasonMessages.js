@@ -37,4 +37,8 @@ export default defineMessages({
     id: `filter.ConsumableReasonSelectField.ConsumableReason_Damaged`,
     defaultMessage: 'Damaged',
   },
+  ConsumableReason_Other: {
+    id: `filter.ConsumableReasonSelectField.ConsumableReason_Other`,
+    defaultMessage: 'Other',
+  },
 })
