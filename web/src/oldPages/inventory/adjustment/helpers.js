@@ -96,17 +96,15 @@ export function getValidations(format, actionType, { requireExpirationDate, requ
     })
   }
 
-  if (uiRemove) {
-    schema = schema.shape({
-      reason: object().nullable().required(format(validationMessages.reasonRequired)),
-      notes: string()
-        .nullable()
-        .when('reason', {
-          is: reason => reason?.externalId === 'other',
-          then: sch => sch.required(format(validationMessages.notesRequired)),
-        }),
-    })
-  }
+  schema = schema.shape({
+    reason: object().nullable().required(format(validationMessages.reasonRequired)),
+    notes: string()
+      .nullable()
+      .when('reason', {
+        is: reason => reason?.externalId === 'other',
+        then: sch => sch.required(format(validationMessages.notesRequired)),
+      }),
+  })
 
   return schema
 }

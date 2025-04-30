@@ -139,7 +139,7 @@ export const validationMessages = defineMessages({
   },
   notesRequired: {
     id: 'pages.InventoryAdjustmentDialogForm.notesRequired',
-    defaultMessage: 'Please enter notes to explain the reason',
+    defaultMessage: 'Please enter a note to explain the reason',
   },
 })
 
