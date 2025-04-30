@@ -12,7 +12,7 @@ describe('Mobile API Custom Fields', () => {
   })
 
   describe('GET', () => {
-    it.only('should return custom fields for given external IDs', async () => {
+    it('should return custom fields for given external IDs', async () => {
       const response = await server
         .get(`${path}?externalIds=ClinicalResponse`)
         .set('Authorization', `Bearer ${shared.token}`)
