@@ -118,36 +118,27 @@ async function addDefaultCustomFieldDefinitions(knex, _partnerId, formsNeeded = 
     return
   }
 
-  let partnerId = _partnerId
-  if (!partnerId) {
-    try {
-      // eslint-disable-next-line prefer-const
-      ;({ partnerId } = await knex('User as u')
-        .join('Person as p', 'u.id', 'p.userId')
-        .join('JobContext as jc', 'p.id', 'jc.personId')
-        .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
-        .where('jf.name', 'Super Admin')
-        .first('p.lastPartnerId as partnerId'))
-      if (!partnerId) {
-        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('Error inserting forms', e)
-      return false
-    }
+  // Get all partners from the database
+  const partners = await knex('Partner').select('id')
+  if (_.isEmpty(partners)) {
+    return false
   }
-  const forms = await getBaseForms()
-  const insertedForms = await knex('FormDefinition').where({ partnerId }).pluck('externalId')
 
-  await Promise.each(Object.keys(forms), async form => {
-    if (insertedForms.indexOf(form) === -1 && formsNeeded.indexOf(form) >= 0) {
-      await knex('FormDefinition').insert({
-        ...forms[form].formDefinition,
-        jsonSchemaFile: forms[form].fileName,
-        partnerId,
-      })
-    }
+  const forms = await getBaseForms()
+
+  // Create forms for each partner
+  await Promise.each(partners, async ({ id: partnerId }) => {
+    const insertedForms = await knex('FormDefinition').where({ partnerId }).pluck('externalId')
+
+    await Promise.each(Object.keys(forms), async form => {
+      if (insertedForms.indexOf(form) === -1 && formsNeeded.indexOf(form) >= 0) {
+        await knex('FormDefinition').insert({
+          ...forms[form].formDefinition,
+          jsonSchemaFile: forms[form].fileName,
+          partnerId,
+        })
+      }
+    })
   })
   return true
 }

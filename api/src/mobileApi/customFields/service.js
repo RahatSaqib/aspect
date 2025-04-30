@@ -14,8 +14,6 @@ async function getCustomFieldsByExternalIds(request) {
 
   const formDefinitions = await getForms(request)
 
-  console.log('formDefinitions', formDefinitions)
-
   return {
     ok: true,
     data: externalIdsList.map(id => formDefinitions[id]).filter(Boolean),
