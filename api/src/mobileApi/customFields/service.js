@@ -1,4 +1,3 @@
-const { knex } = require('../../db')
 const { getForms } = require('../../forms/service')
 
 /**
