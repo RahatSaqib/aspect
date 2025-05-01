@@ -25,9 +25,9 @@ export default defineMessages({
     id: 'filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived',
     defaultMessage: 'Transfer Received',
   },
-  ConsumableReason_Captured: {
-    id: 'filter.ConsumableReasonSelectField.ConsumableReason_Captured',
-    defaultMessage: 'Captured',
+  ConsumableReason_PhysicalCount: {
+    id: 'filter.ConsumableReasonSelectField.ConsumableReason_PhysicalCount',
+    defaultMessage: 'Physical Count',
   },
   ConsumableReason_TestConducted: {
     id: `filter.ConsumableReasonSelectField.ConsumableReason_TestConducted`,

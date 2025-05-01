@@ -13,7 +13,7 @@ const { updateSiteConsumable, getSiteListModifiedQuery } = require('../../site/c
 const { getPartnerByConstraints } = require('../../partner/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { selectAssayConsumables } = require('../../consumable/assayConsumableService')
-const { consumableToIncludeLocation, consumableReasonToId } = require('../../shared/dictionary')
+const { consumableReasonById, consumableToIncludeLocation, consumableReasonToId } = require('../../shared/dictionary')
 
 const { resolveIssues, escalateIssues } = require('../../issue/actions')
 const { inventoryStockout, inventoryStockExpiring } = require('../actions')
@@ -200,6 +200,7 @@ async function upsertInventoryItemAndLog(
   /**
    * log changing inventory quantity
    */
+  const { effectOnStock } = await consumableReasonById(logProps.consumableReasonId ?? consumableReasonId)
   const inventoryLogId = await logInventoryChange({
     knex,
     inventoryItemId,
@@ -213,6 +214,7 @@ async function upsertInventoryItemAndLog(
     createdOn: now,
     createdBy: userId,
     ...logProps,
+    quantity: effectOnStock === 'decrease' ? -logProps.quantity : logProps.quantity,
   })
 
   return { inventoryItemId, inventoryLogId }

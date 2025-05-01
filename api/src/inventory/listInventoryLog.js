@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
 
-const { getDateTimeProjectionInTimeZoneIANA, getDateTimeExpressionInTimeZone } = require(`../shared/date`)
+const { getDateTimeExpressionInTimeZone } = require(`../shared/date`)
 const { getConstraints } = require('../auth/constraints')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../db')
 const { getInventoryLogBaseQuery, getConsumableStrategy } = require('./common/db')
@@ -68,9 +68,7 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
         expiresOnField: 'expiresOn as expirationDate',
       }),
       'siteName',
-      knex.raw(
-        'sum(CASE WHEN IFNULL(ilog.increaseDecrease, 1) < 0 THEN -ilog.quantity ELSE ilog.quantity END) as quantity'
-      ),
+      knex.raw('sum(ilog.quantity) as quantity'),
       'movementReason',
       knex.raw('first_value(ilog.notes) over (partition by ilog.id order by ilog.createdOn) as notes'),
       'consumableReason',
@@ -121,9 +119,11 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
 }
 
 function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
+  const createdOnProjection = getDateTimeExpressionInTimeZone(knex, 'il.createdOn', timeZoneIANA)
+  const adjustedFromProjection = getDateTimeExpressionInTimeZone(knex, 'il.adjustedFrom', timeZoneIANA)
+
   return [
     'il.id as id',
-    knex.raw(`date(${getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)}) as createdOn`),
     'c.name as consumableName',
     'ca.assayId as assayId',
     'c.i18nKey as consumableNameI18nKey',
@@ -131,22 +131,26 @@ function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
       lotNumberField: 'il.lotNumber as lotNumber',
       expiresOnField: 'il.expiresOn',
     }),
-    'cr.increaseDecrease as increaseDecrease',
     's.name as siteName',
     'cr.name as consumableReason',
     'refSite.name as refSiteName',
     'il.quantity as quantity',
     knex.raw(`
       CASE
-        WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
-        WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
+        WHEN cr.externalId = 'transfer_sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
+        WHEN cr.externalId = 'transfer_received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
         ELSE cr.name
       END as movementReason
     `),
     'il.notes as notes',
     'cr.i18nKey as consumableReasonI18nKey',
     'cr.externalId as consumableReasonExternalId',
-    knex.raw(`date(${getDateTimeExpressionInTimeZone(knex, 'il.adjustedFrom', timeZoneIANA)}) as transactionDate`),
+    knex.raw(
+      `CASE WHEN cr.externalId = 'test_conducted' THEN date(${createdOnProjection}) ELSE ${createdOnProjection} END as createdOn`
+    ),
+    knex.raw(
+      `CASE WHEN cr.externalId = 'test_conducted' THEN date(${adjustedFromProjection}) ELSE ${adjustedFromProjection} END as transactionDate`
+    ),
     'r.endedOn as resultEndedOn',
   ]
 }

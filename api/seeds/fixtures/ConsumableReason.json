@@ -3,80 +3,70 @@
     {
       "name": "Manual Addition",
       "i18nKey": "ConsumableReason_ManualAddition",
-      "increaseDecrease": 1,
-      "reset": 0,
+      "effectOnStock": "increase",
       "userSelectable": 1,
       "externalId": "manual_addition"
     },
     {
       "name": "Test Conducted",
       "i18nKey": "ConsumableReason_TestConducted",
-      "increaseDecrease": -1,
-      "reset": 0,
+      "effectOnStock": "decrease",
       "userSelectable": 0,
       "externalId": "test_conducted"
     },
     {
       "name": "Transfer Sent",
       "i18nKey": "ConsumableReason_TransferSent",
-      "increaseDecrease": -1,
-      "reset": 0,
+      "effectOnStock": "decrease",
       "userSelectable": 0,
       "externalId": "transfer_sent"
     },
     {
       "name": "Transfer Received",
       "i18nKey": "ConsumableReason_TransferReceived",
-      "increaseDecrease": 1,
-      "reset": 0,
+      "effectOnStock": "increase",
       "userSelectable": 0,
       "externalId": "transfer_received"
     },
     {
       "name": "Expired",
       "i18nKey": "ConsumableReason_Expired",
-      "increaseDecrease": -1,
-      "reset": 0,
+      "effectOnStock": "decrease",
       "userSelectable": 1,
       "externalId": "expired"
     },
     {
       "name": "Stolen",
       "i18nKey": "ConsumableReason_Stolen",
-      "increaseDecrease": -1,
-      "reset": 0,
+      "effectOnStock": "decrease",
       "userSelectable": 1,
       "externalId": "stolen"
     },
     {
       "name": "Lost",
       "i18nKey": "ConsumableReason_Lost",
-      "increaseDecrease": -1,
-      "reset": 0,
+      "effectOnStock": "decrease",
       "userSelectable": 1,
       "externalId": "lost"
     },
     {
-      "name": "Captured",
-      "i18nKey": "ConsumableReason_Captured",
-      "increaseDecrease": 0,
-      "reset": 1,
+      "name": "Physical Count",
+      "i18nKey": "ConsumableReason_PhysicalCount",
+      "effectOnStock": "resetToValue",
       "userSelectable": 1,
-      "externalId": "captured"
+      "externalId": "physical_count"
     },
     {
       "name": "Damaged",
       "i18nKey": "ConsumableReason_Damaged",
-      "increaseDecrease": -1,
-      "reset": 0,
+      "effectOnStock": "decrease",
       "userSelectable": 1,
       "externalId": "damaged"
     },
     {
       "name": "Other",
       "i18nKey": "ConsumableReason_Other",
-      "increaseDecrease": -1,
-      "reset": 0,
+      "effectOnStock": "decrease",
       "userSelectable": 1,
       "externalId": "other"
     }

@@ -47,7 +47,7 @@ describe('Device API routes for GxAlert Device', () => {
       const endedOn = subHours(now, 2)
       const expirationDate = dateFormat(new Date(addYears(now, 1).setHours(0, 0, 0, 0)), "yyyy-MM-dd'T'HH:mm:ss'Z'")
       const consumableName = 'Xpert HIV-1 Qual Cartridge'
-      const consumableReason = 'Captured'
+      const consumableReason = 'Physical Count'
       const initialQuantity = 100
       const quantity = 5
 
@@ -157,7 +157,7 @@ describe('Device API routes for GxAlert Device', () => {
         const endedOn = subHours(now, 2)
         const expirationDate = dateFormat(new Date(addYears(now, 1).setHours(0, 0, 0, 0)), "yyyy-MM-dd'T'HH:mm:ss'Z'")
         const consumableName = 'Xpert HIV-1 Qual Cartridge'
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
         const initialQuantity = 100
         const quantity = 5
 
@@ -213,7 +213,7 @@ describe('Device API routes for GxAlert Device', () => {
                 inventoryChanges: [
                   {
                     consumableName: 'Unknown consumable type',
-                    consumableReasonName: 'Captured',
+                    consumableReasonName: 'Physical Count',
                     quantity: 12,
                     resultingQuantityOnHand: 112,
                     dateChanged: startedOn,
@@ -237,7 +237,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
 
         const inventoryChanges = [
           {
@@ -384,7 +384,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
         const quantity = 13
 
         await postToDeviceApi({
@@ -483,7 +483,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
         const quantity = -3
 
         await postToDeviceApi({
@@ -578,7 +578,7 @@ describe('Device API routes for GxAlert Device', () => {
       const inventoryChanges = [
         {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 13,
           resultingQuantityOnHand: 73,
           dateChanged: subHours(startedOn, 1),
@@ -589,7 +589,7 @@ describe('Device API routes for GxAlert Device', () => {
         },
         {
           consumableName: 'GeneXpert Ebola Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: -3,
           resultingQuantityOnHand: 18,
           dateChanged: subHours(startedOn, 2),
@@ -724,7 +724,7 @@ describe('Device API routes for GxAlert Device', () => {
 
       const lot1 = {
         consumableName: 'GeneXpert TB Cartridge',
-        consumableReasonName: 'Captured',
+        consumableReasonName: 'Physical Count',
         quantity: 73,
         resultingQuantityOnHand: 73,
         dateChanged: subHours(startedOn, 2),
@@ -735,7 +735,7 @@ describe('Device API routes for GxAlert Device', () => {
       }
       const lot2 = {
         consumableName: 'GeneXpert TB Cartridge',
-        consumableReasonName: 'Captured',
+        consumableReasonName: 'Physical Count',
         quantity: 38,
         resultingQuantityOnHand: 38,
         dateChanged: subHours(startedOn, 2),
@@ -1017,7 +1017,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const initialLotCaptured = {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 25,
           resultingQuantityOnHand: 25,
           dateChanged: subHours(startedOn, 2),
@@ -1119,7 +1119,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const initialLotCaptured = {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 25,
           dateChanged: subHours(startedOn, 2),
           expirationDate,
@@ -1241,7 +1241,7 @@ describe('Device API routes for GxAlert Device', () => {
       const endedOn = subHours(now, 2)
       const expirationDate = dateFormat(new Date(addYears(now, 1).setHours(0, 0, 0, 0)), "yyyy-MM-dd'T'HH:mm:ss'Z'")
       const consumableName = 'Xpert HIV-1 Qual Cartridge'
-      const consumableReason = 'Captured'
+      const consumableReason = 'Physical Count'
       const initialQuantity = 100
       const quantity = 5
 
@@ -1351,7 +1351,7 @@ describe('Device API routes for GxAlert Device', () => {
         const endedOn = subHours(now, 2)
         const expirationDate = dateFormat(new Date(addYears(now, 1).setHours(0, 0, 0, 0)), "yyyy-MM-dd'T'HH:mm:ss'Z'")
         const consumableName = 'Xpert HIV-1 Qual Cartridge'
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
         const initialQuantity = 100
         const quantity = 5
 
@@ -1407,7 +1407,7 @@ describe('Device API routes for GxAlert Device', () => {
                 inventoryChanges: [
                   {
                     consumableName: 'Unknown consumable type',
-                    consumableReasonName: 'Captured',
+                    consumableReasonName: 'Physical Count',
                     quantity: 12,
                     resultingQuantityOnHand: 112,
                     dateChanged: startedOn,
@@ -1431,7 +1431,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
 
         const inventoryChanges = [
           {
@@ -1578,7 +1578,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
         const quantity = 13
 
         await postToDeviceApi({
@@ -1677,7 +1677,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
         const quantity = -3
 
         await postToDeviceApi({
@@ -1772,7 +1772,7 @@ describe('Device API routes for GxAlert Device', () => {
       const inventoryChanges = [
         {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 13,
           resultingQuantityOnHand: 73,
           dateChanged: subHours(startedOn, 1),
@@ -1783,7 +1783,7 @@ describe('Device API routes for GxAlert Device', () => {
         },
         {
           consumableName: 'GeneXpert Ebola Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: -3,
           resultingQuantityOnHand: 18,
           dateChanged: subHours(startedOn, 2),
@@ -1918,7 +1918,7 @@ describe('Device API routes for GxAlert Device', () => {
 
       const lot1 = {
         consumableName: 'GeneXpert TB Cartridge',
-        consumableReasonName: 'Captured',
+        consumableReasonName: 'Physical Count',
         quantity: 73,
         resultingQuantityOnHand: 73,
         dateChanged: subHours(startedOn, 2),
@@ -1929,7 +1929,7 @@ describe('Device API routes for GxAlert Device', () => {
       }
       const lot2 = {
         consumableName: 'GeneXpert TB Cartridge',
-        consumableReasonName: 'Captured',
+        consumableReasonName: 'Physical Count',
         quantity: 38,
         resultingQuantityOnHand: 38,
         dateChanged: subHours(startedOn, 2),
@@ -2211,7 +2211,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const initialLotCaptured = {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 25,
           resultingQuantityOnHand: 25,
           dateChanged: subHours(startedOn, 2),
@@ -2313,7 +2313,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const initialLotCaptured = {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 25,
           dateChanged: subHours(startedOn, 2),
           expirationDate,

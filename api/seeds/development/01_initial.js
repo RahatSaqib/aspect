@@ -3584,7 +3584,7 @@ async function seed(knex) {
         new Date(now.getTime() + _.random(-millisInNormalYear / 2, millisInNormalYear * 2)).setHours(0, 0, 0, 0)
       )
       let quantityOnHand = _.random(0, 1000)
-      const consumableReasons = await knex('ConsumableReason').where('reset', 0).select()
+      const consumableReasons = await knex('ConsumableReason').whereNot('effectOnStock', 'resetToValue').select()
 
       let lotNumber = null
       // TB Cartridges

@@ -1,4 +1,4 @@
-const fixture = require('../fixtures/consumableReason.json')
+const fixture = require('../fixtures/ConsumableReason.json')
 const { buildUpdates } = require('../utils')
 
 module.exports = require('../utils').seed(async knex => {
@@ -64,10 +64,10 @@ async function updateHistoricalRecordsInInventoryLog(knex, reasonMap) {
       })
   }
 
-  if (reasonMap.asserted_zero_inventory && reasonMap.captured) {
-    // Replace "asserted_zero_inventory" with "Captured" and set quantity to 0
+  if (reasonMap.asserted_zero_inventory && reasonMap.physical_count) {
+    // Replace "asserted_zero_inventory" with "Physical Count" and set quantity to 0
     await knex('InventoryLog').where('consumableReasonId', reasonMap.asserted_zero_inventory).update({
-      consumableReasonId: reasonMap.Captured,
+      consumableReasonId: reasonMap.physical_count,
       quantity: 0,
     })
   }
