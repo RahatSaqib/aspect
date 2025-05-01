@@ -7,6 +7,7 @@ const sharedToken = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
 const { addConstraints, getConstraints } = require('../../src/auth/constraints')
+const { consumableReasonToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 
 describe('Add Inventory', () => {
@@ -60,6 +61,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
+      reasonId: await consumableReasonToId('Manual Addition'),
       quantity: 200,
       expiresOn: '2025-01-27T00:00:00Z',
     }
@@ -68,6 +70,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
+      reasonId: await consumableReasonToId('Manual Addition'),
       quantity: 150,
       expiresOn: '2025-01-27T00:00:00Z', // Same expiresOn as payload1
     }
@@ -89,6 +92,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
+      reasonId: await consumableReasonToId('Manual Addition'),
       quantity: 200,
       lotNumber: '1090986432411',
     }
@@ -97,6 +101,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
+      reasonId: await consumableReasonToId('Manual Addition'),
       quantity: 150,
       lotNumber: '1090986432411', // Same lotNumber as payload1
     }
@@ -118,6 +123,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
+      reasonId: await consumableReasonToId('Manual Addition'),
       quantity: 200,
       lotNumber: '1090986432411',
       expiresOn: '2025-01-27T00:00:00Z',

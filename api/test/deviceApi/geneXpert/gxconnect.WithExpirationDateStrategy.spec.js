@@ -150,7 +150,7 @@ describe('Device API routes for GxConnect Devices', () => {
             siteId: site.id,
             consumableReason: 'Test Conducted',
             resultId: lastResultId,
-            quantity: consumableAssay.quantity,
+            quantity: -consumableAssay.quantity,
           },
         ])
       })
@@ -321,7 +321,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const matchingConsumableAssayAfterSecondRequest = _.find(consumableAssays, {
             consumableId: _.head(inventoryLogsAfterSecondRequest).consumableId,
-            quantity: _.head(inventoryLogsAfterSecondRequest).quantity,
+            quantity: -_.head(inventoryLogsAfterSecondRequest).quantity,
           })
           assert.isNotEmpty(matchingConsumableAssayAfterSecondRequest)
         })
@@ -908,7 +908,7 @@ describe('Device API routes for GxConnect Devices', () => {
         {
           consumableName: 'GeneXpert Ebola Cartridge',
           consumableReasonName: 'Physical Count',
-          quantity: -3,
+          quantity: 3,
           resultingQuantityOnHand: 18,
           dateChanged: subHours(startedOn, 2),
           expirationDate: dateFormat(
@@ -1038,7 +1038,7 @@ describe('Device API routes for GxConnect Devices', () => {
             operation: inventoryChange.quantity >= 0 ? 'add from GxConnect' : 'remove from GxConnect',
             lotNumber: null,
             expiresOn: new Date(inventoryChange.expirationDate),
-            quantity: Math.abs(inventoryChange.quantity),
+            quantity: inventoryChange.quantity,
             notes: null,
             adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
             adjustedTo: null,
@@ -1349,7 +1349,7 @@ describe('Device API routes for GxConnect Devices', () => {
               operation: 'remove from GxConnect',
               lotNumber: null,
               expiresOn: new Date(lot1.expirationDate),
-              quantity: Math.abs(updateToLot1.quantity),
+              quantity: updateToLot1.quantity,
               notes: null,
               adjustedFrom: setMilliseconds(updateToLot1.dateChanged, 0),
               adjustedTo: null,
