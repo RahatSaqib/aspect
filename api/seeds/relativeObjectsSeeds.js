@@ -5,7 +5,6 @@ const forms = require('./fixtures/forms')
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const { getBaseForms } = require('./relatedObjects/forms')
-const { partnerTypeToId } = require('../src/shared/dictionary')
 // / This module was meant for adding generic stuff to all folder seeds.
 // / The idea is to add functions which the only parameter is the knex object we are using
 // / Every function should control which elements should insert and which ones should overpass.
