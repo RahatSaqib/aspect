@@ -5,6 +5,7 @@ const forms = require('./fixtures/forms')
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const { getBaseForms } = require('./relatedObjects/forms')
+const { partnerTypeToId } = require('../src/shared/dictionary')
 // / This module was meant for adding generic stuff to all folder seeds.
 // / The idea is to add functions which the only parameter is the knex object we are using
 // / Every function should control which elements should insert and which ones should overpass.
@@ -119,19 +120,25 @@ async function addDefaultCustomFieldDefinitions(knex, _partnerId, formsNeeded = 
     return
   }
 
-  let partnerId = _partnerId
-  if (!partnerId) {
+  const partnerIds = []
+  if (_partnerId) {
+    partnerIds.push(_partnerId)
+  }
+  if (process.env['seeds.directory'] === './seeds/development') {
+    ;(await knex('Partner').pluck('id')).forEach(partnerId => partnerIds.push(partnerId))
+  }
+  if (partnerIds.length === 0) {
     try {
-      // eslint-disable-next-line prefer-const
-      ;({ partnerId } = await knex('User as u')
+      let { partnerId } = await knex('User as u')
         .join('Person as p', 'u.id', 'p.userId')
         .join('JobContext as jc', 'p.id', 'jc.personId')
         .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
         .where('jf.name', 'Super Admin')
-        .first('p.lastPartnerId as partnerId'))
+        .first('p.lastPartnerId as partnerId')
       if (!partnerId) {
         ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
       }
+      partnerIds.push(partnerId)
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log('Error inserting forms', e)
@@ -139,16 +146,18 @@ async function addDefaultCustomFieldDefinitions(knex, _partnerId, formsNeeded = 
     }
   }
   const forms = await getBaseForms()
-  const insertedForms = await knex('FormDefinition').where({ partnerId }).pluck('externalId')
+  const insertedForms = await knex('FormDefinition').whereIn('partnerId', partnerIds).pluck('externalId')
 
-  await Promise.each(Object.keys(forms), async form => {
-    if (insertedForms.indexOf(form) === -1 && formsNeeded.indexOf(form) >= 0) {
-      await knex('FormDefinition').insert({
-        ...forms[form].formDefinition,
-        jsonSchemaFile: forms[form].fileName,
-        partnerId,
-      })
-    }
+  await Promise.each(Array.from(new Set(partnerIds)), async partnerId => {
+    await Promise.each(Object.keys(forms), async form => {
+      if (insertedForms.indexOf(form) === -1 && formsNeeded.indexOf(form) >= 0) {
+        await knex('FormDefinition').insert({
+          ...forms[form].formDefinition,
+          jsonSchemaFile: forms[form].fileName,
+          partnerId,
+        })
+      }
+    })
   })
   return true
 }
