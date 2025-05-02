@@ -47,8 +47,7 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
       lotNumber: 'il.lotNumber',
     })
     .modify(queryBuilder => {
-      if (requestQuery.onlyTransfers)
-        queryBuilder.whereIn('cr.i18nKey', ['ConsumableReason_TransferReceived', 'ConsumableReason_TransferSent'])
+      if (requestQuery.onlyTransfers) queryBuilder.whereIn('cr.externalId', ['transfer_received', 'transfer_sent'])
     })
     .modify(queryBuilder => {
       if (requestQuery.siteIds) {

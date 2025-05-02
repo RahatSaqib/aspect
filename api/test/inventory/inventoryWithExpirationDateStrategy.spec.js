@@ -494,7 +494,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
-              reasonId: await consumableReasonToId('Manual Addition'),
+              reasonId: await consumableReasonToId('manual_addition'),
               quantity: quantityToAdjust,
               notes: 'Testing add',
               toSiteId: inventoryItem.siteId,

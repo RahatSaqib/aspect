@@ -327,7 +327,7 @@ async function addInventory({ auth, payload, plugins }) {
   const { id: userId, partnerId } = await getUser(auth.credentials.name)
   let consumableReasonId = reasonId
   if (!consumableReasonId) {
-    consumableReasonId = await consumableReasonToId('Manual Addition')
+    consumableReasonId = await consumableReasonToId('manual_addition')
   }
   /**
    * take 1st item from returning array of affected items
@@ -481,7 +481,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
       inTransitFromSiteId: transferInPendingMode ? fromSiteId : null,
     })
 
-    const transferSentConsumableReasonId = await consumableReasonToId('Transfer Sent')
+    const transferSentConsumableReasonId = await consumableReasonToId('transfer_sent')
 
     sourceInventoryItemId = await upsertInventoryItem({
       knex,
@@ -518,7 +518,7 @@ async function transferInventory({ payload, messageContext, partnerId, userId })
 
     await createInventoryTransfer(knex, outcomeInventoryLogId, destinationInventoryItemId)
     if (!transferInPendingMode) {
-      const transferReceivedConsumableReasonId = await consumableReasonToId('Transfer Received')
+      const transferReceivedConsumableReasonId = await consumableReasonToId('transfer_received')
       const incomeInventoryLogId = await logInventoryChange({
         knex,
         inventoryItemId: destinationInventoryItemId,
@@ -622,7 +622,7 @@ async function receiveInventory(request) {
     })
     await updateSiteConsumable(toSiteId, { modify: 'add', consumableId }, knex)
 
-    const transferReceivedConsumableReasonId = await consumableReasonToId('Transfer Received')
+    const transferReceivedConsumableReasonId = await consumableReasonToId('transfer_received')
 
     const incomeInventoryLogId = await logInventoryChange({
       knex,
@@ -901,7 +901,7 @@ async function consumeInventoryForResult({
   )
 
   const assayConsumables = await selectAssayConsumables(knex, dataConstraints, assayId)
-  const testRunConsumableReasonId = await consumableReasonToId('Test Conducted')
+  const testRunConsumableReasonId = await consumableReasonToId('test_conducted')
 
   const { resultCountInDeviceLog } = await knex('DeviceLog as mil')
     .where({ 'mil.resultId': resultId })

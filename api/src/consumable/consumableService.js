@@ -41,15 +41,6 @@ async function findConsumables(knownConsumableDetails) {
   return consumables
 }
 
-async function findConsumableReason(consumableReasonName) {
-  const consumableReason = await knex('ConsumableReason')
-    .where({
-      name: consumableReasonName,
-    })
-    .first()
-  return consumableReason
-}
-
 function getSiteIdsByConsumable(consumableId, dataConstraints) {
   const consumableSitesQuery = knex('SiteConsumable as sc')
     .leftJoin('Site as s', 's.id', 'sc.siteId')
@@ -173,7 +164,6 @@ module.exports = {
   listConsumableTypes,
   listConsumableReasons,
   findConsumables,
-  findConsumableReason,
   getConsumableById,
   getUnits,
   updateConsumable,

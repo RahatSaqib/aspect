@@ -61,7 +61,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
-      reasonId: await consumableReasonToId('Manual Addition'),
+      reasonId: await consumableReasonToId('manual_addition'),
       quantity: 200,
       expiresOn: '2025-01-27T00:00:00Z',
     }
@@ -70,7 +70,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
-      reasonId: await consumableReasonToId('Manual Addition'),
+      reasonId: await consumableReasonToId('manual_addition'),
       quantity: 150,
       expiresOn: '2025-01-27T00:00:00Z', // Same expiresOn as payload1
     }
@@ -92,7 +92,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
-      reasonId: await consumableReasonToId('Manual Addition'),
+      reasonId: await consumableReasonToId('manual_addition'),
       quantity: 200,
       lotNumber: '1090986432411',
     }
@@ -101,7 +101,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
-      reasonId: await consumableReasonToId('Manual Addition'),
+      reasonId: await consumableReasonToId('manual_addition'),
       quantity: 150,
       lotNumber: '1090986432411', // Same lotNumber as payload1
     }
@@ -123,7 +123,7 @@ describe('Add Inventory', () => {
       dateAdjusted: '2025-01-07T14:45:08.387Z',
       toSiteId: site.id,
       consumableId: 8,
-      reasonId: await consumableReasonToId('Manual Addition'),
+      reasonId: await consumableReasonToId('manual_addition'),
       quantity: 200,
       lotNumber: '1090986432411',
       expiresOn: '2025-01-27T00:00:00Z',
