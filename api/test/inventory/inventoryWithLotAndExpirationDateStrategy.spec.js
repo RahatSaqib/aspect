@@ -5,6 +5,7 @@ const { addDays } = require('date-fns')
 const shared = require('../utils/sharedToken')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { knex } = require('../../src/db')
+const { consumableReasonToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
 const server = require('../utils/testUtils')
@@ -560,6 +561,7 @@ describe('Inventory Routes', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
+              reasonId: await consumableReasonToId('Manual Addition'),
               quantity: quantityToAdjust,
               notes: 'Testing add',
               toSiteId: inventoryItem.siteId,
@@ -593,6 +595,7 @@ describe('Inventory Routes', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
+              reasonId: await consumableReasonToId('Manual Addition'),
               quantity: quantityToAdjust,
               notes: 'Testing add',
               toSiteId: inventoryItem.siteId,
@@ -630,10 +633,10 @@ describe('Inventory Routes', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
+              reasonId: await consumableReasonToId('Lost'),
               quantity: 400,
               notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
-              reasonId: 1,
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
@@ -650,10 +653,10 @@ describe('Inventory Routes', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: 'ANOTHER LOT NUMBER',
               expiresOn: inventoryItem.expiresOn,
+              reasonId: await consumableReasonToId('Lost'),
               quantity: 510,
               notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
-              reasonId: 1,
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)

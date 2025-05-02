@@ -5,6 +5,7 @@ const addYears = require('date-fns/addYears')
 const { addDays } = require('date-fns')
 const shared = require('../utils/sharedToken')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+const { consumableReasonToId } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
 
 const { assert } = chai
@@ -493,6 +494,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
+              reasonId: await consumableReasonToId('Manual Addition'),
               quantity: quantityToAdjust,
               notes: 'Testing add',
               toSiteId: inventoryItem.siteId,
