@@ -3,7 +3,6 @@ const shared = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
-const { getAccessToken } = require('../utils/authUtils')
 
 const { assert } = chai
 
