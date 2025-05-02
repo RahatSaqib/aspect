@@ -329,7 +329,8 @@ describe('Device API routes for GxConnect Devices', () => {
     })
   })
 
-  describe('inventory changes', () => {
+  // Take a look at the comments here: https://systemone.youtrack.cloud/issue/ASP-7740/Solve-Inventory-Items-duplicates
+  describe.skip('inventory changes', () => {
     const context = createGxConnectTestContext(server, {
       countryCode,
       adminUsername,

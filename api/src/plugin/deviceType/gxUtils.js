@@ -1,11 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
-const setMilliseconds = require('date-fns/setMilliseconds')
-const { isNil } = require('lodash')
 const { insertSite } = require('../../site/common/db')
-const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
-const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
 const { updateDeviceDetails } = require('../../deviceApi/device')
@@ -19,7 +15,6 @@ const {
   getBacterialLoad,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
-const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
 const { assayNameToExternalId } = require('../../shared/assayNameToExternalId')
 /*
 The purpose of this plugin is to ensure that results are captured
@@ -232,6 +227,18 @@ async function transformMergeResultPayload({ deviceId, payload, knex }) {
   return Promise.resolve(payload)
 }
 
+async function postProcessAddDeviceOperation() {
+  return {}
+}
+
+// Take a look at the comments here: https://systemone.youtrack.cloud/issue/ASP-7740/Solve-Inventory-Items-duplicates
+/*
+const setMilliseconds = require('date-fns/setMilliseconds')
+const { isNil } = require('lodash')
+const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
+const { getDevice } = require('../../device/service')
+const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
+
 async function postProcessAddDeviceOperation({ device, payload, now, messageContext, userId }) {
   let inventoryItemIds = []
   const inventoryChanges = _.get(payload, 'data.inventoryChanges')
@@ -269,9 +276,7 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
 
             const operation = `${isDecrease ? 'remove' : 'add'} from GxConnect`
 
-            /**
-             * return object { inventoryItemId, inventoryLogId }
-             */
+            // return object { inventoryItemId, inventoryLogId }
             return changeInventoryQuantity(inventoryStrategy, {
               consumableId,
               siteId,
@@ -302,6 +307,7 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
     inventoryItemIds,
   }
 }
+*/
 
 async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now, isFastImport }) {
   let device = {}
