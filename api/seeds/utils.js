@@ -42,7 +42,7 @@ const tables = [
   'FollowUpType',
   'ResultNoteType',
   // TODO ASP-757 Standardize static data key on externalId
-  ['ConsumableReason', 'name'],
+  'ConsumableReason',
   ['DeviceApproval', 'token'],
   ['PartnerType', 'name'],
   ['DeviceTypeCategory', 'name'],
@@ -555,6 +555,20 @@ async function seedTable(knex, fixtureItem, overridedSeeds = { seedsFolder: null
       }
     })
   }
+}
+
+const buildUpdates = function (fixture, originalData, keyColumn = 'externalId') {
+  return fixture.data.reduce((accUpdates, f) => {
+    const e = originalData.find(e => e[keyColumn] === f[keyColumn])
+    if (!e) return accUpdates
+    const changes = Object.keys(f).reduce((accChanges, key) => {
+      if (e && e[key] !== f[key]) {
+        accChanges[key] = f[key]
+      }
+      return accChanges
+    }, {})
+    return Object.keys(changes).length ? [...accUpdates, { id: e.id, ...changes }] : accUpdates
+  }, [])
 }
 
 async function warnNotExistingOverridedSeeds(overridedSeeds) {
@@ -2973,4 +2987,5 @@ module.exports = {
   updateIssueNotificationTemplates,
 
   upsertForms,
+  buildUpdates,
 }

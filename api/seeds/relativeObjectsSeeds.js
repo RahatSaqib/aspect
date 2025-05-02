@@ -98,12 +98,13 @@ async function addIssueTypes(
           webhookTemplateId,
         })
       }
-      if (!insertedIssueTypes.includes(issues[elem].issueType.externalId)) {
-        await knex('IssueType').insert({
+      await knex('IssueType')
+        .insert({
           ...issues[elem].issueType,
           defaultMessageTypeId: messageTypeId,
         })
-      }
+        .onConflict(['externalId'])
+        .merge()
     }
   })
 
