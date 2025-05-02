@@ -19,26 +19,7 @@
           "errorMessageI18nKey": "PatientAgeValidationFieldi18nKey"
         }
       ],
-      "condition": [
-        {
-          "propToCompare": "PatientAgeDays",
-          "valueToCompare": 0,
-          "operator": ">",
-          "conjunction": "or"
-        },
-        {
-          "propToCompare": "PatientAgeDays",
-          "valueToCompare": null,
-          "operator": ">",
-          "conjunction": "or"
-        },
-        {
-          "propToCompare": "PatientAgeDays",
-          "valueToCompare": "",
-          "operator": ">",
-          "conjunction": "or"
-        }
-      ]
+      "condition": []
     }
   ]
 }

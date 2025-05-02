@@ -13,7 +13,11 @@ const routes = [
       auth: { scope: ['result:view'] },
       validate: {
         query: Joi.object({
-          externalIds: Joi.string().required(),
+          externalIds: Joi.array()
+            .items(Joi.string())
+            .single()
+            .description('The external ids of the custom fields to retrieve')
+            .required(),
         }),
       },
     },

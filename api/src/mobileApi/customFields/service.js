@@ -8,14 +8,13 @@ const { getForms } = require('../../forms/service')
 async function getCustomFieldsByExternalIds(request) {
   const { externalIds } = request.query
 
-  const externalIdsList = externalIds.split(',').map(id => id.trim())
-  request.query.externalsId = externalIdsList
+  request.query.externalsId = externalIds
 
   const formDefinitions = await getForms(request)
 
   return {
     ok: true,
-    data: externalIdsList.map(id => formDefinitions[id]).filter(Boolean),
+    data: externalIds?.map(id => formDefinitions[id]).filter(Boolean),
   }
 }
 
