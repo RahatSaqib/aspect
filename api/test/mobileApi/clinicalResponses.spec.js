@@ -14,15 +14,8 @@ const { getBaseQueryForResults } = require('../../src/result/common/db')
 
 const { assert, expect } = chai
 
-// This test is skipped because it sometimes fails randomly
-describe.skip('Mobile API Clinical Response', () => {
-  const path = '/mobile/api/results/clinical-responses'
-
+describe('Mobile API Clinical Response', () => {
   let results = []
-
-  before(async () => {
-    shared.checkToken(server, path)
-  })
 
   beforeEach(async () => {
     const { partnerId, userId } = await knex('Person as p')
@@ -72,13 +65,18 @@ describe.skip('Mobile API Clinical Response', () => {
 
   afterEach(async () => {
     await knex('ResultFollowUp').whereIn('resultId', _.map(results, 'id')).delete()
-
     await knex('ResultDownloadLog').whereIn('resultId', _.map(results, 'id')).delete()
-
+    await knex('ResultCustomField').whereIn('resultId', _.map(results, 'id')).delete()
     await knex('Result').whereIn('id', _.map(results, 'id')).delete()
   })
 
-  describe('POST', () => {
+  describe('POST: /mobile/api/results/clinical-responses', () => {
+    const path = '/mobile/api/results/clinical-responses'
+
+    before(async () => {
+      shared.checkToken(server, path)
+    })
+
     function assertClinicalResponse(response) {
       expect(response).to.containSubset({
         status: 200,
@@ -111,7 +109,7 @@ describe.skip('Mobile API Clinical Response', () => {
       }
     }
 
-    function responseContainingNulllOutcomeClinicalResponse(response) {
+    function responseContainingNullOutcomeClinicalResponse(response) {
       assertClinicalResponse(response)
       expect(response).to.containSubset({
         body: {
@@ -182,7 +180,72 @@ describe.skip('Mobile API Clinical Response', () => {
           },
         ])
         .set('Authorization', `Bearer ${shared.token}`)
-      responseContainingNulllOutcomeClinicalResponse(res)
+      responseContainingNullOutcomeClinicalResponse(res)
+    })
+  })
+
+  describe.only('POST: /mobile/api/v3/clinical-responses/:resultId', () => {
+    const dataFetchEndpoint = '/mobile/api/entries'
+    const path = '/mobile/api/v3/clinical-responses'
+
+    before(async () => {
+      shared.checkToken(server, path)
+    })
+
+    it('should throw error if incorrect field name is provided', async () => {
+      const response = await server
+        .post(`${path}/${results[0].id}`)
+        .send([{ fieldName: 'incorrectFieldName', value: 'incorrectValue', clientTime: new Date().toISOString() }])
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      expect(response.statusCode).to.equal(400)
+      expect(response.ok).to.equal(false)
+    })
+
+    it('should add clinical response with treatment and outcome with custom field data added', async () => {
+      const dateTimeNow = new Date().toISOString()
+      const response = await server
+        .post(`${path}/${results[0].id}`)
+        .send([
+          {
+            fieldName: 'confirmed',
+            value: true,
+            clientTime: '2022-12-04T11:50:01.000Z',
+          },
+          {
+            fieldName: 'treatment',
+            value: 'iaac',
+            clientTime: dateTimeNow,
+          },
+          {
+            fieldName: 'treatmentOccurred',
+            value: '2022-12-05',
+            clientTime: dateTimeNow,
+          },
+          {
+            fieldName: 'outcome',
+            value: 'recovered',
+            clientTime: dateTimeNow,
+          },
+          {
+            fieldName: 'outcomeOccurred',
+            value: '2023-01-15',
+            clientTime: dateTimeNow,
+          },
+        ])
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      expect(response.body).to.containSubset({
+        ok: true,
+        data: {
+          clinicalResponse: {
+            recorded: true,
+            confirmedOn: '2022-12-04T11:50:01.000Z',
+            outcome: 'recovered',
+            outcomeOccurred: '2023-01-15T00:00:00.000Z',
+          },
+        },
+      })
     })
   })
 })
