@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
+const { Promise } = require('bluebird')
 const { getUser } = require('../../auth/service')
 const {
   getResultItemTransformedDataV2,
@@ -37,6 +38,8 @@ const {
   deleteResultFollowUpTreatment,
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
+const { knex } = require('../../db')
+const { getForms, getFormsByFormDefinitionExternalIds } = require('../../forms/service')
 
 const ACKNOWLEDGED_FIELD_NAME = 'confirmed'
 const NOT_POSSIBLE_FIELD_NAME = 'followUpNotPossible'
@@ -45,17 +48,21 @@ const NOT_POSSIBLE_REASON_FIELD_NAME = 'followUpNotPossibleReason'
 async function clinicalResponse(request) {
   const {
     auth: { credentials },
-    payload,
+    payload: payloadRaw,
     params,
   } = request
 
+  const payload = payloadRaw.filter(fuv => fuv.fieldType !== 'custom-field')
+  const customFields = payloadRaw.filter(fuv => fuv.fieldType === 'custom-field')
+
   const { resultId } = params
-  const { id: currentUserId } = await getUser(credentials.name)
+  const { id: currentUserId, partnerId } = await getUser(credentials.name)
   const dataConstraints = await getConstraints(credentials)
   let resultEntry = await showResult(resultId, dataConstraints)
   if (resultEntry?.isBoom) {
     throw resultEntry
   }
+
   const mostRecentValueCaptured = _.sortBy(payload, value => value.clientTime).reverse()[0]
   if (mostRecentValueCaptured) {
     // If the result has been recorded in the register, acknowledge the result
@@ -336,6 +343,38 @@ async function clinicalResponse(request) {
     }
     resultEntry = await showResult(resultId, dataConstraints)
   }
+
+  if (customFields.length > 0) {
+    console.log(
+      'Form before ',
+      customFields.map(fuv => fuv.formDefinitionExternalId)
+    )
+
+    const forms = await getFormsByFormDefinitionExternalIds(
+      partnerId,
+      customFields.map(fuv => fuv.formDefinitionExternalId)
+    )
+
+    const customFieldsByFormDefinitionExternalId = {}
+    customFields.forEach(fuv => {
+      if (!customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId]) {
+        customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId] = {}
+      }
+      customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId][fuv.fieldName] = fuv.value
+    })
+
+    await Promise.map(
+      Object.entries(customFieldsByFormDefinitionExternalId),
+      async ([formDefinitionExternalId, customFieldsData]) => {
+        await knex('ResultCustomField').insert({
+          resultId,
+          formDefinitionExternalId,
+          customFieldsData,
+        })
+      }
+    )
+  }
+
   return {
     ok: !!resultEntry,
     data: resultEntry,

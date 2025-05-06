@@ -4,14 +4,14 @@
  */
 exports.up = function (knex) {
   return knex.schema.createTable('ResultCustomField', table => {
+    table.increments('id').primary()
     table.integer('resultId').unsigned().notNullable().index().references('id').inTable('Result')
-    table.integer('formDefinitionId').unsigned().notNullable().index().references('id').inTable('FormDefinition')
+    table.string('formDefinitionExternalId').notNullable().index()
     table.specificType('customFieldsData', 'JSON')
     table.dateTime('createdOn').notNullable().defaultTo(knex.fn.now())
     table.dateTime('updatedOn').notNullable().defaultTo(knex.fn.now())
 
-    // Primary key
-    table.primary(['resultId', 'formDefinitionId'])
+    table.unique(['resultId', 'formDefinitionExternalId'])
   })
 }
 

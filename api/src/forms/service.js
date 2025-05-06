@@ -32,6 +32,13 @@ async function getForms(request) {
   return createFormObject(formQuery)
 }
 
+async function getFormsByFormDefinitionExternalIds(partnerId, formDefinitionExternalIds) {
+  const formQuery = await getFormsBaseQuery(partnerId, {
+    externalsId: formDefinitionExternalIds,
+  })
+  return createFormObject(formQuery)
+}
+
 const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
   await Promise.each(
     _.filter(customFields, elem => elem.itemsSource),
@@ -262,4 +269,5 @@ module.exports = {
   replaceOptionSourceProp,
   getCustomFieldPlaceholdersForNotifications,
   getCustomFieldsFromPayload,
+  getFormsByFormDefinitionExternalIds,
 }

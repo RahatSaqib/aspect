@@ -551,6 +551,13 @@ const addClinicalResponsePayloadValidation = () => {
         .valid('custom-field')
         .optional()
         .description('When set to custom-field, allows any string value for fieldName'),
+      formDefinitionExternalId: Joi.string()
+        .when('fieldType', {
+          is: 'custom-field',
+          then: Joi.string().required(),
+          otherwise: Joi.string().optional(),
+        })
+        .description('Required when fieldType is custom-field, specifies which form definition this field belongs to'),
       value: [
         Joi.bool()
           .required()

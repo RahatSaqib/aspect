@@ -185,7 +185,7 @@ describe('Mobile API Clinical Response', () => {
   })
 
   describe.only('POST: /mobile/api/v3/clinical-responses/:resultId', () => {
-    const dataFetchEndpoint = '/mobile/api/entries'
+    const dataFetchEndpoint = '/mobile/api/v4/entries'
     const path = '/mobile/api/v3/clinical-responses'
 
     before(async () => {
@@ -202,10 +202,29 @@ describe('Mobile API Clinical Response', () => {
       expect(response.ok).to.equal(false)
     })
 
-    it('should add clinical response with treatment and outcome with custom field data added', async () => {
-      const dateTimeNow = new Date().toISOString()
+    it('should throw error if custom field fieldType is chosen but other dependent fields are not provided', async () => {
       const response = await server
         .post(`${path}/${results[0].id}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .send([
+          {
+            fieldName: 'age',
+            value: 20,
+            clientTime: new Date().toISOString(),
+            fieldType: 'custom-field',
+          },
+        ])
+
+      expect(response.statusCode).to.equal(400)
+      expect(response.ok).to.equal(false)
+    })
+
+    it('should add clinical response with treatment and outcome with custom field data added', async () => {
+      const currentResultId = results[0].id
+      const entriesBefore = await server.get(dataFetchEndpoint).set('Authorization', `Bearer ${shared.token}`)
+      const dateTimeNow = new Date().toISOString()
+      const response = await server
+        .post(`${path}/${currentResultId}`)
         .send([
           {
             fieldName: 'confirmed',
@@ -233,7 +252,8 @@ describe('Mobile API Clinical Response', () => {
             clientTime: dateTimeNow,
           },
           {
-            fieldName: 'ClinicalResponse.age',
+            formDefinitionExternalId: 'ClinicalResponse',
+            fieldName: 'age',
             value: 20,
             clientTime: dateTimeNow,
             fieldType: 'custom-field',
@@ -252,6 +272,9 @@ describe('Mobile API Clinical Response', () => {
           },
         },
       })
+      const resultEntryBefore = entriesBefore.body.data.find(entry => entry.id === currentResultId)
+      const entriesAfter = await server.get(dataFetchEndpoint).set('Authorization', `Bearer ${shared.token}`)
+      const resultEntryAfter = entriesAfter.body.data.find(entry => entry.id === currentResultId)
     })
   })
 })
