@@ -13,6 +13,7 @@ const { optionalTreatmentResponseValidation } = require('./optionalTreatmentResp
 const { serverTransferResponseValidation } = require('./serverTransferResponseValidation')
 const { serverBaseResponseValidation } = require('./serverBaseResponseValidation')
 const { returnSiteValidationSchema } = require('./sitePropertyValidation')
+const { optionalResultCustomFieldResponseValidation } = require('./optionalResultCustomFieldResponseValidation')
 
 const downloadEntriesResponseValidation = () => {
   return Joi.object()
@@ -66,6 +67,7 @@ const downloadEntriesResponseValidation = () => {
             .concat(optionalEntryTypeResponseValidation)
             .concat(serverTransferResponseValidation)
             .concat(optionalTreatmentResponseValidation)
+            .concat(optionalResultCustomFieldResponseValidation)
         ),
     })
     .concat(serverBaseResponseValidation)

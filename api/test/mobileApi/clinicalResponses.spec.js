@@ -220,8 +220,9 @@ describe('Mobile API Clinical Response', () => {
     })
 
     it('should add clinical response with treatment and outcome with custom field data added', async () => {
-      const currentResultId = results[0].id
       const entriesBefore = await server.get(dataFetchEndpoint).set('Authorization', `Bearer ${shared.token}`)
+      console.log('entriesBefore ', entriesBefore.error)
+      const currentResultId = entriesBefore.body.data[entriesBefore.body.data.length - 1].id
       const dateTimeNow = new Date().toISOString()
       const response = await server
         .post(`${path}/${currentResultId}`)
@@ -272,9 +273,23 @@ describe('Mobile API Clinical Response', () => {
           },
         },
       })
+      const resultCustomFields = await knex('ResultCustomField').where('resultId', currentResultId).select('*')
+      console.log('What is the result ', currentResultId)
+      expect(resultCustomFields).to.have.length(1)
+      expect(JSON.parse(resultCustomFields[0].customFieldsData)).to.deep.equal({
+        age: 20,
+      })
       const resultEntryBefore = entriesBefore.body.data.find(entry => entry.id === currentResultId)
       const entriesAfter = await server.get(dataFetchEndpoint).set('Authorization', `Bearer ${shared.token}`)
       const resultEntryAfter = entriesAfter.body.data.find(entry => entry.id === currentResultId)
+      expect(resultEntryBefore).to.containSubset({})
+      expect(resultEntryAfter).to.containSubset({
+        customFields: {
+          ClinicalResponse: {
+            age: 20,
+          },
+        },
+      })
     })
   })
 })
