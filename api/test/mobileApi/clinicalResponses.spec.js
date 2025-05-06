@@ -232,6 +232,12 @@ describe('Mobile API Clinical Response', () => {
             value: '2023-01-15',
             clientTime: dateTimeNow,
           },
+          {
+            fieldName: 'age',
+            value: 20,
+            clientTime: dateTimeNow,
+            fieldType: 'custom-field',
+          },
         ])
         .set('Authorization', `Bearer ${shared.token}`)
 
