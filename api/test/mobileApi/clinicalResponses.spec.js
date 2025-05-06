@@ -233,7 +233,7 @@ describe('Mobile API Clinical Response', () => {
             clientTime: dateTimeNow,
           },
           {
-            fieldName: 'age',
+            fieldName: 'ClinicalResponse.age',
             value: 20,
             clientTime: dateTimeNow,
             fieldType: 'custom-field',
