@@ -125,8 +125,6 @@ async function fetchEntriesServiceHandler(request) {
 
   const awaitingTreatment = _.countBy(entries, 'requiresFollowUp')
 
-  console.log('resultCustomFieldsByResultId ', resultCustomFieldsByResultId)
-
   return {
     ok: !!entries,
     total: _.size(entries),

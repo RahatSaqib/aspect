@@ -2,7 +2,6 @@ const { getResultCustomFieldsByResultIds } = require('./db')
 
 async function getResultCustomFieldsResponseByResultIds(resultIds) {
   const resultCustomFields = await getResultCustomFieldsByResultIds(resultIds)
-  console.log('resultCustomFields ', resultCustomFields, resultIds)
   const resultCustomFieldByResultId = {}
   resultCustomFields.forEach(resultCustomField => {
     if (!resultCustomFieldByResultId[resultCustomField.resultId]) {

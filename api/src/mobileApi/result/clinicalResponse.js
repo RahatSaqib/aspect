@@ -345,34 +345,31 @@ async function clinicalResponse(request) {
   }
 
   if (customFields.length > 0) {
-    console.log(
-      'Form before ',
-      customFields.map(fuv => fuv.formDefinitionExternalId)
-    )
-
     const forms = await getFormsByFormDefinitionExternalIds(
       partnerId,
       customFields.map(fuv => fuv.formDefinitionExternalId)
     )
 
-    const customFieldsByFormDefinitionExternalId = {}
-    customFields.forEach(fuv => {
-      if (!customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId]) {
-        customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId] = {}
-      }
-      customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId][fuv.fieldName] = fuv.value
-    })
+    if (forms.length !== 0) {
+      const customFieldsByFormDefinitionExternalId = {}
+      customFields.forEach(fuv => {
+        if (!customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId]) {
+          customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId] = {}
+        }
+        customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId][fuv.fieldName] = fuv.value
+      })
 
-    await Promise.map(
-      Object.entries(customFieldsByFormDefinitionExternalId),
-      async ([formDefinitionExternalId, customFieldsData]) => {
-        await knex('ResultCustomField').insert({
-          resultId,
-          formDefinitionExternalId,
-          customFieldsData,
-        })
-      }
-    )
+      await Promise.map(
+        Object.entries(customFieldsByFormDefinitionExternalId),
+        async ([formDefinitionExternalId, customFieldsData]) => {
+          await knex('ResultCustomField').insert({
+            resultId,
+            formDefinitionExternalId,
+            customFieldsData,
+          })
+        }
+      )
+    }
   }
 
   return {
