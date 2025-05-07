@@ -220,9 +220,9 @@ describe('Mobile API Clinical Response', () => {
     })
 
     it('should add clinical response with treatment and outcome with custom field data added', async () => {
+      const currentResultId = results[0].id
       const entriesBefore = await server.get(dataFetchEndpoint).set('Authorization', `Bearer ${shared.token}`)
       console.log('entriesBefore ', entriesBefore.error)
-      const currentResultId = entriesBefore.body.data[entriesBefore.body.data.length - 1].id
       const dateTimeNow = new Date().toISOString()
       const response = await server
         .post(`${path}/${currentResultId}`)
