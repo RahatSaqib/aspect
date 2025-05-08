@@ -362,11 +362,14 @@ async function clinicalResponse(request) {
       await Promise.map(
         Object.entries(customFieldsByFormDefinitionExternalId),
         async ([formDefinitionExternalId, customFieldsData]) => {
-          await knex('ResultCustomField').insert({
-            resultId,
-            formDefinitionExternalId,
-            customFieldsData,
-          })
+          await knex('ResultCustomField')
+            .insert({
+              resultId,
+              formDefinitionExternalId,
+              customFieldsData,
+            })
+            .onConflict(['resultId', 'formDefinitionExternalId'])
+            .merge()
         }
       )
     }
