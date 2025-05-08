@@ -184,7 +184,7 @@ describe('Mobile API Clinical Response', () => {
     })
   })
 
-  describe.only('POST: /mobile/api/v3/clinical-responses/:resultId', () => {
+  describe('POST: /mobile/api/v3/clinical-responses/:resultId', () => {
     const dataFetchEndpoint = '/mobile/api/v4/entries'
     const path = '/mobile/api/v3/clinical-responses'
 

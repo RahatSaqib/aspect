@@ -39,7 +39,7 @@ const {
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
 const { knex } = require('../../db')
-const { getForms, getFormsByFormDefinitionExternalIds } = require('../../forms/service')
+const { getFormsByFormDefinitionExternalIds } = require('../../forms/service')
 
 const ACKNOWLEDGED_FIELD_NAME = 'confirmed'
 const NOT_POSSIBLE_FIELD_NAME = 'followUpNotPossible'
@@ -356,7 +356,7 @@ async function clinicalResponse(request) {
         if (!customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId]) {
           customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId] = {}
         }
-        customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId][fuv.fieldName] = fuv.value
+        customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId][fuv.fieldName] = { value: fuv.value }
       })
 
       await Promise.map(

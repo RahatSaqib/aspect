@@ -10,13 +10,13 @@ const { getSiteIdByName } = require('../site/common/db')
 
 function createFormObject(formQuery) {
   const forms = {}
-  // eslint-disable-next-line no-return-assign
   _.each(formQuery, form => {
     forms[form.externalId] = {
       ...formDictionary[form.jsonSchemaFileName],
       assayId: form.assayId,
       diseaseId: form.diseaseId,
       formTypeId: form.formTypeId,
+      formDefinitionExternalId: form.externalId,
     }
   })
   return forms
