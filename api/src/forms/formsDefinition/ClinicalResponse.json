@@ -22,7 +22,7 @@
       "condition": []
     },
     {
-      "name": "LSDateOfBirth",
+      "name": "DateOfBirth",
       "title": "Date of birth",
       "fieldType": "datetime",
       "order": 15,
@@ -30,7 +30,7 @@
       "mandatory": false
     },
     {
-      "name": "LSInfantBreastfeeding",
+      "name": "InfantBreastfeeding",
       "title": "Infant breastfeeding?",
       "fieldType": "text",
       "order": 16,
@@ -48,19 +48,19 @@
       ],
       "condition": [
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": 0,
           "operator": "!=",
           "conjunction": "and"
         },
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": null,
           "operator": "!=",
           "conjunction": "and"
         },
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": "",
           "operator": "!=",
           "conjunction": "and"
@@ -68,7 +68,7 @@
       ]
     },
     {
-      "name": "LSEIDSampleType",
+      "name": "EIDSampleType",
       "title": "Sample type",
       "fieldType": "text",
       "order": 90,
@@ -90,19 +90,19 @@
       ],
       "condition": [
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": 0,
           "operator": "!=",
           "conjunction": "and"
         },
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": null,
           "operator": "!=",
           "conjunction": "and"
         },
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": "",
           "operator": "!=",
           "conjunction": "and"
@@ -110,7 +110,7 @@
       ]
     },
     {
-      "name": "LSReasonForTesting",
+      "name": "ReasonForTesting",
       "title": "Reasons for testing",
       "fieldType": "text",
       "order": 130,
@@ -144,19 +144,19 @@
       ],
       "condition": [
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": 0,
           "operator": "!=",
           "conjunction": "and"
         },
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": null,
           "operator": "!=",
           "conjunction": "and"
         },
         {
-          "propToCompare": "LSPatientAgeDays",
+          "propToCompare": "PatientAgeDays",
           "valueToCompare": "",
           "operator": "!=",
           "conjunction": "and"
@@ -164,7 +164,7 @@
       ]
     },
     {
-      "name": "LSNameOfRequestingFacility",
+      "name": "NameOfRequestingFacility",
       "title": "Name of requesting facility",
       "fieldType": "text",
       "order": 75,
