@@ -1,3 +1,4 @@
+const { pick } = require('lodash')
 const { getForms } = require('../../forms/service')
 
 /**
@@ -14,7 +15,23 @@ async function getCustomFieldsByExternalIds(request) {
 
   return {
     ok: true,
-    data: externalIds?.map(id => formDefinitions[id]).filter(Boolean),
+    data: externalIds
+      ?.map(id => formDefinitions[id])
+      .filter(Boolean)
+      .map(form =>
+        pick(form, [
+          // only send required fields
+          'name',
+          'title',
+          'fieldType',
+          'order',
+          'controlType',
+          'mandatory',
+          'validation',
+          'condition',
+          'formDefinitionExternalId',
+        ])
+      ),
   }
 }
 

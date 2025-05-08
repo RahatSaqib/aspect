@@ -27,15 +27,13 @@ describe('Mobile API Custom Fields', () => {
       assert.containsAllKeys(response.body.data[0].fields[0], [
         'name',
         'title',
-        'i18nKey',
         'fieldType',
         'order',
-        'caption',
-        'i18nKeyCaption',
         'controlType',
         'mandatory',
         'validation',
         'condition',
+        'formDefinitionExternalId',
       ])
     })
 
