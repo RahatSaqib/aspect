@@ -12,7 +12,7 @@ const {
   SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
-const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
+const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const consumableStrategyFactory = require('./consumableStrategies/consumableStrategyFactory')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 
@@ -353,66 +353,6 @@ function getInventoryItem(inventoryItemId, selectFields = INVENTORY_ITEM_SELECT)
 }
 
 // ----------------------------------------------------------------------------------
-async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
-  const updateValues = {}
-  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
-    updateValues.expiresOn = inventoryItemValues.expiresOn ? parseDateOrDefault(inventoryItemValues.expiresOn) : null
-  }
-  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
-    updateValues.lotNumber = inventoryItemValues.lotNumber
-  }
-  if (typeof inventoryItemValues.siteId !== 'undefined') {
-    updateValues.siteId = inventoryItemValues.siteId
-  }
-  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
-    updateValues.quantityOnHand = inventoryItemValues.quantityOnHand
-  }
-  updateValues.updatedOn = new Date()
-  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
-    updateValues.updatedBy = inventoryItemValues.updatedBy
-  }
-
-  return knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
-}
-
-// ----------------------------------------------------------------------------------
-async function insertInventoryItem(knex, inventoryItemValues) {
-  const insertValues = {}
-  if (typeof inventoryItemValues.consumableId !== 'undefined') {
-    insertValues.consumableId = inventoryItemValues.consumableId
-  }
-  if (typeof inventoryItemValues.inTransitFromSiteId !== 'undefined') {
-    insertValues.inTransitFromSiteId = inventoryItemValues.inTransitFromSiteId
-  }
-  if (typeof inventoryItemValues.siteId !== 'undefined') {
-    insertValues.siteId = inventoryItemValues.siteId
-  }
-  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
-    insertValues.lotNumber = inventoryItemValues.lotNumber
-  }
-  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
-    insertValues.expiresOn = inventoryItemValues.expiresOn ? parseDateOrDefault(inventoryItemValues.expiresOn) : null
-  }
-  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
-    insertValues.quantityOnHand = inventoryItemValues.quantityOnHand
-  }
-  if (typeof inventoryItemValues.updatedOn !== 'undefined') {
-    insertValues.updatedOn = inventoryItemValues.updatedOn
-  }
-  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
-    insertValues.updatedBy = inventoryItemValues.updatedBy
-  }
-  if (typeof inventoryItemValues.createdOn !== 'undefined') {
-    insertValues.createdOn = inventoryItemValues.createdOn
-  }
-  if (typeof inventoryItemValues.createdBy !== 'undefined') {
-    insertValues.createdBy = inventoryItemValues.createdBy
-  }
-  const newInventoryItem = await knex('InventoryItem').insert(insertValues)
-  return newInventoryItem
-}
-
-// ----------------------------------------------------------------------------------
 async function createInventoryTransfer(knex, outcomeInventoryLogId, tempInventoryItemId) {
   const now = new Date()
   await knex('InventoryTransfer').insert({
@@ -712,8 +652,6 @@ async function appendSiteConsumables(data) {
 module.exports = {
   baseMissingInventoryLotsQuery,
   findInventoryItem,
-  updateInventoryItem,
-  insertInventoryItem,
   getInventoryItem,
   getInventorySitesQuery,
   getInventoryLogBaseQuery,

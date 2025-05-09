@@ -25,7 +25,6 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import { showAcknowledgement } from '../../../store/AppNotificationRedux'
 import {
   addInventory,
   hideAdjustInventoryDialog,

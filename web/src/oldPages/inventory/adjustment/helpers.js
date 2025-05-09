@@ -116,14 +116,20 @@ export function getQuantityOnHand(actionType, inventory, values) {
   switch (actionType) {
     case types.SHOW_REMOVE_INVENTORY_DIALOG:
     case types.SHOW_TRANSFER_INVENTORY_DIALOG: {
-      // If we don’t have a lotNumber or expiresOn, it means we're transferring inventory without specifying an inventory item
-      // (in other words, without using the break-by-lot option).
       const quantityOnHand = values.lotNumber || values.expiresOn ? inventory.quantityOnHand : 0
       nextQuantity = quantityOnHand - Number(values?.quantity ?? 0)
       break
     }
     case types.SHOW_RECEIVE_INVENTORY_DIALOG:
       nextQuantity = values?.quantity
+      break
+    case types.SHOW_ADD_INVENTORY_DIALOG:
+      // If the reason is 'physical_count', just return the entered quantity
+      if (values?.reason?.externalId === 'physical_count') {
+        nextQuantity = Number(values.quantity)
+      } else {
+        nextQuantity = Number(inventory.quantityOnHand) + Number(values.quantity)
+      }
       break
     default:
       nextQuantity = inventory.quantityOnHand + Number(values?.quantity ?? 0)

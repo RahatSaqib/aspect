@@ -2,14 +2,7 @@ const { consumableReasonById, consumableReasonToId } = require('../../shared/dic
 const { resolveIssues, escalateIssues } = require('../../issue/actions')
 const { inventoryStockout, inventoryStockExpiring } = require('../actions')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../../shared/utilsInventory')
-const {
-  findInventoryItem,
-  getInventoryItem,
-  updateInventoryItem,
-  insertInventoryItem,
-  createInventoryTransfer,
-  updateInventoryTransfer,
-} = require('./db')
+const { findInventoryItem, getInventoryItem, createInventoryTransfer, updateInventoryTransfer } = require('./db')
 const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./querySelectors')
 const { parseDateOrDefault } = require('../../shared/date')
 
@@ -41,17 +34,20 @@ async function upsertInventoryItem({
     updatedBy: userId,
   }
   if (inventoryItemId) {
-    await updateInventoryItem(knex, inventoryItemId, updateData)
+    await knex('InventoryItem')
+      .where('id', inventoryItemId)
+      .update({ ...updateData, updatedOn: new Date() })
   } else if (quantityOnHand > 0) {
-    ;[inventoryItemId] = await insertInventoryItem(knex, {
+    const insertData = {
       ...updateData,
       consumableId,
       siteId,
       lotNumber,
-      expiresOn,
+      expiresOn: parseDateOrDefault(expiresOn) || null,
       createdOn: now,
       createdBy: userId,
-    })
+    }
+    ;[inventoryItemId] = await knex('InventoryItem').insert(insertData)
   }
   return inventoryItemId
 }
