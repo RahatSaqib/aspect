@@ -585,7 +585,6 @@ describe('Inventory Routes', () => {
           assert.equal(inventoryLog.siteId, inventoryItem.siteId)
           assert.equal(inventoryLog.lotNumber, inventoryItem.lotNumber)
           assert.equal(inventoryLog.expiresOn.toISOString(), inventoryItem.expiresOn.toISOString())
-          assert.equal(inventoryLog.operation, 'add')
           assert.equal(inventoryLog.consumableReasonExternalId, 'manual_addition')
         })
         it('should update the quantity of an inventory item only with expiration date matching', async () => {
@@ -618,7 +617,6 @@ describe('Inventory Routes', () => {
           assert.equal(inventoryLog.siteId, inventoryItem.siteId)
           assert.equal(inventoryLog.lotNumber, inventoryItem.lotNumber)
           assert.equal(inventoryLog.expiresOn.toISOString(), inventoryItem.expiresOn.toISOString())
-          assert.equal(inventoryLog.operation, 'add')
           assert.equal(inventoryLog.consumableReasonExternalId, 'manual_addition')
         })
       })
@@ -660,7 +658,8 @@ describe('Inventory Routes', () => {
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
-          assert.equal(res.status, 500)
+          assert.equal(res.status, 400)
+          assert.equal(res.body.errorKeyCode, 'missingInventoryItem')
         })
       })
     })

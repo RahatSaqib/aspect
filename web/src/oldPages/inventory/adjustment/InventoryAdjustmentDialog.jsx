@@ -348,44 +348,15 @@ function InventoryAdjustmentDialog(props) {
                   </p>
                 ) : null}
 
-                <ConsumableReasonSelect
-                  name="reasonId"
-                  error={errors?.reason}
-                  label={formatMessage(messages.reason)}
-                  value={values?.reason ?? null}
-                  onChange={reason => setFieldValue('reason', reason)}
-                  filterType={actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ? 'decrease' : 'increase'} // Map actionType to filterType
-                />
-
-                {values?.reason?.i18nKey === 'ConsumableReason_TestConducted' ? (
-                  <>
-                    <FormGroup label={formatMessage(messages.testsRunBetween)}>
-                      <DateTimeInput
-                        fullWidth
-                        margin="normal"
-                        intl={{ formatMessage, ...intl }}
-                        dateFormat="yyyy-MM-dd"
-                        RootProps={{
-                          name: 'dateAdjustedFrom',
-                        }}
-                        value={values.dateAdjustedFrom}
-                        onChange={(_, date) => setFieldValue('dateAdjustedFrom', date)}
-                      />
-                    </FormGroup>
-                    <FormGroup label={formatMessage(messages.and)}>
-                      <DateTimeInput
-                        fullWidth
-                        margin="normal"
-                        dateFormat="yyyy-MM-dd"
-                        intl={{ formatMessage, ...intl }}
-                        RootProps={{
-                          name: 'dateAdjustedTo',
-                        }}
-                        value={values.dateAdjustedTo}
-                        onChange={(_, date) => setFieldValue('dateAdjustedTo', date)}
-                      />
-                    </FormGroup>
-                  </>
+                {uiAdd || uiRemove ? (
+                  <ConsumableReasonSelect
+                    name="reasonId"
+                    error={errors?.reason}
+                    label={formatMessage(messages.reason)}
+                    value={values?.reason ?? null}
+                    onChange={reason => setFieldValue('reason', reason)}
+                    filterType={uiRemove ? 'decrease' : 'increase'} // Map actionType to filterType
+                  />
                 ) : null}
 
                 <FormGroup label={`${formatMessage(labels.dateAdjusted)} (yyyy-mm-dd)`}>

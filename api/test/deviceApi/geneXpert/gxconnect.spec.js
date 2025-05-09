@@ -2592,8 +2592,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.expiresOn',
             'il.quantity',
             'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
+            'il.transactionDate'
           )
         assert.deepEqual(inventoryLog, [
           {
@@ -2606,8 +2605,7 @@ describe('Device API routes for GxConnect Devices', () => {
             expiresOn: new Date(expirationDate),
             quantity,
             notes: null,
-            adjustedFrom: setMilliseconds(startedOn, 0),
-            adjustedTo: null,
+            transactionDate: setMilliseconds(startedOn, 0),
           },
         ])
       }))
@@ -2810,8 +2808,7 @@ describe('Device API routes for GxConnect Devices', () => {
               'il.expiresOn',
               'il.quantity',
               'il.notes',
-              'il.adjustedFrom',
-              'il.adjustedTo'
+              'il.transactionDate'
             )
 
           assert.deepEqual(
@@ -2827,8 +2824,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 expiresOn: new Date(inventoryChange.expirationDate),
                 quantity: Math.abs(inventoryChange.quantity),
                 notes: null,
-                adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-                adjustedTo: null,
+                transactionDate: setMilliseconds(inventoryChange.dateChanged, 0),
               })),
               ['consumableName', 'consumableReason']
             )
@@ -2926,8 +2922,7 @@ describe('Device API routes for GxConnect Devices', () => {
               'il.expiresOn',
               'il.quantity',
               'il.notes',
-              'il.adjustedFrom',
-              'il.adjustedTo'
+              'il.transactionDate'
             )
 
           assert.deepEqual(inventoryLog, {
@@ -2940,8 +2935,7 @@ describe('Device API routes for GxConnect Devices', () => {
             expiresOn: inventoryItemAtSiteBefore.expiresOn,
             quantity,
             notes: null,
-            adjustedFrom: setMilliseconds(startedOn, 0),
-            adjustedTo: null,
+            transactionDate: setMilliseconds(startedOn, 0),
           })
         }))
 
@@ -3037,8 +3031,7 @@ describe('Device API routes for GxConnect Devices', () => {
               'il.expiresOn',
               'il.quantity',
               'il.notes',
-              'il.adjustedFrom',
-              'il.adjustedTo'
+              'il.transactionDate'
             )
 
           assert.deepEqual(inventoryLog, {
@@ -3051,8 +3044,7 @@ describe('Device API routes for GxConnect Devices', () => {
             expiresOn: inventoryItemAtSiteBefore.expiresOn,
             quantity,
             notes: null,
-            adjustedFrom: setMilliseconds(startedOn, 0),
-            adjustedTo: null,
+            transactionDate: setMilliseconds(startedOn, 0),
           })
         }))
     })
@@ -3196,8 +3188,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.expiresOn',
             'il.quantity',
             'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
+            'il.transactionDate'
           )
 
         assert.deepEqual(
@@ -3213,8 +3204,7 @@ describe('Device API routes for GxConnect Devices', () => {
               expiresOn: new Date(inventoryChange.expirationDate),
               quantity: Math.abs(inventoryChange.quantity),
               notes: null,
-              adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-              adjustedTo: null,
+              transactionDate: setMilliseconds(inventoryChange.dateChanged, 0),
             })),
             ['consumableName', 'consumableReason', 'expiresOn']
           )
@@ -3315,8 +3305,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.expiresOn',
             'il.quantity',
             'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
+            'il.transactionDate'
           )
 
         assert.deepEqual(
@@ -3335,8 +3324,7 @@ describe('Device API routes for GxConnect Devices', () => {
               expiresOn: new Date(inventoryChange.expirationDate),
               quantity: Math.abs(inventoryChange.quantity),
               notes: null,
-              adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-              adjustedTo: null,
+              transactionDate: setMilliseconds(inventoryChange.dateChanged, 0),
             })),
             ['consumableName', 'consumableReason', 'expiresOn']
           )
@@ -3482,8 +3470,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.expiresOn',
             'il.quantity',
             'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
+            'il.transactionDate'
           )
         assert.deepEqual(
           _.sortBy(inventoryLogsForLot1And2, ['consumableName', 'consumableReason', 'expiresOn']),
@@ -3499,8 +3486,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 expiresOn: new Date(lot1.expirationDate),
                 quantity: Math.abs(lot1.resultingQuantityOnHand),
                 notes: null,
-                adjustedFrom: setMilliseconds(lot1.dateChanged, 0),
-                adjustedTo: null,
+                transactionDate: setMilliseconds(lot1.dateChanged, 0),
               },
               {
                 consumableName: lot2.consumableName,
@@ -3512,8 +3498,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 expiresOn: new Date(lot2.expirationDate),
                 quantity: Math.abs(lot2.resultingQuantityOnHand),
                 notes: null,
-                adjustedFrom: setMilliseconds(lot2.dateChanged, 0),
-                adjustedTo: null,
+                transactionDate: setMilliseconds(lot2.dateChanged, 0),
               },
               {
                 consumableName: lot1.consumableName,
@@ -3525,8 +3510,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 expiresOn: new Date(lot1.expirationDate),
                 quantity: updateToLot1.quantity,
                 notes: null,
-                adjustedFrom: setMilliseconds(updateToLot1.dateChanged, 0),
-                adjustedTo: null,
+                transactionDate: setMilliseconds(updateToLot1.dateChanged, 0),
               },
               {
                 consumableName: lot2.consumableName,
@@ -3538,8 +3522,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 expiresOn: new Date(lot2.expirationDate),
                 quantity: Math.abs(updateToLot2.quantity),
                 notes: null,
-                adjustedFrom: setMilliseconds(updateToLot2.dateChanged, 0),
-                adjustedTo: null,
+                transactionDate: setMilliseconds(updateToLot2.dateChanged, 0),
               },
             ],
             ['consumableName', 'consumableReason', 'expiresOn']

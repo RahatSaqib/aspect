@@ -16,7 +16,6 @@ import {
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
-import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
 import useInventoryList from '../../../hooks/inventory/useInventoryList'
 import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
@@ -99,7 +98,6 @@ export default function InventoryItemsList() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const inventory = useSelector(state => state.inventory)
-  const { data: consumableReasons } = useConsumableReasons()
   const { table, items, inventoryAdjustment } = inventory
   const sortPage = makeSortPageSelector({ sortCol: 'siteName' })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({
@@ -142,15 +140,7 @@ export default function InventoryItemsList() {
   )
 
   const { mutate: onRemoveInventorySubmit } = useMutation(
-    values => {
-      const selectedAdjustmentReason = consumableReasons?.find(reason => reason?.id === values.reasonId)
-      if (selectedAdjustmentReason?.i18nKey === 'ConsumableReason_TestConducted') {
-        return removeInventory(omit(values, ['canExpire', 'dateAdjusted']), dispatch, inventory).then(
-          onAdjustInventorySucceeded
-        )
-      }
-      return removeInventory(omit(values, ['canExpire', 'dateAdjustedFrom', 'dateAdjustedTo']), dispatch, inventory)
-    },
+    values => removeInventory(omit(values, ['canExpire']), dispatch, inventory),
     { onSuccess }
   )
 

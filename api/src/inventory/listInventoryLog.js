@@ -119,7 +119,7 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
 
 function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
   const createdOnProjection = getDateTimeExpressionInTimeZone(knex, 'il.createdOn', timeZoneIANA)
-  const adjustedFromProjection = getDateTimeExpressionInTimeZone(knex, 'il.adjustedFrom', timeZoneIANA)
+  const transactionDateProjection = getDateTimeExpressionInTimeZone(knex, 'il.transactionDate', timeZoneIANA)
 
   return [
     'il.id as id',
@@ -148,7 +148,7 @@ function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
       `CASE WHEN cr.externalId = 'test_conducted' THEN date(${createdOnProjection}) ELSE ${createdOnProjection} END as createdOn`
     ),
     knex.raw(
-      `CASE WHEN cr.externalId = 'test_conducted' THEN date(${adjustedFromProjection}) ELSE ${adjustedFromProjection} END as transactionDate`
+      `CASE WHEN cr.externalId = 'test_conducted' THEN date(${transactionDateProjection}) ELSE ${transactionDateProjection} END as transactionDate`
     ),
     'r.endedOn as resultEndedOn',
   ]

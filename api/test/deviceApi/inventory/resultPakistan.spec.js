@@ -5,6 +5,7 @@ const { subDays, addDays, startOfDay } = require('date-fns')
 const { knex } = require('../../../src/db')
 const { parseDateOrDefault } = require('../../../src/shared/date')
 const { createTestContext } = require('../utils')
+const { consumableReasonToId } = require('../../../src/shared/dictionary')
 
 const server = require('../../utils/testUtils')
 
@@ -194,7 +195,7 @@ describe('inventory strategy for Pakistan', () => {
         quantity,
         notes: 'Testing remove',
         fromSiteId: siteId,
-        reasonId: 1,
+        reasonId: await consumableReasonToId('lost'),
         dateAdjusted: new Date().toISOString(),
       })
       .set('Authorization', clientAuth)

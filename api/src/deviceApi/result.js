@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { getDevice } = require('../device/service')
-const inventoryUtils = require('../inventory/common/logic')
+const { consumeInventoryForResult } = require('../inventory/consumeInventoryForResult')
 
 // ----------------------------------------------------------
 async function getResult(knex, resultId) {
@@ -199,19 +199,19 @@ async function postProcessMergeResult(context, result, previousResult) {
 
   await addResultWorkflowLogIfChanged(knex, payload, result, previousResult, 'Device API Update', now)
   await resolveAutoTagging(knex, result)
-  await consumeInventoryForResult(knex, payload, result, messageContext, userId)
+  await consumeInventoryFromPayload(knex, payload, result, messageContext, userId)
   return {}
 }
 
 /**
  * Consumes inventory for the new result
  */
-async function consumeInventoryForResult(knex, payload, result, messageContext, userId) {
+async function consumeInventoryFromPayload(knex, payload, result, messageContext, userId) {
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
   const expirationDate = consumablesInResultData[0]?.expirationDate
   const lotNumber = consumablesInResultData[0]?.lot
 
-  await inventoryUtils.consumeInventoryForResult({
+  await consumeInventoryForResult({
     knex,
     resultId: result.id,
     assayId: result.assayId,
@@ -220,7 +220,6 @@ async function consumeInventoryForResult(knex, payload, result, messageContext, 
     expirationDate,
     partnerId: result.partnerId,
     testStartedOn: result.startedOn,
-    testEndedOn: result.endedOn,
     messageContext,
     userId,
   })
@@ -388,7 +387,7 @@ async function getLatestResultWorkflowLog(knex, resultId) {
 module.exports = {
   getResult,
   postProcessMergeResult,
-  consumeInventoryForResult,
+  consumeInventoryFromPayload,
   addResultWorkflowLogIfChanged,
   updateResultWorkflowStatus,
   getAllResultTags,

@@ -531,7 +531,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
               quantity: 400,
               notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
-              reasonId: 1,
+              reasonId: await consumableReasonToId('lost'),
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
@@ -552,12 +552,13 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
               quantity: 510,
               notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
-              reasonId: 1,
+              reasonId: await consumableReasonToId('lost'),
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
 
-          assert.equal(res.status, 500)
+          assert.equal(res.status, 400)
+          assert.equal(res.body.errorKeyCode, 'missingInventoryItem')
         })
       })
     })

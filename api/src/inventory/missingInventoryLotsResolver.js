@@ -1,6 +1,5 @@
-const Boom = require('@hapi/boom')
 const { knex, transact } = require('../db')
-const { consumeInventoryForResult } = require('./common/logic')
+const { consumeInventoryForResult } = require('./consumeInventoryForResult')
 
 const getMissingInventoryBaseQuery = () =>
   knex('MissingInventoryLots as m')
@@ -39,7 +38,6 @@ const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate, lo
       'm.id as missingInventoryLotId',
       'r.id as resultId',
       'r.assayId',
-      'r.endedOn',
       'r.startedOn',
       knex.raw('DATE(m.expirationDate) as expirationDate'),
       knex.raw('m.lotNumber'),
@@ -61,8 +59,7 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
-      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, lotNumber, expirationDate } =
-        missingInventory
+      const { missingInventoryLotId, resultId, assayId, startedOn, lotNumber, expirationDate } = missingInventory
 
       await transact(async knex => {
         const consumableResults = await consumeInventoryForResult({
@@ -74,12 +71,11 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
           lotNumber,
           expirationDate,
           testStartedOn: startedOn,
-          testEndedOn: endedOn,
           messageContext,
           userId: null,
         })
 
-        if (!consumableResults.some(s => Boom.isBoom(s) || !s)) {
+        if (!consumableResults.some(res => !res.ok)) {
           // Delete missingInventoryLots entry
           await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
         }

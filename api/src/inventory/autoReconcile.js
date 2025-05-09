@@ -1,8 +1,7 @@
-const Boom = require('@hapi/boom')
 const { getConstraints } = require('../auth/constraints')
 const { getReconciliationList } = require('./common/db')
 const { getUser } = require('../auth/service')
-const { consumeInventoryForResult } = require('./common/logic')
+const { consumeInventoryForResult } = require('./consumeInventoryForResult')
 const { getMissingInventoryToReconcile } = require('./missingInventoryLotsResolver')
 const { transact } = require('../db')
 
@@ -30,8 +29,7 @@ async function autoReconcile(request) {
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
-      const { missingInventoryLotId, resultId, assayId, startedOn, endedOn, lotNumber, expirationDate } =
-        missingInventory
+      const { missingInventoryLotId, resultId, assayId, startedOn, lotNumber, expirationDate } = missingInventory
 
       // eslint-disable-next-line no-loop-func
       await transact(async knex => {
@@ -44,12 +42,11 @@ async function autoReconcile(request) {
           lotNumber,
           expirationDate,
           testStartedOn: startedOn,
-          testEndedOn: endedOn,
           messageContext,
           userId: null,
         })
 
-        if (!consumableResults.some(s => Boom.isBoom(s) || !s)) {
+        if (!consumableResults.some(res => !res.ok)) {
           // Delete missingInventoryLots entry
           await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
         }

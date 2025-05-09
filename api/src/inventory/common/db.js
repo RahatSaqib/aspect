@@ -28,7 +28,7 @@ async function getConsumableStrategy(partnerId) {
 }
 
 // ----------------------------------------------------------------------------------
-function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
+function baseInventoryQuery(knex, siteId, consumableId, inTransitFromSiteId) {
   const matchingInventoryItemsQuery = knex('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
@@ -157,8 +157,8 @@ function getInventorySitesQuery(constraints, request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
-  const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
+async function findInventoryItem(knex, { siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
+  const matchingInventoryItemsQuery = baseInventoryQuery(knex, siteId, consumableId, inTransitFromSiteId)
 
   const consumableStrategy = await getConsumableStrategy(partnerId)
 
@@ -410,54 +410,6 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   }
   const newInventoryItem = await knex('InventoryItem').insert(insertValues)
   return newInventoryItem
-}
-
-// ----------------------------------------------------------------------------------
-async function logInventoryChange({
-  knex,
-  inventoryItemId,
-  consumableId,
-  siteId,
-  referencedSiteId,
-  consumableReasonId,
-  resultId,
-  reconcilationAdjustment,
-  reconcilationStrategy,
-  lotNumber,
-  expiresOn,
-  quantity,
-  operation,
-  notes,
-  adjustedFrom,
-  adjustedTo,
-  createdOn,
-  createdBy,
-  isAutomatic,
-  effectiveDate,
-}) {
-  const [id] = await knex('InventoryLog').insert({
-    inventoryItemId,
-    consumableId,
-    siteId,
-    referencedSiteId,
-    consumableReasonId,
-    resultId,
-    lotNumber,
-    expiresOn: parseDateOrDefault(expiresOn) || null,
-    quantity,
-    operation,
-    notes,
-    reconcilationAdjustment,
-    reconcilationStrategy,
-    adjustedFrom,
-    adjustedTo,
-    createdOn,
-    createdBy,
-    isAutomatic,
-    effectiveDate,
-  })
-
-  return id
 }
 
 // ----------------------------------------------------------------------------------
@@ -767,7 +719,6 @@ module.exports = {
   getInventoryLogBaseQuery,
   getInventoryBySitesAndConsumableQuery,
   getUnreconciledQuantitiesSubquery,
-  logInventoryChange,
   getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
   filteredInventoryItemsBase,
   getInventoryTransfer,

@@ -543,6 +543,12 @@ describe('POST: /api/inventory/auto-reconcile', () => {
       .whereIn('siteId', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
       .delete()
     await knex('SiteConsumable').where({ consumableId: testData.consumableId }).delete()
+    await knex('Site')
+      .whereIn('id', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
+      .update({ parentWarehouseId: null })
+    await knex('Site')
+      .whereIn('id', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
+      .delete()
     await testContext.cleanUp()
   })
 
