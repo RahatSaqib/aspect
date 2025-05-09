@@ -1,5 +1,6 @@
 const chai = require('chai')
 const _ = require('lodash')
+const shared = require('../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
 const patients = require('../../seeds/test/fixtures/patients.json')
