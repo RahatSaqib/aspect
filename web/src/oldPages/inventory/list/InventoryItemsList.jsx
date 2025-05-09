@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl'
 import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
+import { toast } from 'react-toastify'
 import { DetailHeader, InventoryItemsFilter } from '../../../cleanComponents'
 import {
   HierarchicalView,
@@ -105,11 +106,6 @@ export default function InventoryItemsList() {
     availableSortCol,
     dependencies: { breakOutByLot: filter.breakOutByLot },
   })
-  const onAdjustInventorySucceeded = () => {
-    showAcknowledgement({
-      title: messages.inventoryAdjustedSuccessfully,
-    })
-  }
 
   // Disabling the filters since we don't have the filters on warehouse level
   const disableFilters = isHierarchicalView && isWarehouseView
@@ -132,7 +128,7 @@ export default function InventoryItemsList() {
 
   const onSuccess = () => {
     refetch()
-    onAdjustInventorySucceeded()
+    toast.success(intl.formatMessage(messages.inventoryAdjustedSuccessfully))
   }
 
   const { mutateAsync: onExportClick, isLoading: isExporting } = useMutation(formatType =>

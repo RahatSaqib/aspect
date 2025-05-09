@@ -11,6 +11,7 @@ const {
   updateInventoryTransfer,
 } = require('./db')
 const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./querySelectors')
+const { parseDateOrDefault } = require('../../shared/date')
 
 /**
  * when inventory is being transferred - do it in 2 steps:
@@ -30,10 +31,12 @@ async function upsertInventoryItem({
   now,
   userId,
   inTransitFromSiteId,
+  reconciliationStartDate,
 }) {
   const updateData = {
     quantityOnHand,
     inTransitFromSiteId: inTransitFromSiteId || null,
+    reconciliationStartDate,
     updatedOn: now,
     updatedBy: userId,
   }
@@ -120,6 +123,8 @@ async function upsertInventoryItemAndLog(
     referencedSiteId,
   }
 ) {
+  const { effectOnStock } = await consumableReasonById(consumableReasonId)
+
   inventoryItemId = await upsertInventoryItem({
     knex,
     inventoryItemId,
@@ -129,17 +134,17 @@ async function upsertInventoryItemAndLog(
     lotNumber,
     expiresOn,
     inTransitFromSiteId,
+    reconciliationStartDate: effectOnStock === 'resetToValue' ? now : null,
     now,
     userId,
   })
-  const { effectOnStock } = await consumableReasonById(consumableReasonId)
   const [inventoryLogId] = await knex('InventoryLog').insert({
     inventoryItemId,
     consumableId,
     consumableReasonId,
     siteId,
     lotNumber,
-    expiresOn,
+    expiresOn: parseDateOrDefault(expiresOn) || null,
     adjustmentStrategy: inventoryAdjustment,
     consumableStrategy: partnerInventoryStrategy,
     createdOn: now,
@@ -149,6 +154,7 @@ async function upsertInventoryItemAndLog(
     resultId,
     quantity: effectOnStock === 'decrease' ? -quantity : quantity,
     referencedSiteId,
+    quantityOnHandAfter: quantityOnHand,
   })
 
   return { inventoryItemId, inventoryLogId }
