@@ -1,6 +1,5 @@
 const chai = require('chai')
 const _ = require('lodash')
-const shared = require('../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
 const patients = require('../../seeds/test/fixtures/patients.json')
@@ -72,10 +71,6 @@ describe('Mobile API Clinical Response', () => {
 
   describe('POST: /mobile/api/results/clinical-responses', () => {
     const path = '/mobile/api/results/clinical-responses'
-
-    before(async () => {
-      shared.checkToken(server, path)
-    })
 
     function assertClinicalResponse(response) {
       expect(response).to.containSubset({
@@ -187,10 +182,6 @@ describe('Mobile API Clinical Response', () => {
   describe('POST: /mobile/api/v3/clinical-responses/:resultId', () => {
     const dataFetchEndpoint = '/mobile/api/v4/entries'
     const path = '/mobile/api/v3/clinical-responses'
-
-    before(async () => {
-      shared.checkToken(server, path)
-    })
 
     it('should throw error if incorrect field name is provided', async () => {
       const response = await server
