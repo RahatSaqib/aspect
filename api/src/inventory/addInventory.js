@@ -29,8 +29,8 @@ module.exports = async function (request) {
   /**
    * take 1st item from returning array of affected items
    */
-  const res = await transact(async knex =>
-    changeInventoryQuantity(knex, {
+  const res = await transact(async knex => {
+    const res = await changeInventoryQuantity(knex, {
       consumableId,
       siteId: toSite.id,
       lotNumber,
@@ -45,12 +45,19 @@ module.exports = async function (request) {
       notes,
       resultId,
     })
-  )
+
+    if (!res.ok) {
+      return res
+    }
+
+    await updateSiteConsumable(knex, toSite.id, { modify: 'add', consumableId })
+
+    return res
+  })
+
   if (!res.ok) {
     return Boom.badRequest(res.errorMessage, { errorKeyCode: res.error })
   }
-
-  await updateSiteConsumable(toSite.id, { modify: 'add', consumableId })
 
   const data = await getInventoryItem(res.inventoryItemId, INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY)
   return {

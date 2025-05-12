@@ -53,7 +53,7 @@ async function consumeInventoryForResult({
        */
       const includeLocation = await consumableToIncludeLocation(consumableExternalId)
       if (includeLocation) {
-        await updateSiteConsumable(siteId, { modify: 'add', consumableId }, knex)
+        await updateSiteConsumable(knex, siteId, { modify: 'add', consumableId })
       }
 
       const isUnreconciledResult = isResultInReconciliation && resultCountInDeviceLog > 0

@@ -77,7 +77,7 @@ module.exports = async function (request) {
       referencedSiteId: fromSiteId,
     })
 
-    await updateSiteConsumable(toSiteId, { modify: 'add', consumableId }, knex)
+    await updateSiteConsumable(knex, toSiteId, { modify: 'add', consumableId })
 
     await updateInventoryTransfer(knex, inTransitInventoryItem.id, inventoryLogId)
 
