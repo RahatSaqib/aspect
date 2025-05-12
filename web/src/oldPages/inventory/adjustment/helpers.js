@@ -23,7 +23,7 @@ export function transformValues(values) {
 }
 
 export function getValidations(format, actionType, { requireExpirationDate, requireLotNumber, inventory }) {
-  const uiAdd = actionType === types.SHOW_NEW_INVENTORY_DIALOG
+  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
   const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG

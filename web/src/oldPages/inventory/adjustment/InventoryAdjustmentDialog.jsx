@@ -123,6 +123,23 @@ function InventoryAdjustmentDialog(props) {
           >
             <form className={styles.Form}>
               <div className={styles.Form__Content}>
+                {uiAdd || uiRemove ? (
+                  <FormGroup
+                    labelProps={{ required: true }}
+                    label={formatMessage(messages.reason)}
+                    error={!!errors.reason}
+                    helperText={errors.reason}
+                  >
+                    <ConsumableReasonSelect
+                      name="reasonId"
+                      error={errors?.reason ? ' ' : null}
+                      value={values?.reason ?? null}
+                      onChange={reason => setFieldValue('reason', reason)}
+                      filterType={uiRemove ? 'decrease' : 'increase'} // Map actionType to filterType
+                    />
+                  </FormGroup>
+                ) : null}
+
                 {initialValues?.fromSiteId ? (
                   <SiteSelect
                     name="fromSiteId"
@@ -207,7 +224,7 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {(uiTransfer || uiRemove) && !breakOutByLot ? (
+                {(uiTransfer || uiRemove || (uiAdd && initialValues?.consumable)) && !breakOutByLot ? (
                   // Transfer or remove inventory with break out by lot option unchecked
                   <FormGroup
                     labelProps={{ required: true }}
@@ -348,31 +365,22 @@ function InventoryAdjustmentDialog(props) {
                   </p>
                 ) : null}
 
-                {uiAdd || uiRemove ? (
-                  <ConsumableReasonSelect
-                    name="reasonId"
-                    error={errors?.reason}
-                    label={formatMessage(messages.reason)}
-                    value={values?.reason ?? null}
-                    onChange={reason => setFieldValue('reason', reason)}
-                    filterType={uiRemove ? 'decrease' : 'increase'} // Map actionType to filterType
-                  />
+                {values.reason?.effectOnStock !== 'resetToValue' ? (
+                  <FormGroup label={`${formatMessage(labels.dateAdjusted)} (yyyy-mm-dd)`}>
+                    <DateTimeInput
+                      fullWidth
+                      intl={{ formatMessage, ...intl }}
+                      margin="normal"
+                      dateFormat="yyyy-MM-dd"
+                      RootProps={{
+                        name: 'dateAdjusted',
+                      }}
+                      value={values.dateAdjusted}
+                      onChange={(_, date) => setFieldValue('dateAdjusted', date)}
+                      maxDate={now}
+                    />
+                  </FormGroup>
                 ) : null}
-
-                <FormGroup label={`${formatMessage(labels.dateAdjusted)} (yyyy-mm-dd)`}>
-                  <DateTimeInput
-                    fullWidth
-                    intl={{ formatMessage, ...intl }}
-                    margin="normal"
-                    dateFormat="yyyy-MM-dd"
-                    RootProps={{
-                      name: 'dateAdjusted',
-                    }}
-                    value={values.dateAdjusted}
-                    onChange={(_, date) => setFieldValue('dateAdjusted', date)}
-                    maxDate={now}
-                  />
-                </FormGroup>
 
                 <TextField
                   fullWidth
