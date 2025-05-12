@@ -64,6 +64,7 @@ module.exports = async function (request) {
     const { inventoryItemId, inventoryLogId } = await upsertInventoryItemAndLog(knex, {
       inventoryItemId: inventoryItem?.id,
       quantityOnHand: destination.quantityOnHand,
+      quantityToLog: destination.quantityToLog,
       siteId: toSiteId,
       consumableId,
       consumableReasonId,
@@ -71,7 +72,6 @@ module.exports = async function (request) {
       expiresOn,
       now,
       userId: currentlyLoggedInUser.id,
-      quantity,
       transactionDate: dateAdjusted,
       notes,
       referencedSiteId: fromSiteId,

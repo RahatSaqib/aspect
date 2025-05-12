@@ -59,8 +59,8 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
     .from(inventoryLogQuery.select(querySelector).as('ilog'))
     .select([
       'createdOn',
-      'consumableName',
       'assayId',
+      'consumableName',
       'consumableNameI18nKey',
       ...consumableStrategy.filterFields({
         lotNumberField: 'lotNumber',
@@ -68,12 +68,14 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
       }),
       'siteName',
       knex.raw('sum(ilog.quantity) as quantity'),
+      knex.raw('ilog.quantityOnHandAfter'),
       'movementReason',
       knex.raw('first_value(ilog.notes) over (partition by ilog.id order by ilog.createdOn) as notes'),
-      'consumableReason',
       'refSiteName',
+      'consumableReason',
       'consumableReasonI18nKey',
       'consumableReasonExternalId',
+      'consumableReasonEffectOnStock',
       'transactionDate',
       knex.raw('max(resultEndedOn) as resultEndedOn'),
     ])
@@ -134,6 +136,7 @@ function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
     'cr.name as consumableReason',
     'refSite.name as refSiteName',
     'il.quantity as quantity',
+    'il.quantityOnHandAfter as quantityOnHandAfter',
     knex.raw(`
       CASE
         WHEN cr.externalId = 'transfer_sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
@@ -144,6 +147,7 @@ function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
     'il.notes as notes',
     'cr.i18nKey as consumableReasonI18nKey',
     'cr.externalId as consumableReasonExternalId',
+    'cr.effectOnStock as consumableReasonEffectOnStock',
     knex.raw(
       `CASE WHEN cr.externalId = 'test_conducted' THEN date(${createdOnProjection}) ELSE ${createdOnProjection} END as createdOn`
     ),

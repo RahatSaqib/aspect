@@ -24,10 +24,10 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
   return (
     <TableRow className={styles.TableRow}>
       <TableCell className={styles.TableCell}>
-        {inventoryLogItem.transactionDate
+        {inventoryLogItem.createdOn
           ? inventoryLogItem.consumableReasonExternalId === 'test_conducted'
-            ? formatDate(inventoryLogItem.transactionDate)
-            : formatDateTime(inventoryLogItem.transactionDate)
+            ? formatDate(inventoryLogItem.createdOn)
+            : formatDateTime(inventoryLogItem.createdOn)
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.siteName}</TableCell>
@@ -87,7 +87,20 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
             : {}
         }
       >
-        {inventoryLogItem.quantity}
+        {inventoryLogItem.quantity > 0 ? `+${inventoryLogItem.quantity}` : inventoryLogItem.quantity}
+        &nbsp;
+        {inventoryLogItem.consumableReasonEffectOnStock === 'resetToValue' ? (
+          <span>
+            <small>
+              {formatMessage(messages.adjustFromTo, {
+                from: inventoryLogItem.quantityOnHandAfter - inventoryLogItem.quantity,
+                to: inventoryLogItem.quantityOnHandAfter,
+              })}
+            </small>
+          </span>
+        ) : (
+          ''
+        )}
       </TableCell>
       <TableCell className={styles.TableCell}>
         {messages[inventoryLogItem.consumableReasonI18nKey]
@@ -100,10 +113,10 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
       <TableCell className={styles.TableCell}>
-        {inventoryLogItem.createdOn
+        {inventoryLogItem.transactionDate
           ? inventoryLogItem.consumableReasonExternalId === 'test_conducted'
-            ? formatDate(inventoryLogItem.createdOn)
-            : formatDateTime(inventoryLogItem.createdOn)
+            ? formatDate(inventoryLogItem.transactionDate)
+            : formatDateTime(inventoryLogItem.transactionDate)
           : formatMessage(messages.notAvailable)}
       </TableCell>
     </TableRow>

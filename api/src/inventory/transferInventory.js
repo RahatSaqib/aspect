@@ -32,6 +32,6 @@ module.exports = async function (request) {
   }
   return {
     ok: true,
-    data: res, // see corresponding handler func for details about it's response
+    data: res,
   }
 }

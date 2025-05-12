@@ -97,6 +97,10 @@ const messages = {
       id: 'pages.InventoryLog.adjust',
       defaultMessage: 'Adjust',
     },
+    adjustFromTo: {
+      id: 'pages.InventoryLog.adjustFromTo',
+      defaultMessage: '* adjusted from {from} to {to}',
+    },
     paginatorStatus: {
       id: 'pages.InventoryLog.paginatorStatus',
       defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,

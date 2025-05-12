@@ -64,8 +64,8 @@ export const InventoryLogWithProps = ({
 
   const columns = [
     {
-      key: 'transactionDate',
-      label: intl.formatMessage(messages.transactionDate),
+      key: 'createdOn',
+      label: intl.formatMessage(messages.registrationDate),
       sortable: true,
     },
     {
@@ -106,8 +106,8 @@ export const InventoryLogWithProps = ({
       sortable: true,
     },
     {
-      key: 'createdOn',
-      label: intl.formatMessage(messages.registrationDate),
+      key: 'transactionDate',
+      label: intl.formatMessage(messages.transactionDate),
       sortable: true,
     },
   ]
@@ -200,7 +200,7 @@ const InventoryLog = () => {
   const navigate = useNavigate()
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({
-    sortCol: 'transactionDate',
+    sortCol: 'createdOn',
     sortDir: 'desc',
     pageSize: 50,
   })({

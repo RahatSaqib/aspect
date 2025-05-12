@@ -59,14 +59,14 @@ async function getNewQuantityOnHand({ inventoryItem, consumableReasonId, quantit
 
   switch (effectOnStock) {
     case 'increase':
-      return { ok: true, quantityOnHand: initialQuantity + quantity }
+      return { ok: true, quantityOnHand: initialQuantity + quantity, quantityToLog: quantity }
     case 'decrease': {
       const validation = validateDecreaseOperation(inventoryItem, quantity)
       if (!validation.ok) return validation
-      return { ok: true, quantityOnHand: initialQuantity - quantity }
+      return { ok: true, quantityOnHand: initialQuantity - quantity, quantityToLog: -quantity }
     }
     case 'resetToValue':
-      return { ok: true, quantityOnHand: quantity }
+      return { ok: true, quantityOnHand: quantity, quantityToLog: quantity - initialQuantity }
     default:
       return { ok: false, error: 'invalidEffectOnStock', errorMessage: `Invalid effectOnStock: ${effectOnStock}` }
   }
@@ -102,6 +102,7 @@ async function upsertInventoryItemAndLog(
   {
     inventoryItemId,
     quantityOnHand,
+    quantityToLog,
     inventoryAdjustment,
     partnerInventoryStrategy,
     siteId,
@@ -112,7 +113,6 @@ async function upsertInventoryItemAndLog(
     inTransitFromSiteId,
     now,
     userId,
-    quantity,
     transactionDate,
     notes,
     resultId,
@@ -148,7 +148,7 @@ async function upsertInventoryItemAndLog(
     transactionDate,
     notes,
     resultId,
-    quantity: effectOnStock === 'decrease' ? -quantity : quantity,
+    quantity: quantityToLog,
     referencedSiteId,
     quantityOnHandAfter: quantityOnHand,
   })
@@ -194,6 +194,7 @@ async function changeInventoryQuantity(knex, params) {
   const result = await upsertInventoryItemAndLog(knex, {
     inventoryItemId: inventoryItem?.id,
     quantityOnHand: res.quantityOnHand,
+    quantityToLog: res.quantityToLog,
     siteId: inventoryItem?.siteId ?? siteId,
     consumableId,
     consumableReasonId,
@@ -203,7 +204,6 @@ async function changeInventoryQuantity(knex, params) {
     inTransitFromSiteId,
     now,
     userId,
-    quantity,
     transactionDate,
     notes,
     resultId,
@@ -292,6 +292,7 @@ async function transferInventory(knex, { payload, messageContext, partnerId, use
     await upsertInventoryItemAndLog(knex, {
       inventoryItemId: destinationInventoryItem?.id,
       quantityOnHand: destination.quantityOnHand,
+      quantityToLog: destination.quantityToLog,
       siteId: toSiteId,
       consumableId,
       consumableReasonId: transferReceivedConsumableReasonId,
@@ -300,7 +301,6 @@ async function transferInventory(knex, { payload, messageContext, partnerId, use
       inTransitFromSiteId: shouldTransferInPendingMode ? fromSiteId : null,
       now,
       userId,
-      quantity,
       transactionDate: dateAdjusted,
       notes,
       resultId,
@@ -314,6 +314,7 @@ async function transferInventory(knex, { payload, messageContext, partnerId, use
     await upsertInventoryItemAndLog(knex, {
       inventoryItemId: sourceInventoryItem?.id,
       quantityOnHand: source.quantityOnHand,
+      quantityToLog: source.quantityToLog,
       siteId: fromSiteId,
       consumableId,
       consumableReasonId: transferSentConsumableReasonId,
@@ -321,7 +322,6 @@ async function transferInventory(knex, { payload, messageContext, partnerId, use
       expiresOn,
       now,
       userId,
-      quantity,
       transactionDate: dateAdjusted,
       notes,
       resultId,
