@@ -219,31 +219,6 @@ describe('Mobile API Clinical Response', () => {
         .post(`${path}/${currentResultId}`)
         .send([
           {
-            fieldName: 'confirmed',
-            value: true,
-            clientTime: '2022-12-04T11:50:01.000Z',
-          },
-          {
-            fieldName: 'treatment',
-            value: 'iaac',
-            clientTime: dateTimeNow,
-          },
-          {
-            fieldName: 'treatmentOccurred',
-            value: '2022-12-05',
-            clientTime: dateTimeNow,
-          },
-          {
-            fieldName: 'outcome',
-            value: 'recovered',
-            clientTime: dateTimeNow,
-          },
-          {
-            fieldName: 'outcomeOccurred',
-            value: '2023-01-15',
-            clientTime: dateTimeNow,
-          },
-          {
             formDefinitionExternalId: 'ClinicalResponse',
             fieldName: 'age',
             value: 20,
@@ -257,10 +232,7 @@ describe('Mobile API Clinical Response', () => {
         ok: true,
         data: {
           clinicalResponse: {
-            recorded: true,
-            confirmedOn: '2022-12-04T11:50:01.000Z',
-            outcome: 'recovered',
-            outcomeOccurred: '2023-01-15T00:00:00.000Z',
+            recorded: false,
           },
         },
       })
