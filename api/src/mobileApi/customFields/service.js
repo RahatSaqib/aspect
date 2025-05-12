@@ -19,7 +19,7 @@ async function getCustomFieldsByExternalIds(request) {
       ?.map(id => formDefinitions[id])
       .filter(Boolean)
       .map(form => ({
-        ...pick(form, ['formDefinitionExternalId']),
+        formDefinitionExternalId: form.formDefinitionExternalId,
         fields: form.fields.map(field =>
           pick(field, [
             'name',
