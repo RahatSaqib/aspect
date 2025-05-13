@@ -235,7 +235,7 @@ describe('GET: /api/inventory', () => {
     await knex('MissingInventoryLots').insert([
       {
         siteId,
-        consumableLot: inventoryItem1.lotNumber,
+        consumableId,
         resultId: resultId1,
         lotNumber: inventoryItem1.lotNumber,
         expirationDate: inventoryItem1.expiresOn,
@@ -243,7 +243,7 @@ describe('GET: /api/inventory', () => {
       },
       {
         siteId,
-        consumableLot: inventoryItem1.lotNumber,
+        consumableId,
         resultId: resultId2,
         lotNumber: inventoryItem1.lotNumber,
         expirationDate: inventoryItem1.expiresOn,
@@ -251,7 +251,7 @@ describe('GET: /api/inventory', () => {
       },
       {
         siteId,
-        consumableLot: inventoryItem1.lotNumber,
+        consumableId,
         resultId: resultId3,
         lotNumber: inventoryItem1.lotNumber,
         createdOn: new Date(),
@@ -927,7 +927,7 @@ describe('Reset Inventory', () => {
       reportableSiteId: 1,
       siteId: site.id,
       consumableLot: inventoryItem1.lotNumber,
-      consumableExpirationDate: inventoryItem1.expiresOn,
+      consumableExpirationDate: '2025-01-27 00:00:00',
       endedOn: new Date(),
     })
     ;[resultId1] = resultIds
@@ -937,7 +937,7 @@ describe('Reset Inventory', () => {
         consumableId: 8,
         resultId: resultId1,
         lotNumber: inventoryItem1.lotNumber,
-        expirationDate: inventoryItem1.expiresOn,
+        expirationDate: '2025-01-27 00:00:00',
         createdOn: new Date(),
       },
     ])

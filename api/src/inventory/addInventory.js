@@ -11,6 +11,7 @@ const { consumableReasonToId } = require('../shared/dictionary')
 const { getInventoryItem, getConsumableStrategy } = require('./common/db')
 const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./common/querySelectors')
 const { changeInventoryQuantity } = require('./common/logic')
+const { parseDateOrDefault } = require('../shared/date')
 
 module.exports = async function (request) {
   const { auth, payload, plugins } = request
@@ -87,7 +88,7 @@ async function deleteMissingInventoryLots(knex, { toSite, consumableId, partnerI
   consumableStrategy
     .filterFields({
       lotNumberField: { 'mil.lotNumber': lotNumber },
-      expiresOnField: { 'mil.expirationDate': expiresOn },
+      expiresOnField: { 'mil.expirationDate': parseDateOrDefault(expiresOn) || null },
     })
     .forEach(condition => {
       qb.where(condition)
