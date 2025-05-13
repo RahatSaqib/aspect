@@ -52,7 +52,7 @@ async function upsertInventoryItem({
   return inventoryItemId
 }
 
-async function getNewQuantityOnHand({ inventoryItem, consumableReasonId, quantity }) {
+async function validateAndDetermineNewQuantity({ inventoryItem, consumableReasonId, quantity }) {
   const { effectOnStock } = await consumableReasonById(consumableReasonId)
 
   const initialQuantity = inventoryItem?.quantityOnHand || 0
@@ -186,7 +186,7 @@ async function changeInventoryQuantity(knex, params) {
     resultId,
   })
 
-  const res = await getNewQuantityOnHand({ inventoryItem, consumableReasonId, quantity })
+  const res = await validateAndDetermineNewQuantity({ inventoryItem, consumableReasonId, quantity })
   if (!res.ok) {
     return res
   }
@@ -259,7 +259,7 @@ async function transferInventory(knex, { payload, messageContext, partnerId, use
     lotNumber,
     partnerId,
   })
-  const source = await getNewQuantityOnHand({
+  const source = await validateAndDetermineNewQuantity({
     inventoryItem: sourceInventoryItem,
     consumableReasonId: await consumableReasonToId('transfer_sent'),
     quantity,
@@ -276,7 +276,7 @@ async function transferInventory(knex, { payload, messageContext, partnerId, use
     inTransitFromSiteId: transferInPendingMode ? fromSiteId : null,
     partnerId,
   })
-  const destination = await getNewQuantityOnHand({
+  const destination = await validateAndDetermineNewQuantity({
     inventoryItem: destinationInventoryItem,
     consumableReasonId: await consumableReasonToId('transfer_received'),
     quantity,
@@ -440,6 +440,6 @@ module.exports = {
   transferInventory,
   upsertInventoryItem,
   changeInventoryQuantity,
-  getNewQuantityOnHand,
+  validateAndDetermineNewQuantity,
   upsertInventoryItemAndLog,
 }

@@ -10,7 +10,7 @@ const { getConstraints } = require('../auth/constraints')
 const { consumableReasonToId } = require('../shared/dictionary')
 
 const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./common/querySelectors')
-const { transferInPendingMode, getNewQuantityOnHand, upsertInventoryItemAndLog } = require('./common/logic')
+const { transferInPendingMode, validateAndDetermineNewQuantity, upsertInventoryItemAndLog } = require('./common/logic')
 const { findInventoryItem, getInventoryItem, updateInventoryTransfer } = require('./common/db')
 
 module.exports = async function (request) {
@@ -41,7 +41,7 @@ module.exports = async function (request) {
     lotNumber,
     partnerId,
   })
-  const destination = await getNewQuantityOnHand({ inventoryItem, consumableReasonId, quantity })
+  const destination = await validateAndDetermineNewQuantity({ inventoryItem, consumableReasonId, quantity })
   if (!destination.ok) {
     return destination
   }
