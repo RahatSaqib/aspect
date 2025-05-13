@@ -36,7 +36,6 @@ export const PersonList = () => {
   const {
     isLoading: tableLoading,
     data = { data: [] },
-    total,
     refetch,
   } = usePersons({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
 
