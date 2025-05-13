@@ -29,9 +29,11 @@ async function upsertInventoryItem({
   const updateData = {
     quantityOnHand,
     inTransitFromSiteId: inTransitFromSiteId || null,
-    reconciliationStartDate,
     updatedOn: now,
     updatedBy: userId,
+  }
+  if (reconciliationStartDate) {
+    updateData.reconciliationStartDate = reconciliationStartDate
   }
   if (inventoryItemId) {
     await knex('InventoryItem')
@@ -52,9 +54,11 @@ async function upsertInventoryItem({
   return inventoryItemId
 }
 
-async function validateAndDetermineNewQuantity({ inventoryItem, consumableReasonId, quantity }) {
-  const { effectOnStock } = await consumableReasonById(consumableReasonId)
+async function validateAndDetermineNewQuantity({ inventoryItem, consumableReasonId, transactionDate, quantity }) {
+  const validation = validateOperation({ inventoryItem, transactionDate })
+  if (!validation.ok) return validation
 
+  const { effectOnStock } = await consumableReasonById(consumableReasonId)
   const initialQuantity = inventoryItem?.quantityOnHand || 0
 
   switch (effectOnStock) {
@@ -90,6 +94,22 @@ function validateDecreaseOperation(inventoryItem, quantity) {
       ok: false,
       error: 'notEnoughInventory',
       errorMessage: `Not enough inventory (${inventoryItem.quantityOnHand}) to remove ${quantity} items`,
+    }
+  }
+
+  return { ok: true }
+}
+
+function validateOperation({ inventoryItem, transactionDate }) {
+  if (
+    inventoryItem &&
+    inventoryItem.reconciliationStartDate &&
+    inventoryItem.reconciliationStartDate > transactionDate
+  ) {
+    return {
+      ok: false,
+      error: 'reconciliationDateViolation',
+      errorMessage: `Transaction date is before the reconciliation start date (${inventoryItem.reconciliationStartDate}).`,
     }
   }
 
@@ -186,7 +206,7 @@ async function changeInventoryQuantity(knex, params) {
     resultId,
   })
 
-  const res = await validateAndDetermineNewQuantity({ inventoryItem, consumableReasonId, quantity })
+  const res = await validateAndDetermineNewQuantity({ inventoryItem, consumableReasonId, transactionDate, quantity })
   if (!res.ok) {
     return res
   }
@@ -262,6 +282,7 @@ async function transferInventory(knex, { payload, messageContext, partnerId, use
   const source = await validateAndDetermineNewQuantity({
     inventoryItem: sourceInventoryItem,
     consumableReasonId: await consumableReasonToId('transfer_sent'),
+    transactionDate: dateAdjusted,
     quantity,
   })
   if (!source.ok) {
@@ -279,6 +300,7 @@ async function transferInventory(knex, { payload, messageContext, partnerId, use
   const destination = await validateAndDetermineNewQuantity({
     inventoryItem: destinationInventoryItem,
     consumableReasonId: await consumableReasonToId('transfer_received'),
+    transactionDate: dateAdjusted,
     quantity,
   })
   if (!destination.ok) {

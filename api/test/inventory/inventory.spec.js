@@ -1,6 +1,7 @@
 /* eslint-disable no-only-tests/no-only-tests */
 const chai = require('chai')
 const chaiSubset = require('chai-subset')
+const addHours = require('date-fns/addHours')
 
 const { assert } = chai.use(chaiSubset)
 const sharedToken = require('../utils/sharedToken')
@@ -1007,5 +1008,42 @@ describe('Reset Inventory', () => {
 
     const data = await knex('MissingInventoryLots').select()
     assert.equal(data.length, 0, 'Expected no missing inventory lots after reset')
+
+    const manualAdditionConsumableReasonId = await consumableReasonToId('manual_addition')
+
+    const payload2 = {
+      dateAdjusted: '2025-01-07T14:45:08.387Z',
+      toSiteId: site.id,
+      consumableId: 8,
+      reasonId: manualAdditionConsumableReasonId,
+      quantity: 5,
+      lotNumber: 'LOT001',
+      expiresOn: '2025-01-27T00:00:00Z',
+    }
+
+    const res2 = await sendRequest(payload2)
+
+    // Assert the second request returns 400 with reconciliationDateViolation error
+    assert.equal(res2.status, 400, 'Expected status 400 for reconciliation date violation')
+    assert.equal(
+      res2.body.errorKeyCode,
+      'reconciliationDateViolation',
+      'Expected errorKeyCode to be reconciliationDateViolation'
+    )
+
+    const payload3 = {
+      dateAdjusted: addHours(new Date(), 1).toISOString(),
+      toSiteId: site.id,
+      consumableId: 8,
+      reasonId: manualAdditionConsumableReasonId,
+      quantity: 5,
+      lotNumber: 'LOT001',
+      expiresOn: '2025-01-27T00:00:00Z',
+    }
+
+    const res3 = await sendRequest(payload3)
+
+    assert.equal(res3.status, 200, 'Expected status 200')
+    assert.equal(res3.body.data.quantityOnHand, 135, 'Expected quantityOnHand 135')
   })
 })

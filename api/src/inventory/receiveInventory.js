@@ -41,7 +41,12 @@ module.exports = async function (request) {
     lotNumber,
     partnerId,
   })
-  const destination = await validateAndDetermineNewQuantity({ inventoryItem, consumableReasonId, quantity })
+  const destination = await validateAndDetermineNewQuantity({
+    inventoryItem,
+    consumableReasonId,
+    transactionDate: dateAdjusted,
+    quantity,
+  })
   if (!destination.ok) {
     return destination
   }
