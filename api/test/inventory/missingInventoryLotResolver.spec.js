@@ -133,6 +133,7 @@ describe('Missing inventory lot resolver', () => {
     await knex('MissingInventoryLots').insert([
       {
         resultId: resultId1,
+        consumableId,
         expirationDate: expiryDate,
         lotNumber: testLotNumber,
         siteId: site.id,
@@ -140,6 +141,7 @@ describe('Missing inventory lot resolver', () => {
       },
       {
         resultId: resultId2,
+        consumableId,
         expirationDate: expiryDate,
         lotNumber: testLotNumber,
         siteId: site.id,
@@ -147,6 +149,7 @@ describe('Missing inventory lot resolver', () => {
       },
       {
         resultId: resultId3,
+        consumableId,
         expirationDate: expiryDate,
         lotNumber: testLotNumber,
         siteId: site.id,

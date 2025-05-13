@@ -121,6 +121,7 @@ async function consumeInventoryForResult({
           // If the inventory adjustment fails, log the missing inventory lot
           await knex('MissingInventoryLots').insert({
             resultId,
+            consumableId,
             expirationDate: expiresOn,
             lotNumber,
             siteId,

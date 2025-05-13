@@ -8,7 +8,7 @@ const { updateSiteConsumable } = require('../site/common/db')
 const { getConstraints } = require('../auth/constraints')
 const { consumableReasonToId } = require('../shared/dictionary')
 
-const { getInventoryItem } = require('./common/db')
+const { getInventoryItem, getConsumableStrategy } = require('./common/db')
 const { INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY } = require('./common/querySelectors')
 const { changeInventoryQuantity } = require('./common/logic')
 
@@ -52,6 +52,17 @@ module.exports = async function (request) {
 
     await updateSiteConsumable(knex, toSite.id, { modify: 'add', consumableId })
 
+    const physicalCountConsumableReasonId = await consumableReasonToId('physical_count')
+    if (consumableReasonId === physicalCountConsumableReasonId) {
+      await deleteMissingInventoryLots(knex, {
+        toSite,
+        consumableId,
+        partnerId,
+        lotNumber,
+        expiresOn,
+      })
+    }
+
     return res
   })
 
@@ -64,4 +75,23 @@ module.exports = async function (request) {
     ok: true,
     data,
   }
+}
+
+async function deleteMissingInventoryLots(knex, { toSite, consumableId, partnerId, lotNumber, expiresOn }) {
+  const consumableStrategy = await getConsumableStrategy(partnerId)
+  const qb = knex('MissingInventoryLots as mil').where({
+    'mil.siteId': toSite.id,
+    'mil.consumableId': consumableId,
+  })
+
+  consumableStrategy
+    .filterFields({
+      lotNumberField: { 'mil.lotNumber': lotNumber },
+      expiresOnField: { 'mil.expirationDate': expiresOn },
+    })
+    .forEach(condition => {
+      qb.where(condition)
+    })
+
+  await qb.delete()
 }

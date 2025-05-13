@@ -235,6 +235,7 @@ describe('GET: /api/inventory', () => {
     await knex('MissingInventoryLots').insert([
       {
         siteId,
+        consumableLot: inventoryItem1.lotNumber,
         resultId: resultId1,
         lotNumber: inventoryItem1.lotNumber,
         expirationDate: inventoryItem1.expiresOn,
@@ -242,6 +243,7 @@ describe('GET: /api/inventory', () => {
       },
       {
         siteId,
+        consumableLot: inventoryItem1.lotNumber,
         resultId: resultId2,
         lotNumber: inventoryItem1.lotNumber,
         expirationDate: inventoryItem1.expiresOn,
@@ -249,6 +251,7 @@ describe('GET: /api/inventory', () => {
       },
       {
         siteId,
+        consumableLot: inventoryItem1.lotNumber,
         resultId: resultId3,
         lotNumber: inventoryItem1.lotNumber,
         createdOn: new Date(),
@@ -495,6 +498,7 @@ describe('POST: /api/inventory/auto-reconcile', () => {
     const [missingInventoryLotId] = await knex('MissingInventoryLots').insert([
       {
         siteId,
+        consumableId,
         resultId: resultId1,
         lotNumber: inventoryItem1.lotNumber,
         expirationDate: inventoryItem1.expiresOn,
@@ -671,7 +675,6 @@ describe('POST: /api/inventory/auto-reconcile', () => {
       assert.equal(response.body.ok, true)
 
       assert.equal(missingLotsBeforeReconcile.length, 1, 'There should be 1 missing inventory lot before reconcile')
-      // Verify that the missing inventory lots were reconciled
       const missingLotsAfterReconcile = await knex('MissingInventoryLots').where('id', testData.missingInventoryLotId)
       assert.equal(missingLotsAfterReconcile.length, 0, 'All missing inventory lots should be reconciled')
 
@@ -827,5 +830,182 @@ describe('POST: /api/inventory/auto-reconcile', () => {
         'Inventory item should have 99 quantity on hand after reconcile'
       )
     })
+  })
+})
+
+describe('Reset Inventory', () => {
+  const path = '/api/inventory/add'
+  let inventoryItem1
+  let site
+  let partnerId
+  let deviceId
+  let resultId1
+  let missingInventoryLotId
+  const testContext = createGxConnectTestContext(server, {
+    countryCode: 'US',
+    adminUsername: 'admin',
+    adminPassword: 'test07',
+    deviceName: 'New GeneXpert Laboratory',
+    macAddress: 'MAC00000000FAKE',
+    deviceSerialNumber: 'Cepheid-PC-BLH',
+  })
+
+  const sendRequest = async payload => {
+    return server.put(path).set('Authorization', `Bearer ${sharedToken.token}`).send(payload)
+  }
+
+  const assertResponse = (res, status, quantity) => {
+    assert.equal(res.status, status, `Expected status ${status}, but got ${res.status}`)
+    assert.typeOf(res.body, 'Object', 'Response body should be an object')
+    assert.property(res.body, 'data', 'Response should have a "data" property')
+    if (quantity !== undefined) {
+      assert.equal(
+        res.body.data.quantityOnHand,
+        quantity,
+        `Expected quantityOnHand to be ${quantity}, but got ${res.body.data.quantityOnHand}`
+      )
+    }
+  }
+
+  before(async () => {
+    sharedToken.checkToken(server, path)
+
+    // Get constraints and fetch a valid site
+    const dataConstraints = await getConstraints({ name: 'admin' })
+    ;[site] = await knex('Site as s')
+      .join('SiteType as type', 's.siteTypeId', 'type.id')
+      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+      .modify(addConstraints, dataConstraints, {
+        site: 's',
+        geography: 'g',
+      })
+      .where('type.externalId', 'lab')
+      .select('s.*')
+
+    await testContext.registerAndSetDevice()
+
+    const deviceInfo = testContext.device
+    if (deviceInfo) {
+      partnerId = deviceInfo.partnerId
+      deviceId = deviceInfo.id
+    }
+  })
+
+  beforeEach(async () => {
+    const payload1 = {
+      dateAdjusted: '2025-01-07T14:45:08.387Z',
+      toSiteId: site.id,
+      consumableId: 8,
+      reasonId: await consumableReasonToId('manual_addition'),
+      quantity: 200,
+      lotNumber: 'LOT001',
+      expiresOn: '2025-01-27T00:00:00Z',
+    }
+    const payload2 = {
+      dateAdjusted: '2025-01-07T14:45:08.387Z',
+      toSiteId: site.id,
+      consumableId: 8,
+      reasonId: await consumableReasonToId('manual_addition'),
+      quantity: 150,
+      lotNumber: 'LOT001',
+      expiresOn: '2025-01-27T00:00:00Z',
+    }
+
+    const res1 = await sendRequest(payload1)
+    await sendRequest(payload2)
+
+    inventoryItem1 = res1.body.data
+
+    const { assayId } = await knex('ConsumableAssay').where('consumableId', 8).first()
+    const resultIds = await knex('Result').insert({
+      resultSourceId: 1,
+      resultTypeId: 1,
+      partnerId,
+      assayId,
+      deviceId,
+      sampleId: 1,
+      reportableSiteId: 1,
+      siteId: site.id,
+      consumableLot: inventoryItem1.lotNumber,
+      consumableExpirationDate: inventoryItem1.expiresOn,
+      endedOn: new Date(),
+    })
+    ;[resultId1] = resultIds
+    ;[missingInventoryLotId] = await knex('MissingInventoryLots').insert([
+      {
+        siteId: site.id,
+        consumableId: 8,
+        resultId: resultId1,
+        lotNumber: inventoryItem1.lotNumber,
+        expirationDate: inventoryItem1.expiresOn,
+        createdOn: new Date(),
+      },
+    ])
+  })
+
+  afterEach(async () => {
+    // Clean up inventory items and related records
+    await knex('InventoryItem').where('id', '>=', inventoryItem1.id).delete()
+    await knex('InventoryLog').where('siteId', site.id).delete()
+    await knex('FactInventoryConsumptionRate').where('siteId', site.id).delete()
+    await knex('MissingInventoryLots').where('id', missingInventoryLotId).delete()
+    await knex('Result').where('id', resultId1).delete()
+  })
+
+  it('should reset inventory', async () => {
+    // Check reconciliationStartDate is null before reset
+    const inventoryItemBefore = await knex('InventoryItem')
+      .where({
+        siteId: site.id,
+        consumableId: 8,
+        lotNumber: 'LOT001',
+        expiresOn: '2025-01-27T00:00:00Z',
+      })
+      .first()
+    assert.isNull(
+      inventoryItemBefore.reconciliationStartDate,
+      'Expected reconciliationStartDate to be null before reset'
+    )
+
+    const physicalCountConsumableReasonId = await consumableReasonToId('physical_count')
+
+    const payload1 = {
+      dateAdjusted: '2025-01-07T14:45:08.387Z',
+      toSiteId: site.id,
+      consumableId: 8,
+      reasonId: physicalCountConsumableReasonId,
+      quantity: 130,
+      lotNumber: 'LOT001',
+      expiresOn: '2025-01-27T00:00:00Z',
+    }
+
+    const res1 = await sendRequest(payload1)
+
+    // Assert the inventory was reset to the specified quantity
+    assertResponse(res1, 200, 130)
+
+    const [inventoryLog] = await knex('InventoryLog')
+      .where('consumableReasonId', physicalCountConsumableReasonId)
+      .select()
+
+    assert.equal(inventoryLog.quantity, -220, 'Expected inventoryLog.quantity to be -220')
+    assert.equal(inventoryLog.quantityOnHandAfter, 130, 'Expected inventoryLog.quantityOnHandAfter to be 130')
+
+    // Check reconciliationStartDate is not null after reset
+    const inventoryItemAfter = await knex('InventoryItem')
+      .where({
+        siteId: site.id,
+        consumableId: 8,
+        lotNumber: 'LOT001',
+        expiresOn: '2025-01-27T00:00:00Z',
+      })
+      .first()
+    assert.isNotNull(
+      inventoryItemAfter.reconciliationStartDate,
+      'Expected reconciliationStartDate to be set after reset'
+    )
+
+    const data = await knex('MissingInventoryLots').select()
+    assert.equal(data.length, 0, 'Expected no missing inventory lots after reset')
   })
 })
