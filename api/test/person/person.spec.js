@@ -24,7 +24,6 @@ describe('Person routes', () => {
     const insertedJobContextIds = []
 
     before(async () => {
-      shared.checkToken(server, path)
       // Insert JobContext records for Test User
       await run(async knex => {
         const testUser = await knex('Person').where({ name: testUserName }).first('id')
