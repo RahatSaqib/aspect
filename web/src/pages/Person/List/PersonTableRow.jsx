@@ -45,7 +45,7 @@ const PersonTableRow = ({ person, personEditPermission, onUpdateRecord, ...restP
       className={styles[restProps.className]}
     >
       <TableCell>{person.name}</TableCell>
-      <TableCell>{person.level}</TableCell>
+      <TableCell>{person.assignments}</TableCell>
       <TableCell>{person.state}</TableCell>
       <TableCell>{person.lga}</TableCell>
       <TableCell>{formatTags(person.tags)}</TableCell>
