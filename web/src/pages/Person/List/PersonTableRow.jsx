@@ -1,8 +1,8 @@
-import React from 'react'
 import isString from 'lodash/isString'
-import { useIntl } from 'react-intl'
+import React from 'react'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
+import { formatDateTime } from '../../../utils/utils/dateFormat'
 import AccountEnableDisable from './AccountEnableDisable'
 
 const formatTags = tagsStr => {
@@ -39,7 +39,7 @@ const PersonTableRow = ({ person, personEditPermission, onUpdateRecord, ...restP
       onClick(evt)
     }
   }
-  const { formatDate } = useIntl()
+
   return (
     <TableRow
       {...restProps}
@@ -54,7 +54,7 @@ const PersonTableRow = ({ person, personEditPermission, onUpdateRecord, ...restP
       <TableCell>{person.email}</TableCell>
       <TableCell>{person.cell}</TableCell>
       <TableCell>{person.phone}</TableCell>
-      <TableCell>{person.lastLogin ? formatDate(person.lastLogin) : ''}</TableCell>
+      <TableCell>{person.lastLogin ? formatDateTime(person.lastLogin) : ''}</TableCell>
       {personEditPermission ? (
         <AccountEnableDisable type="icon" person={person} onSuccess={onUpdateRecord} />
       ) : (
