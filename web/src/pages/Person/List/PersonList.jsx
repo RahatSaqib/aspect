@@ -97,6 +97,9 @@ export const PersonList = () => {
                       { key: 'state', label: getCustomMessage(formatMessage, messages, 'state', user), sortable: true },
                       { key: 'lga', label: getCustomMessage(formatMessage, messages, 'lga', user), sortable: true },
                       { key: 'tags', label: formatMessage(messages.tags), sortable: true },
+                      { key: 'email', label: 'Email', sortable: false },
+                      { key: 'cell', label: 'Cell', sortable: false },
+                      { key: 'phone', label: 'Phone', sortable: false },
                       isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
                     ]}
                   />

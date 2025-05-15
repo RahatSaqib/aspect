@@ -49,6 +49,9 @@ const PersonTableRow = ({ person, personEditPermission, onUpdateRecord, ...restP
       <TableCell>{person.state}</TableCell>
       <TableCell>{person.lga}</TableCell>
       <TableCell>{formatTags(person.tags)}</TableCell>
+      <TableCell>{person.email}</TableCell>
+      <TableCell>{person.cell}</TableCell>
+      <TableCell>{person.phone}</TableCell>
       {personEditPermission ? (
         <AccountEnableDisable type="icon" person={person} onSuccess={onUpdateRecord} />
       ) : (

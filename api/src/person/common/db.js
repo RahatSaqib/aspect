@@ -187,6 +187,9 @@ async function listPeople(request) {
       'st.name as state',
       'l.name as lga',
       's.name as site',
+      'p.email',
+      'p.phone',
+      'p.cell',
       getTags
     )
 
