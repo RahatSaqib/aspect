@@ -7,6 +7,7 @@ const { getUser } = require('../../auth/service')
 const { revokeUsersToken, lockedOutUser } = require('../../auth/common/db')
 const { transformGeographyFromUpdates } = require('../../geography/service')
 const { updateTagsById } = require('../../tag/service')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 const getCreateAssignPerson = async (
   knex,
@@ -59,19 +60,19 @@ const getCreateAssignPerson = async (
         .first('c.timezone as timeZone')) || (await knex('Country as c').first('c.timezone as timeZone'))
     const { existingTimeZone } = (await knex('TimeZone').where('id', timezone).first('id as existingTimeZone')) || {}
     timezone = existingTimeZone || defaultTimeZone
-    ;[personId] = await knex('Person').insert({
-      geographyId,
-      name: name || null,
-      email: email || null,
-      cell: cell || null,
-      lastPartnerId: partnerId,
-      lastCountryId: countryId,
-      timezone,
-      culture,
-      createdOn: new Date(),
-      updatedOn: new Date(),
-      partnerId,
-    })
+      ;[personId] = await knex('Person').insert({
+        geographyId,
+        name: name || null,
+        email: email || null,
+        cell: cell || null,
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        timezone,
+        culture,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+        partnerId,
+      })
   }
 
   /**
@@ -105,6 +106,7 @@ const getCreateAssignPerson = async (
 async function listPeople(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
+  const { personTimezoneIANA } = await getUser(auth.credentials.name)
 
   const countryLevelPermission = await hasCountryLevelPermission(dataConstraints, ['person:edit', 'person:admin'])
 
@@ -191,8 +193,8 @@ async function listPeople(request) {
 
   // get rows
   const contactsQuery = personQuery
-    .leftJoin('User as u', 'p.userId', 'u.id')
     .clone()
+    .leftJoin('User as u', 'p.userId', 'u.id')
     .modify(sortPageParams, query, 'p.name')
     .groupBy('p.id')
     .select(
@@ -209,6 +211,7 @@ async function listPeople(request) {
       'p.phone',
       'p.cell',
       'u.lastLogin'
+      // getDateTimeProjectionInTimeZoneIANA(knex, 'u.lastLogin', personTimezoneIANA, 'lastLogin')
     )
 
   // return result when both queries are finished
