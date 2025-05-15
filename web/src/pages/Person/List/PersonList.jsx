@@ -1,5 +1,5 @@
-import { LinearProgress, TableBody } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { LinearProgress, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
@@ -100,6 +100,7 @@ export const PersonList = () => {
                       { key: 'email', label: 'Email', sortable: true },
                       { key: 'cell', label: 'Cell', sortable: true },
                       { key: 'phone', label: 'Phone', sortable: true },
+                      { key: 'lastLogin', label: 'Last Login', sortable: true },
                       isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
                     ]}
                   />

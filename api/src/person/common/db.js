@@ -8,29 +8,6 @@ const { revokeUsersToken, lockedOutUser } = require('../../auth/common/db')
 const { transformGeographyFromUpdates } = require('../../geography/service')
 const { updateTagsById } = require('../../tag/service')
 
-/**
- * Group job assignments by job name and count the number of assignments.
- * @param {string} jobsCsv - The semicolon-separated job names string.
- * @returns {string} String with the assignments with a count next the the grouped ones.
- * @example groupAssignments("Aspect Beta; Lab User; Lab User; Lab User")
- * returns: "Aspect Beta; Lab User (3)"
- */
-function groupAssignments(jobsCsv) {
-  const jobsObject = jobsCsv.split(';').reduce((acc, current) => {
-    const job = current.trim()
-    if (!job) return acc
-    if (!acc[job]) {
-      acc[job] = { assignments: 1 }
-    } else {
-      acc[job].assignments += 1
-    }
-    return acc
-  }, {})
-  return Object.entries(jobsObject)
-    .map(([job, { assignments }]) => (assignments > 1 ? `${job} (${assignments})` : job))
-    .join('; ')
-}
-
 const getCreateAssignPerson = async (
   knex,
   { countryId, partnerId, geographyId, siteId, name, email, cell, timezone, culture, jobFunctionExternalId }
@@ -39,7 +16,7 @@ const getCreateAssignPerson = async (
     .where('g.countryId', countryId)
     .groupBy('p.id')
     .first('p.name', 'p.id', 'p.email', 'p.email2', 'p.cell', 'jc.id as jobContextId')
-  //
+
   const personByName = await personQuery.where('p.name', name)
   const personByEmail = await personQuery.where(builder => {
     builder.where('p.email', email).orWhere('p.email2', email)
@@ -182,10 +159,26 @@ async function listPeople(request) {
   // get total count for paging
   const getCount = personQuery.clone().select(knex.raw('count(distinct p.id) as total')).first()
 
-  const assignmentsSubquery = knex('JobContext as jc')
-    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
-    .where('jc.personId', '=', knex.raw('p.id'))
-    .select(knex.raw('group_concat(jf.name separator "; ")'))
+  const assignmentsSubquery = knex
+    .select(
+      knex.raw(`
+        group_concat(
+          case 
+            when job_count = 1 then job_name
+            else concat(job_name, ' (', job_count, ')')
+          end
+          separator '; '
+        )
+      `)
+    )
+    .from(function () {
+      this.select('jf.name as job_name', knex.raw('count(*) as job_count'))
+        .from('JobContext as jc')
+        .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+        .whereRaw('jc.personId = p.id')
+        .groupBy('jf.name')
+        .as('job_counts')
+    })
     .as('assignments')
 
   const tagsSubquery = knex('Tag as t')
@@ -198,6 +191,7 @@ async function listPeople(request) {
 
   // get rows
   const contactsQuery = personQuery
+    .join('User as u', 'p.userId', 'u.id')
     .clone()
     .modify(sortPageParams, query, 'p.name')
     .groupBy('p.id')
@@ -213,18 +207,12 @@ async function listPeople(request) {
       tagsSubquery,
       'p.email',
       'p.phone',
-      'p.cell'
+      'p.cell',
+      'u.lastLogin'
     )
 
   // return result when both queries are finished
   const [{ total }, data] = await Promise.all([getCount, contactsQuery])
-
-  // Group assignments by name with assignment count
-  data.forEach(item => {
-    if (typeof item.assignments === 'string') {
-      item.assignments = groupAssignments(item.assignments)
-    }
-  })
 
   const personIds = data.map(({ id }) => id)
   const personTags = await knex('Tag as t')

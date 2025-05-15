@@ -85,6 +85,7 @@ describe('Person routes', () => {
       assert.property(res.body.data[0], 'email')
       assert.property(res.body.data[0], 'cell')
       assert.property(res.body.data[0], 'phone')
+      assert.property(res.body.data[0], 'lastLogin')
       assert.property(res.body, 'total')
     })
   })
