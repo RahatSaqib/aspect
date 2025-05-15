@@ -191,7 +191,7 @@ async function listPeople(request) {
 
   // get rows
   const contactsQuery = personQuery
-    .join('User as u', 'p.userId', 'u.id')
+    .leftJoin('User as u', 'p.userId', 'u.id')
     .clone()
     .modify(sortPageParams, query, 'p.name')
     .groupBy('p.id')
