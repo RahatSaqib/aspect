@@ -1,4 +1,3 @@
-import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
 export const commonDefinitions = defineMessages({
@@ -123,7 +122,7 @@ export function getCustomMessage(formatMessage, messages, key, user, params) {
   }
 
   if (params) {
-    const [...keys] = Immutable.fromJS(params).keys()
+    const [...keys] = Object.keys(params)
     keys.forEach(key => {
       params[key] = getCustomMessage(formatMessage, messages, params[key], user)
     })
