@@ -210,10 +210,10 @@ async function listPeople(request) {
       'st.name as state',
       'l.name as lga',
       's.name as site',
-      tagsSubquery
+      tagsSubquery,
       'p.email',
       'p.phone',
-      'p.cell',
+      'p.cell'
     )
 
   // return result when both queries are finished

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { TableBody, LinearProgress } from '@mui/material'
+import { LinearProgress, TableBody } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
@@ -97,9 +97,9 @@ export const PersonList = () => {
                       { key: 'state', label: getCustomMessage(formatMessage, messages, 'state', user), sortable: true },
                       { key: 'lga', label: getCustomMessage(formatMessage, messages, 'lga', user), sortable: true },
                       { key: 'tags', label: formatMessage(messages.tags), sortable: true },
-                      { key: 'email', label: 'Email', sortable: false },
-                      { key: 'cell', label: 'Cell', sortable: false },
-                      { key: 'phone', label: 'Phone', sortable: false },
+                      { key: 'email', label: 'Email', sortable: true },
+                      { key: 'cell', label: 'Cell', sortable: true },
+                      { key: 'phone', label: 'Phone', sortable: true },
                       isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
                     ]}
                   />
