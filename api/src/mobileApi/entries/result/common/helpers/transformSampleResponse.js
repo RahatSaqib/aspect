@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
-const formatISO = require('date-fns/formatISO')
 const { transformEntryType } = require('./transformEntryType')
 const { transformSampleData } = require('./transformSample')
 const { getSampleUpdatedOnDate } = require('./getTrueUpdatedOnDates')
