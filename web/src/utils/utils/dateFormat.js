@@ -30,7 +30,7 @@ function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const userSetTimeZone = localStorage.getItem('asTimezoneId')
   const { code: localeCode } = getLocale()
-  const timeZone = getTimezoneById(userSetTimeZone)
+  const timeZone = getTimezoneById(userSetTimeZone) // This line is not working and returning null. I has to be fixed by by ASP-7760 Fix timezone issues in the frontend
   const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
   const timeToFormat = isString(date) ? new Date(date).toLocaleString(localeCode, { timeZone }) : date
 
