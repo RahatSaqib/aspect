@@ -140,7 +140,7 @@ const superAdmin = {
 const regionalAdmin = {
   name: 'Regional Admin',
   reports: superAdmin.reports,
-  permissions: superAdmin.permissions.filter(permission => permission.module !== 'admin'),
+  permissions: superAdmin.permissions.filter(permission => !['admin', 'inventory'].includes(permission.module)),
 }
 
 const regionalOfficer = {
@@ -1195,6 +1195,17 @@ const aspectBeta = {
   ],
 }
 
+const inventoryManager = {
+  name: 'Inventory Manager',
+  reports: [],
+  permissions: [
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
+  ],
+}
+
 const concatUniqOrderedArray = (arr1, arr2, sortedFunction = _.identity) =>
   _.compact(_.sortBy(_.uniq(_.concat(arr1, arr2)), arr1 && arr2 ? sortedFunction : _.identity))
 
@@ -1242,6 +1253,7 @@ module.exports = {
   systemOne,
   labAdmin,
   aspectBeta,
+  inventoryManager,
   mergeJobFunctions,
   countryReportsDecorator,
 }

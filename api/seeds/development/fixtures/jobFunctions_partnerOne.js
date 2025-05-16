@@ -9,6 +9,7 @@ const {
   resultViewerYes,
   technician,
   aspectBeta,
+  inventoryManager,
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
@@ -38,4 +39,5 @@ module.exports = [
   resultViewerYes,
   technician,
   aspectBetaEnhanced,
+  inventoryManager,
 ]

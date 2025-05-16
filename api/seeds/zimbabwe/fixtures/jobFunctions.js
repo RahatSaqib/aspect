@@ -11,6 +11,7 @@ const {
   regionalOfficer,
   systemOne,
   aspectBeta,
+  inventoryManager,
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
@@ -476,4 +477,5 @@ module.exports = [
     ],
   }),
   aspectBeta,
+  inventoryManager,
 ]

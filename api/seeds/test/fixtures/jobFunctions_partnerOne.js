@@ -7,6 +7,7 @@ const {
   technician,
   mergeJobFunctions,
   aspectBeta,
+  inventoryManager,
 } = require('../../fixtures/jobFunctionBase')
 
 const adminEnhanced = mergeJobFunctions(superAdmin, {
@@ -80,4 +81,5 @@ module.exports = [
   },
   technician,
   aspectBeta,
+  inventoryManager,
 ]
