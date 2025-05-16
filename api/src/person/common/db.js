@@ -7,6 +7,7 @@ const { getUser } = require('../../auth/service')
 const { revokeUsersToken, lockedOutUser } = require('../../auth/common/db')
 const { transformGeographyFromUpdates } = require('../../geography/service')
 const { updateTagsById } = require('../../tag/service')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 const getCreateAssignPerson = async (
   knex,
@@ -104,6 +105,7 @@ const getCreateAssignPerson = async (
 
 async function listPeople(request) {
   const { auth, query } = request
+  const { personTimezoneIANA } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
 
   const countryLevelPermission = await hasCountryLevelPermission(dataConstraints, ['person:edit', 'person:admin'])
@@ -208,8 +210,7 @@ async function listPeople(request) {
       'p.email',
       'p.phone',
       'p.cell',
-      'u.lastLogin'
-      // getDateTimeProjectionInTimeZoneIANA(knex, 'u.lastLogin', personTimezoneIANA, 'lastLogin')
+      getDateTimeProjectionInTimeZoneIANA(knex, 'u.lastLogin', personTimezoneIANA, 'lastLogin')
     )
 
   // return result when both queries are finished

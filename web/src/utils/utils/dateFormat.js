@@ -58,6 +58,14 @@ export function formatDateTime(date) {
   return formatBase(date, 'dateTimeFormat')
 }
 
+// TODO: Temporary solution to show dates coming in UTC format ('Z') but that were previously offset in the back.
+export function formatDateTimeWithoutTimezone(date) {
+  if (!date) return ''
+  const prefs = getAspectDisplayPreferences()
+  const dateFormatPreference = prefs.get('dateTimeFormat', 'yyyy-MM-dd HH:mm')
+  return format(new Date(date.replace('Z', '')), dateFormatPreference)
+}
+
 export const formatWithLocale = locale => (date, formatStr) => format(date, formatStr, { locale: getLocale(locale) })
 
 export const withDateFormatProps = withProps(() => {
