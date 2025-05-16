@@ -28,9 +28,11 @@ export function getDateObject(date, defaultValue) {
 function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const userSetTimeZone = localStorage.getItem('asTimezoneId')
+
   const { code: localeCode } = getLocale()
   const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  const timeToFormat = isString(date) ? new Date(date).toLocaleString(localeCode, { timeZone: userSetTimeZone }) : date
+  const timeToFormat =
+    isString(date) && userSetTimeZone ? new Date(date).toLocaleString(localeCode, { timeZone: userSetTimeZone }) : date
 
   return timeToFormat === null ? '' : format(new Date(timeToFormat), dateFormatPreference)
 }
