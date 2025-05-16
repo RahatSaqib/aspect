@@ -91,6 +91,33 @@ async function registerNewSample(request) {
   return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample) }
 }
 
+const resultCombinations = allResultCategories => [
+  {
+    resultCategory1: allResultCategories.Detected,
+    resultCategory2: allResultCategories.Detected,
+    resultData: JSON.stringify({
+      assay: 'Xpert MTB-RIF Assay G4',
+      resultText: 'MTB Detected|Rif Resistance Detected',
+    }),
+  },
+  {
+    resultCategory1: allResultCategories.NotDetected,
+    resultCategory2: null,
+    resultData: JSON.stringify({
+      assay: 'Xpert MTB-RIF Assay G4',
+      resultText: 'MTB Not Detected|Rif Resistance Not Detected',
+    }),
+  },
+  {
+    resultCategory1: allResultCategories.Detected,
+    resultCategory2: allResultCategories.NotDetected,
+    resultData: JSON.stringify({
+      assay: 'Xpert MTB-RIF Assay G4',
+      resultText: 'MTB Detected|Rif Resistance Not Detected',
+    }),
+  },
+]
+
 const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
   const resultWorkflowStatuses = await allResultWorkflowStatusToId()
   const assayIds = await allAssayToId()
@@ -104,6 +131,8 @@ const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
     .andWhere({ siteId })
     .first('d.id', 'partnerId')
 
+  const resultCombination = resultCombinations(resultCategories)[_.random(0, 2)]
+
   if (device) {
     const { id: deviceId, partnerId } = device
     const now = new Date()
@@ -116,9 +145,6 @@ const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
       resultSourceId: resultSources.DiagnosticDevice,
       resultTypeId: resultTypes.Patient,
       sampleId,
-      resultCategory1: resultCategories.NotDetected,
-      resultCategory2: null,
-      resultData: '{"assay": "Xpert MTB-RIF Assay G4", "resultText": "Not Detected"}',
       resultDataHash: null,
       assayVersion: '4',
       startedOn: now,
@@ -130,6 +156,7 @@ const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
       updatedOn: now,
       updatedBy: 1,
       reportableSiteId: siteId,
+      ...resultCombination,
     })
 
     const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
