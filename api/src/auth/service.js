@@ -401,6 +401,9 @@ async function authenticate(request, response) {
     activeStatus: partner.activeStatus,
     statusMessage: partner?.statusMessage,
     notificationWarningMessage,
+    user: {
+      name: user.userName,
+    },
   }
 }
 
