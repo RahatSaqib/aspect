@@ -97,7 +97,7 @@ function generateAppId(deviceCode) {
   }
 
   const hash = crypto.createHash('sha256').update(deviceCode).digest('hex')
-  return hash.slice(0, 10).toUpperCase()
+  return hash.slice(0, 4).toUpperCase()
 }
 
 /**
