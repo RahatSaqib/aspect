@@ -37,11 +37,19 @@ const getBaseAllSamplesRegistered = originSiteIds => {
 }
 
 const getAllSamplesRegistered = (query, originSiteIds) => {
-  const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
+  const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
+  const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
   const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where(queryBuilder =>
     queryBuilder
-      .where(qb => qb.where('sample.collectedOn', '>=', minUpdatedOn).orWhere('sample.updatedOn', '>=', minUpdatedOn))
+      .where(qb =>
+        qb.where('sample.collectedOn', '>=', submittedSince).orWhere('sample.updatedOn', '>=', submittedSince)
+      )
       .andWhere('sample.registeredInAspect', true)
+      .andWhere(qb => {
+        if (modifiedSince) {
+          qb.where('sample.collectedOn', '>=', modifiedSince).orWhere('sample.updatedOn', '>=', modifiedSince)
+        }
+      })
   )
   return knexQuery
 }

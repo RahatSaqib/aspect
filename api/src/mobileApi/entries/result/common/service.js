@@ -114,8 +114,8 @@ async function fetchEntriesServiceHandler(request) {
 
   const entries = _.orderBy(
     _.concat(_.uniqBy(mergedResultData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
-    ['updatedOn'],
-    ['desc']
+    ['endedOn', 'updatedOn'],
+    ['desc', 'desc']
   )
 
   const awaitingTreatment = _.countBy(entries, 'requiresFollowUp')

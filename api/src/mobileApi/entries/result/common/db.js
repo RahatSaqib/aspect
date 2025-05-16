@@ -12,7 +12,9 @@ const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 
 const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
-  const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
+  const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
+
+  const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const knexQuery = knex('Result as result')
     .join('Device as device', 'result.deviceId', 'device.id')
@@ -65,7 +67,12 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       assay: 'assay',
       assayType: 'assayType',
     })
-    .andWhere('result.updatedOn', '>', minUpdatedOn)
+    .andWhere(qb => {
+      if (modifiedSince) {
+        return qb.where('result.updatedOn', '>=', modifiedSince)
+      }
+      return qb.where('result.endedOn', '>=', submittedSince)
+    })
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .andWhere(qb =>
       qb
