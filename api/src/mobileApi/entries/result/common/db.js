@@ -65,7 +65,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       assay: 'assay',
       assayType: 'assayType',
     })
-    .andWhere('result.updatedOn', '>', minUpdatedOn)
+    .andWhere(qb => qb.where('result.updatedOn', '>', minUpdatedOn).orWhere('result.startedOn', '>', minUpdatedOn))
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .andWhere(qb =>
       qb
@@ -95,6 +95,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'result.sampleId as resultSampleId',
       'result.updatedOn as updatedOn',
       'result.errorCode as errorCode',
+      'result.startedOn as startedOn',
       'result.endedOn as testEndDate',
       'result.notes as resultNotes',
       knex.raw('COALESCE(result.endedOn, result.startedOn) as testDate'),
