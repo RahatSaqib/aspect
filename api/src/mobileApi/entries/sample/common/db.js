@@ -47,7 +47,7 @@ const getAllSamplesRegistered = (query, originSiteIds) => {
       .andWhere('sample.registeredInAspect', true)
       .andWhere(qb => {
         if (modifiedSince) {
-          qb.where('sample.submittedOn', '>=', modifiedSince).orWhere('sample.updatedOn', '>=', modifiedSince)
+          qb.where('sample.collectedOn', '>=', modifiedSince).orWhere('sample.updatedOn', '>=', modifiedSince)
         }
       })
   )

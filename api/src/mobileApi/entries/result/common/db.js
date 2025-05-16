@@ -12,7 +12,7 @@ const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 
 const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
-  const modifiedSince = query?.minUpdatedDate ?? query?.modifiedSince
+  const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
 
   const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
@@ -102,7 +102,6 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'result.sampleId as resultSampleId',
       'result.updatedOn as updatedOn',
       'result.errorCode as errorCode',
-      'result.startedOn as startedOn',
       'result.endedOn as testEndDate',
       'result.notes as resultNotes',
       knex.raw('COALESCE(result.endedOn, result.startedOn) as testDate'),
