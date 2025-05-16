@@ -16,14 +16,6 @@ const adminEnhanced = mergeJobFunctions(superAdmin, {
       module: 'dashboard',
       activity: 'inventory',
     },
-    {
-      module: 'inventory',
-      activity: 'view',
-    },
-    {
-      module: 'inventory',
-      activity: 'edit',
-    },
   ],
   reports: [...superAdmin.reports, 'genexpert_issues'],
 })
@@ -34,14 +26,6 @@ const regionalAdminEnhanced = mergeJobFunctions(regionalAdmin, {
     {
       module: 'dashboard',
       activity: 'inventory',
-    },
-    {
-      module: 'inventory',
-      activity: 'view',
-    },
-    {
-      module: 'inventory',
-      activity: 'edit',
     },
   ],
   reports: [...regionalAdmin.reports, 'genexpert_issues'],
@@ -70,10 +54,6 @@ module.exports = [
       },
       {
         module: 'assay',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {

@@ -284,10 +284,6 @@ module.exports = [
         module: 'site',
         activity: 'view',
       },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
     ],
   }),
   technician,

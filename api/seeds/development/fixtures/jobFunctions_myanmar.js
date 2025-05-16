@@ -105,10 +105,6 @@ module.exports = [
         module: 'taskMenu',
         activity: 'view',
       },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
     ],
   }),
   mergeJobFunctions(regionalOfficer, {
