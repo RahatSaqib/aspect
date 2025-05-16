@@ -9,6 +9,7 @@ import isString from 'lodash/isString'
 import { withProps } from 'recompose'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import getLocale from './locale'
+import { getTimezoneById } from './timezone'
 
 export function getDateObject(date, defaultValue) {
   let formatedDate = defaultValue || null
@@ -28,11 +29,10 @@ export function getDateObject(date, defaultValue) {
 function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const userSetTimeZone = localStorage.getItem('asTimezoneId')
-
   const { code: localeCode } = getLocale()
+  const timeZone = getTimezoneById(userSetTimeZone)
   const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  const timeToFormat =
-    isString(date) && userSetTimeZone ? new Date(date).toLocaleString(localeCode, { timeZone: userSetTimeZone }) : date
+  const timeToFormat = isString(date) ? new Date(date).toLocaleString(localeCode, { timeZone }) : date
 
   return timeToFormat === null ? '' : format(new Date(timeToFormat), dateFormatPreference)
 }
