@@ -401,9 +401,6 @@ async function authenticate(request, response) {
     activeStatus: partner.activeStatus,
     statusMessage: partner?.statusMessage,
     notificationWarningMessage,
-    user: {
-      name: user.userName,
-    },
   }
 }
 
@@ -544,9 +541,6 @@ async function refreshToken(request) {
     countryAbbreviation: data.countryAbbreviation,
     userId: data.userId,
     personId: data.personId,
-    user: {
-      name: data.userName,
-    },
   }
 }
 
