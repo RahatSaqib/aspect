@@ -544,6 +544,9 @@ async function refreshToken(request) {
     countryAbbreviation: data.countryAbbreviation,
     userId: data.userId,
     personId: data.personId,
+    user: {
+      name: data.userName,
+    },
   }
 }
 
