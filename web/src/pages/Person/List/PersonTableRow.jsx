@@ -1,5 +1,5 @@
-import isString from 'lodash/isString'
 import React from 'react'
+import isString from 'lodash/isString'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
 import { formatDateTime } from '../../../utils/utils/dateFormat'

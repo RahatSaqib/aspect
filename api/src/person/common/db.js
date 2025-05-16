@@ -7,7 +7,6 @@ const { getUser } = require('../../auth/service')
 const { revokeUsersToken, lockedOutUser } = require('../../auth/common/db')
 const { transformGeographyFromUpdates } = require('../../geography/service')
 const { updateTagsById } = require('../../tag/service')
-const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 const getCreateAssignPerson = async (
   knex,
@@ -60,19 +59,19 @@ const getCreateAssignPerson = async (
         .first('c.timezone as timeZone')) || (await knex('Country as c').first('c.timezone as timeZone'))
     const { existingTimeZone } = (await knex('TimeZone').where('id', timezone).first('id as existingTimeZone')) || {}
     timezone = existingTimeZone || defaultTimeZone
-      ;[personId] = await knex('Person').insert({
-        geographyId,
-        name: name || null,
-        email: email || null,
-        cell: cell || null,
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        timezone,
-        culture,
-        createdOn: new Date(),
-        updatedOn: new Date(),
-        partnerId,
-      })
+    ;[personId] = await knex('Person').insert({
+      geographyId,
+      name: name || null,
+      email: email || null,
+      cell: cell || null,
+      lastPartnerId: partnerId,
+      lastCountryId: countryId,
+      timezone,
+      culture,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      partnerId,
+    })
   }
 
   /**
