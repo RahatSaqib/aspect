@@ -105,7 +105,6 @@ const getCreateAssignPerson = async (
 async function listPeople(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const { personTimezoneIANA } = await getUser(auth.credentials.name)
 
   const countryLevelPermission = await hasCountryLevelPermission(dataConstraints, ['person:edit', 'person:admin'])
 
