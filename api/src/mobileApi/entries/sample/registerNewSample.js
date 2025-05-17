@@ -85,7 +85,7 @@ async function registerNewSample(request) {
 
   const [newSample] = await insertNewSample(payloadForDb, request.auth)
 
-  if (process.env['seeds.directory'] === './seeds/development') {
+  if (process.env['seeds.directory'] === './seeds/development' || process.env.acceptFakeResults === 'true') {
     await createFakeResult(payload.originSiteId, newSample)
   }
   return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample) }
