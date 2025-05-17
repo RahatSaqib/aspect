@@ -5,7 +5,6 @@ const {
   ACKNOWLEDGED,
   FLAGGED,
   MONTHS_HISTORY_TO_LOOK_UP,
-  MOBILE_APP_ALLOWED_ASSAYS,
   deliverableResultWorkflowStatuses,
 } = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
@@ -80,11 +79,6 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
         .orWhere('resultCategoryAssay1.requiresTreatment', true)
         .orWhere('resultCategoryAssay2.requiresTreatment', true)
     )
-    .modify(qb => {
-      if (!_.isEmpty(MOBILE_APP_ALLOWED_ASSAYS)) {
-        qb.whereIn('assay.externalId', MOBILE_APP_ALLOWED_ASSAYS)
-      }
-    })
     .orWhereIn('result.id', userViewOnlyTransferredResultIds)
     .select(
       'assay.externalId as assayExternalId',
