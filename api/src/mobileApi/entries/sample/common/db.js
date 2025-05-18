@@ -41,13 +41,11 @@ const getAllSamplesRegistered = (query, originSiteIds) => {
   const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
   const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where(queryBuilder =>
     queryBuilder
-      .where(qb =>
-        qb.where('sample.collectedOn', '>=', submittedSince).orWhere('sample.updatedOn', '>=', submittedSince)
-      )
+      .where(qb => qb.where('sample.collectedOn', '>=', submittedSince))
       .andWhere('sample.registeredInAspect', true)
       .andWhere(qb => {
         if (modifiedSince) {
-          qb.where('sample.collectedOn', '>=', modifiedSince).orWhere('sample.updatedOn', '>=', modifiedSince)
+          qb.where('sample.updatedOn', '>=', modifiedSince).orWhereNull('sample.updatedOn')
         }
       })
   )
