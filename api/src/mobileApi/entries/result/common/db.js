@@ -72,13 +72,13 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       }
       qb.where('result.endedOn', '>=', submittedSince)
     })
-    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
-    .andWhere(qb =>
-      qb
-        .where('sample.registeredInAspect', true)
-        .orWhere('resultCategoryAssay1.requiresTreatment', true)
-        .orWhere('resultCategoryAssay2.requiresTreatment', true)
-    )
+    // .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
+    // .andWhere(qb =>
+    //   qb
+    //     .where('sample.registeredInAspect', true)
+    //     .orWhere('resultCategoryAssay1.requiresTreatment', true)
+    //     .orWhere('resultCategoryAssay2.requiresTreatment', true)
+    // )
     .orWhereIn('result.id', userViewOnlyTransferredResultIds)
     .select(
       'assay.externalId as assayExternalId',
