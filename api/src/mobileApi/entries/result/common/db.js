@@ -18,8 +18,6 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
 
   const resultCategoryToId = await allResultCategoryToId()
 
-  const erroredResultsIds = [resultCategoryToId.Invalid, resultCategoryToId.Error, resultCategoryToId.NoResult]
-
   const knexQuery = knex('Result as result')
     .join('Device as device', 'result.deviceId', 'device.id')
     .join('Site as laboratory', 'result.siteId', 'laboratory.id')
@@ -78,8 +76,13 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
       qb.where('result.endedOn', '>=', submittedSince)
     })
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
-    .andWhere(qb => qb.whereNotIn('result.resultCategory1', erroredResultsIds))
-    .andWhere(qb => qb.whereNotIn('result.resultCategory2', erroredResultsIds))
+    .andWhere(qb =>
+      qb.whereNotIn('result.resultCategory1', [
+        resultCategoryToId.Invalid,
+        resultCategoryToId.Error,
+        resultCategoryToId.NoResult,
+      ])
+    )
     .orWhereIn('result.id', userViewOnlyTransferredResultIds)
     .select(
       'assay.externalId as assayExternalId',
