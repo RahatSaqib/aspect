@@ -70,7 +70,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       if (modifiedSince) {
         qb.where('result.updatedOn', '>=', modifiedSince).orWhereNull('result.updatedOn')
       }
-      return qb.where('result.endedOn', '>=', submittedSince)
+      qb.where('result.endedOn', '>=', submittedSince)
     })
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .andWhere(qb =>
