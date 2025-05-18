@@ -9,11 +9,16 @@ const {
 } = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
+const { allResultCategoryToId } = require('../../../../shared/dictionary')
 
-const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
+const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
   const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
 
   const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
+
+  const resultCategoryToId = await allResultCategoryToId()
+
+  const erroredResultsIds = [resultCategoryToId.Invalid, resultCategoryToId.Error, resultCategoryToId.NoResult]
 
   const knexQuery = knex('Result as result')
     .join('Device as device', 'result.deviceId', 'device.id')
@@ -74,9 +79,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
     })
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .andWhere(qb =>
-      qb
-        .whereNotIn('resultCategory1.externalId', ['Invalid', 'Error', 'NoResult'])
-        .andWhereNotIn('resultCategory2.externalId', ['Invalid', 'Error', 'NoResult'])
+      qb.whereNotIn('resultCategory1', erroredResultsIds).andWhereNotIn('resultCategory2', erroredResultsIds)
     )
     .orWhereIn('result.id', userViewOnlyTransferredResultIds)
     .select(
