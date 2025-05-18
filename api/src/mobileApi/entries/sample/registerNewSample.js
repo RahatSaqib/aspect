@@ -86,9 +86,9 @@ async function registerNewSample(request) {
 
   const [newSample] = await insertNewSample(payloadForDb, request.auth)
 
-  if (process.env['seeds.directory'] === './seeds/development' || config.acceptFakeResults) {
-    await createFakeResult(payload.originSiteId, newSample)
-  }
+  // if (process.env['seeds.directory'] === './seeds/development' || config.acceptFakeResults) {
+  await createFakeResult(payload.originSiteId, newSample) // uncomment the above comments when merging to `master` branch
+  // }
   return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample) }
 }
 
