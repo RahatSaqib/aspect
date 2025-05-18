@@ -78,9 +78,8 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
       qb.where('result.endedOn', '>=', submittedSince)
     })
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
-    .andWhere(qb =>
-      qb.whereNotIn('resultCategory1', erroredResultsIds).whereNotIn('resultCategory2', erroredResultsIds)
-    )
+    .andWhere(qb => qb.whereNotIn('result.resultCategory1', erroredResultsIds))
+    .andWhere(qb => qb.whereNotIn('result.resultCategory2', erroredResultsIds))
     .orWhereIn('result.id', userViewOnlyTransferredResultIds)
     .select(
       'assay.externalId as assayExternalId',
