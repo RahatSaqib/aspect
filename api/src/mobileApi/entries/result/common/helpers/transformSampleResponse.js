@@ -13,7 +13,7 @@ function transformSampleResponse(query, data, results) {
   return _.map(data, sample => {
     if (!_.isEmpty(_.find(results, { sample: { id: sample.id } }))) return
     if (
-      (modifiedSince && _.lt(new Date(sample.updatedOn), modifiedSince)) ||
+      (modifiedSince && sample.updatedOn && _.lt(new Date(sample.updatedOn), modifiedSince)) ||
       _.lt(new Date(sample.collectedOn), submittedSince)
     ) {
       return
