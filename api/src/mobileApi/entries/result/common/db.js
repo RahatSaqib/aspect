@@ -72,7 +72,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       }
       qb.where('result.endedOn', '>=', submittedSince)
     })
-    // .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
+    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     // .andWhere(qb =>
     //   qb
     //     .where('sample.registeredInAspect', true)
