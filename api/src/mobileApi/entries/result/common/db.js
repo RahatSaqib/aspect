@@ -68,7 +68,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
     })
     .andWhere(qb => {
       if (modifiedSince) {
-        return qb.where('result.updatedOn', '>=', modifiedSince)
+        qb.where('result.updatedOn', '>=', modifiedSince).orWhereNull('result.updatedOn')
       }
       return qb.where('result.endedOn', '>=', submittedSince)
     })
