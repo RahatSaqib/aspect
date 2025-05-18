@@ -14,7 +14,6 @@ const {
   allResultSourceToId,
   allResultTypeToId,
 } = require('../../../shared/dictionary')
-const config = require('../../../config')
 
 async function registerNewSample(request) {
   const {
