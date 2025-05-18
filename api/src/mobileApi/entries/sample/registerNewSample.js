@@ -128,7 +128,6 @@ const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
 
   const device = await knex('Device as d')
     .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .where('dt.externalId', 'CepheidGeneXpert')
     .andWhere({ siteId })
     .first('d.id', 'partnerId')
 
