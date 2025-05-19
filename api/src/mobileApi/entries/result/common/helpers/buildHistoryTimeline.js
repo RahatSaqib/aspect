@@ -73,7 +73,10 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       clinicianName: followUp.clinicianName,
     }
     const matchingFlag = resultFlags?.find(
-      rf => format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
+      rf =>
+        rf.flaggedOn &&
+        followUp.date &&
+        format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
     )
     if (matchingFlag?.reason) {
       followUpHistoryItem.reason = matchingFlag.reason
