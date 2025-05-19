@@ -122,6 +122,8 @@ const checkFollowupType = (testResult, followUp, type) => {
     find(followUpDetail => {
       if (
         followUpDetail.followUpTypeExternalId === type &&
+        followUpDetail.createdOn &&
+        maxDate &&
         new Date(followUpDetail.createdOn).toISOString() === new Date(maxDate).toISOString()
       ) {
         return followUpDetail
