@@ -33,7 +33,7 @@ function initSentry() {
       autoDiscoverNodePerformanceMonitoringIntegrations: true,
 
       // Debug mode to see what's happening. if found any issues with sentry integration, set to true and find more details.
-      debug: true,
+      debug: false,
 
       integrations: [
         new Sentry.Integrations.OnUncaughtException(),
