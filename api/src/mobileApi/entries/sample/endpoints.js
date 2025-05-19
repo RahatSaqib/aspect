@@ -9,7 +9,7 @@ const routes = [
   {
     method: 'POST',
     path: '/v4/sample/register',
-    handler: registerNewSample,
+    handler: asyncHandler(registerNewSample),
     config: {
       description: 'Register new sample specimen',
       notes: 'Ability to register a new sample specimen by hand using Aspect Mobile',

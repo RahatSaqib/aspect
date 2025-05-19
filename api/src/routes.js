@@ -155,7 +155,7 @@ function asyncHandler(handler) {
     handler(request, reply)
       .then(reply)
       .catch(err => {
-        Sentry.captureException(err)
+        Sentry.captureException(err.stack || err)
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
         logger.error(err)
         throw err
