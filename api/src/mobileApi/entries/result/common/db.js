@@ -148,6 +148,10 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
       'transferLog.reportableSiteId as transferReportableSiteId',
       'transferLog.previousReportableSiteId as transferPreviousReportableSiteId'
     )
+    .orderBy('updatedOn', 'desc')
+    .orderBy('testEndDate', 'desc')
+    .orderBy('sampleUpdatedOn', 'desc')
+    .orderBy('sampleCollectedOn', 'desc')
   return knexQuery
 }
 
