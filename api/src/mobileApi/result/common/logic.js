@@ -2,6 +2,7 @@ const _ = require('lodash')
 const { differenceInDays } = require('date-fns')
 const { pipe, find, values } = require('ramda')
 const { subDays } = require('date-fns')
+const isValid = require('date-fns/isValid')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/date')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 const { knex } = require('../../../db')
@@ -120,13 +121,16 @@ const checkFollowupType = (testResult, followUp, type) => {
   const followUpDetail = pipe(
     values,
     find(followUpDetail => {
-      if (
-        followUpDetail.followUpTypeExternalId === type &&
-        followUpDetail.createdOn &&
-        maxDate &&
-        new Date(followUpDetail.createdOn).toISOString() === new Date(maxDate).toISOString()
-      ) {
-        return followUpDetail
+      try {
+        if (!followUpDetail?.createdOn || !maxDate) return false
+        const createdOnDate = new Date(followUpDetail.createdOn)
+        const maxDateObj = new Date(maxDate)
+        if (!isValid(createdOnDate) || !isValid(maxDateObj)) return false
+        return (
+          followUpDetail.followUpTypeExternalId === type && createdOnDate.toISOString() === maxDateObj.toISOString()
+        )
+      } catch (error) {
+        return false
       }
     })
   )(followUps)
