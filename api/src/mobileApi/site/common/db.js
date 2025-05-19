@@ -21,7 +21,7 @@ const getSitesInState = (partnerId, stateId, type) => {
     .select(SELECT_LIST_FIELDS)
 }
 
-const getUserSites = (dataConstraints, type) => {
+const getUserSites = dataConstraints => {
   const userSitesQuery = getSitesQuery(dataConstraints)
   return (
     userSitesQuery

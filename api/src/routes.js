@@ -3,6 +3,7 @@ const uniq = require('lodash/uniq')
 const logger = require('./shared/logger')
 const { REGEX_ISODATESTRING } = require('./shared/date')
 const { splitCsvWithTrim } = require('./shared/string')
+const { Sentry } = require('./shared/sentry')
 // Adds all API routes to the server
 function addClientRoutes(server) {
   server.route(require('./accountDetails/endpoints').routes.map(decorateClientAPI()))
@@ -154,6 +155,7 @@ function asyncHandler(handler) {
     handler(request, reply)
       .then(reply)
       .catch(err => {
+        Sentry.captureException(err)
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
         logger.error(err)
         throw err
