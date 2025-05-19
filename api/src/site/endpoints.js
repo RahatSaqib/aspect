@@ -181,7 +181,7 @@ const routes = [
     config: {
       description: 'Update Site Consumables',
       notes: 'Add or Remove consumable from a site',
-      auth: { scope: ['site:edit'] },
+      auth: { scope: ['site', '+inventory'] },
       validate: updateConsumableSchema,
     },
   },
