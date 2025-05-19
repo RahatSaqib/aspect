@@ -13,7 +13,7 @@ const { updateSiteConsumable, getSiteListModifiedQuery } = require('../../site/c
 const { getPartnerByConstraints } = require('../../partner/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { selectAssayConsumables } = require('../../consumable/assayConsumableService')
-const { consumableToIncludeLocation, consumableReasonToId } = require('../../shared/dictionary')
+const { consumableReasonById, consumableToIncludeLocation, consumableReasonToId } = require('../../shared/dictionary')
 
 const { resolveIssues, escalateIssues } = require('../../issue/actions')
 const { inventoryStockout, inventoryStockExpiring } = require('../actions')
@@ -200,6 +200,7 @@ async function upsertInventoryItemAndLog(
   /**
    * log changing inventory quantity
    */
+  const { effectOnStock } = await consumableReasonById(logProps.consumableReasonId ?? consumableReasonId)
   const inventoryLogId = await logInventoryChange({
     knex,
     inventoryItemId,
@@ -213,6 +214,7 @@ async function upsertInventoryItemAndLog(
     createdOn: now,
     createdBy: userId,
     ...logProps,
+    quantity: effectOnStock === 'decrease' ? -logProps.quantity : logProps.quantity,
   })
 
   return { inventoryItemId, inventoryLogId }
@@ -664,12 +666,7 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
 
   const { reasonId } =
     (await knex('ConsumableReason')
-      .where(
-        'i18nKey',
-        operation === 'add'
-          ? 'ConsumableReason_AssertedInventoryOnHandAdd'
-          : 'ConsumableReason_AssertedInventoryOnHandRemove'
-      )
+      .where('externalId', operation === 'add' ? 'manual_addition' : 'other')
       .first('id as reasonId')) || {}
 
   const res = await changeInventoryQuantity(inventoryStrategy, {
@@ -680,8 +677,7 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
     /**
      * make sure `quantity` is positive, because we add (quantityOnHand + quantity) or
      * remove (quantityOnHand - quantity) based on `operation`. And if `quantity` remains
-     * negative for `remove` - then we increase instead of decreasing in, for instance,
-     * inventory strategy for Pakistan - api/src/plugin/partner/Pakistan/inventoryStrategy.js
+     * negative for `remove` - then we increase instead of decreasing.
      */
     quantity: Math.abs(quantity),
     operation,

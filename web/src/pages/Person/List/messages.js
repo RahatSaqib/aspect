@@ -12,9 +12,9 @@ const messages = {
       id: 'pages.PersonList.personName',
       defaultMessage: 'Name',
     },
-    level: {
-      id: 'pages.PersonList.level',
-      defaultMessage: 'Job',
+    assignments: {
+      id: 'pages.PersonList.assignments',
+      defaultMessage: 'Assignments',
     },
     paginatorStatus: {
       id: 'pages.PersonList.paginatorStatus',

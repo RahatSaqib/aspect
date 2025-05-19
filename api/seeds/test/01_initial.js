@@ -1284,5 +1284,5 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
   ])
 
-  await addDefaultCustomFieldDefinitions(knex)
+  await addDefaultCustomFieldDefinitions(knex, partnerOneId)
 }

@@ -106,7 +106,8 @@ function InventoryAdjustmentDialog(props) {
         const isFormValid =
           !Object.keys(errors).length &&
           Object.keys(touched).length > 0 &&
-          (!uiTransfer || (uiTransfer && values.quantity && values.toSiteId))
+          (!uiTransfer || (values.quantity && values.toSiteId)) &&
+          (values.reason?.externalId !== 'other' || !!values.notes?.trim())
 
         return (
           <AspectDialog
@@ -347,15 +348,14 @@ function InventoryAdjustmentDialog(props) {
                   </p>
                 ) : null}
 
-                {actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ? (
-                  <ConsumableReasonSelect
-                    name="reasonId"
-                    error={errors?.reason}
-                    label={formatMessage(messages.reason)}
-                    value={values?.reason ?? null}
-                    onChange={reason => setFieldValue('reason', reason)}
-                  />
-                ) : null}
+                <ConsumableReasonSelect
+                  name="reasonId"
+                  error={errors?.reason}
+                  label={formatMessage(messages.reason)}
+                  value={values?.reason ?? null}
+                  onChange={reason => setFieldValue('reason', reason)}
+                  filterType={actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ? 'decrease' : 'increase'} // Map actionType to filterType
+                />
 
                 {values?.reason?.i18nKey === 'ConsumableReason_TestConducted' ? (
                   <>
@@ -405,6 +405,7 @@ function InventoryAdjustmentDialog(props) {
 
                 <TextField
                   fullWidth
+                  required={values.reason?.externalId === 'other'}
                   type="notes"
                   name="notes"
                   label={formatMessage(messages.notes)}
@@ -413,8 +414,19 @@ function InventoryAdjustmentDialog(props) {
                   multiline
                   rows={2}
                   margin="normal"
+                  error={!!errors.notes}
+                  helperText={errors.notes}
                   FormHelperTextProps={{
                     margin: 'dense',
+                    classes: {
+                      error: styles.Field__error__message,
+                    },
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                    classes: {
+                      error: styles.Field__label__when__error,
+                    },
                   }}
                   inputProps={{ maxLength: 2000 }}
                 />
