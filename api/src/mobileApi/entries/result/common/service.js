@@ -72,7 +72,7 @@ async function fetchEntriesServiceHandler(request) {
     )
 
     let transformedResults = []
-    if (_.isEmpty(results)) {
+    if (!_.isEmpty(results)) {
       const acknowledgements = await getAcknowledgementsByResultIds(results)
       const flags = await getFlagsByResultIds(results)
       const userSiteIds = await getUserSiteIds(dataConstraints)
