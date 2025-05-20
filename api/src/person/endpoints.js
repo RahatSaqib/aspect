@@ -35,7 +35,7 @@ function listContactBaseConfig() {
           .description('The array of {tagName,tagId} assigned to persons'),
         contactStatus: Joi.number().allow('').description('Filter for person enabled/disabled'),
         ...validateAllGeographyFilterParams(),
-        ...validateSortPageParams('name', 'level', 'state', 'lga', 'tags'),
+        ...validateSortPageParams('name', 'assignments', 'state', 'lga', 'email', 'cell', 'phone', 'lastLogin'),
       },
     },
   }
