@@ -50,14 +50,6 @@ export function formatDate(date) {
   return formatBase(date, 'dateFormat')
 }
 
-export function formatTime(date) {
-  return formatBase(date, 'timeFormat')
-}
-
-export function formatDateTime(date) {
-  return formatBase(date, 'dateTimeFormat')
-}
-
 // TODO: Temporary solution to show dates coming in UTC format ('Z') but that were previously offset in the back.
 export function formatDateTimeWithoutTimezone(date) {
   if (!date) return ''
