@@ -98,23 +98,6 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
     ) ${alias ? ` as ${alias}` : ''}`)
 
 /**
- * - NOTE: This function is obsolete and should be replaced by {@link getDateTimeProjectionInTimeZoneIANA}
- * - Generates knex code to project a datetime field in the specified timezone.
- * @deprecated use {@link getDateTimeProjectionInTimeZoneIANA} instead
- * @param {*} knex - Knex ref.
- * @param {string} field - Name of the field to select.
- * @param {string} offset - Time offset in ISO format (e.g. +05:00)
- * @param {string=} alias - Optional. name to be returned if you don't want the field name.
- * @returns Expression to be added to a Knex query, returning plain datetime value converted a specified TZ
- * @example
- * e.g.:
- * getDateTimeProjectionInUserTimeZone(knex, 'd.lastSeenOn', '+05:00', 'lastSeen')
- * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
- */
-const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
-  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`)
-
-/**
  * Generates knex code to project a datetime field in the specified timezone.
  * @param {*} knex - Knex ref.
  * @param {string} field - Name of the field to select.
@@ -375,7 +358,7 @@ function getDatesFromQuery(query) {
  * @param {string} timeZone - ISO 8601 timezone String (i.e. Australia/Canberra)
  * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
  * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
- * @description - Useful when you need to use {@link getDateTimeProjectionInUserTimeZone} or directly mysql CONVERT_TZ function,
+ * @description - Useful when you need to use mysql CONVERT_TZ function,
  * which takes as argument the time offset in the format this function returns.
  */
 function getOffsetFromTimeZone(timeZone, date = new Date()) {
@@ -531,7 +514,6 @@ module.exports = {
   getDateSubstring,
   getMonthYearField,
   getMonthYearUserTimeZoneField,
-  getDateTimeProjectionInUserTimeZone,
   getDateTimeExpressionInTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
