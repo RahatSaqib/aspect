@@ -11,7 +11,6 @@ function addClientRoutes(server) {
   server.route(require('./device/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./deviceMaintenanceStatus/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./deviceApiKey/endpoints').routes.map(decorateClientAPI('deviceApiKey')))
-  server.route(require('./deviceOperation/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./deviceType/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./geography/endpoints').routes.map(decorateClientAPI()))
   server.route(require('./person/endpoints').routes.map(decorateClientAPI('person')))
