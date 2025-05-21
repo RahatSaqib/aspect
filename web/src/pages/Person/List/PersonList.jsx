@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { TableBody, LinearProgress } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { LinearProgress, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
@@ -93,10 +93,14 @@ export const PersonList = () => {
                     sortColumnDir={sortDir}
                     columns={[
                       { key: 'name', label: formatMessage(messages.personName), sortable: true },
-                      { key: 'level', label: formatMessage(messages.level), sortable: true },
+                      { key: 'assignments', label: formatMessage(messages.assignments), sortable: true },
                       { key: 'state', label: getCustomMessage(formatMessage, messages, 'state', user), sortable: true },
                       { key: 'lga', label: getCustomMessage(formatMessage, messages, 'lga', user), sortable: true },
                       { key: 'tags', label: formatMessage(messages.tags), sortable: true },
+                      { key: 'email', label: formatMessage(messages.email), sortable: true },
+                      { key: 'cell', label: formatMessage(messages.cell), sortable: true },
+                      { key: 'phone', label: formatMessage(messages.phone), sortable: true },
+                      { key: 'lastLogin', label: formatMessage(messages.lastLogin), sortable: true },
                       isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
                     ]}
                   />
