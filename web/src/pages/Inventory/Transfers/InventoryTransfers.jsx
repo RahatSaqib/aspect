@@ -32,7 +32,7 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { strategyRequireExpirationDate, strategyRequireLot } from '../../../oldPages/inventory/strategyHelper'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import { formatDateTime } from '../../../utils/utils/dateFormat'
+import { formatDateTimeWithoutTimezone } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 import styles from './styles.module.css'
 
@@ -145,9 +145,11 @@ const InventoryTransfers = () => {
                     <TableBody>
                       {data.data.map(row => (
                         <TableRow key={row.sentOn}>
-                          <TableCell>{formatDateTime(row.sentOn)}</TableCell>
+                          <TableCell>{formatDateTimeWithoutTimezone(row.sentOn)}</TableCell>
                           <TableCell>
-                            {row.receivedOn ? formatDateTime(row.receivedOn) : formatMessage(messages.notAvailable)}
+                            {row.receivedOn
+                              ? formatDateTimeWithoutTimezone(row.receivedOn)
+                              : formatMessage(messages.notAvailable)}
                           </TableCell>
                           <TableCell>{formatMessage(consumables[row.consumableNameI18nKey])}</TableCell>
                           <TableCell>{row.receivedQuantity || formatMessage(messages.notAvailable)}</TableCell>
