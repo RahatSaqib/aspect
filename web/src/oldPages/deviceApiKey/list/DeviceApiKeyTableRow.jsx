@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FaCheck, FaRegCopy } from 'react-icons/fa'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
-import { formatDateWithoutTimezone } from '../../../utils/utils/dateFormat'
+import { formatDate } from '../../../utils/utils/dateFormat'
 import styles from './DeviceApiKeyTableRow.module.css'
 
 const DeviceApiKeyTableRow = ({ deviceApiKey, disabled, checked, onSelectedChange, onRevokedChange, ...restProps }) => {
@@ -36,7 +36,7 @@ const DeviceApiKeyTableRow = ({ deviceApiKey, disabled, checked, onSelectedChang
           onChange={onSelectedChange}
         />
       </TableCell>
-      <TableCell>{formatDateWithoutTimezone(deviceApiKey.createdOn)}</TableCell>
+      <TableCell>{formatDate(deviceApiKey.createdOn)}</TableCell>
       <TableCell>
         {deviceApiKey.token}{' '}
         {!copied ? (
