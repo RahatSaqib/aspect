@@ -16,7 +16,7 @@ const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getDoNotUseModulesReportData } = require('./doNotUseModulesReport')
-const getDevicesWithCountsForTB = require('./genXpertTbWorkloadReport')
+const { getDevicesWithCountsForTB } = require('./genXpertTbWorkloadReport')
 const { getAllDeviceReportData } = require('./deviceAndSiteSummaryReport')
 const { getResultCategoryGroupColumns, getUnusedModulesReportData } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
@@ -503,9 +503,9 @@ async function getModuleStatusReport(auth, query) {
   }
 }
 
-async function getDevicesWithCountsForTBReport(auth, query, timezone) {
+async function getDevicesWithCountsForTBReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getDevicesWithCountsForTB(dataConstraints, query, timezone)
+  const rows = await getDevicesWithCountsForTB(dataConstraints, query, timezoneIANA)
 
   return {
     ok: true,
