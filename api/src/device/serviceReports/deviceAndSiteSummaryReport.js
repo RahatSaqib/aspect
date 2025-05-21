@@ -4,7 +4,7 @@ const { getInventoryBySitesAndConsumableQuery } = require('../../inventory/commo
 const { getConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { getBasicsForDevicesReport } = require('../common/db')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 // --------------------------------------------------------------------------
 const {
@@ -13,7 +13,7 @@ const {
 } = require('../../result/query/querySelectors')
 
 // --------------------------------------------------------------------------
-async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezone) {
+async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezoneIANA) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
 
   const resultCategoryGroupsColumns = Object.fromEntries(
@@ -73,12 +73,12 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
         'lg.name AS districtName',
         'd.serial AS serial',
         'd.lastInstrumentSerial AS instrumentSerial',
-        getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', timezone, 'lastPingOn'),
+        getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastPingOn', timezoneIANA, 'lastPingOn'),
         'd.lastPingFromIp AS lastPingFrom',
-        getDateTimeProjectionInUserTimeZone(
+        getDateTimeProjectionInTimeZoneIANA(
           knex,
           'COALESCE(configurationData->>"$.systemTime.localTime", configurationData->>"$.systemTime")',
-          timezone,
+          timezoneIANA,
           'informationDate'
         ),
         knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS operativeSystem'),
@@ -88,13 +88,13 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
         knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
         knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
         // The deviceApi doesn't populate d.putInService well, so we are going to get it from configurationData until we fix that
-        getDateTimeProjectionInUserTimeZone(
+        getDateTimeProjectionInTimeZoneIANA(
           knex,
           'COALESCE(d.putInService, d.configurationData->>"$.putInService")',
-          timezone,
+          timezoneIANA,
           'instalationDate'
         ),
-        getDateTimeProjectionInUserTimeZone(knex, 'resultsCount.lastUploadOn', timezone, 'lastUploadOn'),
+        getDateTimeProjectionInTimeZoneIANA(knex, 'resultsCount.lastUploadOn', timezoneIANA, 'lastUploadOn'),
         knex.raw('dms.name AS status'),
         knex.raw('dmsl.data ->> "$.notes" AS statusNote'),
         ...resultCategoryGroups.map(a => knex.raw(`IFNULL(resultsCount.${a.columnKey}, 0) AS ${a.columnKey}`)),
