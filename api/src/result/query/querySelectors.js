@@ -1,5 +1,5 @@
 const { knex } = require('../../db')
-const { getDateTimeProjectionInUserTimeZone, getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 const COMMON_LIST_FIELDS_UTC = {
   id: 'r.id',
@@ -82,7 +82,7 @@ const COMMON_LIST_FIELDS_UTC = {
  * @param {string} userTimeOffset
  * @returns Knex projection
  */
-const getReportCommonFieldsTZ = userTimeOffset => ({
+const getReportCommonFieldsTZ = timezoneIANA => ({
   patientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))'),
   sampleId: 'sp.externalId',
   patientAge: knex.raw(
@@ -102,7 +102,7 @@ const getReportCommonFieldsTZ = userTimeOffset => ({
   errorCode: 'r.errorCode',
   copies: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies"))'),
   caseExternalId: 'ca.externalId',
-  endedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', userTimeOffset),
+  endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
 })
 
 /**

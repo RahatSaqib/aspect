@@ -3,12 +3,7 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { format, addMonths, startOfDay, endOfDay } = require('date-fns')
 const Promise = require('bluebird')
-const {
-  getOffsetFromIsoDateString,
-  getAllMonthsInRange,
-  getMonthYearField,
-  returnIso8601StringWithoutTimeZoneOffset,
-} = require('../shared/date')
+const { getAllMonthsInRange, getMonthYearField, returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const {
@@ -1527,10 +1522,9 @@ async function updateTransferNotification(request) {
 }
 
 // ---------------------------------------------------------------
-async function getResultsForReport(auth, query) {
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+async function getResultsForReport(auth, query, timezoneIANA) {
   // for now call existing function, but later add here a query with different aggregations
-  return getListResults(query, auth, getReportCommonFieldsTZ(userTimeOffset))
+  return getListResults(query, auth, getReportCommonFieldsTZ(timezoneIANA))
 }
 
 async function currentResultAggregations(request) {
