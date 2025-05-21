@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { format, startOfMonth, endOfMonth, startOfDay, endOfDay, parseISO } = require('date-fns')
-const { replaceOffset, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
+const { replaceOffset, getDateTimeProjectionInTimeZoneIANA } = require('../shared/date')
 const { XDR_RESISTANCES, /* XDR_RESISTANCES_COMBO, */ XDR_RESISTANCE_VALUES } = require('../shared/constants')
 const {
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY: { mtbNoResultInvalidIndeterminate, mtbErrorByCode, mtbOtherErrorsNotIn },
@@ -160,7 +160,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
     `),
       knex.raw(
         `DATE_FORMAT(
-        ${getDateTimeProjectionInUserTimeZone(knex, knex.raw(`IFNULL(r.endedOn, r.startedOn)`), timeZoneIANA)}, 
+        ${getDateTimeProjectionInTimeZoneIANA(knex, knex.raw(`IFNULL(r.endedOn, r.startedOn)`), timeZoneIANA)}, 
         "${timeFrameFormat}"
       ) as startedOnTimeFrame`
       ),
