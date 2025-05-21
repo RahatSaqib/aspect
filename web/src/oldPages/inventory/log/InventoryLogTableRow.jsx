@@ -11,7 +11,7 @@ import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
-import { formatDate, formatDateTime } from '../../../utils/utils/dateFormat'
+import { formatDateTimeWithoutTimezone } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
 const TEST_CONDUCTED_EXTERNAL_ID = 'used'
@@ -26,8 +26,8 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
       <TableCell className={styles.TableCell}>
         {inventoryLogItem.createdOn
           ? inventoryLogItem.consumableReasonExternalId === 'test_conducted'
-            ? formatDate(inventoryLogItem.createdOn)
-            : formatDateTime(inventoryLogItem.createdOn)
+            ? inventoryLogItem.createdOn
+            : formatDateTimeWithoutTimezone(inventoryLogItem.createdOn)
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.siteName}</TableCell>
@@ -115,8 +115,8 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
       <TableCell className={styles.TableCell}>
         {inventoryLogItem.transactionDate
           ? inventoryLogItem.consumableReasonExternalId === 'test_conducted'
-            ? formatDate(inventoryLogItem.transactionDate)
-            : formatDateTime(inventoryLogItem.transactionDate)
+            ? inventoryLogItem.transactionDate
+            : formatDateTimeWithoutTimezone(inventoryLogItem.transactionDate)
           : formatMessage(messages.notAvailable)}
       </TableCell>
     </TableRow>
