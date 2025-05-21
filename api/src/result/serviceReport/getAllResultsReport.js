@@ -5,10 +5,10 @@ const flat = require('flat')
 const startCase = require('lodash/startCase')
 const { assayToId } = require('../../shared/dictionary')
 const { knex, sortPageParams } = require('../../db')
-const { getPersonByPersonId } = require('../../auth/service')
+const { getPersonByPersonId, getUser } = require('../../auth/service')
 const { getAllAssaySchemas } = require('../../assay/service')
-const { getSelectCommonListFieldsTZ, SORT_FIELDS } = require('../query')
-const { getOffsetFromIsoDateString } = require('../../shared/date')
+const { SORT_FIELDS, COMMON_LIST_FIELDS_UTC } = require('../query')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 const { getQueryForResultsListAndExport, getCustomFieldsForResult } = require('../common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { XDR_RESISTANCES } = require('../../shared/constants')
@@ -116,9 +116,23 @@ module.exports = async (auth, query) => {
 }
 
 async function getResultsForExport(auth, query) {
-  const offset = getOffsetFromIsoDateString(query.maxDate)
+  const { timezoneIANA } = await getUser(auth.credentials.name)
+
   const selectFields = {
-    ...getSelectCommonListFieldsTZ(offset),
+    ...COMMON_LIST_FIELDS_UTC,
+    // override datetime fields with user time offset:
+    startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
+    endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
+    resultWorkflowChangedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rsl.changedOn', timezoneIANA),
+    consumableExpirationDate: getDateTimeProjectionInTimeZoneIANA(knex, 'r.consumableExpirationDate', timezoneIANA),
+    createdOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.createdOn', timezoneIANA),
+    updatedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.updatedOn', timezoneIANA),
+    sampleCollectedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'sp.collectedOn', timezoneIANA),
+    resultWorkflowLogCreatedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rsl.createdOn', timezoneIANA),
+    resultWorkflowLogChangedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rsl.changedOn', timezoneIANA),
+    resultTreatmentStatusChangedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rtsl.changedOn', timezoneIANA),
+    transferredOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rslog.createdOn', timezoneIANA),
+    firstViewedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.firstViewedOn', timezoneIANA),
     deviceStateName: 'stdpn.name',
     resultCategoryGroup: 'rcg.name',
   }

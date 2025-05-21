@@ -106,28 +106,6 @@ const getReportCommonFieldsTZ = userTimeOffset => ({
 })
 
 /**
- * Knex projection for use in @see {service.getResultsForExport}, which is used to export results to a CSV file
- * @param {string} userTimeOffset
- * @returns Projection to be used in query with datetime fields on specified time zone
- */
-const getSelectCommonListFieldsTZ = userTimeOffset => ({
-  ...COMMON_LIST_FIELDS_UTC,
-  // override datetime fields with user time offset:
-  startedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.startedOn', userTimeOffset),
-  endedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', userTimeOffset),
-  resultWorkflowChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.changedOn', userTimeOffset),
-  consumableExpirationDate: getDateTimeProjectionInUserTimeZone(knex, 'r.consumableExpirationDate', userTimeOffset),
-  createdOn: getDateTimeProjectionInUserTimeZone(knex, 'r.createdOn', userTimeOffset),
-  updatedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.updatedOn', userTimeOffset),
-  sampleCollectedOn: getDateTimeProjectionInUserTimeZone(knex, 'sp.collectedOn', userTimeOffset),
-  resultWorkflowLogCreatedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.createdOn', userTimeOffset),
-  resultWorkflowLogChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.changedOn', userTimeOffset),
-  resultTreatmentStatusChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rtsl.changedOn', userTimeOffset),
-  transferredOn: getDateTimeProjectionInUserTimeZone(knex, 'rslog.createdOn', userTimeOffset),
-  firstViewedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.firstViewedOn', userTimeOffset),
-})
-
-/**
  * Knex projection to be shown in the UI result list
  */
 const LIST_FIELDS_UTC = {
@@ -626,8 +604,8 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
 }
 
 module.exports = {
-  getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
+  COMMON_LIST_FIELDS_UTC,
   SELECT_FIELDS_UTC,
   LIST_FIELDS_UTC,
   SORT_FIELDS,

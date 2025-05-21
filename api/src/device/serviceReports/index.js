@@ -9,7 +9,7 @@ const { getConstraints, addConstraints } = require('../../auth/constraints')
 const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
-  getDateTimeProjectionInUserTimeZone,
+  getDateTimeProjectionInTimeZoneIANA,
   getWorkingDays,
 } = require('../../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
@@ -48,7 +48,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
   return dateFields
 }
 
-async function getDeviceActivityReport(auth, query) {
+async function getDeviceActivityReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true }).whereNotIn(
@@ -58,7 +58,6 @@ async function getDeviceActivityReport(auth, query) {
   const extraField = query.select ? query.select.split(' as ')[1].trim() : null
 
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
-  const offset = getOffsetFromIsoDateString(maxDate)
   const addingGroupingAndSelect = (builder, { select, groupBy }) => {
     if (extraField) {
       if (select) builder.select(select)
@@ -99,7 +98,7 @@ async function getDeviceActivityReport(auth, query) {
       result: 'r',
     })
     .groupBy('r.deviceId')
-    .select('r.deviceId', getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn'))
+    .select('r.deviceId', getDateTimeProjectionInTimeZoneIANA(knex, 'MAX(r.updatedOn)', timezoneIANA, 'lastUploadOn'))
 
   const devicesData = await deviceQuery
     .clone()
@@ -172,9 +171,8 @@ async function getModuleSwapsReport(auth, query) {
   return dataset
 }
 
-async function getGeneXpertIssuesReport(auth, query) {
+async function getGeneXpertIssuesReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const offset = getOffsetFromIsoDateString(query.maxDate)
   // get rows
   const issues = await knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -208,7 +206,7 @@ async function getGeneXpertIssuesReport(auth, query) {
       site: 's',
     })
     .modify(sortPageParams, query, 'i.createdOn')
-    .select(getDateTimeProjectionInUserTimeZone(knex, 'i.createdOn', offset, 'triggeredOn'))
+    .select(getDateTimeProjectionInTimeZoneIANA(knex, 'i.createdOn', timezoneIANA, 'triggeredOn'))
     .select(
       's.name as siteName',
       'st.name as stateName',
