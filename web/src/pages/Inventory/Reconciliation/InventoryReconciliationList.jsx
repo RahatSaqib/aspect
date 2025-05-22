@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import { Table, TableBody, TableRow } from '@mui/material'
-import { formatInTimeZone } from 'date-fns-tz'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
@@ -10,7 +9,8 @@ import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { DataTableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import { getTimezoneById } from '../../../utils/utils/timezone'
+import { formatDate } from '../../../utils/utils/dateFormat'
+import messages from './messages'
 import { getColumns } from './tools'
 
 export function InventoryReconciliationList(props) {
@@ -18,7 +18,6 @@ export function InventoryReconciliationList(props) {
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
   const user = useAuthState()
-  const validTimeZone = getTimezoneById(user.timezoneId)
   const { formatMessage } = useIntl()
   const columns = useMemo(
     () => getColumns(formatMessage, { breakOutByLot, requireLotNumber, requireExpirationDate, user }),
@@ -40,10 +39,14 @@ export function InventoryReconciliationList(props) {
               <>
                 {requireExpirationDate ? (
                   <DataTableCell>
-                    {item.expiresOn ? formatInTimeZone(new Date(item.expiresOn), validTimeZone, 'yyyy-MM-dd') : ''}
+                    {item.expiresOn ? formatDate(item.expiresOn) : formatMessage(messages.notAvailable)}
                   </DataTableCell>
                 ) : null}
-                {requireLotNumber ? <DataTableCell>{item.lotNumber}</DataTableCell> : null}
+                {requireLotNumber ? (
+                  <DataTableCell>
+                    {item.lotNumber ? item.lotNumber : formatMessage(messages.notAvailable)}
+                  </DataTableCell>
+                ) : null}
               </>
             ) : null}
             <DataTableCell

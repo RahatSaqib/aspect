@@ -11,7 +11,7 @@ import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
-import { formatDateTime } from '../../../utils/utils/dateFormat'
+import { formatDate, formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
 const TEST_CONDUCTED_EXTERNAL_ID = 'used'
@@ -26,7 +26,7 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
       <TableCell className={styles.TableCell}>
         {inventoryLogItem.createdOn
           ? inventoryLogItem.consumableReasonExternalId === 'test_conducted'
-            ? inventoryLogItem.createdOn
+            ? formatDate(inventoryLogItem.createdOn)
             : formatDateTime(inventoryLogItem.createdOn)
           : formatMessage(messages.notAvailable)}
       </TableCell>
@@ -53,7 +53,7 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
             }
           >
             {inventoryLogItem.expirationDate
-              ? inventoryLogItem.expirationDate.split('T')[0]
+              ? formatDate(inventoryLogItem.expirationDate)
               : formatMessage(messages.notAvailable)}
           </span>
         </TableCell>
