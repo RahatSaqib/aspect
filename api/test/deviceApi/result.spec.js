@@ -516,7 +516,7 @@ describe('Device Result API routes', () => {
         assert.notEqual(getResultResponse5.body.name, deviceChangedName)
       }))
 
-    it('should set the origin site details of the sample', () =>
+    it('should set the origin site details of the sample on insert', () =>
       runTest(async knex => {
         const resultIds = []
         const { deviceId, clientAuth, deviceAuth, now } = context
@@ -572,6 +572,7 @@ describe('Device Result API routes', () => {
         assert.equal(resultSampleOriginSite.externalId, existingSiteExternalId)
         assert.equal(resultSampleOriginSite.id, existingSiteId)
 
+        // Try to update the origin site - should not change
         const expectedSampleOriginSite = {
           id: existingSiteId,
           externalId: existingSiteExternalId,
@@ -626,7 +627,9 @@ describe('Device Result API routes', () => {
           .leftJoin('Lga as l', 'g.lgaId', 'l.id')
           .where('r.id', lastResultId)
           .first('si.*', 'st.name as stateName', 'l.name as lgaName')
-        expect(updatedResultSampleOriginSite).to.containSubset(expectedSampleOriginSite)
+        // Origin site should remain unchanged
+        assert.equal(updatedResultSampleOriginSite.externalId, existingSiteExternalId)
+        assert.equal(updatedResultSampleOriginSite.id, existingSiteId)
       }))
 
     it('should set result status with different updatedOn parameters', () =>
