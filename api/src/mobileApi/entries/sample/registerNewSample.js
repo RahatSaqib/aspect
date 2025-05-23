@@ -14,6 +14,7 @@ const {
   allResultSourceToId,
   allResultTypeToId,
 } = require('../../../shared/dictionary')
+const config = require('../../../config')
 
 async function registerNewSample(request) {
   const {
@@ -85,9 +86,9 @@ async function registerNewSample(request) {
 
   const [newSample] = await insertNewSample(payloadForDb, request.auth)
 
-  // if (process.env['seeds.directory'] === './seeds/development' || config.acceptFakeResults) {
-  await createFakeResult(payload.originSiteId, newSample) // uncomment the above comments when merging to `master` branch
-  // }
+  if (process.env['seeds.directory'] === './seeds/development' || config.acceptFakeResults) {
+    await createFakeResult(payload.originSiteId, newSample)
+  }
   return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample) }
 }
 
