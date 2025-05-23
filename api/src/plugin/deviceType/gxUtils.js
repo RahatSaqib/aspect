@@ -105,6 +105,7 @@ async function preProcessMergeResult(context) {
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
 
   const sampleId = extractSampleId(payload)
+  _.set(payload, 'sample.id', sampleId)
 
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id
