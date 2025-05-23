@@ -15,7 +15,7 @@ const {
   badCategorizedResults,
   badCategorizedResults2,
 } = require('./HIV_VL_payload')
-const { getResultCategories } = require('../../../src/plugin/deviceType/gxUtils')
+const { getResultCategories, extractSampleId } = require('../../../src/plugin/deviceType/gxUtils')
 
 describe('Extracting data from Result Text HIV VL', () => {
   it('it extract the number of copies and categorizes it', () => {
@@ -95,5 +95,56 @@ describe('Extracting data from Result Text HIV VL', () => {
       const [{ id: categoryExternalId }] = getResultCategories(assayExternalId, resultText)
       assert.equal(categoryExternalId, elem.expectedCategory)
     })
+  })
+})
+
+describe('extractSampleId', () => {
+  it('should extract sample ID from payload.sample.id when valid', () => {
+    const payload = {
+      sample: {
+        id: '123-456789-123',
+      },
+    }
+    assert.equal(extractSampleId(payload), '123-456789-123')
+  })
+
+  it('must return payload.sample.id, even an invalid one, if there is not a valid one in notes', () => {
+    const payload = {
+      sample: {
+        id: 'invalid-format',
+      },
+    }
+    assert.equal(extractSampleId(payload), 'invalid-format')
+  })
+
+  it('should extract sample ID from notes when payload.sample.id is missing', () => {
+    const payload = {
+      notes: 'Sample ID: 123-456789-123 was processed',
+    }
+    assert.equal(extractSampleId(payload), '123-456789-123')
+  })
+
+  it('should extract sample ID from notes when payload.sample.id is invalid', () => {
+    const payload = {
+      sample: {
+        id: 'invalid-format',
+      },
+      notes: 'Sample ID: 123-456789-123 was processed',
+    }
+    assert.equal(extractSampleId(payload), '123-456789-123')
+  })
+
+  it('should return null when no valid sample ID is found', () => {
+    const payload = {
+      notes: 'No sample ID in this note',
+    }
+    assert.isNull(extractSampleId(payload))
+  })
+
+  it('should extract first valid sample ID when multiple are present in notes', () => {
+    const payload = {
+      notes: 'Sample IDs: 123-456789-123 and 456-789123-456 were processed',
+    }
+    assert.equal(extractSampleId(payload), '123-456789-123')
   })
 })
