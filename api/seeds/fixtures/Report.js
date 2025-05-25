@@ -7,7 +7,7 @@ const xdrDevicesSummary = {
   availableForNotification: 1,
   fileName: 'XdrDevicesSummary',
   exportCsv: false,
-  sortOrder: 101,
+  sortOrder: 50,
   validations: [],
   sheets: [
     {
@@ -28,7 +28,7 @@ const mtbDetectedRRDetected = {
   i18nKeyDescription: 'MTB_Detected_RR_Detected_description',
   externalId: 'mtb_detected_rr_detected',
   fileName: 'MTB_Detected_RR_Detected',
-  sortOrder: 0,
+  sortOrder: 40,
   availableForNotification: 1,
   validations: [],
   sheets: [
@@ -52,7 +52,7 @@ const allResults = {
   i18nKeyDescription: 'all_results_description',
   externalId: 'all_results',
   fileName: 'All_results',
-  sortOrder: 0,
+  sortOrder: 20,
   availableForNotification: 1,
   exportCsv: true,
   exportExcel: true,
@@ -80,7 +80,7 @@ const criticalErrorsByDevice = {
   externalId: 'critical_errors_by_device',
   fileName: 'DevicesWithErrors',
   availableForNotification: 1,
-  sortOrder: 2,
+  sortOrder: 150,
   validations: ['dateRangeRequired'],
   sheets: [
     {
@@ -118,7 +118,7 @@ const criticalErrorsByModule = {
   fileName: 'ModulesWithErrors',
   exportCsv: true,
   exportExcel: true,
-  sortOrder: 2,
+  sortOrder: 280,
   validations: ['dateRangeRequired'],
   sheets: [
     {
@@ -136,7 +136,7 @@ const rifResistanceRate = {
   externalId: 'rif_resistance_rate',
   i18nKeyDescription: 'RIF_Resistance_Rate_description',
   fileName: 'RifResistanceRate',
-  sortOrder: 3,
+  sortOrder: 80,
   availableForNotification: 1,
   validations: [],
   sheets: [
@@ -156,7 +156,7 @@ const resultsHivNotSuppressed = {
   i18nKeyDescription: 'results_hiv_not_suppressed_description',
   fileName: 'HIVNotSuppressed',
   availableForNotification: 1,
-  sortOrder: 4,
+  sortOrder: 160,
   validations: [],
   sheets: [
     {
@@ -182,7 +182,7 @@ const deviceActivity = {
   i18nKeyDescription: 'device_activity_description',
   fileName: 'deviceActivity',
   availableForNotification: 1,
-  sortOrder: 5,
+  sortOrder: 90,
   validations: [],
   sheets: [
     {
@@ -219,7 +219,7 @@ const deviceUtilizationReport = {
   i18nKeyDescription: 'device_utilization_description',
   fileName: 'deviceUtilization',
   availableForNotification: 1,
-  sortOrder: 7,
+  sortOrder: 110,
   validations: [],
   sheets: [
     {
@@ -243,7 +243,7 @@ const deviceActivityPercent = {
   externalId: 'device_activity_percent',
   i18nKeyDescription: 'device_activity_percent_description',
   fileName: 'deviceActivityPercent',
-  sortOrder: 6,
+  sortOrder: 100,
   availableForNotification: 1,
   validations: [],
   sheets: [
@@ -268,7 +268,7 @@ const moduleSwaps = {
   fileName: 'moduleSwaps',
   i18nKeyDescription: 'moduleSwapsReport_description',
   availableForNotification: 1,
-  sortOrder: 7,
+  sortOrder: 250,
   validations: [],
   sheets: [
     {
@@ -292,7 +292,7 @@ const deviceCalibrationReport = {
   externalId: 'device_calibration_report',
   fileName: 'DeviceCalibrationReport',
   availableForNotification: 1,
-  sortOrder: 8,
+  sortOrder: 120,
   validations: [],
   sheets: [
     {
@@ -317,7 +317,7 @@ const geneXpertIssues = {
   i18nKeyDescription: 'geneXpertIssues_description',
   externalId: 'genexpert_issues',
   fileName: 'geneXpertIssues',
-  sortOrder: 9,
+  sortOrder: 30,
   validations: [],
   sheets: [
     {
@@ -342,7 +342,7 @@ const utilizationPerInstrumentDayReport = {
   i18nKeyDescription: 'deviceUtilizationPerDayDescription',
   fileName: 'deviceUtilizationPerDay',
   availableForNotification: 1,
-  sortOrder: 11,
+  sortOrder: 130,
   validations: [],
   sheets: [
     {
@@ -362,7 +362,7 @@ const moduleActivityReport = {
   fileName: 'ModuleActivityReport',
   availableForNotification: 1,
   exportCsv: true,
-  sortOrder: 120,
+  sortOrder: 230,
   validations: [],
   sheets: [
     {
@@ -382,7 +382,7 @@ const doNotUseModulesReport = {
   fileName: 'DoNotUseModulesReport',
   availableForNotification: 1,
   exportCsv: false,
-  sortOrder: 125,
+  sortOrder: 260,
   validations: [],
   sheets: [
     {
@@ -402,7 +402,7 @@ const unusedModulesReport = {
   fileName: 'unusedModulesReport',
   availableForNotification: 1,
   exportCsv: true,
-  sortOrder: 125,
+  sortOrder: 270,
   validations: [],
   sheets: [
     {
@@ -424,7 +424,7 @@ const moduleStatusReport = {
   availableForNotification: 1,
   exportCsv: true,
   exportExcel: true,
-  sortOrder: 130,
+  sortOrder: 240,
   validations: [],
   sheets: [
     {
@@ -444,7 +444,7 @@ const reportCustomFieldsCompletion = {
   fileName: 'ReportCustomFieldsCompletion',
   availableForNotification: 1,
   exportCsv: false,
-  sortOrder: 13,
+  sortOrder: 200,
   validations: [],
   sheets: [
     {
@@ -467,7 +467,7 @@ const inventoryLog = {
   i18nKeyDescription: 'inventoryLogDescription',
   fileName: 'InventoryLog',
   exportCsv: false,
-  sortOrder: 14,
+  sortOrder: 290,
   validations: [],
   sheets: [
     {
@@ -490,7 +490,7 @@ const tbWorkloadSummary = {
   availableForNotification: 1,
   fileName: 'ReportTBWorkloadSummary',
   exportCsv: false,
-  sortOrder: 15,
+  sortOrder: 70,
   validations: [],
   sheets: [
     {
@@ -536,7 +536,7 @@ const usageStats = {
   exportCsv: false,
   exportExcel: true,
   availableForNotification: 1,
-  sortOrder: 140,
+  sortOrder: 180,
   validations: [],
   sheets: [
     {
@@ -567,7 +567,7 @@ const geneXpertTBWorkloadReport = {
   fileName: 'GeneXpert_TB_Workload',
   exportCsv: false,
   availableForNotification: 1,
-  sortOrder: 150,
+  sortOrder: 10,
   validations: [],
   sheets: [
     {
@@ -594,7 +594,7 @@ const deviceAndSiteSummaryReport = {
   fileName: 'DeviceAndSiteSummaryReport',
   exportCsv: false,
   availableForNotification: 1,
-  sortOrder: 150,
+  sortOrder: 140,
   validations: ['dateRangeRequired'],
   sheets: [
     /**
@@ -706,7 +706,7 @@ const dataExtract = {
   i18nKeyDescription: 'data_extract_description',
   externalId: 'data_extract',
   fileName: 'DataExtract',
-  sortOrder: 0,
+  sortOrder: 210,
   availableForNotification: 0,
   exportCsv: true,
   exportExcel: false,
@@ -735,7 +735,7 @@ const inventoryNoStock = {
   i18nKeyDescription: 'no_stock_description',
   externalId: 'no_stock',
   fileName: 'NoStock',
-  sortOrder: 0,
+  sortOrder: 300,
   availableForNotification: 1,
   exportCsv: false,
   exportExcel: true,
@@ -764,7 +764,7 @@ const resultNotificationsReport = {
   exportCsv: false,
   exportExcel: true,
   availableForNotification: 1,
-  sortOrder: 160,
+  sortOrder: 190,
   validations: [],
   sheets: [
     {
@@ -789,7 +789,7 @@ const xpertSiteSummaryReportSiteWise = {
   fileName: 'xpertSiteSummaryReportSiteWise',
   exportCsv: false,
   exportExcel: true,
-  sortOrder: 0,
+  sortOrder: 60,
   validations: [],
   sheets: [
     {
@@ -813,7 +813,7 @@ const unreconciledInventoryReport = {
   fileName: 'UnReconciledInventoryReport',
   exportCsv: false,
   exportExcel: true,
-  sortOrder: 0,
+  sortOrder: 310,
   validations: [],
   sheets: [
     {
