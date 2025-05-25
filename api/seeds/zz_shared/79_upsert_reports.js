@@ -1,4 +1,4 @@
-const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_functions')
+const updateReportsAndJobFunctions = require('../common/upsert_reports_and_job_functions')
 /* eslint-disable import/no-dynamic-require */
 const {
   partner: { externalId: partnerExternalId },
