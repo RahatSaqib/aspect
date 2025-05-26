@@ -96,8 +96,12 @@ function generateAppId(deviceCode) {
     throw new Error('Invalid device code provided')
   }
 
-  const hash = crypto.createHash('sha256').update(deviceCode).digest('hex')
-  return hash.slice(0, 4).toUpperCase()
+  const hash = crypto
+    .createHash('sha256')
+    .update(deviceCode)
+    .digest('hex')
+    .replace(/[^0-9]/g, '')
+  return hash.slice(0, 3).toUpperCase()
 }
 
 /**
