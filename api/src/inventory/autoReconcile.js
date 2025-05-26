@@ -9,7 +9,8 @@ async function autoReconcile(request) {
   const { auth, payload, plugins } = request
   const { partnerId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
-  const [, data] = await getReconciliationList(payload, dataConstraints)
+  // TODO: remove hardcoded size
+  const [, data] = await getReconciliationList({ payload, size: 30000 }, dataConstraints)
   const messageContext = plugins?.messageContext || messageContext
   /* eslint-disable no-await-in-loop */
   for (const missingInventoryGroup of data) {

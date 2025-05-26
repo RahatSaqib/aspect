@@ -98,7 +98,7 @@ function getInventoryByLotQuery(request, dataConstraints, consumableStrategy) {
           'r.consumableExpirationDate as expiresOn',
           knex.raw('COUNT(*) as unreconciledCount')
         )
-        .groupBy('r.siteId', 'c.id')
+        .groupBy('r.siteId', 'ca.consumableId')
         .as('unreconciled'),
       builder => {
         builder.on('unreconciled.siteId', 's.id').andOn('unreconciled.consumableId', 'c.id')
