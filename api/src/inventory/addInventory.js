@@ -55,7 +55,7 @@ module.exports = async function (request) {
 
     const physicalCountConsumableReasonId = await consumableReasonToId('physical_count')
     if (consumableReasonId === physicalCountConsumableReasonId) {
-      await deleteMissingInventoryLots(knex, {
+      await updateResultsToReconciled(knex, {
         toSite,
         consumableId,
         partnerId,
@@ -78,21 +78,23 @@ module.exports = async function (request) {
   }
 }
 
-async function deleteMissingInventoryLots(knex, { toSite, consumableId, partnerId, lotNumber, expiresOn }) {
+async function updateResultsToReconciled(knex, { toSite, consumableId, partnerId, lotNumber, expiresOn }) {
   const consumableStrategy = await getConsumableStrategy(partnerId)
-  const qb = knex('MissingInventoryLots as mil').where({
-    'mil.siteId': toSite.id,
-    'mil.consumableId': consumableId,
+  const qb = knex('Result as r').join('ConsumableAssay as ca', 'ca.assayId', 'r.assayId').where({
+    'r.siteId': toSite.id,
+    'ca.consumableId': consumableId,
   })
 
   consumableStrategy
     .filterFields({
-      lotNumberField: { 'mil.lotNumber': lotNumber },
-      expiresOnField: { 'mil.expirationDate': parseDateOrDefault(expiresOn) || null },
+      lotNumberField: { 'r.consumableLot': lotNumber },
+      expiresOnField: { 'r.consumableExpirationDate': parseDateOrDefault(expiresOn) || null },
     })
     .forEach(condition => {
       qb.where(condition)
     })
 
-  await qb.delete()
+  await qb.update({
+    reconciliationDate: new Date(),
+  })
 }

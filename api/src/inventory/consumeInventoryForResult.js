@@ -33,15 +33,10 @@ async function consumeInventoryForResult({
   const assayConsumables = await selectAssayConsumables(knex, dataConstraints, assayId)
   const testConductedConsumableReasonId = await consumableReasonToId('test_conducted')
 
-  const { resultCountInDeviceLog } = await knex('DeviceLog as mil')
-    .where({ 'mil.resultId': resultId })
-    .count('mil.resultId as resultCountInDeviceLog')
-    .first()
-
-  const isResultInReconciliation = await knex('MissingInventoryLots as mil')
-    .where({
-      'mil.resultId': resultId,
-    })
+  const { isUnreconciledResult } = await knex('Result')
+    .whereNull('reconciliationDate')
+    .where('id', resultId)
+    .count('id as isUnreconciledResult')
     .first()
 
   return Promise.all(
@@ -56,15 +51,10 @@ async function consumeInventoryForResult({
         await updateSiteConsumable(knex, siteId, { modify: 'add', consumableId })
       }
 
-      const isUnreconciledResult = isResultInReconciliation && resultCountInDeviceLog > 0
-
       /**
-       * Process inventory based on the following conditions:
-       * 1. `isUnreconciledResult`: The result is flagged as unreconciled, requiring inventory processing.
-       * 2. `resultCountInDeviceLog === 0`:
-       *    The result is being processed for the first time (not in missing inventory lots and no prior logs).
+       * The result is flagged as unreconciled, requiring inventory processing.
        */
-      if (isUnreconciledResult || resultCountInDeviceLog === 0) {
+      if (isUnreconciledResult) {
         const inventoryItem = await findInventoryItem(knex, { siteId, consumableId, expiresOn, lotNumber, partnerId })
         const site = await getSite(siteId, dataConstraints)
         if (!inventoryItem || inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
@@ -117,16 +107,9 @@ async function consumeInventoryForResult({
           resultId,
         })
 
-        if (!res.ok && !isUnreconciledResult) {
-          // If the inventory adjustment fails, log the missing inventory lot
-          await knex('MissingInventoryLots').insert({
-            resultId,
-            consumableId,
-            expirationDate: expiresOn,
-            lotNumber,
-            siteId,
-            createdOn: now,
-            createdBy: userId,
+        if (res.ok) {
+          await knex('Result').where('id', resultId).update({
+            reconciliationDate: new Date(),
           })
         }
 

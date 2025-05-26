@@ -29,7 +29,7 @@ async function autoReconcile(request) {
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
-      const { missingInventoryLotId, resultId, assayId, startedOn, lotNumber, expirationDate } = missingInventory
+      const { resultId, assayId, startedOn, lotNumber, expirationDate } = missingInventory
 
       // eslint-disable-next-line no-loop-func
       await transact(async knex => {
@@ -47,8 +47,10 @@ async function autoReconcile(request) {
         })
 
         if (!consumableResults.some(res => !res.ok)) {
-          // Delete missingInventoryLots entry
-          await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
+          // Change result to reconciled
+          await knex('Result').where('id', resultId).update({
+            reconciliationDate: new Date(),
+          })
         }
       })
     }

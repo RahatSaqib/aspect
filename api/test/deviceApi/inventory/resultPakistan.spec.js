@@ -160,8 +160,9 @@ describe('inventory strategy for Pakistan', () => {
       .expect(200)
     const { aspectResultId: resultId } = res.body
 
-    const missingInventoryLots = await knex('MissingInventoryLots').where({
-      resultId,
+    const missingInventoryLots = await knex('Result').where({
+      id: resultId,
+      reconciliationDate: null,
     })
     assert.equal(missingInventoryLots.length, 1)
   })

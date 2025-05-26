@@ -1,46 +1,45 @@
 const { knex, transact } = require('../db')
 const { consumeInventoryForResult } = require('./consumeInventoryForResult')
 
-const getMissingInventoryBaseQuery = () =>
-  knex('MissingInventoryLots as m')
-    .innerJoin('Result as r', 'm.resultId', 'r.id')
+const getUnreconciledResultsBaseQuery = () =>
+  knex('Result as r')
     .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+    .whereNull('r.reconciliationDate')
     .clone()
 
 const getMissingInventoryGroups = () =>
-  getMissingInventoryBaseQuery()
-    .innerJoin('Site as s', 'm.siteId', 's.id')
+  getUnreconciledResultsBaseQuery()
+    .innerJoin('Site as s', 'r.siteId', 's.id')
     .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
-    .groupBy(['siteId', 'consumableId', knex.raw('DATE(expirationDate)')])
+    .groupBy(['siteId', 'consumableId', knex.raw('DATE(r.consumableExpirationDate)')])
     .select([
       'r.partnerId',
-      'm.siteId',
+      'r.siteId',
       's.parentWarehouseId',
       'ca.consumableId',
-      knex.raw('DATE(m.expirationDate) as expirationDate'),
-      knex.raw('m.lotNumber'),
+      knex.raw('DATE(r.consumableExpirationDate) as expirationDate'),
+      knex.raw('r.consumableLot'),
     ])
     .clone()
 
 const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate, lotNumber) =>
-  getMissingInventoryBaseQuery()
+  getUnreconciledResultsBaseQuery()
     .where(qb => {
-      qb.where('m.siteId', siteId).andWhere('ca.consumableId', consumableId)
+      qb.where('r.siteId', siteId).andWhere('ca.consumableId', consumableId)
       if (expirationDate) {
-        qb.andWhere(knex.raw('DATE(m.expirationDate) <=> DATE(:expirationDate)', { expirationDate }))
+        qb.andWhere(knex.raw('DATE(r.consumableExpirationDate) <=> DATE(:expirationDate)', { expirationDate }))
       }
 
       if (lotNumber) {
-        qb.andWhere('m.lotNumber', lotNumber)
+        qb.andWhere('r.consumableLot', lotNumber)
       }
     })
     .select([
-      'm.id as missingInventoryLotId',
       'r.id as resultId',
       'r.assayId',
       'r.startedOn',
-      knex.raw('DATE(m.expirationDate) as expirationDate'),
-      knex.raw('m.lotNumber'),
+      knex.raw('DATE(r.consumableExpirationDate) as expirationDate'),
+      knex.raw('r.consumableLot as lotNumber'),
     ])
     .clone()
 
@@ -59,7 +58,7 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
     ).orderBy('r.endedOn')
 
     for (const missingInventory of missingInventoryToReconcile) {
-      const { missingInventoryLotId, resultId, assayId, startedOn, lotNumber, expirationDate } = missingInventory
+      const { resultId, assayId, startedOn, lotNumber, expirationDate } = missingInventory
 
       await transact(async knex => {
         const consumableResults = await consumeInventoryForResult({
@@ -76,8 +75,10 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
         })
 
         if (!consumableResults.some(res => !res.ok)) {
-          // Delete missingInventoryLots entry
-          await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
+          // Change result to reconciled
+          await knex('Result').where('id', resultId).update({
+            reconciliationDate: new Date(),
+          })
         }
       })
     }
