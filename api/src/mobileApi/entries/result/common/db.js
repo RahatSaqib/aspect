@@ -83,7 +83,15 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
       resultCategoryToId.Error,
       resultCategoryToId.NoResult,
     ])
-    .orWhereIn('result.id', userViewOnlyTransferredResultIds)
+    .orWhere(qb =>
+      qb
+        .whereIn('result.id', userViewOnlyTransferredResultIds)
+        .whereNotIn('result.resultCategory1', [
+          resultCategoryToId.Invalid,
+          resultCategoryToId.Error,
+          resultCategoryToId.NoResult,
+        ])
+    )
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
