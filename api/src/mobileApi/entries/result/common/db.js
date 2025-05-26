@@ -7,7 +7,7 @@ const {
   MONTHS_HISTORY_TO_LOOK_UP,
   deliverableResultWorkflowStatuses,
 } = require('../../common/consts')
-const { addConstraints } = require('../../../../auth/constraints')
+const { addConstraints, addPartnerQueryConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 const { allResultCategoryToId } = require('../../../../shared/dictionary')
 
@@ -34,6 +34,7 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
     .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
     .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
     .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'result.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
+    .leftJoin('Partner as partner', 'result.partnerId', 'partner.id')
     .leftJoin(
       'ResultWorkflowStatus as resultWorkflowStatus',
       'resultWorkflowLog.resultWorkflowStatusId',
@@ -65,6 +66,7 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
     .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
     .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
     .whereIn('result.reportableSiteId', clinicIds)
+    .modify(addPartnerQueryConstraints, { constraints: dataConstraints })
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
       assayType: 'assayType',
