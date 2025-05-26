@@ -1,23 +1,56 @@
-const geneXpertTBWorkloadReport = {
-  name: 'GeneXpert TB Workload',
+const deviceAndSiteSummaryReport = {
+  name: 'Device and Site Summary Report',
   description:
-    'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
-  i18nKey: 'geneXpertTbWorkloadReport',
-  i18nKeyDescription: 'geneXpertTbWorkload_description',
-  externalId: 'genxpert_tb_workload_report',
-  fileName: 'GeneXpert_TB_Workload',
+    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".',
+  i18nKey: 'deviceAndSiteSummaryReport',
+  i18nKeyDescription: 'deviceAndSiteSummaryReport_description',
+  externalId: 'device_and_site_summary_report',
+  fileName: 'DeviceAndSiteSummaryReport',
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 10,
-  validations: [],
+  validations: ['dateRangeRequired'],
   sheets: [
     {
       sortOrder: 0,
       moduleName: 'device/serviceReports',
-      functionName: 'getDevicesWithCountsForTBReport',
+      functionName: 'getAllDeviceReport',
       query: {
         hasResults: 1,
         sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReports/deviceAndSiteSummaryReport',
+      functionName: 'getInventoryData',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    {
+      sortOrder: 2,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDevicesForTBReachReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    {
+      sortOrder: 3,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorsByDevicesReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'deviceName',
         sortDir: 'asc',
         avoidStreaming: true,
       },
@@ -96,6 +129,33 @@ const mtbDetectedRRDetected = {
         sortCol: 'endedOn',
         sortDir: 'desc',
         resultCategoryGroupId: ['GxMtbRifMtbDetectedRifDetected', 'GxMtbRifUltraMtbDetectedRifDetected'],
+      },
+    },
+  ],
+}
+
+const geneXpertTBWorkloadReport = {
+  name: 'GeneXpert TB Workload',
+  description:
+    'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
+  i18nKey: 'geneXpertTbWorkloadReport',
+  i18nKeyDescription: 'geneXpertTbWorkload_description',
+  externalId: 'genxpert_tb_workload_report',
+  fileName: 'GeneXpert_TB_Workload',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 45,
+  validations: [],
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDevicesWithCountsForTBReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
       },
     },
   ],
@@ -339,66 +399,6 @@ const utilizationPerInstrumentDayReport = {
       sortOrder: 0,
       moduleName: 'deviceMaintenanceStatus/serviceReports',
       functionName: 'getDeviceUtilizationPerDayReport',
-    },
-  ],
-}
-
-const deviceAndSiteSummaryReport = {
-  name: 'Device and Site Summary Report',
-  description:
-    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".',
-  i18nKey: 'deviceAndSiteSummaryReport',
-  i18nKeyDescription: 'deviceAndSiteSummaryReport_description',
-  externalId: 'device_and_site_summary_report',
-  fileName: 'DeviceAndSiteSummaryReport',
-  exportCsv: false,
-  availableForNotification: 1,
-  sortOrder: 140,
-  validations: ['dateRangeRequired'],
-  sheets: [
-    {
-      sortOrder: 0,
-      moduleName: 'device/serviceReports',
-      functionName: 'getAllDeviceReport',
-      query: {
-        hasResults: 1,
-        sortCol: 'name',
-        sortDir: 'asc',
-        avoidStreaming: true,
-      },
-    },
-    {
-      sortOrder: 1,
-      moduleName: 'device/serviceReports/deviceAndSiteSummaryReport',
-      functionName: 'getInventoryData',
-      query: {
-        hasResults: 1,
-        sortCol: 'name',
-        sortDir: 'asc',
-        avoidStreaming: true,
-      },
-    },
-    {
-      sortOrder: 2,
-      moduleName: 'device/serviceReports',
-      functionName: 'getDevicesForTBReachReport',
-      query: {
-        hasResults: 1,
-        sortCol: 'deviceName',
-        sortDir: 'asc',
-        avoidStreaming: true,
-      },
-    },
-    {
-      sortOrder: 3,
-      moduleName: 'device/serviceReports',
-      functionName: 'getErrorsByDevicesReport',
-      query: {
-        hasResults: 1,
-        sortCol: 'deviceName',
-        sortDir: 'asc',
-        avoidStreaming: true,
-      },
     },
   ],
 }
@@ -811,10 +811,11 @@ const unreconciledInventoryReport = {
 }
 
 module.exports = {
-  geneXpertTBWorkloadReport,
+  deviceAndSiteSummaryReport,
   allResults,
   geneXpertIssues,
   mtbDetectedRRDetected,
+  geneXpertTBWorkloadReport,
   xdrDevicesSummary,
   xpertSiteSummaryReportSiteWise,
   tbWorkloadSummary,
@@ -824,7 +825,6 @@ module.exports = {
   deviceUtilizationReport,
   deviceCalibrationReport,
   utilizationPerInstrumentDayReport,
-  deviceAndSiteSummaryReport,
   criticalErrorsByDevice,
   resultsHivNotSuppressed,
   errorRatesReport,
