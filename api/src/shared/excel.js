@@ -289,6 +289,7 @@ async function renderExcelTemplate({
   templateFolderPath,
   dataSelector,
 }) {
+
   const lang = culture.split('-')[0].toLowerCase()
   // read file into workbook as ExcelWorkbook
   const workbook = await readTemplateFile(templateFolderPath, {
@@ -381,6 +382,7 @@ async function renderExcelTemplate({
         const headerRow = allHeaderRows[0]
         const patternRowNumber = cellTableToken.row + 1 + allHeaderRows.length
         const patternRow = worksheet.getRow(patternRowNumber)
+        const totalsRow = extractTotalsRow(worksheet, patternRowNumber)
 
         // field names for data table - order of array elements should match columns order in template file
         const fieldNames = []
@@ -477,8 +479,9 @@ async function renderExcelTemplate({
         }
 
         // remove pattern row and insert rows from patternRowNumber
-        const fillRows = rows => {
+        const fillRows = data => {
           const formulae = []
+          const styles = []
           // `worksheet.duplicateRows` can't be used since the formulae references remains static
           // that way. We have to capture the formulae and fill the correct columns with `fillFormula`
           // method, after data is filled with the destructive `worksheet.spliceRows`.
@@ -486,17 +489,20 @@ async function renderExcelTemplate({
             if (cell.type === excel.ValueType.Formula) {
               formulae.push({ formula: cell.value.formula, index })
             }
+            styles.push(cell.style)
             cell.value = null
           })
-          worksheet.spliceRows(patternRowNumber, 1, ...rows)
-          const firstRow = worksheet.getRow(patternRowNumber)
+          const q = worksheet.spliceRows(patternRowNumber, 1, ...data)
+
+          const patternRow = worksheet.getRow(patternRowNumber)
+
+          extendRowStyles(worksheet, styles, patternRowNumber, patternRowNumber + data.length)
 
           _.each(formulae, f => {
-            const masterCell = firstRow.getCell(f.index)
+            const masterCell = patternRow.getCell(f.index)
 
-            const rangeToFillFormula = `${masterCell.address}:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
-              rows.length + masterCell.row - 1
-            }`
+            const rangeToFillFormula = `${masterCell.address}:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${data.length + masterCell.row - 1
+              }`
 
             worksheet.fillFormula(rangeToFillFormula, f.formula)
           })
@@ -509,7 +515,7 @@ async function renderExcelTemplate({
             dynamicColumns.forEach((column, dynamicColumnIndex) => {
               if (!column.style) return
               const colNumber = dynamicColumnsStartCol + dynamicColumnIndex
-              rows.forEach((rowData, rowIndex) => {
+              data.forEach((rowData, rowIndex) => {
                 const rowNumber = patternRowNumber + rowIndex
                 const row = worksheet.getRow(rowNumber)
                 const cell = row.getCell(colNumber)
@@ -518,6 +524,7 @@ async function renderExcelTemplate({
             })
           }
         }
+
         fillRows(rows)
         if (extension === 'csv') {
           // get all header values from last item of array allHeaderRows
@@ -726,7 +733,7 @@ async function streamExcelTemplate({
        * prepare table in worksheet, i.e.
        * append dynamic columns, get all predefined field names, get pattern row number
        */
-      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
+      ; ({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
     }
 
     /**
@@ -912,27 +919,30 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
   if (rowValues) {
     row.values = rowValues
   }
-  /**
-   * set style
-   * Notice that we are getting all cells from template, including
-   * undefined (empty) - need this to correctly set styles
-   */
-  rowTemplate.eachCell({ includeEmpty: true }, cellTemplate => {
-    const cell = row.getCell(cellTemplate.col)
-    const cellStyle = _.merge(
-      {},
-      rowTemplate.style,
-      cellTemplate.master?.style,
-      cellTemplate.style,
-      cellsStyle ? cellsStyle[cell.col - 1] : {}
-    )
-    cell.style = cellStyle
-  })
+
+  // extendRowStyles(rowTemplate, row, cellsStyle)
+
   /**
    * must commit all row changes to move it to the stream.
    * Notice that no changes possible in row and it's cells after commit.
    */
   row.commit()
+}
+
+function extendRowStyles(worksheet, styles, from, to) {
+  for (i = from; i < to; i++) {
+    const row = worksheet.getRow(i)
+    row.eachCell({ includeEmpty: true }, cell => {
+      const cellStyle = _.merge(
+        {},
+        cell.master?.style,
+        cell.style,
+        styles[cell.col - 1] ?? {}
+      )
+      cell.style = cellStyle
+    })
+  }
+
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -1157,6 +1167,62 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   })
 
   return merges
+}
+
+function extractTotalsRow(worksheet, patternRowNumber) {
+  // Look for totals row immediately after the pattern row
+  const totalsRowNumber = patternRowNumber + 1;
+  const totalsRow = worksheet.findRow(totalsRowNumber);
+
+  if (!totalsRow) return null;
+
+  // Check if this row contains totals indicators (formulas or specific tokens)
+  let isTotalsRow = false;
+  const totalsRowData = {
+    rowNumber: totalsRowNumber,
+    cells: [],
+    formulas: [],
+    styles: []
+  }
+
+  totalsRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+    const cellData = {
+      colNumber,
+      value: cell.value,
+      formula: null,
+      style: getCellStyle(cell),
+      address: cell.address
+    };
+
+    // Check for formula or totals indicators
+    if (cell.type === excel.ValueType.Formula) {
+      cellData.formula = cell.value.formula
+      isTotalsRow = true
+    }
+
+    totalsRowData.cells.push(cellData);
+  })
+
+  return isTotalsRow ? totalsRowData : null;
+}
+
+function createTotalsRow(worksheet, totalsRow, targetRowNumber) {
+  const totalsRowa = worksheet.getRow(targetRowNumber);
+
+  // adjustedFormulas.forEach(cellData => {
+  //   const cell = totalsRow.getCell(cellData.colNumber);
+
+  //   if (cellData.formula) {
+  //     cell.value = { formula: cellData.formula };
+  //   } else {
+  //     cell.value = cellData.value;
+  //   }
+
+  //   // Apply original styling
+  //   setCellStyle(cell, cellData.style);
+  // })
+
+  return totalsRow;
 }
 
 // ----------------------------------------------------------------------------------------------
