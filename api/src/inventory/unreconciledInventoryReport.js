@@ -1,9 +1,9 @@
 const { filterParams, filterDateRangeParams } = require('../db')
 const { addConstraints } = require('../auth/constraints')
-const { baseMissingInventoryLotsQuery } = require('./common/db')
+const { getBaseUnreconciledResultsQuery } = require('./common/db')
 
 async function getUnreconciledInventoryReport(dataConstraints, query) {
-  const data = await baseMissingInventoryLotsQuery()
+  const data = await getBaseUnreconciledResultsQuery()
     .modify(addConstraints, dataConstraints, {
       result: 'r',
       geography: 'g',
@@ -22,8 +22,8 @@ async function getUnreconciledInventoryReport(dataConstraints, query) {
       's.name as site',
       'st.name as province',
       'l.name as district',
-      'm.expirationDate',
-      'm.lotNumber',
+      'r.consumableExpirationDate as expirationDate',
+      'r.consumableLot as lotNumber',
       'pa.name as warehouse',
       'c.name as consumableName'
     )

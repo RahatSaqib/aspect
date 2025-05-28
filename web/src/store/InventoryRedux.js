@@ -24,12 +24,12 @@ export const types = {
 
 function getErrorsForRemove() {
   const messages = defineMessages({
-    notExistedTitle: {
-      id: 'errorResponseMessages.removeInventory.PUT.notExisted.title',
+    missingInventoryItemTitle: {
+      id: 'errorResponseMessages.removeInventory.PUT.missingInventoryItem.title',
       defaultMessage: 'Removing Inventory Failed',
     },
-    notExisted: {
-      id: 'errorResponseMessages.removeInventory.PUT.notExisted.resolution',
+    missingInventoryItem: {
+      id: 'errorResponseMessages.removeInventory.PUT.missingInventoryItem.resolution',
       defaultMessage: 'Can not deduct from non-existed inventory item.',
     },
     negativeQuantityTitle: {
@@ -57,16 +57,16 @@ function getErrorsForRemove() {
 
 function getErrorsForTransfer() {
   const messages = defineMessages({
-    notExistedTitle: {
-      id: 'errorResponseMessages.transferInventory.transfer.notExisted.PUT.title',
+    missingInventoryItemTitle: {
+      id: 'errorResponseMessages.transferInventory.transfer.missingInventoryItem.PUT.title',
       defaultMessage: 'Transferring Inventory Failed',
     },
-    notExisted: {
-      id: 'errorResponseMessages.transferInventory.transfer.PUT.notExisted.resolution',
+    missingInventoryItem: {
+      id: 'errorResponseMessages.transferInventory.transfer.PUT.missingInventoryItem.resolution',
       defaultMessage: 'Can not deduct from non-existed inventory item.',
     },
     negativeQuantityTitle: {
-      id: 'errorResponseMessages.transferInventory.transfer.negativeQuantity.notExisted.PUT.title',
+      id: 'errorResponseMessages.transferInventory.transfer.negativeQuantity.negativeQuantity.PUT.title',
       defaultMessage: 'Transferring Inventory Failed',
     },
     negativeQuantity: {
@@ -74,7 +74,7 @@ function getErrorsForTransfer() {
       defaultMessage: 'Quantity is negative for current inventory.',
     },
     notEnoughInventoryTitle: {
-      id: 'errorResponseMessages.transferInventory.transfer.notExisted.notEnough.PUT.title',
+      id: 'errorResponseMessages.transferInventory.transfer.notEnoughInventory.PUT.title',
       defaultMessage: 'Transferring Inventory Failed',
     },
     notEnoughInventory: {

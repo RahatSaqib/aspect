@@ -72,12 +72,11 @@ async function showSite(request) {
   const siteQuery = getSite(params.siteId, dataConstraints)
     // Add active consumables at the site (current or unreconciled)
     .leftJoin(
-      knex
-        .select('m.siteId', 'ca.consumableId')
-        .from('MissingInventoryLots as m')
-        .leftJoin('Result as r', 'r.id', 'm.resultId')
+      knex('Result as r')
         .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
-        .where('m.siteId', params.siteId)
+        .where('r.siteId', params.siteId)
+        .whereNull('r.reconciliationDate')
+        .select('r.siteId', 'ca.consumableId')
         .unionAll(function () {
           this.select('ii.siteid', 'ii.consumableId')
             .from('InventoryItem as ii')
@@ -88,7 +87,7 @@ async function showSite(request) {
       'ac.siteId',
       's.id'
     )
-    .select([knex.raw('GROUP_CONCAT(DISTINCT ac.consumableId) as activeConsumables')])
+    .select({ activeConsumables: knex.raw('GROUP_CONCAT(DISTINCT ac.consumableId)') })
 
   const site = await siteQuery
   if (!site || site.id === null) {

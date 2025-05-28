@@ -23,7 +23,7 @@ export function transformValues(values) {
 }
 
 export function getValidations(format, actionType, { requireExpirationDate, requireLotNumber, inventory }) {
-  const uiAdd = actionType === types.SHOW_NEW_INVENTORY_DIALOG
+  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
   const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
@@ -96,15 +96,17 @@ export function getValidations(format, actionType, { requireExpirationDate, requ
     })
   }
 
-  schema = schema.shape({
-    reason: object().nullable().required(format(validationMessages.reasonRequired)),
-    notes: string()
-      .nullable()
-      .when('reason', {
-        is: reason => reason?.externalId === 'other',
-        then: sch => sch.required(format(validationMessages.notesRequired)),
-      }),
-  })
+  if (uiAdd || uiRemove) {
+    schema = schema.shape({
+      reason: object().nullable().required(format(validationMessages.reasonRequired)),
+      notes: string()
+        .nullable()
+        .when('reason', {
+          is: reason => reason?.externalId === 'other',
+          then: sch => sch.required(format(validationMessages.notesRequired)),
+        }),
+    })
+  }
 
   return schema
 }
@@ -114,14 +116,20 @@ export function getQuantityOnHand(actionType, inventory, values) {
   switch (actionType) {
     case types.SHOW_REMOVE_INVENTORY_DIALOG:
     case types.SHOW_TRANSFER_INVENTORY_DIALOG: {
-      // If we don’t have a lotNumber or expiresOn, it means we're transferring inventory without specifying an inventory item
-      // (in other words, without using the break-by-lot option).
       const quantityOnHand = values.lotNumber || values.expiresOn ? inventory.quantityOnHand : 0
       nextQuantity = quantityOnHand - Number(values?.quantity ?? 0)
       break
     }
     case types.SHOW_RECEIVE_INVENTORY_DIALOG:
       nextQuantity = values?.quantity
+      break
+    case types.SHOW_ADD_INVENTORY_DIALOG:
+      // If the reason is 'physical_count', just return the entered quantity
+      if (values?.reason?.externalId === 'physical_count') {
+        nextQuantity = Number(values.quantity)
+      } else {
+        nextQuantity = Number(inventory.quantityOnHand) + Number(values.quantity)
+      }
       break
     default:
       nextQuantity = inventory.quantityOnHand + Number(values?.quantity ?? 0)

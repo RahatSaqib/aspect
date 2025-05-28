@@ -28,7 +28,7 @@ export default function InventoryItemSelect({ inventoryItem, requireLotNumber, r
     if (requireExpirationDate) {
       parts.push(
         formatMessage(messages.expiresOn, {
-          expiresOn: item.expiresOn.split('T')[0] || formatMessage(commonDefinitions.notAvailable),
+          expiresOn: item.expiresOn ? item.expiresOn.split('T')[0] : formatMessage(commonDefinitions.notAvailable),
         })
       )
     }

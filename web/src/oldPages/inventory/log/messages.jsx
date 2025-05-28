@@ -97,6 +97,10 @@ const messages = {
       id: 'pages.InventoryLog.adjust',
       defaultMessage: 'Adjust',
     },
+    adjustFromTo: {
+      id: 'pages.InventoryLog.adjustFromTo',
+      defaultMessage: '*Adjusted from {from} to {to}',
+    },
     paginatorStatus: {
       id: 'pages.InventoryLog.paginatorStatus',
       defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
@@ -106,11 +110,11 @@ const messages = {
     },
     inTransitFromSiteName: {
       id: 'pages.InventoryLog.inTransitFromSiteName',
-      defaultMessage: '* in transit from {inTransitFromSiteName}',
+      defaultMessage: '*In transit from {inTransitFromSiteName}',
     },
     excludedLotInTransit: {
       id: 'pages.InventoryLog.excluded.inTransitFromSiteName',
-      defaultMessage: '* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
+      defaultMessage: '*Excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
     },
     never: {
       id: 'pages.InventoryLog.never',

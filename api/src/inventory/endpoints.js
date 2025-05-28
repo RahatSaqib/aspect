@@ -250,17 +250,10 @@ const routes = [
       notes: 'Removes quantity from inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        payload: Joi.alternatives().try(
-          Joi.object().keys({
-            ...removeInventoryCommonPayloadFields,
-            dateAdjusted: Joi.date().iso().required(),
-          }),
-          {
-            ...removeInventoryCommonPayloadFields,
-            dateAdjustedFrom: Joi.date().iso().required(),
-            dateAdjustedTo: Joi.date().iso().required(),
-          }
-        ),
+        payload: Joi.object().keys({
+          ...removeInventoryCommonPayloadFields,
+          dateAdjusted: Joi.date().iso().required(),
+        }),
       },
     },
   },
