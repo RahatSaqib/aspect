@@ -119,7 +119,7 @@ async function fetchEntriesServiceHandler(request) {
   return {
     ok: !!entries,
     total: _.size(entries),
-    awaitingTreatment: awaitingTreatment.true || 0,
+    // awaitingTreatment: awaitingTreatment.true || 0,
     data: entries,
   }
 }
