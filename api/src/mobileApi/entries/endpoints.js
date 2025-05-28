@@ -1,4 +1,4 @@
-// const { downloadEntriesResponseValidation } = require('./result/common/validations/validations')
+const { downloadEntriesResponseValidation } = require('./result/common/validations/validations')
 const { downloadEntriesRequestValidation } = require('./result/common/validations/downloadEntriesRequestValidation')
 const { fetchEntriesServiceHandler } = require('./result/common/service')
 const { asyncHandler } = require('../../routes')
@@ -18,7 +18,7 @@ const routes = [
       validate: downloadEntriesRequestValidation(),
       response: {
         options: { allowUnknown: false },
-        // schema: downloadEntriesResponseValidation(),
+        schema: downloadEntriesResponseValidation(),
       },
     },
   },
