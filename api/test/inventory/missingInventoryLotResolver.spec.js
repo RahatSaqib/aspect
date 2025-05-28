@@ -130,33 +130,6 @@ describe('Missing inventory lot resolver', () => {
       { ...baseDeviceLog, resultId: resultId3 },
     ])
 
-    await knex('MissingInventoryLots').insert([
-      {
-        resultId: resultId1,
-        consumableId,
-        expirationDate: expiryDate,
-        lotNumber: testLotNumber,
-        siteId: site.id,
-        createdOn: now,
-      },
-      {
-        resultId: resultId2,
-        consumableId,
-        expirationDate: expiryDate,
-        lotNumber: testLotNumber,
-        siteId: site.id,
-        createdOn: now,
-      },
-      {
-        resultId: resultId3,
-        consumableId,
-        expirationDate: expiryDate,
-        lotNumber: testLotNumber,
-        siteId: site.id,
-        createdOn: now,
-      },
-    ])
-
     return [resultId1, resultId2, resultId3]
   }
 
@@ -165,7 +138,6 @@ describe('Missing inventory lot resolver', () => {
       .whereIn('deviceId', await knex('Device').whereIn('siteId', sitesToRemove).pluck('id'))
       .delete()
 
-    await knex('MissingInventoryLots').whereIn('siteId', sitesToRemove).delete()
     await knex('FactInventoryConsumptionRate').whereIn('siteId', sitesToRemove).delete()
     const inventoryItemsToRemove = await knex('InventoryItem').whereIn('siteId', sitesToRemove).pluck('id')
     const inventoryLogsToRemove = await knex('InventoryLog')
@@ -222,8 +194,9 @@ describe('Missing inventory lot resolver', () => {
     await waitForCreated
     await waitForIdle(5000)
 
-    const { missingInventoryLotsCount } = await knex('MissingInventoryLots')
+    const { missingInventoryLotsCount } = await knex('Result')
       .where('siteId', sitesToRemove[0])
+      .whereNull('reconciliationDate')
       .count('* as missingInventoryLotsCount')
       .first()
     assert.equal(missingInventoryLotsCount, 1, 'The quantity of unreconciled consumptions should be 1')

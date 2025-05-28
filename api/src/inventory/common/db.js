@@ -333,10 +333,8 @@ FROM SiteHierarchy`
     .count('r.id as unreconciledQuantity')
     .from('Site as s')
     .join(knex.raw(`(${siteHierarchy}) as sh`), 's.id', 'sh.parentId')
-    .leftJoin('MissingInventoryLots as mil', 'mil.siteId', 'sh.childId')
-    .leftJoin('Result as r', function () {
-      this.on('mil.resultId', 'r.id')
-    })
+    .leftJoin('Result as r', 'r.siteId', 'sh.childId')
+    .whereNull('r.reconciliationDate')
     .groupBy('s.id', 'r.assayId')
     .as(alias)
 }
@@ -567,25 +565,25 @@ function filteredInventoryItemsBase(request, dataConstraints) {
   return inventoryItemsQuery
 }
 
-function baseMissingInventoryLotsQuery() {
-  return knex('MissingInventoryLots as m')
-    .innerJoin('Result as r', 'm.resultId', 'r.id')
-    .innerJoin('Site as s', 'm.SiteId', 's.id')
+function getBaseUnreconciledResultsQuery() {
+  return knex('Result as r')
+    .innerJoin('Site as s', 'r.siteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
     .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
+    .whereNull('r.reconciliationDate')
 }
 
 async function getReconciliationList(query, dataConstraints) {
   const partnerId = dataConstraints.partner.id
   const consumableStrategy = await getConsumableStrategy(partnerId)
 
-  const baseQuery = baseMissingInventoryLotsQuery()
+  const baseQuery = getBaseUnreconciledResultsQuery()
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .modify(filterDateRangeParams, query, 'm.expirationDate')
+    .modify(filterDateRangeParams, query, 'r.consumableExpirationDate')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -594,15 +592,15 @@ async function getReconciliationList(query, dataConstraints) {
       siteId: 's.id',
       assayId: 'r.assayId',
       consumableId: 'ca.consumableId',
-      lotNumber: 'm.lotNumber',
+      lotNumber: 'r.consumableLot',
     })
     .groupBy([
       's.id',
       'c.id',
       ...(query.breakOutByLot
         ? consumableStrategy.filterFields({
-            lotNumberField: 'm.lotNumber',
-            expiresOnField: 'm.expirationDate',
+            lotNumberField: 'r.consumableLot',
+            expiresOnField: 'r.consumableExpirationDate',
           })
         : []),
     ])
@@ -616,7 +614,7 @@ async function getReconciliationList(query, dataConstraints) {
   const getItems = baseQuery
     .clone()
     .modify(sortPageParams, query, 's.name')
-    .orderBy('m.id')
+    .orderBy('r.id')
     .select([
       's.name as siteName',
       'c.name as consumableName',
@@ -629,8 +627,8 @@ async function getReconciliationList(query, dataConstraints) {
       'l.name as lgaName',
       ...(query.breakOutByLot
         ? consumableStrategy.filterFields({
-            lotNumberField: 'm.lotNumber',
-            expiresOnField: 'm.expirationDate as expiresOn',
+            lotNumberField: 'r.consumableLot',
+            expiresOnField: 'r.consumableExpirationDate as expiresOn',
           })
         : []),
     ])
@@ -656,7 +654,7 @@ async function appendSiteConsumables(data) {
 }
 
 module.exports = {
-  baseMissingInventoryLotsQuery,
+  getBaseUnreconciledResultsQuery,
   findInventoryItem,
   getInventoryItem,
   getInventorySitesQuery,
