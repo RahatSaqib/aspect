@@ -461,11 +461,20 @@ async function unAcknowledgeResult(resultId, currentUserId, changedOn, dataConst
 }
 
 async function getPossibleReasonsForNoResult(resultId) {
-  const result = await getBaseQueryForResults()
+  const [result] = await getBaseQueryForResults()
     .modify(qb => {
       qb.where('r.id', resultId)
     })
-    .select('r.id', 'd.id as deviceId', 'sp.id as sampleId', 'g.id as geographyId', 'c.id as countryId')
+    .select(
+      'r.id',
+      'd.id as deviceId',
+      'sp.id as sampleId',
+      'g.id as geographyId',
+      'c.id as countryId',
+      'a.id as assayId',
+      'at.id as assayTypeId',
+      'dt.id as deviceTypeId'
+    )
   if (!result) {
     return Boom.notFound('No results found')
   }
@@ -480,6 +489,15 @@ async function getPossibleReasonsForNoResult(resultId) {
   }
   if (!result.countryId) {
     return Boom.notFound('No results found. The linked country appears to be missing.')
+  }
+  if (!result.assayId) {
+    return Boom.notFound('No results found. The linked assay appears to be missing.')
+  }
+  if (!result.assayTypeId) {
+    return Boom.notFound('No results found. The linked assay type appears to be missing.')
+  }
+  if (!result.deviceTypeId) {
+    return Boom.notFound('No results found. The linked device type appears to be missing.')
   }
   return Boom.notFound('No results found')
 }
