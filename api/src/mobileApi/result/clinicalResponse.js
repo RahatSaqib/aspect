@@ -6,6 +6,7 @@ const {
   fieldNameToFollowUpTypeIdMappings,
   ACKNOWLEDGED,
   NOT_POSSIBLE_FOLLOW_UP_TYPE,
+  getResultByResultId,
 } = require('./common/logic')
 const {
   updateResultWorkflowStatusByResultId,
@@ -37,6 +38,7 @@ const {
   deleteResultFollowUpTreatment,
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
+const { getBaseQueryForResults } = require('../../result/common/db')
 
 const ACKNOWLEDGED_FIELD_NAME = 'confirmed'
 const NOT_POSSIBLE_FIELD_NAME = 'followUpNotPossible'
@@ -458,13 +460,36 @@ async function unAcknowledgeResult(resultId, currentUserId, changedOn, dataConst
   return showResult(resultId, dataConstraints)
 }
 
+async function getPossibleReasonsForNoResult(resultId) {
+  const result = await getBaseQueryForResults()
+    .modify(qb => {
+      qb.where('r.id', resultId)
+    })
+    .select('r.id', 'd.id as deviceId', 'sp.id as sampleId', 'g.id as geographyId', 'c.id as countryId')
+  if (!result) {
+    return Boom.notFound('No results found')
+  }
+  if (!result.deviceId) {
+    return Boom.notFound('No results found. The linked device appears to be missing.')
+  }
+  if (!result.sampleId) {
+    return Boom.notFound('No results found. The linked sample appears to be missing.')
+  }
+  if (!result.geographyId) {
+    return Boom.notFound('No results found. The linked geography appears to be missing.')
+  }
+  if (!result.countryId) {
+    return Boom.notFound('No results found. The linked country appears to be missing.')
+  }
+  return Boom.notFound('No results found')
+}
+
 // generate result
 async function showResult(resultId, dataConstraints) {
   const myResultQuery = generateResultQueryV2(false, dataConstraints, resultId)
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
-  if (!data)
-    return Boom.notFound('No results found. Another possible reason could be that the linked device is missing.')
+  if (!data) return getPossibleReasonsForNoResult(resultId)
   const [acknowledgement] = await getAcknowledgementsByResultIds([data].filter(_.identity))
   // get follow-ups for all result in the response for performance (filter later)
   const followUps = await getFollowUpsOfResultById(resultId)
