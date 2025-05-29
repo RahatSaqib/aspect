@@ -463,7 +463,8 @@ async function showResult(resultId, dataConstraints) {
   const myResultQuery = generateResultQueryV2(false, dataConstraints, resultId)
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
-  if (!data) return Boom.notFound()
+  if (!data)
+    return Boom.notFound('No results found. Another possible reason could be that the linked device is missing.')
   const [acknowledgement] = await getAcknowledgementsByResultIds([data].filter(_.identity))
   // get follow-ups for all result in the response for performance (filter later)
   const followUps = await getFollowUpsOfResultById(resultId)
