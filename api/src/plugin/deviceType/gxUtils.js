@@ -213,6 +213,12 @@ function extractSampleId(payload) {
   const exactRegex = new RegExp(`^${sampleIdPattern}$`)
 
   if (!sampleId || !exactRegex.test(sampleId)) {
+    const patientId = payload.result?.data?.patient?.id ?? ''
+    const matches = patientId.match(exactRegex)
+    ;[sampleId] = matches || [sampleId]
+  }
+
+  if (!sampleId || !exactRegex.test(sampleId)) {
     const notes = payload?.notes ?? ''
     const searchRegex = new RegExp(`\\b${sampleIdPattern}\\b`, 'g')
     const matches = notes.match(searchRegex)

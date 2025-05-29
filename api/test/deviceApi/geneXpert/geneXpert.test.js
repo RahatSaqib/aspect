@@ -104,7 +104,33 @@ describe('extractSampleId', () => {
       sample: {
         id: '123-456789-123',
       },
+      result: {
+        data: {
+          patient: {
+            id: '123-999999-123',
+          },
+        },
+      },
+      notes: 'do not parse this 444-555666-777, better from sample.id',
     }
+    assert.equal(extractSampleId(payload), '123-456789-123')
+  })
+
+  it('should extract sample ID from payload.result.data.patient.id when valid', () => {
+    const payload = {
+      sample: {
+        id: '',
+      },
+      result: {
+        data: {
+          patient: {
+            id: '123-456789-123',
+          },
+        },
+      },
+      notes: 'do not parse this 444-555666-777, better from result.data.patient.id',
+    }
+
     assert.equal(extractSampleId(payload), '123-456789-123')
   })
 
