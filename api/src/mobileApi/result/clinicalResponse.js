@@ -6,7 +6,6 @@ const {
   fieldNameToFollowUpTypeIdMappings,
   ACKNOWLEDGED,
   NOT_POSSIBLE_FOLLOW_UP_TYPE,
-  getResultByResultId,
 } = require('./common/logic')
 const {
   updateResultWorkflowStatusByResultId,
