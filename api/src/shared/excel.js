@@ -382,7 +382,6 @@ async function renderExcelTemplate({
         const headerRow = allHeaderRows[0]
         const patternRowNumber = cellTableToken.row + 1 + allHeaderRows.length
         const patternRow = worksheet.getRow(patternRowNumber)
-        const totalsRow = extractTotalsRow(worksheet, patternRowNumber)
 
         // field names for data table - order of array elements should match columns order in template file
         const fieldNames = []
@@ -496,6 +495,7 @@ async function renderExcelTemplate({
 
           const patternRow = worksheet.getRow(patternRowNumber)
 
+
           extendRowStyles(worksheet, styles, patternRowNumber, patternRowNumber + data.length)
 
           _.each(formulae, f => {
@@ -510,16 +510,17 @@ async function renderExcelTemplate({
           /**
            * style dynamic columns, if styling is defined
            */
-          if (dynamicColumns.length > 0 && dynamicColumns.find(column => !!column.style)) {
+          if (dynamicColumns.length > 0 && (!!styles || dynamicColumns.find(column => !!column.style))) {
+            const lastTemplateRowCellStyle = styles[styles.length - 1]
             const dynamicColumnsStartCol = fieldNames.length + 1
             dynamicColumns.forEach((column, dynamicColumnIndex) => {
-              if (!column.style) return
+              // if (!column.style) return
               const colNumber = dynamicColumnsStartCol + dynamicColumnIndex
               data.forEach((rowData, rowIndex) => {
                 const rowNumber = patternRowNumber + rowIndex
                 const row = worksheet.getRow(rowNumber)
                 const cell = row.getCell(colNumber)
-                setCellStyle(cell, column.style)
+                setCellStyle(cell, { ...lastTemplateRowCellStyle, ...column.style })
               })
             })
           }
