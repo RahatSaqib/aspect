@@ -62,7 +62,7 @@ const server = new Hapi.server({
         logger.error('Response validation failed:', err.details)
 
         // Format the validation error using Boom
-        const error = Boom.internal('Response validation failed', err.details || err.message)
+        const error = Boom.badData('Response validation failed', err.details || err.message)
         error.output.payload.validation = {
           source: err.details?.[0]?.path?.join('.') || 'unknown',
           keys: err.details?.map(detail => detail.path.join('.')) || [],
