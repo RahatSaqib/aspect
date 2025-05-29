@@ -55,11 +55,13 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
               </PermissionChecker>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Consumables
-                siteId={site.id}
-                consumableIds={site.consumableIds}
-                disabledSites={site.selectedConsumables}
-              />
+              <PermissionChecker permissions={['inventory:edit']}>
+                <Consumables
+                  siteId={site.id}
+                  consumableIds={site.consumableIds}
+                  disabledSites={site.selectedConsumables}
+                />
+              </PermissionChecker>
             </Grid>
           </Grid>
         </Card>
