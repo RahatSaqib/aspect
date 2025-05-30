@@ -65,7 +65,9 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
     .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
     .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
     .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
-    .whereIn('result.reportableSiteId', clinicIds)
+    .andWhere(qb => {
+      qb.whereIn('result.reportableSiteId', clinicIds).orWhereIn('result.id', userViewOnlyTransferredResultIds)
+    })
     .modify(addPartnerQueryConstraints, { constraints: dataConstraints })
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
@@ -75,7 +77,8 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
       if (modifiedSince) {
         qb.where('result.updatedOn', '>=', modifiedSince).orWhereNull('result.updatedOn')
       }
-      qb.where('result.endedOn', '>=', submittedSince)
+      qb.where('result.endedOn', '>=', submittedSince).orWhereNull('sample.collectedOn')
+      qb.where('sample.collectedOn', '>=', submittedSince).orWhereNull('result.endedOn')
     })
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .whereNotIn('result.resultCategory1', [
@@ -83,15 +86,6 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
       resultCategoryToId.Error,
       resultCategoryToId.NoResult,
     ])
-    .orWhere(qb =>
-      qb
-        .whereIn('result.id', userViewOnlyTransferredResultIds)
-        .whereNotIn('result.resultCategory1', [
-          resultCategoryToId.Invalid,
-          resultCategoryToId.Error,
-          resultCategoryToId.NoResult,
-        ])
-    )
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
@@ -156,10 +150,8 @@ const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, u
       'transferLog.reportableSiteId as transferReportableSiteId',
       'transferLog.previousReportableSiteId as transferPreviousReportableSiteId'
     )
-    .orderBy('updatedOn', 'desc')
-    .orderBy('testEndDate', 'desc')
-    .orderBy('sampleUpdatedOn', 'desc')
     .orderBy('sampleCollectedOn', 'desc')
+    .orderBy('testEndDate', 'desc')
   return knexQuery
 }
 
