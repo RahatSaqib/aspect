@@ -63,7 +63,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   }
 
   const opts = { sampleId, sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId }
-  const existingSampleDetails = await getExistingSample(knex, payload, existingResult, opts)
+  const existingSampleDetails = await upsertSample(knex, payload, existingResult, opts)
   ;({ sampleId } = existingSampleDetails)
 
   const { patientData, resultData, resultDataHash, shouldTriggerResultNotification } = mergeResultWithPayload(
@@ -414,6 +414,28 @@ async function getSiteIdVarieties(knex, payload, site, now) {
   return { sampleOriginSiteId, reportableSiteId, payloadOriginSiteId }
 }
 
+/**
+ * Finds an existing sample ID in a specific country based on various criteria.
+ *
+ * @param {Object} knex - The Knex database instance
+ * @param {string|null} sampleExternalId - The external ID of the sample to search for
+ * @param {string|null} sampleTypeExternalId - The external ID of the sample type to match
+ * @param {number} countryId - The ID of the country to search within
+ * @param {Date} testStartedOn - The timestamp to filter samples by collection date
+ * @returns {Promise<number|null>} The ID of the matching sample if found, null otherwise
+ *
+ * @description
+ * This function searches for an existing sample in the database that matches the given criteria:
+ * 1. Has the specified external ID
+ * 2. Belongs to the specified country
+ * 3. Was collected before or on the test start date
+ *
+ * If multiple samples are found, it will:
+ * - Return the single match if only one exists
+ * - If multiple exist, try to match by sample type if provided
+ * - If no sample type is provided, prefer samples of type 'Sputum' or with no type
+ * - Return null if no matches are found
+ */
 async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
   if (!sampleExternalId) {
     return Promise.resolve(null)
@@ -428,6 +450,7 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
     .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
+
   if (samplesOfType.length === 1) {
     return samplesOfType[0].id
   }
@@ -449,7 +472,32 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
   return null
 }
 
-async function getExistingSample(knex, payload, existingResult, opts) {
+/**
+ * Creates a new sample or updates an existing one based on the provided payload and options.
+ *
+ * @param {Object} knex - The Knex database instance
+ * @param {Object} payload - The payload containing sample information
+ * @param {Object|null} existingResult - The existing result record if any
+ * @param {Object} opts - Options object containing:
+ * @param {number|null} opts.sampleId - The ID of an existing sample
+ * @param {number|null} opts.sampleTypeId - The ID of the sample type
+ * @param {number} opts.sampleOriginSiteId - The ID of the site where the sample originated
+ * @param {string|null} opts.payloadOriginSiteId - The id of the origin site from payload
+ * @param {string|null} opts.payloadSampleTypeId - The id of the sample type from payload
+ * @returns {Promise<{existingSample: Object|null, sampleId: number}>} Object containing:
+ *   - existingSample: The existing sample record if found and updated
+ *   - sampleId: The ID of the created or updated sample
+ *
+ * @description
+ * This function handles the creation or update of a sample record:
+ * 1. If no sampleId exists and there's no existing result, creates a new sample
+ * 2. If sampleId exists or can be derived from existingResult:
+ *    - Retrieves the existing sample
+ *    - Updates it with new information from the payload if available
+ *    - Preserves existing values when payload data is not provided
+ *    - For sample.originSiteId,it is always preserved.
+ */
+async function upsertSample(knex, payload, existingResult, opts) {
   let { sampleId } = opts
   const { sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId } = opts
   let existingSample
@@ -475,7 +523,7 @@ async function getExistingSample(knex, payload, existingResult, opts) {
           externalId: _.get(payload, 'sample.id', existingSample.externalId),
           collectedOn: payload.sample.collectedOn || existingSample.collectedOn || null,
           sampleTypeId: payloadSampleTypeId ? sampleTypeId : existingSample.sampleTypeId,
-          originSiteId: payloadOriginSiteId ? sampleOriginSiteId : existingSample.originSiteId,
+          originSiteId: existingSample.originSiteId || sampleOriginSiteId || payloadOriginSiteId,
         })
     }
   }
