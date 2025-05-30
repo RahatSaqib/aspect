@@ -460,12 +460,11 @@ function addOrConstraints(
     queryBuilder.andWhere(qb => {
       for (const constraint of constraints.$or) {
         qb.orWhere(qb => {
-          console.log('Inside the constraints ', constraint, geography)
-          // addConstraintWithJobFunction({
-          //   ...getBaseProps(qb, constraint),
-          //   alias: geography,
-          //   constraint: constraint.geography,
-          // })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: geography,
+            constraint: constraint.geography,
+          })
           addConstraintWithJobFunction({
             ...getBaseProps(qb, constraint),
             alias: issue,
