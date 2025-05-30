@@ -465,7 +465,7 @@ function addOrConstraints(
           //   ...getBaseProps(qb, constraint),
           //   alias: geography,
           //   constraint: constraint.geography,
-          })
+          // })
           addConstraintWithJobFunction({
             ...getBaseProps(qb, constraint),
             alias: issue,
