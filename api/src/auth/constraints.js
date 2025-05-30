@@ -390,7 +390,7 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
         /**
          * any deviceApproval except 'decommissioned'
          */
-        queryBuilder.whereRaw(`        
+        queryBuilder.whereRaw(`
           ifnull(deviceApproval.token, '') != 'decommissioned'
         `)
         if (hideUnapprovedDevices) {
@@ -460,11 +460,11 @@ function addOrConstraints(
     queryBuilder.andWhere(qb => {
       for (const constraint of constraints.$or) {
         qb.orWhere(qb => {
-          addConstraintWithJobFunction({
-            ...getBaseProps(qb, constraint),
-            alias: geography,
-            constraint: constraint.geography,
-          })
+          // addConstraintWithJobFunction({
+          //   ...getBaseProps(qb, constraint),
+          //   alias: geography,
+          //   constraint: constraint.geography,
+          // })
           addConstraintWithJobFunction({
             ...getBaseProps(qb, constraint),
             alias: issue,
