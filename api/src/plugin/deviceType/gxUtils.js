@@ -199,27 +199,33 @@ async function preProcessMergeResult(context) {
 }
 
 /**
- * Extracts a sample ID from either the payload's sample.id field or from the notes field.
+ * Extracts a sample ID from payload rsult section.
  * The sample ID must match the pattern of 3 digits, followed by 6 digits, followed by 3 digits
  * (e.g. "123-456789-012").
- *
- * @param {Object} payload - A GeneXpert payload
+ * The paths where the sampleId is searched are:
+ * - result.sample.id (exact match)
+ * - result.data.sampleId (exact match)
+ * - result.patient.id (exact match)
+ * - result.data.patientId (exact match)
+ * - result.notes (contains)
+ * - result.data.notes (contains)
+ * @param {Object} result - The result part of a GeneXpert payload
  * @returns {string|null} The extracted sample ID or null if no valid sample Id is found
  */
-function extractSampleId(payload) {
+function extractSampleId(result) {
   const sampleIdPattern = '\\d{3}-\\d{6}-\\d{3}'
 
-  let sampleId = payload?.sample?.id ?? null
+  let sampleId = result.sample?.id ?? result?.data?.sampleId ?? null
   const exactRegex = new RegExp(`^${sampleIdPattern}$`)
 
   if (!sampleId || !exactRegex.test(sampleId)) {
-    const patientId = payload.result?.data?.patient?.id ?? ''
+    const patientId = result.patient?.id ?? result.data?.patientId ?? ''
     const matches = patientId.match(exactRegex)
     ;[sampleId] = matches || [sampleId]
   }
 
   if (!sampleId || !exactRegex.test(sampleId)) {
-    const notes = payload?.notes ?? ''
+    const notes = result?.notes ?? result.data?.notes ?? ''
     const searchRegex = new RegExp(`\\b${sampleIdPattern}\\b`, 'g')
     const matches = notes.match(searchRegex)
     ;[sampleId] = matches || [sampleId]
