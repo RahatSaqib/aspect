@@ -495,7 +495,7 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
  *    - Retrieves the existing sample
  *    - Updates it with new information from the payload if available
  *    - Preserves existing values when payload data is not provided
- *    - For sample.originSiteId,it is always preserved.
+ *    - For sample.originSiteId, it is always preserved.
  */
 async function upsertSample(knex, payload, existingResult, opts) {
   let { sampleId } = opts
