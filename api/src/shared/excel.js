@@ -545,6 +545,24 @@ async function renderExcelTemplate({
             rows.length,
             fieldNames.length + dynamicColumns.length - 1
           )
+
+          // Extend the last template cell's style to dynamic columns in totals row
+          const totalsRowNumber = patternRowNumber + rows.length
+          const totalsRow = worksheet.findRow(totalsRowNumber)
+          if (totalsRow) {
+            const lastTemplateCell = totalsRow.getCell(fieldNames.length)
+            const lastCellStyle = lastTemplateCell?.style
+
+            if (lastCellStyle) {
+              // Apply the style only to dynamic columns
+              for (let i = 1; i <= dynamicColumns.length; i++) {
+                const dynamicCell = totalsRow.getCell(fieldNames.length + i)
+                if (dynamicCell) {
+                  dynamicCell.style = { ...lastCellStyle }
+                }
+              }
+            }
+          }
         }
       }
     })
@@ -1174,12 +1192,12 @@ function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength) {
   const totalsRow = worksheet.findRow(totalsRowNumber)
 
   totalsRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-    // Check for formula or totals indicators
+    // Check for formulas
     if (cell.type === excel.ValueType.Formula) {
       const { formula } = cell.value
       const adjustedFormula = formula.replace(/([A-Z]+)(?!\$)(\d+)/g, (match, col, row) => {
         // Adjust the row reference to point to the correct row in the totals row
-        const adjustedRow = parseInt(row, 10) + dataLength
+        const adjustedRow = parseInt(row, 10) + dataLength - 1
         return `${col}${adjustedRow}`
       })
       cell.value = { formula: adjustedFormula }
@@ -1223,25 +1241,6 @@ function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength) {
 
 //   return isTotalsRow ? totalsRowData : null
 // }
-
-function createTotalsRow(worksheet, totalsRow, targetRowNumber) {
-  const totalsRowa = worksheet.getRow(targetRowNumber)
-
-  // adjustedFormulas.forEach(cellData => {
-  //   const cell = totalsRow.getCell(cellData.colNumber);
-
-  //   if (cellData.formula) {
-  //     cell.value = { formula: cellData.formula };
-  //   } else {
-  //     cell.value = cellData.value;
-  //   }
-
-  //   // Apply original styling
-  //   setCellStyle(cell, cellData.style);
-  // })
-
-  return totalsRow
-}
 
 // ----------------------------------------------------------------------------------------------
 module.exports = {
