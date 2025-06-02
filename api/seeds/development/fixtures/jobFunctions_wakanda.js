@@ -4,6 +4,7 @@ const {
   labUser,
   regionalOfficer,
   aspectBeta,
+  inventoryManager,
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
@@ -293,4 +294,5 @@ module.exports = [
     ],
   }),
   aspectBeta,
+  inventoryManager,
 ]

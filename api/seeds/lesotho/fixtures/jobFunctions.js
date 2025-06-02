@@ -8,6 +8,7 @@ const {
   technician,
   aspectBeta,
   regionalAdmin,
+  inventoryManager,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
@@ -311,4 +312,5 @@ module.exports = [
   dataViewer,
   technician,
   aspectBeta,
+  inventoryManager,
 ]

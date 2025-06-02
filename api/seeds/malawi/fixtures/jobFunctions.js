@@ -5,23 +5,17 @@ const {
   regionalOfficer,
   technician,
   aspectBeta,
-  mergeJobFunctions,
   regionalAdmin,
+  inventoryManager,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
   superAdmin,
   regionalAdmin,
   regionalOfficer,
-  mergeJobFunctions(labUser, {
-    permissions: [
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-    ],
-  }),
+  labUser,
   clinician,
   technician,
   aspectBeta,
+  inventoryManager,
 ]
