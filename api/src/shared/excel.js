@@ -289,7 +289,6 @@ async function renderExcelTemplate({
   templateFolderPath,
   dataSelector,
 }) {
-
   const lang = culture.split('-')[0].toLowerCase()
   // read file into workbook as ExcelWorkbook
   const workbook = await readTemplateFile(templateFolderPath, {
@@ -495,7 +494,6 @@ async function renderExcelTemplate({
 
           const patternRow = worksheet.getRow(patternRowNumber)
 
-
           extendRowStyles(worksheet, styles, patternRowNumber, patternRowNumber + data.length)
 
           _.each(formulae, f => {
@@ -540,6 +538,13 @@ async function renderExcelTemplate({
 
           // remove all rows between 1st row and table body (remove table headers too)
           worksheet.spliceRows(1, patternRowNumber - 1 - 1)
+        } else {
+          adjustTotalsRowFormulaeRefs(
+            worksheet,
+            patternRowNumber,
+            rows.length,
+            fieldNames.length + dynamicColumns.length - 1
+          )
         }
       }
     })
@@ -934,16 +939,10 @@ function extendRowStyles(worksheet, styles, from, to) {
   for (i = from; i < to; i++) {
     const row = worksheet.getRow(i)
     row.eachCell({ includeEmpty: true }, cell => {
-      const cellStyle = _.merge(
-        {},
-        cell.master?.style,
-        cell.style,
-        styles[cell.col - 1] ?? {}
-      )
+      const cellStyle = _.merge({}, cell.master?.style, cell.style, styles[cell.col - 1] ?? {})
       cell.style = cellStyle
     })
   }
-
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -1170,45 +1169,63 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   return merges
 }
 
-function extractTotalsRow(worksheet, patternRowNumber) {
-  // Look for totals row immediately after the pattern row
-  const totalsRowNumber = patternRowNumber + 1;
-  const totalsRow = worksheet.findRow(totalsRowNumber);
-
-  if (!totalsRow) return null;
-
-  // Check if this row contains totals indicators (formulas or specific tokens)
-  let isTotalsRow = false;
-  const totalsRowData = {
-    rowNumber: totalsRowNumber,
-    cells: [],
-    formulas: [],
-    styles: []
-  }
+function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength) {
+  const totalsRowNumber = patternRowNumber + dataLength
+  const totalsRow = worksheet.findRow(totalsRowNumber)
 
   totalsRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-    const cellData = {
-      colNumber,
-      value: cell.value,
-      formula: null,
-      style: getCellStyle(cell),
-      address: cell.address
-    };
-
     // Check for formula or totals indicators
     if (cell.type === excel.ValueType.Formula) {
-      cellData.formula = cell.value.formula
-      isTotalsRow = true
+      const { formula } = cell.value
+      const adjustedFormula = formula.replace(/([A-Z]+)(?!\$)(\d+)/g, (match, col, row) => {
+        // Adjust the row reference to point to the correct row in the totals row
+        const adjustedRow = parseInt(row, 10) + dataLength
+        return `${col}${adjustedRow}`
+      })
+      cell.value = { formula: adjustedFormula }
     }
-
-    totalsRowData.cells.push(cellData);
   })
-
-  return isTotalsRow ? totalsRowData : null;
 }
 
+// function getTotalsRow(worksheet, patternRowNumber) {
+//   // Look for totals row immediately after the pattern row
+//   const totalsRowNumber = patternRowNumber + 1
+//   const totalsRow = worksheet.findRow(totalsRowNumber)
+
+//   if (!totalsRow) return null
+
+//   // Check if this row contains totals indicators (formulas or specific tokens)
+//   let isTotalsRow = false
+//   const totalsRowData = {
+//     rowNumber: totalsRowNumber,
+//     cells: [],
+//     formulas: [],
+//     styles: [],
+//   }
+
+//   totalsRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+//     const cellData = {
+//       colNumber,
+//       value: cell.value,
+//       formula: null,
+//       style: getCellStyle(cell),
+//       address: cell.address,
+//     }
+
+//     // Check for formula or totals indicators
+//     if (cell.type === excel.ValueType.Formula) {
+//       cellData.formula = cell.value.formula
+//       isTotalsRow = true
+//     }
+
+//     totalsRowData.cells.push(cellData)
+//   })
+
+//   return isTotalsRow ? totalsRowData : null
+// }
+
 function createTotalsRow(worksheet, totalsRow, targetRowNumber) {
-  const totalsRowa = worksheet.getRow(targetRowNumber);
+  const totalsRowa = worksheet.getRow(targetRowNumber)
 
   // adjustedFormulas.forEach(cellData => {
   //   const cell = totalsRow.getCell(cellData.colNumber);
@@ -1223,7 +1240,7 @@ function createTotalsRow(worksheet, totalsRow, targetRowNumber) {
   //   setCellStyle(cell, cellData.style);
   // })
 
-  return totalsRow;
+  return totalsRow
 }
 
 // ----------------------------------------------------------------------------------------------
