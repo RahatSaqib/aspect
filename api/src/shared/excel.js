@@ -944,7 +944,22 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
     row.values = rowValues
   }
 
-  // extendRowStyles(rowTemplate, row, cellsStyle)
+  /**
+ * set style
+ * Notice that we are getting all cells from template, including
+ * undefined (empty) - need this to correctly set styles
+ */
+  rowTemplate.eachCell({ includeEmpty: true }, cellTemplate => {
+    const cell = row.getCell(cellTemplate.col)
+    const cellStyle = _.merge(
+      {},
+      rowTemplate.style,
+      cellTemplate.master?.style,
+      cellTemplate.style,
+      cellsStyle ? cellsStyle[cell.col - 1] : {}
+    )
+    cell.style = cellStyle
+  })
 
   /**
    * must commit all row changes to move it to the stream.
