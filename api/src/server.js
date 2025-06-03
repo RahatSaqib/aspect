@@ -9,6 +9,7 @@ const fs = require('fs')
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
+const Boom = require('@hapi/boom')
 
 const config = require('./config')
 
@@ -53,6 +54,21 @@ const server = new Hapi.server({
         // log and respond with the full error
         logger.error(err)
         throw err
+      },
+    },
+    response: {
+      failAction: async (request, h, err) => {
+        // Log the validation error
+        logger.error('Response validation failed:', err.details)
+
+        // Format the validation error using Boom
+        const error = Boom.badData('Response validation failed', err.details || err.message)
+        error.output.payload.validation = {
+          source: err.details?.[0]?.path?.join('.') || 'unknown',
+          keys: err.details?.map(detail => detail.path.join('.')) || [],
+        }
+        error.output.payload.message = 'Response validation failed'
+        throw error
       },
     },
   },

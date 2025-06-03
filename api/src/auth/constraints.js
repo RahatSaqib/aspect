@@ -390,7 +390,7 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
         /**
          * any deviceApproval except 'decommissioned'
          */
-        queryBuilder.whereRaw(`        
+        queryBuilder.whereRaw(`
           ifnull(deviceApproval.token, '') != 'decommissioned'
         `)
         if (hideUnapprovedDevices) {

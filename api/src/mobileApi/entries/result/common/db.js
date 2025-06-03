@@ -5,14 +5,18 @@ const {
   ACKNOWLEDGED,
   FLAGGED,
   MONTHS_HISTORY_TO_LOOK_UP,
-  MOBILE_APP_ALLOWED_ASSAYS,
   deliverableResultWorkflowStatuses,
 } = require('../../common/consts')
-const { addConstraints } = require('../../../../auth/constraints')
+const { addConstraints, addPartnerQueryConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
+const { allResultCategoryToId } = require('../../../../shared/dictionary')
 
-const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
-  const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
+const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
+  const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
+
+  const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
+
+  const resultCategoryToId = await allResultCategoryToId()
 
   const knexQuery = knex('Result as result')
     .join('Device as device', 'result.deviceId', 'device.id')
@@ -30,6 +34,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
     .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
     .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
     .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'result.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
+    .leftJoin('Partner as partner', 'result.partnerId', 'partner.id')
     .leftJoin(
       'ResultWorkflowStatus as resultWorkflowStatus',
       'resultWorkflowLog.resultWorkflowStatusId',
@@ -60,25 +65,27 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
     .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
     .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
     .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
-    .whereIn('result.reportableSiteId', clinicIds)
+    .andWhere(qb => {
+      qb.whereIn('result.reportableSiteId', clinicIds).orWhereIn('result.id', userViewOnlyTransferredResultIds)
+    })
+    .modify(addPartnerQueryConstraints, { constraints: dataConstraints })
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
       assayType: 'assayType',
     })
-    .andWhere('result.updatedOn', '>', minUpdatedOn)
-    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
-    .andWhere(qb =>
-      qb
-        .where('sample.registeredInAspect', true)
-        .orWhere('resultCategoryAssay1.requiresTreatment', true)
-        .orWhere('resultCategoryAssay2.requiresTreatment', true)
-    )
-    .modify(qb => {
-      if (!_.isEmpty(MOBILE_APP_ALLOWED_ASSAYS)) {
-        qb.whereIn('assay.externalId', MOBILE_APP_ALLOWED_ASSAYS)
+    .andWhere(qb => {
+      if (modifiedSince) {
+        qb.where('result.updatedOn', '>=', modifiedSince).orWhereNull('result.updatedOn')
       }
+      qb.where('result.endedOn', '>=', submittedSince).orWhereNull('sample.collectedOn')
+      qb.where('sample.collectedOn', '>=', submittedSince).orWhereNull('result.endedOn')
     })
-    .orWhereIn('result.id', userViewOnlyTransferredResultIds)
+    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
+    .whereNotIn('result.resultCategory1', [
+      resultCategoryToId.Invalid,
+      resultCategoryToId.Error,
+      resultCategoryToId.NoResult,
+    ])
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
@@ -143,6 +150,8 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'transferLog.reportableSiteId as transferReportableSiteId',
       'transferLog.previousReportableSiteId as transferPreviousReportableSiteId'
     )
+    .orderBy('sampleCollectedOn', 'desc')
+    .orderBy('testEndDate', 'desc')
   return knexQuery
 }
 
