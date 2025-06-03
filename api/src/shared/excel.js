@@ -512,7 +512,6 @@ async function renderExcelTemplate({
             const lastTemplateRowCellStyle = styles[styles.length - 1]
             const dynamicColumnsStartCol = fieldNames.length + 1
             dynamicColumns.forEach((column, dynamicColumnIndex) => {
-              // if (!column.style) return
               const colNumber = dynamicColumnsStartCol + dynamicColumnIndex
               data.forEach((rowData, rowIndex) => {
                 const rowNumber = patternRowNumber + rowIndex
@@ -545,24 +544,6 @@ async function renderExcelTemplate({
             rows.length,
             fieldNames.length + dynamicColumns.length - 1
           )
-
-          // Extend the last template cell's style to dynamic columns in totals row
-          const totalsRowNumber = patternRowNumber + rows.length
-          const totalsRow = worksheet.findRow(totalsRowNumber)
-          if (totalsRow) {
-            const lastTemplateCell = totalsRow.getCell(fieldNames.length)
-            const lastCellStyle = lastTemplateCell?.style
-
-            if (lastCellStyle) {
-              // Apply the style only to dynamic columns
-              for (let i = 1; i <= dynamicColumns.length; i++) {
-                const dynamicCell = totalsRow.getCell(fieldNames.length + i)
-                if (dynamicCell) {
-                  dynamicCell.style = { ...lastCellStyle }
-                }
-              }
-            }
-          }
         }
       }
     })
@@ -1202,10 +1183,14 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   return merges
 }
 
-function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength) {
+function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength, totalColumns) {
   const totalsRowNumber = patternRowNumber + dataLength
   const totalsRow = worksheet.findRow(totalsRowNumber)
+  let dynamicColumnsTokenCell = null
 
+  if (!totalsRow) return
+
+  // First handle the template columns formulas
   totalsRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
     // Check for formulas
     if (cell.type === excel.ValueType.Formula) {
@@ -1217,45 +1202,41 @@ function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength) {
       })
       cell.value = { formula: adjustedFormula }
     }
+
+    // Check for #SUM_DYNAMIC token
+    if (cell.value === '#SUM_DYNAMIC') {
+      dynamicColumnsTokenCell = cell
+    }
   })
+
+  // Extend dynamic sum
+  if (dynamicColumnsTokenCell) {
+    const dynamicColumnsStartCol = dynamicColumnsTokenCell.col
+    const dynamicColumnsEndCol = totalColumns + 1
+
+    // Get the last template cell's style
+    const lastTemplateCell = totalsRow.getCell(dynamicColumnsStartCol - 1)
+    const lastCellStyle = lastTemplateCell?.style
+
+    for (let i = dynamicColumnsStartCol; i <= dynamicColumnsEndCol; i++) {
+      const dynamicCell = totalsRow.getCell(i)
+      if (dynamicCell) {
+        // Apply the style if available
+        if (lastCellStyle) {
+          dynamicCell.style = { ...lastCellStyle }
+        }
+
+        // Add SUM formula for the dynamic column
+        const colLetter = dynamicCell.address.match(/([a-zA-Z]{1,2}).*/)[1]
+        const startRow = patternRowNumber
+        const endRow = patternRowNumber + dataLength - 1
+        dynamicCell.value = {
+          formula: `SUM(${colLetter}${startRow}:${colLetter}${endRow})`
+        }
+      }
+    }
+  }
 }
-
-// function getTotalsRow(worksheet, patternRowNumber) {
-//   // Look for totals row immediately after the pattern row
-//   const totalsRowNumber = patternRowNumber + 1
-//   const totalsRow = worksheet.findRow(totalsRowNumber)
-
-//   if (!totalsRow) return null
-
-//   // Check if this row contains totals indicators (formulas or specific tokens)
-//   let isTotalsRow = false
-//   const totalsRowData = {
-//     rowNumber: totalsRowNumber,
-//     cells: [],
-//     formulas: [],
-//     styles: [],
-//   }
-
-//   totalsRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-//     const cellData = {
-//       colNumber,
-//       value: cell.value,
-//       formula: null,
-//       style: getCellStyle(cell),
-//       address: cell.address,
-//     }
-
-//     // Check for formula or totals indicators
-//     if (cell.type === excel.ValueType.Formula) {
-//       cellData.formula = cell.value.formula
-//       isTotalsRow = true
-//     }
-
-//     totalsRowData.cells.push(cellData)
-//   })
-
-//   return isTotalsRow ? totalsRowData : null
-// }
 
 // ----------------------------------------------------------------------------------------------
 module.exports = {
