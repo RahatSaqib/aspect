@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-04-22T10:46:34.725Z\n"
+"POT-Creation-Date: 2025-06-03T10:59:19.681Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -63,28 +63,35 @@ msgstr "# Кількість протестованих сайтів MTB/XDR А�
 msgid "(New quantity on hand: {nextQuantity} {unitShortName})"
 msgstr "(Нова кількість на руках: {nextQuantity} {unitShortName})"
 
+#. [pages.InventoryLog.adjustFromTo]
+#. defaultMessage is:
+#. *Adjusted from {from} to {to}
+#: extracted_strings.json
+msgid "*Adjusted from {from} to {to}"
+msgstr "*Скориговано з {from} до {to}"
+
 #. [pages.excluded.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
+#. *Excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #. [pages.InventoryLog.excluded.inTransitFromSiteName]
 #. defaultMessage is:
-#. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
+#. *Excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
 msgid ""
-"* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
-"s in transit"
+"*Excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s "
+"in transit"
 msgstr ""
 "* виключено {pendingTransfersQuantityOnHand} елементів у {pendingTransfers} "
 "лотах в дорозі"
 
 #. [pages.inTransit.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * in transit from {inTransitFromSiteName}
+#. *In transit from {inTransitFromSiteName}
 #. [pages.InventoryLog.inTransitFromSiteName]
 #. defaultMessage is:
-#. * in transit from {inTransitFromSiteName}
+#. *In transit from {inTransitFromSiteName}
 #: extracted_strings.json
-msgid "* in transit from {inTransitFromSiteName}"
+msgid "*In transit from {inTransitFromSiteName}"
 msgstr "* в дорозі від {inTransitFromSiteName}"
 
 #. [pages.TableCell.moreContacts]
@@ -462,13 +469,6 @@ msgstr "Додати запис"
 #: extracted_strings.json
 msgid "Add Row"
 msgstr "Додати рядок"
-
-#. [pages.NewInventoryDialogForm.dialogTitle]
-#. defaultMessage is:
-#. Add {consumableName}
-#: extracted_strings.json
-msgid "Add {consumableName}"
-msgstr "Додати {consumableName}"
 
 #. [errorResponseMessages.addInventory.PUT.default.title]
 #. defaultMessage is:
@@ -976,44 +976,6 @@ msgstr "Тип аналізу"
 msgid "Assay that Consume this Item"
 msgstr "Аналізи, які використовують цей елемент"
 
-#. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
-#. defaultMessage is:
-#. Asserted inventory on hand decrease
-#: extracted_strings.json
-msgid "Asserted inventory on hand decrease"
-msgstr "Заявлений інвентар на руках"
-
-#. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove]
-#. defaultMessage is:
-#. Asserted inventory on hand increase
-#: extracted_strings.json
-msgid "Asserted inventory on hand increase"
-msgstr "Збільшення заявлених запасів на руках"
-
-#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedInventoryOnHandAdd]
-#. defaultMessage is:
-#. Asserted inventory on hand increase ( Add )
-#: extracted_strings.json
-msgid "Asserted inventory on hand increase ( Add )"
-msgstr "Збільшення заявлених запасів на складі ( Додати )"
-
-#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedInventoryOnHandRemove]
-#. defaultMessage is:
-#. Asserted inventory on hand increase ( Remove )
-#: extracted_strings.json
-msgid "Asserted inventory on hand increase ( Remove )"
-msgstr "Asserted inventory on hand increase ( Remove )"
-
-#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
-#. defaultMessage is:
-#. Asserted zero inventory
-#. [pages.InventoryLog.ConsumableReason_AssertedZeroInventory]
-#. defaultMessage is:
-#. Asserted zero inventory
-#: extracted_strings.json
-msgid "Asserted zero inventory"
-msgstr "Стверджено нульовий запас"
-
 #. [pages.DeviceApiKeyList.assign]
 #. defaultMessage is:
 #. Assign
@@ -1041,6 +1003,13 @@ msgstr "Прикріплений"
 #: extracted_strings.json
 msgid "Assignment Details"
 msgstr "Деталі призначення"
+
+#. [pages.PersonList.assignments]
+#. defaultMessage is:
+#. Assignments
+#: extracted_strings.json
+msgid "Assignments"
+msgstr "Додати завдання"
 
 #. [pages.Notifications.assayRequired]
 #. defaultMessage is:
@@ -1674,10 +1643,10 @@ msgstr "Дата калібрування"
 msgid "Can not be greater than on-hand"
 msgstr "Не може бути більшою, ніж наявна в наявності"
 
-#. [errorResponseMessages.removeInventory.PUT.notExisted.resolution]
+#. [errorResponseMessages.removeInventory.PUT.missingInventoryItem.resolution]
 #. defaultMessage is:
 #. Can not deduct from non-existed inventory item.
-#. [errorResponseMessages.transferInventory.transfer.PUT.notExisted.resolution]
+#. [errorResponseMessages.transferInventory.transfer.PUT.missingInventoryItem.resolution]
 #. defaultMessage is:
 #. Can not deduct from non-existed inventory item.
 #: extracted_strings.json
@@ -1742,16 +1711,6 @@ msgstr "Не можна редагувати"
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Відміна"
-
-#. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
-#. defaultMessage is:
-#. Captured
-#. [pages.InventoryLog.ConsumableReason_Captured]
-#. defaultMessage is:
-#. Captured
-#: extracted_strings.json
-msgid "Captured"
-msgstr "Полонений"
 
 #. [pages.InventoryLog.withLotStrategy]
 #. defaultMessage is:
@@ -1824,6 +1783,13 @@ msgstr "Категорія 2"
 #: extracted_strings.json
 msgid "Category I"
 msgstr "Категорія"
+
+#. [pages.PersonList.cell]
+#. defaultMessage is:
+#. Cell
+#: extracted_strings.json
+msgid "Cell"
+msgstr "Стільниковий"
 
 #. [pages.resultEdit.PatientPhoneNumberi18nkey]
 #. defaultMessage is:
@@ -2884,14 +2850,11 @@ msgstr "Дактарі ВГС"
 msgid "Daktari HIV-VL"
 msgstr "Daktari HIV-VL"
 
-#. [filter.ConsumableReasonSelectField.ConsumableReason_Damage]
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Damaged]
 #. defaultMessage is:
-#. Damage
-#. [pages.InventoryLog.ConsumableReason_Damage]
-#. defaultMessage is:
-#. Damage
+#. Damaged
 #: extracted_strings.json
-msgid "Damage"
+msgid "Damaged"
 msgstr "Пошкодження"
 
 #. [header.link.dashboardv2.title]
@@ -3839,6 +3802,9 @@ msgstr ""
 #. [pages.Notifications.table.emailHeader]
 #. defaultMessage is:
 #. Email
+#. [pages.PersonList.email]
+#. defaultMessage is:
+#. Email
 #: extracted_strings.json
 msgid "Email"
 msgstr "Адреса ел. пошти"
@@ -4329,9 +4295,6 @@ msgstr "Придатний до"
 #. [pages.InventoryItemsList.expired]
 #. defaultMessage is:
 #. Expired
-#. [pages.InventoryLog.ConsumableReason_Expired]
-#. defaultMessage is:
-#. Expired
 #: extracted_strings.json
 msgid "Expired"
 msgstr "Закінчився"
@@ -4582,7 +4545,7 @@ msgstr ""
 #. Failed to update inventory settings. Please try again later.
 #: extracted_strings.json
 msgid "Failed to update inventory settings. Please try again later."
-msgstr ""
+msgstr "Не вдалося оновити налаштування інвентарю. Спробуйте пізніше."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -5873,16 +5836,6 @@ msgstr ""
 msgid "Implementing Partner"
 msgstr "Виконавчий партнер"
 
-#. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
-#. defaultMessage is:
-#. Imported
-#. [pages.InventoryLog.ConsumableReason_Imported]
-#. defaultMessage is:
-#. Imported
-#: extracted_strings.json
-msgid "Imported"
-msgstr "Імпортується"
-
 #. [pages.deviceDetail.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
@@ -6197,6 +6150,13 @@ msgstr "Журнал інвентаризації"
 msgid "Inventory Management Configuration"
 msgstr "Конфігурація управління запасами"
 
+#. [jobFunction.inventoryManager]
+#. defaultMessage is:
+#. Inventory Manager
+#: extracted_strings.json
+msgid "Inventory Manager"
+msgstr "Передача запасів"
+
 #. [browsePage.browseDropdown.inventoryOverview]
 #. defaultMessage is:
 #. Inventory Overview
@@ -6266,8 +6226,6 @@ msgstr "Інвентар на руках"
 #. defaultMessage is:
 #. Inventory settings updated successfully.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Inventory levels have been adjusted successfully"
 msgid "Inventory settings updated successfully."
 msgstr "Рівні запасів успішно відрегульовані"
 
@@ -6429,9 +6387,6 @@ msgid "January"
 msgstr "Січень"
 
 #. [pages.UserPreferences.job]
-#. defaultMessage is:
-#. Job
-#. [pages.PersonList.level]
 #. defaultMessage is:
 #. Job
 #: extracted_strings.json
@@ -6640,6 +6595,13 @@ msgstr "Останні 6 місяці"
 #: extracted_strings.json
 msgid "Last 7 Days"
 msgstr "Останні 7 днів"
+
+#. [pages.PersonList.lastLogin]
+#. defaultMessage is:
+#. Last Login
+#: extracted_strings.json
+msgid "Last Login"
+msgstr "Останній пінг"
 
 #. [pages.dateRangeSelector.lastMonth]
 #. defaultMessage is:
@@ -6972,9 +6934,6 @@ msgid "Longitude"
 msgstr "Довгота"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Lost]
-#. defaultMessage is:
-#. Lost
-#. [pages.InventoryLog.ConsumableReason_Lost]
 #. defaultMessage is:
 #. Lost
 #: extracted_strings.json
@@ -7650,12 +7609,12 @@ msgstr "Чоловіча"
 msgid "Manage"
 msgstr "Організувати"
 
-#. [pages.InventoryLog.ConsumableReason_ManualAddition]
+#. [filter.ConsumableReasonSelectField.ConsumableReason_ManualAddition]
 #. defaultMessage is:
 #. Manual Addition
 #: extracted_strings.json
 msgid "Manual Addition"
-msgstr ""
+msgstr "Додавання вручну"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy]
 #. defaultMessage is:
@@ -9044,6 +9003,9 @@ msgstr "Впорядковано"
 msgid "Origin Site"
 msgstr "Сайт походження"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Other]
+#. defaultMessage is:
+#. Other
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
@@ -9366,9 +9328,22 @@ msgstr "Деталь людини"
 #. [pages.ContactDetails.phoneHeader]
 #. defaultMessage is:
 #. Phone
+#. [pages.PersonList.phone]
+#. defaultMessage is:
+#. Phone
 #: extracted_strings.json
 msgid "Phone"
 msgstr "Телефон"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_PhysicalCount]
+#. defaultMessage is:
+#. Physical Count
+#. [pages.InventoryItemsList.physicalCount]
+#. defaultMessage is:
+#. Physical Count
+#: extracted_strings.json
+msgid "Physical Count"
+msgstr "Фізичний підрахунок"
 
 #. [filter.sampleType.sampleTypePlasma]
 #. defaultMessage is:
@@ -9410,6 +9385,13 @@ msgstr "Підтвердити новий пароль"
 #. Please enter a new password
 #: extracted_strings.json
 msgid "Please enter a new password"
+msgstr "Введіть новий пароль"
+
+#. [pages.InventoryAdjustmentDialogForm.notesRequired]
+#. defaultMessage is:
+#. Please enter a note to explain the reason
+#: extracted_strings.json
+msgid "Please enter a note to explain the reason"
 msgstr "Введіть новий пароль"
 
 #. [pages.ContactDetails.invalidEmailAddress]
@@ -10156,6 +10138,9 @@ msgstr "Контроль якості"
 msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
 
+#. [pages.NewInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity
 #. [pages.InventoryLog.quantity]
 #. defaultMessage is:
 #. Quantity
@@ -10189,13 +10174,6 @@ msgstr "Кількість від'ємна для поточного запас�
 #: extracted_strings.json
 msgid "Quantity on Hand"
 msgstr "Кількість на руках"
-
-#. [pages.NewInventoryDialogForm.quantity]
-#. defaultMessage is:
-#. Quantity to Add
-#: extracted_strings.json
-msgid "Quantity to Add"
-msgstr "Кількість для додавання"
 
 #. [pages.RemoveInventoryDialogForm.quantity]
 #. defaultMessage is:
@@ -10478,8 +10456,6 @@ msgstr "Регіональний співробітник"
 #. defaultMessage is:
 #. Registration Date
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Expiration Date"
 msgid "Registration Date"
 msgstr "Придатний до"
 
@@ -10518,7 +10494,7 @@ msgstr "Видалити рядок"
 msgid "Remove {consumableName}"
 msgstr "Вилучити {consumableName}"
 
-#. [errorResponseMessages.removeInventory.PUT.notExisted.title]
+#. [errorResponseMessages.removeInventory.PUT.missingInventoryItem.title]
 #. defaultMessage is:
 #. Removing Inventory Failed
 #. [errorResponseMessages.removeInventory.PUT.negativeQuantity.title]
@@ -11125,8 +11101,8 @@ msgstr "Результат Статус робочого процесу"
 #. Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"
 #: extracted_strings.json
 msgid ""
-"Result for patient \"{patientId}\" has been transferred from "
-"\"{oldSiteName}\" to \"{newSiteName}\""
+"Result for patient \"{patientId}\" has been transferred from \"{oldSiteName}"
+"\" to \"{newSiteName}\""
 msgstr ""
 "Результат для пацієнта \"{patientId}\" було перенесено з \"{oldSiteName}\" у "
 "\"{newSiteName}\""
@@ -12705,9 +12681,6 @@ msgstr "Запаси"
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Stolen]
 #. defaultMessage is:
 #. Stolen
-#. [pages.InventoryLog.ConsumableReason_Stolen]
-#. defaultMessage is:
-#. Stolen
 #: extracted_strings.json
 msgid "Stolen"
 msgstr "Вкрадене"
@@ -13084,13 +13057,6 @@ msgstr "Тест завершено"
 #: extracted_strings.json
 msgid "Test Started On"
 msgstr "Тест розпочато у"
-
-#. [pages.InventoryLog.ConsumableReason_TestConducted]
-#. defaultMessage is:
-#. Test conducted
-#: extracted_strings.json
-msgid "Test conducted"
-msgstr "Випробування проведено"
 
 #. [pages.DeviceList.errorRate]
 #. defaultMessage is:
@@ -14019,6 +13985,17 @@ msgstr ""
 "Це дозволить цьому користувачу знову ввійти, і він зможе знову ввійти. "
 "Хочете продовжити?"
 
+#. [pages.InventoryAdjustmentDialogForm.resetWarning]
+#. defaultMessage is:
+#. This will reset the Inventory on Hand to {quantity}. Any movement before {resetDate} will be discarded from now on. Are you sure?
+#: extracted_strings.json
+msgid ""
+"This will reset the Inventory on Hand to {quantity}. Any movement before "
+"{resetDate} will be discarded from now on. Are you sure?"
+msgstr ""
+"Це скине наявний запас до {quantity}. Будь-які переміщення до {resetDate} "
+"будуть відхилені відтепер. Ви впевнені?"
+
 #. [components.shared.thursday]
 #. defaultMessage is:
 #. Thursday
@@ -14352,20 +14329,6 @@ msgstr "Помилка результату передачі"
 msgid "Transfer Sent"
 msgstr "Передача відправлена"
 
-#. [pages.InventoryLog.ConsumableReason_TransferReceived]
-#. defaultMessage is:
-#. Transfer received from {refSiteName}
-#: extracted_strings.json
-msgid "Transfer received from {refSiteName}"
-msgstr "Отримано переказ від {refSiteName}"
-
-#. [pages.InventoryLog.ConsumableReason_TransferSent]
-#. defaultMessage is:
-#. Transfer sent to {refSiteName}
-#: extracted_strings.json
-msgid "Transfer sent to {refSiteName}"
-msgstr "Переказ відправлено на рахунок {refSiteName}"
-
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
 #. Transfer to Clinic
@@ -14380,13 +14343,13 @@ msgstr "Переїзд до клініки"
 msgid "Transfer {consumableName}"
 msgstr "Передати {consumableName}"
 
-#. [errorResponseMessages.transferInventory.transfer.notExisted.PUT.title]
+#. [errorResponseMessages.transferInventory.transfer.missingInventoryItem.PUT.title]
 #. defaultMessage is:
 #. Transferring Inventory Failed
-#. [errorResponseMessages.transferInventory.transfer.negativeQuantity.notExisted.PUT.title]
+#. [errorResponseMessages.transferInventory.transfer.negativeQuantity.negativeQuantity.PUT.title]
 #. defaultMessage is:
 #. Transferring Inventory Failed
-#. [errorResponseMessages.transferInventory.transfer.notExisted.notEnough.PUT.title]
+#. [errorResponseMessages.transferInventory.transfer.notEnoughInventory.PUT.title]
 #. defaultMessage is:
 #. Transferring Inventory Failed
 #. [errorResponseMessages.transferInventory.PUT.default.title]
@@ -15380,17 +15343,6 @@ msgstr ""
 msgid "You've successfully logged out"
 msgstr "Ви успішно вийшли"
 
-#. [pages.welcomePage.setupNeeded]
-#. defaultMessage is:
-#. Your account still needs some setup before you will be able to use the system. Please contact your administrator.
-#: extracted_strings.json
-msgid ""
-"Your account still needs some setup before you will be able to use the "
-"system. Please contact your administrator."
-msgstr ""
-"Ваш обліковий запис усе ще потребує налаштування, перш ніж ви зможете "
-"користуватися системою. Зверніться до свого адміністратора."
-
 #. [errorResponseMessages.loginStart.POST.417.missingPermissions.message]
 #. defaultMessage is:
 #. Your credentials were not configured properly. Please, contact your administrator.
@@ -15959,6 +15911,13 @@ msgstr "з результатом {resultCategoryName}"
 msgid "workflow status is {workflowStatusName}"
 msgstr "статус робочого циклу - {workflowStatusName}"
 
+#. [pages.NewInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. {consumableName}
+#: extracted_strings.json
+msgid "{consumableName}"
+msgstr "Додати {consumableName}"
+
 #. [pages.DeviceList.errorOfTotal]
 #. defaultMessage is:
 #. {count} of {total}
@@ -16112,6 +16071,46 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} всього калібрувань"
+
+#~ msgid "Asserted inventory on hand decrease"
+#~ msgstr "Заявлений інвентар на руках"
+
+#~ msgid "Asserted inventory on hand increase"
+#~ msgstr "Збільшення заявлених запасів на руках"
+
+#~ msgid "Asserted inventory on hand increase ( Add )"
+#~ msgstr "Збільшення заявлених запасів на складі ( Додати )"
+
+#~ msgid "Asserted inventory on hand increase ( Remove )"
+#~ msgstr "Asserted inventory on hand increase ( Remove )"
+
+#~ msgid "Asserted zero inventory"
+#~ msgstr "Стверджено нульовий запас"
+
+#~ msgid "Captured"
+#~ msgstr "Полонений"
+
+#~ msgid "Imported"
+#~ msgstr "Імпортується"
+
+#~ msgid "Quantity to Add"
+#~ msgstr "Кількість для додавання"
+
+#~ msgid "Test conducted"
+#~ msgstr "Випробування проведено"
+
+#~ msgid "Transfer received from {refSiteName}"
+#~ msgstr "Отримано переказ від {refSiteName}"
+
+#~ msgid "Transfer sent to {refSiteName}"
+#~ msgstr "Переказ відправлено на рахунок {refSiteName}"
+
+#~ msgid ""
+#~ "Your account still needs some setup before you will be able to use the "
+#~ "system. Please contact your administrator."
+#~ msgstr ""
+#~ "Ваш обліковий запис усе ще потребує налаштування, перш ніж ви зможете "
+#~ "користуватися системою. Зверніться до свого адміністратора."
 
 #~ msgid "Breakdown by Lots"
 #~ msgstr "Розподіл за лотами"
