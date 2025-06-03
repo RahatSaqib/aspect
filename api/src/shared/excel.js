@@ -490,7 +490,7 @@ async function renderExcelTemplate({
             styles.push(cell.style)
             cell.value = null
           })
-          const q = worksheet.spliceRows(patternRowNumber, 1, ...data)
+          worksheet.spliceRows(patternRowNumber, 1, ...data)
 
           const patternRow = worksheet.getRow(patternRowNumber)
 
@@ -499,8 +499,9 @@ async function renderExcelTemplate({
           _.each(formulae, f => {
             const masterCell = patternRow.getCell(f.index)
 
-            const rangeToFillFormula = `${masterCell.address}:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${data.length + masterCell.row - 1
-              }`
+            const rangeToFillFormula = `${masterCell.address}:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
+              data.length + masterCell.row - 1
+            }`
 
             worksheet.fillFormula(rangeToFillFormula, f.formula)
           })
@@ -738,7 +739,7 @@ async function streamExcelTemplate({
        * prepare table in worksheet, i.e.
        * append dynamic columns, get all predefined field names, get pattern row number
        */
-      ; ({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
+      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
     }
 
     /**
@@ -926,10 +927,10 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
   }
 
   /**
- * set style
- * Notice that we are getting all cells from template, including
- * undefined (empty) - need this to correctly set styles
- */
+   * set style
+   * Notice that we are getting all cells from template, including
+   * undefined (empty) - need this to correctly set styles
+   */
   rowTemplate.eachCell({ includeEmpty: true }, cellTemplate => {
     const cell = row.getCell(cellTemplate.col)
     const cellStyle = _.merge(
@@ -950,7 +951,7 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
 }
 
 function extendRowStyles(worksheet, styles, from, to) {
-  for (i = from; i < to; i++) {
+  for (let i = from; i < to; i++) {
     const row = worksheet.getRow(i)
     row.eachCell({ includeEmpty: true }, cell => {
       const cellStyle = _.merge({}, cell.master?.style, cell.style, styles[cell.col - 1] ?? {})
@@ -1191,7 +1192,7 @@ function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength, to
   if (!totalsRow) return
 
   // First handle the template columns formulas
-  totalsRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+  totalsRow.eachCell({ includeEmpty: true }, cell => {
     // Check for formulas
     if (cell.type === excel.ValueType.Formula) {
       const { formula } = cell.value
@@ -1231,7 +1232,7 @@ function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength, to
         const startRow = patternRowNumber
         const endRow = patternRowNumber + dataLength - 1
         dynamicCell.value = {
-          formula: `SUM(${colLetter}${startRow}:${colLetter}${endRow})`
+          formula: `SUM(${colLetter}${startRow}:${colLetter}${endRow})`,
         }
       }
     }
