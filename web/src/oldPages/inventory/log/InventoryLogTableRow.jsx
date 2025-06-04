@@ -11,7 +11,7 @@ import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
-import { formatDate } from '../../../utils/utils/dateFormat'
+import { formatDate, formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
 const TEST_CONDUCTED_EXTERNAL_ID = 'used'
@@ -24,8 +24,10 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
   return (
     <TableRow className={styles.TableRow}>
       <TableCell className={styles.TableCell}>
-        {inventoryLogItem.transactionDate
-          ? formatDate(inventoryLogItem.transactionDate)
+        {inventoryLogItem.createdOn
+          ? inventoryLogItem.consumableReasonExternalId === 'test_conducted'
+            ? formatDate(inventoryLogItem.createdOn)
+            : formatDateTime(inventoryLogItem.createdOn)
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.siteName}</TableCell>
@@ -85,7 +87,20 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
             : {}
         }
       >
-        {inventoryLogItem.quantity}
+        {inventoryLogItem.quantity > 0 ? `+${inventoryLogItem.quantity}` : inventoryLogItem.quantity}
+        &nbsp;
+        {inventoryLogItem.consumableReasonEffectOnStock === 'resetToValue' ? (
+          <span>
+            <small>
+              {formatMessage(messages.adjustFromTo, {
+                from: inventoryLogItem.quantityOnHandAfter - inventoryLogItem.quantity,
+                to: inventoryLogItem.quantityOnHandAfter,
+              })}
+            </small>
+          </span>
+        ) : (
+          ''
+        )}
       </TableCell>
       <TableCell className={styles.TableCell}>
         {messages[inventoryLogItem.consumableReasonI18nKey]
@@ -98,8 +113,10 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
       <TableCell className={styles.TableCell}>
-        {inventoryLogItem.createdOn
-          ? formatDate(new Date(inventoryLogItem.createdOn))
+        {inventoryLogItem.transactionDate
+          ? inventoryLogItem.consumableReasonExternalId === 'test_conducted'
+            ? formatDate(inventoryLogItem.transactionDate)
+            : formatDateTime(inventoryLogItem.transactionDate)
           : formatMessage(messages.notAvailable)}
       </TableCell>
     </TableRow>

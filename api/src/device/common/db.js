@@ -557,12 +557,6 @@ async function deleteMessages(deviceId, trknex) {
   await trknex('WebhookMessage').where('deviceId', deviceId).del()
 }
 
-async function deleteMissingInventoryLots(deviceId, trknex) {
-  await trknex('MissingInventoryLots')
-    .whereIn('resultId', knex('Result').where('deviceId', deviceId).select('id'))
-    .del()
-}
-
 async function deleteResults(deviceId, trknex) {
   await trknex('Result').where('deviceId', deviceId).del()
 }
@@ -970,7 +964,6 @@ module.exports = {
   modulesWithLastResult,
   getDeviceByIdBaseQuery,
   getLastUploadDateBySites,
-  deleteMissingInventoryLots,
   getUnusedModulesReportData,
   getDeviceInfo,
 }

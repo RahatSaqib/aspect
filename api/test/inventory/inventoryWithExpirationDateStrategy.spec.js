@@ -5,6 +5,7 @@ const addYears = require('date-fns/addYears')
 const { addDays } = require('date-fns')
 const shared = require('../utils/sharedToken')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+const { consumableReasonToId } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
 
 const { assert } = chai
@@ -493,6 +494,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
+              reasonId: await consumableReasonToId('manual_addition'),
               quantity: quantityToAdjust,
               notes: 'Testing add',
               toSiteId: inventoryItem.siteId,
@@ -529,7 +531,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
               quantity: 400,
               notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
-              reasonId: 1,
+              reasonId: await consumableReasonToId('lost'),
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
@@ -550,12 +552,13 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
               quantity: 510,
               notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
-              reasonId: 1,
+              reasonId: await consumableReasonToId('lost'),
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
 
-          assert.equal(res.status, 500)
+          assert.equal(res.status, 400)
+          assert.equal(res.body.errorKeyCode, 'missingInventoryItem')
         })
       })
     })

@@ -12,9 +12,9 @@ const messages = {
       id: 'pages.PersonList.personName',
       defaultMessage: 'Name',
     },
-    level: {
-      id: 'pages.PersonList.level',
-      defaultMessage: 'Job',
+    assignments: {
+      id: 'pages.PersonList.assignments',
+      defaultMessage: 'Assignments',
     },
     paginatorStatus: {
       id: 'pages.PersonList.paginatorStatus',
@@ -26,6 +26,22 @@ const messages = {
     tags: {
       id: 'pages.PersonList.tags',
       defaultMessage: 'Tags',
+    },
+    cell: {
+      id: 'pages.PersonList.cell',
+      defaultMessage: 'Cell',
+    },
+    email: {
+      id: 'pages.PersonList.email',
+      defaultMessage: 'Email',
+    },
+    phone: {
+      id: 'pages.PersonList.phone',
+      defaultMessage: 'Phone',
+    },
+    lastLogin: {
+      id: 'pages.PersonList.lastLogin',
+      defaultMessage: 'Last Login',
     },
     addContact: {
       id: 'pages.PersonList.addContact',
