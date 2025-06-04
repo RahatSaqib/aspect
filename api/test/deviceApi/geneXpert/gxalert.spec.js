@@ -1130,7 +1130,7 @@ describe.skip('Device API routes for GxAlert Device', () => {
           siteId: geneXpertDevice.siteId,
           consumableReason: 'Test Conducted',
           resultId: lastResultId,
-          quantity: 1,
+          quantity: -1,
           expiresOn: null,
           lotNumber: null,
           quantityOnHand: 99,
@@ -1234,7 +1234,7 @@ describe.skip('Device API routes for GxAlert Device', () => {
           ])
           const matchingConsumableAssayAfterFirstRequest = _.find(consumableAssays, {
             consumableId: _.head(inventoryLogsAfterFirstRequest).consumableId,
-            quantity: _.head(inventoryLogsAfterFirstRequest).quantity,
+            quantity: -_.head(inventoryLogsAfterFirstRequest).quantity,
           })
           assert.isNotEmpty(matchingConsumableAssayAfterFirstRequest)
 
@@ -1301,7 +1301,7 @@ describe.skip('Device API routes for GxAlert Device', () => {
           assert.deepEqual(inventoryLogsAfterSecondRequest, inventoryLogsAfterFirstRequest)
           const matchingConsumableAssayAfterSecondRequest = _.find(consumableAssays, {
             consumableId: _.head(inventoryLogsAfterSecondRequest).consumableId,
-            quantity: _.head(inventoryLogsAfterSecondRequest).quantity,
+            quantity: -_.head(inventoryLogsAfterSecondRequest).quantity,
           })
           assert.isNotEmpty(matchingConsumableAssayAfterSecondRequest)
         })

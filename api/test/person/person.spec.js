@@ -17,6 +17,57 @@ describe('Person routes', () => {
   })
 
   describe('GET /person', () => {
+    const testUserName = 'Joy'
+    let testUserId
+    let clinicianJobFunctionId
+    let technicianJobFunctionId
+    const insertedJobContextIds = []
+
+    before(async () => {
+      // Insert JobContext records for Test User
+      await run(async knex => {
+        const testUser = await knex('Person').where({ name: testUserName }).first('id')
+        testUserId = testUser.id
+
+        // Get jobFunction ids
+        const clinician = await knex('JobFunction').where({ externalId: 'clinician' }).first('id')
+        const technician = await knex('JobFunction').where({ externalId: 'technician' }).first('id')
+
+        clinicianJobFunctionId = clinician.id
+        technicianJobFunctionId = technician.id
+
+        const jobContexts = [
+          { personId: testUserId, jobFunctionId: clinicianJobFunctionId },
+          { personId: testUserId, jobFunctionId: clinicianJobFunctionId },
+          { personId: testUserId, jobFunctionId: clinicianJobFunctionId },
+        ]
+        // Insert 3 clinician JobContext records
+        const clinicianJobContextPromises = jobContexts.map(async jc => {
+          const [id] = await knex('JobContext').insert(jc)
+
+          return typeof id === 'object' ? id.id : id
+        })
+        const clinicianJobContextIds = await Promise.all(clinicianJobContextPromises)
+        insertedJobContextIds.push(...clinicianJobContextIds)
+        // Insert 1 technician record in JobContext
+        const [techId] = await knex('JobContext').insert({
+          personId: testUserId,
+          jobFunctionId: technicianJobFunctionId,
+        })
+
+        insertedJobContextIds.push(typeof techId === 'object' ? techId.id : techId)
+      })
+    })
+
+    after(async () => {
+      // Remove inserted JobContext records for Test User
+      await run(async knex => {
+        if (insertedJobContextIds.length) {
+          await knex('JobContext').whereIn('id', insertedJobContextIds).del()
+        }
+      })
+    })
+
     it('should return a list of persons when using valid token', async () => {
       const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
@@ -27,9 +78,14 @@ describe('Person routes', () => {
       assert.isAtLeast(res.body.data.length, 3)
       assert.property(res.body.data[0], 'id')
       assert.property(res.body.data[0], 'name')
-      assert.property(res.body.data[0], 'level')
+      assert.property(res.body.data[0], 'assignments')
+      assert.equal(res.body.data.find(p => p.name === 'Joy').assignments, 'Clinician (3); Technician')
       assert.property(res.body.data[0], 'state')
       assert.property(res.body.data[0], 'lga')
+      assert.property(res.body.data[0], 'email')
+      assert.property(res.body.data[0], 'cell')
+      assert.property(res.body.data[0], 'phone')
+      assert.property(res.body.data[0], 'lastLogin')
       assert.property(res.body, 'total')
     })
   })

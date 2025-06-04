@@ -88,18 +88,17 @@ function getInventoryByLotQuery(request, dataConstraints, consumableStrategy) {
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .leftJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
     .leftJoin(
-      knex('MissingInventoryLots as mil')
-        .innerJoin('Result as r', 'mil.resultId', 'r.id')
+      knex('Result as r')
         .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
-        .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
+        .whereNull('r.reconciliationDate')
         .select(
-          'mil.siteId',
-          'c.id as consumableId',
-          'mil.lotNumber as lotNumber',
-          'mil.expirationDate as expiresOn',
+          'r.siteId',
+          'ca.consumableId as consumableId',
+          'r.consumableLot as lotNumber',
+          'r.consumableExpirationDate as expiresOn',
           knex.raw('COUNT(*) as unreconciledCount')
         )
-        .groupBy('mil.siteId', 'c.id')
+        .groupBy('r.siteId', 'ca.consumableId')
         .as('unreconciled'),
       builder => {
         builder.on('unreconciled.siteId', 's.id').andOn('unreconciled.consumableId', 'c.id')

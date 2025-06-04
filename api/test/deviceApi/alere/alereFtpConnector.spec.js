@@ -582,7 +582,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
               siteId: alereDevice.siteId,
               consumableReason: 'Test Conducted',
               resultId: resultDetails.id,
-              quantity: consumableAssay.quantity,
+              quantity: -consumableAssay.quantity,
             },
           ])
           expect(inventoryLogsAfter).to.have.lengthOf(inventoryLogsBefore.length + 1)
@@ -671,7 +671,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                 siteId: alereDevice.siteId,
                 consumableReason: 'Test Conducted',
                 resultId: resultDetailsAfterFirstPost.id,
-                quantity: consumableAssay.quantity,
+                quantity: -consumableAssay.quantity,
               },
             ])
 

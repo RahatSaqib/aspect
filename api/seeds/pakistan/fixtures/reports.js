@@ -8,7 +8,7 @@ const deviceSummaryReport = {
   i18nKeyDescription: 'deviceSummaryReportDescription',
   fileName: 'DeviceSummaryReport',
   exportCsv: false,
-  sortOrder: 11,
+  sortOrder: 15,
   validations: [],
   sheets: [
     {

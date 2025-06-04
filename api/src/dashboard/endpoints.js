@@ -76,7 +76,7 @@ const routes = [
     config: {
       description: 'Consumable Dashboard',
       notes: 'The top level consumable dashboard',
-      auth: { scope: ['site', 'consumable', 'dashboard'] },
+      auth: { scope: ['site', 'consumable', 'dashboard', 'inventory'] },
     },
   },
   {

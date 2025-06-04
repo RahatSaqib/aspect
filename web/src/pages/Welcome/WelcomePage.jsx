@@ -1,20 +1,10 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Box, Paper, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import messages from './messages'
 
 const Welcome = () => {
   const { formatMessage } = useIntl()
-  const navigate = useNavigate()
-  const user = useSelector(({ user }) => user.toJS())
-
-  useEffect(() => {
-    if (user?.jwt?.permissions?.length > 0) {
-      navigate('/')
-    }
-  }, [user, navigate])
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100% - 120px)' }}>
@@ -22,7 +12,6 @@ const Welcome = () => {
         <Typography variant="h4" sx={{ mb: 2 }}>
           {formatMessage(messages.welcome)}
         </Typography>
-        <Typography variant="subtitle1">{formatMessage(messages.setupNeeded)}</Typography>
       </Paper>
     </Box>
   )

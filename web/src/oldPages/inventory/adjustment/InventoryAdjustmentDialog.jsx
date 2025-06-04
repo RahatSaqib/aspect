@@ -106,7 +106,8 @@ function InventoryAdjustmentDialog(props) {
         const isFormValid =
           !Object.keys(errors).length &&
           Object.keys(touched).length > 0 &&
-          (!uiTransfer || (uiTransfer && values.quantity && values.toSiteId))
+          (!uiTransfer || (values.quantity && values.toSiteId)) &&
+          (values.reason?.externalId !== 'other' || !!values.notes?.trim())
 
         return (
           <AspectDialog
@@ -122,6 +123,23 @@ function InventoryAdjustmentDialog(props) {
           >
             <form className={styles.Form}>
               <div className={styles.Form__Content}>
+                {uiAdd || uiRemove ? (
+                  <FormGroup
+                    labelProps={{ required: true }}
+                    label={formatMessage(messages.reason)}
+                    error={!!errors.reason}
+                    helperText={errors.reason}
+                  >
+                    <ConsumableReasonSelect
+                      name="reasonId"
+                      error={errors?.reason ? ' ' : null}
+                      value={values?.reason ?? null}
+                      onChange={reason => setFieldValue('reason', reason)}
+                      filterType={uiRemove ? 'decrease' : 'increase'} // Map actionType to filterType
+                    />
+                  </FormGroup>
+                ) : null}
+
                 {initialValues?.fromSiteId ? (
                   <SiteSelect
                     name="fromSiteId"
@@ -206,7 +224,7 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {(uiTransfer || uiRemove) && !breakOutByLot ? (
+                {(uiTransfer || uiRemove || (uiAdd && initialValues?.consumable)) && !breakOutByLot ? (
                   // Transfer or remove inventory with break out by lot option unchecked
                   <FormGroup
                     labelProps={{ required: true }}
@@ -347,64 +365,26 @@ function InventoryAdjustmentDialog(props) {
                   </p>
                 ) : null}
 
-                {actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ? (
-                  <ConsumableReasonSelect
-                    name="reasonId"
-                    error={errors?.reason}
-                    label={formatMessage(messages.reason)}
-                    value={values?.reason ?? null}
-                    onChange={reason => setFieldValue('reason', reason)}
-                  />
+                {values.reason?.effectOnStock !== 'resetToValue' ? (
+                  <FormGroup label={`${formatMessage(labels.dateAdjusted)} (yyyy-mm-dd)`}>
+                    <DateTimeInput
+                      fullWidth
+                      intl={{ formatMessage, ...intl }}
+                      margin="normal"
+                      dateFormat="yyyy-MM-dd"
+                      RootProps={{
+                        name: 'dateAdjusted',
+                      }}
+                      value={values.dateAdjusted}
+                      onChange={(_, date) => setFieldValue('dateAdjusted', date)}
+                      maxDate={now}
+                    />
+                  </FormGroup>
                 ) : null}
-
-                {values?.reason?.i18nKey === 'ConsumableReason_TestConducted' ? (
-                  <>
-                    <FormGroup label={formatMessage(messages.testsRunBetween)}>
-                      <DateTimeInput
-                        fullWidth
-                        margin="normal"
-                        intl={{ formatMessage, ...intl }}
-                        dateFormat="yyyy-MM-dd"
-                        RootProps={{
-                          name: 'dateAdjustedFrom',
-                        }}
-                        value={values.dateAdjustedFrom}
-                        onChange={(_, date) => setFieldValue('dateAdjustedFrom', date)}
-                      />
-                    </FormGroup>
-                    <FormGroup label={formatMessage(messages.and)}>
-                      <DateTimeInput
-                        fullWidth
-                        margin="normal"
-                        dateFormat="yyyy-MM-dd"
-                        intl={{ formatMessage, ...intl }}
-                        RootProps={{
-                          name: 'dateAdjustedTo',
-                        }}
-                        value={values.dateAdjustedTo}
-                        onChange={(_, date) => setFieldValue('dateAdjustedTo', date)}
-                      />
-                    </FormGroup>
-                  </>
-                ) : null}
-
-                <FormGroup label={`${formatMessage(labels.dateAdjusted)} (yyyy-mm-dd)`}>
-                  <DateTimeInput
-                    fullWidth
-                    intl={{ formatMessage, ...intl }}
-                    margin="normal"
-                    dateFormat="yyyy-MM-dd"
-                    RootProps={{
-                      name: 'dateAdjusted',
-                    }}
-                    value={values.dateAdjusted}
-                    onChange={(_, date) => setFieldValue('dateAdjusted', date)}
-                    maxDate={now}
-                  />
-                </FormGroup>
 
                 <TextField
                   fullWidth
+                  required={values.reason?.externalId === 'other'}
                   type="notes"
                   name="notes"
                   label={formatMessage(messages.notes)}
@@ -413,8 +393,19 @@ function InventoryAdjustmentDialog(props) {
                   multiline
                   rows={2}
                   margin="normal"
+                  error={!!errors.notes}
+                  helperText={errors.notes}
                   FormHelperTextProps={{
                     margin: 'dense',
+                    classes: {
+                      error: styles.Field__error__message,
+                    },
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                    classes: {
+                      error: styles.Field__label__when__error,
+                    },
                   }}
                   inputProps={{ maxLength: 2000 }}
                 />

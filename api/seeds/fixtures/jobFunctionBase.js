@@ -139,8 +139,10 @@ const superAdmin = {
 
 const regionalAdmin = {
   name: 'Regional Admin',
-  reports: superAdmin.reports,
-  permissions: superAdmin.permissions.filter(permission => permission.module !== 'admin'),
+  reports: superAdmin.reports.filter(
+    report => !['unreconciled_inventory_report', 'inventory_log', 'no_stock'].includes(report)
+  ),
+  permissions: superAdmin.permissions.filter(permission => !['admin', 'inventory'].includes(permission.module)),
 }
 
 const regionalOfficer = {
@@ -149,7 +151,6 @@ const regionalOfficer = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -170,7 +171,6 @@ const regionalOfficer = {
     'usage_statistics_report',
     'device_and_site_summary_report',
     'result_notifications',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -238,10 +238,6 @@ const regionalOfficer = {
       module: 'assay',
       activity: 'view',
     },
-    {
-      module: 'inventory',
-      activity: 'edit',
-    },
   ],
 }
 
@@ -251,7 +247,6 @@ const labUser = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -268,7 +263,6 @@ const labUser = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'result_notifications',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -334,10 +328,6 @@ const labUser = {
     },
     {
       module: 'report',
-      activity: 'view',
-    },
-    {
-      module: 'inventory',
       activity: 'view',
     },
   ],
@@ -349,7 +339,6 @@ const clinician = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -366,7 +355,6 @@ const clinician = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'result_notifications',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -434,10 +422,6 @@ const clinician = {
       module: 'dashboard',
       activity: 'inventory',
     },
-    {
-      module: 'inventory',
-      activity: 'view',
-    },
   ],
 }
 
@@ -446,7 +430,6 @@ const deviceMaker = {
   reports: [
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -474,10 +457,6 @@ const deviceMaker = {
       module: 'site',
       activity: 'view',
     },
-    {
-      module: 'inventory',
-      activity: 'view',
-    },
   ],
 }
 
@@ -487,7 +466,6 @@ const ntp = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -506,7 +484,6 @@ const ntp = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'result_notifications',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -534,7 +511,6 @@ const ntpNoResults = {
   reports: [
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -563,7 +539,6 @@ const technician = {
   reports: [
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -615,7 +590,6 @@ const donor = {
   reports: [
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -644,10 +618,6 @@ const donor = {
       module: 'site',
       activity: 'view',
     },
-    {
-      module: 'inventory',
-      activity: 'view',
-    },
   ],
 }
 
@@ -656,7 +626,6 @@ const resultViewerNo = {
   reports: [
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -697,7 +666,6 @@ const resultViewerYes = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -712,7 +680,6 @@ const resultViewerYes = {
     'module_activity_report',
     'do_not_use_modules_report',
     'report_custom_fields_completion',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -753,13 +720,11 @@ const remoteHealthWorker = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'all_results',
     'data_extract',
-    'no_stock',
   ],
   permissions: [
     {
@@ -823,7 +788,6 @@ const labManager = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -843,7 +807,6 @@ const labManager = {
     'usage_statistics_report',
     'device_and_site_summary_report',
     'result_notifications',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -899,10 +862,6 @@ const labManager = {
       module: 'task',
       activity: 'view',
     },
-    {
-      module: 'inventory',
-      activity: 'view',
-    },
   ],
 }
 
@@ -912,7 +871,6 @@ const labSupervisor = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -933,7 +891,6 @@ const labSupervisor = {
     'usage_statistics_report',
     'device_and_site_summary_report',
     'result_notifications',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -989,10 +946,6 @@ const labSupervisor = {
       module: 'task',
       activity: 'view',
     },
-    {
-      module: 'inventory',
-      activity: 'edit',
-    },
   ],
 }
 
@@ -1002,7 +955,6 @@ const medTech = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1015,7 +967,6 @@ const medTech = {
     'device_utilization_per_day',
     'tb_workload_summary',
     'xdr_devices_summary',
-    'no_stock',
   ],
   permissions: [
     {
@@ -1070,10 +1021,6 @@ const medTech = {
       module: 'task',
       activity: 'view',
     },
-    {
-      module: 'inventory',
-      activity: 'edit',
-    },
   ],
 }
 
@@ -1083,7 +1030,6 @@ const dataViewer = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1099,7 +1045,6 @@ const dataViewer = {
     'do_not_use_modules_report',
     'tb_workload_summary',
     'xdr_devices_summary',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -1169,7 +1114,6 @@ const labAdmin = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'critical_errors_by_module',
-    'unreconciled_inventory_report',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1189,7 +1133,6 @@ const labAdmin = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'device_and_site_summary_report',
-    'no_stock',
     'unused_modules_report',
   ],
   permissions: [
@@ -1224,12 +1167,31 @@ const aspectBeta = {
       module: 'dashboard',
       activity: 'inventory',
     },
+  ],
+}
+
+const inventoryManager = {
+  name: 'Inventory Manager',
+  reports: ['unreconciled_inventory_report', 'inventory_log', 'no_stock'],
+  permissions: [
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
     {
       module: 'inventory',
       activity: 'edit',
     },
     {
-      module: 'inventory',
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'report',
       activity: 'view',
     },
   ],
@@ -1282,6 +1244,7 @@ module.exports = {
   systemOne,
   labAdmin,
   aspectBeta,
+  inventoryManager,
   mergeJobFunctions,
   countryReportsDecorator,
 }

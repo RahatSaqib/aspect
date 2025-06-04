@@ -57,4 +57,8 @@ export default defineMessages({
     id: 'jobFunction.regionalOfficer',
     defaultMessage: 'Regional Officer',
   },
+  inventoryManager: {
+    id: 'jobFunction.inventoryManager',
+    defaultMessage: 'Inventory Manager',
+  },
 })
