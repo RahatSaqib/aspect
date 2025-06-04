@@ -292,13 +292,10 @@ describe('Device API routes for GxConnect Devices', () => {
               .where({ 'dak.token': firstContext.apiKey })
               .select('dak.deviceId', 'dak.revoked')
 
-            // Check that old API key is no longer associated with a device
-            assert.deepEqual(firstDeviceApiKeyStatus, [
-              {
-                deviceId: null,
-                revoked: 1,
-              },
-            ])
+            // Check that old API key is revoked
+            assert.lengthOf(firstDeviceApiKeyStatus, 1)
+            assert.isNumber(firstDeviceApiKeyStatus[0].deviceId)
+            assert.equal(firstDeviceApiKeyStatus[0].revoked, 1)
 
             // Check that device exists with MAC Address and Instrument
             // Serial linked to the new device API key
@@ -365,30 +362,30 @@ describe('Device API routes for GxConnect Devices', () => {
                 .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
                 .select('dak.deviceId', 'dak.revoked')
 
-              // Check that old API key no longer associated with a device and is revoked
-              assert.deepEqual(firstDeviceApiKeyStatus, [
-                {
-                  deviceId: null,
-                  revoked: 1,
-                },
-              ])
+              // Check that old API key is revoked
+              assert.lengthOf(firstDeviceApiKeyStatus, 1)
+              assert.isNumber(firstDeviceApiKeyStatus[0].deviceId)
+              assert.equal(firstDeviceApiKeyStatus[0].revoked, 1)
 
               // Check that the device still exists with the new MAC Address
               // Serial linked to the new device API key
-              const secondDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+              const finalDeviceApiKeys = await knex('DeviceApiKey as dak')
                 .join('Device as d', 'dak.DeviceId', 'd.id')
-                .where({ 'dak.token': secondContext.apiKey })
+                .whereIn('dak.token', [firstContext.apiKey, secondContext.apiKey])
+                .orderBy('dak.id', 'asc')
                 .select('d.macAddress', 'd.id', 'dak.revoked')
-              assert.deepEqual(secondDeviceUniqueIdentifiers, [
+              assert.deepEqual(finalDeviceApiKeys, [
+                {
+                  macAddress: newMacAddress,
+                  id: firstContext.device.id,
+                  revoked: 1,
+                },
                 {
                   macAddress: newMacAddress,
                   id: secondContext.device.id,
                   revoked: 0,
                 },
               ])
-
-              // Check that the devices are different (one API key per device
-              assert.notEqual(secondDeviceUniqueIdentifiers[0].id, firstDeviceApiKeyStatus[0].deviceId)
             })
 
             await secondContext.cleanUp()
