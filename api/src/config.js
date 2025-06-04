@@ -138,6 +138,7 @@ module.exports = {
   },
   serviceStatusFile: process.env.serviceStatusFile,
   maxDaysDeviceNoResults: 14,
+  acceptFakeResults: process.env.acceptFakeResults === 'true',
 }
 
 configureOptional(module.exports)

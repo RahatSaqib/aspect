@@ -1488,8 +1488,11 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const result2Sample = await knex('Sample as s').where({ id: result2.sampleId }).first()
 
-        assert.notEqual(result2.siteId, result2Sample.originSiteId)
-        assert.equal(result2SampleSite.id, result2Sample.originSiteId)
+        assert.equal(
+          result2.siteId,
+          result2Sample.originSiteId,
+          'Sample.originSiteId should maintain the original Site that came with the Sample from the mobile app.'
+        )
         assert.equal(result2Sample.externalId, "Bryan's Sputum 2")
 
         const [result2Category1, result2Category2] = await knex('ResultCategory as rt')
