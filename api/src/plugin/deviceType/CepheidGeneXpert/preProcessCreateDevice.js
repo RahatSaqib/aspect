@@ -47,14 +47,15 @@ async function preProcessCreateDevice({ auth, payload }) {
         } else if (matchingDevices.length === 1) {
           ;[matchingDevice] = matchingDevices
         }
-        await knex.from('DeviceApiKey').where({ deviceId: matchingDevice.id }).update({ deviceId: null, revoked: 1 })
 
+        const now = new Date()
+        await knex.from('DeviceApiKey').where({ deviceId: matchingDevice.id }).update({ revoked: 1, updatedOn: now })
         await knex
           .from('DeviceApiKey')
           .where({
             token: auth.credentials.token,
           })
-          .update({ deviceId: matchingDevice.id })
+          .update({ deviceId: matchingDevice.id, updatedOn: now })
         return matchingDevice
       }
     }
