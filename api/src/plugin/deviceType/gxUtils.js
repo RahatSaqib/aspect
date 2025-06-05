@@ -500,14 +500,14 @@ async function findDevices(availableDeviceDetails, knex) {
     }
     if (_.isEmpty(matchingDevices) && countryCode) {
       const partnerCountryDeviceQuery = partnerDeviceQuery.clone().andWhere('c.abbreviation', countryCode)
-      if (hostId && deviceSerialNumber) {
+      if (isValidHostId(hostId) && deviceSerialNumber) {
         matchingDevices = await partnerCountryDeviceQuery
           .clone()
           .andWhere('d.hostId', hostId)
           .andWhere('d.serial', deviceSerialNumber)
           .select(fields)
       }
-      if (hostId) {
+      if (isValidHostId(hostId)) {
         if (_.isEmpty(matchingDevices)) {
           matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.hostId', hostId).select(fields)
           // There are multiple devices using this Host ID
@@ -549,6 +549,10 @@ async function findDevices(availableDeviceDetails, knex) {
     }
   }
   return _.uniqBy(matchingDevices, 'id')
+}
+
+const isValidHostId = hostId => {
+  return hostId && hostId !== '0'
 }
 
 async function getOrCreateSite(knex, device, payload, now, countryCode, deviceName, deviceShortName, fromGxAlert) {
