@@ -14,6 +14,7 @@ const {
   allResultSourceToId,
   allResultTypeToId,
 } = require('../../../shared/dictionary')
+const config = require('../../../config')
 
 async function registerNewSample(request) {
   const {
@@ -85,7 +86,7 @@ async function registerNewSample(request) {
 
   const [newSample] = await insertNewSample(payloadForDb, request.auth)
 
-  if (process.env['seeds.directory'] === './seeds/development') {
+  if (process.env['seeds.directory'] === './seeds/development' || config.acceptFakeResults) {
     await createFakeResult(payload.originSiteId, newSample)
   }
   return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample) }
@@ -127,7 +128,6 @@ const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
 
   const device = await knex('Device as d')
     .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .where('dt.externalId', 'CepheidGeneXpert')
     .andWhere({ siteId })
     .first('d.id', 'partnerId')
 

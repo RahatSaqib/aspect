@@ -15,6 +15,7 @@ const {
 } = require('./common/validations')
 const { clinicalResponse } = require('./clinicalResponse')
 const { updateWorkflowStatusToFlagged } = require('./updateWorkflowStatus')
+const { asyncHandler } = require('../../routes')
 // -----------------------------------------------------
 // routes
 // -----------------------------------------------------
@@ -161,7 +162,7 @@ const routes = [
   {
     method: 'POST',
     path: '/v3/clinical-responses/{resultId}',
-    handler: clinicalResponse,
+    handler: asyncHandler(clinicalResponse),
     config: {
       description: 'Adds result follow ups that have been captured in the app',
       notes: 'Adds a set of treatment/outcome follow up actions for a result',
