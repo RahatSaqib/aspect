@@ -115,7 +115,7 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
       <TableCell className={styles.TableCell}>
         {inventoryLogItem.transactionDate
           ? inventoryLogItem.consumableReasonExternalId === 'test_conducted'
-            ? inventoryLogItem.transactionDate
+            ? formatDate(inventoryLogItem.transactionDate)
             : formatDateTime(inventoryLogItem.transactionDate)
           : formatMessage(messages.notAvailable)}
       </TableCell>
