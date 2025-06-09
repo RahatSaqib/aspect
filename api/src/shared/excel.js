@@ -509,7 +509,7 @@ async function renderExcelTemplate({
           /**
            * style dynamic columns, if styling is defined
            */
-          if (dynamicColumns.length > 0 && (!!styles || dynamicColumns.find(column => !!column.style))) {
+          if (dynamicColumns.length > 0 && (styles.length > 0 || dynamicColumns.find(column => !!column.style))) {
             const lastTemplateRowCellStyle = styles[styles.length - 1]
             const dynamicColumnsStartCol = fieldNames.length + 1
             dynamicColumns.forEach((column, dynamicColumnIndex) => {
