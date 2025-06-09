@@ -6,7 +6,7 @@ const resultsDrTb10A10BCovid = {
   i18nKeyDescription: 'reportDrTb10a10bCovidDescription',
   fileName: 'ReportDrTb10a10bCovid',
   exportCsv: false,
-  sortOrder: 11,
+  sortOrder: 14,
   availableForNotification: 1,
   validations: [],
   sheets: [
@@ -59,7 +59,7 @@ const resultsDrTb10A10BCovidNtpUse = {
   fileName: 'ReportDrTb10a10bCovidNtpUse',
   exportCsv: false,
   availableForNotification: 1,
-  sortOrder: 12,
+  sortOrder: 17,
   validations: [],
   sheets: [
     {

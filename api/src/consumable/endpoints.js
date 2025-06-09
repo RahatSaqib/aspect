@@ -81,8 +81,9 @@ const routes = [
               id: Joi.number().integer().required(),
               name: Joi.string().max(255).allow('', null),
               i18nKey: Joi.string().max(255).allow('', null),
-              decrease: Joi.number().integer(),
-              reset: Joi.number().integer(),
+              effectOnStock: Joi.string().valid('increase', 'decrease', 'resetToValue').required(),
+              userSelectable: Joi.number().integer(),
+              externalId: Joi.string(),
             })
           ),
         },

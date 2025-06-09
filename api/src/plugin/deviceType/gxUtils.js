@@ -1,11 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
-const setMilliseconds = require('date-fns/setMilliseconds')
-const { isNil } = require('lodash')
 const { insertSite } = require('../../site/common/db')
-const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
-const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
 const { updateDeviceDetails } = require('../../deviceApi/device')
@@ -19,7 +15,6 @@ const {
   getBacterialLoad,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
-const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
 const { assayNameToExternalId } = require('../../shared/assayNameToExternalId')
 /*
 The purpose of this plugin is to ensure that results are captured
@@ -269,74 +264,8 @@ async function transformMergeResultPayload({ deviceId, payload, knex }) {
   return Promise.resolve(payload)
 }
 
-async function postProcessAddDeviceOperation({ device, payload, now, messageContext, userId }) {
-  let inventoryItemIds = []
-  const inventoryChanges = _.get(payload, 'data.inventoryChanges')
-  if (!_.isEmpty(inventoryChanges)) {
-    const { partnerId, id: deviceId } = device
-    const inventoryStrategy = await getInventoryStrategy({ partnerId, deviceId })
-
-    const sortedInventoryChanges = _.sortBy(inventoryChanges, inventoryChange =>
-      parseDateOrDefault(inventoryChange.dateChanged)
-    )
-    inventoryItemIds = await Promise.all(
-      _.map(sortedInventoryChanges, async inventoryChange => {
-        const matchingConsumables = await findConsumables({
-          name: inventoryChange.consumableName,
-        })
-        if (matchingConsumables.length === 1) {
-          const matchingConsumable = matchingConsumables[0]
-          const matchingConsumableReason = await findConsumableReason(inventoryChange.consumableReasonName)
-          if (matchingConsumableReason) {
-            const absoluteQuantity = Math.abs(inventoryChange.quantity)
-            const isDecrease =
-              (matchingConsumableReason.reset && inventoryChange.quantity < 0) || matchingConsumableReason.decrease
-            if (!device.siteId && device.id) {
-              const deviceData = await getDevice(device.id)
-              device.siteId = deviceData.siteId
-            }
-            if (!device.siteId) {
-              throw Boom.notFound('Cannot determine which site this request came from')
-            }
-
-            const { siteId } = device
-            const consumableId = matchingConsumable.id
-            const expiresOn = parseDateOrDefault(inventoryChange.expirationDate)
-
-            const operation = `${isDecrease ? 'remove' : 'add'} from GxConnect`
-
-            /**
-             * return object { inventoryItemId, inventoryLogId }
-             */
-            return changeInventoryQuantity(inventoryStrategy, {
-              consumableId,
-              siteId,
-              expiresOn,
-              // lotNumber, // <--- lot is not set here
-              quantity: absoluteQuantity,
-              quantityOnHand: inventoryChange.resultingQuantityOnHand,
-              operation,
-              now,
-              messageContext,
-              userId,
-              logProps: {
-                consumableReasonId: matchingConsumableReason.id,
-                adjustedFrom: inventoryChange.dateChanged
-                  ? setMilliseconds(parseDateOrDefault(inventoryChange.dateChanged), 0)
-                  : null,
-                operation,
-              },
-            })
-          }
-        }
-        return null
-      })
-    )
-    inventoryItemIds = inventoryItemIds.filter(x => !isNil(x) && !Boom.isBoom(x)).map(x => x.inventoryItemId)
-  }
-  return {
-    inventoryItemIds,
-  }
+async function postProcessAddDeviceOperation() {
+  return {}
 }
 
 async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now, isFastImport }) {

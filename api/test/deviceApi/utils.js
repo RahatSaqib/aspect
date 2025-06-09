@@ -52,7 +52,6 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .orWhereIn('generatedResultId', resultIds)
     .delete()
 
-  await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
   await knex('ResultFileReference').whereIn('resultId', resultIds).delete()

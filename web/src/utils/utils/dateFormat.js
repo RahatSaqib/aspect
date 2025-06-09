@@ -30,7 +30,7 @@ function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const userSetTimeZone = localStorage.getItem('asTimezoneId')
   const { code: localeCode } = getLocale()
-  const timeZone = getTimezoneById(userSetTimeZone)
+  const timeZone = getTimezoneById(userSetTimeZone) // This line is not working and returning null. I has to be fixed by by ASP-7760 Fix timezone issues in the frontend
   const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
   const timeToFormat = isString(date) ? new Date(date).toLocaleString(localeCode, { timeZone }) : date
 
@@ -56,6 +56,14 @@ export function formatTime(date) {
 
 export function formatDateTime(date) {
   return formatBase(date, 'dateTimeFormat')
+}
+
+// TODO: Temporary solution to show dates coming in UTC format ('Z') but that were previously offset in the back.
+export function formatDateTimeWithoutTimezone(date) {
+  if (!date) return ''
+  const prefs = getAspectDisplayPreferences()
+  const dateFormatPreference = prefs.get('dateTimeFormat', 'yyyy-MM-dd HH:mm')
+  return format(new Date(date.replace('Z', '')), dateFormatPreference)
 }
 
 export const formatWithLocale = locale => (date, formatStr) => format(date, formatStr, { locale: getLocale(locale) })

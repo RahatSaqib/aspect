@@ -25,6 +25,7 @@ function createInventoryItemSelect(includeStrategy = true) {
     'ii.id',
     'itfs.name as inTransitFromSiteName',
     'ii.inTransitFromSiteId',
+    'ii.reconciliationStartDate',
   ]
 
   if (includeStrategy) {

@@ -123,14 +123,16 @@ async function getInventoryData(auth, query) {
       knex.raw('COALESCE(t2.qtyExpired, 0) as quantityExpired'),
     ]
   )
-    .select(knex.raw('COUNT(CONCAT(mi.siteId, "-", ca.consumableId)) AS unreconciledResults'))
-    .leftJoin('MissingInventoryLots AS mi', 'mi.siteId', 't2.siteId')
     .leftJoin(
       function () {
-        this.select('*').from('Result').whereBetween('endedOn', [query.minDate, query.maxDate]).as('r')
+        this.select('*')
+          .from('Result')
+          .whereNull('reconciliationDate')
+          .whereBetween('endedOn', [query.minDate, query.maxDate])
+          .as('r')
       },
-      'r.id',
-      'mi.resultId'
+      'r.siteId',
+      't2.siteId'
     )
     .leftJoin('ConsumableAssay AS ca', join => {
       join.on('ca.assayId', '=', 'r.assayId')
@@ -140,6 +142,7 @@ async function getInventoryData(auth, query) {
     .orHaving('unreconciledResults', '>', 0)
     .groupBy('t2.siteName', 't2.consumableName')
     .orderBy(['t2.siteName', 't2.consumableName'])
+    .select({ unreconciledResults: knex.raw('COUNT(CONCAT(r.siteId, "-", ca.consumableId))') })
 
   const data = await dataQuery
 

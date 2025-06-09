@@ -7,6 +7,7 @@ const {
   mergeJobFunctions,
   technician,
   aspectBeta,
+  inventoryManager,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
@@ -284,12 +285,9 @@ module.exports = [
         module: 'site',
         activity: 'view',
       },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
     ],
   }),
   technician,
   aspectBeta,
+  inventoryManager,
 ]

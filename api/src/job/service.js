@@ -752,6 +752,7 @@ function getRoleLevel(creatorRoles, personRole) {
     'Lab Manager': 2,
     'Lab Supervisor': 3,
     'Aspect Beta': 1,
+    'Inventory Manager': 1,
   }
 
   // Initialize highest level to -1 or a value lower than the lowest level

@@ -27,7 +27,7 @@ async function listConsumableReasons(request) {
   const getItems = consumableReasonQuery
     .clone()
     .modify(sortPageParams, query, 'name')
-    .select(['id', 'name', 'i18nKey', 'decrease', 'reset'])
+    .select(['id', 'name', 'i18nKey', 'effectOnStock', 'userSelectable', 'externalId'])
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -41,15 +41,6 @@ async function findConsumables(knownConsumableDetails) {
   return consumables
 }
 
-async function findConsumableReason(consumableReasonName) {
-  const consumableReason = await knex('ConsumableReason')
-    .where({
-      name: consumableReasonName,
-    })
-    .first()
-  return consumableReason
-}
-
 function getSiteIdsByConsumable(consumableId, dataConstraints) {
   const consumableSitesQuery = knex('SiteConsumable as sc')
     .leftJoin('Site as s', 's.id', 'sc.siteId')
@@ -61,14 +52,13 @@ function getSiteIdsByConsumable(consumableId, dataConstraints) {
 }
 
 async function getConsumableDetail(consumableId, dataConstraints) {
-  const activeSitesSubQuery = knex
-    .select('m.siteId', 'ca.consumableId')
-    .from('MissingInventoryLots as m')
-    .leftJoin('Result as r', 'r.id', 'm.resultId')
-    .leftJoin('Site as s', 's.id', 'm.siteId')
+  const activeSitesSubQuery = knex('Result as r')
+    .leftJoin('Site as s', 's.id', 'r.siteId')
     .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
     .modify(addConstraints, dataConstraints, { site: 's' })
     .where('ca.consumableId', consumableId)
+    .whereNull('r.reconciliationDate')
+    .select('r.siteId', 'ca.consumableId')
     .unionAll(function () {
       this.select('ii.siteid', 'ii.consumableId')
         .from('InventoryItem as ii')
@@ -173,7 +163,6 @@ module.exports = {
   listConsumableTypes,
   listConsumableReasons,
   findConsumables,
-  findConsumableReason,
   getConsumableById,
   getUnits,
   updateConsumable,
