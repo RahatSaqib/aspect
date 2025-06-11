@@ -61,7 +61,7 @@ module.exports = require('../utils').seed(async knex => {
 
   if (reasonMap.received) {
     await knex('ConsumableReason').where('externalId', 'transfer_received').del()
-    const transferSentFixture = fixture.data.find(f => f.externalId === 'transfer_received')
-    await knex('ConsumableReason').where('externalId', 'received').update(transferSentFixture)
+    const transferReceivedFixture = fixture.data.find(f => f.externalId === 'transfer_received')
+    await knex('ConsumableReason').where('externalId', 'received').update(transferReceivedFixture)
   }
 }, __filename)
