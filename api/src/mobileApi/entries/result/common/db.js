@@ -10,6 +10,7 @@ const {
 const { addConstraints, addPartnerQueryConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 const { allResultCategoryToId } = require('../../../../shared/dictionary')
+const { buildQueryForResultsListAndExport } = require('../../../../result/service')
 
 const fetchResultsBySubmittedSinceQuery = async (
   query,
@@ -23,12 +24,7 @@ const fetchResultsBySubmittedSinceQuery = async (
 
   const resultCategoryToId = await allResultCategoryToId()
 
-  const knexQuery = knex('Result as result')
-    .join('Device as device', 'result.deviceId', 'device.id')
-    .join('Site as laboratory', 'result.siteId', 'laboratory.id')
-    .join('Assay as assay', 'result.assayId', 'assay.id')
-    .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
-    .join('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
+  const knexQuery = buildQueryForResultsListAndExport(query, dataConstraints)
     .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .leftJoin('ResultCategory as resultCategory1', 'result.resultCategory1', 'resultCategory1.id')
     .leftJoin('ResultCategory as resultCategory2', 'result.resultCategory2', 'resultCategory2.id')
@@ -71,7 +67,9 @@ const fetchResultsBySubmittedSinceQuery = async (
     .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
     .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
     .andWhere(qb => {
-      qb.whereIn('result.reportableSiteId', clinicIds).orWhereIn('result.id', userViewOnlyTransferredResultIds)
+      qb.whereIn('result.reportableSiteId', clinicIds)
+        .orWhereIn('result.id', userViewOnlyTransferredResultIds)
+        .orWhereIn('result.siteId', clinicIds)
     })
     .modify(addPartnerQueryConstraints, { constraints: dataConstraints })
     .modify(addConstraints, dataConstraints, {
@@ -85,7 +83,10 @@ const fetchResultsBySubmittedSinceQuery = async (
       qb.where('result.endedOn', '>=', submittedSince).orWhereNull('sample.collectedOn')
       qb.where('sample.collectedOn', '>=', submittedSince).orWhereNull('result.endedOn')
     })
-    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
+    .andWhere(
+      qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses)
+      // .orWhereNull('resultWorkflowStatus.externalId')
+    )
     .whereNotIn('result.resultCategory1', [
       resultCategoryToId.Invalid,
       resultCategoryToId.Error,
