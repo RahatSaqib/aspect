@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
-  fetchResultsByUpdatedOnQuery,
+  fetchResultsBySubmittedSinceQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
@@ -62,7 +62,7 @@ async function fetchEntriesServiceHandler(request) {
   const clinics = await getSitesQuery(dataConstraints).select('s.id')
   const clinicIds = clinics.map(c => c.id)
   const samples = await getAllSamplesRegistered(query, clinicIds)
-  const results = await fetchResultsByUpdatedOnQuery(
+  const results = await fetchResultsBySubmittedSinceQuery(
     query,
     clinicIds,
     dataConstraints,

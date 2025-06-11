@@ -11,7 +11,12 @@ const { addConstraints, addPartnerQueryConstraints } = require('../../../../auth
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 const { allResultCategoryToId } = require('../../../../shared/dictionary')
 
-const fetchResultsByUpdatedOnQuery = async (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
+const fetchResultsBySubmittedSinceQuery = async (
+  query,
+  clinicIds,
+  dataConstraints,
+  userViewOnlyTransferredResultIds
+) => {
   const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
 
   const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
@@ -244,7 +249,7 @@ const getUserSiteIds = async dataConstraints => {
 }
 
 module.exports = {
-  fetchResultsByUpdatedOnQuery,
+  fetchResultsBySubmittedSinceQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
