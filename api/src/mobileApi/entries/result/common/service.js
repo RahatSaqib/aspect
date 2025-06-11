@@ -8,7 +8,7 @@ const {
   getFlagsByResultIds,
   getUserSiteIds,
 } = require('./db')
-const { getAllSamplesRegistered, getTransferHistory } = require('../../sample/common/db')
+const { getAllSamplesRegistered } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transformResultResponse } = require('./helpers/transformResultResponse')
@@ -54,20 +54,10 @@ async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  // get resultIds of transferred result
-  const resultTransferHistory = await getTransferHistory(dataConstraints)
-
-  const userViewOnlyTransferredResultIds = resultTransferHistory.map(record => record.resultId)
-
   const clinics = await getSitesQuery(dataConstraints).select('s.id')
   const clinicIds = clinics.map(c => c.id)
   const samples = await getAllSamplesRegistered(query, clinicIds)
-  const results = await fetchResultsBySubmittedSinceQuery(
-    query,
-    clinicIds,
-    dataConstraints,
-    userViewOnlyTransferredResultIds
-  )
+  const results = await fetchResultsBySubmittedSinceQuery(query, dataConstraints)
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
