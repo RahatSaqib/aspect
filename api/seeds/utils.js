@@ -557,6 +557,24 @@ async function seedTable(knex, fixtureItem, overridedSeeds = { seedsFolder: null
   }
 }
 
+/**
+ * Builds an array of update objects by comparing fixture data with original data.
+ * For each fixture item, it finds the matching original item by the specified key column
+ * and creates an update object containing only the fields that have changed.
+ *
+ * @param {Object} fixture - The fixture object containing data to compare against
+ * @param {Array<Object>} fixture.data - Array of objects containing the new/desired data
+ * @param {Array<Object>} originalData - Array of objects containing the existing data to compare against
+ * @param {string} [keyColumn='externalId'] - The column name to use for matching fixture and original data
+ * @returns {Array<Object>} Array of update objects, each containing:
+ *   - id: The ID of the record to update
+ *   - ...changes: Object containing only the fields that have changed from original to fixture data
+ * @example
+ * // Given:
+ * // fixture.data = [{ externalId: '1', name: 'New Name', status: 'active' }]
+ * // originalData = [{ id: 1, externalId: '1', name: 'Old Name', status: 'active' }]
+ * // Returns: [{ id: 1, name: 'New Name' }]
+ */
 const buildUpdates = function (fixture, originalData, keyColumn = 'externalId') {
   return fixture.data.reduce((accUpdates, f) => {
     const e = originalData.find(e => e[keyColumn] === f[keyColumn])
