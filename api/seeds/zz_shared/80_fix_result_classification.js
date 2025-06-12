@@ -24,6 +24,9 @@ async function seed(knex) {
       maxId: knex.raw('MAX(r.id)'),
     })
 
+  // Nothing to do
+  if (!minId || !maxId) return
+
   const assays = await getAssayExternalIdToIdMap(knex)
 
   const batchSize = 1000
@@ -92,6 +95,8 @@ const getResultsToUpdateInRange = async (knex, minId, maxId, assays) => {
       if (!assayId) {
         // eslint-disable-next-line no-console
         console.log(`Assay with externalId ${mappedAssayExternalId} not found`)
+        // eslint-disable-next-line no-continue
+        continue
       }
 
       // eslint-disable-next-line no-await-in-loop
@@ -109,7 +114,7 @@ const getResultsToUpdateInRange = async (knex, minId, maxId, assays) => {
         // eslint-disable-next-line no-await-in-loop
         assayId,
         resultData: JSON.stringify(baseResult.resultData),
-        resultDataHash: getResultDataHash(resultData),
+        resultDataHash: getResultDataHash(baseResult.resultData),
       }
       transformedResults.push(transformedResult)
     } catch (error) {
