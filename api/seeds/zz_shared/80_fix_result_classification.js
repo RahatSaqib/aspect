@@ -17,6 +17,7 @@ async function seed(knex) {
     .andWhere(qb => {
       qb.where('a.externalId', 'GxUnknown')
       qb.orWhere('rc.externalId', 'Success')
+      qb.orWhere('rc.externalId', 'NoResult')
     })
     .first({
       minId: knex.raw('MIN(r.id)'),
@@ -61,6 +62,7 @@ const getResultsToUpdateInRange = async (knex, minId, maxId, assays) => {
     .andWhere(qb => {
       qb.where('a.externalId', 'GxUnknown')
       qb.orWhere('rc.externalId', 'Success')
+      qb.orWhere('rc.externalId', 'NoResult')
     })
     .select('r.*')
 
