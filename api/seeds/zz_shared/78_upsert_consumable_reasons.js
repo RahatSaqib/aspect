@@ -1,74 +1,67 @@
 const fixture = require('../fixtures/ConsumableReason.json')
-const { buildUpdates } = require('../utils')
 
 module.exports = require('../utils').seed(async knex => {
   // Fetch the ConsumableReasons
   const consumableReasons = await knex('ConsumableReason').select('*')
+
   const reasonMap = consumableReasons.reduce((map, reason) => {
     map[reason.externalId] = reason.id
     return map
   }, {})
 
-  await updateHistoricalRecordsInInventoryLog(knex, reasonMap)
-
-  await updateConsumableReasonValues(knex, consumableReasons)
-
-  await removeDeletedReasons(knex)
-}, __filename)
-
-function removeDeletedReasons(knex) {
-  // Delete any ConsumableReason records that are not in the fixture
-  return knex('ConsumableReason')
-    .whereNotIn(
-      'externalId',
-      fixture.data.map(f => f.externalId)
-    )
-    .del()
-}
-
-function updateConsumableReasonValues(knex, consumableReasons) {
-  // Update all the changed values in the fixture
-  const changesToUpdate = buildUpdates(fixture, consumableReasons, 'externalId')
-  const updatePromises = []
-  for (const change of changesToUpdate) {
-    updatePromises.push(knex('ConsumableReason').where('id', change.id).update(change))
-  }
-  return Promise.all(updatePromises)
-}
-
-async function updateHistoricalRecordsInInventoryLog(knex, reasonMap) {
-  // Default seeding doesn't support changing the externalId then
-  // Move all InventoryLog records to the new 'damaged' Id
-  if (reasonMap.damaged && reasonMap.damage) {
-    await knex('InventoryLog')
-      .where('consumableReasonId', reasonMap.damage)
-      .update({ consumableReasonId: reasonMap.damaged })
-    // Delete the old record with externalId 'damage'
-    await knex('ConsumableReason').where('externalId', 'damage').del()
+  if (reasonMap.used) {
+    await knex('ConsumableReason').where('externalId', 'test_conducted').del()
+    const testConductedFixture = fixture.data.find(f => f.externalId === 'test_conducted')
+    await knex('ConsumableReason').where('externalId', 'used').update(testConductedFixture)
   }
 
-  // Update "asserted_increase" and "imported" to "manual_addition"
-  if (reasonMap.asserted_increase && reasonMap.imported && reasonMap.manual_addition) {
+  if (reasonMap.zero) {
+    await knex('InventoryLog').where('consumableReasonId', reasonMap.zero).del()
+    await knex('ConsumableReason').where('externalId', 'zero').del()
+  }
+
+  if (reasonMap.captured) {
+    await knex('ConsumableReason').where('externalId', 'physical_count').del()
+    const physicalCountFixture = fixture.data.find(f => f.externalId === 'physical_count')
+    await knex('ConsumableReason').where('externalId', 'captured').update(physicalCountFixture)
+  }
+
+  if (reasonMap.imported) {
     await knex('InventoryLog')
-      .whereIn('consumableReasonId', [reasonMap.asserted_increase, reasonMap.imported])
+      .where('consumableReasonId', reasonMap.imported)
       .update({ consumableReasonId: reasonMap.manual_addition })
+    await knex('ConsumableReason').where('externalId', 'imported').del()
   }
 
-  // Update "asserted_decrease" to "Other" with notes adjustment
-  if (reasonMap.asserted_decrease && reasonMap.other) {
+  if (reasonMap.deteriorated) {
+    await knex('ConsumableReason').where('externalId', 'damaged').del()
+    const damagedFixture = fixture.data.find(f => f.externalId === 'damaged')
+    await knex('ConsumableReason').where('externalId', 'deteriorated').update(damagedFixture)
+  }
+
+  if (reasonMap.asserted_increase) {
+    await knex('InventoryLog')
+      .where('consumableReasonId', reasonMap.asserted_increase)
+      .update({ consumableReasonId: reasonMap.manual_addition })
+    await knex('ConsumableReason').where('externalId', 'asserted_increase').del()
+  }
+
+  if (reasonMap.asserted_decrease) {
     await knex('InventoryLog')
       .where('consumableReasonId', reasonMap.asserted_decrease)
-      .update({
-        consumableReasonId: reasonMap.other,
-        notes: knex.raw("COALESCE(notes, 'Asserted Inventory On Hand Decrease')"),
-      })
+      .update({ consumableReasonId: reasonMap.other })
+    await knex('ConsumableReason').where('externalId', 'asserted_decrease').del()
   }
 
-  if (reasonMap.asserted_zero_inventory && reasonMap.physical_count) {
-    // Replace "asserted_zero_inventory" with "Physical Count" and set quantity to 0
-    await knex('InventoryLog').where('consumableReasonId', reasonMap.asserted_zero_inventory).update({
-      consumableReasonId: reasonMap.physical_count,
-      quantity: 0,
-    })
+  if (reasonMap.sent) {
+    await knex('ConsumableReason').where('externalId', 'transfer_sent').del()
+    const transferSentFixture = fixture.data.find(f => f.externalId === 'transfer_sent')
+    await knex('ConsumableReason').where('externalId', 'sent').update(transferSentFixture)
   }
-}
+
+  if (reasonMap.received) {
+    await knex('ConsumableReason').where('externalId', 'transfer_received').del()
+    const transferReceivedFixture = fixture.data.find(f => f.externalId === 'transfer_received')
+    await knex('ConsumableReason').where('externalId', 'received').update(transferReceivedFixture)
+  }
+}, __filename)
