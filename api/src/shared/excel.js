@@ -477,8 +477,9 @@ async function renderExcelTemplate({
         }
 
         // remove pattern row and insert rows from patternRowNumber
-        const fillRows = rows => {
+        const fillRows = data => {
           const formulae = []
+          const styles = []
           // `worksheet.duplicateRows` can't be used since the formulae references remains static
           // that way. We have to capture the formulae and fill the correct columns with `fillFormula`
           // method, after data is filled with the destructive `worksheet.spliceRows`.
@@ -486,16 +487,20 @@ async function renderExcelTemplate({
             if (cell.type === excel.ValueType.Formula) {
               formulae.push({ formula: cell.value.formula, index })
             }
+            styles.push(cell.style)
             cell.value = null
           })
-          worksheet.spliceRows(patternRowNumber, 1, ...rows)
-          const firstRow = worksheet.getRow(patternRowNumber)
+          worksheet.spliceRows(patternRowNumber, 1, ...data)
+
+          const patternRow = worksheet.getRow(patternRowNumber)
+
+          extendRowStyles(worksheet, styles, patternRowNumber, patternRowNumber + data.length)
 
           _.each(formulae, f => {
-            const masterCell = firstRow.getCell(f.index)
+            const masterCell = patternRow.getCell(f.index)
 
             const rangeToFillFormula = `${masterCell.address}:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
-              rows.length + masterCell.row - 1
+              data.length + masterCell.row - 1
             }`
 
             worksheet.fillFormula(rangeToFillFormula, f.formula)
@@ -504,20 +509,21 @@ async function renderExcelTemplate({
           /**
            * style dynamic columns, if styling is defined
            */
-          if (dynamicColumns.length > 0 && dynamicColumns.find(column => !!column.style)) {
+          if (dynamicColumns.length > 0 && (styles.length > 0 || dynamicColumns.find(column => !!column.style))) {
+            const lastTemplateRowCellStyle = styles[styles.length - 1]
             const dynamicColumnsStartCol = fieldNames.length + 1
             dynamicColumns.forEach((column, dynamicColumnIndex) => {
-              if (!column.style) return
               const colNumber = dynamicColumnsStartCol + dynamicColumnIndex
-              rows.forEach((rowData, rowIndex) => {
+              data.forEach((rowData, rowIndex) => {
                 const rowNumber = patternRowNumber + rowIndex
                 const row = worksheet.getRow(rowNumber)
                 const cell = row.getCell(colNumber)
-                setCellStyle(cell, column.style)
+                setCellStyle(cell, { ...lastTemplateRowCellStyle, ...column.style })
               })
             })
           }
         }
+
         fillRows(rows)
         if (extension === 'csv') {
           // get all header values from last item of array allHeaderRows
@@ -532,6 +538,13 @@ async function renderExcelTemplate({
 
           // remove all rows between 1st row and table body (remove table headers too)
           worksheet.spliceRows(1, patternRowNumber - 1 - 1)
+        } else {
+          adjustTotalsRowFormulaeRefs(
+            worksheet,
+            patternRowNumber,
+            rows.length,
+            fieldNames.length + dynamicColumns.length - 1
+          )
         }
       }
     })
@@ -912,6 +925,7 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
   if (rowValues) {
     row.values = rowValues
   }
+
   /**
    * set style
    * Notice that we are getting all cells from template, including
@@ -928,11 +942,22 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
     )
     cell.style = cellStyle
   })
+
   /**
    * must commit all row changes to move it to the stream.
    * Notice that no changes possible in row and it's cells after commit.
    */
   row.commit()
+}
+
+function extendRowStyles(worksheet, styles, from, to) {
+  for (let i = from; i < to; i++) {
+    const row = worksheet.getRow(i)
+    row.eachCell({ includeEmpty: true }, cell => {
+      const cellStyle = _.merge({}, cell.master?.style, cell.style, styles[cell.col - 1] ?? {})
+      cell.style = cellStyle
+    })
+  }
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -1157,6 +1182,61 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   })
 
   return merges
+}
+
+function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength, totalColumns) {
+  const totalsRowNumber = patternRowNumber + dataLength
+  const totalsRow = worksheet.findRow(totalsRowNumber)
+  let dynamicColumnsTokenCell = null
+
+  if (!totalsRow) return
+
+  // First handle the template columns formulas
+  totalsRow.eachCell({ includeEmpty: true }, cell => {
+    // Check for formulas
+    if (cell.type === excel.ValueType.Formula) {
+      const { formula } = cell.value
+      const adjustedFormula = formula.replace(/([A-Z]+)(?!\$)(\d+)/g, (match, col, row) => {
+        // Adjust the row reference to point to the correct row in the totals row
+        const adjustedRow = parseInt(row, 10) + dataLength - 1
+        return `${col}${adjustedRow}`
+      })
+      cell.value = { formula: adjustedFormula }
+    }
+
+    // Check for #SUM_DYNAMIC token
+    if (cell.value === '#SUM_DYNAMIC') {
+      dynamicColumnsTokenCell = cell
+    }
+  })
+
+  // Extend dynamic sum
+  if (dynamicColumnsTokenCell) {
+    const dynamicColumnsStartCol = dynamicColumnsTokenCell.col
+    const dynamicColumnsEndCol = totalColumns + 1
+
+    // Get the last template cell's style
+    const lastTemplateCell = totalsRow.getCell(dynamicColumnsStartCol - 1)
+    const lastCellStyle = lastTemplateCell?.style
+
+    for (let i = dynamicColumnsStartCol; i <= dynamicColumnsEndCol; i++) {
+      const dynamicCell = totalsRow.getCell(i)
+      if (dynamicCell) {
+        // Apply the style if available
+        if (lastCellStyle) {
+          dynamicCell.style = { ...lastCellStyle }
+        }
+
+        // Add SUM formula for the dynamic column
+        const colLetter = dynamicCell.address.match(/([a-zA-Z]{1,2}).*/)[1]
+        const startRow = patternRowNumber
+        const endRow = patternRowNumber + dataLength - 1
+        dynamicCell.value = {
+          formula: `SUM(${colLetter}${startRow}:${colLetter}${endRow})`,
+        }
+      }
+    }
+  }
 }
 
 // ----------------------------------------------------------------------------------------------
