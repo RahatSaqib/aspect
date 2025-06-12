@@ -306,13 +306,20 @@ function getVLCopies(result1Text) {
 }
 
 function getResultCategoriesHivVL(result1Text) {
+  if (!result1Text) return 'NoResult'
+  if (result1Text.includes('не обнаружен')) return 'NotDetected'
+
+  const result1TextLower = result1Text.toLowerCase().replace('обнаружен', 'detected')
+
+  if (result1TextLower.includes('detected < 40')) return 'LessThan40'
+
   const copies = getVLCopies(result1Text)
-  // Add HIV VL Categories
   if (copies) {
     if (copies < 1000 && copies >= 40) return 'LessThan1000'
     if (copies >= 1000) return 'MoreThan1000'
-  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40')) return 'LessThan40'
-  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0) return 'NoResult'
+  }
+
+  if (result1TextLower.indexOf('detected') === 0) return 'NoResult'
 }
 
 const getBacterialLoad = resultText => {

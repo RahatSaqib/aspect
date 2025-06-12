@@ -2,6 +2,7 @@ const { assert } = require('chai')
 const {
   mapResultCategory2,
   parseResultText,
+  getResultCategoriesHivVL,
   getDetectedResistanceCategoryTypes,
   getBacterialLoad,
 } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
@@ -379,8 +380,20 @@ describe('[HIV] Result Text Parsing', () => {
     )
   })
 
-  it('Should parse not detected HIV results', () => {
+  it('Should parse detected HIV results #10', () => {
+    assert.deepEqual(parseResultText('HIV-1 ОБНАРУЖЕН < 40 copies/mL'), {
+      'HIV-1': 'LessThan40',
+    })
+  })
+
+  it('Should parse not detected HIV results #1', () => {
     assert.deepEqual(parseResultText('HIV-1 NOT DETECTED'), {
+      'HIV-1': 'NotDetected',
+    })
+  })
+
+  it('Should parse not detected HIV results #2', () => {
+    assert.deepEqual(parseResultText('HIV-1 НЕ ОБНАРУЖЕН'), {
       'HIV-1': 'NotDetected',
     })
   })
@@ -440,4 +453,22 @@ describe('Bacterial Load', () => {
   )
   assert.equal('Low', getBacterialLoad('MTB DETECTED LOW||RIF Resistance NOT DETECTED'))
   assert.equal('Medium', getBacterialLoad('MTB DETECTED MEDIUM|Rif Resistance NOT DETECTED|'))
+})
+
+describe('getResultCategoriesHivVL', () => {
+  it('Should parse no result HIV results #1', () => {
+    assert.equal(getResultCategoriesHivVL('NO RESULT'), 'NoResult')
+  })
+
+  it('Should parse no result HIV results #2', () => {
+    assert.equal(getResultCategoriesHivVL('@label_result_no_result'), 'NoResult')
+  })
+
+  it('Should parse no result HIV results #3', () => {
+    assert.equal(getResultCategoriesHivVL('|NO RESULT|'), 'NoResult')
+  })
+
+  it('Should parse no result HIV results #4', () => {
+    assert.equal(getResultCategoriesHivVL('НЕТ РЕЗУЛЬТАТА'), 'NoResult')
+  })
 })
