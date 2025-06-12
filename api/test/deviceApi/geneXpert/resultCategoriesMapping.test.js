@@ -357,6 +357,28 @@ describe('[HIV] Result Text Parsing', () => {
     )
   })
 
+  it('Should parse detected HIV results #8', () => {
+    assert.deepEqual(
+      parseResultText(
+        'HIV-1 @label_quant1_result_abnormal_low_log,@label_result_detected,#40,copies/mL,@label_log,#1.60'
+      ),
+      {
+        'HIV-1': 'LessThan1000',
+      }
+    )
+  })
+
+  it('Should parse detected HIV results #9', () => {
+    assert.deepEqual(
+      parseResultText(
+        'HIV-1 @label_quant1_result_abnormal_low_log,@label_result_detected,#40,copies/ml,@label_log,#1.60'
+      ),
+      {
+        'HIV-1': 'LessThan1000',
+      }
+    )
+  })
+
   it('Should parse not detected HIV results', () => {
     assert.deepEqual(parseResultText('HIV-1 NOT DETECTED'), {
       'HIV-1': 'NotDetected',

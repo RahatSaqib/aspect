@@ -296,7 +296,7 @@ const mapResultCategory2 = (assayExternalId, resultTextValues) => {
 
 function getVLCopies(result1Text) {
   if (result1Text && !result1Text.includes('< 40')) {
-    const regex = /(\d+([.,]\d*)?([eE][+-]?\d+)?|[.,]\d+([eE][+-]?\d+)?)/
+    const regex = /(\d+([.,]\d*)?([eE][+-]?\d+)?|[.,]\d+([eE][+-]?\d+)?)(?=[,\s]copies\/mL)/i
     const text = result1Text.replace('HIV-1', '').replace('@label_quant1_result_normal_log', '')
     const arr = regex.exec(text)
 
