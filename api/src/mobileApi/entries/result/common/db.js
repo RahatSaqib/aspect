@@ -47,6 +47,7 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       }
       qb.where('r.endedOn', '>=', submittedSince).orWhereNull('sp.collectedOn')
       qb.where('sp.collectedOn', '>=', submittedSince).orWhereNull('r.endedOn')
+      qb.whereNotNull('sp.collectedOn').orWhereNull('r.endedOn')
     })
     .whereNotIn('r.resultCategory1', [
       resultCategoryToId.Invalid,
