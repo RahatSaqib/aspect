@@ -15,13 +15,8 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
   const resultCategoryToId = await allResultCategoryToId()
 
   const knexQuery = buildQueryForResultsListAndExport(query, dataConstraints)
-    .leftJoin('ResultCategory as resultCategory1', 'r.resultCategory1', 'resultCategory1.id')
-    .leftJoin('ResultCategory as resultCategory2', 'r.resultCategory2', 'resultCategory2.id')
-    .leftJoin('Sample as sample', 'r.sampleId', 'sample.id')
-    .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
-    .leftJoin('Person as sampleCollectedBy', 'sample.collectedBy', 'sampleCollectedBy.userId')
-    .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
-    .leftJoin('Site as laboratory', 'r.siteId', 'laboratory.id')
+    .leftJoin('Person as sampleCollectedBy', 'sp.collectedBy', 'sampleCollectedBy.userId')
+    .leftJoin('Site as sampleOriginSite', 'sp.originSiteId', 'sampleOriginSite.id')
     .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
     .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
     .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'r.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
@@ -51,8 +46,8 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       if (modifiedSince) {
         qb.where('r.updatedOn', '>=', modifiedSince).orWhereNull('r.updatedOn')
       }
-      qb.where('r.endedOn', '>=', submittedSince).orWhereNull('sample.collectedOn')
-      qb.where('sample.collectedOn', '>=', submittedSince).orWhereNull('r.endedOn')
+      qb.where('r.endedOn', '>=', submittedSince).orWhereNull('sp.collectedOn')
+      qb.where('sp.collectedOn', '>=', submittedSince).orWhereNull('r.endedOn')
     })
     .whereNotIn('r.resultCategory1', [
       resultCategoryToId.Invalid,
@@ -78,10 +73,10 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       'r.endedOn as testEndDate',
       'r.notes as resultNotes',
       knex.raw('COALESCE(r.endedOn, r.startedOn) as testDate'),
-      'resultCategory1.i18nKey as resultCategory1ValueI18nKey',
-      'resultCategory1.name as resultCategory1Name',
-      'resultCategory2.i18nKey as resultCategory2ValueI18nKey',
-      'resultCategory2.name as resultCategory2Name',
+      'rc1.i18nKey as resultCategory1ValueI18nKey',
+      'rc1.name as resultCategory1Name',
+      'rc2.i18nKey as resultCategory2ValueI18nKey',
+      'rc2.name as resultCategory2Name',
       'rca.emphasize as resultCategory1Emphasize',
       'rca.requiresTreatment as resultCategoryAssay1RequiresTreatment',
       'rca2.emphasize as resultCategory2Emphasize',
@@ -94,26 +89,26 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       'resultWorkflowLog.changedOn as resultWorkflowStatusChangedOn',
       'resultWorkflowLog.resultWorkflowStatusId as resultWorkflowStatusId',
       'resultWorkflowLog.reason as resultWorkflowStatusReason',
-      'sample.externalId as sampleExternalId',
-      'sample.id as sampleId',
-      'sample.sampleData',
-      'sample.sampleStatus as sampleStatus',
-      'sample.updatedOn as sampleUpdatedOn',
-      'sample.collectedOn as sampleCollectedOn',
-      'sample.externalId as sampleExternalId',
+      'sp.externalId as sampleExternalId',
+      'sp.id as sampleId',
+      'sp.sampleData',
+      'sp.sampleStatus as sampleStatus',
+      'sp.updatedOn as sampleUpdatedOn',
+      'sp.collectedOn as sampleCollectedOn',
+      'sp.externalId as sampleExternalId',
       'sampleOriginSite.externalId as sampleSiteExternalId',
       'sampleOriginSite.id as sampleSiteId',
       'sampleOriginSite.name as sampleSiteName',
       'sampleOriginState.name as sampleSiteStateName',
-      'sampleType.externalId as sampleTypeExternalId',
-      'sampleType.i18nKey as sampleTypeI18nKey',
-      'sampleType.name as sampleTypeName',
+      'stp.externalId as sampleTypeExternalId',
+      'stp.i18nKey as sampleTypeI18nKey',
+      'stp.name as sampleTypeName',
       'reportableSite.id as reportableSiteId',
       'reportableSite.externalId as reportableSiteExternalId',
       'reportableSite.name as reportableSiteName',
-      'laboratory.id as laboratorySiteId',
-      'laboratory.externalId as laboratorySiteExternalId',
-      'laboratory.name as laboratorySiteName',
+      'si.id as laboratorySiteId',
+      'si.externalId as laboratorySiteExternalId',
+      'si.name as laboratorySiteName',
       'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
       'sampleCollectedBy.name as sampleClinicianName',
       'transferReportableSite.name as transferSiteName',
