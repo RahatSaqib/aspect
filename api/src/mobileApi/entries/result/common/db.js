@@ -20,7 +20,6 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
     .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
     .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
     .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'r.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
-    .leftJoin('Partner as partner', 'r.partnerId', 'partner.id')
     .leftJoin(
       'ResultWorkflowStatus as resultWorkflowStatus',
       'resultWorkflowLog.resultWorkflowStatusId',
@@ -89,7 +88,6 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       'resultWorkflowLog.changedOn as resultWorkflowStatusChangedOn',
       'resultWorkflowLog.resultWorkflowStatusId as resultWorkflowStatusId',
       'resultWorkflowLog.reason as resultWorkflowStatusReason',
-      'sp.externalId as sampleExternalId',
       'sp.id as sampleId',
       'sp.sampleData',
       'sp.sampleStatus as sampleStatus',
