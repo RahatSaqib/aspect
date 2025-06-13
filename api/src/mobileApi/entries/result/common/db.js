@@ -45,9 +45,9 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       if (modifiedSince) {
         qb.where('r.updatedOn', '>=', modifiedSince).orWhereNull('r.updatedOn')
       }
-      qb.where('r.endedOn', '>=', submittedSince).orWhereNull('sp.collectedOn')
-      qb.where('sp.collectedOn', '>=', submittedSince).orWhereNull('r.endedOn')
-      qb.whereNotNull('sp.collectedOn').orWhereNull('r.endedOn')
+    })
+    .andWhere(qb => {
+      qb.where('r.endedOn', '>=', submittedSince).orWhere('sp.collectedOn', '>=', submittedSince)
     })
     .whereNotIn('r.resultCategory1', [
       resultCategoryToId.Invalid,
