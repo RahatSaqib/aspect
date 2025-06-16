@@ -25,7 +25,6 @@ module.exports = async (knex, partnerData) => {
     hoursNotificationsShouldWaitForCustomFields: finalValues.hoursNotificationsShouldWaitForCustomFields,
     isDefault: finalValues.isDefault ?? true,
     excludePattern: finalValues.excludePattern,
-    customWorkingDays: JSON.stringify(finalValues.customWorkingDays),
   }
 
   if (!dbPartner) {
