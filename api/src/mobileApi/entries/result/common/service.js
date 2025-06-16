@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const Promise = require('bluebird')
 const {
   fetchResultsBySubmittedSinceQuery,
   getCommentsOfResultById,
@@ -13,12 +12,7 @@ const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transformResultResponse } = require('./helpers/transformResultResponse')
 const { getConstraints } = require('../../../../auth/constraints')
 const { getUser } = require('../../../../auth/service')
-const {
-  addResultDownloadLogQuery,
-  getResultWorkflowStatusQuery,
-  insertResultWorkflowLogQuery,
-  updateResultWorkflowLogQuery,
-} = require('../../../result/common/db')
+const { addResultDownloadLogQuery } = require('../../../result/common/db')
 const { getSitesQuery } = require('../../../../site/service')
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
