@@ -1,6 +1,6 @@
 const { INTERNAL_DEVICE_IDS } = require('../../src/shared/constants')
 
-const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
+const commonUtilizationRateQuery = (dateCondition, dayCondition) => `
   SELECT
   CONCAT(
     ROUND(
@@ -8,9 +8,13 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
         SUM(resultCount)
         /
         SUM(dailyTestCapacity * GetWeekdaysInRangeCustom(
-          ${endDate}, 
-          ${startDate},
-          customWorkingDays->>"$.excludedDays"
+          NOW(), 
+          DATE_FORMAT(NOW(), '%Y-%m-01'),
+          CASE 
+            WHEN customWorkingDays IS NOT NULL
+            THEN JSON_UNQUOTE(JSON_EXTRACT(customWorkingDays, '$.excludedDays'))
+            ELSE NULL
+          END
         )) * 100
       ,0)
     ,2)
@@ -24,7 +28,7 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Result AS r ON d.id = r.deviceId 
         AND ${dateCondition}
-        AND find_in_set(DAYOFWEEK(r.endedOn), p.customWorkingDays->>"$.excludedDays") = 0
+        AND ${dayCondition}
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dtc.hasResults = 1
     GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
@@ -324,16 +328,12 @@ const utilizationRate = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: commonUtilizationRateQuery(
-    // this month
-    "DATE(r.endedOn) >= DATE_FORMAT(NOW(), '%Y-%m-01')",
-    "DATE_FORMAT(NOW(), '%Y-%m-01')",
-    'NOW()'
+    "DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)",
+    'DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7'
   ),
   sqlForStatUnit: commonUtilizationRateQuery(
-    // last month
-    "r.endedOn >= DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') AND r.endedOn < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')",
-    "DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')",
-    "DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')"
+    "DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') > r.endedOn AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') < r.endedOn",
+    'DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7'
   ),
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
