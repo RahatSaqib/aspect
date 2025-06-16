@@ -24,7 +24,7 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Result AS r ON d.id = r.deviceId 
         AND ${dateCondition}
-        AND find_in_set(DAYOFWEEK(r.endedOn), p.customWorkingDays->>"$.excludedDays") = 0
+        AND find_in_set(DAYOFWEEK(r.endedOn), COALESCE(p.customWorkingDays->>"$.excludedDays", '')) = 0
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dtc.hasResults = 1
     GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
