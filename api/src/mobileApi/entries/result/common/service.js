@@ -34,21 +34,6 @@ const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   return addResultDownloadLogQuery(resultDownloadLogs)
 }
 
-const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkflowStatusExternalId) => {
-  const { id: resultWorkflowStatusId } = await getResultWorkflowStatusQuery(resultWorkflowStatusExternalId)
-  const now = new Date()
-
-  return Promise.each(resultIdsToUpdate, async resultId => {
-    const [resultWorkflowStatusLogId] = await insertResultWorkflowLogQuery(
-      resultId,
-      resultWorkflowStatusId,
-      now,
-      userId
-    )
-    await updateResultWorkflowLogQuery(resultId, userId, now, resultWorkflowStatusLogId)
-  })
-}
-
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
