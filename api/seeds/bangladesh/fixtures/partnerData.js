@@ -47,5 +47,5 @@ module.exports = {
     daysPerMonth: 24,
     daysPerQuarter: 72,
     daysPerYear: 288,
-  })
+  }),
 }
