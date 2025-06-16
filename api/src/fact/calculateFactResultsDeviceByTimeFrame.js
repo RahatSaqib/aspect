@@ -130,9 +130,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
     .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .whereNotNull('r.assayId')
     .whereNotNull('r.resultCategory1')
-    .where(function () {
-      this.whereNotNull('r.endedOn').orWhereNotNull('r.startedOn')
-    })
+    .whereRaw('COALESCE(r.endedOn, r.startedOn) IS NOT NULL')
     .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame', 'r.siteId')
     .count('r.id as resultCount')
     .modify(qb => {
