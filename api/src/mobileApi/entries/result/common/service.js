@@ -9,7 +9,6 @@ const {
   getUserSiteIds,
 } = require('./db')
 const { getAllSamplesRegistered } = require('../../sample/common/db')
-const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transformResultResponse } = require('./helpers/transformResultResponse')
 const { getConstraints } = require('../../../../auth/constraints')
@@ -67,13 +66,6 @@ async function fetchEntriesServiceHandler(request) {
     const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
     const user = await getUser(auth.credentials.name)
     await addResultDownloadLog(resultIdsToBeRegistered, user.id)
-
-    const resultIdsToUpdate = _.uniq(
-      results
-        .filter(result => setDeliveredResultWorkflowStatuses.includes(result.resultWorkflowStatusExternalId))
-        .map(result => result.id)
-    )
-    await updateResultWorkflowStatus(resultIdsToUpdate, user.id, 'Delivered')
 
     const followUps = await getFollowUpsByResultIds(results)
     const comments = await getCommentsOfResultById(results)
