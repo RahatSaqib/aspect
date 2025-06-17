@@ -53,6 +53,31 @@ const {
 } = require('./common/db')
 const { replaceOffset } = require('../shared/date')
 
+function buildQueryForResultsListAndExport(query, dataConstraints) {
+  const orConstraint = dataConstraints.$or
+
+  const isSiteLevelAccess = _.some(orConstraint, obj => _.has(obj, 'site'))
+
+  // check if user has site-level access and modify the constraint
+  if (isSiteLevelAccess) {
+    const filteredOrConstraint = _.map(orConstraint, obj => {
+      if (query.reportableSiteId) {
+        return _.omit(obj, 'site')
+      }
+      if (obj.result && obj.result.reportableSiteId) {
+        return {
+          ...obj,
+          result: _.omit(obj.result, 'reportableSiteId'),
+        }
+      }
+      return obj
+    })
+    dataConstraints.$or = filteredOrConstraint
+  }
+
+  return getQueryForResultsListAndExport(query, dataConstraints)
+}
+
 async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
   const selectFields = _.clone(fields)
@@ -142,28 +167,8 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const orConstraint = dataConstraints.$or
+  const resultQuery = buildQueryForResultsListAndExport(query, dataConstraints)
 
-  const isSiteLevelAccess = _.some(orConstraint, obj => _.has(obj, 'site'))
-
-  // check if user has site-level access and modify the constraint
-  if (isSiteLevelAccess) {
-    const filteredOrConstraint = _.map(orConstraint, obj => {
-      if (query.reportableSiteId) {
-        return _.omit(obj, 'site')
-      }
-      if (obj.result && obj.result.reportableSiteId) {
-        return {
-          ...obj,
-          result: _.omit(obj.result, 'reportableSiteId'),
-        }
-      }
-      return obj
-    })
-    dataConstraints.$or = filteredOrConstraint
-  }
-
-  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
@@ -2463,4 +2468,5 @@ module.exports = {
   getClinicalIndicatorQueryForResultsTable,
   processGroupedQuery,
   getQuarterByMonth,
+  buildQueryForResultsListAndExport,
 }
