@@ -11,7 +11,7 @@ const {
   mapResultCategory2,
   getResultCategoriesHivVL,
   getVLCopies,
-  getDetectedResistanceCategoryTypes,
+  getXdrDetectedResistanceCategoryTypes,
   getBacterialLoad,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
@@ -241,7 +241,9 @@ function getAdditionalDataFromPayload(payload, assays) {
   }
 
   if (assays.includes('GxMtbXdr')) {
-    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(_.get(payload, 'data.resultText'))
+    const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(
+      _.get(payload, 'data.resultText')
+    )
     data.detectedResistance = detectedResistance
     data.allResistances = allResistances
   }
