@@ -1,20 +1,13 @@
 const { INTERNAL_DEVICE_IDS } = require('../../src/shared/constants')
 
 const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
-  SELECT
-  CONCAT(
-    ROUND(
-      IFNULL(
-        SUM(resultCount)
-        /
+  SELECT CONCAT(ROUND(IFNULL(
+        SUM(resultCount)/
         SUM(dailyTestCapacity * GetWeekdaysInRangeCustom(
           ${endDate}, 
           ${startDate},
-          customWorkingDays->>"$.excludedDays"
-        )) * 100
-      ,0)
-    ,2)
-  ,'%') AS cnt
+          customWorkingDays->>"$.excludedDays")
+        ) * 100,0),2),'%') AS cnt
   FROM (
     SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity, p.customWorkingDays
       FROM Device AS d
@@ -24,7 +17,7 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Result AS r ON d.id = r.deviceId 
         AND ${dateCondition}
-        AND find_in_set(DAYOFWEEK(r.endedOn), COALESCE(p.customWorkingDays->>"$.excludedDays", '')) = 0
+        AND FIND_IN_SET(DAYOFWEEK(r.endedOn), COALESCE(p.customWorkingDays->>"$.excludedDays", '')) = 0
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dtc.hasResults = 1
     GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
