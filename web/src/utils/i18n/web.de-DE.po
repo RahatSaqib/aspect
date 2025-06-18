@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-06-03T10:59:19.681Z\n"
+"POT-Creation-Date: 2025-06-18T06:01:28.545Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -68,7 +68,7 @@ msgstr "(Neue Menge im Bestand: {nextQuantity} {unitShortName})"
 #. *Adjusted from {from} to {to}
 #: extracted_strings.json
 msgid "*Adjusted from {from} to {to}"
-msgstr ""
+msgstr "*Angepasst von {from} auf {to}"
 
 #. [pages.excluded.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
@@ -77,10 +77,6 @@ msgstr ""
 #. defaultMessage is:
 #. *Excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} "
-#| "lot/s in transit"
 msgid ""
 "*Excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s "
 "in transit"
@@ -95,8 +91,6 @@ msgstr ""
 #. defaultMessage is:
 #. *In transit from {inTransitFromSiteName}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "* in transit from {inTransitFromSiteName}"
 msgid "*In transit from {inTransitFromSiteName}"
 msgstr "* auf dem Weg von {inTransitFromSiteName}"
 
@@ -1013,10 +1007,8 @@ msgstr "Details über die Zuweisung"
 #. defaultMessage is:
 #. Assignments
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Add Assignment"
 msgid "Assignments"
-msgstr "Übung hinzufügen"
+msgstr "Aufgaben"
 
 #. [pages.Notifications.assayRequired]
 #. defaultMessage is:
@@ -1805,7 +1797,7 @@ msgstr "Kategorie I"
 #. Cell
 #: extracted_strings.json
 msgid "Cell"
-msgstr ""
+msgstr "Zelle"
 
 #. [pages.resultEdit.PatientPhoneNumberi18nkey]
 #. defaultMessage is:
@@ -2869,10 +2861,8 @@ msgstr "Daktari HIV-VL"
 #. defaultMessage is:
 #. Damaged
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Damage"
 msgid "Damaged"
-msgstr "Schaden"
+msgstr "Beschädigt"
 
 #. [header.link.dashboardv2.title]
 #. defaultMessage is:
@@ -2925,9 +2915,6 @@ msgstr "Datenvisualisierung für XDR-Resistenz"
 #. defaultMessage is:
 #. Date
 #. [pages.Notifications.table.dateHeader]
-#. defaultMessage is:
-#. Date
-#. [pages.DeviceDetailOperation.startedOn]
 #. defaultMessage is:
 #. Date
 #: extracted_strings.json
@@ -4566,6 +4553,8 @@ msgstr ""
 #: extracted_strings.json
 msgid "Failed to update inventory settings. Please try again later."
 msgstr ""
+"Die Inventareinstellungen konnten nicht aktualisiert werden. Bitte versuchen "
+"Sie es später noch einmal."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -4633,13 +4622,6 @@ msgstr "Standort Finden"
 msgid "Finish"
 msgstr "Fertigstellen"
 
-#. [pages.DeviceDetailOperation.firmware]
-#. defaultMessage is:
-#. Firmware
-#: extracted_strings.json
-msgid "Firmware"
-msgstr "Firmware"
-
 #. [pages.TablePaginator.first]
 #. defaultMessage is:
 #. First
@@ -4653,13 +4635,6 @@ msgstr "Erste"
 #: extracted_strings.json
 msgid "First Result"
 msgstr "Erstes Ergebnis"
-
-#. [pages.DeviceDetailEdit.firstApproved]
-#. defaultMessage is:
-#. First approved
-#: extracted_strings.json
-msgid "First approved"
-msgstr "Erstmals zugelassen"
 
 #. [pages.resultEdit.firstOrSecond]
 #. defaultMessage is:
@@ -5719,13 +5694,6 @@ msgstr "Home"
 msgid "Host"
 msgstr "Host"
 
-#. [pages.DeviceDetail.operation.hostId]
-#. defaultMessage is:
-#. Host ID
-#: extracted_strings.json
-msgid "Host ID"
-msgstr "Gastgeber-ID"
-
 #. [components.shared.hours]
 #. defaultMessage is:
 #. Hour
@@ -5783,9 +5751,6 @@ msgid "I don't know what email address I am registered with"
 msgstr "Ich weiß nicht, mit welcher E-Mail Adresse ich registriert bin"
 
 #. [placeholder.id]
-#. defaultMessage is:
-#. ID
-#. [pages.DeviceDetailOperation.id]
 #. defaultMessage is:
 #. ID
 #: extracted_strings.json
@@ -6177,10 +6142,8 @@ msgstr "Konfiguration der Bestandsverwaltung"
 #. defaultMessage is:
 #. Inventory Manager
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Inventory Transfer"
 msgid "Inventory Manager"
-msgstr "Übertragung des Inventars"
+msgstr "Lagerverwalter"
 
 #. [browsePage.browseDropdown.inventoryOverview]
 #. defaultMessage is:
@@ -6252,10 +6215,8 @@ msgstr "Vorhandene Bestände"
 #. defaultMessage is:
 #. Inventory settings updated successfully.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Inventory levels have been adjusted successfully"
 msgid "Inventory settings updated successfully."
-msgstr "Der Lagerbestand wurde erfolgreich angepasst"
+msgstr "Inventareinstellungen erfolgreich aktualisiert."
 
 #. [pages.DeviceDetailEdit.isDaisyChained]
 #. defaultMessage is:
@@ -6631,10 +6592,8 @@ msgstr "Letzte 7 Tage"
 #. defaultMessage is:
 #. Last Login
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Last Ping"
 msgid "Last Login"
-msgstr "Letzter Ping"
+msgstr "Letzte Anmeldung"
 
 #. [pages.dateRangeSelector.lastMonth]
 #. defaultMessage is:
@@ -6857,13 +6816,6 @@ msgstr ""
 "Listet die Anzahl der derzeit aktiven/deaktivierten Module auf sowie die "
 "Anzahl der Module, die in einem durch Filter definierten Zeitraum ersetzt "
 "wurden"
-
-#. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
-#. defaultMessage is:
-#. Loading DeviceOperations Failed
-#: extracted_strings.json
-msgid "Loading DeviceOperations Failed"
-msgstr "Laden von Gerätevorgängen fehlgeschlagen"
 
 #. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
 #. defaultMessage is:
@@ -7646,7 +7598,7 @@ msgstr "Verwalten"
 #. Manual Addition
 #: extracted_strings.json
 msgid "Manual Addition"
-msgstr ""
+msgstr "Manuelle Hinzufügung"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy]
 #. defaultMessage is:
@@ -9380,7 +9332,7 @@ msgstr "Telefon"
 #. Physical Count
 #: extracted_strings.json
 msgid "Physical Count"
-msgstr ""
+msgstr "Physische Zählung"
 
 #. [filter.sampleType.sampleTypePlasma]
 #. defaultMessage is:
@@ -9428,10 +9380,8 @@ msgstr "Bitte geben Sie ein neues Passwort ein"
 #. defaultMessage is:
 #. Please enter a note to explain the reason
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Please enter a new password"
 msgid "Please enter a note to explain the reason"
-msgstr "Bitte geben Sie ein neues Passwort ein"
+msgstr "Bitte geben Sie eine Notiz ein, um den Grund zu erläutern"
 
 #. [pages.ContactDetails.invalidEmailAddress]
 #. defaultMessage is:
@@ -10503,10 +10453,8 @@ msgstr "Regionalbeauftragter"
 #. defaultMessage is:
 #. Registration Date
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Expiration Date"
 msgid "Registration Date"
-msgstr "Verfallsdatum"
+msgstr "Anmeldedatum"
 
 #. [legends.Unknown.resultCategoryRejected]
 #. defaultMessage is:
@@ -10828,13 +10776,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Request a New Password From Aspect"
 msgstr "Neues Passwort von Aspect anfordern"
-
-#. [pages.DeviceDetailOperation.requirePrinter]
-#. defaultMessage is:
-#. Require printer
-#: extracted_strings.json
-msgid "Require printer"
-msgstr "Drucker benötigt"
 
 #. [validations.required]
 #. defaultMessage is:
@@ -11524,13 +11465,6 @@ msgstr ""
 msgid "Screen is not yet complete"
 msgstr "Bildschirm ist noch nicht vollständig"
 
-#. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
-#. defaultMessage is:
-#. Searching DeviceOperations Failed
-#: extracted_strings.json
-msgid "Searching DeviceOperations Failed"
-msgstr "Suche nach Geräteoperationen fehlgeschlagen"
-
 #. [errorResponseMessages.fetchResults.GET.400.title]
 #. defaultMessage is:
 #. Searching Results Failed
@@ -11908,13 +11842,6 @@ msgstr "Seriennummer"
 msgid "Serial Number"
 msgstr "Seriennummer"
 
-#. [pages.DeviceDetailEdit.serialNumber]
-#. defaultMessage is:
-#. Serial number
-#: extracted_strings.json
-msgid "Serial number"
-msgstr "Seriennummer"
-
 #. [component.Widget.serverUptimeTitle]
 #. defaultMessage is:
 #. Server Uptime
@@ -12196,17 +12123,6 @@ msgid ""
 msgstr ""
 "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
 "Benachrichtigung} other {# Benachrichtigungen} }"
-
-#. [pages.DeviceDetailOperation.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"record} other {# records} }"
-msgstr ""
-"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
-"Datensatz} other {# Datensätzen} }"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -13074,13 +12990,6 @@ msgstr "Techniker"
 #: extracted_strings.json
 msgid "Telephone"
 msgstr "Telefon"
-
-#. [pages.DeviceDetailOperation.temperature]
-#. defaultMessage is:
-#. Temperature
-#: extracted_strings.json
-msgid "Temperature"
-msgstr "Temperatur"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
 #. defaultMessage is:
@@ -14079,6 +13988,8 @@ msgid ""
 "This will reset the Inventory on Hand to {quantity}. Any movement before "
 "{resetDate} will be discarded from now on. Are you sure?"
 msgstr ""
+"Dadurch wird der Lagerbestand auf {quantity} zurückgesetzt. Alle Bewegungen "
+"vor dem {resetDate} werden von nun an verworfen. Sind Sie sicher?"
 
 #. [components.shared.thursday]
 #. defaultMessage is:
@@ -14866,13 +14777,6 @@ msgstr "Validierungsfehler"
 #: extracted_strings.json
 msgid "View Log"
 msgstr "Betrachten Protokoll"
-
-#. [pages.DeviceDetailOperation.voltage]
-#. defaultMessage is:
-#. Voltage
-#: extracted_strings.json
-msgid "Voltage"
-msgstr "Spannung"
 
 #. [pages.ErrorRate.whoBenchmark]
 #. defaultMessage is:
@@ -16009,10 +15913,8 @@ msgstr "Workflow-Status ist {workflowStatusName}"
 #. defaultMessage is:
 #. {consumableName}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Add {consumableName}"
 msgid "{consumableName}"
-msgstr "{consumableName} hinzufügen"
+msgstr "{consumableName}"
 
 #. [pages.DeviceList.errorOfTotal]
 #. defaultMessage is:
@@ -16167,6 +16069,40 @@ msgstr "{unit} seit letzter Woche"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} gesamt kalibrierungen"
+
+#~ msgid "Firmware"
+#~ msgstr "Firmware"
+
+#~ msgid "First approved"
+#~ msgstr "Erstmals zugelassen"
+
+#~ msgid "Host ID"
+#~ msgstr "Gastgeber-ID"
+
+#~ msgid "Loading DeviceOperations Failed"
+#~ msgstr "Laden von Gerätevorgängen fehlgeschlagen"
+
+#~ msgid "Require printer"
+#~ msgstr "Drucker benötigt"
+
+#~ msgid "Searching DeviceOperations Failed"
+#~ msgstr "Suche nach Geräteoperationen fehlgeschlagen"
+
+#~ msgid "Serial number"
+#~ msgstr "Seriennummer"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "record} other {# records} }"
+#~ msgstr ""
+#~ "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+#~ "Datensatz} other {# Datensätzen} }"
+
+#~ msgid "Temperature"
+#~ msgstr "Temperatur"
+
+#~ msgid "Voltage"
+#~ msgstr "Spannung"
 
 #~ msgid "Asserted inventory on hand decrease"
 #~ msgstr "Bestätigter Bestand an Vorräten"
