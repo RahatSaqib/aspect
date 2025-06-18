@@ -90,6 +90,10 @@ const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset 
     ) ${alias ? ` as ${alias}` : ''}`)
 }
 
+const getMonthYearExpressionFromFieldInTimeZone = (knex, field, alias = 'monthYear', timeZoneIANA) => {
+  return knex.raw(`DATE_FORMAT(CONVERT_TZ(${field}, 'UTC', ?), '%Y-%m') ${alias ? `AS ${alias}` : ''}`, [timeZoneIANA])
+}
+
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
   knex.raw(`CONCAT_WS(
     '-',
@@ -202,9 +206,9 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
   }
   return initialProperties
     ? dates.map(d => ({
-        date: parseISO(d),
-        ...initialProperties,
-      }))
+      date: parseISO(d),
+      ...initialProperties,
+    }))
     : dates.map(d => parseISO(d))
 }
 
@@ -541,4 +545,5 @@ module.exports = {
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
   adjustDate,
+  getMonthYearExpressionFromFieldInTimeZone,
 }
