@@ -77,24 +77,11 @@ async function summaryDashboard(request) {
   const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard, country })
   const data = await Promise.all(
     widgets.map(async widget => {
-      const { externalId, sqlForExtra, options, titleI18nKey } = widget
-      let { sqlForIndicator, sqlForStatUnit } = widget
+      const { externalId, sqlForExtra, options } = widget
+      const { sqlForIndicator, sqlForStatUnit } = widget
 
-      // This is a hack to update an already saved query
-      if (titleI18nKey === 'utilizationRateTitle') {
-        const partnerConfig = await getPartnerWorkingDaysConfig(auth)
-        if (partnerConfig) {
-          const oldPattern = /AND DAYOFWEEK\(r\.endedOn\) <> 1 AND DAYOFWEEK\(r\.endedOn\) <> 7/
-
-          const excludedDays = partnerConfig.excludedDays.split(',').map(day => day.trim())
-          const newPattern = excludedDays.map(day => `AND DAYOFWEEK(r.endedOn) <> ${day}`).join(' ')
-
-          sqlForIndicator = sqlForIndicator.replace(oldPattern, newPattern)
-          sqlForStatUnit = sqlForStatUnit.replace(oldPattern, newPattern)
-        }
-      }
-
-      const unit = await queryValue(sqlForStatUnit, dataConstraints, query)
+      const unitQuery = queryValue(sqlForStatUnit, dataConstraints, query)
+      const unit = await unitQuery
       const extra = await queryValue(sqlForExtra, dataConstraints, query)
 
       let indicatorQueryResult
@@ -103,7 +90,8 @@ async function summaryDashboard(request) {
         const indicatorKnexQuery = knexFunction(knex, dataConstraints) || { cnt: null }
         indicatorQueryResult = (await indicatorKnexQuery) || { cnt: null }
       } else {
-        indicatorQueryResult = (await queryValue(sqlForIndicator, dataConstraints, query)) || { cnt: null }
+        const sqlQuery = queryValue(sqlForIndicator, dataConstraints, query)
+        indicatorQueryResult = (await sqlQuery) || { cnt: null }
       }
 
       const { cnt, ...restCountProps } = indicatorQueryResult
