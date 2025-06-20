@@ -4,7 +4,7 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
   SELECT CONCAT(ROUND(IFNULL(
         SUM(resultCount)/
         SUM(dailyTestCapacity * GetWeekdaysInRangeCustom(
-          ${endDate}, 
+          ${endDate},
           ${startDate},
           customWorkingDays->>"$.excludedDays")
         ) * 100,0),2),'%') AS cnt
@@ -15,9 +15,8 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
       INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
       INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
-      LEFT OUTER JOIN Result AS r ON d.id = r.deviceId 
+      LEFT OUTER JOIN Result AS r ON d.id = r.deviceId
         AND ${dateCondition}
-        AND FIND_IN_SET(DAYOFWEEK(r.endedOn), COALESCE(p.customWorkingDays->>"$.excludedDays", '')) = 0
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dtc.hasResults = 1
     GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
@@ -326,7 +325,7 @@ const utilizationRate = {
     // last month
     "r.endedOn >= DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') AND r.endedOn < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')",
     "DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')",
-    "DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')"
+    "DATE_SUB(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), INTERVAL 1 DAY)"
   ),
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
@@ -2068,7 +2067,7 @@ const activeModuleBays = {
   subTitleI18nKey: null,
   sqlForIndicator: `
     SELECT SUM(g.moduleBaysUsed) AS cnt
-    FROM 
+    FROM
       (
         SELECT f.deviceId, MAX(f.moduleBaysUsed) AS moduleBaysUsed
         FROM FactDeviceModulesCount AS f

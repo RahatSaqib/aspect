@@ -24,8 +24,24 @@ const { assayToId } = require('../../shared/dictionary')
 const { getWorkingDays } = require('../../shared/date')
 
 function getMonthsDatefields(minDate, maxDate, culture) {
-  const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
-  const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
+  // Helper function to parse timezone-aware ISO strings correctly
+  const parseDateOnly = dateString => {
+    if (_.isDate(dateString)) {
+      return dateString
+    }
+
+    if (typeof dateString === 'string' && dateString.includes('T')) {
+      // For timezone-aware dates, just extract the date part and treat it as local
+      // This avoids the timezone conversion issue
+      const datePart = dateString.split('T')[0]
+      return new Date(`${datePart}T00:00:00`)
+    }
+
+    return parseISO(dateString)
+  }
+
+  const minDateFormatted = parseDateOnly(minDate)
+  const maxDateFormatted = parseDateOnly(maxDate)
 
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
@@ -665,7 +681,7 @@ async function getDeviceCoverageReport(request) {
             /**
              * We used bellow commented code to get number of 6c/10c modules from Device.configurationData props
              * See - https://systemone.youtrack.cloud/issue/HD-15418/Bangladesh-Dashboard-GeneXpert-Device-Coverage-data-need-to-rechecknot-showing-correct-data#focus=Comments-4-66139.0-0
-             * 
+             *
              // const configurationData = dev.configurationData ? JSON.parse(dev.configurationData) : {}
              // const { moduleSerials = [], tenColorModules = [] } = configurationData
              // const tenColors = moduleSerials.filter(
@@ -673,11 +689,11 @@ async function getDeviceCoverageReport(request) {
              // )
              // const cnt6cModules = moduleSerials.length - tenColors.length
              // const cnt10cModules = tenColors.length
-             * 
-             * And to show correct values in `GeneXpert Device Coverage` nesting tables - we changed that and started using 
+             *
+             * And to show correct values in `GeneXpert Device Coverage` nesting tables - we changed that and started using
              * of Device.gx6cModulesCount and Device.gx10cModulesCount fields directly
              * See - https://systemone.youtrack.cloud/issue/HD-15418/Bangladesh-Dashboard-GeneXpert-Device-Coverage-data-need-to-rechecknot-showing-correct-data#focus=Comments-4-66141.0-0
-             * 
+             *
              */
             let { cnt6cModules, cnt10cModules } = dev
             cnt6cModules = cnt6cModules ?? 0
