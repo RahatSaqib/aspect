@@ -18,70 +18,67 @@ async function getDeviceCapacityReport(auth, query, timezone) {
 
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
 
-  // Precompute working days for each period using timeZoneIANA
-  const workingDaysQuery = deviceQuery
-    .clone()
-    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
+  const countByDeviceAndPeriod = knex
     .select(
-      'd.id AS deviceId',
-      getMonthYearExpressionFromFieldInTimeZone(knex, 'r.endedOn', 'monthYear', timeZoneIANA),
-      knex.raw(
-        `GetWeekdaysInRangeCustom(
-          LAST_DAY(DATE_FORMAT(r.endedOn, '%Y-%m-01')),
-          DATE_FORMAT(r.endedOn, '%Y-%m-01'),
-          p.customWorkingDays->>"$.excludedDays"
-        ) as workingDays`
-      )
-    )
-    .groupBy('d.id', 'monthYear')
-
-  const monthlyCapacityQuery = deviceQuery
-    .clone()
-    .leftJoin('Result as r', builder =>
-      builder.on('d.id', 'r.deviceId').andOn(knex.raw('DATE(r.endedOn) BETWEEN ? AND ?', [minDate, maxDate]))
-    )
-    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
-    .leftJoin({ wd: workingDaysQuery }, function () {
-      this.on('d.id', 'wd.deviceId').andOn(
-        knex.raw('wd.monthYear = ?', [
-          getMonthYearExpressionFromFieldInTimeZone(knex, 'r.endedOn', 'monthYear', timeZoneIANA),
-        ])
-      )
-    })
-    .where({ 'dt.externalId': 'CepheidGeneXpert' })
-    .andWhere(knex.raw(`find_in_set(DAYOFWEEK(r.endedOn), COALESCE(p.customWorkingDays->>"$.excludedDays", '')) = 0`))
-    .groupBy('d.id', 'monthYear')
-    .distinct(
+      'd.id',
       'd.name',
-      'wd.monthYear',
-      'd.id AS deviceId',
-      knex.raw('COUNT(DISTINCT r.id) as resultCount'),
-      'wd.workingDays',
-      'd.dailyTestCapacity as dailyCapacity')
-    .orderBy('d.name')
+      'd.dailyTestCapacity',
+      'result_group.count',
+      knex.raw('date_format(result_group.period_first_day, "%Y-%m") as period'),
+      knex.raw('GetWeekdaysInRangeCustom(last_day(result_group.period_first_day), result_group.period_first_day, p.customWorkingDays ->> "$.excludedDays") as workingDays')
+    )
+    .from(deviceQuery
+      .groupBy('d.id', 'd.name', 'd.dailyTestCapacity', 'd.partnerId')
+      .select('d.id', 'd.name', 'd.dailyTestCapacity', 'd.partnerId')
+      .as('d'))
+    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
+    .leftJoin(function () {
+      this.select(
+        'r.deviceId',
+        'r.siteId',
+        knex.raw('date_format(r.endedOn, "%Y-%m-01") as period_first_day'),
+        knex.raw('count(*) as count')
+      )
+        .from('Result as r')
+        .whereNotNull('r.endedOn')
+        .andWhere('r.endedOn', '>=', minDate)
+        .andWhere('r.endedOn', '<=', maxDate)
+        .groupBy('r.deviceId', 'period_first_day')
+        .as('result_group')
+    }, 'result_group.deviceId', 'd.id')
 
-  const devicePeriodsQuery = deviceQuery
-    .clone()
-    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
-    .groupBy('d.id')
-    .select('d.name', 'd.id')
-    .orderBy('d.name')
+  // Execute the query to get the raw data
+  const rawData = await countByDeviceAndPeriod
 
-  console.log('\x1b[1;36m', '🚀 ➜ monthlyCapacityQuery:', monthlyCapacityQuery.toString())
-  const [monthlyCapacityData, devicePeriods] = await Promise.all([monthlyCapacityQuery, devicePeriodsQuery])
+  // Transform the data into the required format
+  const data = rawData.reduce((acc, row) => {
+    const deviceId = row.id
+    const deviceName = row.name
+    const period = row.period
+    const count = row.count || 0
+    const dailyTestCapacity = row.dailyTestCapacity || 0
+    const workingDays = row.workingDays || 0
 
-  const data = devicePeriods.map(devicePeriods => {
-    monthlyCapacityData
-      .filter(deviceFiltered => deviceFiltered.deviceId === devicePeriods.id)
-      .forEach(filteredMonthlyCapacity => {
-        devicePeriods[filteredMonthlyCapacity.monthYear] = Math.round(
-          (filteredMonthlyCapacity.resultCount * 100) /
-          Math.max(filteredMonthlyCapacity.dailyCapacity * filteredMonthlyCapacity.workingDays, 1)
-        )
-      })
+    // Calculate capacity percentage
+    const capacityPercentage = workingDays > 0 && dailyTestCapacity > 0
+      ? Number(((count * 100) / (dailyTestCapacity * workingDays)).toFixed(2))
+      : null
 
-    return devicePeriods
-  })
+    // Find existing device entry or create new one
+    let deviceEntry = acc.find(device => device.id === deviceId)
+    if (!deviceEntry) {
+      deviceEntry = {
+        name: deviceName,
+        id: deviceId
+      }
+      acc.push(deviceEntry)
+    }
+
+    // Add the period data
+    deviceEntry[period] = capacityPercentage
+
+    return acc
+  }, [])
 
   const dataset = {
     ok: true,
