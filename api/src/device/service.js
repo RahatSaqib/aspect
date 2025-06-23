@@ -1081,7 +1081,7 @@ async function getDevicesMaintenanceLogForTheDay(knex, today, timezone) {
   /**
    * total results today for all devices.
    * Notice that we shift endedOn and startedOn dates to the country timezone with CONVERT_TZ directly,
-   * without using helper getDateTimeProjectionInUserTimeZone because here we wrap it with DATE() func
+   * without using helper getDateTimeProjectionInTimeZoneIANA because here we wrap it with DATE() func
    */
   const allResults = await devicesBase
     .clone()

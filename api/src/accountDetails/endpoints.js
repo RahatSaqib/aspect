@@ -28,7 +28,7 @@ const routes = [
             phone: Joi.string().max(45).allow('', null),
             cell: Joi.string().max(45).allow('', null),
             countryId: Joi.number().integer().required(),
-            stateId: Joi.number().max(255).allow('', null),
+            stateId: Joi.number().integer().positive().allow('', null),
             lgaId: Joi.number().allow('', null),
             zip: Joi.string().max(45).allow('', null),
             timezone: Joi.string().max(255).allow('', null),

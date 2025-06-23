@@ -5,7 +5,6 @@ const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('.
 const { allResultCategoryToId, resultCategoryToId, deviceMaintenanceTypeToId } = require('../../shared/dictionary')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { usedAssay } = require('../../assay/common/db')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 const { XDR_RESISTANCES } = require('../../shared/constants')
@@ -353,18 +352,6 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
     deviceQuery,
     resultCategoryIds,
   }
-}
-
-async function getLastUploadDateBySites(siteIds, timeOffset) {
-  return knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
-    .whereIn('s.id', siteIds)
-    .groupBy('s.id')
-    .select({
-      siteId: 's.id',
-      lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', timeOffset),
-    })
 }
 
 async function getSourceDevices(sourceDevicesIds) {
@@ -963,7 +950,6 @@ module.exports = {
   moduleDisabledIssues,
   modulesWithLastResult,
   getDeviceByIdBaseQuery,
-  getLastUploadDateBySites,
   getUnusedModulesReportData,
   getDeviceInfo,
 }

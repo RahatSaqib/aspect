@@ -53,7 +53,7 @@ const InventoryLogTableRow = ({ inventoryLogItem, timeZone, requireExpirationDat
             }
           >
             {inventoryLogItem.expirationDate
-              ? inventoryLogItem.expirationDate.split('T')[0]
+              ? formatDate(inventoryLogItem.expirationDate)
               : formatMessage(messages.notAvailable)}
           </span>
         </TableCell>

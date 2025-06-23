@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
 
-const { getDateTimeExpressionInTimeZone } = require(`../shared/date`)
+const { getDateTimeProjectionInTimeZoneIANA } = require(`../shared/date`)
 const { getConstraints } = require('../auth/constraints')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../db')
 const { getInventoryLogBaseQuery, getConsumableStrategy } = require('./common/db')
@@ -120,8 +120,8 @@ async function getInventoryLog(requestQuery, dataConstraints, timeZoneIANA) {
 }
 
 function getInventoryLogListProjection(knex, timeZoneIANA, consumableStrategy) {
-  const createdOnProjection = getDateTimeExpressionInTimeZone(knex, 'il.createdOn', timeZoneIANA)
-  const transactionDateProjection = getDateTimeExpressionInTimeZone(knex, 'il.transactionDate', timeZoneIANA)
+  const createdOnProjection = getDateTimeProjectionInTimeZoneIANA(knex, 'il.createdOn', timeZoneIANA)
+  const transactionDateProjection = getDateTimeProjectionInTimeZoneIANA(knex, 'il.transactionDate', timeZoneIANA)
 
   return [
     'il.id as id',
