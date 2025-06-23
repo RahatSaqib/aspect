@@ -5,6 +5,8 @@ const { getDeviceBaseExtendedQuery } = require('../service')
 const { getDateTimeExpressionInTimeZone } = require('../../shared/date')
 const { knex } = require('../../db')
 const { getMonthsDatefields } = require('./index')
+const { getWorkingDays } = require('../utilizationReports/index')
+const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
 
 async function getDeviceCapacityReport(auth, query, timezone) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -15,6 +17,9 @@ async function getDeviceCapacityReport(auth, query, timezone) {
 
   minDate = minDate || addMonths(new Date(), -12).toISOString()
 
+  // Get partner working days configuration
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
+
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
 
   const countByDeviceAndPeriodQuery = knex
@@ -24,9 +29,7 @@ async function getDeviceCapacityReport(auth, query, timezone) {
       'd.dailyTestCapacity',
       'result_group.count',
       knex.raw('date_format(result_group.period_first_day, "%Y-%m") as period'),
-      knex.raw(
-        'GetWeekdaysInRangeCustom(last_day(result_group.period_first_day), result_group.period_first_day, p.customWorkingDays ->> "$.excludedDays") as workingDays'
-      )
+      knex.raw('result_group.period_first_day as period_first_day')
     )
     .from(
       deviceQuery
@@ -65,7 +68,15 @@ async function getDeviceCapacityReport(auth, query, timezone) {
     const { period } = row
     const count = row.count || 0
     const dailyTestCapacity = row.dailyTestCapacity || 0
-    const workingDays = row.workingDays || 0
+    const periodFirstDay = row.period_first_day
+
+    // Calculate working days for this period using the getWorkingDays function
+    let workingDays = 0
+    if (periodFirstDay) {
+      const periodStart = new Date(periodFirstDay)
+      const periodEnd = new Date(periodStart.getFullYear(), periodStart.getMonth() + 1, 0) // Last day of the month
+      workingDays = getWorkingDays(periodStart.toISOString(), periodEnd.toISOString(), customWorkingDaysConfig)
+    }
 
     // Calculate capacity percentage
     const capacityPercentage =
