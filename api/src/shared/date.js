@@ -206,9 +206,9 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
   }
   return initialProperties
     ? dates.map(d => ({
-      date: parseISO(d),
-      ...initialProperties,
-    }))
+        date: parseISO(d),
+        ...initialProperties,
+      }))
     : dates.map(d => parseISO(d))
 }
 

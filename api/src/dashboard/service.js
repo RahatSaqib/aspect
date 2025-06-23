@@ -7,13 +7,6 @@ const { addExtraData } = require('./options')
 const knexWidgets = require('./widgets')
 const resultsTransmittedDashboard = require('./resultsTransmitted')
 const activityOverTimeDashboard = require('./activityOverTime')
-const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
-
-// const dashboardWidgetsBase = require('../../seeds/fixtures/dashboardWidgetsBase')
-
-// const {
-//   stat: { activeDevicesCnt, totalNumberOfModules, activeModules },
-// } = dashboardWidgetsBase
 
 const i18nKeys = {
   // Dashboard
@@ -32,12 +25,6 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
-// const dashboardWidgetTitle = [
-// activeDevicesCnt.title,
-// totalNumberOfModules.title,
-// activeModules.title,
-// ]
-
 async function getDashboardWidget({ id, partnerId }, options) {
   // const { layout, dashboard = 'home', country } = options
   const { layout, dashboard = 'home' } = options
@@ -54,9 +41,6 @@ async function getDashboardWidget({ id, partnerId }, options) {
     })
     .where(function () {
       this.whereRaw(`JSON_EXTRACT(w.dashboards , '$.${dashboard}') IS NOT NULL`)
-      // if (country === 'BD' && dashboard === 'home') this.orWhereIn('w.title', dashboardWidgetTitle)
-      // else
-      // this.whereNotIn('w.title', dashboardWidgetTitle)
 
       if (dashboard === 'home') {
         this.orWhereNull('w.dashboards')

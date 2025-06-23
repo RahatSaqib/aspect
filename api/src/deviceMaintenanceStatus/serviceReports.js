@@ -75,19 +75,23 @@ async function getDeviceActivityPercentReport(auth, query) {
         `SUM(CASE WHEN DAYOFWEEK(deviceStatusByDayWithResultCounts.day) = 7 OR DAYOFWEEK(deviceStatusByDayWithResultCounts.day) = 1 OR (deviceStatusByDayWithResultCounts.maintenanceStatusExternalId = 'active' AND deviceStatusByDayWithResultCounts.numberOfResultsForDay = 0) THEN 0 ELSE deviceStatusByDayWithResultCounts.maintenanceStatusIsActive END) AS activeDaysInMonth`
       ),
       knex.raw(
-        `(5 * (DATEDIFF(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${maxDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${maxDateDateValue.getMonth() + 1
+        `(5 * (DATEDIFF(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${maxDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
+          maxDateDateValue.getMonth() + 1
         } THEN '${format(
           maxDateDateValue,
           'yyyy-MM-dd'
-        )}' ELSE LAST_DAY(deviceStatusByDayWithResultCounts.day) END, CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getMonth() + 1
+        )}' ELSE LAST_DAY(deviceStatusByDayWithResultCounts.day) END, CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
+          minDateDateValue.getMonth() + 1
         } THEN '${format(
           minDateDateValue,
           'yyyy-MM-dd'
-        )}' ELSE DATE_SUB(deviceStatusByDayWithResultCounts.day, INTERVAL DAYOFMONTH(deviceStatusByDayWithResultCounts.day) - 1 DAY) END) DIV 7) + MID('0123444401233334012222340111123400001234000123440', 7 * WEEKDAY(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getMonth() + 1
+        )}' ELSE DATE_SUB(deviceStatusByDayWithResultCounts.day, INTERVAL DAYOFMONTH(deviceStatusByDayWithResultCounts.day) - 1 DAY) END) DIV 7) + MID('0123444401233334012222340111123400001234000123440', 7 * WEEKDAY(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
+          minDateDateValue.getMonth() + 1
         } THEN '${format(
           minDateDateValue,
           'yyyy-MM-dd'
-        )}' ELSE DATE_SUB(deviceStatusByDayWithResultCounts.day, INTERVAL DAYOFMONTH(deviceStatusByDayWithResultCounts.day) - 1 DAY) END) + WEEKDAY(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${maxDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${maxDateDateValue.getMonth() + 1
+        )}' ELSE DATE_SUB(deviceStatusByDayWithResultCounts.day, INTERVAL DAYOFMONTH(deviceStatusByDayWithResultCounts.day) - 1 DAY) END) + WEEKDAY(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${maxDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
+          maxDateDateValue.getMonth() + 1
         } THEN '${format(
           maxDateDateValue,
           'yyyy-MM-dd'

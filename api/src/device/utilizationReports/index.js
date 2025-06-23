@@ -169,8 +169,8 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
   const CUSTOM_WORKING_DAYS_IN_YEAR = query.tableData
     ? getWorkingDays(query.minDate, query.maxDate, customWorkingDaysConfig)
     : customWorkingDaysConfig
-      ? customWorkingDaysConfig?.daysPerYear
-      : WORKING_DAYS_IN_YEAR
+    ? customWorkingDaysConfig?.daysPerYear
+    : WORKING_DAYS_IN_YEAR
   /**
    *
    */
