@@ -17,6 +17,10 @@ const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
   const startDate = new Date(minDate.split('T')[0])
   const endDate = new Date(maxDate.split('T')[0])
 
+  const convertMysqlDayOfWeekToDateFns = day => day - 1 // different start of the week index, partner config is in MySQL format
+  // MySQL DAYOFWEEK(): // 1 = Sunday // 2 = Monday // 3 = Tuesday // 4 = Wednesday // 5 = Thursday // 6 = Friday // 7 = Saturday
+  // date-fns getDay(): // 0 = Sunday // 1 = Monday // 2 = Tuesday // 3 = Wednesday // 4 = Thursday // 5 = Friday // 6 = Saturday
+
   const isMonthPeriod = () => {
     return (
       startDate.getDate() === 1 &&
@@ -65,7 +69,7 @@ const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
   }
 
   // Otherwise calculate actual working days using functional approach
-  const excludedDays = clientConfig?.excludedDays?.split(',').map(Number) || [5, 6] // Default to exclude weekends
+  const excludedDays = clientConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [5, 6] // Default to exclude weekends
 
   // Generate array of all dates in the interval
   const allDates = eachDayOfInterval({ start: startDate, end: endDate })
