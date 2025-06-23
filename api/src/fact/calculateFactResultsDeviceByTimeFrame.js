@@ -76,7 +76,7 @@ const sumSingleXdrResistance = knex =>
       const item = knex.raw(`
           SUM(
             CASE
-              WHEN 
+              WHEN
                 (r.resultData ->> '$.allResistances.${resistanceName}') = '${resistanceValue}'
                 ${
                   resistanceValue === 'NotDetected'
@@ -130,6 +130,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
     .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .whereNotNull('r.assayId')
     .whereNotNull('r.resultCategory1')
+    .whereRaw('COALESCE(r.endedOn, r.startedOn) IS NOT NULL')
     .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame', 'r.siteId')
     .count('r.id as resultCount')
     .modify(qb => {
@@ -160,7 +161,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
     `),
       knex.raw(
         `DATE_FORMAT(
-        ${getDateTimeProjectionInTimeZoneIANA(knex, knex.raw(`IFNULL(r.endedOn, r.startedOn)`), timeZoneIANA)}, 
+        ${getDateTimeProjectionInTimeZoneIANA(knex, knex.raw(`IFNULL(r.endedOn, r.startedOn)`), timeZoneIANA)},
         "${timeFrameFormat}"
       ) as startedOnTimeFrame`
       ),

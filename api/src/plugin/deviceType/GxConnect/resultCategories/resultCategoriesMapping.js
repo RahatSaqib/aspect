@@ -296,7 +296,7 @@ const mapResultCategory2 = (assayExternalId, resultTextValues) => {
 
 function getVLCopies(result1Text) {
   if (result1Text && !result1Text.includes('< 40')) {
-    const regex = /(\d+([.,]\d*)?([eE][+-]?\d+)?|[.,]\d+([eE][+-]?\d+)?)/
+    const regex = /(\d+([.,]\d*)?([eE][+-]?\d+)?|[.,]\d+([eE][+-]?\d+)?)(?=[,\s]copies\/mL)/i
     const text = result1Text.replace('HIV-1', '').replace('@label_quant1_result_normal_log', '')
     const arr = regex.exec(text)
 
@@ -306,13 +306,20 @@ function getVLCopies(result1Text) {
 }
 
 function getResultCategoriesHivVL(result1Text) {
+  if (!result1Text) return 'NoResult'
+  if (result1Text.includes('не обнаружен')) return 'NotDetected'
+
+  const result1TextLower = result1Text.toLowerCase().replace('обнаружен', 'detected')
+
+  if (result1TextLower.includes('detected < 40')) return 'LessThan40'
+
   const copies = getVLCopies(result1Text)
-  // Add HIV VL Categories
   if (copies) {
     if (copies < 1000 && copies >= 40) return 'LessThan1000'
     if (copies >= 1000) return 'MoreThan1000'
-  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40')) return 'LessThan40'
-  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0) return 'NoResult'
+  }
+
+  if (result1TextLower.indexOf('detected') === 0) return 'NoResult'
 }
 
 const getBacterialLoad = resultText => {
@@ -332,28 +339,24 @@ const getBacterialLoad = resultText => {
  * Sample of `resultText` for MTB-XDR may look like this:
  * |MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_indeterminate|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_not_detected
  */
-const parseResultText = resultText => {
+const parseXdrResultText = resultText => {
   const results = {}
 
   const resultTextValues = splitResultTextValues(resultText)
   resultTextValues.forEach(val => {
     const categoryType = categoryTypes.find(ct => val.toLowerCase().includes(ct.toLowerCase()))
 
-    if (categoryType === 'HIV-1') {
-      results['HIV-1'] = result1CategoryMapping[sanitizeResultTextValue(val)] || getResultCategoriesHivVL(val)
-    } else {
-      const resultValue =
-        // from 1-st mapping collection
-        result1CategoryMapping[sanitizeResultTextValue(val)] ||
-        // or from 2-nd mapping collection
-        result2CategoryMapping[sanitizeResultTextValue(val)]
+    const resultValue =
+      // from 1-st mapping collection
+      result1CategoryMapping[sanitizeResultTextValue(val)] ||
+      // or from 2-nd mapping collection
+      result2CategoryMapping[sanitizeResultTextValue(val)]
 
-      if (categoryType && resultValue) {
-        /**
-         * i.e. results['FLQ RESISTANCE'] = 'Indeterminate'
-         */
-        results[categoryType] = resultValue
-      }
+    if (categoryType && resultValue) {
+      /**
+       * i.e. results['FLQ RESISTANCE'] = 'Indeterminate'
+       */
+      results[categoryType] = resultValue
     }
   })
   return results
@@ -364,10 +367,10 @@ const parseResultText = resultText => {
  * @param {string} resultText The result text of a GeneXpert result
  * @returns An array including all the resistances category types which result was Detected. Ex.: ['INH', 'ETH']
  */
-const getDetectedResistanceCategoryTypes = resultText => {
+const getXdrDetectedResistanceCategoryTypes = resultText => {
   const detectedResistance = []
   const allResistances = {}
-  const resultsCollection = parseResultText(resultText)
+  const resultsCollection = parseXdrResultText(resultText)
   Object.keys(resultsCollection).forEach(categoryType => {
     const resistance = categoryType.replace('RESISTANCE', '').trim()
     const resultCategoryValue = resultsCollection[categoryType]
@@ -382,10 +385,10 @@ const getDetectedResistanceCategoryTypes = resultText => {
 }
 
 module.exports = {
-  getDetectedResistanceCategoryTypes,
+  getXdrDetectedResistanceCategoryTypes,
   result1CategoryMapping,
   mapResultCategory2,
-  parseResultText,
+  parseXdrResultText,
   getResultCategoriesHivVL,
   getVLCopies,
   getBacterialLoad,

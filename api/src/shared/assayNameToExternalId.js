@@ -38,11 +38,14 @@ const assayNameToExternalId = {
   'SARS-COV-2': 'assayGXCovid19',
   'XPERT SARS-COV-2': 'assayGXCovid19',
   'XPRESS SARS-COV-2': 'assayGXCovid19',
+  'XPERT XPRESS COV-2 PLUS': 'assayGXCovid19',
+  'XPRESS SARS-COV-2_FLU_RSV PLUS': 'assayGXCovid19',
 
   'XPERT_HCV VIRAL LOAD': 'GxHcv',
   'XPERT HCV VIRAL LOAD': 'GxHcv',
   'HCV VL': 'GxHcv',
   'XPERT HCV VL': 'GxHcv',
+  'XPERT HCV VL FINGERSTICK': 'GxHcv',
 
   'XPERT EBOLA CE-IVD': 'GxEbola',
   'EBOLA RUO': 'GxEbola',
