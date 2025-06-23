@@ -9,27 +9,13 @@ const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shar
 const { randomToken, groupToken } = require('../deviceApi/apiKey')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../shared/date')
 
 const bcryptCompare = promisify(bcrypt.compare)
 
-const SELECT_LIST_FIELDS = [
-  'dak.id',
-  'dak.createdOn',
-  'dak.token',
-  'dak.revoked',
-  'p.name as partner',
-  'p.id as partnerId',
-  'c.name as country',
-  'c.id as countryId',
-  's.name as site',
-  's.id as siteId',
-  'd.name as device',
-  'd.id as deviceId',
-]
-
 async function listDeviceApiKeys(request) {
   const { query, auth } = request
-
+  const { timezoneIANA } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
 
   const dakQuery = knex('DeviceApiKey as dak')
@@ -61,14 +47,21 @@ async function listDeviceApiKeys(request) {
     .clone()
     .modify(sortPageParams, query, 'createdOn')
     .orderBy('dak.id', 'desc') // second sort param to make the query deterministic
-    .select(SELECT_LIST_FIELDS)
-    .then(items =>
-      items.map(dak =>
-        _.assign({}, dak, {
-          token: groupToken(dak.token),
-        })
-      )
-    )
+    .select([
+      'dak.id',
+      getDateTimeProjectionInTimeZoneIANA(knex, 'dak.createdOn', timezoneIANA, 'createdOn'),
+      'dak.token',
+      'dak.revoked',
+      'p.name as partner',
+      'p.id as partnerId',
+      'c.name as country',
+      'c.id as countryId',
+      's.name as site',
+      's.id as siteId',
+      'd.name as device',
+      'd.id as deviceId',
+    ])
+    .then(items => items.map(item => ({ ...item, token: groupToken(item.token) })))
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

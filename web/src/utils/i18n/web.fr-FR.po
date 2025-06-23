@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-03T10:59:19.681Z\n"
+"POT-Creation-Date: 2025-06-18T06:01:28.545Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2921,9 +2921,6 @@ msgstr "Visualisation des données relatives à la résistance XDR"
 #. [pages.Notifications.table.dateHeader]
 #. defaultMessage is:
 #. Date
-#. [pages.DeviceDetailOperation.startedOn]
-#. defaultMessage is:
-#. Date
 #: extracted_strings.json
 msgid "Date"
 msgstr "Date"
@@ -4629,13 +4626,6 @@ msgstr "Trouver l'emplacement"
 msgid "Finish"
 msgstr "Ferminer"
 
-#. [pages.DeviceDetailOperation.firmware]
-#. defaultMessage is:
-#. Firmware
-#: extracted_strings.json
-msgid "Firmware"
-msgstr "Micrologiciel"
-
 #. [pages.TablePaginator.first]
 #. defaultMessage is:
 #. First
@@ -4649,13 +4639,6 @@ msgstr "Premier"
 #: extracted_strings.json
 msgid "First Result"
 msgstr "Premier résultat"
-
-#. [pages.DeviceDetailEdit.firstApproved]
-#. defaultMessage is:
-#. First approved
-#: extracted_strings.json
-msgid "First approved"
-msgstr "D'abord approuvé"
 
 #. [pages.resultEdit.firstOrSecond]
 #. defaultMessage is:
@@ -5714,13 +5697,6 @@ msgstr "Accueil"
 msgid "Host"
 msgstr "Hôte"
 
-#. [pages.DeviceDetail.operation.hostId]
-#. defaultMessage is:
-#. Host ID
-#: extracted_strings.json
-msgid "Host ID"
-msgstr "ID d'hôte"
-
 #. [components.shared.hours]
 #. defaultMessage is:
 #. Hour
@@ -5778,9 +5754,6 @@ msgid "I don't know what email address I am registered with"
 msgstr "Je ne sais pas à quelle adresse e-mail je suis enregistré"
 
 #. [placeholder.id]
-#. defaultMessage is:
-#. ID
-#. [pages.DeviceDetailOperation.id]
 #. defaultMessage is:
 #. ID
 #: extracted_strings.json
@@ -6845,13 +6818,6 @@ msgid ""
 msgstr ""
 "Liste le nombre de modules actuellement actifs/désactivés, ainsi que le "
 "nombre de modules remplacés dans une période de temps définie par des filtres"
-
-#. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
-#. defaultMessage is:
-#. Loading DeviceOperations Failed
-#: extracted_strings.json
-msgid "Loading DeviceOperations Failed"
-msgstr "Échec du chargement de DeviceOperations"
 
 #. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
 #. defaultMessage is:
@@ -10812,13 +10778,6 @@ msgstr ""
 msgid "Request a New Password From Aspect"
 msgstr "Demander un nouveau mot de passe à Aspect"
 
-#. [pages.DeviceDetailOperation.requirePrinter]
-#. defaultMessage is:
-#. Require printer
-#: extracted_strings.json
-msgid "Require printer"
-msgstr "Nécessite une imprimante"
-
 #. [validations.required]
 #. defaultMessage is:
 #. Required
@@ -11507,13 +11466,6 @@ msgstr ""
 msgid "Screen is not yet complete"
 msgstr "L'écran n'est pas encore complet"
 
-#. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
-#. defaultMessage is:
-#. Searching DeviceOperations Failed
-#: extracted_strings.json
-msgid "Searching DeviceOperations Failed"
-msgstr "Echec de la recherche dans DeviceOperations"
-
 #. [errorResponseMessages.fetchResults.GET.400.title]
 #. defaultMessage is:
 #. Searching Results Failed
@@ -11890,13 +11842,6 @@ msgstr "Numéro de série"
 msgid "Serial Number"
 msgstr "Numéro de série"
 
-#. [pages.DeviceDetailEdit.serialNumber]
-#. defaultMessage is:
-#. Serial number
-#: extracted_strings.json
-msgid "Serial number"
-msgstr "Numéro de série"
-
 #. [component.Widget.serverUptimeTitle]
 #. defaultMessage is:
 #. Server Uptime
@@ -12178,17 +12123,6 @@ msgid ""
 msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
 "{# le reporter} other {# le reporters}}"
-
-#. [pages.DeviceDetailOperation.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"record} other {# records} }"
-msgstr ""
-"Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
-"{# enregistrement} other {# enregistrements}}"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -13057,13 +12991,6 @@ msgstr "Technicien"
 #: extracted_strings.json
 msgid "Telephone"
 msgstr "Téléphone"
-
-#. [pages.DeviceDetailOperation.temperature]
-#. defaultMessage is:
-#. Temperature
-#: extracted_strings.json
-msgid "Temperature"
-msgstr "Température"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
 #. defaultMessage is:
@@ -14845,13 +14772,6 @@ msgstr "Erreur de validation"
 msgid "View Log"
 msgstr "Voir le journal"
 
-#. [pages.DeviceDetailOperation.voltage]
-#. defaultMessage is:
-#. Voltage
-#: extracted_strings.json
-msgid "Voltage"
-msgstr "Tension"
-
 #. [pages.ErrorRate.whoBenchmark]
 #. defaultMessage is:
 #. WHO Benchmark
@@ -16145,6 +16065,40 @@ msgstr "{unit} semaine dernière"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total des étalonnages"
+
+#~ msgid "Firmware"
+#~ msgstr "Micrologiciel"
+
+#~ msgid "First approved"
+#~ msgstr "D'abord approuvé"
+
+#~ msgid "Host ID"
+#~ msgstr "ID d'hôte"
+
+#~ msgid "Loading DeviceOperations Failed"
+#~ msgstr "Échec du chargement de DeviceOperations"
+
+#~ msgid "Require printer"
+#~ msgstr "Nécessite une imprimante"
+
+#~ msgid "Searching DeviceOperations Failed"
+#~ msgstr "Echec de la recherche dans DeviceOperations"
+
+#~ msgid "Serial number"
+#~ msgstr "Numéro de série"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "record} other {# records} }"
+#~ msgstr ""
+#~ "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, "
+#~ "one {# enregistrement} other {# enregistrements}}"
+
+#~ msgid "Temperature"
+#~ msgstr "Température"
+
+#~ msgid "Voltage"
+#~ msgstr "Tension"
 
 #~ msgid "Asserted inventory on hand decrease"
 #~ msgstr "Diminution de l'inventaire en main affirmé"

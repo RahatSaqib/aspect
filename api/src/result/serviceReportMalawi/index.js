@@ -1,14 +1,11 @@
 const { knex } = require('../../db')
-const { getOffsetFromIsoDateString } = require('../../shared/date')
 const { getListResults } = require('../service')
 const { getReportCommonFieldsTZ } = require('../query')
 
 // ---------------------------------------------------------------
-async function getResultsForReport(auth, query) {
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-
+async function getResultsForReport(auth, query, timezoneIANA) {
   const fields = {
-    ...getReportCommonFieldsTZ(userTimeOffset),
+    ...getReportCommonFieldsTZ(timezoneIANA),
     /**
      * additional fields in Excel templates for Malawi
      */

@@ -40,7 +40,7 @@ const { upsertSingle } = require('../utils')
 const upsertReports = require('../common/upsert_reports')
 const upsertConsumables = require('../common/upsert_consumables')
 const {
-  getDetectedResistanceCategoryTypes,
+  getXdrDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { insertSite } = require('../../src/site/common/db')
 const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
@@ -4284,7 +4284,7 @@ async function seed(knex) {
 
         resultData.resultText = result.resultText
 
-        const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(result.resultText)
+        const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(result.resultText)
         resultData.detectedResistance = detectedResistance
         resultData.allResistances = allResistances
 
