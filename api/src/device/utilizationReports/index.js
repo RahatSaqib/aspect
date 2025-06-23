@@ -1,6 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { format, parseISO, addMonths, startOfYear, subYears, endOfMonth } = require('date-fns')
+const { format, parseISO, addMonths, startOfYear, subYears, endOfMonth, eachDayOfInterval } = require('date-fns')
 const locales = require('date-fns/locale')
 const { knex, filterParams } = require('../../db')
 const { getConstraints, canViewResults, addConstraints } = require('../../auth/constraints')
@@ -64,18 +64,14 @@ const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
     }
   }
 
-  // Otherwise calculate actual working days
-  const excludedDays = clientConfig?.excludedDays?.split(',').map(Number) || '5,6' // Default to exclude weekends
-  let totalWorkingDays = 0
-  const currentDate = new Date(startDate)
+  // Otherwise calculate actual working days using functional approach
+  const excludedDays = clientConfig?.excludedDays?.split(',').map(Number) || [5, 6] // Default to exclude weekends
 
-  while (currentDate <= endDate) {
-    const dayOfWeek = currentDate.getDay()
-    if (!excludedDays.includes(dayOfWeek)) {
-      totalWorkingDays += 1
-    }
-    currentDate.setDate(currentDate.getDate() + 1)
-  }
+  // Generate array of all dates in the interval
+  const allDates = eachDayOfInterval({ start: startDate, end: endDate })
+
+  // Filter out excluded days and count working days
+  const totalWorkingDays = allDates.filter(date => !excludedDays.includes(date.getDay())).length
 
   return totalWorkingDays
 }
@@ -169,8 +165,8 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
   const CUSTOM_WORKING_DAYS_IN_YEAR = query.tableData
     ? getWorkingDays(query.minDate, query.maxDate, customWorkingDaysConfig)
     : customWorkingDaysConfig
-    ? customWorkingDaysConfig?.daysPerYear
-    : WORKING_DAYS_IN_YEAR
+      ? customWorkingDaysConfig?.daysPerYear
+      : WORKING_DAYS_IN_YEAR
   /**
    *
    */
@@ -399,4 +395,5 @@ module.exports = {
   // endpoint handlers
   listAnnualUtilizationRateNational,
   listAnnualUtilizationRateProvincial,
+  getWorkingDays,
 }
