@@ -29,6 +29,7 @@ module.exports = {
     {
       deviceType: 'GeneXpert',
       data: {
+        SendResultsToGxAlert: false,
         EnableInventoryModule: false,
         ShowPopupWindowOnNewTest: true,
         ClearLISSettingsIfTheyPointToGxAlert: false,
