@@ -7,12 +7,11 @@ const {
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
-  INVENTORY_TRANSFER,
   STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 const consumableStrategyFactory = require('./consumableStrategies/consumableStrategyFactory')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 
@@ -203,8 +202,21 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
     )
 
 // ----------------------------------------------------------------------------------
-async function getInventoryTransfer(query, dataConstraints, querySelector = INVENTORY_TRANSFER) {
+async function getInventoryTransfer(query, dataConstraints, timeZoneIANA) {
   const { minDate, maxDate } = query
+
+  const INVENTORY_TRANSFER = {
+    consumableName: 'c.name',
+    consumableNameI18nKey: 'c.i18nKey',
+    lotNumber: 'oil.lotNumber',
+    originSiteName: 'originSite.name',
+    destinationSiteName: 'destinationSite.name',
+    sentQuantity: 'oil.quantity',
+    receivedQuantity: 'iil.quantity',
+    expirationDate: 'oil.expiresOn',
+    sentOn: 'oil.createdOn',
+    receivedOn: 'iil.createdOn',
+  }
 
   const inventoryTransferQuery = knex('InventoryTransfer as it')
     .innerJoin('InventoryLog as oil', 'it.outcomeInventoryLogId', 'oil.id')
@@ -229,26 +241,20 @@ async function getInventoryTransfer(query, dataConstraints, querySelector = INVE
     })
     .modify(queryBuilder => {
       if (query.originSiteIds) {
-        queryBuilder.whereIn('originSite.id', query.originSiteIds.split(','))
+        queryBuilder.whereIn('originSite.id', query.originSiteIds)
       }
     })
 
   const { total } = await inventoryTransferQuery.clone().count('it.id as total').first()
 
   const data = await inventoryTransferQuery
-    .select(querySelector)
+    .select({
+      ...INVENTORY_TRANSFER,
+      sentOn: getDateTimeProjectionInTimeZoneIANA(knex, 'oil.createdOn', timeZoneIANA),
+      receivedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'iil.createdOn', timeZoneIANA),
+    })
     .modify(sortPageParams, query, 'it.createdOn', INVENTORY_TRANSFER)
   return { data, total }
-}
-
-// ----------------------------------------------------------------------------------
-async function getInventoryTransferForExport(query, dataConstraints, offset) {
-  const querySelector = {
-    ...INVENTORY_TRANSFER,
-    sentOn: getDateTimeProjectionInUserTimeZone(knex, 'oil.createdOn', offset),
-    receivedOn: getDateTimeProjectionInUserTimeZone(knex, 'iil.createdOn', offset),
-  }
-  return getInventoryTransfer(query, dataConstraints, querySelector)
 }
 
 // ----------------------------------------------------------------------------------
@@ -658,7 +664,6 @@ module.exports = {
   getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
   filteredInventoryItemsBase,
   getInventoryTransfer,
-  getInventoryTransferForExport,
   createInventoryTransfer,
   updateInventoryTransfer,
   getReconciliationList,

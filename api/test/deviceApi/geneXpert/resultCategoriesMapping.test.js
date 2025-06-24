@@ -1,11 +1,12 @@
 const { assert } = require('chai')
 const {
   mapResultCategory2,
-  parseResultText,
-  getDetectedResistanceCategoryTypes,
+  parseXdrResultText,
+  getXdrDetectedResistanceCategoryTypes,
   getBacterialLoad,
 } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/utils')
+const { getResultCategories } = require('../../../src/plugin/deviceType/gxUtils')
 
 describe('Result Category Mapping', () => {
   describe('Result Category 2', () => {
@@ -241,29 +242,33 @@ describe('Result Category Mapping', () => {
 
 describe('Result Text Parsing', () => {
   it('Should parse MTB Rif/Ultra result #1', () => {
-    assert.deepEqual(parseResultText('|MTB @label_result_detected||Rif Resistance @label_result_not_detected'), {
+    assert.deepEqual(parseXdrResultText('|MTB @label_result_detected||Rif Resistance @label_result_not_detected'), {
       MTB: 'Detected',
       'RIF RESISTANCE': 'NotDetected',
     })
   })
 
   it('Should parse MTB Rif/Ultra result #2', () => {
-    assert.deepEqual(parseResultText('|MTB Trace DÉTECTÉ|RIF Resistance INDÉTERMINÉ'), {
+    assert.deepEqual(parseXdrResultText('|MTB Trace DÉTECTÉ|RIF Resistance INDÉTERMINÉ'), {
       MTB: 'Trace Detected',
       'RIF RESISTANCE': 'Indeterminate',
     })
   })
 
+  // This test is not implemented in Aspect because the function parseXdrResultText is only called in GxMtbXdr devices
   it('Should parse Ebola result', () => {
-    assert.deepEqual(parseResultText('|EBOLA GP @label_result_not_detected|||EBOLA NP @label_result_not_detected||'), {
-      'EBOLA GP': 'NotDetected',
-      'EBOLA NP': 'NotDetected',
-    })
+    assert.deepEqual(
+      parseXdrResultText('|EBOLA GP @label_result_not_detected|||EBOLA NP @label_result_not_detected||'),
+      {
+        'EBOLA GP': 'NotDetected',
+        'EBOLA NP': 'NotDetected',
+      }
+    )
   })
 
   it('Should parse MTB XDR result', () => {
     assert.deepEqual(
-      parseResultText(
+      parseXdrResultText(
         '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
       ),
       {
@@ -279,94 +284,119 @@ describe('Result Text Parsing', () => {
   })
 
   it('Should not parse category types without values', () => {
-    assert.deepEqual(parseResultText('|MTB @label_result_detected||Rif Resistance '), {
+    assert.deepEqual(parseXdrResultText('|MTB @label_result_detected||Rif Resistance '), {
       MTB: 'Detected',
     })
   })
 
   it('Should not parse unexisting category types', () => {
-    assert.deepEqual(parseResultText('|MTB @label_result_detected||ANY RESISTANCE '), {
+    assert.deepEqual(parseXdrResultText('|MTB @label_result_detected||ANY RESISTANCE '), {
       MTB: 'Detected',
     })
   })
 
   it('Should not parse unexisting results', () => {
-    assert.deepEqual(parseResultText('|MTB @label_result_detected||Rif Resistance UNEXISTING RESULT '), {
+    assert.deepEqual(parseXdrResultText('|MTB @label_result_detected||Rif Resistance UNEXISTING RESULT '), {
       MTB: 'Detected',
-    })
-  })
-
-  it('Should include all the COVID results', () => {
-    assert.deepEqual(parseResultText('SARS-CoV-2 POSITIVE'), {
-      'SARS-COV-2': 'Positive',
     })
   })
 })
 
-describe('[HIV] Result Text Parsing', () => {
+describe('[COVID] getResultCategories', () => {
+  it('Should include all the COVID results', () => {
+    assert.deepEqual(getResultCategories('assayGXCovid19', 'SARS-CoV-2 POSITIVE'), [{ id: 'Positive' }])
+  })
+})
+
+describe('[HIV] getResultCategories', () => {
   it('Should parse detected HIV results #1', () => {
-    assert.deepEqual(parseResultText('HIV-1 DETECTED < 40 copies/mL (log 1.60)'), {
-      'HIV-1': 'LessThan40',
-    })
+    assert.deepEqual(getResultCategories('GxHiv1Vl', 'HIV-1 DETECTED < 40 copies/mL (log 1.60)'), [
+      { id: 'LessThan40' },
+    ])
   })
 
   it('Should parse detected HIV results #2', () => {
-    assert.deepEqual(parseResultText('HIV-1 DÉTECTÉ 6,61E03 copies/mL'), {
-      'HIV-1': 'MoreThan1000',
-    })
+    assert.deepEqual(getResultCategories('GxHiv1Vl', 'HIV-1 DÉTECTÉ 6,61E03 copies/mL'), [{ id: 'MoreThan1000' }])
   })
 
   it('Should parse detected HIV results #3', () => {
-    assert.deepEqual(parseResultText('HIV-1 DETECTED 4.16E06 copies/mL (log 6.62)'), {
-      'HIV-1': 'MoreThan1000',
-    })
+    assert.deepEqual(getResultCategories('GxHiv1Vl', 'HIV-1 DETECTED 4.16E06 copies/mL (log 6.62)'), [
+      { id: 'MoreThan1000' },
+    ])
   })
 
   it('Should parse detected HIV results #4', () => {
-    assert.deepEqual(parseResultText('HIV-1 DÉTECTÉ 701 copies/mL (log 2,85)'), {
-      'HIV-1': 'LessThan1000',
-    })
+    assert.deepEqual(getResultCategories('GxHiv1Vl', 'HIV-1 DÉTECTÉ 701 copies/mL (log 2,85)'), [
+      { id: 'LessThan1000' },
+    ])
   })
 
   it('Should parse detected HIV results #5', () => {
     assert.deepEqual(
-      parseResultText('HIV-1 @label_quant1_result_normal_log,@label_result_detected,#452,copies/mL,@label_log,#2.66'),
-      {
-        'HIV-1': 'LessThan1000',
-      }
+      getResultCategories(
+        'GxHiv1Vl',
+        'HIV-1 @label_quant1_result_normal_log,@label_result_detected,#452,copies/mL,@label_log,#2.66'
+      ),
+      [{ id: 'LessThan1000' }]
     )
   })
 
   it('Should parse detected HIV results #6', () => {
     assert.deepEqual(
-      parseResultText('HIV-1 @label_quant1_result_normal_log,@label_result_detected,#707,copies/mL,@label_log,#2.85'),
-      {
-        'HIV-1': 'LessThan1000',
-      }
+      getResultCategories(
+        'GxHiv1Vl',
+        'HIV-1 @label_quant1_result_normal_log,@label_result_detected,#707,copies/mL,@label_log,#2.85'
+      ),
+      [{ id: 'LessThan1000' }]
     )
   })
 
   it('Should parse detected HIV results #7', () => {
     assert.deepEqual(
-      parseResultText(
+      getResultCategories(
+        'GxHiv1Vl',
         'HIV-1 @label_quant1_result_normal_log,@label_result_detected,#4.23E05,copies/mL,@label_log,#5.63'
       ),
-      {
-        'HIV-1': 'MoreThan1000',
-      }
+      [{ id: 'MoreThan1000' }]
     )
   })
 
-  it('Should parse not detected HIV results', () => {
-    assert.deepEqual(parseResultText('HIV-1 NOT DETECTED'), {
-      'HIV-1': 'NotDetected',
-    })
+  it('Should parse detected HIV results #8', () => {
+    assert.deepEqual(
+      getResultCategories(
+        'GxHiv1Vl',
+        'HIV-1 @label_quant1_result_abnormal_low_log,@label_result_detected,#40,copies/mL,@label_log,#1.60'
+      ),
+      [{ id: 'LessThan1000' }]
+    )
+  })
+
+  it('Should parse detected HIV results #9', () => {
+    assert.deepEqual(
+      getResultCategories(
+        'GxHiv1Vl',
+        'HIV-1 @label_quant1_result_abnormal_low_log,@label_result_detected,#40,copies/ml,@label_log,#1.60'
+      ),
+      [{ id: 'LessThan1000' }]
+    )
+  })
+
+  it('Should parse detected HIV results #10', () => {
+    assert.deepEqual(getResultCategories('GxHiv1Vl', 'HIV-1 ОБНАРУЖЕН < 40 copies/mL'), [{ id: 'LessThan40' }])
+  })
+
+  it('Should parse not detected HIV results #1', () => {
+    assert.deepEqual(getResultCategories('GxHiv1Vl', 'HIV-1 NOT DETECTED'), [{ id: 'NotDetected' }])
+  })
+
+  it('Should parse not detected HIV results #2', () => {
+    assert.deepEqual(getResultCategories('GxHiv1Vl', 'HIV-1 НЕ ОБНАРУЖЕН'), [{ id: 'NotDetected' }])
   })
 })
 
 describe('Detected Resistancies Calculation', () => {
   it('Should get all the category types of the resistancies that were detected', () => {
-    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(
+    const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(
       '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_indeterminate|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
     )
     assert.deepEqual(detectedResistance, ['INH'])
@@ -381,7 +411,7 @@ describe('Detected Resistancies Calculation', () => {
   })
 
   it('Should return an empty array if no resistances were detected', () => {
-    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(
+    const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(
       '|MTB @label_result_detected|INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_not_detected'
     )
     assert.isEmpty(detectedResistance)
@@ -396,14 +426,14 @@ describe('Detected Resistancies Calculation', () => {
   })
 
   it('Should not crash if invalid categories are present', () => {
-    const { detectedResistance } = getDetectedResistanceCategoryTypes(
+    const { detectedResistance } = getXdrDetectedResistanceCategoryTypes(
       '|MTB @label_result_detected|Medium A_RESISTANCE_ANYONE_KNOWS Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
     )
     assert.deepEqual(detectedResistance, ['FLQ'])
   })
 
   it('Should not crash if result text does not include resistancies', () => {
-    const { detectedResistance } = getDetectedResistanceCategoryTypes('|MTB @label_result_detected')
+    const { detectedResistance } = getXdrDetectedResistanceCategoryTypes('|MTB @label_result_detected')
     assert.isEmpty(detectedResistance)
   })
 })
@@ -418,4 +448,26 @@ describe('Bacterial Load', () => {
   )
   assert.equal('Low', getBacterialLoad('MTB DETECTED LOW||RIF Resistance NOT DETECTED'))
   assert.equal('Medium', getBacterialLoad('MTB DETECTED MEDIUM|Rif Resistance NOT DETECTED|'))
+})
+
+describe('[ANY ASSAY] getResultCategories', () => {
+  it('Should parse no result #1', () => {
+    assert.deepEqual(getResultCategories(null, 'NO RESULT'), [{ id: 'NoResult' }])
+  })
+
+  it('Should parse no result #2', () => {
+    assert.deepEqual(getResultCategories(null, '@label_result_no_result'), [{ id: 'NoResult' }])
+  })
+
+  it('Should parse no result #3', () => {
+    assert.deepEqual(getResultCategories(null, '|NO RESULT|'), [{ id: 'NoResult' }])
+  })
+
+  it('Should parse no result #4', () => {
+    assert.deepEqual(getResultCategories(null, 'НЕТ РЕЗУЛЬТАТА'), [{ id: 'NoResult' }])
+  })
+
+  it('Should parse error', () => {
+    assert.deepEqual(getResultCategories(null, 'ОШИБКА'), [{ id: 'Error' }])
+  })
 })
