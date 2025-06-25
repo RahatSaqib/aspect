@@ -91,7 +91,7 @@ const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset 
 }
 
 const getMonthYearExpressionFromFieldInTimeZone = (knex, field, alias = 'monthYear', timeZoneIANA) => {
-  return knex.raw(`DATE_FORMAT(CONVERT_TZ(${field}, 'UTC', ?), '%Y-%m') ${alias ? `AS ${alias}` : ''}`, [timeZoneIANA])
+  return knex.raw(`DATE_FORMAT(CONVERT_TZ(${field}, 'UTC', '${timeZoneIANA}'), '%Y-%m')${alias ? ` AS ${alias}` : ''}`)
 }
 
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
