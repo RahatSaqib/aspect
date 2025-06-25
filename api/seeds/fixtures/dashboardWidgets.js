@@ -317,15 +317,17 @@ const utilizationRate = {
   subTitleI18nKey: null,
   sqlForIndicator: commonUtilizationRateQuery(
     // this month
-    "DATE(r.endedOn) >= DATE_FORMAT(NOW(), '%Y-%m-01')",
-    "DATE_FORMAT(NOW(), '%Y-%m-01')",
+    "r.endedOn >= CONVERT_TZ(DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), '%Y-%m-01'), '{timeZone}', 'UTC')", // r.endedOn > first day of the month in the country's timezone, converted to UTC
+    "DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'),'%Y-%m-01')", // first day of this month in the country's timezone, then
     'NOW()'
   ),
   sqlForStatUnit: commonUtilizationRateQuery(
     // last month
-    "r.endedOn >= DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') AND r.endedOn < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')",
-    "DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')",
-    "DATE_SUB(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), INTERVAL 1 DAY)"
+
+    `r.endedOn >= CONVERT_TZ(DATE_FORMAT(DATE_SUB(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), INTERVAL 1 MONTH), '%Y-%m-01'),'{timeZone}', 'UTC')
+       AND r.endedOn < CONVERT_TZ(DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), '%Y-%m-01'), '{timeZone}', 'UTC')`, // r.endedOn < first day of this month in the country's timezone, then converted to UTC
+    "DATE_FORMAT(DATE_SUB(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), INTERVAL 1 MONTH), '%Y-%m-01')", // first day of previous month in the country's timezone
+    "DATE_SUB(DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), '%Y-%m-01'), INTERVAL 1 DAY)" // Last day of previous month in the country's timezone
   ),
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',

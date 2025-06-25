@@ -64,9 +64,9 @@ async function summaryDashboard(request) {
       const { externalId, sqlForExtra, options } = widget
       const { sqlForIndicator, sqlForStatUnit } = widget
 
-      const unitQuery = queryValue(sqlForStatUnit, dataConstraints, query)
+      const unitQuery = queryValue(sqlForStatUnit, dataConstraints, query, user)
       const unit = await unitQuery
-      const extra = await queryValue(sqlForExtra, dataConstraints, query)
+      const extra = await queryValue(sqlForExtra, dataConstraints, query, user)
 
       let indicatorQueryResult
       if (!sqlForIndicator && knexWidgets[externalId]) {
@@ -74,7 +74,7 @@ async function summaryDashboard(request) {
         const indicatorKnexQuery = knexFunction(knex, dataConstraints) || { cnt: null }
         indicatorQueryResult = (await indicatorKnexQuery) || { cnt: null }
       } else {
-        const sqlQuery = queryValue(sqlForIndicator, dataConstraints, query)
+        const sqlQuery = queryValue(sqlForIndicator, dataConstraints, query, user)
         indicatorQueryResult = (await sqlQuery) || { cnt: null }
       }
 
