@@ -498,6 +498,16 @@ function getWorkingDays(startDate, endDate) {
 
 const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
 
+/**
+ * Converts MySQL DAYOFWEEK() format to date-fns getDay() format
+ * @param {number} day - MySQL day of week (1-7), Sunday is 1
+ * @returns {number} date-fns day of week (0-6), Sunday is 0
+ * @description
+ * MySQL DAYOFWEEK(): 1 = Sunday, 2 = Monday, 3 = Tuesday, 4 = Wednesday, 5 = Thursday, 6 = Friday, 7 = Saturday
+ * date-fns getDay(): 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
+ */
+const convertMysqlDayOfWeekToDateFns = day => day - 1
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -546,4 +556,5 @@ module.exports = {
   getDateTimeProjectionInTimeZoneIANA,
   adjustDate,
   getMonthYearExpressionFromFieldInTimeZone,
+  convertMysqlDayOfWeekToDateFns,
 }

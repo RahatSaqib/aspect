@@ -7,6 +7,7 @@ const { getConstraints, canViewResults, addConstraints } = require('../../auth/c
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
+const { convertMysqlDayOfWeekToDateFns } = require('../../shared/date')
 
 const WORKING_DAYS_IN_YEAR = 252
 const DEFAULT_MODULES = 4
@@ -16,10 +17,6 @@ const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
   // Parse the input dates and reset time to midnight without considering time zone
   const startDate = new Date(minDate.split('T')[0])
   const endDate = new Date(maxDate.split('T')[0])
-
-  const convertMysqlDayOfWeekToDateFns = day => day - 1 // different start of the week index, partner config is in MySQL format
-  // MySQL DAYOFWEEK(): // 1 = Sunday // 2 = Monday // 3 = Tuesday // 4 = Wednesday // 5 = Thursday // 6 = Friday // 7 = Saturday
-  // date-fns getDay(): // 0 = Sunday // 1 = Monday // 2 = Tuesday // 3 = Wednesday // 4 = Thursday // 5 = Friday // 6 = Saturday
 
   const isMonthPeriod = () => {
     return (
