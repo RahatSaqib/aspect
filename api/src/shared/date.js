@@ -481,6 +481,11 @@ function getDateInMilliSeconds(date) {
 
 /**
  *  Retrieves the No of working days excluding weekends
+ * @deprecated This function is obsolete as it does not contemplate the weekends in PartnerData.customWorkingDays.
+ * TODO: It must be merged with getWorkingDays function from api/src/device/utilizationReports/index.js instead,
+ * which properly handles client-specific working day configurations. date-fns isWeekend is not applicable to countries
+ * with different weekend days than Saturday and Sunday.
+ * @see {@link HD-15651 Replace the user of date-fns weekend by custom Partner configuration}
  * @param {*} startDate
  * @param {*} endDate
  * @returns number - Return the count of working days
