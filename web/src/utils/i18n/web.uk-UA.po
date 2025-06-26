@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-06-03T10:59:19.681Z\n"
+"POT-Creation-Date: 2025-06-18T06:01:28.545Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2910,9 +2910,6 @@ msgstr "Візуалізація даних для визначення стій
 #. [pages.Notifications.table.dateHeader]
 #. defaultMessage is:
 #. Date
-#. [pages.DeviceDetailOperation.startedOn]
-#. defaultMessage is:
-#. Date
 #: extracted_strings.json
 msgid "Date"
 msgstr "Дата"
@@ -4613,13 +4610,6 @@ msgstr "Пошук місця"
 msgid "Finish"
 msgstr "Завершити"
 
-#. [pages.DeviceDetailOperation.firmware]
-#. defaultMessage is:
-#. Firmware
-#: extracted_strings.json
-msgid "Firmware"
-msgstr "Прошивки"
-
 #. [pages.TablePaginator.first]
 #. defaultMessage is:
 #. First
@@ -4633,13 +4623,6 @@ msgstr "Перший"
 #: extracted_strings.json
 msgid "First Result"
 msgstr "Перший результат"
-
-#. [pages.DeviceDetailEdit.firstApproved]
-#. defaultMessage is:
-#. First approved
-#: extracted_strings.json
-msgid "First approved"
-msgstr "Вперше затвердив"
 
 #. [pages.resultEdit.firstOrSecond]
 #. defaultMessage is:
@@ -5698,13 +5681,6 @@ msgstr "Головна"
 msgid "Host"
 msgstr "ID хосту"
 
-#. [pages.DeviceDetail.operation.hostId]
-#. defaultMessage is:
-#. Host ID
-#: extracted_strings.json
-msgid "Host ID"
-msgstr "ID хосту"
-
 #. [components.shared.hours]
 #. defaultMessage is:
 #. Hour
@@ -5762,9 +5738,6 @@ msgid "I don't know what email address I am registered with"
 msgstr "Я не знаю, на яку електронну адресу я зареєстрований"
 
 #. [placeholder.id]
-#. defaultMessage is:
-#. ID
-#. [pages.DeviceDetailOperation.id]
 #. defaultMessage is:
 #. ID
 #: extracted_strings.json
@@ -6823,13 +6796,6 @@ msgid ""
 msgstr ""
 "Показує кількість активних/вимкнених модулів, а також кількість модулів, "
 "замінених за період часу, визначений фільтрами"
-
-#. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
-#. defaultMessage is:
-#. Loading DeviceOperations Failed
-#: extracted_strings.json
-msgid "Loading DeviceOperations Failed"
-msgstr "Помилка завантаження пристрою"
 
 #. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
 #. defaultMessage is:
@@ -10775,13 +10741,6 @@ msgstr ""
 msgid "Request a New Password From Aspect"
 msgstr "Запитуйте новий пароль від Aspect"
 
-#. [pages.DeviceDetailOperation.requirePrinter]
-#. defaultMessage is:
-#. Require printer
-#: extracted_strings.json
-msgid "Require printer"
-msgstr "Потрібен принтер"
-
 #. [validations.required]
 #. defaultMessage is:
 #. Required
@@ -11469,13 +11428,6 @@ msgstr ""
 msgid "Screen is not yet complete"
 msgstr "Екран ще не завершено"
 
-#. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
-#. defaultMessage is:
-#. Searching DeviceOperations Failed
-#: extracted_strings.json
-msgid "Searching DeviceOperations Failed"
-msgstr "Не вдалося здійснити пошук пристрою"
-
 #. [errorResponseMessages.fetchResults.GET.400.title]
 #. defaultMessage is:
 #. Searching Results Failed
@@ -11852,13 +11804,6 @@ msgstr "Серійний номер"
 msgid "Serial Number"
 msgstr "Серійний номер"
 
-#. [pages.DeviceDetailEdit.serialNumber]
-#. defaultMessage is:
-#. Serial number
-#: extracted_strings.json
-msgid "Serial number"
-msgstr "Серійний номер"
-
 #. [component.Widget.serverUptimeTitle]
 #. defaultMessage is:
 #. Server Uptime
@@ -12139,17 +12084,6 @@ msgid ""
 msgstr ""
 "Показати {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
 "сповіщення} other {# сповіщення} } }"
-
-#. [pages.DeviceDetailOperation.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"record} other {# records} }"
-msgstr ""
-"Показано {firstItemIndex} - {lastItemIndex} з {itemCount, plural, one {# "
-"запись} other {# записи}}"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -13016,13 +12950,6 @@ msgstr "Технік"
 #: extracted_strings.json
 msgid "Telephone"
 msgstr "Телефон"
-
-#. [pages.DeviceDetailOperation.temperature]
-#. defaultMessage is:
-#. Temperature
-#: extracted_strings.json
-msgid "Temperature"
-msgstr "Температура"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
 #. defaultMessage is:
@@ -14780,13 +14707,6 @@ msgstr "Помилка перевірки"
 msgid "View Log"
 msgstr "Показати журнал"
 
-#. [pages.DeviceDetailOperation.voltage]
-#. defaultMessage is:
-#. Voltage
-#: extracted_strings.json
-msgid "Voltage"
-msgstr "Напруга"
-
 #. [pages.ErrorRate.whoBenchmark]
 #. defaultMessage is:
 #. WHO Benchmark
@@ -16071,6 +15991,40 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} всього калібрувань"
+
+#~ msgid "Firmware"
+#~ msgstr "Прошивки"
+
+#~ msgid "First approved"
+#~ msgstr "Вперше затвердив"
+
+#~ msgid "Host ID"
+#~ msgstr "ID хосту"
+
+#~ msgid "Loading DeviceOperations Failed"
+#~ msgstr "Помилка завантаження пристрою"
+
+#~ msgid "Require printer"
+#~ msgstr "Потрібен принтер"
+
+#~ msgid "Searching DeviceOperations Failed"
+#~ msgstr "Не вдалося здійснити пошук пристрою"
+
+#~ msgid "Serial number"
+#~ msgstr "Серійний номер"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "record} other {# records} }"
+#~ msgstr ""
+#~ "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, plural, one {# "
+#~ "запись} other {# записи}}"
+
+#~ msgid "Temperature"
+#~ msgstr "Температура"
+
+#~ msgid "Voltage"
+#~ msgstr "Напруга"
 
 #~ msgid "Asserted inventory on hand decrease"
 #~ msgstr "Заявлений інвентар на руках"

@@ -7,13 +7,13 @@ const {
 } = require('../../auth/constraints')
 const { knex } = require('../../db')
 const { getBaseQueryForResults } = require('../common/db')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 const { mtbDetectedTraceDetected, mtbDetectedRifDetected, mtbValid, mtbValidWithIndeterminate } =
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
 
-const getResultCount = (dataConstraints, minDate, maxDate, timezone) =>
+const getResultCount = (dataConstraints, minDate, maxDate, timezoneIANA) =>
   getBaseQueryForResults()
     .clone()
     /**
@@ -23,7 +23,7 @@ const getResultCount = (dataConstraints, minDate, maxDate, timezone) =>
      */
     .whereNot('dt.externalId', 'GxAlert')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .whereBetween(getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', timezone), [minDate, maxDate])
+    .whereBetween(getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA), [minDate, maxDate])
     .first({
       mtbValid,
       mtbValidWithIndeterminate,
