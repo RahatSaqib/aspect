@@ -55,6 +55,17 @@ describe('PUT', () => {
         .put(`${path}/${lga.id}`)
         .send({ name: newName, stateId })
         .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 200)
+    })
+
+    it('should throw error when lgas with same name exists in same state', async () => {
+      const dupLgaId = await knex('Lga').insert({ name: newName })
+      await knex('Geography').insert({ lgaId: dupLgaId, stateId })
+      lgasToDelete.push(dupLgaId)
+      const res = await server
+        .put(`${path}/${lga.id}`)
+        .send({ name: 'oldLgaName', stateId })
+        .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 409)
     })
 
