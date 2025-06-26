@@ -18,6 +18,9 @@ async function updateLga({ auth, params, payload }) {
 }
 
 async function validate(lgaId, values, dataConstraints) {
+  if (!values.stateId) {
+    throw Boom.badRequest('State Id is required')
+  }
   await validateExistingLga(lgaId, dataConstraints)
   await validateDuplicateValues(values, dataConstraints, lgaId)
 }
