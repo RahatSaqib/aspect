@@ -39,7 +39,7 @@ async function validateDuplicateValues(values, dataConstraints, lgaId) {
     return
   }
   if (geoGraphies.some(g => g.lgaId !== lgaId)) {
-    throw Boom.conflict('Lga already exists in the state')
+    throw Boom.conflict('There are lgas with the same name')
   }
 }
 

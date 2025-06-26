@@ -8,7 +8,7 @@ async function createLga({ auth, payload }, h) {
   const existingLgas = await getGeographyByLgaNameAndStateId(payload.name, payload.stateId, dataConstraints)
 
   if (existingLgas.length > 0) {
-    throw Boom.conflict('Lga already exists in the state')
+    throw Boom.conflict('There are lgas with the same name')
   }
 
   let lgaId
