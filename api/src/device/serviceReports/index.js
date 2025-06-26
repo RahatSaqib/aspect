@@ -22,42 +22,7 @@ const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/comm
 const { getDevicesByTBReach } = require('./deviceReport')
 const { assayToId } = require('../../shared/dictionary')
 const { getWorkingDays } = require('../../shared/date')
-
-function getMonthsDatefields(minDate, maxDate, culture) {
-  // Helper function to parse timezone-aware ISO strings correctly
-  const parseDateOnly = dateString => {
-    if (_.isDate(dateString)) {
-      return dateString
-    }
-
-    if (typeof dateString === 'string' && dateString.includes('T')) {
-      // For timezone-aware dates, just extract the date part and treat it as local
-      // This avoids the timezone conversion issue
-      const datePart = dateString.split('T')[0]
-      return new Date(`${datePart}T00:00:00`)
-    }
-
-    return parseISO(dateString)
-  }
-
-  const minDateFormatted = parseDateOnly(minDate)
-  const maxDateFormatted = parseDateOnly(maxDate)
-
-  const dateFields = []
-  const locale = culture.split('-')[0].toLowerCase()
-
-  let curMonth = minDateFormatted
-  while (curMonth <= maxDateFormatted) {
-    dateFields.push({
-      key: format(curMonth, 'yyyy-MM'),
-      header: `${format(curMonth, 'yyyy-LLL', {
-        locale: locales[locale],
-      })}`,
-    })
-    curMonth = addMonths(curMonth, 1)
-  }
-  return dateFields
-}
+const { getMonthsDatefields } = require('./logic')
 
 async function getDeviceActivityReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -842,5 +807,4 @@ module.exports = {
   getDeviceCoverageReport,
   getDevicesForTBReachReport,
   getUnusedModulesReport,
-  getMonthsDatefields,
 }

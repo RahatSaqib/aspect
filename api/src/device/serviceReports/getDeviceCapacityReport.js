@@ -4,7 +4,7 @@ const { getPersonByPersonId } = require('../../auth/service')
 const { getDeviceBaseExtendedQuery } = require('../service')
 const { getDateTimeExpressionInTimeZone } = require('../../shared/date')
 const { knex } = require('../../db')
-const { getMonthsDatefields } = require('./index')
+const { getMonthsDatefields } = require('./logic')
 const { getWorkingDays } = require('../utilizationReports/index')
 const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
 
