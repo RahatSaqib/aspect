@@ -15,7 +15,7 @@ describe('PUT', () => {
   let lga
   const lgasToDelete = []
   before(() => shared.checkToken(server, path))
-  before(async () => {
+  beforeEach(async () => {
     return run(async knex => {
       const lgaId = await knex('Lga').insert({ name: 'oldLgaName' })
       const { id: countryId } = await knex('Country').where('name', 'United States').first()
@@ -26,7 +26,7 @@ describe('PUT', () => {
     })
   })
 
-  after(async () => {
+  afterEach(async () => {
     return run(async knex => {
       await knex('Geography').whereIn('lgaId', lgasToDelete).del()
       await knex('Lga').whereIn('id', lgasToDelete).del()
