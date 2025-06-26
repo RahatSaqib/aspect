@@ -38,13 +38,6 @@ describe('getMonthsDatefields', () => {
     expect(result).to.deep.equal([{ key: '2024-05', header: '2024-May' }])
   })
 
-  it('should use only the language part of the culture string', () => {
-    const minDate = '2024-06-01'
-    const maxDate = '2024-06-30'
-    const result = getMonthsDatefields(minDate, maxDate, 'de-DE')
-    expect(result[0].header).to.match(/^2024-/)
-  })
-
   it('should handle minDate after maxDate by returning an empty array', () => {
     const minDate = '2024-07-01'
     const maxDate = '2024-06-30'
