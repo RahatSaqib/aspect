@@ -1,6 +1,5 @@
 const _ = require('lodash')
-const { format, parseISO, addMonths, subMonths } = require('date-fns')
-const locales = require('date-fns/locale')
+const { format, parseISO, subMonths } = require('date-fns')
 const Boom = require('@hapi/boom')
 const { getDeviceBaseExtendedQuery } = require('../service')
 const { exportData } = require('../../shared/excel')
