@@ -63,7 +63,7 @@ describe('PUT', () => {
       await knex('Geography').insert({ lgaId: dupLgaId, stateId })
       lgasToDelete.push(dupLgaId)
       const res = await server
-        .put(`${path}/${dupLgaId.id}`)
+        .put(`${path}/${dupLgaId}`)
         .send({ name: 'oldLgaName', stateId })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 409)
