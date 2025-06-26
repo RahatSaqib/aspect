@@ -62,7 +62,10 @@ async function getDeviceCapacityReport(auth, query, timezone) {
   const rawData = await countByDeviceAndPeriodQuery
 
   // Transform the data into the required format
-  const data = rawData.reduce((acc, row) => {
+  const deviceMap = new Map()
+  const workingDaysCache = {}
+
+  for (const row of rawData) {
     const deviceId = row.id
     const deviceName = row.name
     const { period } = row
@@ -70,12 +73,19 @@ async function getDeviceCapacityReport(auth, query, timezone) {
     const dailyTestCapacity = row.dailyTestCapacity || 0
     const periodFirstDay = row.period_first_day
 
-    // Calculate working days for this period using the getWorkingDays function
+    // Calculate working days for this period using cached result
     let workingDays = 0
     if (periodFirstDay) {
-      const periodStart = new Date(periodFirstDay)
-      const periodEnd = new Date(periodStart.getFullYear(), periodStart.getMonth() + 1, 0) // Last day of the month
-      workingDays = getWorkingDays(periodStart.toISOString(), periodEnd.toISOString(), customWorkingDaysConfig)
+      if (!workingDaysCache[periodFirstDay]) {
+        const periodStart = new Date(periodFirstDay)
+        const periodEnd = new Date(periodStart.getFullYear(), periodStart.getMonth() + 1, 0) // Last day of the month
+        workingDaysCache[periodFirstDay] = getWorkingDays(
+          periodStart.toISOString(),
+          periodEnd.toISOString(),
+          customWorkingDaysConfig
+        )
+      }
+      workingDays = workingDaysCache[periodFirstDay]
     }
 
     // Calculate capacity percentage
@@ -84,21 +94,22 @@ async function getDeviceCapacityReport(auth, query, timezone) {
         ? Number(((count * 100) / (dailyTestCapacity * workingDays)).toFixed(2))
         : null
 
-    // Find existing device entry or create new one
-    let deviceEntry = acc.find(device => device.id === deviceId)
+    // Get or create device entry using Map for O(1) lookup
+    let deviceEntry = deviceMap.get(deviceId)
     if (!deviceEntry) {
       deviceEntry = {
         name: deviceName,
         id: deviceId,
       }
-      acc.push(deviceEntry)
+      deviceMap.set(deviceId, deviceEntry)
     }
 
     // Add the period data
     deviceEntry[period] = capacityPercentage
+  }
 
-    return acc
-  }, [])
+  // Convert Map values back to array
+  const data = Array.from(deviceMap.values())
 
   const dataset = {
     ok: true,
