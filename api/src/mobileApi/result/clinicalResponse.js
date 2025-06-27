@@ -36,7 +36,7 @@ const {
   updateResultFollowUp,
   deleteResultFollowUpTreatment,
 } = require('./common/db')
-const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
+const { getAcknowledgementsByResultIds, fetchResultsBySubmittedSinceQuery } = require('../entries/result/common/db')
 const { getBaseQueryForResults } = require('../../result/common/db')
 
 const ACKNOWLEDGED_FIELD_NAME = 'confirmed'
@@ -503,7 +503,7 @@ async function getPossibleReasonsForNoResult(resultId) {
 
 // generate result
 async function showResult(resultId, dataConstraints) {
-  const myResultQuery = generateResultQueryV2(false, dataConstraints, resultId)
+  const myResultQuery = fetchResultsBySubmittedSinceQuery({ resultId }, dataConstraints)
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
   if (!data) return getPossibleReasonsForNoResult(resultId)

@@ -12,6 +12,11 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
 
   const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
+  return fetchResultsQuery({ ...query, modifiedSince, submittedSince }, dataConstraints)
+}
+
+const fetchResultsQuery = async (query, dataConstraints) => {
+  const { modifiedSince, submittedSince, resultId } = query
   const resultCategoryToId = await allResultCategoryToId()
 
   const knexQuery = buildQueryForResultsListAndExport(query, dataConstraints)
@@ -47,13 +52,20 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       }
     })
     .andWhere(qb => {
-      qb.where('r.endedOn', '>=', submittedSince).orWhere('sp.collectedOn', '>=', submittedSince)
+      if (submittedSince) {
+        qb.where('r.endedOn', '>=', submittedSince).orWhere('sp.collectedOn', '>=', submittedSince)
+      }
     })
     .whereNotIn('r.resultCategory1', [
       resultCategoryToId.Invalid,
       resultCategoryToId.Error,
       resultCategoryToId.NoResult,
     ])
+    .andWhere(qb => {
+      if (resultId) {
+        qb.where('r.id', resultId)
+      }
+    })
     .select(
       'a.externalId as assayExternalId',
       'a.patientDataSchema as patientDataSchema',
