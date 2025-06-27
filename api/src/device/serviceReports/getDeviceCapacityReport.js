@@ -98,8 +98,9 @@ async function getDeviceCapacityReport(auth, query, timezone) {
     let deviceEntry = deviceMap.get(deviceId)
     if (!deviceEntry) {
       deviceEntry = {
-        name: deviceName,
         id: deviceId,
+        name: deviceName,
+        dailyTestCapacity,
       }
       deviceMap.set(deviceId, deviceEntry)
     }
