@@ -41,6 +41,13 @@ const GENEXPERT_ASSAYS = Object.freeze({
   GX_HIV1VL: 'GxHiv1Vl',
   GX_HCV: 'GxHcv',
 })
+
+const SITE_TYPE_EXTERNAL_IDS = Object.freeze({
+  LAB: 'lab',
+  CLINIC: 'clinic',
+  WAREHOUSE: 'warehouse',
+})
+
 const ISSUE_CATEGORY_EXTERNAL_IDS = {
   CepheidC360InstrumentLogsReceived: 'CepheidC360InstrumentLogsReceived',
 }
@@ -73,6 +80,7 @@ module.exports = {
   WEBHOOK_SERVERS,
   EXTERNAL_IDS,
   GENEXPERT_ASSAYS,
+  SITE_TYPE_EXTERNAL_IDS,
   ISSUE_CATEGORY_EXTERNAL_IDS,
   ISSUE_TYPE_EXTERNAL_IDS,
   INVENTORY_ADJUSTMENT,

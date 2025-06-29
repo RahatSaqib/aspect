@@ -1,5 +1,5 @@
-import React from 'react'
 import { LinearProgress, MenuItem, TextField } from '@mui/material'
+import React from 'react'
 import useSiteType from '../../../../hooks/site/useSiteType'
 
 const SiteTypeSelect = ({ name, label, value, onChange, width, disabled, className }) => {

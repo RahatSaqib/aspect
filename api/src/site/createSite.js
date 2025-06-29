@@ -7,6 +7,7 @@ const { getUserFromCredentials } = require('../auth/constraints')
 const { getExistingSite } = require('./common/db')
 const { throwExistingSiteError } = require('./common/validations')
 const { updateTagsById } = require('../tag/service')
+const { SITE_TYPE_EXTERNAL_IDS } = require('../shared/constants')
 
 module.exports = async function (request) {
   const {
@@ -24,6 +25,21 @@ module.exports = async function (request) {
   }
 
   const siteParams = await normalizeParameters(payload, user.countryId)
+
+  // Convert siteTypeExternalId to siteTypeId if provided
+  if (siteParams.siteTypeExternalId && !siteParams.siteTypeId) {
+    const siteType = await knex('SiteType').where('externalId', siteParams.siteTypeExternalId).first('id')
+    if (siteType) {
+      siteParams.siteTypeId = siteType.id
+    }
+    delete siteParams.siteTypeExternalId
+  }
+
+  // Set default value for sampleRegistrationAllowed based on site type
+  if (siteParams.sampleRegistrationAllowed === undefined || siteParams.sampleRegistrationAllowed === null) {
+    const clinicSiteType = await knex('SiteType').where('externalId', SITE_TYPE_EXTERNAL_IDS.CLINIC).first('id')
+    siteParams.sampleRegistrationAllowed = siteParams.siteTypeId === clinicSiteType?.id
+  }
 
   const values = {
     ...siteParams,

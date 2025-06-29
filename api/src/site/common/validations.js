@@ -23,6 +23,7 @@ const entitySchema = {
   consumableIds: Joi.array().items(Joi.number()).allow(null),
   siteTypeId: Joi.number().integer().positive().required(),
   parentWarehouseId: Joi.number().integer().positive().allow('', null),
+  sampleRegistrationAllowed: Joi.boolean().allow('', null),
 }
 
 const updateSchema = {

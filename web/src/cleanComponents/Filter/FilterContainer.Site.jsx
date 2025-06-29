@@ -1,5 +1,5 @@
-import React from 'react'
 import { Grid, TextField } from '@mui/material'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
@@ -7,7 +7,7 @@ import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import SiteTypeSelect from '../../pages/Site/Detail/Edit/SiteTypeSelect'
-import { StateSelect, LgaSelect, SiteListSelect } from '../index'
+import { LgaSelect, SiteListSelect, StateSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const SiteFilter = props => {

@@ -62,6 +62,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldTags',
     defaultMessage: 'Tags',
   },
+  fieldSampleRegistrationAllowed: {
+    id: 'pages.SiteDetail.allowsSampleCreation',
+    defaultMessage: 'Allows Sample creation from mobile app',
+  },
   fieldDevices: {
     id: 'pages.SiteDetail.fieldDevices',
     defaultMessage: 'Devices',

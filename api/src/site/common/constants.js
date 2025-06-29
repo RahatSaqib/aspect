@@ -36,6 +36,7 @@ const SITE_FIELDS = [
   's.hoursStart',
   's.hoursEnd',
   's.createdOn',
+  's.sampleRegistrationAllowed',
 ]
 
 const SELECT_SHOW_FIELDS = [

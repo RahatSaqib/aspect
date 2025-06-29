@@ -1,6 +1,7 @@
 const { getConstraints } = require('../../auth/constraints')
 const getInventoryOverviewList = require('./db')
 const { getAllGeographiesWithNames } = require('../../geography/common/db')
+const { SITE_TYPE_EXTERNAL_IDS } = require('../../shared/constants')
 
 module.exports = async function (request) {
   const { auth, query } = request
@@ -72,7 +73,7 @@ function fillHierarchicalAggregations(item) {
       item.unreconciledQuantity = 0
 
       item.children
-        .filter(site => site.type !== 'warehouse')
+        .filter(site => site.type !== SITE_TYPE_EXTERNAL_IDS.WAREHOUSE)
         .forEach(child => {
           fillHierarchicalAggregations(child)
           item.quantity += child.quantity
@@ -97,7 +98,7 @@ function fillHierarchicalAggregations(item) {
         item.daysOfInventoryLeft = 0
       }
       break
-    case 'warehouse':
+    case SITE_TYPE_EXTERNAL_IDS.WAREHOUSE:
       break
     default:
       break
@@ -135,17 +136,21 @@ function processSites(sites) {
 
   return sitesWithDefaults.sort((a, b) => {
     if (a.type === b.type) return 0
-    if (a.type === 'warehouse') return -1
+    if (a.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE) return -1
     return 1
   })
 }
 
 function getCountryWarehouses(sites) {
-  return sites.filter(s => s.type === 'warehouse' && s.stateId === 'NO_STATE' && s.lgaId === 'NO_LGA')
+  return sites.filter(
+    s => s.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE && s.stateId === 'NO_STATE' && s.lgaId === 'NO_LGA'
+  )
 }
 
 function getStateWarehouses(stateId, sites) {
-  return sites.filter(s => s.type === 'warehouse' && stateId === s.stateId && s.lgaId === `STATE_${s.stateId}_NO_LGA`)
+  return sites.filter(
+    s => s.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE && stateId === s.stateId && s.lgaId === `STATE_${s.stateId}_NO_LGA`
+  )
 }
 
 function getLgaSites(lga, sites) {
@@ -153,9 +158,11 @@ function getLgaSites(lga, sites) {
     s =>
       s.lgaId === lga.lgaId &&
       s.stateId === lga.stateId &&
-      (['lab', 'clinic'].includes(s.type) ||
+      ([SITE_TYPE_EXTERNAL_IDS.LAB, SITE_TYPE_EXTERNAL_IDS.CLINIC].includes(s.type) ||
         // Only lga-level warehouses are going to be included in the site-level
-        (s.type === 'warehouse' && s.lgaId !== 'NO_LGA' && s.lgaId !== `STATE_${s.stateId}_NO_LGA`))
+        (s.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE &&
+          s.lgaId !== 'NO_LGA' &&
+          s.lgaId !== `STATE_${s.stateId}_NO_LGA`))
   )
 }
 
@@ -164,7 +171,7 @@ function reduceItemAuxiliarProperties(item) {
   delete reduced.consumableId
   delete reduced.geographyId
   delete reduced.firstResultDateInLastSixMonths
-  if (reduced.type === 'warehouse') {
+  if (reduced.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE) {
     delete reduced.usedLastSixMonths
     delete reduced.usedInDateRange
   }

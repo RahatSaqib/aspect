@@ -1,7 +1,15 @@
 const { knex } = require('../../../db')
 const { getSitesQuery } = require('../../../site/service')
 
-const SELECT_LIST_FIELDS = ['s.id', 's.name', 's.shortName', 'sta.name as state', 'l.name as lga', 's.externalId']
+const SELECT_LIST_FIELDS = [
+  's.id',
+  's.name',
+  's.shortName',
+  'sta.name as state',
+  'l.name as lga',
+  's.externalId',
+  's.sampleRegistrationAllowed',
+]
 
 const getSitesInState = (partnerId, stateId, type) => {
   return knex('Site as s')

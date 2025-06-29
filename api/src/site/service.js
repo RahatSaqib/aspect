@@ -60,7 +60,7 @@ function getSite(siteId, dataConstraints) {
       ...SELECT_SHOW_FIELDS,
       getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
     ])
-    .select('st.name as siteType')
+    .select('st.name as siteType', 'st.externalId as siteTypeExternalId')
 }
 
 async function showSite(request) {

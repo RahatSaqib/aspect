@@ -1,6 +1,6 @@
-import React from 'react'
-import { Card, Grid } from '@mui/material'
+import { Card, Checkbox, FormControlLabel, Grid } from '@mui/material'
 import PropTypes from 'prop-types'
+import React from 'react'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
@@ -34,6 +34,16 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
       value: site.devices?.map(device => ({ description: device.name, to: `/browse/device/list/${device.id}` })),
     },
     { label: formatMessage(messages.fieldTags), value: site?.tags.map(tag => tag.title).join(', ') },
+    {
+      label: '',
+      value: (
+        <FormControlLabel
+          control={<Checkbox checked={site.sampleRegistrationAllowed || false} disabled color="primary" />}
+          label={formatMessage(messages.fieldSampleRegistrationAllowed)}
+          style={{ margin: 0 }}
+        />
+      ),
+    },
   ]
   return (
     <div>
