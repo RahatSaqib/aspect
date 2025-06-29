@@ -426,7 +426,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
                     color="primary"
                   />
                 }
-                label={formatMessage(messages.fieldSampleRegistrationAllowed)}
+                label={formatMessage(messages.sampleRegistrationAllowed)}
               />
             </Grid>
           </Grid>

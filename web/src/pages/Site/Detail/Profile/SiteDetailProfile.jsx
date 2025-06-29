@@ -49,7 +49,7 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
       value: (
         <FormControlLabel
           control={<Checkbox checked={site.sampleRegistrationAllowed || false} disabled color="primary" />}
-          label={formatMessage(messages.fieldSampleRegistrationAllowed)}
+          label={formatMessage(messages.sampleRegistrationAllowed)}
           style={{ margin: 0 }}
         />
       ),

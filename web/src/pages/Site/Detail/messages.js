@@ -62,9 +62,9 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldTags',
     defaultMessage: 'Tags',
   },
-  fieldSampleRegistrationAllowed: {
-    id: 'pages.SiteDetail.allowsSampleCreation',
-    defaultMessage: 'Sample registration allowed',
+  sampleRegistrationAllowed: {
+    id: 'pages.SiteDetail.sampleRegistrationAllowed',
+    defaultMessage: 'Sample collection allowed',
   },
   fieldDevices: {
     id: 'pages.SiteDetail.fieldDevices',
