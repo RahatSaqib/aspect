@@ -64,7 +64,7 @@ export default defineMessages({
   },
   fieldSampleRegistrationAllowed: {
     id: 'pages.SiteDetail.allowsSampleCreation',
-    defaultMessage: 'Allows Sample creation from mobile app',
+    defaultMessage: 'Sample registration allowed',
   },
   fieldDevices: {
     id: 'pages.SiteDetail.fieldDevices',

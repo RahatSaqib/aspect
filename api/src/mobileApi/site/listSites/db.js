@@ -31,16 +31,7 @@ const getSitesInState = (partnerId, stateId, type) => {
 
 const getUserSites = dataConstraints => {
   const userSitesQuery = getSitesQuery(dataConstraints)
-  return (
-    userSitesQuery
-      .clone()
-      // .modify(qb => {
-      //   if (type) {
-      //     qb.andWhere(qbSiteType => qbSiteType.whereIn('st.externalId', type))
-      //   }
-      // })
-      .select(SELECT_LIST_FIELDS)
-  )
+  return userSitesQuery.clone().select(SELECT_LIST_FIELDS)
 }
 
 module.exports = { getSitesInState, getUserSites }
