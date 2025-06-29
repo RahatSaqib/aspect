@@ -11,11 +11,14 @@ import styles from '../SiteDetail.module.css'
 
 const messages = { ...commonDefinitions, ...localMessages }
 
+const formatHour = hour => (hour != null ? `${String(hour).padStart(2, '0')}:00` : '')
+
 const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
   const fields = [
     { label: formatMessage(messages.fieldName), value: site.name },
     { label: formatMessage(messages.fieldShortName), value: site.shortName },
     { label: formatMessage(messages.fieldExternalId), value: site.externalId },
+    { label: formatMessage(messages.fieldSiteType), value: site.siteType },
     {
       label: formatMessage(messages.fieldAddress),
       value: (
@@ -29,6 +32,13 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
     { label: getCustomMessage(formatMessage, messages, 'state', user), value: site.state },
     { label: getCustomMessage(formatMessage, messages, 'lga', user), value: site.lga },
     { label: formatMessage(messages.fieldCity), value: site.city },
+    { label: formatMessage(messages.fieldTimeZone), value: site.timezone },
+    { label: formatMessage(messages.fieldLongitude), value: site.longitude },
+    { label: formatMessage(messages.fieldLatitude), value: site.latitude },
+    { label: formatMessage(messages.fieldStartingHours), value: formatHour(site.hoursStart) },
+    { label: formatMessage(messages.fieldEndingHours), value: formatHour(site.hoursEnd) },
+    { label: formatMessage(messages.fieldBelongTo), value: site.parentWarehouseName },
+    { label: formatMessage(messages.fieldNotes), value: site.notes },
     {
       label: formatMessage(messages.fieldDevices),
       value: site.devices?.map(device => ({ description: device.name, to: `/browse/device/list/${device.id}` })),
