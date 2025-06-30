@@ -13,7 +13,7 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
 
   const resultCategoryToId = await allResultCategoryToId()
 
-  const queryBuilder = await fetchResultsQuery(
+  const queryBuilder = fetchResultsQuery(
     {
       ...query,
       modifiedSince,
