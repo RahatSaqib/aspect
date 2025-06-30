@@ -6,7 +6,10 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
         SUM(dailyTestCapacity * GetWeekdaysInRangeCustom(
           ${endDate},
           ${startDate},
-          customWorkingDays->>"$.excludedDays")
+          customWorkingDays->>"$.excludedDays",
+          customWorkingDays->>"$.daysPerYear",
+          customWorkingDays->>"$.daysPerQuarter",
+          customWorkingDays->>"$.daysPerMonth")
         ) * 100,0),2),'%') AS cnt
   FROM (
     SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity, p.customWorkingDays
