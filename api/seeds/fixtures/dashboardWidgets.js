@@ -22,6 +22,7 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
         AND ${dateCondition}
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dtc.hasResults = 1
+      AND dt.externalId = 'CepheidGeneXpert'
     GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
   ) AS innerQuery`
 
@@ -48,6 +49,7 @@ const errorRateQueryLast30Days = `SELECT
           BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
           AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
           AND dtc.hasResults = 1
+          AND dt.externalId = 'CepheidGeneXpert'
     GROUP BY r.deviceId, d.dailyTestCapacity
   ) AS innerQuery`
 
