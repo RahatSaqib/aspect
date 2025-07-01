@@ -6,6 +6,8 @@ const { deviceStatusByDayQuery, getDeviceStatusOverTime } = require('./service')
 const { knex, sortPageParams } = require('../db')
 const { getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { getMonthYearField, parseDateOrDefault, getDateTimeProjectionInTimeZoneIANA } = require('../shared/date')
+const { getWorkingDays } = require('../device/utilizationReports/index')
+const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
 async function getDeviceActivityPercentReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -143,6 +145,9 @@ async function getDeviceUtilizationPerDayReport(auth, query) {
     query.minDate = query.minDate.toISOString()
   }
 
+  // Get partner working days configuration
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
+
   let data = await getDeviceStatusOverTime(auth, query)
   /**
    * define dynamic columns which are day dates in period
@@ -167,15 +172,20 @@ async function getDeviceUtilizationPerDayReport(auth, query) {
   data = data.map(device => {
     const { deviceCapacity = 12, name, maintenanceStatusHistory } = device
     let totals = 0
-    let cntWorkingDays = 0
+
+    // Calculate working days for the entire period using getWorkingDays function
+    let workingDays = 0
+    if (maintenanceStatusHistory.length > 0) {
+      const firstDay = maintenanceStatusHistory[0].day
+      const lastDay = maintenanceStatusHistory[maintenanceStatusHistory.length - 1].day
+      workingDays = getWorkingDays(firstDay, lastDay, customWorkingDaysConfig)
+    }
+
     const dynamicFields = _.reduce(
       maintenanceStatusHistory,
       (acc, item) => {
-        const { day, isWeekend, totalResults } = item
+        const { day, totalResults } = item
         totals += totalResults
-        if (!isWeekend || totalResults > 0) {
-          cntWorkingDays += 1
-        }
         /**
          * cell value is plain object which must have 1 mandatory prop `value`
          * and may have 1 optional prop `style`
@@ -196,7 +206,7 @@ async function getDeviceUtilizationPerDayReport(auth, query) {
       },
       {}
     )
-    const utilizationRate = cntWorkingDays > 0 && deviceCapacity > 0 ? totals / (deviceCapacity * cntWorkingDays) : 0
+    const utilizationRate = workingDays > 0 && deviceCapacity > 0 ? totals / (deviceCapacity * workingDays) : 0
     return {
       name,
       totalResults: totals,
