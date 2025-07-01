@@ -270,7 +270,7 @@ describe('Site routes', () => {
           'siteType',
           'siteTypeExternalId',
         ])
-        const params = { ...newSiteData, street2: newStreet2, tags: 'Tag' }
+        const params = { ...newSiteData, street2: newStreet2, tags: 'Tag', sampleRegistrationAllowed: true }
         const updateSiteResponse = await server
           .put(`${path}/${siteId}`)
           .send(params)
