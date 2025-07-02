@@ -1,7 +1,7 @@
 const { expect, assert } = require('chai')
 const { addDays, subDays } = require('date-fns')
 const uuid = require('node-uuid')
-const { deviceMaintenanceTypeToId, resultCategoryToId } = require('../../src/shared/dictionary')
+const { deviceMaintenanceTypeToId, resultCategoryToId, consumableReasonToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
@@ -294,9 +294,8 @@ async function setInventoryItemAndInventoryLog(repeatedSourceResultId) {
       inventoryItemId,
       consumableId,
       siteId,
-      consumableReasonId: 2, // 'Test Conducted'
+      consumableReasonId: await consumableReasonToId('test_conducted'),
       resultId: repeatedSourceResultId,
-      operation: 'result',
       lotNumber,
       expiresOn,
       quantity,

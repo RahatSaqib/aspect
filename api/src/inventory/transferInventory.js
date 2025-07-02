@@ -3,6 +3,7 @@ const { transferInventory } = require('./common/logic')
 const { getSite } = require('../site/service')
 const { getConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
+const { knex } = require('../db')
 
 module.exports = async function (request) {
   const {
@@ -25,10 +26,12 @@ module.exports = async function (request) {
 
   const { partnerId, userId } = await getUser(auth.credentials.name)
 
-  const res = await transferInventory({ payload, partnerId, userId, messageContext })
-  if (Boom.isBoom(res)) return res
+  const res = await transferInventory(knex, { payload, partnerId, userId, messageContext })
+  if (!res.ok) {
+    return Boom.badRequest(res.errorMessage, { errorKeyCode: res.error })
+  }
   return {
     ok: true,
-    data: res, // see corresponding handler func for details about it's response
+    data: res,
   }
 }

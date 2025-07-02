@@ -90,29 +90,16 @@ const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset 
     ) ${alias ? ` as ${alias}` : ''}`)
 }
 
+const getMonthYearExpressionFromFieldInTimeZone = (knex, field, alias = 'monthYear', timeZoneIANA) => {
+  return knex.raw(`DATE_FORMAT(CONVERT_TZ(${field}, 'UTC', '${timeZoneIANA}'), '%Y-%m')${alias ? ` AS ${alias}` : ''}`)
+}
+
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
   knex.raw(`CONCAT_WS(
     '-',
     CAST(YEAR(${field}) AS CHAR ),
     LPAD(CAST(MONTH(${field}) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
-
-/**
- * - NOTE: This function is obsolete and should be replaced by {@link getDateTimeProjectionInTimeZoneIANA}
- * - Generates knex code to project a datetime field in the specified timezone.
- * @deprecated use {@link getDateTimeProjectionInTimeZoneIANA} instead
- * @param {*} knex - Knex ref.
- * @param {string} field - Name of the field to select.
- * @param {string} offset - Time offset in ISO format (e.g. +05:00)
- * @param {string=} alias - Optional. name to be returned if you don't want the field name.
- * @returns Expression to be added to a Knex query, returning plain datetime value converted a specified TZ
- * @example
- * e.g.:
- * getDateTimeProjectionInUserTimeZone(knex, 'd.lastSeenOn', '+05:00', 'lastSeen')
- * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
- */
-const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
-  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`)
 
 /**
  * Generates knex code to project a datetime field in the specified timezone.
@@ -375,7 +362,7 @@ function getDatesFromQuery(query) {
  * @param {string} timeZone - ISO 8601 timezone String (i.e. Australia/Canberra)
  * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
  * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
- * @description - Useful when you need to use {@link getDateTimeProjectionInUserTimeZone} or directly mysql CONVERT_TZ function,
+ * @description - Useful when you need to use mysql CONVERT_TZ function,
  * which takes as argument the time offset in the format this function returns.
  */
 function getOffsetFromTimeZone(timeZone, date = new Date()) {
@@ -494,6 +481,11 @@ function getDateInMilliSeconds(date) {
 
 /**
  *  Retrieves the No of working days excluding weekends
+ * @deprecated This function is obsolete as it does not contemplate the weekends in PartnerData.customWorkingDays.
+ * TODO: It must be merged with getWorkingDays function from api/src/device/utilizationReports/index.js instead,
+ * which properly handles client-specific working day configurations. date-fns isWeekend is not applicable to countries
+ * with different weekend days than Saturday and Sunday.
+ * @see {@link HD-15651 Replace the user of date-fns weekend by custom Partner configuration}
  * @param {*} startDate
  * @param {*} endDate
  * @returns number - Return the count of working days
@@ -510,6 +502,16 @@ function getWorkingDays(startDate, endDate) {
 }
 
 const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
+
+/**
+ * Converts MySQL DAYOFWEEK() format to date-fns getDay() format
+ * @param {number} day - MySQL day of week (1-7), Sunday is 1
+ * @returns {number} date-fns day of week (0-6), Sunday is 0
+ * @description
+ * MySQL DAYOFWEEK(): 1 = Sunday, 2 = Monday, 3 = Tuesday, 4 = Wednesday, 5 = Thursday, 6 = Friday, 7 = Saturday
+ * date-fns getDay(): 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
+ */
+const convertMysqlDayOfWeekToDateFns = day => day - 1
 
 module.exports = {
   getDateOrDefault,
@@ -531,7 +533,6 @@ module.exports = {
   getDateSubstring,
   getMonthYearField,
   getMonthYearUserTimeZoneField,
-  getDateTimeProjectionInUserTimeZone,
   getDateTimeExpressionInTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
@@ -559,4 +560,6 @@ module.exports = {
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
   adjustDate,
+  getMonthYearExpressionFromFieldInTimeZone,
+  convertMysqlDayOfWeekToDateFns,
 }

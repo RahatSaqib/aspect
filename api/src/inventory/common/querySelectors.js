@@ -25,6 +25,7 @@ function createInventoryItemSelect(includeStrategy = true) {
     'ii.id',
     'itfs.name as inTransitFromSiteName',
     'ii.inTransitFromSiteId',
+    'ii.reconciliationStartDate',
   ]
 
   if (includeStrategy) {
@@ -45,19 +46,6 @@ function createInventoryItemSelect(includeStrategy = true) {
 
 const INVENTORY_ITEM_SELECT = createInventoryItemSelect()
 const INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY = createInventoryItemSelect(false)
-
-const INVENTORY_TRANSFER = {
-  consumableName: 'c.name',
-  consumableNameI18nKey: 'c.i18nKey',
-  lotNumber: 'oil.lotNumber',
-  originSiteName: 'originSite.name',
-  destinationSiteName: 'destinationSite.name',
-  sentQuantity: 'oil.quantity',
-  receivedQuantity: 'iil.quantity',
-  expirationDate: 'oil.expiresOn',
-  sentOn: 'oil.createdOn',
-  receivedOn: 'iil.createdOn',
-}
 
 const INVENTORY_ITEM_SORT_FIELDS = {
   consumableName: 'c.name',
@@ -124,7 +112,6 @@ const SUPPLY_IN_STOCK_FIELDS = [
 ]
 
 module.exports = {
-  INVENTORY_TRANSFER,
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
   INVENTORY_ITEM_FILTER_FIELDS,

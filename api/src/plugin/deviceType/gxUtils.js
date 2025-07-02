@@ -11,7 +11,7 @@ const {
   mapResultCategory2,
   getResultCategoriesHivVL,
   getVLCopies,
-  getDetectedResistanceCategoryTypes,
+  getXdrDetectedResistanceCategoryTypes,
   getBacterialLoad,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
@@ -98,7 +98,9 @@ async function preProcessMergeResult(context) {
   }
   const instrumentSerial = _.get(payload, 'instrument.serial', null)
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
-  const sampleId = _.get(payload, 'sample.id')
+
+  const sampleId = extractSampleId(payload)
+  _.set(payload, 'sample.id', sampleId)
 
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id
@@ -191,6 +193,41 @@ async function preProcessMergeResult(context) {
   }
 }
 
+/**
+ * Extracts a sample ID from payload rsult section.
+ * The sample ID must match the pattern of 3 digits, followed by 6 digits, followed by 3 digits
+ * (e.g. "123-456789-012").
+ * The paths where the sampleId is searched are:
+ * - result.sample.id (exact match)
+ * - result.data.sampleId (exact match)
+ * - result.patient.id (exact match)
+ * - result.data.patientId (exact match)
+ * - result.notes (contains)
+ * - result.data.notes (contains)
+ * @param {Object} result - The result part of a GeneXpert payload
+ * @returns {string|null} The extracted sample ID or null if no valid sample Id is found
+ */
+function extractSampleId(result) {
+  const sampleIdPattern = '\\d{3}-\\d{6}-\\d{3}'
+
+  let sampleId = result.sample?.id ?? result?.data?.sampleId ?? null
+  const exactRegex = new RegExp(`^${sampleIdPattern}$`)
+
+  if (!sampleId || !exactRegex.test(sampleId)) {
+    const patientId = result.patient?.id ?? result.data?.patientId ?? ''
+    const matches = patientId.match(exactRegex)
+    ;[sampleId] = matches || [sampleId]
+  }
+
+  if (!sampleId || !exactRegex.test(sampleId)) {
+    const notes = result?.notes ?? result.data?.notes ?? ''
+    const searchRegex = new RegExp(`\\b${sampleIdPattern}\\b`, 'g')
+    const matches = notes.match(searchRegex)
+    ;[sampleId] = matches || [sampleId]
+  }
+  return sampleId
+}
+
 function getAdditionalDataFromPayload(payload, assays) {
   const data = {}
   if (assays.includes('GxMtbRif') && _.get(payload, 'data.resultText')) {
@@ -204,7 +241,9 @@ function getAdditionalDataFromPayload(payload, assays) {
   }
 
   if (assays.includes('GxMtbXdr')) {
-    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(_.get(payload, 'data.resultText'))
+    const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(
+      _.get(payload, 'data.resultText')
+    )
     data.detectedResistance = detectedResistance
     data.allResistances = allResistances
   }
@@ -230,84 +269,6 @@ async function transformMergeResultPayload({ deviceId, payload, knex }) {
 async function postProcessAddDeviceOperation() {
   return {}
 }
-
-// Take a look at the comments here: https://systemone.youtrack.cloud/issue/ASP-7740/Solve-Inventory-Items-duplicates
-/*
-const setMilliseconds = require('date-fns/setMilliseconds')
-const { isNil } = require('lodash')
-const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
-const { getDevice } = require('../../device/service')
-const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
-
-async function postProcessAddDeviceOperation({ device, payload, now, messageContext, userId }) {
-  let inventoryItemIds = []
-  const inventoryChanges = _.get(payload, 'data.inventoryChanges')
-  if (!_.isEmpty(inventoryChanges)) {
-    const { partnerId, id: deviceId } = device
-    const inventoryStrategy = await getInventoryStrategy({ partnerId, deviceId })
-
-    const sortedInventoryChanges = _.sortBy(inventoryChanges, inventoryChange =>
-      parseDateOrDefault(inventoryChange.dateChanged)
-    )
-    inventoryItemIds = await Promise.all(
-      _.map(sortedInventoryChanges, async inventoryChange => {
-        const matchingConsumables = await findConsumables({
-          name: inventoryChange.consumableName,
-        })
-        if (matchingConsumables.length === 1) {
-          const matchingConsumable = matchingConsumables[0]
-          const matchingConsumableReason = await findConsumableReason(inventoryChange.consumableReasonName)
-          if (matchingConsumableReason) {
-            const absoluteQuantity = Math.abs(inventoryChange.quantity)
-            const isDecrease =
-              (matchingConsumableReason.effectOnStock === 'resetToValue' && inventoryChange.quantity < 0) ||
-              matchingConsumableReason.effectOnStock === 'decrease'
-            if (!device.siteId && device.id) {
-              const deviceData = await getDevice(device.id)
-              device.siteId = deviceData.siteId
-            }
-            if (!device.siteId) {
-              throw Boom.notFound('Cannot determine which site this request came from')
-            }
-
-            const { siteId } = device
-            const consumableId = matchingConsumable.id
-            const expiresOn = parseDateOrDefault(inventoryChange.expirationDate)
-
-            const operation = `${isDecrease ? 'remove' : 'add'} from GxConnect`
-
-            // return object { inventoryItemId, inventoryLogId }
-            return changeInventoryQuantity(inventoryStrategy, {
-              consumableId,
-              siteId,
-              expiresOn,
-              // lotNumber, // <--- lot is not set here
-              quantity: absoluteQuantity,
-              quantityOnHand: inventoryChange.resultingQuantityOnHand,
-              operation,
-              now,
-              messageContext,
-              userId,
-              logProps: {
-                consumableReasonId: matchingConsumableReason.id,
-                adjustedFrom: inventoryChange.dateChanged
-                  ? setMilliseconds(parseDateOrDefault(inventoryChange.dateChanged), 0)
-                  : null,
-                operation,
-              },
-            })
-          }
-        }
-        return null
-      })
-    )
-    inventoryItemIds = inventoryItemIds.filter(x => !isNil(x) && !Boom.isBoom(x)).map(x => x.inventoryItemId)
-  }
-  return {
-    inventoryItemIds,
-  }
-}
-*/
 
 async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now, isFastImport }) {
   let device = {}
@@ -470,14 +431,14 @@ async function findDevices(availableDeviceDetails, knex) {
     }
     if (_.isEmpty(matchingDevices) && countryCode) {
       const partnerCountryDeviceQuery = partnerDeviceQuery.clone().andWhere('c.abbreviation', countryCode)
-      if (hostId && deviceSerialNumber) {
+      if (isValidHostId(hostId) && deviceSerialNumber) {
         matchingDevices = await partnerCountryDeviceQuery
           .clone()
           .andWhere('d.hostId', hostId)
           .andWhere('d.serial', deviceSerialNumber)
           .select(fields)
       }
-      if (hostId) {
+      if (isValidHostId(hostId)) {
         if (_.isEmpty(matchingDevices)) {
           matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.hostId', hostId).select(fields)
           // There are multiple devices using this Host ID
@@ -519,6 +480,10 @@ async function findDevices(availableDeviceDetails, knex) {
     }
   }
   return _.uniqBy(matchingDevices, 'id')
+}
+
+const isValidHostId = hostId => {
+  return hostId && hostId !== '0'
 }
 
 async function getOrCreateSite(knex, device, payload, now, countryCode, deviceName, deviceShortName, fromGxAlert) {
@@ -721,4 +686,5 @@ module.exports = {
   postProcessUpdateDeviceConfiguration,
   getAdditionalDataFromPayload,
   getResultCategories,
+  extractSampleId,
 }

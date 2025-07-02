@@ -29,6 +29,7 @@ module.exports = {
     {
       deviceType: 'GeneXpert',
       data: {
+        SendResultsToGxAlert: false,
         EnableInventoryModule: false,
         ShowPopupWindowOnNewTest: true,
         ClearLISSettingsIfTheyPointToGxAlert: false,
@@ -44,4 +45,10 @@ module.exports = {
     },
   ],
   deviceCapacityFactor: 3,
+  customWorkingDays: {
+    excludedDays: '6', // Exclude Fridays. the function DAYOFWEEK starts from Sunday 1-7, where 1 is Sunday and 7 is Saturday
+    daysPerMonth: 21,
+    daysPerQuarter: 63,
+    daysPerYear: 252,
+  },
 }

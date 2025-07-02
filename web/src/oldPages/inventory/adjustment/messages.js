@@ -146,11 +146,11 @@ export const validationMessages = defineMessages({
 export const newInventoryMessages = defineMessages({
   dialogTitle: {
     id: 'pages.NewInventoryDialogForm.dialogTitle',
-    defaultMessage: 'Add {consumableName}',
+    defaultMessage: '{consumableName}',
   },
   quantity: {
     id: 'pages.NewInventoryDialogForm.quantity',
-    defaultMessage: 'Quantity to Add',
+    defaultMessage: 'Quantity',
   },
   dateAdjusted: {
     id: 'pages.NewInventoryDialogForm.dateAdjusted',

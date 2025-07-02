@@ -7,13 +7,6 @@ const { addExtraData } = require('./options')
 const knexWidgets = require('./widgets')
 const resultsTransmittedDashboard = require('./resultsTransmitted')
 const activityOverTimeDashboard = require('./activityOverTime')
-const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
-
-// const dashboardWidgetsBase = require('../../seeds/fixtures/dashboardWidgetsBase')
-
-// const {
-//   stat: { activeDevicesCnt, totalNumberOfModules, activeModules },
-// } = dashboardWidgetsBase
 
 const i18nKeys = {
   // Dashboard
@@ -32,12 +25,6 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
-// const dashboardWidgetTitle = [
-// activeDevicesCnt.title,
-// totalNumberOfModules.title,
-// activeModules.title,
-// ]
-
 async function getDashboardWidget({ id, partnerId }, options) {
   // const { layout, dashboard = 'home', country } = options
   const { layout, dashboard = 'home' } = options
@@ -54,9 +41,6 @@ async function getDashboardWidget({ id, partnerId }, options) {
     })
     .where(function () {
       this.whereRaw(`JSON_EXTRACT(w.dashboards , '$.${dashboard}') IS NOT NULL`)
-      // if (country === 'BD' && dashboard === 'home') this.orWhereIn('w.title', dashboardWidgetTitle)
-      // else
-      // this.whereNotIn('w.title', dashboardWidgetTitle)
 
       if (dashboard === 'home') {
         this.orWhereNull('w.dashboards')
@@ -77,25 +61,12 @@ async function summaryDashboard(request) {
   const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard, country })
   const data = await Promise.all(
     widgets.map(async widget => {
-      const { externalId, sqlForExtra, options, titleI18nKey } = widget
-      let { sqlForIndicator, sqlForStatUnit } = widget
+      const { externalId, sqlForExtra, options } = widget
+      const { sqlForIndicator, sqlForStatUnit } = widget
 
-      // This is a hack to update an already saved query
-      if (titleI18nKey === 'utilizationRateTitle') {
-        const partnerConfig = await getPartnerWorkingDaysConfig(auth)
-        if (partnerConfig) {
-          const oldPattern = /AND DAYOFWEEK\(r\.endedOn\) <> 1 AND DAYOFWEEK\(r\.endedOn\) <> 7/
-
-          const excludedDays = partnerConfig.excludedDays.split(',').map(day => day.trim())
-          const newPattern = excludedDays.map(day => `AND DAYOFWEEK(r.endedOn) <> ${day}`).join(' ')
-
-          sqlForIndicator = sqlForIndicator.replace(oldPattern, newPattern)
-          sqlForStatUnit = sqlForStatUnit.replace(oldPattern, newPattern)
-        }
-      }
-
-      const unit = await queryValue(sqlForStatUnit, dataConstraints, query)
-      const extra = await queryValue(sqlForExtra, dataConstraints, query)
+      const unitQuery = queryValue(sqlForStatUnit, dataConstraints, query, user.timezoneIANA)
+      const unit = await unitQuery
+      const extra = await queryValue(sqlForExtra, dataConstraints, query, user.timezoneIANA)
 
       let indicatorQueryResult
       if (!sqlForIndicator && knexWidgets[externalId]) {
@@ -103,7 +74,8 @@ async function summaryDashboard(request) {
         const indicatorKnexQuery = knexFunction(knex, dataConstraints) || { cnt: null }
         indicatorQueryResult = (await indicatorKnexQuery) || { cnt: null }
       } else {
-        indicatorQueryResult = (await queryValue(sqlForIndicator, dataConstraints, query)) || { cnt: null }
+        const sqlQuery = queryValue(sqlForIndicator, dataConstraints, query, user.timezoneIANA)
+        indicatorQueryResult = (await sqlQuery) || { cnt: null }
       }
 
       const { cnt, ...restCountProps } = indicatorQueryResult

@@ -23,6 +23,7 @@ import {
   showRemoveInventoryDialog,
   showTransferInventoryDialog,
 } from '../../../store/InventoryRedux'
+import { formatDate } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
 const InventoryTableRow = ({
@@ -233,7 +234,7 @@ const InventoryTableRow = ({
             }
           >
             {inventoryItem.get('expiresOn')
-              ? inventoryItem.get('expiresOn').split('T')[0]
+              ? formatDate(inventoryItem.get('expiresOn'))
               : formatMessage(messages.notAvailable)}
           </span>
         </TableCell>

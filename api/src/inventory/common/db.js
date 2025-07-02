@@ -7,12 +7,11 @@ const {
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
-  INVENTORY_TRANSFER,
   STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
-const { getDateTimeProjectionInUserTimeZone, parseDateOrDefault } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 const consumableStrategyFactory = require('./consumableStrategies/consumableStrategyFactory')
 const { getPartnerByConstraints } = require('../../partner/common/db')
 
@@ -28,7 +27,7 @@ async function getConsumableStrategy(partnerId) {
 }
 
 // ----------------------------------------------------------------------------------
-function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
+function baseInventoryQuery(knex, siteId, consumableId, inTransitFromSiteId) {
   const matchingInventoryItemsQuery = knex('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
@@ -157,8 +156,8 @@ function getInventorySitesQuery(constraints, request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function findInventoryItem({ siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
-  const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
+async function findInventoryItem(knex, { siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId, partnerId }) {
+  const matchingInventoryItemsQuery = baseInventoryQuery(knex, siteId, consumableId, inTransitFromSiteId)
 
   const consumableStrategy = await getConsumableStrategy(partnerId)
 
@@ -203,8 +202,21 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
     )
 
 // ----------------------------------------------------------------------------------
-async function getInventoryTransfer(query, dataConstraints, querySelector = INVENTORY_TRANSFER) {
+async function getInventoryTransfer(query, dataConstraints, timeZoneIANA) {
   const { minDate, maxDate } = query
+
+  const INVENTORY_TRANSFER = {
+    consumableName: 'c.name',
+    consumableNameI18nKey: 'c.i18nKey',
+    lotNumber: 'oil.lotNumber',
+    originSiteName: 'originSite.name',
+    destinationSiteName: 'destinationSite.name',
+    sentQuantity: 'oil.quantity',
+    receivedQuantity: 'iil.quantity',
+    expirationDate: 'oil.expiresOn',
+    sentOn: 'oil.createdOn',
+    receivedOn: 'iil.createdOn',
+  }
 
   const inventoryTransferQuery = knex('InventoryTransfer as it')
     .innerJoin('InventoryLog as oil', 'it.outcomeInventoryLogId', 'oil.id')
@@ -229,26 +241,20 @@ async function getInventoryTransfer(query, dataConstraints, querySelector = INVE
     })
     .modify(queryBuilder => {
       if (query.originSiteIds) {
-        queryBuilder.whereIn('originSite.id', query.originSiteIds.split(','))
+        queryBuilder.whereIn('originSite.id', query.originSiteIds)
       }
     })
 
   const { total } = await inventoryTransferQuery.clone().count('it.id as total').first()
 
   const data = await inventoryTransferQuery
-    .select(querySelector)
+    .select({
+      ...INVENTORY_TRANSFER,
+      sentOn: getDateTimeProjectionInTimeZoneIANA(knex, 'oil.createdOn', timeZoneIANA),
+      receivedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'iil.createdOn', timeZoneIANA),
+    })
     .modify(sortPageParams, query, 'it.createdOn', INVENTORY_TRANSFER)
   return { data, total }
-}
-
-// ----------------------------------------------------------------------------------
-async function getInventoryTransferForExport(query, dataConstraints, offset) {
-  const querySelector = {
-    ...INVENTORY_TRANSFER,
-    sentOn: getDateTimeProjectionInUserTimeZone(knex, 'oil.createdOn', offset),
-    receivedOn: getDateTimeProjectionInUserTimeZone(knex, 'iil.createdOn', offset),
-  }
-  return getInventoryTransfer(query, dataConstraints, querySelector)
 }
 
 // ----------------------------------------------------------------------------------
@@ -327,10 +333,8 @@ FROM SiteHierarchy`
     .count('r.id as unreconciledQuantity')
     .from('Site as s')
     .join(knex.raw(`(${siteHierarchy}) as sh`), 's.id', 'sh.parentId')
-    .leftJoin('MissingInventoryLots as mil', 'mil.siteId', 'sh.childId')
-    .leftJoin('Result as r', function () {
-      this.on('mil.resultId', 'r.id')
-    })
+    .leftJoin('Result as r', 'r.siteId', 'sh.childId')
+    .whereNull('r.reconciliationDate')
     .groupBy('s.id', 'r.assayId')
     .as(alias)
 }
@@ -350,114 +354,6 @@ function getInventoryItem(inventoryItemId, selectFields = INVENTORY_ITEM_SELECT)
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .where('ii.id', inventoryItemId)
     .first(selectFields)
-}
-
-// ----------------------------------------------------------------------------------
-async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
-  const updateValues = {}
-  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
-    updateValues.expiresOn = inventoryItemValues.expiresOn ? parseDateOrDefault(inventoryItemValues.expiresOn) : null
-  }
-  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
-    updateValues.lotNumber = inventoryItemValues.lotNumber
-  }
-  if (typeof inventoryItemValues.siteId !== 'undefined') {
-    updateValues.siteId = inventoryItemValues.siteId
-  }
-  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
-    updateValues.quantityOnHand = inventoryItemValues.quantityOnHand
-  }
-  updateValues.updatedOn = new Date()
-  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
-    updateValues.updatedBy = inventoryItemValues.updatedBy
-  }
-
-  return knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
-}
-
-// ----------------------------------------------------------------------------------
-async function insertInventoryItem(knex, inventoryItemValues) {
-  const insertValues = {}
-  if (typeof inventoryItemValues.consumableId !== 'undefined') {
-    insertValues.consumableId = inventoryItemValues.consumableId
-  }
-  if (typeof inventoryItemValues.inTransitFromSiteId !== 'undefined') {
-    insertValues.inTransitFromSiteId = inventoryItemValues.inTransitFromSiteId
-  }
-  if (typeof inventoryItemValues.siteId !== 'undefined') {
-    insertValues.siteId = inventoryItemValues.siteId
-  }
-  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
-    insertValues.lotNumber = inventoryItemValues.lotNumber
-  }
-  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
-    insertValues.expiresOn = inventoryItemValues.expiresOn ? parseDateOrDefault(inventoryItemValues.expiresOn) : null
-  }
-  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
-    insertValues.quantityOnHand = inventoryItemValues.quantityOnHand
-  }
-  if (typeof inventoryItemValues.updatedOn !== 'undefined') {
-    insertValues.updatedOn = inventoryItemValues.updatedOn
-  }
-  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
-    insertValues.updatedBy = inventoryItemValues.updatedBy
-  }
-  if (typeof inventoryItemValues.createdOn !== 'undefined') {
-    insertValues.createdOn = inventoryItemValues.createdOn
-  }
-  if (typeof inventoryItemValues.createdBy !== 'undefined') {
-    insertValues.createdBy = inventoryItemValues.createdBy
-  }
-  const newInventoryItem = await knex('InventoryItem').insert(insertValues)
-  return newInventoryItem
-}
-
-// ----------------------------------------------------------------------------------
-async function logInventoryChange({
-  knex,
-  inventoryItemId,
-  consumableId,
-  siteId,
-  referencedSiteId,
-  consumableReasonId,
-  resultId,
-  reconcilationAdjustment,
-  reconcilationStrategy,
-  lotNumber,
-  expiresOn,
-  quantity,
-  operation,
-  notes,
-  adjustedFrom,
-  adjustedTo,
-  createdOn,
-  createdBy,
-  isAutomatic,
-  effectiveDate,
-}) {
-  const [id] = await knex('InventoryLog').insert({
-    inventoryItemId,
-    consumableId,
-    siteId,
-    referencedSiteId,
-    consumableReasonId,
-    resultId,
-    lotNumber,
-    expiresOn: parseDateOrDefault(expiresOn) || null,
-    quantity,
-    operation,
-    notes,
-    reconcilationAdjustment,
-    reconcilationStrategy,
-    adjustedFrom,
-    adjustedTo,
-    createdOn,
-    createdBy,
-    isAutomatic,
-    effectiveDate,
-  })
-
-  return id
 }
 
 // ----------------------------------------------------------------------------------
@@ -669,25 +565,25 @@ function filteredInventoryItemsBase(request, dataConstraints) {
   return inventoryItemsQuery
 }
 
-function baseMissingInventoryLotsQuery() {
-  return knex('MissingInventoryLots as m')
-    .innerJoin('Result as r', 'm.resultId', 'r.id')
-    .innerJoin('Site as s', 'm.SiteId', 's.id')
+function getBaseUnreconciledResultsQuery() {
+  return knex('Result as r')
+    .innerJoin('Site as s', 'r.siteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
     .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
+    .whereNull('r.reconciliationDate')
 }
 
 async function getReconciliationList(query, dataConstraints) {
   const partnerId = dataConstraints.partner.id
   const consumableStrategy = await getConsumableStrategy(partnerId)
 
-  const baseQuery = baseMissingInventoryLotsQuery()
+  const baseQuery = getBaseUnreconciledResultsQuery()
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .modify(filterDateRangeParams, query, 'm.expirationDate')
+    .modify(filterDateRangeParams, query, 'r.consumableExpirationDate')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -696,15 +592,15 @@ async function getReconciliationList(query, dataConstraints) {
       siteId: 's.id',
       assayId: 'r.assayId',
       consumableId: 'ca.consumableId',
-      lotNumber: 'm.lotNumber',
+      lotNumber: 'r.consumableLot',
     })
     .groupBy([
       's.id',
       'c.id',
       ...(query.breakOutByLot
         ? consumableStrategy.filterFields({
-            lotNumberField: 'm.lotNumber',
-            expiresOnField: 'm.expirationDate',
+            lotNumberField: 'r.consumableLot',
+            expiresOnField: 'r.consumableExpirationDate',
           })
         : []),
     ])
@@ -718,7 +614,7 @@ async function getReconciliationList(query, dataConstraints) {
   const getItems = baseQuery
     .clone()
     .modify(sortPageParams, query, 's.name')
-    .orderBy('m.id')
+    .orderBy('r.id')
     .select([
       's.name as siteName',
       'c.name as consumableName',
@@ -731,8 +627,8 @@ async function getReconciliationList(query, dataConstraints) {
       'l.name as lgaName',
       ...(query.breakOutByLot
         ? consumableStrategy.filterFields({
-            lotNumberField: 'm.lotNumber',
-            expiresOnField: 'm.expirationDate as expiresOn',
+            lotNumberField: 'r.consumableLot',
+            expiresOnField: 'r.consumableExpirationDate as expiresOn',
           })
         : []),
     ])
@@ -758,20 +654,16 @@ async function appendSiteConsumables(data) {
 }
 
 module.exports = {
-  baseMissingInventoryLotsQuery,
+  getBaseUnreconciledResultsQuery,
   findInventoryItem,
-  updateInventoryItem,
-  insertInventoryItem,
   getInventoryItem,
   getInventorySitesQuery,
   getInventoryLogBaseQuery,
   getInventoryBySitesAndConsumableQuery,
   getUnreconciledQuantitiesSubquery,
-  logInventoryChange,
   getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
   filteredInventoryItemsBase,
   getInventoryTransfer,
-  getInventoryTransferForExport,
   createInventoryTransfer,
   updateInventoryTransfer,
   getReconciliationList,

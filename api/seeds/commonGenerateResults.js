@@ -37,7 +37,7 @@ const { addCase } = require('../src/case/service')
 const { getRandomGeneXpertPatientData, getRandomTruenatPatientData } = require('./commonTBResults')
 const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovidResultFormSchema.json')
 const {
-  getDetectedResistanceCategoryTypes,
+  getXdrDetectedResistanceCategoryTypes,
 } = require('../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const gxMtbRifPossibleResults = require('./development/generateResultsSeed/gxMtbRifPossibleResults.json')
 const gxXdrPossibleResults = require('./development/generateResultsSeed/gxXdrPossibleResults.json')
@@ -869,7 +869,7 @@ async function addTBResults(
 
     if (gxAssayExternalIds.includes(assay.externalId)) {
       resultData[assay.externalId].resultText = result.resultText
-      const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(result.resultText)
+      const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(result.resultText)
       resultData[assay.externalId].detectedResistance = detectedResistance
       resultData[assay.externalId].allResistances = allResistances
     }

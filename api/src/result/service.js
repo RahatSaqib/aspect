@@ -3,12 +3,7 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { format, addMonths, startOfDay, endOfDay } = require('date-fns')
 const Promise = require('bluebird')
-const {
-  getOffsetFromIsoDateString,
-  getAllMonthsInRange,
-  getMonthYearField,
-  returnIso8601StringWithoutTimeZoneOffset,
-} = require('../shared/date')
+const { getAllMonthsInRange, getMonthYearField, returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const {
@@ -57,6 +52,31 @@ const {
   getClinicalIndicatorQueryForResultsTable,
 } = require('./common/db')
 const { replaceOffset } = require('../shared/date')
+
+function buildQueryForResultsListAndExport(query, dataConstraints) {
+  const orConstraint = dataConstraints.$or
+
+  const isSiteLevelAccess = _.some(orConstraint, obj => _.has(obj, 'site'))
+
+  // check if user has site-level access and modify the constraint
+  if (isSiteLevelAccess) {
+    const filteredOrConstraint = _.map(orConstraint, obj => {
+      if (query.reportableSiteId) {
+        return _.omit(obj, 'site')
+      }
+      if (obj.result && obj.result.reportableSiteId) {
+        return {
+          ...obj,
+          result: _.omit(obj.result, 'reportableSiteId'),
+        }
+      }
+      return obj
+    })
+    dataConstraints.$or = filteredOrConstraint
+  }
+
+  return getQueryForResultsListAndExport(query, dataConstraints)
+}
 
 async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
@@ -147,28 +167,8 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const orConstraint = dataConstraints.$or
+  const resultQuery = buildQueryForResultsListAndExport(query, dataConstraints)
 
-  const isSiteLevelAccess = _.some(orConstraint, obj => _.has(obj, 'site'))
-
-  // check if user has site-level access and modify the constraint
-  if (isSiteLevelAccess) {
-    const filteredOrConstraint = _.map(orConstraint, obj => {
-      if (query.reportableSiteId) {
-        return _.omit(obj, 'site')
-      }
-      if (obj.result && obj.result.reportableSiteId) {
-        return {
-          ...obj,
-          result: _.omit(obj.result, 'reportableSiteId'),
-        }
-      }
-      return obj
-    })
-    dataConstraints.$or = filteredOrConstraint
-  }
-
-  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
@@ -1527,10 +1527,9 @@ async function updateTransferNotification(request) {
 }
 
 // ---------------------------------------------------------------
-async function getResultsForReport(auth, query) {
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+async function getResultsForReport(auth, query, timezoneIANA) {
   // for now call existing function, but later add here a query with different aggregations
-  return getListResults(query, auth, getReportCommonFieldsTZ(userTimeOffset))
+  return getListResults(query, auth, getReportCommonFieldsTZ(timezoneIANA))
 }
 
 async function currentResultAggregations(request) {
@@ -2126,7 +2125,6 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     externalId,
     collectedOn,
     sampleTypeId,
-    originSiteId,
     registeredInAspect: true,
   }
 
@@ -2134,10 +2132,15 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     // remove undefined (= not part of the POST fields) for updating
     sampleData = _.omitBy(sampleData, _.isUndefined)
     if (!_.isEmpty(sampleData)) {
+      const existingSample = await knex('Sample').where({ id: sampleId }).first('originSiteId')
+      if (existingSample && existingSample.originSiteId === null && originSiteId) {
+        sampleData.originSiteId = originSiteId
+      }
       await knex('Sample').update(sampleData).where({ id: sampleId })
     }
     return sampleId
   }
+  sampleData.originSiteId = originSiteId
   const [id] = await knex('Sample').insert(sampleData)
   return id
 }
@@ -2465,4 +2468,5 @@ module.exports = {
   getClinicalIndicatorQueryForResultsTable,
   processGroupedQuery,
   getQuarterByMonth,
+  buildQueryForResultsListAndExport,
 }

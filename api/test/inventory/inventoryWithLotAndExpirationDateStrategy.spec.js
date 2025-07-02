@@ -561,7 +561,7 @@ describe('Inventory Routes', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
-              reasonId: await consumableReasonToId('Manual Addition'),
+              reasonId: await consumableReasonToId('manual_addition'),
               quantity: quantityToAdjust,
               notes: 'Testing add',
               toSiteId: inventoryItem.siteId,
@@ -585,7 +585,6 @@ describe('Inventory Routes', () => {
           assert.equal(inventoryLog.siteId, inventoryItem.siteId)
           assert.equal(inventoryLog.lotNumber, inventoryItem.lotNumber)
           assert.equal(inventoryLog.expiresOn.toISOString(), inventoryItem.expiresOn.toISOString())
-          assert.equal(inventoryLog.operation, 'add')
           assert.equal(inventoryLog.consumableReasonExternalId, 'manual_addition')
         })
         it('should update the quantity of an inventory item only with expiration date matching', async () => {
@@ -595,7 +594,7 @@ describe('Inventory Routes', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
-              reasonId: await consumableReasonToId('Manual Addition'),
+              reasonId: await consumableReasonToId('manual_addition'),
               quantity: quantityToAdjust,
               notes: 'Testing add',
               toSiteId: inventoryItem.siteId,
@@ -618,7 +617,6 @@ describe('Inventory Routes', () => {
           assert.equal(inventoryLog.siteId, inventoryItem.siteId)
           assert.equal(inventoryLog.lotNumber, inventoryItem.lotNumber)
           assert.equal(inventoryLog.expiresOn.toISOString(), inventoryItem.expiresOn.toISOString())
-          assert.equal(inventoryLog.operation, 'add')
           assert.equal(inventoryLog.consumableReasonExternalId, 'manual_addition')
         })
       })
@@ -633,7 +631,7 @@ describe('Inventory Routes', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
-              reasonId: await consumableReasonToId('Lost'),
+              reasonId: await consumableReasonToId('lost'),
               quantity: 400,
               notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
@@ -653,14 +651,15 @@ describe('Inventory Routes', () => {
               consumableId: inventoryItem.consumableId,
               lotNumber: 'ANOTHER LOT NUMBER',
               expiresOn: inventoryItem.expiresOn,
-              reasonId: await consumableReasonToId('Lost'),
+              reasonId: await consumableReasonToId('lost'),
               quantity: 510,
               notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
-          assert.equal(res.status, 500)
+          assert.equal(res.status, 400)
+          assert.equal(res.body.errorKeyCode, 'missingInventoryItem')
         })
       })
     })

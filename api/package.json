@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.57.0",
+  "version": "1.59.0",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
@@ -17,6 +17,7 @@
     "knex:seed:run": "knex seed:run",
     "lint": "eslint ./src ./test ./migrations ./seeds ./knexfile.js --ext .js",
     "lint:fix": "eslint ./src ./test ./migrations ./seeds ./knexfile.js --ext .js --fix",
+    "lint:changes": "eslint $(git diff --name-only --diff-filter=ACM | grep -E '\\.(js|ts|jsx|tsx)$' | sed 's|^|../|') --fix",
     "mocha:contract": "TZ=UTC mocha --config test/contract.mocharc.js ",
     "mocha:contract:ci": "TZ=UTC mocha --config test/ci-contract.mocharc.js",
     "mocha:unit": "TZ=UTC mocha --config test/unit.mocharc.js",

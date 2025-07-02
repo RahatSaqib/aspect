@@ -16,7 +16,7 @@ const cacheConfig = {
     additionalColumns: ['includeLocation'],
   },
   ConsumableReason: {
-    keyColumn: 'name',
+    keyColumn: 'externalId',
     additionalColumns: ['effectOnStock'],
   },
   DeviceApiRawStatus: {},

@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const format = require('date-fns/format')
+const isValid = require('date-fns/isValid')
 const { extractFromDataById } = require('./extractFromDataById')
 const { generateTransferStatus } = require('./generateTransferStatus')
 
@@ -72,9 +73,19 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       type: followUp.followUpTypeName,
       clinicianName: followUp.clinicianName,
     }
-    const matchingFlag = resultFlags?.find(
-      rf => format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
-    )
+    const matchingFlag = resultFlags?.find(rf => {
+      try {
+        return (
+          rf.flaggedOn &&
+          followUp.date &&
+          isValid(new Date(rf.flaggedOn)) &&
+          isValid(new Date(followUp.date)) &&
+          format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
+        )
+      } catch (error) {
+        return false
+      }
+    })
     if (matchingFlag?.reason) {
       followUpHistoryItem.reason = matchingFlag.reason
     }

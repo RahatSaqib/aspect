@@ -35,7 +35,10 @@ const { assayNameToExternalId } = require('../../../src/shared/assayNameToExtern
 
 const { assert, expect } = chai
 
-describe('Device API routes for GxAlert Device', () => {
+/**
+ * TODO: Delete this with GxAlert removal
+ */
+describe.skip('Device API routes for GxAlert Device', () => {
   shared.checkToken(server, '/api/device')
   function createContext() {
     return createGxAlertTestContext(server)

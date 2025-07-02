@@ -28,7 +28,6 @@ const deleteResults = async resultIds => {
   const resultIdsToBeDeleted = [...new Set(resultIds)]
 
   await knex('InventoryLog').delete().whereIn('resultId', resultIdsToBeDeleted)
-  await knex('MissingInventoryLots').whereIn('resultId', resultIdsToBeDeleted).delete()
   await knex('Result').delete().whereIn('id', resultIdsToBeDeleted)
 }
 
