@@ -90,6 +90,10 @@ const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset 
     ) ${alias ? ` as ${alias}` : ''}`)
 }
 
+const getMonthYearExpressionFromFieldInTimeZone = (knex, field, alias = 'monthYear', timeZoneIANA) => {
+  return knex.raw(`DATE_FORMAT(CONVERT_TZ(${field}, 'UTC', '${timeZoneIANA}'), '%Y-%m')${alias ? ` AS ${alias}` : ''}`)
+}
+
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
   knex.raw(`CONCAT_WS(
     '-',
@@ -477,6 +481,11 @@ function getDateInMilliSeconds(date) {
 
 /**
  *  Retrieves the No of working days excluding weekends
+ * @deprecated This function is obsolete as it does not contemplate the weekends in PartnerData.customWorkingDays.
+ * TODO: It must be merged with getWorkingDays function from api/src/device/utilizationReports/index.js instead,
+ * which properly handles client-specific working day configurations. date-fns isWeekend is not applicable to countries
+ * with different weekend days than Saturday and Sunday.
+ * @see {@link HD-15651 Replace the user of date-fns weekend by custom Partner configuration}
  * @param {*} startDate
  * @param {*} endDate
  * @returns number - Return the count of working days
@@ -493,6 +502,16 @@ function getWorkingDays(startDate, endDate) {
 }
 
 const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
+
+/**
+ * Converts MySQL DAYOFWEEK() format to date-fns getDay() format
+ * @param {number} day - MySQL day of week (1-7), Sunday is 1
+ * @returns {number} date-fns day of week (0-6), Sunday is 0
+ * @description
+ * MySQL DAYOFWEEK(): 1 = Sunday, 2 = Monday, 3 = Tuesday, 4 = Wednesday, 5 = Thursday, 6 = Friday, 7 = Saturday
+ * date-fns getDay(): 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
+ */
+const convertMysqlDayOfWeekToDateFns = day => day - 1
 
 module.exports = {
   getDateOrDefault,
@@ -541,4 +560,6 @@ module.exports = {
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
   adjustDate,
+  getMonthYearExpressionFromFieldInTimeZone,
+  convertMysqlDayOfWeekToDateFns,
 }

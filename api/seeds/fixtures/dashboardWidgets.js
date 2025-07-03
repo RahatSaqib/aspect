@@ -1,24 +1,16 @@
 const { INTERNAL_DEVICE_IDS } = require('../../src/shared/constants')
 
-const commonUtilizationRateQuery = (dateCondition, dayCondition) => `
-  SELECT
-  CONCAT(
-    ROUND(
-      IFNULL(
-        SUM(resultCount)
-        /
+const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
+  SELECT CONCAT(ROUND(IFNULL(
+        SUM(resultCount)/
         SUM(dailyTestCapacity * GetWeekdaysInRangeCustom(
-          NOW(), 
-          DATE_FORMAT(NOW(), '%Y-%m-01'),
-          CASE 
-            WHEN customWorkingDays IS NOT NULL
-            THEN JSON_UNQUOTE(JSON_EXTRACT(customWorkingDays, '$.excludedDays'))
-            ELSE NULL
-          END
-        )) * 100
-      ,0)
-    ,2)
-  ,'%') AS cnt
+          ${endDate},
+          ${startDate},
+          customWorkingDays->>"$.excludedDays",
+          customWorkingDays->>"$.daysPerYear",
+          customWorkingDays->>"$.daysPerQuarter",
+          customWorkingDays->>"$.daysPerMonth")
+        ) * 100,0),2),'%') AS cnt
   FROM (
     SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, d.dailyTestCapacity, p.customWorkingDays
       FROM Device AS d
@@ -26,11 +18,11 @@ const commonUtilizationRateQuery = (dateCondition, dayCondition) => `
       INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
       INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
-      LEFT OUTER JOIN Result AS r ON d.id = r.deviceId 
+      LEFT OUTER JOIN Result AS r ON d.id = r.deviceId
         AND ${dateCondition}
-        AND ${dayCondition}
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dtc.hasResults = 1
+      AND dt.externalId = 'CepheidGeneXpert'
     GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
   ) AS innerQuery`
 
@@ -57,6 +49,7 @@ const errorRateQueryLast30Days = `SELECT
           BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
           AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
           AND dtc.hasResults = 1
+          AND dt.externalId = 'CepheidGeneXpert'
     GROUP BY r.deviceId, d.dailyTestCapacity
   ) AS innerQuery`
 
@@ -328,12 +321,18 @@ const utilizationRate = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: commonUtilizationRateQuery(
-    "DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)",
-    'DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7'
+    // this month
+    "r.endedOn >= CONVERT_TZ(DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), '%Y-%m-01'), '{timeZone}', 'UTC')", // r.endedOn > first day of the month in the country's timezone, converted to UTC
+    "DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'),'%Y-%m-01')", // first day of this month in the country's timezone, then
+    'NOW()'
   ),
   sqlForStatUnit: commonUtilizationRateQuery(
-    "DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') > r.endedOn AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') < r.endedOn",
-    'DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7'
+    // last month
+
+    `r.endedOn >= CONVERT_TZ(DATE_FORMAT(DATE_SUB(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), INTERVAL 1 MONTH), '%Y-%m-01'),'{timeZone}', 'UTC')
+       AND r.endedOn < CONVERT_TZ(DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), '%Y-%m-01'), '{timeZone}', 'UTC')`, // r.endedOn < first day of this month in the country's timezone, then converted to UTC
+    "DATE_FORMAT(DATE_SUB(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), INTERVAL 1 MONTH), '%Y-%m-01')", // first day of previous month in the country's timezone
+    "DATE_SUB(DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', '{timeZone}'), '%Y-%m-01'), INTERVAL 1 DAY)" // Last day of previous month in the country's timezone
   ),
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
@@ -2075,7 +2074,7 @@ const activeModuleBays = {
   subTitleI18nKey: null,
   sqlForIndicator: `
     SELECT SUM(g.moduleBaysUsed) AS cnt
-    FROM 
+    FROM
       (
         SELECT f.deviceId, MAX(f.moduleBaysUsed) AS moduleBaysUsed
         FROM FactDeviceModulesCount AS f
