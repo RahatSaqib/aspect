@@ -90,6 +90,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldNotes',
     defaultMessage: 'Notes',
   },
+  fieldHoursOfOperation: {
+    id: 'pages.SiteDetail.fieldHoursOfOperation',
+    defaultMessage: 'Hours of Operation',
+  },
   fieldEndingHours: {
     id: 'pages.SiteDetail.fieldEndingHours',
     defaultMessage: 'Hours of Operation End',

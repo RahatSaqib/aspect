@@ -1,6 +1,6 @@
-import React from 'react'
 import { Card, Checkbox, FormControlLabel, Grid } from '@mui/material'
 import PropTypes from 'prop-types'
+import React from 'react'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
@@ -12,6 +12,31 @@ import styles from '../SiteDetail.module.css'
 const messages = { ...commonDefinitions, ...localMessages }
 
 const formatHour = hour => (hour != null ? `${String(hour).padStart(2, '0')}:00` : '')
+
+const formatHoursOfOperation = (startHour, endHour) => {
+  const start = formatHour(startHour)
+  const end = formatHour(endHour)
+
+  // If both values are empty/null/undefined
+  if (!start && !end) {
+    return ''
+  }
+
+  // If only one value exists
+  if (start && !end) {
+    return `${start} -`
+  }
+  if (!start && end) {
+    return `- ${end}`
+  }
+
+  // If both values exist
+  if (start && end) {
+    return `${start} - ${end}`
+  }
+
+  return ''
+}
 
 const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
   const fields = [
@@ -35,8 +60,7 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
     { label: formatMessage(messages.fieldTimeZone), value: site.timezone },
     { label: formatMessage(messages.fieldLongitude), value: site.longitude },
     { label: formatMessage(messages.fieldLatitude), value: site.latitude },
-    { label: formatMessage(messages.fieldStartingHours), value: formatHour(site.hoursStart) },
-    { label: formatMessage(messages.fieldEndingHours), value: formatHour(site.hoursEnd) },
+    { label: formatMessage(messages.fieldHoursOfOperation), value: formatHoursOfOperation(site.hoursStart, site.hoursEnd) },
     { label: formatMessage(messages.fieldBelongTo), value: site.parentWarehouseName },
     { label: formatMessage(messages.fieldNotes), value: site.notes },
     {
