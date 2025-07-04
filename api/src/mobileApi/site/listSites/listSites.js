@@ -11,7 +11,8 @@ async function listSites(request) {
   const sitesInState = await getSitesInState(user.partnerId, stateId ?? user.stateId, type || ['clinic', 'lab'])
   const dataConstraints = await getConstraints(credentials)
   const userSites = await getUserSites(dataConstraints, type || ['clinic', 'lab'])
-  const nonUserSitesInState = sitesInState.filter(ss => !userSites.map(us => us.id).includes(ss.id))
+  const userSiteIds = userSites.map(us => us.id)
+  const nonUserSitesInState = sitesInState.filter(ss => !userSiteIds.includes(ss.id))
 
   const totalSites = _.sortBy(
     [...nonUserSitesInState, ...userSites].map(site => ({
