@@ -1,10 +1,10 @@
+import React, { useEffect, useRef, useState } from 'react'
 import { Box, Button, Card, Checkbox, FormControlLabel, Grid, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -42,31 +42,25 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const [submitting, setSubmitting] = useState(false)
 
   // Helper function to get default site type ID (lab)
-  const getDefaultSiteTypeId = useCallback(() => {
+  const getDefaultSiteTypeId = () => {
     if (!siteTypes) return null
     const labSiteType = siteTypes.find(st => st.externalId === SITE_TYPE_EXTERNAL_IDS.LAB)
     return labSiteType?.id || null
-  }, [siteTypes])
+  }
 
   // Helper function to check if site type is clinic
-  const isClinicSiteType = useCallback(
-    siteTypeId => {
-      if (!siteTypeId || !siteTypes) return false
-      const siteType = siteTypes.find(st => st.id === siteTypeId)
-      return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.CLINIC
-    },
-    [siteTypes]
-  )
+  const isClinicSiteType = siteTypeId => {
+    if (!siteTypeId || !siteTypes) return false
+    const siteType = siteTypes.find(st => st.id === siteTypeId)
+    return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.CLINIC
+  }
 
   // Helper function to check if site type is warehouse
-  const isWarehouseSiteType = useCallback(
-    siteTypeId => {
-      if (!siteTypeId || !siteTypes) return false
-      const siteType = siteTypes.find(st => st.id === siteTypeId)
-      return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE
-    },
-    [siteTypes]
-  )
+  const isWarehouseSiteType = siteTypeId => {
+    if (!siteTypeId || !siteTypes) return false
+    const siteType = siteTypes.find(st => st.id === siteTypeId)
+    return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE
+  }
 
   const [editSite, setEditSite] = useState({
     ...site,
@@ -80,9 +74,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
     excludeSiteIds: [site.id],
   })
 
-  // Track the original site type to detect changes
-  const [originalSiteTypeId] = useState(site.siteTypeId)
-
   // Use ref to track if we're in the initial load
   const isInitialLoad = useRef(true)
 
@@ -92,7 +83,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const isPristine = isEqual(site, editSite)
   const isWarehouse = isWarehouseSiteType(editSite.siteTypeId)
   const isNew = site.id === 0
-  const goBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
+  const goBack = () => gotoReturnUrl(navigate, location, '/browse/site')
 
   useEffect(
     () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
@@ -111,7 +102,9 @@ const SiteForm = ({ site, onLatLongChange }) => {
     // For new sites, always allow updates
     // For existing sites, only update if the site type has actually changed
     if (isNew || (!isNew && editSite.siteTypeId && editSite.siteTypeId !== previousSiteTypeId.current)) {
-      const shouldAllowSampleRegistration = isClinicSiteType(editSite.siteTypeId)
+      const siteType = siteTypes?.find(st => st.id === editSite.siteTypeId)
+      const shouldAllowSampleRegistration = siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.CLINIC
+
       setEditSite(prev => ({
         ...prev,
         sampleRegistrationAllowed: shouldAllowSampleRegistration,
@@ -442,7 +435,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               multiline
               rows={4}
               fullWidth
-              defaultValue={editSite.notes}
+              value={editSite.notes || ''}
               onChange={e => setEditSite({ ...editSite, notes: e.target.value })}
             />
           </div>
