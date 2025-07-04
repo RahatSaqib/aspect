@@ -1,6 +1,6 @@
+import React from 'react'
 import { Card, Checkbox, FormControlLabel, Grid } from '@mui/material'
 import PropTypes from 'prop-types'
-import React from 'react'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
@@ -60,7 +60,10 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
     { label: formatMessage(messages.fieldTimeZone), value: site.timezone },
     { label: formatMessage(messages.fieldLongitude), value: site.longitude },
     { label: formatMessage(messages.fieldLatitude), value: site.latitude },
-    { label: formatMessage(messages.fieldHoursOfOperation), value: formatHoursOfOperation(site.hoursStart, site.hoursEnd) },
+    {
+      label: formatMessage(messages.fieldHoursOfOperation),
+      value: formatHoursOfOperation(site.hoursStart, site.hoursEnd),
+    },
     { label: formatMessage(messages.fieldBelongTo), value: site.parentWarehouseName },
     { label: formatMessage(messages.fieldNotes), value: site.notes },
     {
