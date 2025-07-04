@@ -64,8 +64,6 @@ function normalizeFields(site) {
   if (Number.isNaN(site.hoursEnd)) {
     site.hoursStart = null
   }
-  // Note: sampleRegistrationAllowed default value will be set in the service layer
-  // where we can perform database queries to get the clinic site type ID
   return site
 }
 

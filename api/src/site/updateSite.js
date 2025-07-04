@@ -3,7 +3,13 @@ const { knex } = require('../db')
 const { getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
-const { getExistingSiteExcludingCurrent, updateSite, updateSiteConsumable, checkSiteAccess } = require('./common/db')
+const {
+  getExistingSiteExcludingCurrent,
+  updateSite,
+  updateSiteConsumable,
+  checkSiteAccess,
+  getSiteTypeIdByExternalId,
+} = require('./common/db')
 const { throwExistingSiteError } = require('./common/validations')
 const { updateTagsById } = require('../tag/service')
 
@@ -29,7 +35,7 @@ async function update(request) {
 
   // Convert siteTypeExternalId to siteTypeId if provided
   if (siteParams.siteTypeExternalId && !siteParams.siteTypeId) {
-    const siteType = await knex('SiteType').where('externalId', siteParams.siteTypeExternalId).first('id')
+    const siteType = await getSiteTypeIdByExternalId(siteParams.siteTypeExternalId)
     if (siteType) {
       siteParams.siteTypeId = siteType.id
     }

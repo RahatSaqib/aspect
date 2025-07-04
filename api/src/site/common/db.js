@@ -205,6 +205,10 @@ function getSiteListQuery(query, dataConstraints) {
   return siteQuery
 }
 
+function getSiteTypeIdByExternalId(siteTypeExternalId) {
+  return knex('SiteType').where('externalId', siteTypeExternalId).first('id')
+}
+
 function getSiteListModifiedQuery(query, dataConstraints) {
   const getItems = getSiteListQuery(query, dataConstraints)
     .clone()
@@ -230,4 +234,5 @@ module.exports = {
   getSitesQuery,
   getSiteListQuery,
   getSiteListModifiedQuery,
+  getSiteTypeIdByExternalId,
 }
