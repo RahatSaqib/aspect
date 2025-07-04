@@ -21,12 +21,12 @@ const { SELECT_SHOW_FIELDS } = require('./common/constants')
 async function listSites(request) {
   const { query, auth } = request
 
-  // To ensure correct database queries, the `stateId` and `lgaId` values should be converted from empty strings to `null`.
-  ;['stateId', 'lgaId'].forEach(property => {
-    if (query[property] === '') {
-      query[property] = null
-    }
-  })
+    // To ensure correct database queries, the `stateId` and `lgaId` values should be converted from empty strings to `null`.
+    ;['stateId', 'lgaId'].forEach(property => {
+      if (query[property] === '') {
+        query[property] = null
+      }
+    })
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
@@ -54,13 +54,14 @@ function getSite(siteId, dataConstraints) {
     .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Site as spw', 's.parentWarehouseId', 'spw.id')
     .where('s.id', siteId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .first([
       ...SELECT_SHOW_FIELDS,
       getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
     ])
-    .select('st.name as siteType', 'st.externalId as siteTypeExternalId')
+    .select('st.name as siteType', 'st.externalId as siteTypeExternalId', 'spw.name as parentWarehouseName')
 }
 
 async function showSite(request) {
