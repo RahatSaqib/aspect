@@ -73,7 +73,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
     ...(!site.countryId ? { countryId: user.countryId } : {}),
     // Use siteTypeId from site data, or default to lab if not provided
     siteTypeId: site.siteTypeId || getDefaultSiteTypeId(),
-    sampleRegistrationAllowed: site.sampleRegistrationAllowed ?? isClinicSiteType(site.siteTypeId),
+    sampleRegistrationAllowed: Boolean(site.sampleRegistrationAllowed ?? isClinicSiteType(site.siteTypeId)),
   })
   const [queryParamsForWarehouse] = useState({
     siteTypeExternalIds: [SITE_TYPE_EXTERNAL_IDS.WAREHOUSE], // This is for the SiteListSelect component which expects external IDs
