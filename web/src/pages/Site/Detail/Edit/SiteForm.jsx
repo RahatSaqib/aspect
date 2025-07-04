@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
 import { Box, Button, Card, Checkbox, FormControlLabel, Grid, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -42,25 +42,31 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const [submitting, setSubmitting] = useState(false)
 
   // Helper function to get default site type ID (lab)
-  const getDefaultSiteTypeId = () => {
+  const getDefaultSiteTypeId = useCallback(() => {
     if (!siteTypes) return null
     const labSiteType = siteTypes.find(st => st.externalId === SITE_TYPE_EXTERNAL_IDS.LAB)
     return labSiteType?.id || null
-  }
+  }, [siteTypes])
 
   // Helper function to check if site type is clinic
-  const isClinicSiteType = siteTypeId => {
-    if (!siteTypeId || !siteTypes) return false
-    const siteType = siteTypes.find(st => st.id === siteTypeId)
-    return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.CLINIC
-  }
+  const isClinicSiteType = useCallback(
+    siteTypeId => {
+      if (!siteTypeId || !siteTypes) return false
+      const siteType = siteTypes.find(st => st.id === siteTypeId)
+      return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.CLINIC
+    },
+    [siteTypes]
+  )
 
   // Helper function to check if site type is warehouse
-  const isWarehouseSiteType = siteTypeId => {
-    if (!siteTypeId || !siteTypes) return false
-    const siteType = siteTypes.find(st => st.id === siteTypeId)
-    return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE
-  }
+  const isWarehouseSiteType = useCallback(
+    siteTypeId => {
+      if (!siteTypeId || !siteTypes) return false
+      const siteType = siteTypes.find(st => st.id === siteTypeId)
+      return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE
+    },
+    [siteTypes]
+  )
 
   const [editSite, setEditSite] = useState({
     ...site,
@@ -74,6 +80,15 @@ const SiteForm = ({ site, onLatLongChange }) => {
     excludeSiteIds: [site.id],
   })
 
+  // Track the original site type to detect changes
+  const [originalSiteTypeId] = useState(site.siteTypeId)
+
+  // Use ref to track if we're in the initial load
+  const isInitialLoad = useRef(true)
+
+  // Use ref to track the previous site type for comparison
+  const previousSiteTypeId = useRef(site.siteTypeId)
+
   const isPristine = isEqual(site, editSite)
   const isWarehouse = isWarehouseSiteType(editSite.siteTypeId)
   const isNew = site.id === 0
@@ -83,6 +98,28 @@ const SiteForm = ({ site, onLatLongChange }) => {
     () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
     [editSite.latitude, editSite.longitude, onLatLongChange]
   )
+
+  // Auto-update sampleRegistrationAllowed only when user changes site type (not on initial load)
+  useEffect(() => {
+    // Skip the initial load only for edit mode (not for new sites)
+    if (isInitialLoad.current && !isNew) {
+      isInitialLoad.current = false
+      previousSiteTypeId.current = editSite.siteTypeId
+      return
+    }
+
+    // For new sites, always allow updates
+    // For existing sites, only update if the site type has actually changed
+    if (isNew || (!isNew && editSite.siteTypeId && editSite.siteTypeId !== previousSiteTypeId.current)) {
+      const shouldAllowSampleRegistration = isClinicSiteType(editSite.siteTypeId)
+      setEditSite(prev => ({
+        ...prev,
+        sampleRegistrationAllowed: shouldAllowSampleRegistration,
+      }))
+      // Update the previous site type
+      previousSiteTypeId.current = editSite.siteTypeId
+    }
+  }, [editSite.siteTypeId, siteTypes, isNew])
 
   const updateSiteLatLong = async address => {
     getLatLongFromAddress(address).then(({ lat, lng }) => {
@@ -421,7 +458,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={editSite.sampleRegistrationAllowed || false}
+                    checked={Boolean(editSite.sampleRegistrationAllowed)}
                     onChange={e => setEditSite({ ...editSite, sampleRegistrationAllowed: e.target.checked })}
                     color="primary"
                   />
