@@ -188,6 +188,11 @@ async function listSitesForTransferSelectList(request) {
 
 async function getListSitesForSelectList(dataConstraints, opt = {}) {
   const { excludeSiteIds, mode, siteTypeExternalIds, tags } = opt
+
+  // Debug logging
+  console.log('getListSitesForSelectList - dataConstraints:', dataConstraints)
+  console.log('getListSitesForSelectList - opt:', opt)
+
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('SiteType as sType', 's.siteTypeId', 'sType.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -234,6 +239,22 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     ]
   }
 
+  // Get sites without constraints for debugging
+  const sitesWithoutConstraints = await knex('Site as s')
+    .leftOuterJoin('SiteType as sType', 's.siteTypeId', 'sType.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Site as stp', 's.parentWarehouseId', 'stp.id')
+    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
+    .orderBy(['s.name'], 'asc')
+    .select(columnsToSelect)
+    .groupBy('s.id')
+    .distinct()
+
+  console.log('getListSitesForSelectList - sites without constraints:', sitesWithoutConstraints.length)
+
   sitesQuery = sitesQuery
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')
@@ -242,6 +263,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     .distinct()
 
   const sites = await sitesQuery
+  console.log('getListSitesForSelectList - sites with constraints:', sites.length)
   /**
    * convert csv string of siteConsumables into array of numbers
    */

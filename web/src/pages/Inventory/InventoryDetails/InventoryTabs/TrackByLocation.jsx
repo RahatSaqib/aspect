@@ -7,7 +7,7 @@ import { useUpdateConsumableSitesBatch } from '../../../../hooks/inventory/useUp
 import useSiteList from '../../../../hooks/site/useSiteList'
 
 export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) => {
-  const { data: sites = [] } = useSiteList()
+  const { data: sites = [], isLoading, error } = useSiteList()
   const updateConsumableSitesBatch = useUpdateConsumableSitesBatch()
   const { formatMessage } = useIntl()
 
@@ -38,7 +38,7 @@ export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) =
       } finally {
         setIsUpdating(false)
       }
-    }, 1000),
+    }, 3000),
     [consumableId, updateConsumableSitesBatch, siteIds]
   )
 
@@ -75,18 +75,30 @@ export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) =
         <span>Track this consumable at the following sites:</span>
       </Box>
 
-      <CheckBoxList
-        items={sites}
-        selectedItems={localSelectedSiteIds}
-        onToggle={handleSiteToggle}
-        onSelectAll={handleSelectAll}
-        isAllSelected={isAllSelected}
-        isIndeterminate={isIndeterminate}
-        disabledItems={disabledSites}
-        isLoading={updateConsumableSitesBatch.isLoading || isUpdating}
-        getItemId={site => site.id}
-        getItemLabel={site => site.name}
-      />
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" p={2}>
+          <span>Loading sites...</span>
+        </Box>
+      ) : error ? (
+        <Box display="flex" justifyContent="center" p={2}>
+          <span>Error loading sites: {error.message}</span>
+        </Box>
+      ) : (
+        <CheckBoxList
+          listData={sites}
+          selectedList={localSelectedSiteIds}
+          onSelect={(checked, siteId) => {
+            if (siteId) {
+              handleSiteToggle(siteId, checked)
+            } else {
+              handleSelectAll(checked)
+            }
+          }}
+          disabledList={disabledSites}
+          isChanging={updateConsumableSitesBatch.isLoading || isUpdating}
+          isLoading={false}
+        />
+      )}
     </>
   )
 }

@@ -111,6 +111,15 @@ async function checkSiteAccess(siteId, dataConstraints) {
   return knex('Site as s').where('s.id', siteId).modify(addConstraints, dataConstraints, { site: 's' }).first('s.id')
 }
 
+async function checkSitesAccess(siteIds, dataConstraints) {
+  const accessibleSites = await knex('Site as s')
+    .whereIn('s.id', siteIds)
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .select('s.id')
+
+  return accessibleSites.length
+}
+
 const getSiteIdByName = async siteName => {
   const site = await knex('Site').where('name', siteName).first('id')
   return site ? site.id : null
@@ -281,6 +290,7 @@ module.exports = {
   updateSiteConsumablesBatch,
   insertSiteConsumables,
   checkSiteAccess,
+  checkSitesAccess,
   getSiteIdByName,
   getLinkedResults,
   getSamplesRegisteredCount,
