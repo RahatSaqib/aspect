@@ -1,40 +1,92 @@
-import React from 'react'
+import { Box } from '@mui/material'
+import debounce from 'lodash/debounce'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import CheckBoxList from '../../../../cleanComponents/CheckBoxList'
+import { useUpdateConsumableSitesBatch } from '../../../../hooks/inventory/useUpdateConsumableSitesBatch'
 import useSiteList from '../../../../hooks/site/useSiteList'
-import useUpdateConsumable from '../../../../hooks/site/useUpdateConsumable'
 
 export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) => {
-  const { mutateAsync: changeApplicable, isLoading: isChanging } = useUpdateConsumable()
-  const { data: sites, isLoading } = useSiteList()
+  const { data: sites = [] } = useSiteList()
+  const updateConsumableSitesBatch = useUpdateConsumableSitesBatch()
+  const { formatMessage } = useIntl()
 
-  const handleSelectAll = (checked, id) => {
-    if (id) {
-      changeApplicable({
-        siteId: id,
-        modify: checked ? 'add' : 'remove',
-        consumable: { id: consumableId },
-      })
-    } else {
-      sites.forEach(({ id }) => {
-        if (!disabledSites.includes(id)) {
-          changeApplicable({
-            siteId: id,
-            modify: checked ? 'add' : 'remove',
-            consumable: { id: consumableId },
-          })
-        }
-      })
-    }
-  }
+  // Local state to track changes before sending to backend
+  const [localSelectedSiteIds, setLocalSelectedSiteIds] = useState(siteIds || [])
+  const [isUpdating, setIsUpdating] = useState(false)
+
+  // Update local state when prop changes
+  useEffect(() => {
+    setLocalSelectedSiteIds(siteIds || [])
+  }, [siteIds])
+
+  // Debounced function to send batch updates
+  const debouncedUpdate = useCallback(
+    debounce(async newSiteIds => {
+      if (!consumableId) return
+
+      setIsUpdating(true)
+      try {
+        await updateConsumableSitesBatch.mutateAsync({
+          consumableId,
+          siteIds: newSiteIds,
+        })
+      } catch (error) {
+        console.error('Failed to update sites:', error)
+        // Revert local state on error
+        setLocalSelectedSiteIds(siteIds || [])
+      } finally {
+        setIsUpdating(false)
+      }
+    }, 1000),
+    [consumableId, updateConsumableSitesBatch, siteIds]
+  )
+
+  const handleSiteToggle = useCallback(
+    (siteId, checked) => {
+      const newSelectedSiteIds = checked
+        ? [...localSelectedSiteIds, siteId]
+        : localSelectedSiteIds.filter(id => id !== siteId)
+
+      setLocalSelectedSiteIds(newSelectedSiteIds)
+      debouncedUpdate(newSelectedSiteIds)
+    },
+    [localSelectedSiteIds, debouncedUpdate]
+  )
+
+  const handleSelectAll = useCallback(
+    checked => {
+      const availableSiteIds = sites.filter(site => !disabledSites.includes(site.id)).map(site => site.id)
+
+      const newSelectedSiteIds = checked ? availableSiteIds : []
+      setLocalSelectedSiteIds(newSelectedSiteIds)
+      debouncedUpdate(newSelectedSiteIds)
+    },
+    [sites, disabledSites, debouncedUpdate]
+  )
+
+  const isAllSelected =
+    sites.length > 0 && sites.every(site => localSelectedSiteIds.includes(site.id) || disabledSites.includes(site.id))
+  const isIndeterminate = !isAllSelected && sites.some(site => localSelectedSiteIds.includes(site.id))
 
   return (
-    <CheckBoxList
-      listData={sites}
-      isChanging={isChanging}
-      disabledList={disabledSites}
-      selectedList={siteIds}
-      onSelect={handleSelectAll}
-      isLoading={isLoading}
-    />
+    <>
+      <Box display="flex" alignItems="center" mb={2}>
+        <span>Track this consumable at the following sites:</span>
+      </Box>
+
+      <CheckBoxList
+        items={sites}
+        selectedItems={localSelectedSiteIds}
+        onToggle={handleSiteToggle}
+        onSelectAll={handleSelectAll}
+        isAllSelected={isAllSelected}
+        isIndeterminate={isIndeterminate}
+        disabledItems={disabledSites}
+        isLoading={updateConsumableSitesBatch.isLoading || isUpdating}
+        getItemId={site => site.id}
+        getItemLabel={site => site.name}
+      />
+    </>
   )
 }

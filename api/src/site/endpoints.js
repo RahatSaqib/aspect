@@ -2,7 +2,11 @@ const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const createSite = require('./createSite')
-const { update: updateSite, updateConsumable: updateSiteConsumable } = require('./updateSite')
+const {
+  update: updateSite,
+  updateConsumable: updateSiteConsumable,
+  updateConsumablesBatch: updateSiteConsumablesBatch,
+} = require('./updateSite')
 const {
   listSites,
   showSite,
@@ -12,7 +16,12 @@ const {
   disableSite,
   getReportingSites,
 } = require('./service')
-const { postSchema, updateSchema, updateConsumableSchema } = require('./common/validations')
+const {
+  postSchema,
+  updateSchema,
+  updateConsumableSchema,
+  updateConsumablesBatchSchema,
+} = require('./common/validations')
 
 const { exportSites, exportReporters } = require('./serviceReports')
 const { reportingSitesQueryParams, reportingSitesResponse } = require('./common/validation/reportingSite')
@@ -185,6 +194,18 @@ const routes = [
       validate: updateConsumableSchema,
     },
   },
+  {
+    method: 'PUT',
+    path: '/site/consumables/{siteId}',
+    handler: updateSiteConsumablesBatch,
+    config: {
+      description: 'Update Site Consumables Batch',
+      notes: 'Update multiple consumables for a site in a single atomic operation',
+      auth: { scope: ['site', '+inventory'] },
+      validate: updateConsumablesBatchSchema,
+    },
+  },
+
   {
     method: 'GET',
     path: '/site/select-list/{mode?}',

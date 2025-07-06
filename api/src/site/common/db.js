@@ -53,6 +53,60 @@ async function updateSiteConsumable(knex, siteId, { modify, consumableId }) {
   }
 }
 
+async function updateSiteConsumablesBatch(knex, siteId, { consumableIds }) {
+  // Get current consumables for this site
+  const currentConsumables = await knex('SiteConsumable')
+    .where({ siteId })
+    .select('consumableId')
+    .then(rows => rows.map(row => row.consumableId))
+
+  // Find consumables to add and remove
+  const consumablesToAdd = consumableIds.filter(id => !currentConsumables.includes(id))
+  const consumablesToRemove = currentConsumables.filter(id => !consumableIds.includes(id))
+
+  // Check if any consumables to remove have inventory or unreconciled transactions
+  if (consumablesToRemove.length > 0) {
+    const hasInventory = await knex('InventoryItem')
+      .where({ siteId })
+      .whereIn('consumableId', consumablesToRemove)
+      .where('quantityOnHand', '>', 0)
+      .first()
+
+    if (hasInventory) {
+      throw Boom.conflict('Unable to remove consumables with existing inventory')
+    }
+
+    // Check for unreconciled results
+    const hasUnreconciledResults = await knex('Result as r')
+      .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
+      .where('r.siteId', siteId)
+      .whereIn('ca.consumableId', consumablesToRemove)
+      .whereNull('r.reconciliationDate')
+      .first()
+
+    if (hasUnreconciledResults) {
+      throw Boom.conflict('Unable to remove consumables with unreconciled transactions')
+    }
+  }
+
+  // Perform atomic batch operation
+  return knex.transaction(async trx => {
+    // Remove consumables that are no longer selected
+    if (consumablesToRemove.length > 0) {
+      await trx('SiteConsumable').where({ siteId }).whereIn('consumableId', consumablesToRemove).del()
+    }
+
+    // Add new consumables
+    if (consumablesToAdd.length > 0) {
+      const rowsToInsert = consumablesToAdd.map(consumableId => ({
+        siteId,
+        consumableId,
+      }))
+      await trx('SiteConsumable').insert(rowsToInsert).onConflict(['siteId', 'consumableId']).ignore()
+    }
+  })
+}
+
 async function checkSiteAccess(siteId, dataConstraints) {
   return knex('Site as s').where('s.id', siteId).modify(addConstraints, dataConstraints, { site: 's' }).first('s.id')
 }
@@ -224,6 +278,7 @@ module.exports = {
   getExistingSiteExcludingCurrent,
   updateSite,
   updateSiteConsumable,
+  updateSiteConsumablesBatch,
   insertSiteConsumables,
   checkSiteAccess,
   getSiteIdByName,
