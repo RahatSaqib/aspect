@@ -2,11 +2,7 @@ const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const createSite = require('./createSite')
-const {
-  update: updateSite,
-  updateConsumable: updateSiteConsumable,
-  updateConsumablesBatch: updateSiteConsumablesBatch,
-} = require('./updateSite')
+const { update: updateSite, updateConsumablesBatch: updateSiteConsumablesBatch } = require('./updateSite')
 const {
   listSites,
   showSite,
@@ -16,12 +12,7 @@ const {
   disableSite,
   getReportingSites,
 } = require('./service')
-const {
-  postSchema,
-  updateSchema,
-  updateConsumableSchema,
-  updateConsumablesBatchSchema,
-} = require('./common/validations')
+const { postSchema, updateSchema, updateConsumablesBatchSchema } = require('./common/validations')
 
 const { exportSites, exportReporters } = require('./serviceReports')
 const { reportingSitesQueryParams, reportingSitesResponse } = require('./common/validation/reportingSite')
@@ -183,17 +174,7 @@ const routes = [
       validate: updateSchema,
     },
   },
-  {
-    method: 'PUT',
-    path: '/site/consumable/{siteId}',
-    handler: updateSiteConsumable,
-    config: {
-      description: 'Update Site Consumables',
-      notes: 'Add or Remove consumable from a site',
-      auth: { scope: ['site', '+inventory'] },
-      validate: updateConsumableSchema,
-    },
-  },
+
   {
     method: 'PUT',
     path: '/site/consumables/{siteId}',
