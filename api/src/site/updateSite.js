@@ -33,15 +33,6 @@ async function update(request) {
 
   const siteParams = await normalizeParameters(payload, user.countryId)
 
-  // Convert siteTypeExternalId to siteTypeId if provided
-  if (siteParams.siteTypeExternalId && !siteParams.siteTypeId) {
-    const siteType = await getSiteTypeIdByExternalId(siteParams.siteTypeExternalId)
-    if (siteType) {
-      siteParams.siteTypeId = siteType.id
-    }
-    delete siteParams.siteTypeExternalId
-  }
-
   await validate(params.siteId, auth.credentials, siteParams)
 
   await updateSite(params.siteId, siteParams)

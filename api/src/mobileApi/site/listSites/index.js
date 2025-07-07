@@ -1,3 +1,3 @@
-const listSites = require('./listSites')
+const { listSites } = require('./listSites')
 
 module.exports = { listSites }
