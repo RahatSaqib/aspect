@@ -127,6 +127,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const handleSubmit = async data => {
     setSubmitting(true)
     if (!data.longitude || !data.latitude) {
+      delete editSite.parentWarehouseName
       await updateSiteLatLong({
         country: editSite.country,
         state: editSite.state,

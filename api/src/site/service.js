@@ -21,12 +21,12 @@ const { SELECT_SHOW_FIELDS } = require('./common/constants')
 async function listSites(request) {
   const { query, auth } = request
 
-    // To ensure correct database queries, the `stateId` and `lgaId` values should be converted from empty strings to `null`.
-    ;['stateId', 'lgaId'].forEach(property => {
-      if (query[property] === '') {
-        query[property] = null
-      }
-    })
+  // To ensure correct database queries, the `stateId` and `lgaId` values should be converted from empty strings to `null`.
+  ;['stateId', 'lgaId'].forEach(property => {
+    if (query[property] === '') {
+      query[property] = null
+    }
+  })
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
