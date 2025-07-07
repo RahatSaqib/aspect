@@ -1,6 +1,6 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Box } from '@mui/material'
 import debounce from 'lodash/debounce'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import CheckBoxList from '../../../../cleanComponents/CheckBoxList'
