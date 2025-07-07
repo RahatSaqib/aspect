@@ -1,6 +1,7 @@
-import { Box, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
+import { Box, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
+import { toast } from 'react-toastify'
 import { CheckBoxList } from '../../../cleanComponents'
 import { useConsumable } from '../../../hooks/inventory/useConsumable'
 import { useUpdateConsumablesBatch } from '../../../hooks/site/useUpdateConsumable'
@@ -28,16 +29,23 @@ const Consumables = ({ consumableIds, siteId, disabledSites }) => {
         clearTimeout(debounceTimer)
       }
 
-      const timer = setTimeout(() => {
-        updateBatch({
-          siteId,
-          consumableIds: newSelectedIds,
-        })
-      }, 1000) // 1 second debounce
+      const timer = setTimeout(async () => {
+        try {
+          await updateBatch({
+            siteId,
+            consumableIds: newSelectedIds,
+          })
+          toast.success(formatMessage(messages.consumablesUpdatedSuccessfully))
+        } catch (error) {
+          toast.error(formatMessage(messages.errorUpdatingConsumables))
+          // Revert local state on error
+          setLocalSelectedIds(consumableIds || [])
+        }
+      }, 1500) // debounce time
 
       setDebounceTimer(timer)
     },
-    [debounceTimer, siteId, updateBatch]
+    [debounceTimer, siteId, updateBatch, formatMessage, consumableIds]
   )
 
   const handleSelectAll = (checked, id) => {

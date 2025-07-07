@@ -5,6 +5,14 @@ export default defineMessages({
     id: 'pages.InventoryTabs.New.assay',
     defaultMessage: 'Assay',
   },
+  errorUpdatingSites: {
+    id: 'pages.InventoryTabs.New.errorUpdatingSites',
+    defaultMessage: 'Error updating sites',
+  },
+  sitesUpdatedSuccessfully: {
+    id: 'pages.InventoryTabs.New.sitesUpdatedSuccessfully',
+    defaultMessage: 'Sites updated successfully',
+  },
   quantity: {
     id: 'pages.InventoryTabs.New.quantity',
     defaultMessage: 'Quantity',

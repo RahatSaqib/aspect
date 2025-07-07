@@ -5,8 +5,6 @@ import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
 import { INVENTORY_KEY } from '../inventory/inventoryKeys'
 import { SITE_KEY, SITE_KEY_BATCH_UPDATE_CONSUMABLE } from './siteKeys'
 
-
-
 function updateConsumablesBatch({ siteId, consumableIds }) {
   return fetchWrapperForQueries({
     endpoint: replaceRouteParams(SITE_KEY_BATCH_UPDATE_CONSUMABLE, { siteId }),
@@ -23,7 +21,8 @@ function updateConsumablesBatch({ siteId, consumableIds }) {
             },
             message: {
               id: 'errorResponseMessages.updateConsumablesBatch.message',
-              defaultMessage: 'Some consumables could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action',
+              defaultMessage:
+                'Some consumables could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action',
             },
           }),
         },
@@ -31,10 +30,6 @@ function updateConsumablesBatch({ siteId, consumableIds }) {
     },
   })
 }
-
-
-
-
 
 export function useUpdateConsumablesBatch() {
   const queryClient = useQueryClient()
@@ -50,5 +45,3 @@ export function useUpdateConsumablesBatch() {
 
   return mutation
 }
-
-

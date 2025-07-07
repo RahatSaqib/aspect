@@ -1,15 +1,18 @@
 import { Box } from '@mui/material'
 import debounce from 'lodash/debounce'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { toast } from 'react-toastify'
 import CheckBoxList from '../../../../cleanComponents/CheckBoxList'
 import { useUpdateConsumableSitesBatch } from '../../../../hooks/inventory/useUpdateConsumableSitesBatch'
 import useSiteList from '../../../../hooks/site/useSiteList'
+import messages from './messages'
 
 export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) => {
   const { data: sites = [], isLoading, error } = useSiteList()
   const updateConsumableSitesBatch = useUpdateConsumableSitesBatch()
   const { formatMessage } = useIntl()
+  const debouncedUpdateRef = useRef(null)
 
   // Local state to track changes before sending to backend
   const [localSelectedSiteIds, setLocalSelectedSiteIds] = useState(siteIds || [])
@@ -20,27 +23,42 @@ export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) =
     setLocalSelectedSiteIds(siteIds || [])
   }, [siteIds])
 
-  // Debounced function to send batch updates
-  const debouncedUpdate = useCallback(
-    debounce(async newSiteIds => {
-      if (!consumableId) return
+  // Create the debounced function once and store it in ref
+  useEffect(() => {
+    const debouncedFunction = debounce(async newSiteIds => {
+      // Get current values at the time of execution
+      const currentConsumableId = consumableId
+      const currentSiteIds = siteIds || []
+
+      if (!currentConsumableId) return
 
       setIsUpdating(true)
       try {
         await updateConsumableSitesBatch.mutateAsync({
-          consumableId,
+          consumableId: currentConsumableId,
           siteIds: newSiteIds,
         })
+        toast.success(formatMessage(messages.sitesUpdatedSuccessfully))
       } catch (error) {
+        toast.error(formatMessage(messages.errorUpdatingSites))
         console.error('Failed to update sites:', error)
         // Revert local state on error
-        setLocalSelectedSiteIds(siteIds || [])
+        setLocalSelectedSiteIds(currentSiteIds)
       } finally {
         setIsUpdating(false)
       }
-    }, 3000),
-    [consumableId, updateConsumableSitesBatch, siteIds]
-  )
+    }, 1500) // debounce time
+
+    debouncedUpdateRef.current = debouncedFunction
+
+    // Cleanup function
+    return () => {
+      if (debouncedFunction) {
+        debouncedFunction.cancel()
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty dependency array to create function only once
 
   const handleSiteToggle = useCallback(
     (siteId, checked) => {
@@ -49,9 +67,13 @@ export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) =
         : localSelectedSiteIds.filter(id => id !== siteId)
 
       setLocalSelectedSiteIds(newSelectedSiteIds)
-      debouncedUpdate(newSelectedSiteIds)
+
+      // Call the debounced function - this will reset the timer
+      if (debouncedUpdateRef.current) {
+        debouncedUpdateRef.current(newSelectedSiteIds)
+      }
     },
-    [localSelectedSiteIds, debouncedUpdate]
+    [localSelectedSiteIds]
   )
 
   const handleSelectAll = useCallback(
@@ -60,14 +82,14 @@ export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) =
 
       const newSelectedSiteIds = checked ? availableSiteIds : []
       setLocalSelectedSiteIds(newSelectedSiteIds)
-      debouncedUpdate(newSelectedSiteIds)
-    },
-    [sites, disabledSites, debouncedUpdate]
-  )
 
-  const isAllSelected =
-    sites.length > 0 && sites.every(site => localSelectedSiteIds.includes(site.id) || disabledSites.includes(site.id))
-  const isIndeterminate = !isAllSelected && sites.some(site => localSelectedSiteIds.includes(site.id))
+      // Call the debounced function - this will reset the timer
+      if (debouncedUpdateRef.current) {
+        debouncedUpdateRef.current(newSelectedSiteIds)
+      }
+    },
+    [sites, disabledSites]
+  )
 
   return (
     <>

@@ -600,9 +600,9 @@ async function getReconciliationList(query, dataConstraints) {
       'c.id',
       ...(query.breakOutByLot
         ? consumableStrategy.filterFields({
-          lotNumberField: 'r.consumableLot',
-          expiresOnField: 'r.consumableExpirationDate',
-        })
+            lotNumberField: 'r.consumableLot',
+            expiresOnField: 'r.consumableExpirationDate',
+          })
         : []),
     ])
     .modify(queryBuilder => {
@@ -628,9 +628,9 @@ async function getReconciliationList(query, dataConstraints) {
       'l.name as lgaName',
       ...(query.breakOutByLot
         ? consumableStrategy.filterFields({
-          lotNumberField: 'r.consumableLot',
-          expiresOnField: 'r.consumableExpirationDate as expiresOn',
-        })
+            lotNumberField: 'r.consumableLot',
+            expiresOnField: 'r.consumableExpirationDate as expiresOn',
+          })
         : []),
     ])
 
@@ -694,10 +694,7 @@ async function updateConsumableSitesBatch(knex, consumableId, { siteIds }) {
   return knex.transaction(async trx => {
     // Remove consumable from sites that are no longer selected
     if (sitesToRemove.length > 0) {
-      await trx('SiteConsumable')
-        .where({ consumableId })
-        .whereIn('siteId', sitesToRemove)
-        .del()
+      await trx('SiteConsumable').where({ consumableId }).whereIn('siteId', sitesToRemove).del()
     }
 
     // Add consumable to new sites
@@ -706,10 +703,7 @@ async function updateConsumableSitesBatch(knex, consumableId, { siteIds }) {
         siteId,
         consumableId,
       }))
-      await trx('SiteConsumable')
-        .insert(rowsToInsert)
-        .onConflict(['siteId', 'consumableId'])
-        .ignore()
+      await trx('SiteConsumable').insert(rowsToInsert).onConflict(['siteId', 'consumableId']).ignore()
     }
   })
 }

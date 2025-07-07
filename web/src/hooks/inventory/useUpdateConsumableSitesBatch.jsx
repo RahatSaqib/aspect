@@ -21,7 +21,8 @@ function updateConsumableSitesBatch({ consumableId, siteIds }) {
             },
             message: {
               id: 'errorResponseMessages.updateConsumableSitesBatch.message',
-              defaultMessage: 'Some sites could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action',
+              defaultMessage:
+                'Some sites could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action',
             },
           }),
         },
@@ -33,7 +34,7 @@ function updateConsumableSitesBatch({ consumableId, siteIds }) {
 export function useUpdateConsumableSitesBatch() {
   const queryClient = useQueryClient()
   const mutation = useMutation(variables => updateConsumableSitesBatch(variables), {
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       queryClient.refetchQueries([SITE_KEY, 'list'])
       queryClient.refetchQueries([SITE_KEY, 'table'])
       queryClient.refetchQueries([INVENTORY_KEY, 'consumable'])
