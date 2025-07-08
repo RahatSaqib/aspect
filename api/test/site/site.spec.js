@@ -268,7 +268,7 @@ describe('Site routes', () => {
           'devices',
           'contacts',
           'siteType',
-          'siteTypeExternalId',
+          'parentWarehouseName',
         ])
         const params = { ...newSiteData, street2: newStreet2, tags: 'Tag', sampleRegistrationAllowed: true }
         const updateSiteResponse = await server
