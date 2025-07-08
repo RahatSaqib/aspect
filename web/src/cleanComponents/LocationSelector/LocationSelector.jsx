@@ -75,10 +75,6 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validator
           countryId={selectedCountry.id}
           stateId={selectedState.id}
           lgaId={selectedLga.id}
-          error={validators.lga.error}
-          helperText={formatMessage(messages.isRequired, {
-            entity: getCustomMessage(formatMessage, messages, 'lga', user),
-          })}
           tabIndex="0"
           aria-haspopup
           floatingLabelText={getCustomMessage(formatMessage, messages, 'lga', user)}
