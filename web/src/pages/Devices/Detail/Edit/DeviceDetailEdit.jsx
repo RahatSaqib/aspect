@@ -38,6 +38,34 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const [error, setError] = useState({})
   const [submitting, setSubmitting] = useState(false)
 
+  // Validation function to check a single numeric field
+  const validateNumericField = (value, min, max) => {
+    if (value === '' || value === null || value === undefined) return false
+    if (Number.isNaN(Number(value))) return false
+    const numValue = Number(value)
+    if (min !== undefined && numValue < min) return true
+    if (max !== undefined && numValue > max) return true
+    return false
+  }
+
+  // Initial validation on component mount and when device changes
+  React.useEffect(() => {
+    const initialErrors = {
+      dailyTestCapacity: validateNumericField(editDevice.dailyTestCapacity, 1, 9999),
+      moduleBayCapacity: validateNumericField(editDevice.moduleBayCapacity, 1, 256),
+      instrumentsConnected: validateNumericField(editDevice.instrumentsConnected, 1),
+      gx6cModulesCount: validateNumericField(editDevice.gx6cModulesCount, 0),
+      gx10cModulesCount: validateNumericField(editDevice.gx10cModulesCount, 0),
+    }
+    setError(initialErrors)
+  }, [
+    editDevice.dailyTestCapacity,
+    editDevice.moduleBayCapacity,
+    editDevice.instrumentsConnected,
+    editDevice.gx6cModulesCount,
+    editDevice.gx10cModulesCount,
+  ])
+
   // Create initial values for Formik (using actual device data without defaults)
   const initialValues = {
     name: device.name,
@@ -106,14 +134,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
       <Helmet title={device.name} />
       <section className={`${styles.Section} ${styles.Section__first}`}>
         <Card className={styles.Section__Content}>
-          <Formik
-            initialValues={initialValues}
-            enableReinitialize
-            onSubmit={() => {
-              // Handle submit through existing logic
-              handleSubmit()
-            }}
-          >
+          <Formik initialValues={initialValues} enableReinitialize onSubmit={handleSubmit}>
             {({ setFieldValue, resetForm }) => (
               <form>
                 <TextField
@@ -125,7 +146,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   value={editDevice.name}
                   onChange={e => {
                     setEditDevice({ ...editDevice, name: e.target.value })
-                    setError(isEmpty(e.target.value))
                     setFieldValue('name', e.target.value)
                   }}
                 />
@@ -138,7 +158,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   value={editDevice.shortName}
                   onChange={e => {
                     setEditDevice({ ...editDevice, shortName: e.target.value })
-                    setError(isEmpty(e.target.value))
                     setFieldValue('shortName', e.target.value)
                   }}
                 />
@@ -170,7 +189,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   error={error?.dailyTestCapacity}
                   value={editDevice.dailyTestCapacity}
                   onChange={({ target: { value } }) => {
-                    setError(error => ({ ...error, dailyTestCapacity: Number(value) < 1 || Number(value) > 9999 }))
+                    const hasError = validateNumericField(value, 1, 9999)
+                    setError(error => ({ ...error, dailyTestCapacity: hasError }))
                     setEditDevice({ ...editDevice, dailyTestCapacity: value ? parseInt(value, 10) : '' })
                     setFieldValue('dailyTestCapacity', value ? parseInt(value, 10) : '')
                   }}
@@ -185,7 +205,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   error={error?.moduleBayCapacity}
                   value={editDevice.moduleBayCapacity}
                   onChange={({ target: { value } }) => {
-                    setError(error => ({ ...error, moduleBayCapacity: Number(value) < 1 || Number(value) > 256 }))
+                    const hasError = validateNumericField(value, 1, 256)
+                    setError(error => ({ ...error, moduleBayCapacity: hasError }))
                     setEditDevice({ ...editDevice, moduleBayCapacity: value ? parseInt(value, 10) : '' })
                     setFieldValue('moduleBayCapacity', value ? parseInt(value, 10) : '')
                   }}
@@ -200,7 +221,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   error={error?.instrumentsConnected}
                   value={editDevice.instrumentsConnected}
                   onChange={({ target: { value } }) => {
-                    setError(error => ({ ...error, instrumentsConnected: Number(value) <= 0 }))
+                    const hasError = validateNumericField(value, 1)
+                    setError(error => ({ ...error, instrumentsConnected: hasError }))
                     setEditDevice({ ...editDevice, instrumentsConnected: value ? parseInt(value, 10) : '' })
                     setFieldValue('instrumentsConnected', value ? parseInt(value, 10) : '')
                   }}
@@ -217,7 +239,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                       error={error?.gx6cModulesCount}
                       value={editDevice?.gx6cModulesCount ?? 0}
                       onChange={({ target: { value } }) => {
-                        setError(error => ({ ...error, gx6cModulesCount: Number(value) < 0 }))
+                        const hasError = validateNumericField(value, 0)
+                        setError(error => ({ ...error, gx6cModulesCount: hasError }))
                         setEditDevice({ ...editDevice, gx6cModulesCount: value ? parseInt(value, 10) : '' })
                         setFieldValue('gx6cModulesCount', value ? parseInt(value, 10) : '')
                       }}
@@ -232,7 +255,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                       error={error?.gx10cModulesCount}
                       value={editDevice?.gx10cModulesCount ?? 0}
                       onChange={({ target: { value } }) => {
-                        setError(error => ({ ...error, gx10cModulesCount: Number(value) < 0 }))
+                        const hasError = validateNumericField(value, 0)
+                        setError(error => ({ ...error, gx10cModulesCount: hasError }))
                         setEditDevice({ ...editDevice, gx10cModulesCount: value ? parseInt(value, 10) : '' })
                         setFieldValue('gx10cModulesCount', value ? parseInt(value, 10) : '')
                       }}
