@@ -347,7 +347,7 @@ const deviceUtilizationReport = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'device/serviceReports',
+      moduleName: 'device/serviceReports/getDeviceCapacityReport',
       functionName: 'getDeviceCapacityReport',
       query: {
         sortCol: 'name',

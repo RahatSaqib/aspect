@@ -673,10 +673,11 @@ function tryConvertSqlStringToKnexQueryBuilder(originalSql, dataConstraints, url
   return sqlBuilder
 }
 
-async function queryValue(sql, dataConstraints, query) {
+async function queryValue(sql, dataConstraints, query, timezoneIANA) {
   let firstResult
   sql = trimSql(sql)
   if (sql) {
+    sql = sql.replace(/{timeZone}/g, timezoneIANA)
     const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql, dataConstraints, query)
 
     try {

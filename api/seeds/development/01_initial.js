@@ -102,6 +102,12 @@ async function seed(knex) {
     deviceLogHistoryDays: 14,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
+    customWorkingDays: JSON.stringify({
+      daysPerYear: 252,
+      daysPerMonth: 21,
+      excludedDays: '6,7',
+      daysPerQuarter: 63,
+    }),
   })
 
   const [partnerTwoId] = await knex('Partner').insert({
@@ -3489,6 +3495,7 @@ async function seed(knex) {
         // not all sites will have a router - we only added routers to some site
         deviceId: routerId || null,
         moduleBayCapacity: 4,
+        dailyTestCapacity: 12,
         createdOn: subDays(now, _.random(0, 120)),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
