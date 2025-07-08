@@ -38,23 +38,23 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const [error, setError] = useState({})
   const [submitting, setSubmitting] = useState(false)
 
-  // Create initial values for Formik
+  // Create initial values for Formik (using actual device data without defaults)
   const initialValues = {
-    name: device.name || '',
-    shortName: device.shortName || '',
-    siteId: device.siteId || '',
-    implementingPartnerId: device.implementingPartnerId ?? null,
-    dailyTestCapacity: device.dailyTestCapacity || '',
-    moduleBayCapacity: device.moduleBayCapacity || '',
-    instrumentsConnected: device.instrumentsConnected || '',
-    gx6cModulesCount: device.gx6cModulesCount ?? 0,
-    gx10cModulesCount: device.gx10cModulesCount ?? 0,
-    stickerInstrumentSerial: device.stickerInstrumentSerial || '',
-    instrumentModel: device.instrumentModel || '',
-    softwareType: device.softwareType || '',
-    isDaisyChained: device.isDaisyChained || false,
-    notes: device.notes || '',
-    tags: [...deviceTags],
+    name: device.name,
+    shortName: device.shortName,
+    siteId: device.siteId,
+    implementingPartnerId: device.implementingPartnerId,
+    dailyTestCapacity: device.dailyTestCapacity,
+    moduleBayCapacity: device.moduleBayCapacity,
+    instrumentsConnected: device.instrumentsConnected,
+    gx6cModulesCount: device.gx6cModulesCount,
+    gx10cModulesCount: device.gx10cModulesCount,
+    stickerInstrumentSerial: device.stickerInstrumentSerial,
+    instrumentModel: device.instrumentModel,
+    softwareType: device.softwareType,
+    isDaisyChained: device.isDaisyChained,
+    notes: device.notes,
+    tags: deviceTags,
   }
 
   const onDiscardClick = resetForm => {
