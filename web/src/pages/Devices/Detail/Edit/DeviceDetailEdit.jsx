@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Checkbox, Card, FormControlLabel, TextField } from '@mui/material'
-import { Formik } from 'formik'
+import { Formik, Form } from 'formik'
 import get from 'lodash/get'
-import isEmpty from 'lodash/isEmpty'
-import isEqual from 'lodash/isEqual'
-import lodashValues from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -24,6 +21,7 @@ import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import styles from '../styles.module.css'
 import messages from './messages'
+import { getValidationSchema } from './validation'
 
 const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const navigate = useNavigate()
@@ -32,41 +30,12 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
 
   const { mutate: updateDevice } = useUpdateDevice(device.id)
   const { mutate: updateDeviceTags } = useUpdateTagByTypeAndId('device', device.id)
-  const [editDevice, setEditDevice] = useState({ ...device })
-  const [editDeviceTags, setEditDeviceTags] = useState([...deviceTags])
-  const isPristine = isEqual(device, editDevice) && isEqual(deviceTags, editDeviceTags)
-  const [error, setError] = useState({})
   const [submitting, setSubmitting] = useState(false)
 
-  // Validation function to check a single numeric field
-  const validateNumericField = (value, min, max) => {
-    if (value === '' || value === null || value === undefined) return false
-    if (Number.isNaN(Number(value))) return false
-    const numValue = Number(value)
-    if (min !== undefined && numValue < min) return true
-    if (max !== undefined && numValue > max) return true
-    return false
-  }
+  // Create validation schema using imported function
+  const validationSchema = getValidationSchema(intl.formatMessage)
 
-  // Initial validation on component mount and when device changes
-  React.useEffect(() => {
-    const initialErrors = {
-      dailyTestCapacity: validateNumericField(editDevice.dailyTestCapacity, 1, 9999),
-      moduleBayCapacity: validateNumericField(editDevice.moduleBayCapacity, 1, 256),
-      instrumentsConnected: validateNumericField(editDevice.instrumentsConnected, 1),
-      gx6cModulesCount: validateNumericField(editDevice.gx6cModulesCount, 0),
-      gx10cModulesCount: validateNumericField(editDevice.gx10cModulesCount, 0),
-    }
-    setError(initialErrors)
-  }, [
-    editDevice.dailyTestCapacity,
-    editDevice.moduleBayCapacity,
-    editDevice.instrumentsConnected,
-    editDevice.gx6cModulesCount,
-    editDevice.gx10cModulesCount,
-  ])
-
-  // Create initial values for Formik (using actual device data without defaults)
+  // Create initial values for Formik
   const initialValues = {
     name: device.name,
     shortName: device.shortName,
@@ -80,48 +49,41 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
     stickerInstrumentSerial: device.stickerInstrumentSerial,
     instrumentModel: device.instrumentModel,
     softwareType: device.softwareType,
-    isDaisyChained: device.isDaisyChained,
+    isDaisyChained: device.isDaisyChained || false, // Keep default for boolean
     notes: device.notes,
-    tags: deviceTags,
+    tags: deviceTags || [], // Keep default for array operations
   }
 
-  const onDiscardClick = resetForm => {
-    setError({})
-    setEditDevice({ ...device })
-    setEditDeviceTags([...deviceTags])
-    // Reset Formik form to initial values
-    if (resetForm) {
-      resetForm({ values: initialValues })
-    }
-  }
-
-  const onAddTag = (tagName, setFieldValue) => {
+  const onAddTag = (tagName, values, setFieldValue) => {
     if (tagName.trim().length === 0) return
-    if (editDeviceTags.some(deviceTag => deviceTag.title.toLowerCase() === tagName.toLowerCase())) return
+    if (values.tags.some(deviceTag => deviceTag.title.toLowerCase() === tagName.toLowerCase())) return
 
-    const newTags = [...editDeviceTags, { title: tagName }]
-    setEditDeviceTags(newTags)
-    // Update Formik state as well
-    if (setFieldValue) {
-      setFieldValue('tags', newTags)
-    }
+    const newTags = [...values.tags, { title: tagName }]
+    setFieldValue('tags', newTags)
   }
 
-  const onDeleteTag = (tag, setFieldValue) => {
-    const newTags = editDeviceTags.filter(deviceTag => deviceTag !== tag)
-    setEditDeviceTags(newTags)
-    // Update Formik state as well
-    if (setFieldValue) {
-      setFieldValue('tags', newTags)
-    }
+  const onDeleteTag = (tag, values, setFieldValue) => {
+    const newTags = values.tags.filter(deviceTag => deviceTag !== tag)
+    setFieldValue('tags', newTags)
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async values => {
     setSubmitting(true)
-    updateDeviceTags(editDeviceTags.map(deviceTag => deviceTag.title).join(','), {
+
+    // Convert empty strings to null for numeric fields
+    const deviceData = {
+      ...values,
+      dailyTestCapacity: values.dailyTestCapacity === '' ? null : values.dailyTestCapacity,
+      moduleBayCapacity: values.moduleBayCapacity === '' ? null : values.moduleBayCapacity,
+      instrumentsConnected: values.instrumentsConnected === '' ? null : values.instrumentsConnected,
+      gx6cModulesCount: values.gx6cModulesCount === '' ? null : values.gx6cModulesCount,
+      gx10cModulesCount: values.gx10cModulesCount === '' ? null : values.gx10cModulesCount,
+    }
+
+    updateDeviceTags(values.tags.map(deviceTag => deviceTag.title).join(','), {
       onError: () => setSubmitting(false),
       onSuccess: () => {
-        updateDevice(editDevice, {
+        updateDevice(deviceData, {
           onSettled: () => setSubmitting(false),
           onSuccess: () => navigate(`/browse/device/list/${device.id}${location.search}`),
         })
@@ -134,66 +96,61 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
       <Helmet title={device.name} />
       <section className={`${styles.Section} ${styles.Section__first}`}>
         <Card className={styles.Section__Content}>
-          <Formik initialValues={initialValues} enableReinitialize onSubmit={handleSubmit}>
-            {({ setFieldValue, resetForm }) => (
-              <form>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
+            validateOnMount
+            validateOnChange
+          >
+            {({ values, errors, setFieldValue, resetForm, dirty, isValid }) => (
+              <Form>
                 <TextField
                   fullWidth
                   id="name"
-                  error={isEmpty(editDevice.name)}
+                  name="name"
+                  error={Boolean(errors.name)}
+                  helperText={errors.name}
                   required
                   label={intl.formatMessage(messages.name)}
-                  value={editDevice.name}
-                  onChange={e => {
-                    setEditDevice({ ...editDevice, name: e.target.value })
-                    setFieldValue('name', e.target.value)
-                  }}
+                  value={values.name}
+                  onChange={e => setFieldValue('name', e.target.value)}
                 />
                 <TextField
                   fullWidth
                   id="shortName"
-                  error={isEmpty(editDevice.shortName)}
+                  name="shortName"
+                  error={Boolean(errors.shortName)}
+                  helperText={errors.shortName}
                   required
                   label={intl.formatMessage(messages.shortName)}
-                  value={editDevice.shortName}
-                  onChange={e => {
-                    setEditDevice({ ...editDevice, shortName: e.target.value })
-                    setFieldValue('shortName', e.target.value)
-                  }}
+                  value={values.shortName}
+                  onChange={e => setFieldValue('shortName', e.target.value)}
                 />
                 <SiteSelect
                   id="siteId"
                   name="siteId"
                   label={intl.formatMessage(messages.location)}
-                  value={editDevice?.siteId || ''}
-                  onChange={e => {
-                    setEditDevice({ ...editDevice, siteId: e.target.value })
-                    setFieldValue('siteId', e.target.value)
-                  }}
+                  value={values.siteId || ''}
+                  onChange={e => setFieldValue('siteId', e.target.value)}
                   disabled={!editable}
                 />
 
                 <ImplementingPartnerSelect
                   valueBy="value"
                   label={intl.formatMessage(messages.partner)}
-                  value={editDevice?.implementingPartnerId ?? null}
-                  onChange={implementingPartnerId => {
-                    setEditDevice(prv => ({ ...prv, implementingPartnerId }))
-                    setFieldValue('implementingPartnerId', implementingPartnerId)
-                  }}
+                  value={values.implementingPartnerId ?? null}
+                  onChange={implementingPartnerId => setFieldValue('implementingPartnerId', implementingPartnerId)}
                 />
                 <TextField
                   label={intl.formatMessage(messages.dailyTestCapacity)}
                   type="number"
-                  name="capacity"
-                  error={error?.dailyTestCapacity}
-                  value={editDevice.dailyTestCapacity}
-                  onChange={({ target: { value } }) => {
-                    const hasError = validateNumericField(value, 1, 9999)
-                    setError(error => ({ ...error, dailyTestCapacity: hasError }))
-                    setEditDevice({ ...editDevice, dailyTestCapacity: value ? parseInt(value, 10) : '' })
-                    setFieldValue('dailyTestCapacity', value ? parseInt(value, 10) : '')
-                  }}
+                  name="dailyTestCapacity"
+                  error={Boolean(errors.dailyTestCapacity)}
+                  helperText={errors.dailyTestCapacity}
+                  value={values.dailyTestCapacity}
+                  onChange={e => setFieldValue('dailyTestCapacity', e.target.value ? parseInt(e.target.value, 10) : '')}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -202,14 +159,11 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 <TextField
                   label={intl.formatMessage(messages.moduleBayCapacity)}
                   type="number"
-                  error={error?.moduleBayCapacity}
-                  value={editDevice.moduleBayCapacity}
-                  onChange={({ target: { value } }) => {
-                    const hasError = validateNumericField(value, 1, 256)
-                    setError(error => ({ ...error, moduleBayCapacity: hasError }))
-                    setEditDevice({ ...editDevice, moduleBayCapacity: value ? parseInt(value, 10) : '' })
-                    setFieldValue('moduleBayCapacity', value ? parseInt(value, 10) : '')
-                  }}
+                  name="moduleBayCapacity"
+                  error={Boolean(errors.moduleBayCapacity)}
+                  helperText={errors.moduleBayCapacity}
+                  value={values.moduleBayCapacity}
+                  onChange={e => setFieldValue('moduleBayCapacity', e.target.value ? parseInt(e.target.value, 10) : '')}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -218,14 +172,13 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 <TextField
                   label={intl.formatMessage(messages.instrumentsConnected)}
                   type="number"
-                  error={error?.instrumentsConnected}
-                  value={editDevice.instrumentsConnected}
-                  onChange={({ target: { value } }) => {
-                    const hasError = validateNumericField(value, 1)
-                    setError(error => ({ ...error, instrumentsConnected: hasError }))
-                    setEditDevice({ ...editDevice, instrumentsConnected: value ? parseInt(value, 10) : '' })
-                    setFieldValue('instrumentsConnected', value ? parseInt(value, 10) : '')
-                  }}
+                  name="instrumentsConnected"
+                  error={Boolean(errors.instrumentsConnected)}
+                  helperText={errors.instrumentsConnected}
+                  value={values.instrumentsConnected}
+                  onChange={e =>
+                    setFieldValue('instrumentsConnected', e.target.value ? parseInt(e.target.value, 10) : '')
+                  }
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -236,14 +189,13 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                     <TextField
                       label={intl.formatMessage(messages.gx6cModulesCount)}
                       type="number"
-                      error={error?.gx6cModulesCount}
-                      value={editDevice?.gx6cModulesCount ?? 0}
-                      onChange={({ target: { value } }) => {
-                        const hasError = validateNumericField(value, 0)
-                        setError(error => ({ ...error, gx6cModulesCount: hasError }))
-                        setEditDevice({ ...editDevice, gx6cModulesCount: value ? parseInt(value, 10) : '' })
-                        setFieldValue('gx6cModulesCount', value ? parseInt(value, 10) : '')
-                      }}
+                      name="gx6cModulesCount"
+                      error={Boolean(errors.gx6cModulesCount)}
+                      helperText={errors.gx6cModulesCount}
+                      value={values.gx6cModulesCount ?? 0}
+                      onChange={e =>
+                        setFieldValue('gx6cModulesCount', e.target.value ? parseInt(e.target.value, 10) : '')
+                      }
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -252,14 +204,13 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                     <TextField
                       label={intl.formatMessage(messages.gx10cModulesCount)}
                       type="number"
-                      error={error?.gx10cModulesCount}
-                      value={editDevice?.gx10cModulesCount ?? 0}
-                      onChange={({ target: { value } }) => {
-                        const hasError = validateNumericField(value, 0)
-                        setError(error => ({ ...error, gx10cModulesCount: hasError }))
-                        setEditDevice({ ...editDevice, gx10cModulesCount: value ? parseInt(value, 10) : '' })
-                        setFieldValue('gx10cModulesCount', value ? parseInt(value, 10) : '')
-                      }}
+                      name="gx10cModulesCount"
+                      error={Boolean(errors.gx10cModulesCount)}
+                      helperText={errors.gx10cModulesCount}
+                      value={values.gx10cModulesCount ?? 0}
+                      onChange={e =>
+                        setFieldValue('gx10cModulesCount', e.target.value ? parseInt(e.target.value, 10) : '')
+                      }
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -268,32 +219,24 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                     <TextField
                       fullWidth
                       id="stickerInstrumentSerial"
+                      name="stickerInstrumentSerial"
                       label={intl.formatMessage(messages.stickerInstrumentSerial)}
-                      value={editDevice.stickerInstrumentSerial}
-                      onChange={e => {
-                        setEditDevice({ ...editDevice, stickerInstrumentSerial: e.target.value })
-                        setFieldValue('stickerInstrumentSerial', e.target.value)
-                      }}
+                      value={values.stickerInstrumentSerial}
+                      onChange={e => setFieldValue('stickerInstrumentSerial', e.target.value)}
                     />
 
                     <CepheidInstrumentModelSelect
                       valueBy="value"
                       label={intl.formatMessage(messages.instrumentModel)}
-                      value={editDevice.instrumentModel}
-                      onChange={instrumentModel => {
-                        setEditDevice(prv => ({ ...prv, instrumentModel }))
-                        setFieldValue('instrumentModel', instrumentModel)
-                      }}
+                      value={values.instrumentModel}
+                      onChange={instrumentModel => setFieldValue('instrumentModel', instrumentModel)}
                     />
 
                     <CepheidSoftwareTypeSelect
                       valueBy="value"
                       label={intl.formatMessage(messages.softwareType)}
-                      value={editDevice.softwareType}
-                      onChange={softwareType => {
-                        setEditDevice(prv => ({ ...prv, softwareType }))
-                        setFieldValue('softwareType', softwareType)
-                      }}
+                      value={values.softwareType}
+                      onChange={softwareType => setFieldValue('softwareType', softwareType)}
                     />
 
                     <FormControlLabel
@@ -301,12 +244,9 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                       control={
                         <Checkbox
                           type="checkbox"
-                          onChange={isDaisyChained => {
-                            const { checked } = isDaisyChained.target
-                            setEditDevice(prv => ({ ...prv, isDaisyChained: checked }))
-                            setFieldValue('isDaisyChained', checked)
-                          }}
-                          checked={[true, 'true'].includes(editDevice.isDaisyChained)}
+                          name="isDaisyChained"
+                          onChange={e => setFieldValue('isDaisyChained', e.target.checked)}
+                          checked={[true, 'true'].includes(values.isDaisyChained)}
                         />
                       }
                       label={intl.formatMessage(messages.isDaisyChained)}
@@ -317,12 +257,10 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 <TextField
                   fullWidth
                   id="notes"
+                  name="notes"
                   label={intl.formatMessage(messages.notes)}
-                  value={editDevice.notes}
-                  onChange={e => {
-                    setEditDevice({ ...editDevice, notes: e.target.value })
-                    setFieldValue('notes', e.target.value)
-                  }}
+                  value={values.notes}
+                  onChange={e => setFieldValue('notes', e.target.value)}
                   multiline
                   maxRows={6}
                   minRows={3}
@@ -332,11 +270,11 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   <TagInput
                     allowCreate
                     keepFocusOnChange
-                    source={editDeviceTags}
-                    value={editDeviceTags}
+                    source={values.tags}
+                    value={values.tags}
                     tagName="title"
-                    onAdd={tagName => onAddTag(tagName, setFieldValue)}
-                    onDelete={tag => onDeleteTag(tag, setFieldValue)}
+                    onAdd={tagName => onAddTag(tagName, values, setFieldValue)}
+                    onDelete={tag => onDeleteTag(tag, values, setFieldValue)}
                     disabled={!editable}
                   />
                 </FormGroup>
@@ -345,24 +283,24 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   <ButtonGroup isolated>
                     <AspectButton
                       type="button"
-                      disabled={isPristine}
-                      onClick={() => onDiscardClick(resetForm)}
+                      disabled={!dirty}
+                      onClick={() => resetForm()}
                       color="primary"
                       variant="contained"
                     >
                       {intl.formatMessage(messages.discard)}
                     </AspectButton>
                     <Button
+                      type="submit"
                       color="primary"
                       variant="contained"
-                      onClick={handleSubmit}
-                      disabled={isPristine || !lodashValues(error).every(v => v === false) || submitting}
+                      disabled={!dirty || !isValid || submitting}
                     >
                       {intl.formatMessage(messages.save)}
                     </Button>
                   </ButtonGroup>
                 </div>
-              </form>
+              </Form>
             )}
           </Formik>
         </Card>
