@@ -102,7 +102,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
       isEmpty(editSite.shortName) ||
       isEmpty(editSite.countryId?.toString()) ||
       isEmpty(editSite.externalId) ||
-      (!isWarehouse && (isEmpty(editSite.stateId?.toString()) || isEmpty(editSite.lgaId?.toString()))))
+      (!isWarehouse && isEmpty(editSite.stateId?.toString())))
 
   return (
     <Box width="100%">
@@ -206,7 +206,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
               validators={{
                 country: { error: !isPristine && isEmpty(editSite.countryId?.toString()) },
                 state: !isWarehouse ? { error: !isPristine && isEmpty(editSite.stateId?.toString()) } : {},
-                lga: !isWarehouse ? { error: !isPristine && isEmpty(editSite.lgaId?.toString()) } : {},
               }}
               onChange={location => {
                 setEditSite({
