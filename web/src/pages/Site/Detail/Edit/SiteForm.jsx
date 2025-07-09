@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
 import { Box, Button, Card, Checkbox, FormControlLabel, Grid, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -61,14 +61,16 @@ const SiteForm = ({ site, onLatLongChange }) => {
     const siteType = siteTypes.find(st => st.id === siteTypeId)
     return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE
   }
-
-  const [editSite, setEditSite] = useState({
-    ...site,
-    ...(!site.countryId ? { countryId: user.countryId } : {}),
-    // Use siteTypeId from site data, or default to lab if not provided
-    siteTypeId: site.siteTypeId || getDefaultSiteTypeId(),
-    sampleRegistrationAllowed: Boolean(site.sampleRegistrationAllowed ?? isClinicSiteType(site.siteTypeId)),
-  })
+  const initialState = useMemo(() => {
+    return {
+      ...site,
+      ...(!site.countryId ? { countryId: user.countryId } : {}),
+      // Use siteTypeId from site data, or default to lab if not provided
+      siteTypeId: site.siteTypeId || getDefaultSiteTypeId(),
+      sampleRegistrationAllowed: Boolean(site.sampleRegistrationAllowed ?? isClinicSiteType(site.siteTypeId)),
+    }
+  }, [site, user.countryId])
+  const [editSite, setEditSite] = useState(initialState)
   const [queryParamsForWarehouse] = useState({
     siteTypeExternalIds: [SITE_TYPE_EXTERNAL_IDS.WAREHOUSE], // This is for the SiteListSelect component which expects external IDs
     excludeSiteIds: [site.id],
@@ -80,7 +82,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
   // Use ref to track the previous site type for comparison
   const previousSiteTypeId = useRef(site.siteTypeId)
 
-  const isPristine = isEqual(site, editSite)
+  const isPristine = isEqual(initialState, editSite)
   const isWarehouse = isWarehouseSiteType(editSite.siteTypeId)
   const isNew = site.id === 0
   const goBack = () => gotoReturnUrl(navigate, location, '/browse/site')
@@ -172,6 +174,25 @@ const SiteForm = ({ site, onLatLongChange }) => {
       isEmpty(editSite.countryId?.toString()) ||
       isEmpty(editSite.externalId) ||
       (!isWarehouse && isEmpty(editSite.stateId?.toString())))
+
+  const getDiff = (o1, o2) => {
+    const onlyOriginal = {}
+    const onlyEdited = {}
+
+    Object.keys(o1).forEach(key => {
+      if (o1[key] !== o2[key]) {
+        onlyOriginal[key] = o1[key]
+      }
+    })
+
+    Object.keys(o2).forEach(key => {
+      if (o2[key] !== o1[key]) {
+        onlyEdited[key] = o2[key]
+      }
+    })
+
+    return [onlyOriginal, onlyEdited]
+  }
 
   return (
     <Box width="100%">
