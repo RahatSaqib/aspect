@@ -40,9 +40,7 @@
 				"ms-azuretools.vscode-docker",
 				"dbaeumer.vscode-eslint",
 				"eamodio.gitlens",
-				"ChakrounAnas.turbo-console-log",
-				"GitHub.copilot",
-				"GitHub.copilot-chat"
+				"ChakrounAnas.turbo-console-log"
 			]
 		}
 	}
