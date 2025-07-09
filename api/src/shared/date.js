@@ -19,7 +19,6 @@ const {
   max,
   addMonths,
   eachDayOfInterval,
-  isWeekend,
   endOfDay,
   subDays,
   addMilliseconds,
@@ -480,25 +479,111 @@ function getDateInMilliSeconds(date) {
 }
 
 /**
- *  Retrieves the No of working days excluding weekends
- * @deprecated This function is obsolete as it does not contemplate the weekends in PartnerData.customWorkingDays.
- * TODO: It must be merged with getWorkingDays function from api/src/device/utilizationReports/index.js instead,
- * which properly handles client-specific working day configurations. date-fns isWeekend is not applicable to countries
- * with different weekend days than Saturday and Sunday.
- * @see {@link HD-15651 Replace the user of date-fns weekend by custom Partner configuration}
- * @param {*} startDate
- * @param {*} endDate
- * @returns number - Return the count of working days
+ * Calculates the number of working days between two dates, considering client-specific configurations.
+ *
+ * @param {string} minDate - The start date in ISO format (e.g., "2023-01-01T00:00:00.000Z")
+ * @param {string} maxDate - The end date in ISO format (e.g., "2023-12-31T23:59:59.999Z")
+ * @param {Object} [clientConfig={}] - Value of Partner.customWorkingDays
+ * @param {number} [clientConfig.daysPerYear] - Predefined working days for a full year period
+ * @param {number} [clientConfig.daysPerQuarter] - Predefined working days for a full quarter period
+ * @param {number} [clientConfig.daysPerMonth] - Predefined working days for a full month period
+ * @param {string} [clientConfig.excludedDays] - Comma-separated string of days to exclude (MySQL DAYOFWEEK format: 1=Sunday, 7=Saturday)
+ *
+ * @returns {number} The number of working days in the specified date range
+ *
+ * @description
+ * This function calculates working days by first checking if the date range represents a standard period
+ * (full year, quarter, or month) and if the client has predefined values for such periods. If so, it returns
+ * the predefined value. Otherwise, it calculates the actual working days by generating all dates in the range
+ * and filtering out excluded days (defaults to weekends: Saturday and Sunday).
+ *
+ * @example
+ * // Calculate working days for a month with default weekend exclusion
+ * getWorkingDays("2023-01-01T00:00:00.000Z", "2023-01-31T23:59:59.999Z")
+ * // Returns: 22 (assuming January 2023 has 22 weekdays)
+ *
+ * @example
+ * // Calculate working days with custom excluded days (excluding Monday and Tuesday)
+ * getWorkingDays("2023-01-01T00:00:00.000Z", "2023-01-31T23:59:59.999Z", { excludedDays: "2,3" })
+ * // Returns: 13 (excluding Mondays and Tuesdays)
  */
-function getWorkingDays(startDate, endDate) {
-  // Generate an array of all dates between the start and end dates
+const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
+  // Parse the input dates and extract just the date part
+  const minDateStr = typeof minDate === 'string' ? minDate : minDate.toISOString()
+  const maxDateStr = typeof maxDate === 'string' ? maxDate : maxDate.toISOString()
+  
+  // Extract date parts and create dates in UTC
+  const startDateParts = minDateStr.split('T')[0].split('-')
+  const endDateParts = maxDateStr.split('T')[0].split('-')
+  
+  const startDate = new Date(Date.UTC(
+    parseInt(startDateParts[0]), 
+    parseInt(startDateParts[1]) - 1, 
+    parseInt(startDateParts[2])
+  ))
+  const endDate = new Date(Date.UTC(
+    parseInt(endDateParts[0]), 
+    parseInt(endDateParts[1]) - 1, 
+    parseInt(endDateParts[2])
+  ))
+
+  const isMonthPeriod = () => {
+    return (
+      startDate.getUTCDate() === 1 &&
+      endDate.getUTCMonth() === startDate.getUTCMonth() &&
+      endDate.getUTCDate() === new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth() + 1, 0)).getUTCDate()
+    )
+  }
+
+  const isQuarterPeriod = () => {
+    // Get the start of the quarter
+    const quarter = Math.floor(startDate.getUTCMonth() / 3)
+    const quarterStartMonth = quarter * 3
+
+    // Check if startDate is first day of quarter
+    const isStartOfQuarter = startDate.getUTCMonth() === quarterStartMonth && startDate.getUTCDate() === 1
+
+    // Check if endDate matches last day of quarter (comparing month and day directly)
+    const isEndOfQuarter =
+      endDate.getUTCMonth() === quarterStartMonth + 2 && // Last month of quarter
+      endDate.getUTCDate() === new Date(Date.UTC(endDate.getUTCFullYear(), quarterStartMonth + 3, 0)).getUTCDate() // Last day of that month
+
+    return isStartOfQuarter && isEndOfQuarter
+  }
+
+  const isYearPeriod = () => {
+    return (
+      startDate.getUTCMonth() === 0 &&
+      startDate.getUTCDate() === 1 &&
+      endDate.getUTCMonth() === 11 &&
+      endDate.getUTCDate() === 31 &&
+      endDate.getUTCFullYear() === startDate.getUTCFullYear()
+    )
+  }
+
+  // If it's a standard period and client has config, use the config values
+  if (clientConfig) {
+    if (isYearPeriod() && clientConfig.daysPerYear) {
+      return clientConfig.daysPerYear
+    }
+    if (isQuarterPeriod() && clientConfig.daysPerQuarter) {
+      return clientConfig.daysPerQuarter
+    }
+    if (isMonthPeriod() && clientConfig.daysPerMonth) {
+      return clientConfig.daysPerMonth
+    }
+  }
+
+  // Otherwise calculate actual working days using functional approach
+  const excludedDays = clientConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [5, 6] // Default to exclude weekends
+
+  // Generate array of all dates in the interval
   const allDates = eachDayOfInterval({ start: startDate, end: endDate })
 
-  // Filter out weekends (Saturdays and Sundays)
-  const workingDays = allDates.filter(date => !isWeekend(date))
+  // Filter out excluded days and count working days
+  const totalWorkingDays = allDates.filter(date => !excludedDays.includes(date.getDay())).length
 
-  // Return the count of working days
-  return workingDays.length
+  return totalWorkingDays
 }
 
 const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)

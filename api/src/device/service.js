@@ -8,7 +8,6 @@ const {
   startOfMonth,
   endOfMonth,
   format,
-  isWeekend,
   parseJSON,
   differenceInBusinessDays,
 } = require('date-fns')
@@ -41,6 +40,7 @@ const { getSelectListFields } = require('./common/querySelectors')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
 const { getDeviceStatusOverTime } = require('../deviceMaintenanceStatus/service')
 const { getDateTimeExpressionInTimeZone } = require('../shared/date')
+const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
 async function getDeviceByRequest(request) {
   const {
@@ -851,6 +851,7 @@ async function deviceMaintenanceStatusHistory(request) {
   const { query, auth } = request
   const { minDate, maxDate = new Date() } = query
   const dataConstraints = await getConstraints(auth.credentials)
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
 
   const days = []
   let day = minDate || startOfMonth(new Date())
@@ -1017,10 +1018,11 @@ async function deviceMaintenanceStatusHistory(request) {
           latestDeviceMaintenanceStatusLogsPerDay.find(
             log => log.deviceId === device.id && format(log.day, 'yyyyMMdd') === format(day, 'yyyyMMdd')
           ) || {}
+        const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(d => parseInt(d) - 1) || [5, 6] // Convert MySQL dayOfWeek to JS dayOfWeek
         const dayStatus = {
           date: day,
           externalId: deviceMaintenanceStatusLog.externalId || 'inactiveUnknown',
-          isWeekend: isWeekend(day),
+          isWeekend: excludedDays.includes(day.getDay()),
           data: {},
         }
         if (deviceMaintenanceStatusLog.data) {
