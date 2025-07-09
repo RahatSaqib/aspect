@@ -467,6 +467,18 @@ describe('[ANY ASSAY] getResultCategories', () => {
     assert.deepEqual(getResultCategories(null, 'НЕТ РЕЗУЛЬТАТА'), [{ id: 'NoResult' }])
   })
 
+  it('Should parse no result #5', () => {
+    assert.deepEqual(getResultCategories(null, 'NO RESULT|NO RESULT|'), [{ id: 'NoResult' }])
+  })
+
+  it('Should parse no result #6', () => {
+    assert.deepEqual(getResultCategories(null, 'NO RESULT||'), [{ id: 'NoResult' }])
+  })
+
+  it('Should parse no result #7', () => {
+    assert.deepEqual(getResultCategories(null, 'PAS DE RÉSULTAT'), [{ id: 'NoResult' }])
+  })
+
   it('Should parse error', () => {
     assert.deepEqual(getResultCategories(null, 'ОШИБКА'), [{ id: 'Error' }])
   })
