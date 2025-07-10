@@ -23,8 +23,8 @@ module.exports = async (auth, query) => {
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = 0
-  // For performance issues we are going to limit this report to max 50k results.
-  query.size = query.maxNumberOfRecords || 50000
+  // For performance issues we are going to limit this report to max 1m results.
+  query.size = query.maxNumberOfRecords || 1000000
 
   // For performance issues this enforce to use the result_partner_endedOn_index Index, because it helps to reduce query time down to  60%
   if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 360)
