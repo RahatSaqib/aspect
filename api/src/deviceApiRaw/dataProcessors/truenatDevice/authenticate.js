@@ -41,10 +41,10 @@ class TruenatLogin extends SynchronousDataProcessor {
     if (!payload) {
       throw Boom.badRequest('Request payload is required')
     }
-    if (!payload.Username || payload.Username === '') {
+    if (!payload.Username) {
       throw Boom.badRequest('Username cannot be empty')
     }
-    if (!payload.Password || payload.Password === '') {
+    if (!payload.Password) {
       throw Boom.badRequest('Password cannot be empty')
     }
 
