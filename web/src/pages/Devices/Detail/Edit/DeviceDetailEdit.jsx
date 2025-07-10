@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Checkbox, Card, FormControlLabel, TextField } from '@mui/material'
+import { Button, Checkbox, Card, FormControlLabel, TextField, Stack } from '@mui/material'
 import { Formik, Form } from 'formik'
 import get from 'lodash/get'
 import PropTypes from 'prop-types'
@@ -17,7 +17,6 @@ import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
-import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import styles from '../styles.module.css'
@@ -283,27 +282,20 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   />
                 </FormGroup>
 
-                <div className={styles.Form__Actions}>
-                  <ButtonGroup isolated>
-                    <AspectButton
-                      type="button"
-                      disabled={!dirty}
-                      onClick={() => resetForm()}
-                      color="primary"
-                      variant="contained"
-                    >
-                      {intl.formatMessage(messages.discard)}
-                    </AspectButton>
-                    <Button
-                      type="submit"
-                      color="primary"
-                      variant="contained"
-                      disabled={!dirty || !isValid || submitting}
-                    >
-                      {intl.formatMessage(messages.save)}
-                    </Button>
-                  </ButtonGroup>
-                </div>
+                <Stack sx={{ gap: 2, flexDirection: 'row', justifyContent: 'flex-end' }}>
+                  <AspectButton
+                    type="button"
+                    disabled={!dirty}
+                    onClick={() => resetForm()}
+                    color="primary"
+                    variant="contained"
+                  >
+                    {intl.formatMessage(messages.discard)}
+                  </AspectButton>
+                  <Button type="submit" color="primary" variant="contained" disabled={!dirty || !isValid || submitting}>
+                    {intl.formatMessage(messages.save)}
+                  </Button>
+                </Stack>
               </Form>
             )}
           </Formik>
