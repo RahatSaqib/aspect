@@ -15,11 +15,13 @@ import resultCategoryType from './resultCategoryType'
 import resultTreatmentStatusMessages from './resultTreatmentStatusMessages'
 import resultWorkflowStatusMessages from './resultWorkflowStatusMessages'
 import sampleType from './sampleType'
+import validationMessages from './validationMessages'
 
 export {
   assay,
   consumableMessages,
   consumableReasonMessages,
+  validationMessages,
   commonDefinitions,
   getCustomMessage,
   deviceApprovalMessages,

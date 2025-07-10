@@ -226,41 +226,7 @@ const headerMessagesBase = {
   }),
 }
 
-const errorMessagesBase = {
-  ...defineMessages({
-    required: {
-      id: 'forms.formItem.error.required',
-      defaultMessage: '{field} is required',
-    },
-    min: {
-      id: 'forms.formItem.error.min',
-      defaultMessage: 'Must be at least {min}',
-    },
-    max: {
-      id: 'forms.formItem.error.max',
-      defaultMessage: 'Must be less than {max}',
-    },
-    number: {
-      id: 'forms.formItem.error.number',
-      defaultMessage: 'Must be a number',
-    },
-    string: {
-      id: 'forms.formItem.error.string',
-      defaultMessage: 'Must be a string',
-    },
-    mustBeAtLeast: {
-      id: 'forms.formItem.error.mustBeAtLeast',
-      defaultMessage: 'Must be at least {min}',
-    },
-    mustBeLessThan: {
-      id: 'forms.formItem.error.mustBeLessThan',
-      defaultMessage: 'Must be less than {max}',
-    },
-  }),
-}
-
 export default {
   ...messagesBase,
   ...headerMessagesBase,
-  ...errorMessagesBase,
 }
