@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import {
   ImplementingPartnerSelect,
   SiteSelect,
@@ -56,14 +57,14 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
 
   const onAddTag = (tagName, values, setFieldValue) => {
     if (tagName.trim().length === 0) return
-    if (values.tags.some(deviceTag => deviceTag.title.toLowerCase() === tagName.toLowerCase())) return
+    if (values.tags.some(deviceTag => deviceTag?.title?.toLowerCase() === tagName.toLowerCase())) return
 
     const newTags = [...values.tags, { title: tagName }]
     setFieldValue('tags', newTags)
   }
 
   const onDeleteTag = (tag, values, setFieldValue) => {
-    const newTags = values.tags.filter(deviceTag => deviceTag !== tag)
+    const newTags = values.tags.filter(deviceTag => deviceTag?.title?.toLowerCase() !== tag?.title?.toLowerCase())
     setFieldValue('tags', newTags)
   }
 
@@ -85,7 +86,10 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
       onSuccess: () => {
         updateDevice(deviceData, {
           onSettled: () => setSubmitting(false),
-          onSuccess: () => navigate(`/browse/device/list/${device.id}${location.search}`),
+          onSuccess: () => {
+            toast.success(intl.formatMessage(messages.deviceUpdated))
+            navigate(`/browse/device/list/${device.id}${location.search}`)
+          },
         })
       },
     })
