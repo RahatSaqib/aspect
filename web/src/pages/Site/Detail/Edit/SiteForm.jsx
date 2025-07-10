@@ -69,7 +69,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
       siteTypeId: site.siteTypeId || getDefaultSiteTypeId(),
       sampleRegistrationAllowed: Boolean(site.sampleRegistrationAllowed ?? isClinicSiteType(site.siteTypeId)),
     }
-  }, [site, user.countryId])
+  }, [site, user.countryId, getDefaultSiteTypeId, isClinicSiteType])
   const [editSite, setEditSite] = useState(initialState)
   const [queryParamsForWarehouse] = useState({
     siteTypeExternalIds: [SITE_TYPE_EXTERNAL_IDS.WAREHOUSE], // This is for the SiteListSelect component which expects external IDs
@@ -174,25 +174,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
       isEmpty(editSite.countryId?.toString()) ||
       isEmpty(editSite.externalId) ||
       (!isWarehouse && isEmpty(editSite.stateId?.toString())))
-
-  const getDiff = (o1, o2) => {
-    const onlyOriginal = {}
-    const onlyEdited = {}
-
-    Object.keys(o1).forEach(key => {
-      if (o1[key] !== o2[key]) {
-        onlyOriginal[key] = o1[key]
-      }
-    })
-
-    Object.keys(o2).forEach(key => {
-      if (o2[key] !== o1[key]) {
-        onlyEdited[key] = o2[key]
-      }
-    })
-
-    return [onlyOriginal, onlyEdited]
-  }
 
   return (
     <Box width="100%">
