@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Box, Button, Card, Checkbox, FormControlLabel, Grid, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -61,15 +61,14 @@ const SiteForm = ({ site, onLatLongChange }) => {
     const siteType = siteTypes.find(st => st.id === siteTypeId)
     return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE
   }
-  const initialState = useMemo(() => {
-    return {
-      ...site,
-      ...(!site.countryId ? { countryId: user.countryId } : {}),
-      // Use siteTypeId from site data, or default to lab if not provided
-      siteTypeId: site.siteTypeId || getDefaultSiteTypeId(),
-      sampleRegistrationAllowed: Boolean(site.sampleRegistrationAllowed ?? isClinicSiteType(site.siteTypeId)),
-    }
-  }, [site, user.countryId, getDefaultSiteTypeId, isClinicSiteType])
+  const initialState = {
+    ...site,
+    ...(!site.countryId ? { countryId: user.countryId } : {}),
+    // Use siteTypeId from site data, or default to lab if not provided
+    siteTypeId: site.siteTypeId || getDefaultSiteTypeId(),
+    sampleRegistrationAllowed: Boolean(site.sampleRegistrationAllowed ?? isClinicSiteType(site.siteTypeId)),
+  }
+
   const [editSite, setEditSite] = useState(initialState)
   const [queryParamsForWarehouse] = useState({
     siteTypeExternalIds: [SITE_TYPE_EXTERNAL_IDS.WAREHOUSE], // This is for the SiteListSelect component which expects external IDs
