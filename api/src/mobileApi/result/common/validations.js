@@ -530,19 +530,34 @@ const addClinicalResponseParamValidation = () => {
 const addClinicalResponsePayloadValidation = () => {
   return Joi.array().items(
     Joi.object().keys({
-      fieldName: Joi.string()
-        .valid(
-          'confirmed',
-          'treatment',
-          'treatmentOccurred',
-          'outcome',
-          'outcomeOccurred',
-          'followUpNotPossible',
-          'followUpNotPossibleReason'
-        )
-        .description(
-          'Optional either confirmed, treatment, treatmentOccurred, outcome, outcomeOccurred, followUpNotPossible or followUpNotPossibleReason.'
-        ),
+      fieldName: Joi.string().when('fieldType', {
+        is: 'custom-field',
+        then: Joi.string().required(),
+        otherwise: Joi.string()
+          .valid(
+            'confirmed',
+            'treatment',
+            'treatmentOccurred',
+            'outcome',
+            'outcomeOccurred',
+            'followUpNotPossible',
+            'followUpNotPossibleReason'
+          )
+          .description(
+            'Optional either confirmed, treatment, treatmentOccurred, outcome, outcomeOccurred, followUpNotPossible or followUpNotPossibleReason.'
+          ),
+      }),
+      fieldType: Joi.string()
+        .valid('custom-field')
+        .optional()
+        .description('When set to custom-field, allows any string value for fieldName'),
+      formDefinitionExternalId: Joi.string()
+        .when('fieldType', {
+          is: 'custom-field',
+          then: Joi.string().required(),
+          otherwise: Joi.string().optional(),
+        })
+        .description('Required when fieldType is custom-field, specifies which form definition this field belongs to'),
       value: [
         Joi.bool()
           .required()
@@ -557,6 +572,7 @@ const addClinicalResponsePayloadValidation = () => {
           .allow('', null)
           .iso()
           .description('The date/time value when fieldName is treatmentOccurred or outcomeOccurred'),
+        Joi.number().description('Numeric value for custom fields'),
       ],
       clientTime: Joi.date()
         .iso()

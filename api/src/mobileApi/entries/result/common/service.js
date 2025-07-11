@@ -14,6 +14,7 @@ const { getConstraints } = require('../../../../auth/constraints')
 const { getUser } = require('../../../../auth/service')
 const { addResultDownloadLogQuery } = require('../../../result/common/db')
 const { getSitesQuery } = require('../../../../site/service')
+const { getResultCustomFieldsResponseByResultIds } = require('../../../../result/customFields/service')
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
@@ -73,6 +74,10 @@ async function fetchEntriesServiceHandler(request) {
 
   const transformedSamples = transformSampleResponse(query, samples, mergedResultData)
 
+  const resultCustomFieldsByResultId = await getResultCustomFieldsResponseByResultIds(
+    mergedResultData.map(result => result.id)
+  )
+
   const entries = _.concat(_.uniqBy(mergedResultData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity)
 
   const awaitingTreatment = _.countBy(entries, 'requiresFollowUp')
@@ -81,7 +86,10 @@ async function fetchEntriesServiceHandler(request) {
     ok: !!entries,
     total: _.size(entries),
     awaitingTreatment: awaitingTreatment.true || 0,
-    data: entries,
+    data: entries.map(entry => ({
+      ...entry,
+      customFields: resultCustomFieldsByResultId[entry.id],
+    })),
   }
 }
 
