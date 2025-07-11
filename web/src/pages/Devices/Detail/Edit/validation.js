@@ -14,8 +14,7 @@ export const getValidationSchema = formatMessage =>
       .max(9999, formatMessage(validationErrorMessages.mustBeLessThan, { max: 9999 }))
       .integer(formatMessage(validationErrorMessages.mustBeANumber)),
     moduleBayCapacity: Yup.number()
-      .nullable()
-      .transform((value, originalValue) => (originalValue === '' ? null : value))
+      .required(formatMessage(validationErrorMessages.required))
       .min(1, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }))
       .max(256, formatMessage(validationErrorMessages.mustBeLessThan, { max: 256 }))
       .integer(formatMessage(validationErrorMessages.mustBeANumber)),

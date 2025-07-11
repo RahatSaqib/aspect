@@ -79,7 +79,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
     const deviceData = {
       ...values,
       dailyTestCapacity: values.dailyTestCapacity === '' ? null : values.dailyTestCapacity,
-      moduleBayCapacity: values.moduleBayCapacity === '' ? null : values.moduleBayCapacity,
       instrumentsConnected: values.instrumentsConnected === '' ? null : values.instrumentsConnected,
       gx6cModulesCount: values.gx6cModulesCount === '' ? null : values.gx6cModulesCount,
       gx10cModulesCount: values.gx10cModulesCount === '' ? null : values.gx10cModulesCount,
