@@ -5,7 +5,7 @@ import set from 'lodash/set'
 import uniqBy from 'lodash/uniqBy'
 import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
-import { validations } from '../../../messages/validations'
+import { validationErrorMessages } from '../../../messages'
 import getFormConfig from './Forms/editConfig'
 import getValidationSchema from './Forms/validation'
 import messages from './messages'
@@ -136,7 +136,7 @@ const getValidationRule = (customField, formatMessage) => {
   }
 
   if (customField.optional === false) {
-    validationRule = validationRule.required(formatMessage(validations.required))
+    validationRule = validationRule.required(formatMessage(validationErrorMessages.required))
   }
 
   return validationRule
