@@ -10,6 +10,7 @@ const {
   result1CategoryMapping,
   mapResultCategory2,
   getResultCategoriesHivVL,
+  getResultCategoriesHcv,
   getVLCopies,
   getXdrDetectedResistanceCategoryTypes,
   getBacterialLoad,
@@ -623,7 +624,12 @@ function getResultCategories(assayExternalId, resultText) {
 
     if (parts.length === 0) return categories
 
-    let status = sanitizeResultTextValue(parts[0])
+    const status = sanitizeResultTextValue(parts[0])
+
+    if (assayExternalId === 'GxHcv') {
+      const hivCategory = getResultCategoriesHcv(status)
+      return [{ id: hivCategory }]
+    }
 
     if (assayExternalId === 'GxHiv1Vl') {
       const hivCategory = getResultCategoriesHivVL(status)
@@ -637,20 +643,6 @@ function getResultCategories(assayExternalId, resultText) {
 
     const category2 = mapResultCategory2(assayExternalId, parts)
     if (category2) categories.push({ id: category2 })
-
-    // fallback logic
-    if (categories.length === 0) {
-      if (assayExternalId === 'GxHcv') {
-        const regexp = /^([\w\s]+)\s*\d/g
-        const matches = regexp.exec(resultText)
-        if (matches && matches.length > 1) {
-          const rawStatus = matches[1]
-          status = sanitizeResultTextValue(rawStatus)
-          const category1 = result1CategoryMapping[status]
-          if (category1) categories.push({ id: category1 })
-        }
-      }
-    }
   } else if (assayExternalId === 'GxHiv1Vl') categories.push({ id: 'NoResult' })
 
   return categories

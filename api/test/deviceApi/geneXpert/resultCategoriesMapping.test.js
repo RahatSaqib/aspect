@@ -394,6 +394,114 @@ describe('[HIV] getResultCategories', () => {
   })
 })
 
+describe('[HCV] getResultCategories', () => {
+  it('Should parse detected HCV results #1', () => {
+    assert.deepEqual(
+      getResultCategories(
+        'GxHcv',
+        'HCV @label_quant1_result_normal_log,@label_result_detected,#2.24E06,IU/mL,@label_log,#6.35'
+      ),
+      [{ id: 'Detected' }]
+    )
+  })
+
+  it('Should parse detected HCV results #2', () => {
+    assert.deepEqual(
+      getResultCategories(
+        'GxHcv',
+        'HCV @label_quant1_result_normal_log,@label_result_detected,#4.97E03,IU/mL,@label_log,#3.70'
+      ),
+      [{ id: 'Detected' }]
+    )
+  })
+
+  it('Should parse detected HCV results #3', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'HCV DETECTED 23 IU/mL (log 1.36)'), [{ id: 'Detected' }])
+  })
+
+  it('Should parse detected HCV results #4', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'HCV DETECTED 5.07E06 IU/mL (log 6.71)'), [{ id: 'Detected' }])
+  })
+
+  it('Should parse detected HCV results #5', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'HCV ОБНАРУЖЕН 3,62E06 IU/mL (log 6,56)'), [{ id: 'Detected' }])
+  })
+
+  it('Should parse detected HCV results #6', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'HCV ОБНАРУЖЕН < 10 IU/mL (log 1,00)'), [{ id: 'Detected' }])
+  })
+
+  it('Should parse detected HCV results #7', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'HCV ОБНАРУЖЕН 28 IU/mL (log 1,45)'), [{ id: 'Detected' }])
+  })
+
+  it('Should parse detected HCV results #8', () => {
+    assert.deepEqual(
+      getResultCategories(
+        'GxHcv',
+        'HCV @label_quant1_result_abnormal_low_log,@label_result_detected,#10,IU/mL,@label_log,#1.00'
+      ),
+      [{ id: 'Detected' }]
+    )
+  })
+
+  it('Should parse no detected HCV results #1', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'HCV @label_result_not_detected'), [{ id: 'NotDetected' }])
+  })
+
+  it('Should parse no detected HCV results #2', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'HCV NOT DETECTED'), [{ id: 'NotDetected' }])
+  })
+
+  it('Should parse no detected HCV results #3', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'NOT DETECTED|'), [{ id: 'NotDetected' }])
+  })
+
+  it('Should parse no detected HCV results #4', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'HCV НЕ ОБНАРУЖЕН'), [{ id: 'NotDetected' }])
+  })
+
+  it('Should parse error HCV results #1', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'ERROR'), [{ id: 'Error' }])
+  })
+
+  it('Should parse error HCV results #2', () => {
+    assert.deepEqual(getResultCategories('GxHcv', '@label_result_error'), [{ id: 'Error' }])
+  })
+
+  it('Should parse error HCV results #3', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'ОШИБКА'), [{ id: 'Error' }])
+  })
+
+  it('Should parse invalid HCV results #1', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'INVALID|'), [{ id: 'Invalid' }])
+  })
+
+  it('Should parse invalid HCV results #2', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'INVALID'), [{ id: 'Invalid' }])
+  })
+
+  it('Should parse invalid HCV results #3', () => {
+    assert.deepEqual(getResultCategories('GxHcv', '@label_result_invalid'), [{ id: 'Invalid' }])
+  })
+
+  it('Should parse invalid HCV results #4', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'НЕДЕЙСТВИТЕЛЬНЫЙ'), [{ id: 'Invalid' }])
+  })
+
+  it('Should parse no result HCV results #1', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'НЕТ РЕЗУЛЬТАТА'), [{ id: 'NoResult' }])
+  })
+
+  it('Should parse no result HCV results #2', () => {
+    assert.deepEqual(getResultCategories('GxHcv', 'NO RESULT'), [{ id: 'NoResult' }])
+  })
+
+  it('Should parse no result HCV results #3', () => {
+    assert.deepEqual(getResultCategories('GxHcv', '@label_result_no_result'), [{ id: 'NoResult' }])
+  })
+})
+
 describe('Detected Resistancies Calculation', () => {
   it('Should get all the category types of the resistancies that were detected', () => {
     const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(
