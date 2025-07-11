@@ -511,21 +511,17 @@ const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
   // Parse the input dates and extract just the date part
   const minDateStr = typeof minDate === 'string' ? minDate : minDate.toISOString()
   const maxDateStr = typeof maxDate === 'string' ? maxDate : maxDate.toISOString()
-  
+
   // Extract date parts and create dates in UTC
   const startDateParts = minDateStr.split('T')[0].split('-')
   const endDateParts = maxDateStr.split('T')[0].split('-')
-  
-  const startDate = new Date(Date.UTC(
-    parseInt(startDateParts[0]), 
-    parseInt(startDateParts[1]) - 1, 
-    parseInt(startDateParts[2])
-  ))
-  const endDate = new Date(Date.UTC(
-    parseInt(endDateParts[0]), 
-    parseInt(endDateParts[1]) - 1, 
-    parseInt(endDateParts[2])
-  ))
+
+  const startDate = new Date(
+    Date.UTC(parseInt(startDateParts[0]), parseInt(startDateParts[1]) - 1, parseInt(startDateParts[2]))
+  )
+  const endDate = new Date(
+    Date.UTC(parseInt(endDateParts[0]), parseInt(endDateParts[1]) - 1, parseInt(endDateParts[2]))
+  )
 
   const isMonthPeriod = () => {
     return (

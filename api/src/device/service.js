@@ -26,6 +26,7 @@ const {
   getTimezoneOffsetFromNumber,
   getOffsetFromIsoDateString,
   getDateTimeProjectionInTimeZoneIANA,
+  convertMysqlDayOfWeekToDateFns,
 } = require('../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../shared/query')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
@@ -1018,7 +1019,9 @@ async function deviceMaintenanceStatusHistory(request) {
           latestDeviceMaintenanceStatusLogsPerDay.find(
             log => log.deviceId === device.id && format(log.day, 'yyyyMMdd') === format(day, 'yyyyMMdd')
           ) || {}
-        const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(d => parseInt(d) - 1) || [5, 6] // Convert MySQL dayOfWeek to JS dayOfWeek
+        const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [
+          5, 6,
+        ]
         const dayStatus = {
           date: day,
           externalId: deviceMaintenanceStatusLog.externalId || 'inactiveUnknown',

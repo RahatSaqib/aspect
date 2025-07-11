@@ -5,7 +5,12 @@ const { getDeviceBaseExtendedQuery } = require('../device/service')
 const { deviceStatusByDayQuery, getDeviceStatusOverTime } = require('./service')
 const { knex, sortPageParams } = require('../db')
 const { getConstraints, getUserFromCredentials } = require('../auth/constraints')
-const { getMonthYearField, parseDateOrDefault, getDateTimeProjectionInTimeZoneIANA, getWorkingDays } = require('../shared/date')
+const {
+  getMonthYearField,
+  parseDateOrDefault,
+  getDateTimeProjectionInTimeZoneIANA,
+  getWorkingDays,
+} = require('../shared/date')
 const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
 async function getDeviceActivityPercentReport(auth, query) {

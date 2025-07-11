@@ -13,7 +13,6 @@ const WORKING_DAYS_IN_YEAR = 252
 const DEFAULT_MODULES = 4
 const DEFAULT_DAILY_CAPACITY = DEFAULT_MODULES * 3
 
-
 async function getAnnualUtilizationData(auth, query, { timeFrame }) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)

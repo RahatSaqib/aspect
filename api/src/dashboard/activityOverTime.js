@@ -5,7 +5,12 @@ const addDays = require('date-fns/addDays')
 const addMinutes = require('date-fns/addMinutes')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getArrayOfDaysInRange, getOffsetFromIsoDateStringInMinutes, formatDateOrDefault } = require('../shared/date')
+const {
+  getArrayOfDaysInRange,
+  getOffsetFromIsoDateStringInMinutes,
+  formatDateOrDefault,
+  convertMysqlDayOfWeekToDateFns,
+} = require('../shared/date')
 const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
 async function activityOverTimeDashboard(request) {
@@ -176,7 +181,7 @@ async function activityOverTimeDashboard(request) {
         devicesTotal,
       }
     }
-    const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(d => parseInt(d) - 1) || [5, 6] // Convert MySQL dayOfWeek to JS dayOfWeek
+    const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [5, 6]
     const dayDate = new Date(day.date.getUTCFullYear(), day.date.getUTCMonth(), day.date.getUTCDate())
     day.isWeekendOrHoliday = excludedDays.includes(dayDate.getDay())
     return day

@@ -2,7 +2,12 @@ const { groupBy, orderBy, omit, min, uniq, isNil, isArray } = require('lodash')
 const { format, getISOWeek, parseISO } = require('date-fns')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex, filterParams } = require('../db')
-const { getArrayOfDaysInRange, getDateTimeExpressionInTimeZone, getDateSubstring } = require('../shared/date')
+const {
+  getArrayOfDaysInRange,
+  getDateTimeExpressionInTimeZone,
+  getDateSubstring,
+  convertMysqlDayOfWeekToDateFns,
+} = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 const { getPeopleBase } = require('../shared/utilsPerson')
 const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
@@ -315,7 +320,9 @@ async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
         }
       }
 
-      const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(d => parseInt(d) - 1) || [5, 6] // Convert MySQL dayOfWeek to JS dayOfWeek
+      const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [
+        5, 6,
+      ]
       const dayDate = new Date(isoDay)
       maintenanceStatusHistory.push({
         ...status,
