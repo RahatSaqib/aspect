@@ -22,6 +22,10 @@ const validationErrorMessages = {
       id: 'form.error.mustBeANumber',
       defaultMessage: 'Must be a number',
     },
+    mustBeAWholeNumber: {
+      id: 'form.error.mustBeAWholeNumber',
+      defaultMessage: 'Must be a whole number (no decimals like .2, 1.5)',
+    },
     mustBeAString: {
       id: 'form.error.mustBeAString',
       defaultMessage: 'Must be a string',

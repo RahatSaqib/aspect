@@ -157,7 +157,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   error={Boolean(errors.dailyTestCapacity)}
                   helperText={errors.dailyTestCapacity}
                   value={values.dailyTestCapacity}
-                  onChange={e => setFieldValue('dailyTestCapacity', e.target.value ? parseInt(e.target.value, 10) : '')}
+                  onChange={e => setFieldValue('dailyTestCapacity', e.target.value)}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -170,7 +170,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   error={Boolean(errors.moduleBayCapacity)}
                   helperText={errors.moduleBayCapacity}
                   value={values.moduleBayCapacity}
-                  onChange={e => setFieldValue('moduleBayCapacity', e.target.value ? parseInt(e.target.value, 10) : '')}
+                  onChange={e => setFieldValue('moduleBayCapacity', e.target.value)}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -183,9 +183,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   error={Boolean(errors.instrumentsConnected)}
                   helperText={errors.instrumentsConnected}
                   value={values.instrumentsConnected}
-                  onChange={e =>
-                    setFieldValue('instrumentsConnected', e.target.value ? parseInt(e.target.value, 10) : '')
-                  }
+                  onChange={e => setFieldValue('instrumentsConnected', e.target.value)}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -200,9 +198,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                       error={Boolean(errors.gx6cModulesCount)}
                       helperText={errors.gx6cModulesCount}
                       value={values.gx6cModulesCount ?? 0}
-                      onChange={e =>
-                        setFieldValue('gx6cModulesCount', e.target.value ? parseInt(e.target.value, 10) : '')
-                      }
+                      onChange={e => setFieldValue('gx6cModulesCount', e.target.value)}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -215,9 +211,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                       error={Boolean(errors.gx10cModulesCount)}
                       helperText={errors.gx10cModulesCount}
                       value={values.gx10cModulesCount ?? 0}
-                      onChange={e =>
-                        setFieldValue('gx10cModulesCount', e.target.value ? parseInt(e.target.value, 10) : '')
-                      }
+                      onChange={e => setFieldValue('gx10cModulesCount', e.target.value)}
                       InputLabelProps={{
                         shrink: true,
                       }}
