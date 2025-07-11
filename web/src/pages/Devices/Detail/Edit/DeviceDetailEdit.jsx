@@ -80,11 +80,16 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
       gx10cModulesCount: values.gx10cModulesCount === '' ? null : values.gx10cModulesCount,
     }
 
+    const onError = () => {
+      setSubmitting(false)
+      toast.error(intl.formatMessage(messages.deviceUpdateError))
+    }
+
     updateDeviceTags(values.tags.map(deviceTag => deviceTag.title).join(','), {
-      onError: () => setSubmitting(false),
+      onError,
       onSuccess: () => {
         updateDevice(deviceData, {
-          onSettled: () => setSubmitting(false),
+          onError,
           onSuccess: () => {
             toast.success(intl.formatMessage(messages.deviceUpdated))
             navigate(`/browse/device/list/${device.id}${location.search}`)

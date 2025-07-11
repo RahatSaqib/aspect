@@ -27,5 +27,6 @@ export default defineMessages({
   tags: { id: 'pages.DeviceDetailEdit.tags', defaultMessage: 'Tags' },
   discard: { id: 'pages.DeviceDetailEdit.discard', defaultMessage: 'Discard' },
   save: { id: 'pages.DeviceDetailEdit.save', defaultMessage: 'Save' },
+  deviceUpdateError: { id: 'pages.DeviceDetailEdit.deviceUpdateError', defaultMessage: 'Error updating device' },
   deviceUpdated: { id: 'pages.DeviceDetailEdit.deviceUpdated', defaultMessage: 'Device updated successfully' },
 })
