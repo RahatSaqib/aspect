@@ -67,6 +67,11 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
     setFieldValue('tags', newTags)
   }
 
+  const onError = () => {
+    setSubmitting(false)
+    toast.error(intl.formatMessage(messages.deviceUpdateError))
+  }
+
   const handleSubmit = async values => {
     setSubmitting(true)
 
@@ -78,11 +83,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
       instrumentsConnected: values.instrumentsConnected === '' ? null : values.instrumentsConnected,
       gx6cModulesCount: values.gx6cModulesCount === '' ? null : values.gx6cModulesCount,
       gx10cModulesCount: values.gx10cModulesCount === '' ? null : values.gx10cModulesCount,
-    }
-
-    const onError = () => {
-      setSubmitting(false)
-      toast.error(intl.formatMessage(messages.deviceUpdateError))
     }
 
     updateDeviceTags(values.tags.map(deviceTag => deviceTag.title).join(','), {
