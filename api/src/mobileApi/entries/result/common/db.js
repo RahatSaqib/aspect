@@ -9,51 +9,19 @@ const { buildQueryForResultsListAndExport } = require('../../../../result/servic
 
 const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
   const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
-
   const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const resultCategoryToId = await allResultCategoryToId()
 
-  const knexQuery = buildQueryForResultsListAndExport(query, dataConstraints)
-    .leftJoin('Person as sampleCollectedBy', 'sp.collectedBy', 'sampleCollectedBy.userId')
-    .leftJoin('Site as sampleOriginSite', 'sp.originSiteId', 'sampleOriginSite.id')
-    .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
-    .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
-    .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'r.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
-    .leftJoin(
-      'ResultWorkflowStatus as resultWorkflowStatus',
-      'resultWorkflowLog.resultWorkflowStatusId',
-      'resultWorkflowStatus.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatusLog as resultTreatmentStatusLog',
-      'r.treatmentStatusLogId',
-      'resultTreatmentStatusLog.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatus as resultTreatmentStatus',
-      'resultTreatmentStatusLog.resultTreatmentStatusId',
-      'resultTreatmentStatus.id'
-    )
-    .leftJoin('ResultStatusLog as resultStatusLog', 'r.id', 'resultStatusLog.resultId')
-    .leftJoin('ResultTransferLog as transferLog', 'r.id', 'transferLog.resultId')
-    .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
-    .leftJoin('Site as reportableSite', 'r.reportableSiteId', 'reportableSite.id')
-    .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
-    .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
-    .andWhere(qb => {
-      if (modifiedSince) {
-        qb.where('r.updatedOn', '>=', modifiedSince).orWhereNull('r.updatedOn')
-      }
-    })
-    .andWhere(qb => {
-      qb.where('r.endedOn', '>=', submittedSince).orWhere('sp.collectedOn', '>=', submittedSince)
-    })
-    .whereNotIn('r.resultCategory1', [
-      resultCategoryToId.Invalid,
-      resultCategoryToId.Error,
-      resultCategoryToId.NoResult,
-    ])
+  const queryBuilder = fetchResultsQuery(
+    {
+      ...query,
+      modifiedSince,
+      submittedSince,
+      ignoredResultCategories: [resultCategoryToId.Invalid, resultCategoryToId.Error, resultCategoryToId.NoResult],
+    },
+    dataConstraints
+  )
     .select(
       'a.externalId as assayExternalId',
       'a.patientDataSchema as patientDataSchema',
@@ -119,7 +87,55 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
     )
     .orderBy('sampleCollectedOn', 'desc')
     .orderBy('testEndDate', 'desc')
-  return knexQuery
+  return queryBuilder
+}
+
+const fetchResultsQuery = (query, dataConstraints) => {
+  const { modifiedSince, submittedSince, resultId, ignoredResultCategories } = query
+
+  return buildQueryForResultsListAndExport(query, dataConstraints)
+    .leftJoin('Person as sampleCollectedBy', 'sp.collectedBy', 'sampleCollectedBy.userId')
+    .leftJoin('Site as sampleOriginSite', 'sp.originSiteId', 'sampleOriginSite.id')
+    .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
+    .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
+    .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'r.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
+    .leftJoin(
+      'ResultWorkflowStatus as resultWorkflowStatus',
+      'resultWorkflowLog.resultWorkflowStatusId',
+      'resultWorkflowStatus.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatusLog as resultTreatmentStatusLog',
+      'r.treatmentStatusLogId',
+      'resultTreatmentStatusLog.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as resultTreatmentStatus',
+      'resultTreatmentStatusLog.resultTreatmentStatusId',
+      'resultTreatmentStatus.id'
+    )
+    .leftJoin('ResultStatusLog as resultStatusLog', 'r.id', 'resultStatusLog.resultId')
+    .leftJoin('ResultTransferLog as transferLog', 'r.id', 'transferLog.resultId')
+    .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
+    .leftJoin('Site as reportableSite', 'r.reportableSiteId', 'reportableSite.id')
+    .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
+    .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
+    .andWhere(qb => {
+      if (modifiedSince) {
+        qb.where('r.updatedOn', '>=', modifiedSince).orWhereNull('r.updatedOn')
+      }
+    })
+    .andWhere(qb => {
+      if (submittedSince) {
+        qb.where('r.endedOn', '>=', submittedSince).orWhere('sp.collectedOn', '>=', submittedSince)
+      }
+    })
+    .whereNotIn('r.resultCategory1', ignoredResultCategories)
+    .andWhere(qb => {
+      if (resultId) {
+        qb.where('r.id', resultId)
+      }
+    })
 }
 
 const getWorkflowLogsByResultIds = (results, resultWorkflowStatusExternalId) => {
@@ -212,6 +228,7 @@ const getUserSiteIds = async dataConstraints => {
 
 module.exports = {
   fetchResultsBySubmittedSinceQuery,
+  fetchResultsQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
