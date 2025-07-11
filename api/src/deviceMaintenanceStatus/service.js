@@ -6,7 +6,7 @@ const {
   getArrayOfDaysInRange,
   getDateTimeExpressionInTimeZone,
   getDateSubstring,
-  convertMysqlDayOfWeekToDateFns,
+  isWeekend,
 } = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 const { getPeopleBase } = require('../shared/utilsPerson')
@@ -320,14 +320,11 @@ async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
         }
       }
 
-      const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [
-        5, 6,
-      ]
       const dayDate = new Date(isoDay)
       maintenanceStatusHistory.push({
         ...status,
         day: isoDay,
-        isWeekend: excludedDays.includes(dayDate.getDay()),
+        isWeekend: isWeekend(dayDate, customWorkingDaysConfig),
         weekNumber: getISOWeek(dayDate),
         totalResults,
       })

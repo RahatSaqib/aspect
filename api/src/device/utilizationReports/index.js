@@ -1,13 +1,13 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { format, parseISO, addMonths, startOfYear, subYears, endOfMonth, eachDayOfInterval } = require('date-fns')
+const { format, parseISO, addMonths, startOfYear, subYears } = require('date-fns')
 const locales = require('date-fns/locale')
 const { knex, filterParams } = require('../../db')
 const { getConstraints, canViewResults, addConstraints } = require('../../auth/constraints')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
-const { convertMysqlDayOfWeekToDateFns, getWorkingDays } = require('../../shared/date')
+const { getWorkingDays } = require('../../shared/date')
 
 const WORKING_DAYS_IN_YEAR = 252
 const DEFAULT_MODULES = 4

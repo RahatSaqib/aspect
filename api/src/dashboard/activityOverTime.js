@@ -9,7 +9,7 @@ const {
   getArrayOfDaysInRange,
   getOffsetFromIsoDateStringInMinutes,
   formatDateOrDefault,
-  convertMysqlDayOfWeekToDateFns,
+  isWeekend,
 } = require('../shared/date')
 const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
@@ -181,9 +181,8 @@ async function activityOverTimeDashboard(request) {
         devicesTotal,
       }
     }
-    const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [5, 6]
     const dayDate = new Date(day.date.getUTCFullYear(), day.date.getUTCMonth(), day.date.getUTCDate())
-    day.isWeekendOrHoliday = excludedDays.includes(dayDate.getDay())
+    day.isWeekendOrHoliday = isWeekend(dayDate, customWorkingDaysConfig)
     return day
   })
 

@@ -517,10 +517,10 @@ const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
   const endDateParts = maxDateStr.split('T')[0].split('-')
 
   const startDate = new Date(
-    Date.UTC(parseInt(startDateParts[0]), parseInt(startDateParts[1]) - 1, parseInt(startDateParts[2]))
+    Date.UTC(parseInt(startDateParts[0], 10), parseInt(startDateParts[1], 10) - 1, parseInt(startDateParts[2], 10))
   )
   const endDate = new Date(
-    Date.UTC(parseInt(endDateParts[0]), parseInt(endDateParts[1]) - 1, parseInt(endDateParts[2]))
+    Date.UTC(parseInt(endDateParts[0], 10), parseInt(endDateParts[1], 10) - 1, parseInt(endDateParts[2], 10))
   )
 
   const isMonthPeriod = () => {
@@ -594,6 +594,18 @@ const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
  */
 const convertMysqlDayOfWeekToDateFns = day => day - 1
 
+/**
+ * Checks if a given date is a weekend based on partner configuration
+ * @param {Date} date - The date to check
+ * @param {Object} customWorkingDaysConfig - Partner working days configuration
+ * @param {string} customWorkingDaysConfig.excludedDays - Comma-separated string of excluded days in MySQL format
+ * @returns {boolean} True if the date is a weekend/excluded day
+ */
+const isWeekend = (date, customWorkingDaysConfig) => {
+  const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [5, 6]
+  return excludedDays.includes(date.getDay())
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -643,4 +655,5 @@ module.exports = {
   adjustDate,
   getMonthYearExpressionFromFieldInTimeZone,
   convertMysqlDayOfWeekToDateFns,
+  isWeekend,
 }
