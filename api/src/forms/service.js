@@ -11,13 +11,13 @@ const { SITE_TYPE_EXTERNAL_IDS } = require('../shared/constants')
 
 function createFormObject(formQuery) {
   const forms = {}
-  // eslint-disable-next-line no-return-assign
   _.each(formQuery, form => {
     forms[form.externalId] = {
       ...formDictionary[form.jsonSchemaFileName],
       assayId: form.assayId,
       diseaseId: form.diseaseId,
       formTypeId: form.formTypeId,
+      formDefinitionExternalId: form.externalId,
     }
   })
   return forms
@@ -30,6 +30,13 @@ async function getForms(request) {
   } = await getConstraints(auth.credentials)
   const formQuery = await getFormsBaseQuery(partnerId, query)
 
+  return createFormObject(formQuery)
+}
+
+async function getFormsByFormDefinitionExternalIds(partnerId, formDefinitionExternalIds) {
+  const formQuery = await getFormsBaseQuery(partnerId, {
+    externalsId: formDefinitionExternalIds,
+  })
   return createFormObject(formQuery)
 }
 
@@ -263,4 +270,5 @@ module.exports = {
   replaceOptionSourceProp,
   getCustomFieldPlaceholdersForNotifications,
   getCustomFieldsFromPayload,
+  getFormsByFormDefinitionExternalIds,
 }
