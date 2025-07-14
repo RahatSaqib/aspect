@@ -37,6 +37,11 @@ const downloadSitesResponseValidationV4 = () => {
           sampleRegistrationAllowed: Joi.bool()
             .required()
             .description('Whether the user is allowed to regsiter samples from the site'),
+          onlyForTransfers: Joi.bool()
+            .required()
+            .description(
+              'Whether the user is allowed just to create transfers (true) or also to to register samples (false)'
+            ),
         })
       ),
   })
