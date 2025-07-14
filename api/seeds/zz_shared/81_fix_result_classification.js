@@ -16,6 +16,7 @@ async function seed(knex) {
     .andWhere('dt.externalId', 'CepheidGeneXpert')
     .andWhere(qb => {
       qb.where('a.externalId', 'GxUnknown')
+      qb.orWhere('a.externalId', 'GxHcv')
       qb.orWhere('rc.externalId', 'Success')
       qb.orWhere('rc.externalId', 'NoResult')
     })
