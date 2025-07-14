@@ -220,4 +220,23 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       })
     })
   })
+
+  describe('with empty payload', () => {
+    it('should return a 400 (bad request) response', async () => {
+      const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send()
+      assert.equal(response.statusCode, 400)
+      assert.isUndefined(response.body.token)
+      assert.equal(response.body.message, `Request payload is required`)
+    })
+
+    it('should return a 400 (bad request) response when username is empty', async () => {
+      const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
+        Username: '',
+        Password: 'valid_Pa55w()rd',
+      })
+      assert.equal(response.statusCode, 400)
+      assert.isUndefined(response.body.token)
+      assert.equal(response.body.message, `Username cannot be empty`)
+    })
+  })
 })
