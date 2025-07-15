@@ -11,6 +11,30 @@ const SELECT_LIST_FIELDS = [
   's.sampleRegistrationAllowed',
 ]
 
+/**
+ * Gets a list of sites for mobile view with user-specific access controls.
+ *
+ * Returns sites that the user has access to, including:
+ * - Sites where the user has direct job assignments (onlyForTransfers = false)
+ * - Sites in the user's states that don't have job assignments (onlyForTransfers = true)
+ * @async
+ * @function getSitesMobileView
+ * @param {Object} dataConstraints - User data constraints containing partner and access information
+ * @param {string[]|null} type - Optional array of site type external IDs to filter by, default is lab and clinic
+ * @param {string} [sortBy='name'] - Field to sort results by, defaults to 'name'
+ * @returns {Promise<Array<Object>>} Promise that resolves to an array of site objects with the following properties:
+ *   - {number} id - Site ID
+ *   - {string} name - Site name
+ *   - {string} shortName - Site short name
+ *   - {string} state - State name
+ *   - {string} lga - LGA (Local Government Area) name
+ *   - {string} externalId - Site external ID
+ *   - {boolean} sampleRegistrationAllowed - Whether sample registration is allowed at this site (editable in Site CRUD)
+ *   - {boolean} onlyForTransfers - Whether this site is only accessible for transfers (no direct job assignment)
+ * true for sites in the user's states that don't have job assignments
+ * By "user states" we mean the states where the user has any job assignment.
+ * @throws {Error} Database errors from knex operations
+ */
 const getSitesMobileView = async (dataConstraints, type, sortBy = 'name') => {
   const userStatesIdsQuery = knex('State as st')
     .join('Geography as g', 'st.id', 'g.stateId')
