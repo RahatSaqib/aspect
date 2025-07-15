@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const { getConstraints } = require('../../../auth/constraints')
 const { getSitesMobileView } = require('./db')
 

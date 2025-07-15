@@ -73,7 +73,6 @@ const getSitesMobileView = async (dataConstraints, type, sortBy = 'name') => {
     .select(knex.raw('false as onlyForTransfers'))
     .union(stateSitesQuery.select(SELECT_LIST_FIELDS).select(knex.raw('true as onlyForTransfers')))
     .orderBy(sortBy)
-  // console.log('\x1b[1;36m', '🚀 ➜ getSitesMobileView ➜ q:', sitesListQ.toString())
 
   const sitesList = await sitesListQ
   sitesList.forEach(s => {
