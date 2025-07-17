@@ -121,9 +121,9 @@ describe.skip('Global reports', () => {
 
     // helper func which runs func and return same list of devices as for report
     const getDeviceForReport = async (userName, deviceId) => {
-      const { getDeviceCalibrationsForReport } = require('../../src/device/service')
+      const { getDeviceCalibrationReport } = require('../../src/device/serviceReports/getDeviceCalibrationReport')
       const auth = { credentials: { name: userName } }
-      const { ok, total, data } = await getDeviceCalibrationsForReport(auth, {})
+      const { ok, total, data } = await getDeviceCalibrationReport(auth, {})
       assert.isTrue(ok)
       assert.isAbove(total, 0)
       // check presence of props for row pattern in Excel 'api/templates/device_calibration_report/en.xlsx'
