@@ -2,10 +2,14 @@ const { getDeviceBaseExtendedQuery } = require('../service')
 const { getConstraints } = require('../../auth/constraints')
 const { knex, sortPageParams } = require('../../db')
 const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
+const { deviceMaintenanceTypeToId } = require('../../shared/dictionary')
 
 async function getDeviceCalibrationReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
+  const calibrationDeviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
+
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
 
@@ -13,7 +17,10 @@ async function getDeviceCalibrationReport(auth, query, timezoneIANA) {
   const getItems = deviceQuery
     .clone()
     .leftJoin('DeviceMaintenance as dm', queryBuilder => {
-      queryBuilder.on('d.id', 'dm.deviceId').andOn('dm.current', 1)
+      queryBuilder
+        .on('d.id', 'dm.deviceId')
+        .andOn('dm.current', 1)
+        .andOn('dm.deviceMaintenanceTypeId', calibrationDeviceMaintenanceTypeId)
     })
     .modify(sortPageParams, query, 'name')
     .select([
