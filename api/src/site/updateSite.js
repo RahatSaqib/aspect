@@ -9,7 +9,6 @@ const {
   updateSiteConsumable,
   updateSiteConsumablesBatch,
   checkSiteAccess,
-  getSiteTypeIdByExternalId,
 } = require('./common/db')
 const { throwExistingSiteError } = require('./common/validations')
 const { updateTagsById } = require('../tag/service')
