@@ -7,6 +7,7 @@ const { getListSitesForSelectList } = require('../site/service')
 const { stateSelectList } = require('../geography/service')
 const { normalizePhoneNumber } = require('../shared/phoneNormalization')
 const { getSiteIdByName } = require('../site/common/db')
+const { SITE_TYPE_EXTERNAL_IDS } = require('../shared/constants')
 
 function createFormObject(formQuery) {
   const forms = {}
@@ -78,7 +79,7 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
           field.InputControlData = {}
         }
         field.items = await getAllSites(partnerId, countryId, itemsSourceConfig, {
-          siteTypeExternalIds: ['clinic'],
+          siteTypeExternalIds: [SITE_TYPE_EXTERNAL_IDS.CLINIC],
         })
       }
 

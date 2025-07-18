@@ -62,6 +62,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldTags',
     defaultMessage: 'Tags',
   },
+  sampleRegistrationAllowed: {
+    id: 'pages.SiteDetail.sampleRegistrationAllowed',
+    defaultMessage: 'Sample collection allowed',
+  },
   fieldDevices: {
     id: 'pages.SiteDetail.fieldDevices',
     defaultMessage: 'Devices',
@@ -85,6 +89,10 @@ export default defineMessages({
   fieldNotes: {
     id: 'pages.SiteDetail.fieldNotes',
     defaultMessage: 'Notes',
+  },
+  fieldHoursOfOperation: {
+    id: 'pages.SiteDetail.fieldHoursOfOperation',
+    defaultMessage: 'Hours of Operation',
   },
   fieldEndingHours: {
     id: 'pages.SiteDetail.fieldEndingHours',

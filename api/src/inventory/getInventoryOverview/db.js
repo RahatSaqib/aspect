@@ -2,6 +2,7 @@ const { max, min, subDays, subYears, startOfDay, differenceInDays, parseISO } = 
 const { knex, filterDateRangeParams } = require('../../db')
 const { getUnreconciledQuantitiesSubquery } = require('../common/db')
 const { addConstraints } = require('../../auth/constraints')
+const { SITE_TYPE_EXTERNAL_IDS } = require('../../shared/constants')
 
 module.exports = async function (query, constraints) {
   const sixMonthsBeforeToday = startOfDay(subDays(new Date(), 180))
@@ -96,7 +97,7 @@ module.exports = async function (query, constraints) {
   const sites = await overviewQuery
 
   sites
-    .filter(s => s.type !== 'warehouse')
+    .filter(s => s.type !== SITE_TYPE_EXTERNAL_IDS.WAREHOUSE)
     .forEach(site => {
       addDailyConsumptionRateInDateRange(site, query.minDate, query.maxDate)
 
