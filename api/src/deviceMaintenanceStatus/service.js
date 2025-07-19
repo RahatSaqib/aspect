@@ -1,10 +1,16 @@
 const { groupBy, orderBy, omit, min, uniq, isNil, isArray } = require('lodash')
-const { format, isWeekend, getISOWeek, parseISO } = require('date-fns')
+const { format, getISOWeek, parseISO } = require('date-fns')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex, filterParams } = require('../db')
-const { getArrayOfDaysInRange, getDateTimeExpressionInTimeZone, getDateSubstring } = require('../shared/date')
+const {
+  getArrayOfDaysInRange,
+  getDateTimeExpressionInTimeZone,
+  getDateSubstring,
+  isWeekend,
+} = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 const { getPeopleBase } = require('../shared/utilsPerson')
+const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
 /**
  * minDate and maxDate - are LOCAL user date-time
@@ -110,6 +116,7 @@ async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
   const dataConstraints = await getConstraints(auth.credentials)
   const user = await getUserFromCredentials(auth.credentials)
   const { timezoneIANA } = user
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
 
   /**
    * minDate and maxDate are Date object, because we used
@@ -313,11 +320,12 @@ async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
         }
       }
 
+      const dayDate = new Date(isoDay)
       maintenanceStatusHistory.push({
         ...status,
         day: isoDay,
-        isWeekend: isWeekend(new Date(isoDay)),
-        weekNumber: getISOWeek(new Date(isoDay)),
+        isWeekend: isWeekend(dayDate, customWorkingDaysConfig),
+        weekNumber: getISOWeek(dayDate),
         totalResults,
       })
     })
