@@ -6,6 +6,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { addMilliseconds, addHours, addMinutes, subDays, subHours, subMinutes, subMonths } = require('date-fns')
 const { insertSite } = require('../../src/site/common/db')
+const helpers = require('./fixtures/helpers')
 const { upsertJobFunctionFixture } = require('../common')
 const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
@@ -486,7 +487,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-    ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
@@ -563,6 +564,9 @@ async function seed(knex) {
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultEidNumber, 6000)
 
+    const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+    const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
+
     const rnd = _.random(0, 100)
     const result = _.find(possibleResultsEid, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
     const patient = patients[_.random(patientNumber)]
@@ -591,9 +595,9 @@ async function seed(knex) {
       createdOn: addMinutes(randomDate, 120),
       updatedOn: addMinutes(randomDate, 180),
       researchId: `R-ID-${i}`,
-      instrumentSerial: `S-1234-${i % 3}`,
-      moduleName: 'Module A',
-      moduleSerial: `M-1234-${i % 4}`,
+      instrumentSerial,
+      moduleName: module.name,
+      moduleSerial: module.serial,
       senderOperator: 'Frank',
       errorCode: result.category1 === resultCategoryErrorId ? _.random(2000, 9000) : null,
       errorNotes: result.category1 === resultCategoryErrorId ? 'Temperature out of acceptable range' : null,
@@ -684,7 +688,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-    ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
@@ -711,6 +715,9 @@ async function seed(knex) {
         copies = _.random(1000, 2000000)
       }
     }
+
+    const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+    const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
 
     const resultData = {
       resultText: copies ? result.resultText.replace('X', copies) : result.resultText,
@@ -739,9 +746,9 @@ async function seed(knex) {
       createdOn: addMinutes(randomDate, 120),
       updatedOn: addMinutes(randomDate, 180),
       researchId: `R-ID-${i}`,
-      instrumentSerial: `S-1234-${i % 3}`,
-      moduleName: 'Module A',
-      moduleSerial: `M-1234-${i % 4}`,
+      instrumentSerial,
+      moduleName: module.name,
+      moduleSerial: module.serial,
       senderOperator: 'Frank',
       errorCode: result.category1 === resultCategoryErrorId ? _.random(2000, 9000) : null,
       errorNotes: result.category1 === resultCategoryErrorId ? 'Temperature out of acceptable range' : null,

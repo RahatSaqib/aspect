@@ -21,6 +21,7 @@ const {
 } = require('date-fns')
 const { getLinkedResultDate, getDateFields } = require('./utils')
 const { getMGITResultFromTBPositive } = require('./commonTB')
+const helpers = require('./development/fixtures/helpers')
 const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
@@ -356,7 +357,7 @@ async function addCovidResults(
       originSiteId: siteData.id,
     }
 
-    ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
@@ -495,13 +496,13 @@ async function addCovidResults(
           caseId: formData.caseId,
           gender: formData.gender
             ? wakandaCovidResultFormSchema.fields.gender.control.options.find(
-                option => option.value == formData.gender // eslint-disable-line eqeqeq
-              ).title
+              option => option.value == formData.gender // eslint-disable-line eqeqeq
+            ).title
             : undefined,
           testReason: formData.testReason
             ? wakandaCovidResultFormSchema.fields.testReason.control.options.find(
-                option => option.value == formData.testReason // eslint-disable-line eqeqeq
-              ).title
+              option => option.value == formData.testReason // eslint-disable-line eqeqeq
+            ).title
             : undefined,
         }),
       }
@@ -532,8 +533,8 @@ async function addCovidResults(
       rndWorkflow < 20
         ? resultWorkflowStatusProcessedId
         : rndWorkflow < 30
-        ? resultWorkflowStatusValidatedId
-        : resultWorkflowStatusDeliverableId
+          ? resultWorkflowStatusValidatedId
+          : resultWorkflowStatusDeliverableId
 
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
@@ -583,7 +584,7 @@ async function addHivVlResults(
       originSiteId: siteData.id,
     }
 
-    ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
@@ -658,6 +659,9 @@ async function addHivVlResults(
     const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
     const randomDate = date || calculateDateForResult(i, resultHivVlNumber, 6000)
 
+    const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+    const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
+
     const rnd = _.random(0, 100)
     const selectionConditionWithNoErrors = r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     const selectionConditionWithErrors = r => r.category1 === resultCategories.resultCategoryErrorId
@@ -713,9 +717,9 @@ async function addHivVlResults(
       consumableSerial: `${i}12`,
       consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
       consumableLot: `Lot ${i % 5}`,
-      instrumentSerial: `S-1234-${i % 3}`,
-      moduleName: 'Module A',
-      moduleSerial: `M-1234-${i % 4}`,
+      instrumentSerial,
+      moduleName: module.name,
+      moduleSerial: module.serial,
       researchId: `R-ID-${i}`,
       patientData: JSON.stringify(patients[_.random(patientNumber)]),
       senderVersion: '4.4',
@@ -775,7 +779,7 @@ async function addTBResults(
         originSiteId: siteData.id,
       }
 
-      ;[sample.id] = await knex('Sample').insert(sample)
+        ;[sample.id] = await knex('Sample').insert(sample)
 
       samples.push(sample)
     }
@@ -847,6 +851,9 @@ async function addTBResults(
     const device = validDevices[i % validDevices.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
 
+    const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+    const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
+
     // we make sure to have at least one error result if error codes are passed
     const result = _.find(
       possibleResults[assay.externalId],
@@ -901,7 +908,7 @@ async function addTBResults(
       consumableSerial: `${i}12`,
       consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
       consumableLot: `Lot ${i % 5}`,
-      instrumentSerial: `S-1234-${i % 3}`,
+      instrumentSerial,
       researchId: `R-ID-${i}`,
       senderOperator: 'Marsha',
       notes: 'This is a test... result',
@@ -909,8 +916,8 @@ async function addTBResults(
     if (gxAssayExternalIds.includes(assay.externalId)) {
       resultElement.resultCategory2 = result.resultCategory2
       resultElement.assayVersion = '4'
-      resultElement.moduleName = 'Module A'
-      resultElement.moduleSerial = `M-1234-${i % 4}`
+      resultElement.moduleName = module.name
+      resultElement.moduleSerial = module.serial
       resultElement.patientData = JSON.stringify(getRandomGeneXpertPatientData(patientNumber, patients))
       resultElement.senderVersion = '4.6b'
       resultElement.errorCode = result.resultCategory1 === resultCategories.Error ? _.sample(errorCodes) : null
@@ -988,7 +995,7 @@ async function addEbolaResults(
       originSiteId: siteData.id,
     }
 
-    ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
@@ -1064,6 +1071,10 @@ async function addEbolaResults(
     const sample = samples[i % samples.length]
     const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
     const randomDate = date || subDays(new Date(), _.random(5))
+
+    const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+    const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
+
     // Result source
     const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
 
@@ -1097,9 +1108,9 @@ async function addEbolaResults(
         consumableSerial: `${i}12`,
         consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
         consumableLot: `Lot ${i % 5}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
+        instrumentSerial,
+        moduleName: module.name,
+        moduleSerial: module.serial,
         researchId: `R-ID-${i}`,
         reportableSiteId: sample.originSiteId || siteData.id,
         patientData: JSON.stringify(patients[_.random(patientNumber)]),
@@ -1146,11 +1157,11 @@ async function setTreatmentStatusToResults(knex, resultsToUpdate, treatmentStatu
 
     const [treatmentStatusLogId] = treatment
       ? await knex('ResultTreatmentStatusLog').insert({
-          resultId: result.id,
-          resultTreatmentStatusId: treatment,
-          changedOn: treatmentDateTime,
-          createdOn: treatmentDateTime,
-        })
+        resultId: result.id,
+        resultTreatmentStatusId: treatment,
+        changedOn: treatmentDateTime,
+        createdOn: treatmentDateTime,
+      })
       : [null]
 
     await knex('Result').where('id', result.id).update({
