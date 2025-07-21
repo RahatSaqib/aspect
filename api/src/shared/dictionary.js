@@ -24,7 +24,9 @@ const cacheConfig = {
     keyColumn: 'token',
   },
   DeviceMaintenanceStatus: {},
-  DeviceMaintenanceType: {},
+  DeviceMaintenanceType: {
+    keyColumn: 'externalId',
+  },
   DeviceType: {
     additionalColumns: ['plugin'],
   },
