@@ -1,55 +1,119 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
+import { Box, Button, Card, Checkbox, FormControlLabel, Grid, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
+  ConsumableSelect,
+  LocationSelector,
   SiteListSelect,
   SiteTagInput,
-  LocationSelector,
   TimezoneSelect,
-  ConsumableSelect,
 } from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
 import useDeleteSite from '../../../../hooks/site/useDeleteSite'
+import useSiteType from '../../../../hooks/site/useSiteType'
 import useUpdateSite from '../../../../hooks/site/useUpdateSite'
 import useAuthState from '../../../../hooks/useAuthState'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { gotoReturnUrl } from '../../../../utils/utils/browser'
+import { SITE_TYPE_EXTERNAL_IDS } from '../../siteTypes'
 import messages from '../messages'
 import styles from '../SiteDetail.module.css'
 import { convertToFloat, getLatLongFromAddress } from './address'
 import SiteTypeSelect from './SiteTypeSelect'
 
-const WAREHOUSE_SITE_TYPE_ID = 3
 const SiteForm = ({ site, onLatLongChange }) => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const navigate = useNavigate()
   const location = useLocation()
   const [showConfirmation, setShowConfirmation] = useState(false)
+  const { data: siteTypes } = useSiteType()
 
   const { mutate: updateSite } = useUpdateSite(site.id)
   const { mutate: deleteSite } = useDeleteSite(site.id)
   const { mutate: createSite } = useCreateSite()
   const [submitting, setSubmitting] = useState(false)
-  const [editSite, setEditSite] = useState({ ...site, ...(!site.countryId ? { countryId: user.countryId } : {}) })
-  const [queryParamsForWarehouse] = useState({ siteTypeExternalIds: ['warehouse'], excludeSiteIds: [site.id] })
 
-  const isPristine = isEqual(site, editSite)
-  const isWarehouse = editSite.siteTypeId === WAREHOUSE_SITE_TYPE_ID
+  // Helper function to get default site type ID (lab)
+  const getDefaultSiteTypeId = () => {
+    if (!siteTypes) return null
+    const labSiteType = siteTypes.find(st => st.externalId === SITE_TYPE_EXTERNAL_IDS.LAB)
+    return labSiteType?.id || null
+  }
+
+  // Helper function to check if site type is clinic
+  const isClinicSiteType = siteTypeId => {
+    if (!siteTypeId || !siteTypes) return false
+    const siteType = siteTypes.find(st => st.id === siteTypeId)
+    return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.CLINIC
+  }
+
+  // Helper function to check if site type is warehouse
+  const isWarehouseSiteType = siteTypeId => {
+    if (!siteTypeId || !siteTypes) return false
+    const siteType = siteTypes.find(st => st.id === siteTypeId)
+    return siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE
+  }
+  const initialState = {
+    ...site,
+    ...(!site.countryId ? { countryId: user.countryId } : {}),
+    // Use siteTypeId from site data, or default to lab if not provided
+    siteTypeId: site.siteTypeId || getDefaultSiteTypeId(),
+    sampleRegistrationAllowed: Boolean(site.sampleRegistrationAllowed ?? isClinicSiteType(site.siteTypeId)),
+  }
+
+  const [editSite, setEditSite] = useState(initialState)
+  const [queryParamsForWarehouse] = useState({
+    siteTypeExternalIds: [SITE_TYPE_EXTERNAL_IDS.WAREHOUSE], // This is for the SiteListSelect component which expects external IDs
+    excludeSiteIds: [site.id],
+  })
+
+  // Use ref to track if we're in the initial load
+  const isInitialLoad = useRef(true)
+
+  // Use ref to track the previous site type for comparison
+  const previousSiteTypeId = useRef(site.siteTypeId)
+
+  const isPristine = isEqual(initialState, editSite)
+  const isWarehouse = isWarehouseSiteType(editSite.siteTypeId)
   const isNew = site.id === 0
-  const goBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
+  const goBack = () => gotoReturnUrl(navigate, location, '/browse/site')
 
   useEffect(
     () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
     [editSite.latitude, editSite.longitude, onLatLongChange]
   )
+
+  // Auto-update sampleRegistrationAllowed only when user changes site type (not on initial load)
+  useEffect(() => {
+    // Skip the initial load only for edit mode (not for new sites)
+    if (isInitialLoad.current && !isNew) {
+      isInitialLoad.current = false
+      previousSiteTypeId.current = editSite.siteTypeId
+      return
+    }
+
+    // For new sites, always allow updates
+    // For existing sites, only update if the site type has actually changed
+    if (isNew || (!isNew && editSite.siteTypeId && editSite.siteTypeId !== previousSiteTypeId.current)) {
+      const siteType = siteTypes?.find(st => st.id === editSite.siteTypeId)
+      const shouldAllowSampleRegistration = siteType?.externalId === SITE_TYPE_EXTERNAL_IDS.CLINIC
+
+      setEditSite(prev => ({
+        ...prev,
+        sampleRegistrationAllowed: shouldAllowSampleRegistration,
+      }))
+      // Update the previous site type
+      previousSiteTypeId.current = editSite.siteTypeId
+    }
+  }, [editSite.siteTypeId, siteTypes, isNew])
 
   const updateSiteLatLong = async address => {
     getLatLongFromAddress(address).then(({ lat, lng }) => {
@@ -64,6 +128,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const handleSubmit = async data => {
     setSubmitting(true)
     if (!data.longitude || !data.latitude) {
+      delete editSite.parentWarehouseName
       await updateSiteLatLong({
         country: editSite.country,
         state: editSite.state,
@@ -72,14 +137,19 @@ const SiteForm = ({ site, onLatLongChange }) => {
         address: editSite.address,
       })
     }
+
+    // Prepare the payload, removing siteTypeExternalId as it's not allowed by the backend
+    const payload = { ...editSite }
+    delete payload.siteTypeExternalId
+
     if (isNew) {
-      createSite(editSite, {
+      createSite(payload, {
         onSuccess: newId => navigate(`/browse/site/${newId}${location.search}`),
         onSettled: () => setSubmitting(false),
       })
     } else {
-      delete editSite.selectedConsumables
-      updateSite(editSite, {
+      delete payload.selectedConsumables
+      updateSite(payload, {
         onSuccess: navigate(`/browse/site/${site.id}${location.search}`),
         onSettled: () => setSubmitting(false),
       })
@@ -360,11 +430,39 @@ const SiteForm = ({ site, onLatLongChange }) => {
             </span>
           </div>
 
+          <div className={`${styles.container} ${styles.coordinate}`}>
+            <TextField
+              label={formatMessage(messages.fieldNotes)}
+              multiline
+              rows={4}
+              fullWidth
+              value={editSite.notes || ''}
+              onChange={e => setEditSite({ ...editSite, notes: e.target.value })}
+            />
+          </div>
+
           <SiteTagInput
             label={formatMessage(messages.fieldTags)}
             onChange={tags => setEditSite(prv => ({ ...prv, tags }))}
             value={editSite?.tags ?? []}
           />
+
+          <Grid container>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={Boolean(editSite.sampleRegistrationAllowed)}
+                    onChange={e => setEditSite({ ...editSite, sampleRegistrationAllowed: e.target.checked })}
+                    color="primary"
+                  />
+                }
+                label={formatMessage(messages.sampleRegistrationAllowed)}
+              />
+            </Grid>
+          </Grid>
+
+          <div style={{ height: 24 }} />
 
           {isNew ? (
             <ConsumableSelect
@@ -376,16 +474,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
             />
           ) : null}
 
-          <div className={`${styles.container} ${styles.coordinate}`}>
-            <TextField
-              label={formatMessage(messages.fieldNotes)}
-              multiline
-              rows={4}
-              fullWidth
-              defaultValue={editSite.notes}
-              onChange={e => setEditSite({ ...editSite, notes: e.target.value })}
-            />
-          </div>
           <Button
             color="secondary"
             variant="contained"
@@ -463,11 +551,12 @@ SiteForm.defaultProps = {
     street2: '',
     longitude: 0,
     latitude: 0,
-    siteTypeId: 1,
+    siteTypeId: null,
     hoursStart: 9,
     hoursEnd: 18,
     notes: '',
     parentWarehouseId: null,
+    sampleRegistrationAllowed: false,
   },
   onLatLongChange: () => {},
 }

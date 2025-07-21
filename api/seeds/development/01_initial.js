@@ -3269,23 +3269,25 @@ async function seed(knex) {
               if (!preventRandomSitesForCountries.includes(countryData.abbreviation)) {
                 await Promise.all(
                   _.map(_.range(1, 6 - (lgaData.id % 5)), async siteNumber => {
+                    const siteType = labStrings[_.random(0, labStrings.length - 1)]
+                    const siteTypeId = siteTypeIds[siteType === 'Clinic' ? 'clinic' : 'lab']
                     const city = lga.cities && lga.cities[siteNumber - 1] ? lga.cities[siteNumber - 1] : null
                     const siteData = {
                       partnerId: partnerOneId,
                       geographyId,
                       externalId: `${state.name}_${siteNumber}_${(incremental += 1)}`,
-                      name: city
-                        ? `${city} ${labStrings[_.random(0, labStrings.length - 1)]}`
-                        : `${lga.name} County ${siteNumber % 2 ? 'Lab' : 'Clinic'} ${siteNumber}`,
-                      siteTypeId: siteTypeIds[siteNumber % 2 ? 'lab' : 'clinic'],
+                      name: city ? `${city} ${siteType}` : `${lga.name} County ${siteType} ${siteNumber}`,
+                      siteTypeId,
                       shortName: city || `${lga.name}, ${stateKey} ${siteNumber}`,
                       city: city || `${lga.name} City`,
                       street1: `${lgaData.id} Main Street`,
                       zip: `12345-${lgaData.id}`,
                       latitude: _.has(state, 'lat') ? state.lat + _.random(-0.5, 0.5, true) : undefined,
                       longitude: _.has(state, 'lng') ? state.lng + _.random(-0.5, 0.5, true) : undefined,
+                      sampleRegistrationAllowed: siteType === 'Clinic', // true if it's clinic
                       ...auditFields,
                     }
+
                     const [siteId] = await insertSite(knex, siteData)
                     siteData.id = siteId
                     countryData.sites.push(siteData)

@@ -1,110 +1,17 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { format, parseISO, addMonths, startOfYear, subYears, endOfMonth, eachDayOfInterval } = require('date-fns')
+const { format, parseISO, addMonths, startOfYear, subYears } = require('date-fns')
 const locales = require('date-fns/locale')
 const { knex, filterParams } = require('../../db')
 const { getConstraints, canViewResults, addConstraints } = require('../../auth/constraints')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
-const { convertMysqlDayOfWeekToDateFns } = require('../../shared/date')
+const { getWorkingDays } = require('../../shared/date')
 
 const WORKING_DAYS_IN_YEAR = 252
 const DEFAULT_MODULES = 4
 const DEFAULT_DAILY_CAPACITY = DEFAULT_MODULES * 3
-
-/**
- * Calculates the number of working days between two dates, considering client-specific configurations.
- *
- * @param {string} minDate - The start date in ISO format (e.g., "2023-01-01T00:00:00.000Z")
- * @param {string} maxDate - The end date in ISO format (e.g., "2023-12-31T23:59:59.999Z")
- * @param {Object} [clientConfig={}] - Value of Partner.customWorkingDays
- * @param {number} [clientConfig.daysPerYear] - Predefined working days for a full year period
- * @param {number} [clientConfig.daysPerQuarter] - Predefined working days for a full quarter period
- * @param {number} [clientConfig.daysPerMonth] - Predefined working days for a full month period
- * @param {string} [clientConfig.excludedDays] - Comma-separated string of days to exclude (MySQL DAYOFWEEK format: 1=Sunday, 7=Saturday)
- *
- * @returns {number} The number of working days in the specified date range
- *
- * @description
- * This function calculates working days by first checking if the date range represents a standard period
- * (full year, quarter, or month) and if the client has predefined values for such periods. If so, it returns
- * the predefined value. Otherwise, it calculates the actual working days by generating all dates in the range
- * and filtering out excluded days (defaults to weekends: Saturday and Sunday).
- *
- * @example
- * // Calculate working days for a month with default weekend exclusion
- * getWorkingDays("2023-01-01T00:00:00.000Z", "2023-01-31T23:59:59.999Z")
- * // Returns: 22 (assuming January 2023 has 22 weekdays)
- *
- * @example
- * // Calculate working days with custom excluded days (excluding Monday and Tuesday)
- * getWorkingDays("2023-01-01T00:00:00.000Z", "2023-01-31T23:59:59.999Z", { excludedDays: "2,3" })
- * // Returns: 13 (excluding Mondays and Tuesdays)
- */
-const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
-  // Parse the input dates and reset time to midnight without considering time zone
-  const startDate = new Date(minDate.split('T')[0])
-  const endDate = new Date(maxDate.split('T')[0])
-
-  const isMonthPeriod = () => {
-    return (
-      startDate.getDate() === 1 &&
-      endDate.getMonth() === startDate.getMonth() &&
-      endDate.getDate() === endOfMonth(endDate).getDate()
-    )
-  }
-
-  const isQuarterPeriod = () => {
-    // Get the start of the quarter
-    const quarter = Math.floor(startDate.getMonth() / 3)
-    const quarterStartMonth = quarter * 3
-
-    // Check if startDate is first day of quarter
-    const isStartOfQuarter = startDate.getMonth() === quarterStartMonth && startDate.getDate() === 1
-
-    // Check if endDate matches last day of quarter (comparing month and day directly)
-    const isEndOfQuarter =
-      endDate.getMonth() === quarterStartMonth + 2 && // Last month of quarter
-      endDate.getDate() === new Date(endDate.getFullYear(), quarterStartMonth + 3, 0).getDate() // Last day of that month
-
-    return isStartOfQuarter && isEndOfQuarter
-  }
-
-  const isYearPeriod = () => {
-    return (
-      startDate.getMonth() === 0 &&
-      startDate.getDate() === 1 &&
-      endDate.getMonth() === 11 &&
-      endDate.getDate() === 31 &&
-      endDate.getFullYear() === startDate.getFullYear()
-    )
-  }
-
-  // If it's a standard period and client has config, use the config values
-  if (clientConfig) {
-    if (isYearPeriod() && clientConfig.daysPerYear) {
-      return clientConfig.daysPerYear
-    }
-    if (isQuarterPeriod() && clientConfig.daysPerQuarter) {
-      return clientConfig.daysPerQuarter
-    }
-    if (isMonthPeriod() && clientConfig.daysPerMonth) {
-      return clientConfig.daysPerMonth
-    }
-  }
-
-  // Otherwise calculate actual working days using functional approach
-  const excludedDays = clientConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [5, 6] // Default to exclude weekends
-
-  // Generate array of all dates in the interval
-  const allDates = eachDayOfInterval({ start: startDate, end: endDate })
-
-  // Filter out excluded days and count working days
-  const totalWorkingDays = allDates.filter(date => !excludedDays.includes(date.getDay())).length
-
-  return totalWorkingDays
-}
 
 async function getAnnualUtilizationData(auth, query, { timeFrame }) {
   // get data constraints
@@ -425,5 +332,4 @@ module.exports = {
   // endpoint handlers
   listAnnualUtilizationRateNational,
   listAnnualUtilizationRateProvincial,
-  getWorkingDays,
 }
