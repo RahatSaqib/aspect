@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-02T10:29:54.230Z\n"
+"POT-Creation-Date: 2025-07-16T10:42:20.495Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3448,6 +3448,13 @@ msgstr "Журнали пристроїв"
 msgid "Device type"
 msgstr "Тип пристрою"
 
+#. [pages.DeviceDetailEdit.deviceUpdated]
+#. defaultMessage is:
+#. Device updated successfully
+#: extracted_strings.json
+msgid "Device updated successfully"
+msgstr "Пристрій успішно оновлено"
+
 #. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
@@ -4133,6 +4140,13 @@ msgstr "Помилка збереження нового пароля"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Помилка надсилання електронної пошти для скидання пароля"
+
+#. [pages.DeviceDetailEdit.deviceUpdateError]
+#. defaultMessage is:
+#. Error updating device
+#: extracted_strings.json
+msgid "Error updating device"
+msgstr "Помилка оновлення пристрою"
 
 #. [report.missingDateRangeFilterTitle]
 #. defaultMessage is:
@@ -6015,7 +6029,7 @@ msgstr ""
 "Недійсні дані. Перегляньте, повторіть спробу або зверніться по допомогу до "
 "адміністратора."
 
-#. [validations.invalidEmail]
+#. [form.error.invalidEmail]
 #. defaultMessage is:
 #. Invalid email
 #: extracted_strings.json
@@ -7885,12 +7899,47 @@ msgstr "Більше 550 cp/mL"
 msgid "More filters"
 msgstr "Більше фільтрів"
 
+#. [form.error.mustBeANumber]
+#. defaultMessage is:
+#. Must be a number
+#: extracted_strings.json
+msgid "Must be a number"
+msgstr "Має бути число"
+
+#. [form.error.mustBeAString]
+#. defaultMessage is:
+#. Must be a string
+#: extracted_strings.json
+msgid "Must be a string"
+msgstr "Має бути рядок"
+
+#. [form.error.mustBeAWholeNumber]
+#. defaultMessage is:
+#. Must be a whole number (no decimals like .2, 1.5)
+#: extracted_strings.json
+msgid "Must be a whole number (no decimals like .2, 1.5)"
+msgstr "Має бути цілим числом (без десяткових знаків, таких як 0,2, 1,5)"
+
+#. [form.error.mustBeAtLeast]
+#. defaultMessage is:
+#. Must be at least {min}
+#: extracted_strings.json
+msgid "Must be at least {min}"
+msgstr "Має бути щонайменше {min}"
+
 #. [pages.InventoryAdjustmentDialogForm.expiryDateAfterToday]
 #. defaultMessage is:
 #. Must be later than today
 #: extracted_strings.json
 msgid "Must be later than today"
 msgstr "Має бути пізніше, ніж сьогодні"
+
+#. [form.error.mustBeLessThan]
+#. defaultMessage is:
+#. Must be less than {max}
+#: extracted_strings.json
+msgid "Must be less than {max}"
+msgstr "Має бути менше ніж {max}"
 
 #. [pages.common.notAvailable]
 #. defaultMessage is:
@@ -10741,7 +10790,7 @@ msgstr ""
 msgid "Request a New Password From Aspect"
 msgstr "Запитуйте новий пароль від Aspect"
 
-#. [validations.required]
+#. [form.error.required]
 #. defaultMessage is:
 #. Required
 #. [forms.required]
@@ -16651,9 +16700,6 @@ msgstr "{unit} всього калібрувань"
 
 #~ msgid "Enter report name..."
 #~ msgstr "Введіть назву звіту ..."
-
-#~ msgid "Error Loading Device Details"
-#~ msgstr "Помилка завантаження деталей пристрою"
 
 #~ msgid "Error Loading Device profile performance report"
 #~ msgstr "Помилка завантаження звіту про ефективність профілю пристрою"

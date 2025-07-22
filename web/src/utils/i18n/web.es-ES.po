@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-02T10:29:54.230Z\n"
+"POT-Creation-Date: 2025-07-16T10:42:20.495Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3454,6 +3454,13 @@ msgstr "Registros de dispositivos"
 msgid "Device type"
 msgstr "Tipo dispositivo"
 
+#. [pages.DeviceDetailEdit.deviceUpdated]
+#. defaultMessage is:
+#. Device updated successfully
+#: extracted_strings.json
+msgid "Device updated successfully"
+msgstr "Dispositivo actualizado exitosamente"
+
 #. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
@@ -4140,6 +4147,13 @@ msgstr "Error al guardar la nueva contraseña"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Error al enviar el correo electrónico de reinicio de contraseña"
+
+#. [pages.DeviceDetailEdit.deviceUpdateError]
+#. defaultMessage is:
+#. Error updating device
+#: extracted_strings.json
+msgid "Error updating device"
+msgstr "Error al actualizar el dispositivo"
 
 #. [report.missingDateRangeFilterTitle]
 #. defaultMessage is:
@@ -6030,7 +6044,7 @@ msgstr ""
 "Por favor, inténtelo de nuevo en unos minutos. Si el error persiste, póngase "
 "en contacto con su administrador para obtener ayuda."
 
-#. [validations.invalidEmail]
+#. [form.error.invalidEmail]
 #. defaultMessage is:
 #. Invalid email
 #: extracted_strings.json
@@ -7899,12 +7913,47 @@ msgstr "Más de 550 cp/mL"
 msgid "More filters"
 msgstr "Más filtros"
 
+#. [form.error.mustBeANumber]
+#. defaultMessage is:
+#. Must be a number
+#: extracted_strings.json
+msgid "Must be a number"
+msgstr "debe ser un numero"
+
+#. [form.error.mustBeAString]
+#. defaultMessage is:
+#. Must be a string
+#: extracted_strings.json
+msgid "Must be a string"
+msgstr "debe ser una cuerda"
+
+#. [form.error.mustBeAWholeNumber]
+#. defaultMessage is:
+#. Must be a whole number (no decimals like .2, 1.5)
+#: extracted_strings.json
+msgid "Must be a whole number (no decimals like .2, 1.5)"
+msgstr "Debe ser un número entero (sin decimales como 0,2 o 1,5)"
+
+#. [form.error.mustBeAtLeast]
+#. defaultMessage is:
+#. Must be at least {min}
+#: extracted_strings.json
+msgid "Must be at least {min}"
+msgstr "Debe ser al menos {min}"
+
 #. [pages.InventoryAdjustmentDialogForm.expiryDateAfterToday]
 #. defaultMessage is:
 #. Must be later than today
 #: extracted_strings.json
 msgid "Must be later than today"
 msgstr "Debe ser más tarde que hoy"
+
+#. [form.error.mustBeLessThan]
+#. defaultMessage is:
+#. Must be less than {max}
+#: extracted_strings.json
+msgid "Must be less than {max}"
+msgstr "Debe ser menor que {max}"
 
 #. [pages.common.notAvailable]
 #. defaultMessage is:
@@ -10764,7 +10813,7 @@ msgstr ""
 msgid "Request a New Password From Aspect"
 msgstr "Solicitar una nueva contraseña de Aspect"
 
-#. [validations.required]
+#. [form.error.required]
 #. defaultMessage is:
 #. Required
 #. [forms.required]
@@ -16709,9 +16758,6 @@ msgstr "{unit} calibraciones totales"
 
 #~ msgid "Enter report name..."
 #~ msgstr "Introduzca el nombre del reporte..."
-
-#~ msgid "Error Loading Device Details"
-#~ msgstr "Error al cargar los detalles del dispositivo"
 
 #~ msgid "Error Loading Device profile performance report"
 #~ msgstr ""
