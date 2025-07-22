@@ -1,16 +1,11 @@
 const logger = require('../../src/shared/logger')
 const {
-  db: { database, ...dbConfigWithoutDatabase },
+  db: { database },
   seeds,
 } = require('../../src/config')
+const { knexConnectionWithoutDatabase: knex } = require('../../src/db')
 
 async function recreateDB() {
-  // Generate a knex instance without using the schema because maybe it doesn't exist
-  const knex = require('knex')({
-    client: 'mysql',
-    connection: dbConfigWithoutDatabase,
-  })
-
   // eslint-disable-next-line no-console
   console.log('\x1b[1;36m', '⚙️ Recreating db for Schema ➜', database)
   // eslint-disable-next-line no-console
