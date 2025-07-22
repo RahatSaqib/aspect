@@ -2,10 +2,9 @@ const { addMonths } = require('date-fns')
 const { getConstraints } = require('../../auth/constraints')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getDeviceBaseExtendedQuery } = require('../service')
-const { getDateTimeExpressionInTimeZone } = require('../../shared/date')
+const { getDateTimeExpressionInTimeZone, getWorkingDays } = require('../../shared/date')
 const { knex } = require('../../db')
 const { getMonthsDatefields } = require('./logic')
-const { getWorkingDays } = require('../utilizationReports/index')
 const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
 
 async function getDeviceCapacityReport(auth, query, timezone) {

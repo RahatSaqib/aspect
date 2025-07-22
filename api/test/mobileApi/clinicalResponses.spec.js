@@ -14,15 +14,8 @@ const { getBaseQueryForResults } = require('../../src/result/common/db')
 
 const { assert, expect } = chai
 
-// This test is skipped because it sometimes fails randomly
-describe.skip('Mobile API Clinical Response', () => {
-  const path = '/mobile/api/results/clinical-responses'
-
+describe('Mobile API Clinical Response', () => {
   let results = []
-
-  before(async () => {
-    shared.checkToken(server, path)
-  })
 
   beforeEach(async () => {
     const { partnerId, userId } = await knex('Person as p')
@@ -72,13 +65,14 @@ describe.skip('Mobile API Clinical Response', () => {
 
   afterEach(async () => {
     await knex('ResultFollowUp').whereIn('resultId', _.map(results, 'id')).delete()
-
     await knex('ResultDownloadLog').whereIn('resultId', _.map(results, 'id')).delete()
-
+    await knex('ResultCustomField').whereIn('resultId', _.map(results, 'id')).delete()
     await knex('Result').whereIn('id', _.map(results, 'id')).delete()
   })
 
-  describe('POST', () => {
+  describe('POST: /mobile/api/results/clinical-responses', () => {
+    const path = '/mobile/api/results/clinical-responses'
+
     function assertClinicalResponse(response) {
       expect(response).to.containSubset({
         status: 200,
@@ -111,7 +105,7 @@ describe.skip('Mobile API Clinical Response', () => {
       }
     }
 
-    function responseContainingNulllOutcomeClinicalResponse(response) {
+    function responseContainingNullOutcomeClinicalResponse(response) {
       assertClinicalResponse(response)
       expect(response).to.containSubset({
         body: {
@@ -182,7 +176,101 @@ describe.skip('Mobile API Clinical Response', () => {
           },
         ])
         .set('Authorization', `Bearer ${shared.token}`)
-      responseContainingNulllOutcomeClinicalResponse(res)
+      responseContainingNullOutcomeClinicalResponse(res)
+    })
+  })
+
+  describe('POST: /mobile/api/v3/clinical-responses/:resultId', () => {
+    const dataFetchEndpoint = '/mobile/api/v4/entries'
+    const path = '/mobile/api/v3/clinical-responses'
+
+    it('should throw error if incorrect field name is provided', async () => {
+      const response = await server
+        .post(`${path}/${results[0].id}`)
+        .send([{ fieldName: 'incorrectFieldName', value: 'incorrectValue', clientTime: new Date().toISOString() }])
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      expect(response.statusCode).to.equal(400)
+      expect(response.ok).to.equal(false)
+    })
+
+    it('should throw error if custom field fieldType is chosen but other dependent fields are not provided', async () => {
+      const response = await server
+        .post(`${path}/${results[0].id}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .send([
+          {
+            fieldName: 'age',
+            value: 20,
+            clientTime: new Date().toISOString(),
+            fieldType: 'custom-field',
+          },
+        ])
+
+      expect(response.statusCode).to.equal(400)
+      expect(response.ok).to.equal(false)
+    })
+
+    it('should add clinical response with treatment and outcome with custom field data added and updated next', async () => {
+      const currentResultId = results[0].id
+      const entriesBefore = await server.get(dataFetchEndpoint).set('Authorization', `Bearer ${shared.token}`)
+      const dateTimeNow = new Date().toISOString()
+      const firstResponse = await server
+        .post(`${path}/${currentResultId}`)
+        .send([
+          {
+            formDefinitionExternalId: 'ClinicalResponse',
+            fieldName: 'age',
+            value: 20,
+            clientTime: dateTimeNow,
+            fieldType: 'custom-field',
+          },
+        ])
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      expect(firstResponse.body).to.containSubset({
+        ok: true,
+        data: {
+          clinicalResponse: {
+            recorded: false,
+          },
+        },
+      })
+      const resultCustomFields = await knex('ResultCustomField').where('resultId', currentResultId).select('*')
+      expect(resultCustomFields).to.have.length(1)
+      expect(JSON.parse(resultCustomFields[0].customFieldsData)).to.deep.equal({
+        age: { value: 20 },
+      })
+      const resultEntryBefore = entriesBefore.body.data.find(entry => entry.id === currentResultId)
+      const entriesAfter = await server.get(dataFetchEndpoint).set('Authorization', `Bearer ${shared.token}`)
+      const resultEntryAfter = entriesAfter.body.data.find(entry => entry.id === currentResultId)
+      expect(resultEntryBefore).to.containSubset({})
+      expect(resultEntryAfter).to.containSubset({
+        customFields: {
+          ClinicalResponse: {
+            age: { value: 20 },
+          },
+        },
+      })
+      const secondResponse = await server
+        .post(`${path}/${currentResultId}`)
+        .send([
+          {
+            fieldName: 'age',
+            value: 21,
+            clientTime: new Date().toISOString(),
+            fieldType: 'custom-field',
+            formDefinitionExternalId: 'ClinicalResponse',
+          },
+        ])
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      expect(secondResponse.body.ok).to.equal(true)
+      const resultCustomFieldsAfter = await knex('ResultCustomField').where('resultId', currentResultId).select('*')
+      expect(resultCustomFieldsAfter).to.have.length(1)
+      expect(JSON.parse(resultCustomFieldsAfter[0].customFieldsData)).to.deep.equal({
+        age: { value: 21 },
+      })
     })
   })
 })

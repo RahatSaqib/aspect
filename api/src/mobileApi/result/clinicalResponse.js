@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
+const { Promise } = require('bluebird')
 const { getUser } = require('../../auth/service')
 const {
   getResultItemTransformedDataV2,
@@ -12,7 +13,11 @@ const {
   updateNotPossibleWorkflowStatusByResultId,
 } = require('./updateWorkflowStatus')
 const { getConstraints } = require('../../auth/constraints')
-const { resultTreatmentStatusToId, resultWorkflowStatusToId } = require('../../shared/dictionary')
+const {
+  resultTreatmentStatusToId,
+  resultWorkflowStatusToId,
+  allResultCategoryToId,
+} = require('../../shared/dictionary')
 const {
   getFollowUpByExternalId,
   getLastTreatmentStatusByResult,
@@ -26,7 +31,6 @@ const {
   getFollowUpsOfResultById,
   getCommentsOfResultById,
   getItemsV2,
-  generateResultQueryV2,
   getLatestResultWorkflowLog,
   getLatestResultWorkflowLogBefore,
   getCurrentResultWorkflowStatus,
@@ -36,7 +40,9 @@ const {
   updateResultFollowUp,
   deleteResultFollowUpTreatment,
 } = require('./common/db')
-const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
+const { getAcknowledgementsByResultIds, fetchResultsQuery } = require('../entries/result/common/db')
+const { knex } = require('../../db')
+const { getFormsByFormDefinitionExternalIds } = require('../../forms/service')
 const { getBaseQueryForResults } = require('../../result/common/db')
 
 const ACKNOWLEDGED_FIELD_NAME = 'confirmed'
@@ -46,17 +52,21 @@ const NOT_POSSIBLE_REASON_FIELD_NAME = 'followUpNotPossibleReason'
 async function clinicalResponse(request) {
   const {
     auth: { credentials },
-    payload,
+    payload: payloadRaw,
     params,
   } = request
 
+  const payload = payloadRaw.filter(fuv => fuv.fieldType !== 'custom-field')
+  const customFields = payloadRaw.filter(fuv => fuv.fieldType === 'custom-field')
+
   const { resultId } = params
-  const { id: currentUserId } = await getUser(credentials.name)
+  const { id: currentUserId, partnerId } = await getUser(credentials.name)
   const dataConstraints = await getConstraints(credentials)
   let resultEntry = await showResult(resultId, dataConstraints)
   if (resultEntry?.isBoom) {
     throw resultEntry
   }
+
   const mostRecentValueCaptured = _.sortBy(payload, value => value.clientTime).reverse()[0]
   if (mostRecentValueCaptured) {
     // If the result has been recorded in the register, acknowledge the result
@@ -337,6 +347,38 @@ async function clinicalResponse(request) {
     }
     resultEntry = await showResult(resultId, dataConstraints)
   }
+
+  if (customFields.length > 0) {
+    const forms = await getFormsByFormDefinitionExternalIds(
+      partnerId,
+      customFields.map(fuv => fuv.formDefinitionExternalId)
+    )
+
+    if (forms.length !== 0) {
+      const customFieldsByFormDefinitionExternalId = {}
+      customFields.forEach(fuv => {
+        if (!customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId]) {
+          customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId] = {}
+        }
+        customFieldsByFormDefinitionExternalId[fuv.formDefinitionExternalId][fuv.fieldName] = { value: fuv.value }
+      })
+
+      await Promise.map(
+        Object.entries(customFieldsByFormDefinitionExternalId),
+        async ([formDefinitionExternalId, customFieldsData]) => {
+          await knex('ResultCustomField')
+            .insert({
+              resultId,
+              formDefinitionExternalId,
+              customFieldsData,
+            })
+            .onConflict(['resultId', 'formDefinitionExternalId'])
+            .merge()
+        }
+      )
+    }
+  }
+
   return {
     ok: !!resultEntry,
     data: resultEntry,
@@ -503,7 +545,14 @@ async function getPossibleReasonsForNoResult(resultId) {
 
 // generate result
 async function showResult(resultId, dataConstraints) {
-  const myResultQuery = generateResultQueryV2(false, dataConstraints, resultId)
+  const resultCategoryToId = await allResultCategoryToId()
+  const myResultQuery = fetchResultsQuery(
+    {
+      resultId,
+      ignoredResultCategories: [resultCategoryToId.Invalid, resultCategoryToId.Error, resultCategoryToId.NoResult],
+    },
+    dataConstraints
+  )
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
   if (!data) return getPossibleReasonsForNoResult(resultId)
