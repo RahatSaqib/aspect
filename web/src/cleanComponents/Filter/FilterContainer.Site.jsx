@@ -7,7 +7,7 @@ import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import SiteTypeSelect from '../../pages/Site/Detail/Edit/SiteTypeSelect'
-import { StateSelect, LgaSelect, SiteListSelect } from '../index'
+import { LgaSelect, SiteListSelect, StateSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const SiteFilter = props => {

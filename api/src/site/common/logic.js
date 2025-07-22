@@ -35,8 +35,10 @@ function sanitizeParameters(payload) {
       'hoursStart',
       'hoursEnd',
       'siteTypeId',
+      'siteTypeExternalId',
       'parentWarehouseId',
       'externalId',
+      'sampleRegistrationAllowed',
     ]),
     {
       timezoneId: isEmpty(payload.timezone) ? null : payload.timezone,
