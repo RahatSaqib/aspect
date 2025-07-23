@@ -2,7 +2,7 @@ const logger = require('../../src/shared/logger')
 const {
   db: { database },
 } = require('../../src/config')
-const { knexConnectionWithoutDatabase: knex } = require('../../src/db')
+const { knexConnectionWithoutSchema: knex } = require('../../src/db')
 
 async function dropDB() {
   // eslint-disable-next-line no-console

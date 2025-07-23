@@ -158,7 +158,7 @@ function load() {
   return knex
 }
 
-function knexConnectionWithoutDatabase() {
+function knexConnectionWithoutSchema() {
   // Create a new knex instance without the database name
   const config = { ...knexConfig }
   delete config.connection.database
@@ -185,4 +185,4 @@ module.exports = {
 }
 
 Object.defineProperty(module.exports, 'knex', { get: load })
-Object.defineProperty(module.exports, 'knexConnectionWithoutDatabase', { get: knexConnectionWithoutDatabase })
+Object.defineProperty(module.exports, 'knexConnectionWithoutSchema', { get: knexConnectionWithoutSchema })

@@ -3,7 +3,7 @@ const {
   db: { database },
   seeds,
 } = require('../../src/config')
-const { knexConnectionWithoutDatabase: knex } = require('../../src/db')
+const { knexConnectionWithoutSchema: knex } = require('../../src/db')
 
 async function recreateDB() {
   // eslint-disable-next-line no-console
