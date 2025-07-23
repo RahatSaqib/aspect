@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
-import Consumables from '../../../Inventory/Consumables/Consumables'
+import ConsumablesBySite from '../../../Inventory/Consumables/ConsumablesBySite'
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
 import styles from '../SiteDetail.module.css'
@@ -116,7 +116,7 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
             </Grid>
             <Grid item xs={12} md={6}>
               <PermissionChecker permissions={['inventory:edit']}>
-                <Consumables
+                <ConsumablesBySite
                   siteId={site.id}
                   consumableIds={site.consumableIds}
                   fixedConsumables={site.selectedConsumables}

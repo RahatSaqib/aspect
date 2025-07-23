@@ -8,7 +8,7 @@ import { useUpdateConsumablesBatch } from '../../../hooks/site/useUpdateConsumab
 import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
 import messages from './messages'
 
-const Consumables = ({ consumableIds, siteId, fixedConsumables = [] }) => {
+const ConsumablesBySite = ({ consumableIds, siteId, fixedConsumables = [] }) => {
   const { mutateAsync: updateBatch, isLoading: isChanging } = useUpdateConsumablesBatch()
   const { data: { data: consumables } = {}, isLoading } = useConsumable()
   const { formatMessage } = useIntl()
@@ -89,4 +89,4 @@ const Consumables = ({ consumableIds, siteId, fixedConsumables = [] }) => {
   )
 }
 
-export default Consumables
+export default ConsumablesBySite
