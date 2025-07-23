@@ -1,6 +1,6 @@
-import React from 'react'
 import { Card, Checkbox, FormControlLabel, Grid } from '@mui/material'
 import PropTypes from 'prop-types'
+import React from 'react'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
@@ -119,7 +119,7 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
                 <Consumables
                   siteId={site.id}
                   consumableIds={site.consumableIds}
-                  disabledSites={site.selectedConsumables}
+                  fixedConsumables={site.selectedConsumables}
                 />
               </PermissionChecker>
             </Grid>

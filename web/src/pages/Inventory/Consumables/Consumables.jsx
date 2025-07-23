@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import { CheckBoxList } from '../../../cleanComponents'
@@ -8,7 +8,7 @@ import { useUpdateConsumablesBatch } from '../../../hooks/site/useUpdateConsumab
 import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
 import messages from './messages'
 
-const Consumables = ({ consumableIds, siteId, disabledSites }) => {
+const Consumables = ({ consumableIds, siteId, fixedConsumables = [] }) => {
   const { mutateAsync: updateBatch, isLoading: isChanging } = useUpdateConsumablesBatch()
   const { data: { data: consumables } = {}, isLoading } = useConsumable()
   const { formatMessage } = useIntl()
@@ -60,12 +60,10 @@ const Consumables = ({ consumableIds, siteId, disabledSites }) => {
       }
     } else if (checked) {
       // Select all
-      newSelectedIds = consumables
-        .filter(({ id: consumableId }) => !disabledSites?.includes(consumableId))
-        .map(({ id: consumableId }) => consumableId)
+      newSelectedIds = consumables.map(({ id: consumableId }) => consumableId)
     } else {
       // Unselect all
-      newSelectedIds = []
+      newSelectedIds = fixedConsumables
     }
 
     setLocalSelectedIds(newSelectedIds)
@@ -82,7 +80,7 @@ const Consumables = ({ consumableIds, siteId, disabledSites }) => {
       <CheckBoxList
         listData={consumables}
         isChanging={isChanging}
-        disabledList={disabledSites}
+        disabledList={fixedConsumables}
         selectedList={localSelectedIds}
         onSelect={handleSelectAll}
         isLoading={isLoading}
