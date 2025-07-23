@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
@@ -15,7 +15,7 @@ const ConsumablesBySite = ({ consumableIds, siteId, fixedConsumables = [] }) => 
 
   // Local state to track changes before sending to backend
   const [localSelectedIds, setLocalSelectedIds] = useState(consumableIds || [])
-  const [debounceTimer, setDebounceTimer] = useState(null)
+  const debounceTimer = useRef(null)
 
   // Update local state when prop changes
   useEffect(() => {
@@ -25,8 +25,8 @@ const ConsumablesBySite = ({ consumableIds, siteId, fixedConsumables = [] }) => 
   // Debounced save function
   const debouncedSave = useCallback(
     newSelectedIds => {
-      if (debounceTimer) {
-        clearTimeout(debounceTimer)
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current)
       }
 
       const timer = setTimeout(async () => {
@@ -43,9 +43,9 @@ const ConsumablesBySite = ({ consumableIds, siteId, fixedConsumables = [] }) => 
         }
       }, 1500) // debounce time
 
-      setDebounceTimer(timer)
+      debounceTimer.current = timer
     },
-    [debounceTimer, siteId, updateBatch, formatMessage, consumableIds]
+    [siteId, updateBatch, formatMessage, consumableIds]
   )
 
   const handleSelectAll = (checked, id) => {
