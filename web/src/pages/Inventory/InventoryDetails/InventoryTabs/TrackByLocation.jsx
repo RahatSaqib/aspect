@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Box } from '@mui/material'
 import debounce from 'lodash/debounce'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import CheckBoxList from '../../../../cleanComponents/CheckBoxList'
@@ -78,9 +78,9 @@ export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) =
 
   const handleSelectAll = useCallback(
     checked => {
-      const availableSiteIds = sites.filter(site => !disabledSites.includes(site.id)).map(site => site.id)
+      const availableSiteIds = sites.map(site => site.id)
 
-      const newSelectedSiteIds = checked ? availableSiteIds : []
+      const newSelectedSiteIds = checked ? availableSiteIds : disabledSites
       setLocalSelectedSiteIds(newSelectedSiteIds)
 
       // Call the debounced function - this will reset the timer
