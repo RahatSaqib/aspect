@@ -108,7 +108,7 @@ export const SitesByConsumable = ({ siteIds, consumableId, disabledSites = [] })
           }}
           disabledList={disabledSites}
           isChanging={updateConsumableSitesBatch.isLoading || isUpdating}
-          isLoading={false}
+          isLoading={isLoading}
         />
       )}
     </>
