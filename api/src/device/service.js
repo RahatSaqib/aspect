@@ -3,7 +3,6 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const {
   addDays,
-  addYears,
   subMonths,
   startOfMonth,
   endOfMonth,
@@ -12,7 +11,7 @@ const {
   differenceInBusinessDays,
 } = require('date-fns')
 const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
-const { knex, filterParams, filterDateRangeParams, sortPageParams, sortParams, transact } = require('../db')
+const { knex, filterParams, filterDateRangeParams, sortParams, transact } = require('../db')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const { allResultCategoryToId, allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
@@ -1329,50 +1328,6 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
   })
 }
 
-async function getDeviceCalibrationsForReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-  // get total count for paging
-  const getCount = deviceQuery.clone().count('d.id as count').first()
-
-  // get rows
-  const getItems = deviceQuery
-    .clone()
-    .leftOuterJoin('DeviceMaintenance as dm', queryBuilder => {
-      queryBuilder.on('d.id', 'dm.deviceId').andOn('dm.current', 1)
-    })
-    .modify(sortPageParams, query, 'name')
-    .select([
-      ..._.filter(
-        getSelectListFields(userTimeOffset),
-        /**
-         * make sure to exclude columns starting with `dms.` because
-         * we do not have JOIN with DeviceMaintenanceStatus table
-         */
-        elem =>
-          _.isString(elem) &&
-          // is either -1 or > 0
-          elem.indexOf('dms.') !== 0
-      ),
-      'd.serial',
-      'dm.contextDate as calibratedOn',
-    ])
-    .groupBy(['d.id', 'd.serial'])
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  // add more fields which depend on aggregations
-  data.forEach(async it => {
-    it.nextCalibrationOn = it.calibratedOn ? addYears(it.calibratedOn, 1) : null
-  })
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
-}
-
 // Reusable method to create a device log and update lastSeenOn for a device
 // This method will sometimes be called in a context of a database transaction.
 //  In this case the transaction's knex instance can be passed as the optionalKnex
@@ -1454,7 +1409,6 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
-  getDeviceCalibrationsForReport,
   getDeviceBaseExtendedQuery,
   setStatusForDateRange,
   postPayloadFromDevice,

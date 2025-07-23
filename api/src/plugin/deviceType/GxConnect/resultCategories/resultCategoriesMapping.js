@@ -322,6 +322,14 @@ function getResultCategoriesHivVL(result1Text) {
   if (result1TextLower.indexOf('detected') === 0) return 'NoResult'
 }
 
+function getResultCategoriesHcv(status) {
+  if (!status) return null
+  const normalizedStatus = status.toLowerCase().trim()
+  // Find a key in result1CategoryMapping that is included in the status string
+  const foundKey = Object.keys(result1CategoryMapping).find(key => normalizedStatus.includes(key))
+  return foundKey ? result1CategoryMapping[foundKey] : null
+}
+
 const getBacterialLoad = resultText => {
   const resultTextValues = splitResultTextValues(resultText)
 
@@ -390,6 +398,7 @@ module.exports = {
   mapResultCategory2,
   parseXdrResultText,
   getResultCategoriesHivVL,
+  getResultCategoriesHcv,
   getVLCopies,
   getBacterialLoad,
   bacterialLoadMapping,

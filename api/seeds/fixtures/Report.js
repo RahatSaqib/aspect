@@ -371,8 +371,8 @@ const deviceCalibrationReport = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'device/service',
-      functionName: 'getDeviceCalibrationsForReport',
+      moduleName: 'device/serviceReports/getDeviceCalibrationReport',
+      functionName: 'getDeviceCalibrationReport',
       query: {
         hasResults: 1,
         sortCol: 'name',
