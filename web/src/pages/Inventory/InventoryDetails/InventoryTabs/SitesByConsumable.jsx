@@ -1,6 +1,6 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Box } from '@mui/material'
 import debounce from 'lodash/debounce'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import CheckBoxList from '../../../../cleanComponents/CheckBoxList'
@@ -8,7 +8,7 @@ import { useUpdateConsumableSitesBatch } from '../../../../hooks/inventory/useUp
 import useSiteList from '../../../../hooks/site/useSiteList'
 import messages from './messages'
 
-export const TrackByLocation = ({ siteIds, consumableId, disabledSites = [] }) => {
+export const SitesByConsumable = ({ siteIds, consumableId, disabledSites = [] }) => {
   const { data: sites = [], isLoading, error } = useSiteList()
   const updateConsumableSitesBatch = useUpdateConsumableSitesBatch()
   const { formatMessage } = useIntl()

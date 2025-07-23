@@ -1,5 +1,5 @@
-import { Box, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
+import { Box, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import { CheckBoxList } from '../../../cleanComponents'

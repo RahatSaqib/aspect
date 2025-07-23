@@ -17,12 +17,12 @@ export default defineMessages({
     id: 'pages.InventoryTabs.New.quantity',
     defaultMessage: 'Quantity',
   },
-  trackByLocation: {
-    id: 'pages.InventoryTabs.New.trackByLocation',
-    defaultMessage: 'Track By Location',
+  sitesByConsumable: {
+    id: 'pages.InventoryTabs.New.sitesByConsumable',
+    defaultMessage: 'Sites by Consumable',
   },
-  trackByLocationTooltip: {
-    id: 'pages.InventoryTabs.New.trackByLocationTooltip',
+  sitesByConsumableTooltip: {
+    id: 'pages.InventoryTabs.New.sitesByConsumableTooltip',
     defaultMessage:
       'Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item',
   },
