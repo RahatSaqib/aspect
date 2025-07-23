@@ -12,6 +12,7 @@ const Joi = require('@hapi/joi')
 const Boom = require('@hapi/boom')
 
 const config = require('./config')
+const { knex, getCurrentSslCipher } = require('./db')
 
 // =======================
 // configuration =========
@@ -426,6 +427,14 @@ const start = async () => {
   try {
     await server.start()
     logger.info(`Server running on ${address}`)
+
+    // Verify MySQL SSL connection
+    const sslCipher = await getCurrentSslCipher(knex)
+    if (sslCipher) {
+      logger.info(`✅ MySQL connection secured with SSL cipher: ${sslCipher}`)
+    } else {
+      logger.warning('❌ MySQL connection is not using SSL')
+    }
   } catch (err) {
     logger.error(err)
     Sentry.captureException(err)
