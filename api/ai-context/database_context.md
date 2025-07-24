@@ -79,12 +79,20 @@ Standard aliases:
 .modify(filterDateRangeParams, { minDate, maxDate }, 'r.endedOn', { allowNulls: true })
 ```
 
-### 4. `knex.raw()` - Minimize Usage, Always Parameterize
+### 4. `raw` methods - Minimize Usage, Always Parameterize
 
 ```javascript
-// NEVER: knex.raw(`WHERE x = '${value}'`)
-// ALWAYS: knex.raw('WHERE x = ?', [value])
-knex.raw('IFNULL(??, ??) BETWEEN ? AND ?', ['r.endedOn', 'r.startedOn', minDate, maxDate])
+// NEVER: 
+.whereRaw('r2.endedOn > r.endedOn')
+// ALWAYS: 
+.where('r2.endedOn', '>', 'r.endedOn')
+```
+
+```javascript
+// NEVER: 
+.whereRaw('r2.endedOn > MAX(r.endedOn)')
+// ALWAYS: 
+.where('r2.endedOn', '>', knex.raw('max(r.endedOn)'))
 ```
 
 ### 5. `.modify()` Method (Preferred for Composable Queries)
