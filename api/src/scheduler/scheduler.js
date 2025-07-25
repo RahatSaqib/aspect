@@ -25,6 +25,50 @@ const { webhookServerCheckTokens } = require('../webhook/actions')
 const { serviceModification, serviceNotificationInformation } = require('../auth/service')
 const config = require('../config')
 const { unlinkAsyncReports } = require('../report/service')
+const logger = require('../shared/logger')
+
+/**
+ * Staggers startup tasks with delays to prevent overwhelming the system during startup
+ * @param {Object} dispatcher - The action dispatcher
+ */
+function staggerStartupTasks(dispatcher) {
+  // Define startup tasks with their delay times (in milliseconds)
+  // Using 10-second intervals instead of 5-second to provide more breathing room for system recovery
+  const startupTasks = [
+    { name: 'factGenerateResultCounts', delay: 0 },
+    { name: 'factGenerateDeviceConnectivity', delay: 10000 }, // 10 seconds
+    { name: 'factDataCategoryLowCheck', delay: 20000 }, // 20 seconds
+    { name: 'factCalculateInventoryConsumptionRates', delay: 30000 }, // 30 seconds
+    { name: 'factCheckCompletionRatePerSite', delay: 40000 }, // 40 seconds
+    { name: 'factFillCustomFieldsCompletionStatsLast30Days', delay: 50000 }, // 50 seconds
+    { name: 'resolveIssues', delay: 60000 }, // 60 seconds
+    { name: 'calibrationDueDateAnalysis', delay: 70000 }, // 70 seconds
+    { name: 'calibrationIssueNotificationTrigger', delay: 80000 }, // 80 seconds
+    { name: 'resultAnalyzeTimeout', delay: 90000 }, // 90 seconds
+    { name: 'missingInventoryLotsResolver', delay: 100000 }, // 100 seconds
+    { name: 'deviceUpdateModuleSerials', delay: 110000 }, // 110 seconds
+    { name: 'expectedBackOnlineAnalysis', delay: 120000 }, // 120 seconds (2 minutes)
+  ]
+
+  logger.info(
+    'Scheduler startup: Staggering initial task execution over 2 minutes to improve system stability and recovery'
+  )
+
+  startupTasks.forEach(({ name, delay }) => {
+    if (dispatcher[name]) {
+      setTimeout(() => {
+        logger.info(`Scheduler startup: Executing delayed startup task '${name}'`)
+        dispatcher[name]()
+      }, delay)
+
+      if (delay > 0) {
+        logger.info(`Scheduler startup: Task '${name}' scheduled to run in ${delay / 1000} seconds`)
+      } else {
+        logger.info(`Scheduler startup: Task '${name}' running immediately`)
+      }
+    }
+  })
+}
 
 function startScheduler(queue) {
   // run hourly tasks on startup and cron every hour
@@ -51,20 +95,23 @@ function startScheduler(queue) {
     expectedBackOnlineAnalysis,
   })
 
+  // Stagger startup tasks instead of running them all immediately
+  staggerStartupTasks(dispatcher)
+
   // dispatcher.webhookServerCheckTokens()
-  dispatcher.factGenerateResultCounts()
-  dispatcher.factGenerateDeviceConnectivity()
-  dispatcher.factDataCategoryLowCheck()
-  dispatcher.factCalculateInventoryConsumptionRates()
-  dispatcher.factCheckCompletionRatePerSite()
-  dispatcher.factFillCustomFieldsCompletionStatsLast30Days()
-  dispatcher.resolveIssues()
-  dispatcher.calibrationDueDateAnalysis()
-  dispatcher.calibrationIssueNotificationTrigger()
-  dispatcher.resultAnalyzeTimeout()
-  dispatcher.missingInventoryLotsResolver()
-  dispatcher.deviceUpdateModuleSerials()
-  dispatcher.expectedBackOnlineAnalysis()
+  // dispatcher.factGenerateResultCounts()
+  // dispatcher.factGenerateDeviceConnectivity()
+  // dispatcher.factDataCategoryLowCheck()
+  // dispatcher.factCalculateInventoryConsumptionRates()
+  // dispatcher.factCheckCompletionRatePerSite()
+  // dispatcher.factFillCustomFieldsCompletionStatsLast30Days()
+  // dispatcher.resolveIssues()
+  // dispatcher.calibrationDueDateAnalysis()
+  // dispatcher.calibrationIssueNotificationTrigger()
+  // dispatcher.resultAnalyzeTimeout()
+  // dispatcher.missingInventoryLotsResolver()
+  // dispatcher.deviceUpdateModuleSerials()
+  // dispatcher.expectedBackOnlineAnalysis()
 
   // cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
