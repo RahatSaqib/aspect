@@ -118,7 +118,7 @@ function startScheduler(queue) {
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('0 2 * * *', dispatcher.tryToContinueUnprocessedRawData) // daily at 2 am
-  cron.schedule('0 4 * * *', dispatcher.factGenerateResultCounts) // daily at 4 am - MOVED to avoid collisions with hourly jobs
+  cron.schedule('0 3 * * *', dispatcher.factGenerateResultCounts) // daily at 3 am
   cron.schedule('10 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 10 minutes past - AVOIDING minute 1 to prevent collisions with daily jobs
   cron.schedule('15 * * * *', dispatcher.factDataCategoryLowCheck) // every hour at 15th minute
   cron.schedule('30 * * * *', dispatcher.resultAnalyzeTimeout) // every hour at 30th minute
@@ -138,10 +138,10 @@ function startScheduler(queue) {
 
   cron.schedule('0 */8 * * *', dispatcher.deviceUpdateModuleSerials) // run every 8 hours
 
-  cron.schedule('15 4 * * *', dispatcher.deviceInactiveNotificationAnalysis) // daily at 4:15 am - MOVED to avoid conflict with factGenerateResultCounts
+  cron.schedule('25 3 * * *', dispatcher.deviceInactiveNotificationAnalysis) // daily at 3:25 am
   cron.schedule('30 6 * * *', dispatcher.expectedBackOnlineAnalysis) // daily at 6:30 am
-  cron.schedule('0 */2 * * *', serviceModification) // run every 2 hours
-  cron.schedule('* */1 * * *', unlinkAsyncReports) // run every 1 hour
+  cron.schedule('40 */2 * * *', serviceModification) // run every 2:40 hours
+  cron.schedule('0 */1 * * *', unlinkAsyncReports) // run every 1 hour
   cron.schedule('0 0 * * *', serviceNotificationInformation) // run in every 24 hrs
 
   cron.schedule(config.scheduler.cron.logDeviceMaintenanceStatus, dispatcher.logDeviceMaintenanceStatus) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
