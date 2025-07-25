@@ -3,28 +3,26 @@ import { useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
 import { INVENTORY_KEY } from '../inventory/inventoryKeys'
-import { SITE_KEY, SITE_KEY_UPDATE_CONSUMABLE } from './siteKeys'
+import { SITE_KEY, SITE_KEY_BATCH_UPDATE_CONSUMABLE } from './siteKeys'
 
-function updateConsumable({ siteId, modify, consumable }) {
+function updateConsumablesBatch({ siteId, consumableIds }) {
   return fetchWrapperForQueries({
-    endpoint: replaceRouteParams(SITE_KEY_UPDATE_CONSUMABLE, { siteId }),
+    endpoint: replaceRouteParams(SITE_KEY_BATCH_UPDATE_CONSUMABLE, { siteId }),
     method: 'PUT',
-    params: { modify, consumableId: consumable.id },
+    params: { consumableIds },
     customErrorNotifications: {
       409: {
         default: {
           severity: 'warn',
-          messageValues: {
-            consumableName: consumable.name,
-          },
           ...defineMessages({
             title: {
-              id: 'errorResponseMessages.updateConsumable.title',
-              defaultMessage: 'Unable to delist the cartridge !',
+              id: 'errorResponseMessages.updateConsumablesBatch.title',
+              defaultMessage: 'Unable to update some consumables',
             },
             message: {
-              id: 'errorResponseMessages.updateConsumable.message',
-              defaultMessage: `As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action`,
+              id: 'errorResponseMessages.updateConsumablesBatch.message',
+              defaultMessage:
+                'Some consumables could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action',
             },
           }),
         },
@@ -33,9 +31,9 @@ function updateConsumable({ siteId, modify, consumable }) {
   })
 }
 
-export default function useUpdateConsumable() {
+export function useUpdateConsumablesBatch() {
   const queryClient = useQueryClient()
-  const mutation = useMutation(variables => updateConsumable(variables), {
+  const mutation = useMutation(variables => updateConsumablesBatch(variables), {
     onSuccess: (data, variables) => {
       queryClient.refetchQueries([SITE_KEY, String(variables.siteId)])
       queryClient.refetchQueries([SITE_KEY, 'list'])

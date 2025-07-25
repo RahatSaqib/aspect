@@ -15,6 +15,7 @@ const listInventoryLog = require('./listInventoryLog')
 const listInventoryTransfer = require('./listInventoryTransfer')
 const exportInventoryTransfer = require('./exportInventoryTransfer')
 const { exportSupplies, exportReconciliation } = require('./serviceReports')
+const updateConsumableSitesBatch = require('./updateConsumableSitesBatch')
 const {
   listSuppliesBaseConfig,
   adjustInventoryCommonPayloadFields,
@@ -376,6 +377,24 @@ const routes = [
             'expiresOn',
             'lotNumber'
           ),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/inventory/consumable-sites/{consumableId}',
+    handler: asyncHandler(updateConsumableSitesBatch),
+    config: {
+      description: 'Update Consumable Sites Batch',
+      notes: 'Update multiple sites for a single consumable in a single atomic operation',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        params: {
+          consumableId: Joi.number().integer().positive().description('Consumable id').required(),
+        },
+        payload: {
+          siteIds: Joi.array().items(Joi.number().integer().positive()).required(),
         },
       },
     },

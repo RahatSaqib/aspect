@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
 
 const logger = require('../../shared/logger')
 const { knex, filterDateRangeParams, query, filterParams, sortPageParams } = require('../../db')
@@ -653,6 +654,60 @@ async function appendSiteConsumables(data) {
   return data
 }
 
+async function updateConsumableSitesBatch(knex, consumableId, { siteIds }) {
+  // Get current sites for this consumable
+  const currentSites = await knex('SiteConsumable')
+    .where({ consumableId })
+    .select('siteId')
+    .then(rows => rows.map(row => row.siteId))
+
+  // Find sites to add and remove
+  const sitesToAdd = siteIds.filter(id => !currentSites.includes(id))
+  const sitesToRemove = currentSites.filter(id => !siteIds.includes(id))
+
+  // Check if any sites to remove have inventory or unreconciled transactions
+  if (sitesToRemove.length > 0) {
+    const hasInventory = await knex('InventoryItem')
+      .whereIn('siteId', sitesToRemove)
+      .where({ consumableId })
+      .where('quantityOnHand', '>', 0)
+      .first()
+
+    if (hasInventory) {
+      throw Boom.conflict('Unable to remove consumable from sites with existing inventory')
+    }
+
+    // Check for unreconciled results
+    const hasUnreconciledResults = await knex('Result as r')
+      .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
+      .whereIn('r.siteId', sitesToRemove)
+      .where('ca.consumableId', consumableId)
+      .whereNull('r.reconciliationDate')
+      .first()
+
+    if (hasUnreconciledResults) {
+      throw Boom.conflict('Unable to remove consumable from sites with unreconciled transactions')
+    }
+  }
+
+  // Perform atomic batch operation
+  return knex.transaction(async trx => {
+    // Remove consumable from sites that are no longer selected
+    if (sitesToRemove.length > 0) {
+      await trx('SiteConsumable').where({ consumableId }).whereIn('siteId', sitesToRemove).del()
+    }
+
+    // Add consumable to new sites
+    if (sitesToAdd.length > 0) {
+      const rowsToInsert = sitesToAdd.map(siteId => ({
+        siteId,
+        consumableId,
+      }))
+      await trx('SiteConsumable').insert(rowsToInsert).onConflict(['siteId', 'consumableId']).ignore()
+    }
+  })
+}
+
 module.exports = {
   getBaseUnreconciledResultsQuery,
   findInventoryItem,
@@ -669,4 +724,5 @@ module.exports = {
   getReconciliationList,
   appendSiteConsumables,
   getConsumableStrategy,
+  updateConsumableSitesBatch,
 }

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import { ConsumptionRate } from './ConsumptionRate.jsx'
 import messages from './messages'
-import { TrackByLocation } from './TrackByLocation'
+import { SitesByConsumable } from './SitesByConsumable'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -30,7 +30,7 @@ export const InventoryTabs = ({ consumableId, siteIds, disabledSites }) => {
       <Tabs value={tabValue} onChange={handleTabChange} aria-label="Inventory tabs">
         <Tab
           sx={{ textTransform: 'none' }}
-          label={formatMessage(messages.trackByLocation)}
+          label={formatMessage(messages.sitesByConsumable)}
           id="tab-0"
           aria-controls="tabpanel-0"
         />
@@ -45,10 +45,10 @@ export const InventoryTabs = ({ consumableId, siteIds, disabledSites }) => {
       <TabPanel value={tabValue} index={0}>
         <Box display="flex" alignItems="center">
           <h4>{formatMessage(messages.locationsWithThisItem)}</h4>
-          <AspectTooltip showHelpIcon title={formatMessage(messages.trackByLocationTooltip)} />
+          <AspectTooltip showHelpIcon title={formatMessage(messages.sitesByConsumableTooltip)} />
         </Box>
         <Typography>{formatMessage(messages.selectAllLocations)}</Typography>
-        <TrackByLocation consumableId={consumableId} disabledSites={disabledSites} siteIds={siteIds} />
+        <SitesByConsumable consumableId={consumableId} disabledSites={disabledSites} siteIds={siteIds} />
       </TabPanel>
 
       <TabPanel value={tabValue} index={1}>

@@ -51,6 +51,15 @@ const updateConsumableSchema = {
   },
 }
 
+const updateConsumablesBatchSchema = {
+  params: {
+    siteId: Joi.number().integer().positive().description('Site id').required(),
+  },
+  payload: {
+    consumableIds: Joi.array().items(Joi.number().integer().positive()).required(),
+  },
+}
+
 /**
  * Throws a Boom error with the result of build a @see Problem object detailing the repeated values
  * between a request params and a existing site.
@@ -74,4 +83,10 @@ function throwExistingSiteError(name, shortName, externalId, existingSite) {
   throw Boom.conflict('', problems)
 }
 
-module.exports = { postSchema, updateSchema, updateConsumableSchema, throwExistingSiteError }
+module.exports = {
+  postSchema,
+  updateSchema,
+  updateConsumableSchema,
+  updateConsumablesBatchSchema,
+  throwExistingSiteError,
+}
