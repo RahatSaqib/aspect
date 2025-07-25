@@ -2,13 +2,10 @@ const _ = require('lodash')
 
 const { getListResults } = require('../service')
 const { getFieldsForQuarterlyReport } = require('../query')
-const { getUser } = require('../../auth/service')
 const { GENDER_MAP } = require('../../plugin/partner/Myanmar/shared/constants')
 
 // ---------------------------------------------------------------
-async function getDataForQuarterlyReport(auth, query) {
-  const { timezoneIANA } = await getUser(auth.credentials.name)
-
+async function getDataForQuarterlyReport(auth, query, timezoneIANA) {
   const fields = getFieldsForQuarterlyReport(timezoneIANA)
 
   if (_.isNil(query.withTags)) {
