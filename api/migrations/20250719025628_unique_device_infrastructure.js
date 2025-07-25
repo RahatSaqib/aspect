@@ -23,8 +23,8 @@ exports.up = function (knex) {
         table.integer('instrumentId').unsigned().notNullable()
         table.foreign('instrumentId').references('Instrument.id')
 
-        table.string('serial').nullable()
-        table.string('name', 2).nullable()
+        table.string('serial', 255).nullable()
+        table.string('name', 255).nullable()
         table.date('start').notNullable()
         table.date('end').nullable()
       })
