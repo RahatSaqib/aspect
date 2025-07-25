@@ -71,13 +71,13 @@ function startScheduler(queue) {
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('0 2 * * *', dispatcher.tryToContinueUnprocessedRawData) // daily at 2 am
-  cron.schedule('0 3 * * *', dispatcher.factGenerateResultCounts) // daily at 3 am
-  cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
+  cron.schedule('0 4 * * *', dispatcher.factGenerateResultCounts) // daily at 4 am - MOVED to avoid collisions with hourly jobs
+  cron.schedule('10 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 10 minutes past - AVOIDING minute 1 to prevent collisions with daily jobs
   cron.schedule('15 * * * *', dispatcher.factDataCategoryLowCheck) // every hour at 15th minute
   cron.schedule('30 * * * *', dispatcher.resultAnalyzeTimeout) // every hour at 30th minute
-  cron.schedule('*/15 * * * *', dispatcher.escalateIssues) // run every 15 minutes
+  cron.schedule('5,20,35,50 * * * *', dispatcher.escalateIssues) // run every 15 minutes at 5,20,35,50 minutes past - AVOIDING 00,15,30,45 to prevent collisions
   cron.schedule(
-    '25 */2 * * *', // run every 2 hours at 25th minute past the hour
+    '45 */2 * * *', // run every 2 hours at 45th minute past the hour - MOVED from 25 to avoid collisions
     dispatcher.factCalculateInventoryConsumptionRates
   )
   cron.schedule('30 2 * * *', dispatcher.calibrationDueDateAnalysis) // daily at 2:30 am
@@ -87,11 +87,11 @@ function startScheduler(queue) {
 
   cron.schedule('0 7 * * *', dispatcher.factNewResultsAvailableCheck) // daily at 7am
 
-  cron.schedule('0 2 * * *', dispatcher.missingInventoryLotsResolver) // daily at 02:00 am
+  cron.schedule('15 2 * * *', dispatcher.missingInventoryLotsResolver) // daily at 02:15 am - MOVED from 02:00 to avoid conflict
 
   cron.schedule('0 */8 * * *', dispatcher.deviceUpdateModuleSerials) // run every 8 hours
 
-  cron.schedule('0 3 * * *', dispatcher.deviceInactiveNotificationAnalysis) // daily at 3 am
+  cron.schedule('15 4 * * *', dispatcher.deviceInactiveNotificationAnalysis) // daily at 4:15 am - MOVED to avoid conflict with factGenerateResultCounts
   cron.schedule('30 6 * * *', dispatcher.expectedBackOnlineAnalysis) // daily at 6:30 am
   cron.schedule('0 */2 * * *', serviceModification) // run every 2 hours
   cron.schedule('* */1 * * *', unlinkAsyncReports) // run every 1 hour
