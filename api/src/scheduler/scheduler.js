@@ -98,21 +98,6 @@ function startScheduler(queue) {
   // Stagger startup tasks instead of running them all immediately
   staggerStartupTasks(dispatcher)
 
-  // dispatcher.webhookServerCheckTokens()
-  // dispatcher.factGenerateResultCounts()
-  // dispatcher.factGenerateDeviceConnectivity()
-  // dispatcher.factDataCategoryLowCheck()
-  // dispatcher.factCalculateInventoryConsumptionRates()
-  // dispatcher.factCheckCompletionRatePerSite()
-  // dispatcher.factFillCustomFieldsCompletionStatsLast30Days()
-  // dispatcher.resolveIssues()
-  // dispatcher.calibrationDueDateAnalysis()
-  // dispatcher.calibrationIssueNotificationTrigger()
-  // dispatcher.resultAnalyzeTimeout()
-  // dispatcher.missingInventoryLotsResolver()
-  // dispatcher.deviceUpdateModuleSerials()
-  // dispatcher.expectedBackOnlineAnalysis()
-
   // cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
