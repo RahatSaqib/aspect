@@ -107,7 +107,7 @@ function startScheduler(queue) {
   cron.schedule('10 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 10 minutes past - AVOIDING minute 1 to prevent collisions with daily jobs
   cron.schedule('15 * * * *', dispatcher.factDataCategoryLowCheck) // every hour at 15th minute
   cron.schedule('30 * * * *', dispatcher.resultAnalyzeTimeout) // every hour at 30th minute
-  cron.schedule('5,20,35,50 * * * *', dispatcher.escalateIssues) // run every 15 minutes at 5,20,35,50 minutes past - AVOIDING 00,15,30,45 to prevent collisions
+  cron.schedule('5-59/15 * * * *', dispatcher.escalateIssues) // run every 15 minutes at 5,20,35,50 minutes past - AVOIDING 00,15,30,45 to prevent collisions
   cron.schedule(
     '45 */2 * * *', // run every 2 hours at 45th minute past the hour - MOVED from 25 to avoid collisions
     dispatcher.factCalculateInventoryConsumptionRates
@@ -125,7 +125,7 @@ function startScheduler(queue) {
 
   cron.schedule('25 3 * * *', dispatcher.deviceInactiveNotificationAnalysis) // daily at 3:25 am
   cron.schedule('30 6 * * *', dispatcher.expectedBackOnlineAnalysis) // daily at 6:30 am
-  cron.schedule('40 */2 * * *', serviceModification) // run every 2:40 hours
+  cron.schedule('40 */2 * * *', serviceModification) // run every 2 hours at 40 minutes past the hour
   cron.schedule('0 */1 * * *', unlinkAsyncReports) // run every 1 hour
   cron.schedule('0 0 * * *', serviceNotificationInformation) // run in every 24 hrs
 
