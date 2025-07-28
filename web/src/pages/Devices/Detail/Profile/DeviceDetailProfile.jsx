@@ -36,6 +36,7 @@ import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceSt
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import styles from '../styles.module.css'
 import messages from './messages'
+import DeviceArrangement from './DeviceArrangement'
 import PerformanceReport from './PerformanceReport'
 
 const tokens = {
@@ -196,6 +197,7 @@ const enhance = compose(
     },
   })
 )
+
 
 const DeviceDetailProfile = ({
   navigate,
@@ -539,7 +541,7 @@ const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
-
+      <DeviceArrangement deviceId={device.get('id')} />
       <PerformanceReport
         performanceReport={devicePerformance}
         dailyCapacity={dailyCapacity || 0}
