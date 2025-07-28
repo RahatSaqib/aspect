@@ -30,6 +30,7 @@ const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial }
 const { deviceReport } = require('./serviceReports/deviceReport')
 const getMtbErrorGraph = require('./getErrorGraph')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
+const getDeviceSetup = require('./getDeviceSetup')
 
 const routes = [
   {
@@ -105,6 +106,49 @@ const routes = [
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False if there was some sort of error'),
           data: deviceDetailsResponseFields,
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/{deviceId}/setup',
+    handler: asyncHandler(getDeviceSetup),
+    config: {
+      description: 'Device Setup',
+      notes: 'Get instruments and modules configuration for a device',
+      auth: { scope: ['device:view'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+        query: {
+          includeHistory: Joi.boolean().default(false).description('Include historical instruments and modules that have been removed'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.object().keys({
+            deviceId: Joi.number().required().description('Device ID'),
+            instruments: Joi.array().items(
+              Joi.object().keys({
+                instrumentSerial: Joi.number().required().description('Instrument serial number'),
+                modules: Joi.array().items(
+                  Joi.object().keys({
+                    moduleSerial: Joi.number().required().description('Module serial number'),
+                    moduleName: Joi.string().allow(null).description('Module bay name (e.g., A1, A2, etc.)'),
+                    startedOn: Joi.date().required().description('Date when module was installed'),
+                    lastSeenOn: Joi.date().required().description('Date when module was last seen/used'),
+                    removedOn: Joi.date().allow(null).description('Date when module was removed'),
+                  })
+                ).description('List of modules in this instrument'),
+              })
+            ).description('List of instruments connected to the device'),
+          }).description('Device setup data'),
         }),
       },
     },

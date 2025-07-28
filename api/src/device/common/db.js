@@ -912,6 +912,38 @@ async function getUnusedModulesReportData(dataConstraints, query) {
     })
 }
 
+async function getDeviceSetup(deviceId, dataConstraints, includeHistory = false) {
+  const query = knex('Device as d')
+    .join('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Instrument as i', function() {
+      this.on('i.deviceId', 'd.id').andOn('i.active', 1)
+    })
+    .leftJoin('Module as m', 'm.instrumentId', 'i.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+    })
+    .where('d.id', deviceId)
+
+  if (!includeHistory) {
+    query.where(function() {
+      this.whereNull('m.removedOn').orWhereNull('m.id')
+    })
+  }
+
+  return query
+    .orderBy(['i.serial', { column: 'm.startedOn', order: 'desc' }])
+    .select(
+      'd.id as deviceId',
+      'i.serial as instrumentSerial',
+      'm.serial as moduleSerial',
+      'm.name as moduleName',
+      'm.startedOn',
+      'm.lastSeenOn',
+      'm.removedOn'
+    )
+}
+
 module.exports = {
   getDeviceByDeviceId,
   getDeviceWorkload,
@@ -952,4 +984,5 @@ module.exports = {
   getDeviceByIdBaseQuery,
   getUnusedModulesReportData,
   getDeviceInfo,
+  getDeviceSetup,
 }

@@ -35,6 +35,7 @@ const {
   getBasicsForDevicesReport,
   getDeviceByIdBaseQuery,
   getDeviceByDeviceId,
+  getDeviceSetup,
 } = require('./common/db')
 const { getSelectListFields } = require('./common/querySelectors')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')

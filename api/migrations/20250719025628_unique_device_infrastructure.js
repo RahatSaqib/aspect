@@ -25,8 +25,9 @@ exports.up = function (knex) {
 
         table.string('serial', 255).nullable()
         table.string('name', 255).nullable()
-        table.date('start').notNullable()
-        table.date('end').nullable()
+        table.date('startedOn').notNullable()
+        table.date('lastSeenOn').notNullable()
+        table.date('removedOn').nullable()
       })
     })
 }

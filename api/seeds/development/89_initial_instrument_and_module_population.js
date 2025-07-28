@@ -32,13 +32,14 @@ from Device          as d
 group by d.id, r.instrumentSerial
 order by instrumentSerial, max(r.endedOn) desc;`)
 
-  await knex.raw(`insert into Module (deviceId, instrumentId, serial, name, start, \`end\`)
+  await knex.raw(`insert into Module (deviceId, instrumentId, serial, name, startedOn, lastSeenOn, removedOn)
 select deviceId,
        (select id from Instrument as i where i.serial = t.instrumentSerial and t.deviceid = i.deviceId) as instrumentId,
        moduleSerial                                                                                     as serial,
        trim(moduleName)                                                                                       as name,
-       first                                                                                            as start,
-       case when moved then last else null end                                                          as \`end\`
+       first                                                                                            as startedOn,
+       last                                                                                             as lastSeenOn,
+       case when moved then last else null end                                                          as removedOn
 from (select d.id           as deviceId,
              r.instrumentSerial,
              r.moduleSerial,
