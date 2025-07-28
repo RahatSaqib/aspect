@@ -5,17 +5,17 @@ const { getDeviceArrangement } = require('./common/db')
 module.exports = async function ({ params, query, auth }) {
   const { deviceId } = params
   const { includeHistory = false } = query
-  
+
   // Get user constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  
+
   // Get instruments data with constraints applied
   const instrumentRows = await getDeviceArrangement(deviceId, dataConstraints, includeHistory)
-  
+
   if (!instrumentRows.length) {
     return Boom.notFound('Device not found')
   }
-  
+
   // Check if device exists but has no instruments
   const hasDevice = instrumentRows.some(row => row.deviceId)
   if (!hasDevice) {
@@ -24,30 +24,30 @@ module.exports = async function ({ params, query, auth }) {
 
   // Group modules by instrument
   const instrumentsMap = {}
-  let latestLetterByInstrument = {}
-  
+  const latestLetterByInstrument = {}
+
   instrumentRows.forEach(row => {
     // Skip rows with no instrument (device exists but no instruments)
     if (!row.instrumentSerial) {
       return
     }
-    
+
     if (!instrumentsMap[row.instrumentSerial]) {
       instrumentsMap[row.instrumentSerial] = {
         instrumentSerial: row.instrumentSerial,
-        modules: []
+        modules: [],
       }
       // First module for this instrument (newest due to ordering) determines the letter
       if (!includeHistory && row.moduleName) {
         latestLetterByInstrument[row.instrumentSerial] = row.moduleName.charAt(0)
       }
     }
-    
+
     // Skip rows with no module (instrument exists but no modules)
     if (!row.moduleSerial) {
       return
     }
-    
+
     // For current setup, only include modules with the same letter as the newest
     if (!includeHistory && row.moduleName) {
       const expectedLetter = latestLetterByInstrument[row.instrumentSerial]
@@ -55,13 +55,13 @@ module.exports = async function ({ params, query, auth }) {
         return // Skip this module
       }
     }
-    
+
     instrumentsMap[row.instrumentSerial].modules.push({
       moduleSerial: row.moduleSerial,
       moduleName: row.moduleName,
       startedOn: row.startedOn,
       lastSeenOn: row.lastSeenOn,
-      removedOn: row.removedOn
+      removedOn: row.removedOn,
     })
   })
 
@@ -78,7 +78,7 @@ module.exports = async function ({ params, query, auth }) {
   return {
     ok: true,
     data: {
-      deviceId: parseInt(deviceId),
+      deviceId: parseInt(deviceId, 10),
       instruments: Object.values(instrumentsMap),
     },
   }

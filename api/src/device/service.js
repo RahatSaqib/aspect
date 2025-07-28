@@ -35,7 +35,6 @@ const {
   getBasicsForDevicesReport,
   getDeviceByIdBaseQuery,
   getDeviceByDeviceId,
-  getDeviceSetup,
 } = require('./common/db')
 const { getSelectListFields } = require('./common/querySelectors')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
@@ -380,36 +379,36 @@ async function getDevicesForReport(auth, query) {
     .sum({
       totalResults: 'r.resultCount',
       totalErrors: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Error} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Error}
+        then r.resultCount
+        else 0
         end`),
       noResults: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult}
+        then r.resultCount
+        else 0
         end`),
       totalInvalid: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid}
+        then r.resultCount
+        else 0
         end`),
 
       totalResults_sameOriginSite: knex.raw(`r.xdrResistanceCounts ->> "$.cntSameOriginSite"`),
       totalErrors_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Error} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Error}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
       noResults_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
       totalInvalid_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
     })
   const resultsLastUploaded = await knex('Result as r')

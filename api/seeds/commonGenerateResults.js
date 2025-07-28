@@ -357,7 +357,7 @@ async function addCovidResults(
       originSiteId: siteData.id,
     }
 
-      ;[sample.id] = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
@@ -496,13 +496,13 @@ async function addCovidResults(
           caseId: formData.caseId,
           gender: formData.gender
             ? wakandaCovidResultFormSchema.fields.gender.control.options.find(
-              option => option.value == formData.gender // eslint-disable-line eqeqeq
-            ).title
+                option => option.value == formData.gender // eslint-disable-line eqeqeq
+              ).title
             : undefined,
           testReason: formData.testReason
             ? wakandaCovidResultFormSchema.fields.testReason.control.options.find(
-              option => option.value == formData.testReason // eslint-disable-line eqeqeq
-            ).title
+                option => option.value == formData.testReason // eslint-disable-line eqeqeq
+              ).title
             : undefined,
         }),
       }
@@ -533,8 +533,8 @@ async function addCovidResults(
       rndWorkflow < 20
         ? resultWorkflowStatusProcessedId
         : rndWorkflow < 30
-          ? resultWorkflowStatusValidatedId
-          : resultWorkflowStatusDeliverableId
+        ? resultWorkflowStatusValidatedId
+        : resultWorkflowStatusDeliverableId
 
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
@@ -584,7 +584,7 @@ async function addHivVlResults(
       originSiteId: siteData.id,
     }
 
-      ;[sample.id] = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
@@ -779,7 +779,7 @@ async function addTBResults(
         originSiteId: siteData.id,
       }
 
-        ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
       samples.push(sample)
     }
@@ -995,7 +995,7 @@ async function addEbolaResults(
       originSiteId: siteData.id,
     }
 
-      ;[sample.id] = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
@@ -1157,11 +1157,11 @@ async function setTreatmentStatusToResults(knex, resultsToUpdate, treatmentStatu
 
     const [treatmentStatusLogId] = treatment
       ? await knex('ResultTreatmentStatusLog').insert({
-        resultId: result.id,
-        resultTreatmentStatusId: treatment,
-        changedOn: treatmentDateTime,
-        createdOn: treatmentDateTime,
-      })
+          resultId: result.id,
+          resultTreatmentStatusId: treatment,
+          changedOn: treatmentDateTime,
+          createdOn: treatmentDateTime,
+        })
       : [null]
 
     await knex('Result').where('id', result.id).update({

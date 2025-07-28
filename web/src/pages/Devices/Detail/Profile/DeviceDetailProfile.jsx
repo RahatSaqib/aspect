@@ -35,8 +35,8 @@ import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import styles from '../styles.module.css'
-import messages from './messages'
 import DeviceArrangement from './DeviceArrangement'
+import messages from './messages'
 import PerformanceReport from './PerformanceReport'
 
 const tokens = {
@@ -197,7 +197,6 @@ const enhance = compose(
     },
   })
 )
-
 
 const DeviceDetailProfile = ({
   navigate,

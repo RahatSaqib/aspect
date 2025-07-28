@@ -1029,7 +1029,7 @@ async function seed(knex) {
       serial: _.times(24, () => String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))).join(''),
     }
 
-      ;[device.id] = await knex('Device').insert(device)
+    ;[device.id] = await knex('Device').insert(device)
     devicesDaktari.push(device)
 
     // Create API Keys
@@ -1069,7 +1069,7 @@ async function seed(knex) {
       sampleTypeId: await sampleTypeToId('DBS'),
       originSiteId: siteDate.id,
     }
-      ;[sample.id] = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
     samples.push(sample)
   })
 

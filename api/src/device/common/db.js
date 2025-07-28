@@ -915,7 +915,7 @@ async function getUnusedModulesReportData(dataConstraints, query) {
 async function getDeviceArrangement(deviceId, dataConstraints, includeHistory = false) {
   const query = knex('Device as d')
     .join('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Instrument as i', function() {
+    .leftJoin('Instrument as i', function () {
       this.on('i.deviceId', 'd.id').andOn('i.active', 1)
     })
     .leftJoin('Module as m', 'm.instrumentId', 'i.id')
@@ -926,7 +926,7 @@ async function getDeviceArrangement(deviceId, dataConstraints, includeHistory = 
     .where('d.id', deviceId)
 
   if (!includeHistory) {
-    query.where(function() {
+    query.where(function () {
       this.whereNull('m.removedOn').orWhereNull('m.id')
     })
   }

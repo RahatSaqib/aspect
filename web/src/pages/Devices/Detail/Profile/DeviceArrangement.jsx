@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from 'react'
 import { Card, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import PropTypes from 'prop-types'
-import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Summary from '../../../../oldComponents/Summary'
 import { aspectFetch } from '../../../../utils/utils/fetch'
