@@ -456,6 +456,7 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
     id: 'r.id',
     patientId: knex.raw(`r.patientData ->> '$.id'`),
     sampleId: 'sp.externalId',
+    sampleType: knex.raw(`r.patientData ->> '$.SampleType'`),
     testDate: getDateTimeProjectionInTimeZoneIANA(knex, 'COALESCE(r.endedOn, r.startedOn)', timezoneIANA),
     startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
     endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
