@@ -1,6 +1,6 @@
 const Boom = require('@hapi/boom')
 const { getConstraints } = require('../auth/constraints')
-const { getDeviceSetup } = require('./common/db')
+const { getDeviceArrangement } = require('./common/db')
 
 module.exports = async function ({ params, query, auth }) {
   const { deviceId } = params
@@ -10,7 +10,7 @@ module.exports = async function ({ params, query, auth }) {
   const dataConstraints = await getConstraints(auth.credentials)
   
   // Get instruments data with constraints applied
-  const instrumentRows = await getDeviceSetup(deviceId, dataConstraints, includeHistory)
+  const instrumentRows = await getDeviceArrangement(deviceId, dataConstraints, includeHistory)
   
   if (!instrumentRows.length) {
     return Boom.notFound('Device not found')

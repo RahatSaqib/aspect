@@ -30,7 +30,7 @@ const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial }
 const { deviceReport } = require('./serviceReports/deviceReport')
 const getMtbErrorGraph = require('./getErrorGraph')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
-const getDeviceSetup = require('./getDeviceSetup')
+const getDeviceArrangement = require('./getDeviceArrangement')
 
 const routes = [
   {
@@ -112,11 +112,11 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/device/{deviceId}/setup',
-    handler: asyncHandler(getDeviceSetup),
+    path: '/device/{deviceId}/arrangement',
+    handler: asyncHandler(getDeviceArrangement),
     config: {
-      description: 'Device Setup',
-      notes: 'Get instruments and modules configuration for a device',
+      description: 'Device Arrangement',
+      notes: 'Get instruments and modules arrangement for a device',
       auth: { scope: ['device:view'] },
       validate: {
         params: {
@@ -148,7 +148,7 @@ const routes = [
                 ).description('List of modules in this instrument'),
               })
             ).description('List of instruments connected to the device'),
-          }).description('Device setup data'),
+          }).description('Device arrangement data'),
         }),
       },
     },

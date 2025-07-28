@@ -912,7 +912,7 @@ async function getUnusedModulesReportData(dataConstraints, query) {
     })
 }
 
-async function getDeviceSetup(deviceId, dataConstraints, includeHistory = false) {
+async function getDeviceArrangement(deviceId, dataConstraints, includeHistory = false) {
   const query = knex('Device as d')
     .join('Site as s', 'd.siteId', 's.id')
     .leftJoin('Instrument as i', function() {
@@ -984,5 +984,5 @@ module.exports = {
   getDeviceByIdBaseQuery,
   getUnusedModulesReportData,
   getDeviceInfo,
-  getDeviceSetup,
+  getDeviceArrangement,
 }

@@ -14,7 +14,7 @@ const DeviceArrangement = ({ deviceId }) => {
   useEffect(() => {
     const fetchDeviceSetup = async () => {
       try {
-        const result = await aspectFetch(`/device/${deviceId}/setup`)
+        const result = await aspectFetch(`/device/${deviceId}/arrangement`)
         if (result.ok) {
           setInstrumentData(result.data.instruments)
         }
