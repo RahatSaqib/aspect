@@ -147,6 +147,16 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('FactInventoryConsumptionRate', siteIds).delete()
   await knex('SiteTag').whereIn('siteId', siteIds).delete()
   await knex('InventoryLog').whereIn('siteId', siteIds).delete()
+
+  // Delete AlertMessage records that reference sites to avoid foreign key constraint errors
+  await knex('AlertMessage')
+    .whereIn('siteId', siteIds)
+    .orWhereIn(
+      'siteId',
+      _.map(sitesAndDevices, elem => elem.siteId)
+    )
+    .delete()
+
   await knex('Site')
     .whereIn('id', siteIds)
     .orWhereIn(
