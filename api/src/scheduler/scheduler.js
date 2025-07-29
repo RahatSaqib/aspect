@@ -36,16 +36,16 @@ function staggerStartupTasks(dispatcher) {
   // Using 10-second intervals instead of 5-second to provide more breathing room for system recovery
   const startupTasks = [
     { name: 'factGenerateResultCounts', delay: 0 },
-    { name: 'factGenerateDeviceConnectivity', delay: 10000 }, // 10 seconds
+    { name: 'factGenerateDeviceConnectivity', delay: 100000 }, // 100 seconds
     { name: 'factDataCategoryLowCheck', delay: 20000 }, // 20 seconds
-    { name: 'factCalculateInventoryConsumptionRates', delay: 30000 }, // 30 seconds
-    { name: 'factCheckCompletionRatePerSite', delay: 40000 }, // 40 seconds
+    { name: 'factCalculateInventoryConsumptionRates', delay: 300000 }, // 300 seconds
+    { name: 'factCheckCompletionRatePerSite', delay: 400000 }, // 400 seconds
     { name: 'factFillCustomFieldsCompletionStatsLast30Days', delay: 50000 }, // 50 seconds
     { name: 'resolveIssues', delay: 60000 }, // 60 seconds
     { name: 'calibrationDueDateAnalysis', delay: 70000 }, // 70 seconds
     { name: 'calibrationIssueNotificationTrigger', delay: 80000 }, // 80 seconds
     { name: 'resultAnalyzeTimeout', delay: 90000 }, // 90 seconds
-    { name: 'missingInventoryLotsResolver', delay: 100000 }, // 100 seconds
+    { name: 'missingInventoryLotsResolver', delay: 200000 }, // 200 seconds
     { name: 'deviceUpdateModuleSerials', delay: 110000 }, // 110 seconds
     { name: 'expectedBackOnlineAnalysis', delay: 120000 }, // 120 seconds (2 minutes)
   ]
