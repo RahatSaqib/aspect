@@ -32,6 +32,9 @@ const logger = require('../shared/logger')
  * @param {Object} dispatcher - The action dispatcher
  */
 function staggerStartupTasks(dispatcher) {
+  const isTestRunning =
+    Array.isArray(config.seeds.directory) && config.seeds.directory.some(dir => dir.endsWith('test'))
+
   // Define startup tasks with their delay times (in milliseconds)
   // Using 10-second intervals instead of 5-second to provide more breathing room for system recovery
   const startupTasks = [
@@ -48,7 +51,7 @@ function staggerStartupTasks(dispatcher) {
     { name: 'missingInventoryLotsResolver', delay: 200000 }, // 200 seconds
     { name: 'deviceUpdateModuleSerials', delay: 110000 }, // 110 seconds
     { name: 'expectedBackOnlineAnalysis', delay: 120000 }, // 120 seconds (2 minutes)
-  ]
+  ].map(task => ({ ...task, delay: isTestRunning ? 0 : task.delay })) // Do not stagger tasks in test environment
 
   logger.info(
     'Scheduler startup: Staggering initial task execution over 2 minutes to improve system stability and recovery'
