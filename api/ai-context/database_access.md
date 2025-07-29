@@ -79,7 +79,7 @@ Standard aliases:
 .modify(filterDateRangeParams, { minDate, maxDate }, 'r.endedOn', { allowNulls: true })
 ```
 
-### 4. `raw` methods - Minimize Usage, Always Parameterize
+### 4. `raw` methods - Minimize Usage
 
 ```javascript
 // NEVER: 
@@ -94,6 +94,7 @@ Standard aliases:
 // ALWAYS: 
 .where('r2.endedOn', '>', knex.raw('max(r.endedOn)'))
 ```
+
 
 ### 5. `.modify()` Method (Preferred for Composable Queries)
 
@@ -129,22 +130,24 @@ await transact(async trx => {
 
 1. **SQL Injection**: Never use string interpolation in SQL
    ```javascript
-   // WRONG: knex.raw(`WHERE x = '${value}'`)
-   // RIGHT: knex.raw('WHERE x = ?', [value])
+   // WRONG: 
+   knex.raw(`WHERE x = '${value}'`)
+   // RIGHT: 
+   knex.raw('WHERE x = ?', [value])
    ```
 
-2. **Constraints**: Apply to ALL user-facing queries
-   ```javascript
-   const dataConstraints = await getConstraints(auth.credentials)
-   // Then: .modify(addConstraints, dataConstraints, {...})
-   ```
+2. **Joins**: Use `leftJoin` for optional relationships, `join` for required
 
-3. **Joins**: Use `leftJoin` for optional relationships, `join` for required
-
-4. **Null Handling**: Explicit for nullable columns
+3. **Null Handling**: Explicit for nullable columns
    ```javascript
    .modify(filterDateRangeParams, params, 'field', { allowNulls: true })
    ```
+
+4. Sorting
+   Use field names for ASC and object for desc sorting.
+```javascript
+   .orderBy(['i.serial', { column: 'm.startedOn', order: 'desc' }])
+```
 
 ## Complete Example
 
