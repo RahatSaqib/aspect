@@ -136,20 +136,6 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
 
   await knex('FactInventoryConsumptionRate').whereIn('siteId', siteIds).delete()
   await knex('JobContext').whereIn('siteId', siteIds).delete()
-
-  // Delete DeviceTag records that reference devices and sites to avoid foreign key constraint errors
-  await knex('DeviceTag').whereIn('deviceId', deviceIdsToRemove).orWhereIn('siteId', siteIds).delete()
-
-  // Delete additional message records by siteId to avoid foreign key constraint errors
-  await knex('WebhookMessage').whereIn('siteId', siteIds).delete()
-  await knex('PushNotificationMessage').whereIn('siteId', siteIds).delete()
-  await knex('EmailMessage').whereIn('siteId', siteIds).delete()
-  await knex('SmsMessage').whereIn('siteId', siteIds).delete()
-  await knex('AlertMessage').whereIn('siteId', siteIds).delete()
-
-  // Delete FactCustomFieldCompletion records that reference sites to avoid foreign key constraint errors
-  await knex('FactCustomFieldCompletion').whereIn('siteId', siteIds).delete()
-
   await knex('InventoryLog').whereIn('siteId', siteIds).delete()
   await knex('Site').whereIn('id', siteIds).delete()
 
