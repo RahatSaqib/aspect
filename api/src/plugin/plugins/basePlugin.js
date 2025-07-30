@@ -5,6 +5,7 @@ const findResult = require('../result/geneXpert/resultIdentification/findResult_
 const issueTriggers = require('../issueTriggers')
 const issueResolutions = require('../issueResolutions')
 const filtersOpenIssues = require('../../issue/filterConditions')
+const { extractSampleId } = require('../deviceType/extractSampleId')
 
 const DEFAULT_SETTINGS = {
   displayPreferences: {
@@ -80,6 +81,7 @@ const basePlugin = {
   getCustomFields,
   findResult,
   extractCustomFieldsFromPayload,
+  extractSampleId,
 }
 
 /**
