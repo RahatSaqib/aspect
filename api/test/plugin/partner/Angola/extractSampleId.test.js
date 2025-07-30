@@ -1,6 +1,5 @@
 const { assert } = require('chai')
 const { extractSampleId } = require('../../../../src/plugin/partner/Angola/extractSampleId')
-const { extractSampleId: defaultExtractSampleId } = require('../../../../src/plugin/deviceType/extractSampleId')
 
 describe('extractSampleId - Angola Implementation', () => {
   describe('Angola Pattern Tests', () => {
