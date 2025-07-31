@@ -737,8 +737,10 @@ function getRoleLevel(creatorRoles, personRole) {
   const roleLevels = {
     'Super Admin': 5,
     SystemOne: 5,
+    'Admin - (IT team)': 4,
     'Regional Admin': 4,
     'Regional Officer': 3,
+    'Med Tech': 2,
     'Lab User': 2,
     Clinician: 2,
     'Device Maker': 1,
@@ -750,9 +752,12 @@ function getRoleLevel(creatorRoles, personRole) {
     'Result Viewer - Yes': 3,
     'Remote Health Worker': 1,
     'Lab Manager': 2,
+    'Lab Head': 3,
     'Lab Supervisor': 3,
+    'Lab Technician': 3,
     'Aspect Beta': 1,
     'Inventory Manager': 1,
+    'Data Viewer': 1,
   }
 
   // Initialize highest level to -1 or a value lower than the lowest level
