@@ -1,15 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
-const {
-  addDays,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-  format,
-  parseJSON,
-  differenceInBusinessDays,
-} = require('date-fns')
+const { addDays, subMonths, startOfMonth, endOfMonth, format, parseJSON } = require('date-fns')
 const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
 const { knex, filterParams, filterDateRangeParams, sortParams, transact } = require('../db')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
@@ -26,6 +18,7 @@ const {
   getOffsetFromIsoDateString,
   getDateTimeProjectionInTimeZoneIANA,
   isWeekend,
+  getWorkingDays,
 } = require('../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../shared/query')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
@@ -296,28 +289,29 @@ async function getDevicePerformance(request) {
     dt = endOfMonth(subMonths(dt, 1))
   }
 
-  let utilizationRateAvg = null
-  const newData = _.map(devicePerformance, x => {
-    if (devicePerformance.dailyTestCapacity) {
-      utilizationRateAvg = 80
+  let utilizationRateSum = 0
 
-      const minDate = new Date(`${x.monthTested}-01`)
-      const workingDays = differenceInBusinessDays(x.lastDayOfMonth, minDate)
-      x.utilizationRate = _.round(
-        (x.totalResult * 100) / Math.max(workingDays * devicePerformance.dailyTestCapacity, 1),
-        2
-      )
+  const newData = devicePerformance.map(dp => {
+    if (!dp.dailyTestCapacity) {
+      dp.utilizationRate = 0
     } else {
-      x.utilizationRate = null
+      const minDate = new Date(`${dp.monthTested}-01`)
+      const workingDays = getWorkingDays(minDate, dp.lastDayOfMonth)
+      const monthlyCapacity = Math.max(workingDays * dp.dailyTestCapacity, 1)
+      dp.utilizationRate = Math.round(((dp.totalResult * 100) / monthlyCapacity) * 100) / 100
+      if (dp.utilizationRate !== null && !Number.isNaN(dp.utilizationRate)) {
+        utilizationRateSum += dp.utilizationRate
+      }
     }
-
-    if (x.totalResult) {
-      x.errorRate = Math.round((x.errorCount * 100) / x.totalResult)
-      return x
+    if (dp.totalResult) {
+      dp.errorRate = Math.round((dp.errorCount * 100) / dp.totalResult)
+      return dp
     }
-    x.errorRate = 0
-    return x
+    dp.errorRate = 0
+    return dp
   })
+
+  const utilizationRateAvg = Math.round((utilizationRateSum / devicePerformance.length) * 100) / 100
 
   return {
     ok: true,
@@ -379,36 +373,36 @@ async function getDevicesForReport(auth, query) {
     .sum({
       totalResults: 'r.resultCount',
       totalErrors: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Error} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Error}
+        then r.resultCount
+        else 0
         end`),
       noResults: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult}
+        then r.resultCount
+        else 0
         end`),
       totalInvalid: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid}
+        then r.resultCount
+        else 0
         end`),
 
       totalResults_sameOriginSite: knex.raw(`r.xdrResistanceCounts ->> "$.cntSameOriginSite"`),
       totalErrors_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Error} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Error}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
       noResults_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
       totalInvalid_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
     })
   const resultsLastUploaded = await knex('Result as r')
