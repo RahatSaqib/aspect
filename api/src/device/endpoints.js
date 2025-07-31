@@ -6,11 +6,11 @@ const {
   listMaintenanceStatuses,
   listDevicesForSelectList,
   updateDeviceMaintenance,
-  getDevicePerformance,
   setStatusForDateRange,
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
 } = require('./service')
+const { getDevicePerformance } = require('./getDevicePerformance')
 const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
