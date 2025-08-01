@@ -76,9 +76,6 @@ const routes = [
         params: {
           deviceId: Joi.string().description('Device id').required(),
         },
-        query: {
-          timezoneOffset: Joi.number().description(`Current user's timezone offset`),
-        },
       },
     },
   },

@@ -3,15 +3,13 @@ const _ = require('lodash')
 const {
   getMonthYearExpressionFromFieldInTimeZone,
   getDateTimeExpressionInTimeZone,
-  getTimezoneOffsetFromNumber,
   getWorkingDays,
 } = require('../shared/date')
-const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../shared/query')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex } = require('../db')
 
 async function getDevicePerformance(request) {
-  const { auth, params, query } = request
+  const { auth, params } = request
   const { deviceId } = params
   const dataConstraints = await getConstraints(auth.credentials)
   const user = await getUserFromCredentials(auth.credentials)
@@ -19,7 +17,6 @@ async function getDevicePerformance(request) {
 
   const endedOn = new Date()
   const startedOn = startOfMonth(subMonths(endedOn, 12)) // 12 months period
-  const offset = getTimezoneOffsetFromNumber(query.timezoneOffset)
 
   const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
@@ -36,14 +33,20 @@ async function getDevicePerformance(request) {
       endedOn,
     ])
     .select([
-      knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
+      knex.raw('count(r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
       knex.raw(`sum(rc1.externalId = 'Error') as errorCount`),
-
       getMonthYearExpressionFromFieldInTimeZone(knex, 'r.endedOn', 'monthTested', timezoneIANA),
-      lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
+      knex.raw(
+        // last day of the month or today if result.endedOn is in the current month
+        `CASE
+          WHEN DATE(NOW()) < LAST_DAY(r.endedOn)
+          THEN DATE(CONVERT_TZ(NOW(), "+00:00","${timezoneIANA}"))
+          ELSE DATE(LAST_DAY(r.endedOn))
+        END as lastDayOfMonth`
+      ),
       'd.dailyTestCapacity',
     ])
-    .groupBy('monthTested')
+    .groupBy('monthTested', 'lastDayOfMonth')
 
   const { errorCategoryId } = await knex('ResultCategory as r')
     .where('r.externalId', 'Error')
