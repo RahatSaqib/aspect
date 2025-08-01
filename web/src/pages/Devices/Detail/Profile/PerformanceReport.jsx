@@ -4,7 +4,7 @@ import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
 import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
 import startOfMonth from 'date-fns/startOfMonth'
-import { oneOfType, object, string, number } from 'prop-types'
+import { number, object, oneOfType, string } from 'prop-types'
 import { defineMessages, useIntl } from 'react-intl'
 import { ColumnGraph } from '../../../../cleanComponents'
 import variables from '../../../../theme/colors'
@@ -49,12 +49,12 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
         utilization.push(
           {
             period: monthName,
-            type: 'Above Target Utilization Rate',
+            type: formatMessage(messages.aboveAverageUtilizationRate),
             value: i.utilizationRate > utilizationRateAvg ? i.utilizationRate - utilizationRateAvg : 0,
           },
           {
             period: monthName,
-            type: 'Utilization Rate',
+            type: formatMessage(messages.utilizationRate),
             value: i.utilizationRate > utilizationRateAvg ? utilizationRateAvg : i.utilizationRate || 0,
             totalCapacity: dailyCapacity * differenceInBusinessDays(endOfMonth(isoDate), startOfMonth(isoDate)),
             totalResult: i.totalResult || 0,
@@ -64,12 +64,12 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
         error.push(
           {
             period: monthName,
-            type: 'Above Average Error Rate',
+            type: formatMessage(messages.aboveAverageErrorRate),
             value: i.errorRate > errorRateAvg ? i.errorRate - errorRateAvg : 0,
           },
           {
             period: monthName,
-            type: 'Error Rate',
+            type: formatMessage(messages.errorRate),
             value: i.errorRate > errorRateAvg ? errorRateAvg : i.errorRate || 0,
             errorCount: i.errorCount || 0,
             totalResult: i.totalResult || 0,
@@ -134,12 +134,12 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
                   {
                     type: 'text',
                     position: ['min', utilizationData.average],
-                    content: `Average: ${utilizationData.average}%`,
+                    content: `${formatMessage(messages.average)}: ${utilizationData.average}%`,
                     offsetY: -4,
                     style: { textBaseline: 'bottom' },
                   },
                 ]}
-                colors={['#FF0000', shakespeare]}
+                colors={['#9FD466', '#9AD7EE']}
               />
             ) : null}
           </Grid>
@@ -190,12 +190,12 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
                   {
                     type: 'text',
                     position: ['min', errorData.average],
-                    content: `Average: ${errorData.average}%`,
+                    content: `${formatMessage(messages.average)}: ${errorData.average}%`,
                     offsetY: -4,
                     style: { textBaseline: 'bottom' },
                   },
                 ]}
-                colors={['#FF0000', mandy]}
+                colors={['#D91C17', '#F18888']}
               />
             ) : null}
           </Grid>

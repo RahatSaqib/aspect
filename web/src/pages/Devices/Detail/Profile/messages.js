@@ -45,6 +45,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.performanceTitle',
       defaultMessage: 'Performance',
     },
+    aboveAverageUtilizationRate: {
+      id: 'pages.DeviceDetailProfile.aboveAverageUtilizationRate',
+      defaultMessage: 'Above Average Utilization Rate',
+    },
     deviceLogs: {
       id: 'pages.DeviceDetailProfile.deviceLogs',
       defaultMessage: 'Device logs',
@@ -102,6 +106,10 @@ const messages = {
     errorRate: {
       id: 'pages.DeviceDetailProfile.errorRate',
       defaultMessage: 'Error Rate',
+    },
+    aboveAverageErrorRate: {
+      id: 'pages.DeviceDetailProfile.aboveAverageErrorRate',
+      defaultMessage: 'Above Average Error Rate',
     },
     errorRateExplain: {
       id: 'pages.DeviceDetailProfile.errorRateExplain',
@@ -185,6 +193,10 @@ const messages = {
     aboveTarget: {
       id: 'pages.deviceDetail.aboveTarget',
       defaultMessage: 'Above Target',
+    },
+    average: {
+      id: 'pages.deviceDetail.average',
+      defaultMessage: 'Average',
     },
     aboveAverage: {
       id: 'pages.deviceDetail.aboveAverage',
