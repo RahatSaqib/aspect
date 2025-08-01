@@ -97,4 +97,12 @@ export default defineMessages({
     id: 'jobFunction.labTechnician',
     defaultMessage: 'Lab Technician',
   },
+  partners: {
+    id: 'jobFunction.partners',
+    defaultMessage: 'Partners',
+  },
+  ntpLevel: {
+    id: 'jobFunction.ntpLevel',
+    defaultMessage: 'NTP Level',
+  },
 })
