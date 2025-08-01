@@ -1,21 +1,24 @@
 const { format, startOfMonth, subMonths, endOfMonth } = require('date-fns')
 const _ = require('lodash')
-const { getMonthYearUserTimeZoneField, getTimezoneOffsetFromNumber, getWorkingDays } = require('../shared/date')
+const {
+  getMonthYearExpressionFromFieldInTimeZone,
+  getDateTimeExpressionInTimeZone,
+  getTimezoneOffsetFromNumber,
+  getWorkingDays,
+} = require('../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../shared/query')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex } = require('../db')
 
 async function getDevicePerformance(request) {
   const { auth, params, query } = request
-
   const { deviceId } = params
-
   const dataConstraints = await getConstraints(auth.credentials)
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA } = user
 
   const endedOn = new Date()
-
   const startedOn = startOfMonth(subMonths(endedOn, 12)) // 12 months period
-
   const offset = getTimezoneOffsetFromNumber(query.timezoneOffset)
 
   const devicePerformance = await knex('Result as r')
@@ -28,11 +31,15 @@ async function getDevicePerformance(request) {
       { showUnapprovedDevices: true, showDecommissionedDevices: true }
     )
     .where('r.deviceId', deviceId)
-    .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
+    .whereRaw(`DATE(${getDateTimeExpressionInTimeZone(knex, 'r.endedOn', timezoneIANA)}) between date(?) and date(?)`, [
+      startedOn,
+      endedOn,
+    ])
     .select([
       knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
       knex.raw(`sum(rc1.externalId = 'Error') as errorCount`),
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthTested', offset),
+
+      getMonthYearExpressionFromFieldInTimeZone(knex, 'r.endedOn', 'monthTested', timezoneIANA),
       lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
       'd.dailyTestCapacity',
     ])
