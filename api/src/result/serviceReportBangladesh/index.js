@@ -794,7 +794,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_all: andByHistory(
           'Presumptive Pulmonary Smear Negative TB Cases',
           'Unknown history',
-          null,
+          excludeNonResultCategories,
           assayMtb
         ),
         // cell B41
@@ -816,7 +816,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_all: andByHistory(
           'Presumptive Pulmonary Smear Negative TB Cases',
           'New',
-          null,
+          excludeNonResultCategories,
           assayMtb
         ),
         // cell C41
@@ -838,7 +838,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_all: andByHistory(
           'Presumptive Pulmonary Smear Negative TB Cases',
           'Previously treated',
-          null,
+          excludeNonResultCategories,
           assayMtb
         ),
         // cell D41
