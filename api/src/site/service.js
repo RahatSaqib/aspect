@@ -188,6 +188,7 @@ async function listSitesForTransferSelectList(request) {
 
 async function getListSitesForSelectList(dataConstraints, opt = {}) {
   const { excludeSiteIds, mode, siteTypeExternalIds, tags } = opt
+
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('SiteType as sType', 's.siteTypeId', 'sType.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -242,6 +243,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     .distinct()
 
   const sites = await sitesQuery
+
   /**
    * convert csv string of siteConsumables into array of numbers
    */
