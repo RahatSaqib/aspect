@@ -85,7 +85,7 @@ const routes = [
     handler: downloadScheduledReport,
     config: {
       description: 'Report Excel file',
-      notes: 'Returns Excel file generated from report besed notification',
+      notes: 'Returns Excel file generated from report based notification',
       auth: false,
       validate: {
         query: {

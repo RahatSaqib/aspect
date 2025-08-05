@@ -1,16 +1,19 @@
 const chai = require('chai')
 const { subMonths } = require('date-fns')
+const fs = require('fs')
+const path = require('path')
 
+const jwt = require('jsonwebtoken')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = require('../utils/testUtils')
+const config = require('../../src/config')
 
 const { assert } = chai
 
-// We're skipping these tests because they fail frequently and cause repeated errors
-describe.skip('API Reports Endpoint', () => {
-  describe('GET: /api/reports/critical_errors_by_module', () => {
+describe('API Reports Endpoint', () => {
+  describe.skip('GET: /api/reports/critical_errors_by_module', () => {
     const apiPath = '/api/reports/critical_errors_by_module'
 
     before(() => {
@@ -70,7 +73,7 @@ describe.skip('API Reports Endpoint', () => {
     })
   })
 
-  describe('GET: /api/reports/unreconciled_inventory_report', () => {
+  describe.skip('GET: /api/reports/unreconciled_inventory_report', () => {
     const apiPath = '/api/reports/unreconciled_inventory_report'
 
     before(() => {
@@ -104,7 +107,7 @@ describe.skip('API Reports Endpoint', () => {
     })
   })
 
-  describe('GET: /api/reports', () => {
+  describe.skip('GET: /api/reports', () => {
     const apiPath = '/api/reports'
 
     before(() => {
@@ -125,5 +128,83 @@ describe.skip('API Reports Endpoint', () => {
         assert.equal(unreconciledInventoryReport.name, 'List of Unreconciled Inventory')
         assert.equal(unreconciledInventoryReport.exportExcel, true)
       }))
+  })
+
+  describe('GET: /api/reports/download', () => {
+    const apiPath = '/api/reports/download'
+    const testFileName = 'test.xlsx'
+    const testFilePath = path.join('/tmp', testFileName)
+
+    before(() => {
+      shared.checkToken(server, apiPath)
+    })
+
+    beforeEach(async () => {
+      // Create a test file in /tmp directory
+      const testContent = Buffer.from('Test Excel file content for download verification')
+      await fs.promises.writeFile(testFilePath, testContent)
+    })
+
+    afterEach(async () => {
+      // Clean up test file after each test
+      try {
+        await fs.promises.unlink(testFilePath)
+      } catch (error) {
+        // File might not exist, ignore error
+      }
+    })
+
+    it('should return 401 for an invalid token', async () => {
+      const response = await server
+        .get(apiPath)
+        .query({ token: 'invalid-token' })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(response.status, 401)
+      assert.equal(response.body.error, 'Invalid token')
+    })
+
+    it('should return 404 when the token is valid but the file does not exist', async () => {
+      const response = await server
+        .get(apiPath)
+        .query({ token: shared.token })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(response.status, 404)
+      assert.equal(response.body.error, 'File not found')
+    })
+    it('should return 200 when the token is valid and the file exists', async () => {
+      const response = await server
+        .get(apiPath)
+        .query({ token: jwt.sign({ report_filename: testFileName }, config.secret, { expiresIn: '1 hour' }) })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(response.status, 200)
+
+      // Verify that the response contains the expected file content
+      assert.isTrue(Buffer.isBuffer(response.body), 'Response body should be a Buffer')
+      assert.exists(response.headers['content-disposition'])
+      assert.equal(response.headers['content-disposition'].includes('attachment'), true)
+      assert.equal(response.headers['content-disposition'].includes(`filename=${testFileName}`), true)
+
+      // Verify the file content matches what we created
+      const expectedContent = Buffer.from('Test Excel file content for download verification')
+      assert.deepEqual(response.body, expectedContent)
+    })
+
+    it('should return 404 when the token has undefined report_filename', async () => {
+      const response = await server
+        .get(apiPath)
+        .query({ token: jwt.sign({ report_filename: undefined }, config.secret, { expiresIn: '1 hour' }) })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(response.status, 404)
+      assert.equal(response.body.error, 'File not found')
+    })
+
+    it('should return 400 when the token has empty report_filename', async () => {
+      const response = await server
+        .get(apiPath)
+        .query({ token: jwt.sign({ report_filename: '' }, config.secret, { expiresIn: '1 hour' }) })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(response.status, 400)
+      assert.equal(response.body.error, 'File is a directory')
+    })
   })
 })
