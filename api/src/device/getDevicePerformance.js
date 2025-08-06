@@ -7,6 +7,7 @@ const {
 } = require('../shared/date')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex } = require('../db')
+const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
 async function getDevicePerformance(request) {
   const { auth, params } = request
@@ -85,13 +86,14 @@ async function getDevicePerformance(request) {
   }
 
   let utilizationRateSum = 0
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
 
   const newData = devicePerformance.map(dp => {
     if (!dp.dailyTestCapacity) {
       dp.utilizationRate = 0
     } else {
       const minDate = new Date(`${dp.monthTested}-01`)
-      const workingDays = getWorkingDays(minDate, dp.lastDayOfMonth)
+      const workingDays = getWorkingDays(minDate, dp.lastDayOfMonth, customWorkingDaysConfig)
       const monthlyCapacity = Math.max(workingDays * dp.dailyTestCapacity, 1)
       dp.utilizationRate = Math.round(((dp.totalResult * 100) / monthlyCapacity) * 100) / 100
       if (dp.utilizationRate !== null && !Number.isNaN(dp.utilizationRate)) {
