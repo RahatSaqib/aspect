@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-16T10:42:20.495Z\n"
+"POT-Creation-Date: 2025-07-30T08:59:53.144Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -896,19 +896,6 @@ msgid ""
 msgstr ""
 "Ви впевнені, що хочете видалити цей сайт? Ця дія призначена лише для "
 "тестових сайтів, усі дані сайту будуть втрачені."
-
-#. [errorResponseMessages.updateConsumable.message]
-#. defaultMessage is:
-#. As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action
-#: extracted_strings.json
-msgid ""
-"As there is unreconciled consumption for the specified cartridge, "
-"{consumableName}, system cant allow delisting of the same at the site. "
-"Please reconcile your inventory to complete this action"
-msgstr ""
-"Оскільки для вказаного картриджа {consumableName} існує неузгоджене "
-"споживання, система не може дозволити видалення його з переліку на сайті. "
-"Будь ласка, звірте свої запаси, щоб виконати цю дію"
 
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
@@ -2152,6 +2139,13 @@ msgstr "Витратні матеріали, що застосовуються �
 #: extracted_strings.json
 msgid "Consumables applicable for this site"
 msgstr "Витратні матеріали, що застосовуються для цього сайту"
+
+#. [pages.consumables.consumablesUpdatedSuccessfully]
+#. defaultMessage is:
+#. Consumables updated successfully
+#: extracted_strings.json
+msgid "Consumables updated successfully"
+msgstr "Витратні матеріали успішно оновлено"
 
 #. [p.PkDashboard.consumptionRate]
 #. defaultMessage is:
@@ -4141,12 +4135,26 @@ msgstr "Помилка збереження нового пароля"
 msgid "Error Sending Reset Password Email"
 msgstr "Помилка надсилання електронної пошти для скидання пароля"
 
+#. [pages.consumables.errorUpdatingConsumables]
+#. defaultMessage is:
+#. Error updating consumables
+#: extracted_strings.json
+msgid "Error updating consumables"
+msgstr "Помилка оновлення витратних матеріалів"
+
 #. [pages.DeviceDetailEdit.deviceUpdateError]
 #. defaultMessage is:
 #. Error updating device
 #: extracted_strings.json
 msgid "Error updating device"
 msgstr "Помилка оновлення пристрою"
+
+#. [pages.InventoryTabs.New.errorUpdatingSites]
+#. defaultMessage is:
+#. Error updating sites
+#: extracted_strings.json
+msgid "Error updating sites"
+msgstr "Помилка оновлення сайтів"
 
 #. [report.missingDateRangeFilterTitle]
 #. defaultMessage is:
@@ -5708,6 +5716,13 @@ msgstr "Година"
 #: extracted_strings.json
 msgid "Hours"
 msgstr "Години"
+
+#. [pages.SiteDetail.fieldHoursOfOperation]
+#. defaultMessage is:
+#. Hours of Operation
+#: extracted_strings.json
+msgid "Hours of Operation"
+msgstr "Години роботи"
 
 #. [pages.SiteDetail.fieldEndingHours]
 #. defaultMessage is:
@@ -11388,6 +11403,13 @@ msgstr "Зразок сайту походження"
 msgid "Sample Type"
 msgstr "Тип зразка"
 
+#. [pages.SiteDetail.sampleRegistrationAllowed]
+#. defaultMessage is:
+#. Sample collection allowed
+#: extracted_strings.json
+msgid "Sample collection allowed"
+msgstr "Збір проб дозволений"
+
 #. [filter.popover.sampleOriginSite]
 #. defaultMessage is:
 #. Sample collection site
@@ -12392,6 +12414,20 @@ msgstr "Назва сайту вже використовується"
 msgid "Sites"
 msgstr "Сайти"
 
+#. [pages.InventoryTabs.New.sitesByConsumable]
+#. defaultMessage is:
+#. Sites by Consumable
+#: extracted_strings.json
+msgid "Sites by Consumable"
+msgstr "Сайти за витратними матеріалами"
+
+#. [pages.InventoryTabs.New.sitesUpdatedSuccessfully]
+#. defaultMessage is:
+#. Sites updated successfully
+#: extracted_strings.json
+msgid "Sites updated successfully"
+msgstr "Сайти успішно оновлені"
+
 #. [legends.Unknown.assaySmear]
 #. defaultMessage is:
 #. Smear
@@ -12492,6 +12528,17 @@ msgstr "SMS-повідомлення не повинно бути довшим �
 msgid "Software Type"
 msgstr "Тип програмного забезпечення"
 
+#. [errorResponseMessages.updateConsumablesBatch.message]
+#. defaultMessage is:
+#. Some consumables could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"Some consumables could not be updated due to unreconciled consumption. "
+"Please reconcile your inventory to complete this action"
+msgstr ""
+"Деякі витратні матеріали не вдалося оновити через неузгоджене споживання. "
+"Будь ласка, узгодьте свій інвентар, щоб завершити цю дію."
+
 #. [pages.consumables.consumablesApplicableForThisSiteTooltip]
 #. defaultMessage is:
 #. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
@@ -12503,7 +12550,18 @@ msgstr ""
 "Деякі витратні матеріали можуть виявитися недоступними для зміни вибору, "
 "оскільки на сайті є запаси або неузгоджені транзакції"
 
-#. [pages.InventoryTabs.New.trackByLocationTooltip]
+#. [errorResponseMessages.updateConsumableSitesBatch.message]
+#. defaultMessage is:
+#. Some sites could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"Some sites could not be updated due to unreconciled consumption. Please "
+"reconcile your inventory to complete this action"
+msgstr ""
+"Деякі сайти не вдалося оновити через неузгоджене споживання. Будь ласка, "
+"узгодьте свій інвентар, щоб завершити цю дію."
+
+#. [pages.InventoryTabs.New.sitesByConsumableTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
 #: extracted_strings.json
@@ -14229,13 +14287,6 @@ msgstr ""
 msgid "Trace Detected"
 msgstr "Виявлено слід"
 
-#. [pages.InventoryTabs.New.trackByLocation]
-#. defaultMessage is:
-#. Track By Location
-#: extracted_strings.json
-msgid "Track By Location"
-msgstr "Відстежувати за місцем розташування"
-
 #. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
 #. Track by batch
@@ -14519,12 +14570,19 @@ msgstr "Неможливо видалити, оскільки з ним пов'�
 msgid "Unable to delete since there are associated entities with it."
 msgstr "Неможливо видалити, оскільки з ним пов'язані сутності."
 
-#. [errorResponseMessages.updateConsumable.title]
+#. [errorResponseMessages.updateConsumablesBatch.title]
 #. defaultMessage is:
-#. Unable to delist the cartridge !
+#. Unable to update some consumables
 #: extracted_strings.json
-msgid "Unable to delist the cartridge !"
-msgstr "Неможливо видалити картридж зі списку!"
+msgid "Unable to update some consumables"
+msgstr "Не вдається оновити деякі витратні матеріали"
+
+#. [errorResponseMessages.updateConsumableSitesBatch.title]
+#. defaultMessage is:
+#. Unable to update some sites
+#: extracted_strings.json
+msgid "Unable to update some sites"
+msgstr "Не вдається оновити деякі сайти"
 
 #. [pages.Consumable.New.unit]
 #. defaultMessage is:
@@ -16040,6 +16098,21 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} всього калібрувань"
+
+#~ msgid ""
+#~ "As there is unreconciled consumption for the specified cartridge, "
+#~ "{consumableName}, system cant allow delisting of the same at the site. "
+#~ "Please reconcile your inventory to complete this action"
+#~ msgstr ""
+#~ "Оскільки для вказаного картриджа {consumableName} існує неузгоджене "
+#~ "споживання, система не може дозволити видалення його з переліку на сайті. "
+#~ "Будь ласка, звірте свої запаси, щоб виконати цю дію"
+
+#~ msgid "Track By Location"
+#~ msgstr "Відстежувати за місцем розташування"
+
+#~ msgid "Unable to delist the cartridge !"
+#~ msgstr "Неможливо видалити картридж зі списку!"
 
 #~ msgid "Firmware"
 #~ msgstr "Прошивки"
