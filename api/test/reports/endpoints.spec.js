@@ -135,10 +135,6 @@ describe('API Reports Endpoint', () => {
     const testFileName = 'test.xlsx'
     const testFilePath = path.join('/tmp', testFileName)
 
-    before(() => {
-      shared.checkToken(server, apiPath)
-    })
-
     beforeEach(async () => {
       // Create a test file in /tmp directory
       const testContent = Buffer.from('Test Excel file content for download verification')
