@@ -447,7 +447,6 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
     .where('s.externalId', sampleExternalId)
     .andWhere('s.registeredInAspect', true)
     .andWhere('g.countryId', countryId)
-    .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
     .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
 
