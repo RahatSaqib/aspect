@@ -4,6 +4,7 @@ const {
   getMonthYearExpressionFromFieldInTimeZone,
   getDateTimeExpressionInTimeZone,
   getWorkingDays,
+  slideDateToTimeZone,
 } = require('../shared/date')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex } = require('../db')
@@ -16,7 +17,7 @@ async function getDevicePerformance(request) {
   const user = await getUserFromCredentials(auth.credentials)
   const { timezoneIANA } = user
 
-  const endedOn = new Date()
+  const endedOn = slideDateToTimeZone(new Date(), timezoneIANA)
   const startedOn = startOfMonth(subMonths(endedOn, 12)) // 12 months period
 
   const devicePerformance = await knex('Result as r')
@@ -75,10 +76,16 @@ async function getDevicePerformance(request) {
     const monthTested = format(dt, 'yyyy-MM')
 
     if (!devicePerformance.find(x => x.monthTested === monthTested)) {
+      const isCurrentMonth = format(slideDateToTimeZone(new Date(), timezoneIANA), 'yyyy-MM') === monthTested
+      const placeholderMinDate = new Date(`${monthTested}-01T00:00:00.000Z`)
+      const placeholderLastDay = isCurrentMonth
+        ? format(slideDateToTimeZone(new Date(), timezoneIANA), 'yyyy-MM-dd')
+        : format(endOfMonth(placeholderMinDate), 'yyyy-MM-dd')
       devicePerformance.push({
         errorCount: 0,
         totalResult: 0,
         monthTested,
+        lastDayOfMonth: placeholderLastDay,
       })
     }
 
@@ -89,11 +96,14 @@ async function getDevicePerformance(request) {
   const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
 
   const newData = devicePerformance.map(dp => {
+    const minDate = `${dp.monthTested}-01`
+    const lastDayForCalc = dp.lastDayOfMonth
+    const workingDays = getWorkingDays(minDate, lastDayForCalc, customWorkingDaysConfig)
+    dp.workingDays = workingDays
+
     if (!dp.dailyTestCapacity) {
       dp.utilizationRate = 0
     } else {
-      const minDate = new Date(`${dp.monthTested}-01`)
-      const workingDays = getWorkingDays(minDate, dp.lastDayOfMonth, customWorkingDaysConfig)
       const monthlyCapacity = Math.max(workingDays * dp.dailyTestCapacity, 1)
       dp.utilizationRate = Math.round(((dp.totalResult * 100) / monthlyCapacity) * 100) / 100
       if (dp.utilizationRate !== null && !Number.isNaN(dp.utilizationRate)) {

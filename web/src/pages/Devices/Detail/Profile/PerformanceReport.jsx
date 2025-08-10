@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Grid } from '@mui/material'
-import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
-import endOfMonth from 'date-fns/endOfMonth'
-import parseISO from 'date-fns/parseISO'
-import startOfMonth from 'date-fns/startOfMonth'
 import { number, object, oneOfType, string } from 'prop-types'
 import { defineMessages, useIntl } from 'react-intl'
 import { ColumnGraph } from '../../../../cleanComponents'
@@ -44,7 +40,6 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
       data.forEach(i => {
         const date = new Date(i.monthTested)
         const monthName = date.toLocaleString(culture, { month: 'short', timeZone: 'UTC' })
-        const isoDate = parseISO(i.monthTested)
 
         utilization.push(
           {
@@ -56,7 +51,7 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
             period: monthName,
             type: formatMessage(messages.utilizationRate),
             value: i.utilizationRate > utilizationRateAvg ? utilizationRateAvg : i.utilizationRate || 0,
-            totalCapacity: dailyCapacity * differenceInBusinessDays(endOfMonth(isoDate), startOfMonth(isoDate)),
+            totalCapacity: dailyCapacity * i.workingDays,
             totalResult: i.totalResult || 0,
           }
         )
