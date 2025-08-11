@@ -123,15 +123,6 @@ const whereWorkingDaysDateRange = (startedOn, endedOn) => {
   }
 }
 
-const lastDayOfMonthByOffsetAndResultEndedOn = (knex, offset, alias) => {
-  return knex.raw(
-    `CASE
-      WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(CONVERT_TZ(now(), "+00:00","${offset}"))
-      ELSE DATE(LAST_DAY(r.endedOn))
-    END as ${alias}`
-  )
-}
-
 const addResultCountsQueryExtended = (queryBuilder, knex, options) => {
   // Call the original function to set up the base query
   addResultCountsQuery(queryBuilder, knex, options)
@@ -164,6 +155,5 @@ module.exports = {
   addResultCountsQuery,
   addTransferredQuery,
   whereWorkingDaysDateRange,
-  lastDayOfMonthByOffsetAndResultEndedOn,
   addResultCountsQueryExtended,
 }

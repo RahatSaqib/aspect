@@ -22,6 +22,7 @@ const { getDevicesByTBReach } = require('./deviceReport')
 const { assayToId } = require('../../shared/dictionary')
 const { getWorkingDays } = require('../../shared/date')
 const { getMonthsDatefields } = require('./logic')
+const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
 
 async function getDeviceActivityReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -493,8 +494,9 @@ async function getDevicesForTBReachReport(auth, query) {
     getDevicesByTBReach(dataConstraints, query),
     getErrorsByDevices(dataConstraints, query),
   ])
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
   const devicesByTBReachData = new Map(devicesByTBReach.map(device => [device.deviceId, device]))
-  const workingDays = getWorkingDays(new Date(minDate), new Date(maxDate))
+  const workingDays = getWorkingDays(new Date(minDate), new Date(maxDate), customWorkingDaysConfig)
   // Merge data from both queries
   let mergedData = errorsResult.map(error => {
     const TBReachDevice = devicesByTBReachData.get(error.deviceId)
