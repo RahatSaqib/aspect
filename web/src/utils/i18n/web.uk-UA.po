@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-30T08:59:53.144Z\n"
+"POT-Creation-Date: 2025-08-13T11:06:59.387Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -331,6 +331,20 @@ msgstr "Абревіатура"
 msgid "Above Average"
 msgstr "Вище середнього"
 
+#. [pages.DeviceDetailProfile.aboveAverageErrorRate]
+#. defaultMessage is:
+#. Above Average Error Rate
+#: extracted_strings.json
+msgid "Above Average Error Rate"
+msgstr "Рівень помилок вище середнього"
+
+#. [pages.DeviceDetailProfile.aboveAverageUtilizationRate]
+#. defaultMessage is:
+#. Above Average Utilization Rate
+#: extracted_strings.json
+msgid "Above Average Utilization Rate"
+msgstr "Вище середнього рівня використання"
+
 #. [pages.deviceDetail.aboveTarget]
 #. defaultMessage is:
 #. Above Target
@@ -523,6 +537,13 @@ msgstr "Налаштувати кількість"
 #: extracted_strings.json
 msgid "Admin"
 msgstr "Адміністратор"
+
+#. [jobFunction.adminItTeam]
+#. defaultMessage is:
+#. Admin - (IT team)
+#: extracted_strings.json
+msgid "Admin - (IT team)"
+msgstr "Адміністратор - (ІТ-команда)"
 
 #. [pages.transferResult.successMessageButton]
 #. defaultMessage is:
@@ -1046,6 +1067,13 @@ msgstr "Автоматичний вихід"
 #: extracted_strings.json
 msgid "Automatic include location with reported consumption"
 msgstr "Автоматичне включення місцезнаходження зі звітом про споживання"
+
+#. [pages.deviceDetail.average]
+#. defaultMessage is:
+#. Average
+#: extracted_strings.json
+msgid "Average"
+msgstr "Середній"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -2877,6 +2905,13 @@ msgstr "Дані"
 #: extracted_strings.json
 msgid "Data Extract for Tableau"
 msgstr "Витяг даних для Tableau"
+
+#. [jobFunction.dataViewer]
+#. defaultMessage is:
+#. Data Viewer
+#: extracted_strings.json
+msgid "Data Viewer"
+msgstr "Переглядач даних"
 
 #. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
@@ -6522,12 +6557,33 @@ msgstr "LPA"
 msgid "Lab Admin"
 msgstr "Адміністратор лабораторії"
 
+#. [jobFunction.labHead]
+#. defaultMessage is:
+#. Lab Head
+#: extracted_strings.json
+msgid "Lab Head"
+msgstr "Начальник лабораторії"
+
 #. [jobFunction.labManager]
 #. defaultMessage is:
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
 msgstr "Завідувач лабораторії"
+
+#. [jobFunction.labSupervisor]
+#. defaultMessage is:
+#. Lab Supervisor
+#: extracted_strings.json
+msgid "Lab Supervisor"
+msgstr "Начальник лабораторії"
+
+#. [jobFunction.labTechnician]
+#. defaultMessage is:
+#. Lab Technician
+#: extracted_strings.json
+msgid "Lab Technician"
+msgstr "Технік-лаборант"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -7646,6 +7702,13 @@ msgstr "Березень"
 msgid "May"
 msgstr "Травень"
 
+#. [jobFunction.medTech]
+#. defaultMessage is:
+#. Med Tech
+#: extracted_strings.json
+msgid "Med Tech"
+msgstr "Мед Тех"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7996,6 +8059,20 @@ msgstr "Виявлено НП"
 #: extracted_strings.json
 msgid "NTP"
 msgstr "NTP"
+
+#. [jobFunction.ntpNoResults]
+#. defaultMessage is:
+#. NTP - No Results
+#: extracted_strings.json
+msgid "NTP - No Results"
+msgstr "НТП – Немає результатів"
+
+#. [jobFunction.ntpLevel]
+#. defaultMessage is:
+#. NTP Level
+#: extracted_strings.json
+msgid "NTP Level"
+msgstr "Рівень NTP"
 
 #. [placeholder.name]
 #. defaultMessage is:
@@ -9138,6 +9215,13 @@ msgstr "Номер за каталогом"
 #: extracted_strings.json
 msgid "Partner"
 msgstr "Партнер"
+
+#. [jobFunction.partners]
+#. defaultMessage is:
+#. Partners
+#: extracted_strings.json
+msgid "Partners"
+msgstr "Партнери"
 
 #. [pages.Login.password]
 #. defaultMessage is:
@@ -10502,6 +10586,13 @@ msgstr "Відхилено"
 #: extracted_strings.json
 msgid "Relapses"
 msgstr "Рецидиви"
+
+#. [jobFunction.remoteHealthWorker]
+#. defaultMessage is:
+#. Remote Health Worker
+#: extracted_strings.json
+msgid "Remote Health Worker"
+msgstr "Віддалений медичний працівник"
 
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
@@ -12840,6 +12931,13 @@ msgstr "Прізвище"
 #: extracted_strings.json
 msgid "Susceptible"
 msgstr "Сприйнятливий"
+
+#. [jobFunction.systemOne]
+#. defaultMessage is:
+#. SystemOne
+#: extracted_strings.json
+msgid "SystemOne"
+msgstr "SystemOne"
 
 #. [p.PkDashboard.RRTestingDiagnosis]
 #. defaultMessage is:
