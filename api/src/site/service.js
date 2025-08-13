@@ -10,7 +10,6 @@ const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getNotDecommissionedDevices } = require('../device/common/db')
 const { getSitesQuery, getSiteListQuery, getSiteListModifiedQuery } = require('./common/db')
 const { SELECT_SHOW_FIELDS } = require('./common/constants')
-const { getReportingSites } = require('./getReportingSites')
 
 async function listSites(request) {
   const { query, auth } = request
@@ -420,5 +419,4 @@ module.exports = {
   listSitesWithReporters,
   getListSitesForSelectList,
   disableSite,
-  getReportingSites,
 }
