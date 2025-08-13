@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
 const getReportingSites = async request => {
   const { query, auth } = request
@@ -123,6 +124,7 @@ const getSites = (dataConstraints, query) => {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
     .select('s.id as siteId', 's.name as siteName')
 }
 
