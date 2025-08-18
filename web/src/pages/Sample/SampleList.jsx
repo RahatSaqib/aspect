@@ -90,11 +90,6 @@ const SampleList = () => {
         <Helmet title={intl.formatMessage(messages.samplesTitle)} />
         <SampleFilter />
         <DataTableCard key={`DataTableCard__table-${location.key}`} sx={{ width: '100%', maxWidth: '100%' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
-            <Typography variant="subtitle2" color="textSecondary">
-              {formatMessage(messages.samplesSubtitle)}
-            </Typography>
-          </Box>
           {isLoading ? (
             <LinearProgress />
           ) : !data || !data.sampleList || data.sampleList.length === 0 ? (

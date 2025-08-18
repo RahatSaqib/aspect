@@ -5,10 +5,6 @@ const messages = defineMessages({
     id: 'pages.SampleList.samplesTitle',
     defaultMessage: 'Samples',
   },
-  samplesSubtitle: {
-    id: 'pages.SampleList.samplesSubtitle',
-    defaultMessage: 'Registered samples with results and details',
-  },
   sampleCollectionSite: {
     id: 'samples.sampleCollectionSite',
     defaultMessage: 'Sample Collection Site',
