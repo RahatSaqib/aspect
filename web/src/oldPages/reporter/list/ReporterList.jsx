@@ -113,7 +113,23 @@ const ReporterList = () => {
                   {data.data.map(reporter => (
                     <TableRow key={reporter.siteId}>
                       <TableCell>{reporter.siteName}</TableCell>
-                      <TableCell>{reporter.samplesRegistered}</TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => {
+                            addFilter(
+                              {
+                                siteId: reporter.siteId,
+                                ...pick(filters, ['minDate', 'maxDate']),
+                              },
+                              '/browse/samples'
+                            )
+                            navigate('/browse/samples')
+                          }}
+                          variant="text"
+                        >
+                          {reporter.samplesRegistered}
+                        </Button>
+                      </TableCell>
                       <TableCell>
                         <Button onClick={() => handleColumnClick(reporter.siteName, 'resultsReporting')} variant="text">
                           {reporter.resultsReporting}
