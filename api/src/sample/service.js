@@ -42,9 +42,6 @@ async function listSamples(request) {
       if (query.patientId) {
         this.where('p.externalId', query.patientId)
       }
-      if (query.siteId) {
-        this.where('site.id', query.siteId)
-      }
     })
 
   // Get count
