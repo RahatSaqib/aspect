@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { Box, Button, LinearProgress, TableBody, Typography, Grid } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import { Button, LinearProgress, TableBody } from '@mui/material'
 import { format } from 'date-fns-tz'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -18,7 +18,6 @@ import styles from './SampleList.module.css'
 
 const SampleList = () => {
   const intl = useIntl()
-  const { formatMessage } = intl
   const navigate = useNavigate()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
@@ -44,17 +43,6 @@ const SampleList = () => {
     { key: 'result', label: intl.formatMessage(messages.result), sortable: false },
     { key: 'resultDate', label: intl.formatMessage(messages.resultDate), sortable: true },
   ]
-
-  const onRowClick = useCallback(
-    ({
-      currentTarget: {
-        dataset: { sampleId },
-      },
-    }) => {
-      // TODO: Navigate to sample detail if needed
-    },
-    []
-  )
 
   const formatDate = dateString => {
     if (!dateString) return 'N/A'
@@ -116,7 +104,6 @@ const SampleList = () => {
                           resultDate: formatDate(sample.resultDate),
                           result: formatResult(sample),
                         }}
-                        onClick={onRowClick}
                         data-sample-id={sample.sampleId}
                       />
                     ))}
