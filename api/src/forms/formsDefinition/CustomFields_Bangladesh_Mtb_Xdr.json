@@ -1,0 +1,33 @@
+{
+  "fields": [
+    {
+      "id": 2000,
+      "name": "originTestFrom",
+      "i18nKey": "originTestFromi18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 201,
+      "title": "Origin Test From",
+      "caption": "The test that originated this test has been done at",
+      "gxAlertDbColumn": "originTestFrom",
+      "i18nKeyCaption": "originTestFromi18nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.2000.value",
+      "source": "resultData.originTestFrom",
+      "items": [
+        {
+          "key": 0,
+          "value": "This site",
+          "order": 0
+        },
+        {
+          "key": 1,
+          "value": "Different site",
+          "order": 10
+        }
+      ],
+      "mandatory": true
+    }
+  ],
+  "refForms": []
+}
