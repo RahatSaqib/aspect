@@ -37,10 +37,10 @@ async function listSamples(request) {
         this.whereBetween('s.collectedOn', [query.minDate, query.maxDate])
       }
       if (query.sampleId) {
-        this.where('s.externalId', 'like', `%${query.sampleId}%`)
+        this.where('s.externalId', query.sampleId)
       }
       if (query.patientId) {
-        this.where('p.externalId', 'like', `%${query.patientId}%`)
+        this.where('p.externalId', query.patientId)
       }
       if (query.siteId) {
         this.where('site.id', query.siteId)
