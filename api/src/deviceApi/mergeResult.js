@@ -53,13 +53,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   )
 
   if (!sampleId) {
-    sampleId = await getExistingSampleIdInCountry(
-      knex,
-      sampleExternalId,
-      payloadSampleTypeId,
-      site.countryId,
-      testStartedOn
-    )
+    sampleId = await getExistingSampleIdInCountry(knex, sampleExternalId, payloadSampleTypeId, site.countryId)
   }
 
   const opts = { sampleId, sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId }
@@ -421,14 +415,12 @@ async function getSiteIdVarieties(knex, payload, site, now) {
  * @param {string|null} sampleExternalId - The external ID of the sample to search for
  * @param {string|null} sampleTypeExternalId - The external ID of the sample type to match
  * @param {number} countryId - The ID of the country to search within
- * @param {Date} testStartedOn - The timestamp to filter samples by collection date
  * @returns {Promise<number|null>} The ID of the matching sample if found, null otherwise
  *
  * @description
  * This function searches for an existing sample in the database that matches the given criteria:
  * 1. Has the specified external ID
  * 2. Belongs to the specified country
- * 3. Was collected before or on the test start date
  *
  * If multiple samples are found, it will:
  * - Return the single match if only one exists
@@ -436,7 +428,7 @@ async function getSiteIdVarieties(knex, payload, site, now) {
  * - If no sample type is provided, prefer samples of type 'Sputum' or with no type
  * - Return null if no matches are found
  */
-async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
+async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId) {
   if (!sampleExternalId) {
     return Promise.resolve(null)
   }
@@ -447,7 +439,6 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
     .where('s.externalId', sampleExternalId)
     .andWhere('s.registeredInAspect', true)
     .andWhere('g.countryId', countryId)
-    .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
     .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
 
