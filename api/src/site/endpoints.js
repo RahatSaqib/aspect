@@ -10,8 +10,8 @@ const {
   listSitesForTransferSelectList,
   listSitesWithReporters,
   disableSite,
-  getReportingSites,
 } = require('./service')
+const { getReportingSites } = require('./getReportingSites')
 const { postSchema, updateSchema, updateConsumablesBatchSchema } = require('./common/validations')
 
 const { exportSites, exportReporters } = require('./serviceReports')
