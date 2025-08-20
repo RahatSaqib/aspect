@@ -500,6 +500,7 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
 async function upsertSample(knex, payload, existingResult, opts) {
   let { sampleId } = opts
   const { sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId } = opts
+  const now = new Date()
   let existingSample
   if (sampleId == null && existingResult == null) {
     ;[sampleId] = await knex('Sample').insert({
@@ -507,6 +508,8 @@ async function upsertSample(knex, payload, existingResult, opts) {
       collectedOn: _.get(payload, 'sample.collectedOn', null),
       sampleTypeId,
       originSiteId: sampleOriginSiteId,
+      createdOn: now,
+      updatedOn: now,
     })
   } else {
     if (sampleId == null) {
@@ -524,6 +527,7 @@ async function upsertSample(knex, payload, existingResult, opts) {
           collectedOn: payload.sample.collectedOn || existingSample.collectedOn || null,
           sampleTypeId: payloadSampleTypeId ? sampleTypeId : existingSample.sampleTypeId,
           originSiteId: existingSample.originSiteId || sampleOriginSiteId || payloadOriginSiteId,
+          updatedOn: now,
         })
     }
   }

@@ -361,10 +361,13 @@ async function getSampleTypeId(sampleTypeName) {
 async function getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, originSiteId) {
   let { id: sampleId } = (await knex('Sample').where('externalId', sampleExternalId).first('id')) || {}
   if (!sampleId) {
+    const now = new Date()
     ;[sampleId] = await knex('Sample').insert({
       externalId: sampleExternalId,
       sampleTypeId,
       originSiteId,
+      createdOn: now,
+      updatedOn: now,
     })
   }
   return sampleId
