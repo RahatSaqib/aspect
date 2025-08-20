@@ -310,6 +310,8 @@ async function seed(knex) {
             collectedOn: calculateDateForResult(i, 500, millisInMinute),
             sampleTypeId: sampleTypeDBSId,
             originSiteId: siteData.id,
+            createdOn: now,
+            updatedOn: now,
           }
 
           ;[sample.id] = await knex('Sample').insert(sample)

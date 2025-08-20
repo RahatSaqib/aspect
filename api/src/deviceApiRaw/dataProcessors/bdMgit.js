@@ -154,6 +154,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       const sampleFields = {
         externalId: mgitAccessionNumber || null,
         originSiteId: site ? site.id : null,
+        updatedOn: now,
       }
       const existingSample = await knex('Sample').where('externalId', sampleFields.externalId).first()
       let sampleId = null
@@ -163,7 +164,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         await knex('Sample').where('id', existingSample.id).update(sampleFields)
       } else {
         // insert sample
-        ;[sampleId] = await knex('Sample').insert(sampleFields)
+        ;[sampleId] = await knex('Sample').insert({ ...sampleFields, createdOn: now })
       }
 
       // It is possible that a single plastic carrier could be used more than once for a particular access number.

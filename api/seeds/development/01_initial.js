@@ -3685,6 +3685,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -3964,6 +3966,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbUltraNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4185,6 +4189,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbXdrNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4420,6 +4426,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultEbolaNumber, millisInMinute),
           sampleTypeId: sampleTypePlasmaId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4581,6 +4589,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultHivVlNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4739,6 +4749,8 @@ async function seed(knex) {
             externalId: `SMP-HCV-GX-${i}`,
             collectedOn: calculateDateForResult(i, resultHcvNumber, millisInMinute),
             sampleTypeId: sampleTypeDBSId,
+            createdOn: now,
+            updatedOn: now,
           }
 
           ;[sample.id] = await knex('Sample').insert(sample)
