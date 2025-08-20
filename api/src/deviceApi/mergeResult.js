@@ -6,8 +6,10 @@ const { resultSourceToId, resultTypeToId, resultWorkflowStatusToId, sampleTypeTo
 const { insertSite } = require('../site/common/db')
 const { getLatestResultWorkflowLog } = require('./result')
 const { getResultCategoriesFromPayload } = require('./utils')
+const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
+const { getSampleByExternalId } = require('../sample/common/db')
 
-async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId = null } = {}, context) {
+async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, context) {
   const sampleExternalId = _.get(payload, 'sample.id', null)
 
   const existingResult = await getResultRecord(knex, payload, deviceId, context?.existingResultId)
@@ -52,16 +54,9 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     now
   )
 
-  if (!sampleId) {
-    sampleId = await getExistingSampleIdInCountry(
-      knex,
-      sampleExternalId,
-      payloadSampleTypeId,
-      site.countryId,
-      testStartedOn
-    )
-  }
-
+  let sampleId = isValidSampleExternalIdMobileFormat(sampleExternalId)
+    ? await getSampleByExternalId(sampleExternalId).then(s => s.id)
+    : await getExistingSampleIdInCountry(knex, sampleExternalId, payloadSampleTypeId, site.countryId, testStartedOn)
   const opts = { sampleId, sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId }
   const existingSampleDetails = await upsertSample(knex, payload, existingResult, opts)
   ;({ sampleId } = existingSampleDetails)

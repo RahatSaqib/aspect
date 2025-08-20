@@ -15,6 +15,7 @@ const {
 } = require('../../../shared/dictionary')
 const config = require('../../../config')
 const { getBaseAllSamplesRegistered } = require('./common/db')
+const { getSampleByExternalId } = require('../../../sample/common/db')
 
 async function registerNewSample(request) {
   const { payload, auth } = request
@@ -102,10 +103,6 @@ async function registerNewSample(request) {
 const getSamplesRegisteredByExternalId = async (externalId, originSiteIds) => {
   const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where({ 'sample.externalId': externalId })
   return knexQuery
-}
-
-const getSampleByExternalId = (knex, externalId) => {
-  return knex('Sample').where('externalId', externalId).first()
 }
 
 const getSiteIdsForUser = async auth => {
