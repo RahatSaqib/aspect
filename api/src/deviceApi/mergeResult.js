@@ -55,7 +55,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   )
 
   let sampleId = isValidSampleExternalIdMobileFormat(sampleExternalId)
-    ? await getSampleByExternalId(sampleExternalId).then(s => s.id)
+    ? await getSampleByExternalId(knex, sampleExternalId).then(s => s.id)
     : await getExistingSampleIdInCountry(knex, sampleExternalId, payloadSampleTypeId, site.countryId, testStartedOn)
   const opts = { sampleId, sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId }
   const existingSampleDetails = await upsertSample(knex, payload, existingResult, opts)
