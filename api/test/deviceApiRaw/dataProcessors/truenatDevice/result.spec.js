@@ -356,7 +356,7 @@ describe('Truenat Result Upload Data Processor', () => {
     })
 
     describe('when the sample does not yet exist', () => {
-      it.only('will create a new sample', async () => {
+      it('will create a new sample', async () => {
         const TruenatResult = fluentMockTruenatResultUploadDataProcessor().build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
