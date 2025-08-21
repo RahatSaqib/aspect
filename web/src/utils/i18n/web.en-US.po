@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-30T08:59:53.144Z\n"
+"POT-Creation-Date: 2025-08-13T11:06:59.387Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -328,6 +328,24 @@ msgstr "Abbreviation"
 msgid "Above Average"
 msgstr "Above Average"
 
+#. [pages.DeviceDetailProfile.aboveAverageErrorRate]
+#. defaultMessage is:
+#. Above Average Error Rate
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Above Average"
+msgid "Above Average Error Rate"
+msgstr "Above Average"
+
+#. [pages.DeviceDetailProfile.aboveAverageUtilizationRate]
+#. defaultMessage is:
+#. Above Average Utilization Rate
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Device Average Utilization per Month"
+msgid "Above Average Utilization Rate"
+msgstr "Device Average Utilization per Month"
+
 #. [pages.deviceDetail.aboveTarget]
 #. defaultMessage is:
 #. Above Target
@@ -520,6 +538,13 @@ msgstr "Adjust Quantity"
 #: extracted_strings.json
 msgid "Admin"
 msgstr "Admin"
+
+#. [jobFunction.adminItTeam]
+#. defaultMessage is:
+#. Admin - (IT team)
+#: extracted_strings.json
+msgid "Admin - (IT team)"
+msgstr "Admin - (IT team)"
 
 #. [pages.transferResult.successMessageButton]
 #. defaultMessage is:
@@ -1043,6 +1068,13 @@ msgstr "Automatic Logout"
 #: extracted_strings.json
 msgid "Automatic include location with reported consumption"
 msgstr "Automatic include location with reported consumption"
+
+#. [pages.deviceDetail.average]
+#. defaultMessage is:
+#. Average
+#: extracted_strings.json
+msgid "Average"
+msgstr "Average"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -2870,6 +2902,13 @@ msgstr "Data"
 #: extracted_strings.json
 msgid "Data Extract for Tableau"
 msgstr "Data Extract for Tableau"
+
+#. [jobFunction.dataViewer]
+#. defaultMessage is:
+#. Data Viewer
+#: extracted_strings.json
+msgid "Data Viewer"
+msgstr "Data Viewer"
 
 #. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
@@ -6510,12 +6549,35 @@ msgstr "LPA"
 msgid "Lab Admin"
 msgstr "Lab Admin"
 
+#. [jobFunction.labHead]
+#. defaultMessage is:
+#. Lab Head
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Lab User"
+msgid "Lab Head"
+msgstr "Lab User"
+
 #. [jobFunction.labManager]
 #. defaultMessage is:
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
 msgstr "Lab Manager"
+
+#. [jobFunction.labSupervisor]
+#. defaultMessage is:
+#. Lab Supervisor
+#: extracted_strings.json
+msgid "Lab Supervisor"
+msgstr "Lab Supervisor"
+
+#. [jobFunction.labTechnician]
+#. defaultMessage is:
+#. Lab Technician
+#: extracted_strings.json
+msgid "Lab Technician"
+msgstr "Lab Technician"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -7629,6 +7691,13 @@ msgstr "March"
 msgid "May"
 msgstr "May"
 
+#. [jobFunction.medTech]
+#. defaultMessage is:
+#. Med Tech
+#: extracted_strings.json
+msgid "Med Tech"
+msgstr "Med Tech"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7979,6 +8048,20 @@ msgstr "NP Detected"
 #: extracted_strings.json
 msgid "NTP"
 msgstr "NTP"
+
+#. [jobFunction.ntpNoResults]
+#. defaultMessage is:
+#. NTP - No Results
+#: extracted_strings.json
+msgid "NTP - No Results"
+msgstr "NTP - No Results"
+
+#. [jobFunction.ntpLevel]
+#. defaultMessage is:
+#. NTP Level
+#: extracted_strings.json
+msgid "NTP Level"
+msgstr "NTP Level"
 
 #. [placeholder.name]
 #. defaultMessage is:
@@ -9119,6 +9202,13 @@ msgstr "Part Number"
 #: extracted_strings.json
 msgid "Partner"
 msgstr "Partner"
+
+#. [jobFunction.partners]
+#. defaultMessage is:
+#. Partners
+#: extracted_strings.json
+msgid "Partners"
+msgstr "Partners"
 
 #. [pages.Login.password]
 #. defaultMessage is:
@@ -10480,6 +10570,13 @@ msgstr "Rejected"
 #: extracted_strings.json
 msgid "Relapses"
 msgstr "Relapses"
+
+#. [jobFunction.remoteHealthWorker]
+#. defaultMessage is:
+#. Remote Health Worker
+#: extracted_strings.json
+msgid "Remote Health Worker"
+msgstr "Remote Health Worker"
 
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
@@ -12816,6 +12913,13 @@ msgstr "Surname"
 #: extracted_strings.json
 msgid "Susceptible"
 msgstr "Susceptible"
+
+#. [jobFunction.systemOne]
+#. defaultMessage is:
+#. SystemOne
+#: extracted_strings.json
+msgid "SystemOne"
+msgstr "SystemOne"
 
 #. [p.PkDashboard.RRTestingDiagnosis]
 #. defaultMessage is:
