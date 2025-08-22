@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Button, LinearProgress, TableBody } from '@mui/material'
-import { format } from 'date-fns-tz'
+import { formatInTimeZone } from 'date-fns-tz'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
+import { useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, SampleFilter, TableContainer } from '../../cleanComponents'
 import useSamples from '../../hooks/sample/useSamples'
@@ -12,6 +13,7 @@ import BrowseTablePaginator from '../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../utils/utils/browser'
+import { getTimezoneById } from '../../utils/utils/timezone'
 import messages from './messages'
 import { SampleDataTable, SampleDataTableHead, SampleDataTableRow } from './SampleDataTable'
 import styles from './SampleList.module.css'
@@ -23,6 +25,9 @@ const SampleList = () => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'sampleCollectedOn' })({ location })
   const [isLoading, setIsLoading] = useState(true)
+
+  const { timezoneId } = useSelector(({ user }) => user)
+  const validTimeZone = getTimezoneById(timezoneId)
 
   const { data, isLoading: tableLoading } = useSamples(
     { sortCol, sortDir, pageAt, pageSize, filters },
@@ -47,7 +52,7 @@ const SampleList = () => {
   const formatDate = dateString => {
     if (!dateString) return 'N/A'
     try {
-      return format(new Date(dateString), 'yyyy-MM-dd HH:mm')
+      return formatInTimeZone(new Date(dateString), validTimeZone, 'yyyy-MM-dd')
     } catch {
       return 'N/A'
     }
