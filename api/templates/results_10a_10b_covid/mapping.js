@@ -226,6 +226,20 @@ sheets = [
     H23: 'cnt_treated_female_positive',
     H26: 'cnt_treated_female_negative',
   },
+  /**
+   * ********************************************************
+   * 5th sheet 'XDR Cartridges'
+   * ********************************************************
+   */ {
+    B19: 'DET-OWN-NEW-SP-TOT',
+    B20: 'DET-OWN-NEW-SP-',
+    B20: 'DET-OWN-NEW-SP-INHR',
+    B21: 'DET-OWN-NEW-SP-INHI',
+    B22: 'DET-OWN-NEW-SP-FLQR',
+    B23: 'DET-OWN-NEW-SP-FLQI',
+    B24: 'DET-OWN-NEW-SP-ETHR',
+    B25: 'DET-OWN-NEW-SP-ETHI',
+   },
 ]
 
 module.exports = sheets
