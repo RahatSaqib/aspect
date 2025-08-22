@@ -2121,11 +2121,13 @@ async function validatePayloadHadDeviceId(payload) {
 }
 
 async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collectedOn, originSiteId) {
+  const now = new Date()
   let sampleData = {
     externalId,
     collectedOn,
     sampleTypeId,
     registeredInAspect: true,
+    updatedOn: now,
   }
 
   if (sampleId) {
@@ -2141,7 +2143,7 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     return sampleId
   }
   sampleData.originSiteId = originSiteId
-  const [id] = await knex('Sample').insert(sampleData)
+  const [id] = await knex('Sample').insert({ ...sampleData, createdOn: now })
   return id
 }
 

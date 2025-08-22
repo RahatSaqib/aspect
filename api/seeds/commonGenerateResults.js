@@ -354,6 +354,8 @@ async function addCovidResults(
       collectedOn: calculateDateForResultForCovid(i, resultCovidNumber, millisInMinute),
       sampleTypeId: sampleTypeNasalSwab,
       originSiteId: siteData.id,
+      createdOn: now,
+      updatedOn: now,
     }
 
     ;[sample.id] = await knex('Sample').insert(sample)
@@ -581,6 +583,8 @@ async function addHivVlResults(
       collectedOn: calculateDateForResult(i, resultHivVlNumber, millisInMinute),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id,
+      createdOn: now,
+      updatedOn: now,
     }
 
     ;[sample.id] = await knex('Sample').insert(sample)
@@ -685,7 +689,6 @@ async function addHivVlResults(
     resultData.log = log
     resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
-    const { id: lastSampleId } = await knex('Sample').orderBy('id', 'desc').first('id')
     const resultStatus =
       ensureResultIds.shift() || _.random(1) < 0.3 ? deliverable : _.random(1) < 0.5 ? validated : acknowledged
 
@@ -773,6 +776,8 @@ async function addTBResults(
         collectedOn: calculateDateForResult(i, resultMtbNumber, millisInMinute),
         sampleTypeId: sampleTypeSputumId,
         originSiteId: siteData.id,
+        createdOn: now,
+        updatedOn: now,
       }
 
       ;[sample.id] = await knex('Sample').insert(sample)
@@ -986,6 +991,8 @@ async function addEbolaResults(
       collectedOn: calculateDateForResult(i, resultEbolaNumber, millisInMinute),
       sampleTypeId: sampleTypePlasmaId,
       originSiteId: siteData.id,
+      createdOn: now,
+      updatedOn: now,
     }
 
     ;[sample.id] = await knex('Sample').insert(sample)

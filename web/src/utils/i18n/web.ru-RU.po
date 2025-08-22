@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-30T08:59:53.144Z\n"
+"POT-Creation-Date: 2025-08-13T11:06:59.387Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -330,6 +330,20 @@ msgstr "Сокращение"
 msgid "Above Average"
 msgstr "Выше среднего"
 
+#. [pages.DeviceDetailProfile.aboveAverageErrorRate]
+#. defaultMessage is:
+#. Above Average Error Rate
+#: extracted_strings.json
+msgid "Above Average Error Rate"
+msgstr "Частота ошибок выше среднего"
+
+#. [pages.DeviceDetailProfile.aboveAverageUtilizationRate]
+#. defaultMessage is:
+#. Above Average Utilization Rate
+#: extracted_strings.json
+msgid "Above Average Utilization Rate"
+msgstr "Коэффициент использования выше среднего"
+
 #. [pages.deviceDetail.aboveTarget]
 #. defaultMessage is:
 #. Above Target
@@ -522,6 +536,13 @@ msgstr "Настроить количество"
 #: extracted_strings.json
 msgid "Admin"
 msgstr "Администратор"
+
+#. [jobFunction.adminItTeam]
+#. defaultMessage is:
+#. Admin - (IT team)
+#: extracted_strings.json
+msgid "Admin - (IT team)"
+msgstr "Администратор - (ИТ-отдел)"
 
 #. [pages.transferResult.successMessageButton]
 #. defaultMessage is:
@@ -1045,6 +1066,13 @@ msgstr "Автоматический выход"
 #: extracted_strings.json
 msgid "Automatic include location with reported consumption"
 msgstr "Автоматическое включение местоположения в отчет о потреблении"
+
+#. [pages.deviceDetail.average]
+#. defaultMessage is:
+#. Average
+#: extracted_strings.json
+msgid "Average"
+msgstr "Средний"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -2878,12 +2906,19 @@ msgstr "Данные"
 msgid "Data Extract for Tableau"
 msgstr "Извлечение данных для Tableau"
 
+#. [jobFunction.dataViewer]
+#. defaultMessage is:
+#. Data Viewer
+#: extracted_strings.json
+msgid "Data Viewer"
+msgstr "Просмотр данных"
+
 #. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
 #. Data Visualisation For XDR Resistance Over Time
 #: extracted_strings.json
 msgid "Data Visualisation For XDR Resistance Over Time"
-msgstr "Визуализация данных о резистентности к ХЛУ с течением времени"
+msgstr "Визуализация данных об устойчивости к XDR с течением времени"
 
 #. [p.PkDashboard.dataVisualisationForXDR]
 #. defaultMessage is:
@@ -6526,12 +6561,33 @@ msgstr "LPA"
 msgid "Lab Admin"
 msgstr "Администратор лаборатории"
 
+#. [jobFunction.labHead]
+#. defaultMessage is:
+#. Lab Head
+#: extracted_strings.json
+msgid "Lab Head"
+msgstr "Руководитель лаборатории"
+
 #. [jobFunction.labManager]
 #. defaultMessage is:
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
 msgstr "Руководитель лаборатории"
+
+#. [jobFunction.labSupervisor]
+#. defaultMessage is:
+#. Lab Supervisor
+#: extracted_strings.json
+msgid "Lab Supervisor"
+msgstr "Руководитель лаборатории"
+
+#. [jobFunction.labTechnician]
+#. defaultMessage is:
+#. Lab Technician
+#: extracted_strings.json
+msgid "Lab Technician"
+msgstr "Лаборант"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -7649,6 +7705,13 @@ msgstr "Март"
 msgid "May"
 msgstr "Май"
 
+#. [jobFunction.medTech]
+#. defaultMessage is:
+#. Med Tech
+#: extracted_strings.json
+msgid "Med Tech"
+msgstr "Мед Технологии"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7999,6 +8062,20 @@ msgstr "Обнаружен NP"
 #: extracted_strings.json
 msgid "NTP"
 msgstr "NTP"
+
+#. [jobFunction.ntpNoResults]
+#. defaultMessage is:
+#. NTP - No Results
+#: extracted_strings.json
+msgid "NTP - No Results"
+msgstr "НТП — нет результатов"
+
+#. [jobFunction.ntpLevel]
+#. defaultMessage is:
+#. NTP Level
+#: extracted_strings.json
+msgid "NTP Level"
+msgstr "Уровень NTP"
 
 #. [placeholder.name]
 #. defaultMessage is:
@@ -9142,6 +9219,13 @@ msgstr "Номер запчасти"
 #: extracted_strings.json
 msgid "Partner"
 msgstr "Партнер"
+
+#. [jobFunction.partners]
+#. defaultMessage is:
+#. Partners
+#: extracted_strings.json
+msgid "Partners"
+msgstr "Партнеры"
 
 #. [pages.Login.password]
 #. defaultMessage is:
@@ -10511,6 +10595,13 @@ msgstr "Отклоненный"
 #: extracted_strings.json
 msgid "Relapses"
 msgstr "Рецидивы"
+
+#. [jobFunction.remoteHealthWorker]
+#. defaultMessage is:
+#. Remote Health Worker
+#: extracted_strings.json
+msgid "Remote Health Worker"
+msgstr "Удаленный медицинский работник"
 
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
@@ -12854,6 +12945,13 @@ msgstr "Фамилия"
 #: extracted_strings.json
 msgid "Susceptible"
 msgstr "Восприимчивый"
+
+#. [jobFunction.systemOne]
+#. defaultMessage is:
+#. SystemOne
+#: extracted_strings.json
+msgid "SystemOne"
+msgstr "SystemOne"
 
 #. [p.PkDashboard.RRTestingDiagnosis]
 #. defaultMessage is:

@@ -642,6 +642,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
 
   async getOrCreateSample(resultsWithSameId, deviceSiteId, knex) {
     const sampleTypeIds = await allSampleTypeToId()
+    const now = new Date()
+
     let sample = {}
     if (!_.isEmpty(resultsWithSameId)) {
       const result = resultsWithSameId[0]
@@ -677,6 +679,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           collectedOn: result.sample.collectedOn,
           sampleTypeId: sampleTypeIds[result.sample.sampleTypeExternalId],
           originSiteId: deviceSiteId,
+          createdOn: now,
+          updatedOn: now,
         }
         const [sampleId] = await knex('Sample').insert(sample)
         sample.id = sampleId
@@ -692,6 +696,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           .update({
             ..._.omit(sample, ['sampleTypeExternalId']),
             sampleTypeId: sampleTypeIds[sample.sampleTypeExternalId],
+            updatedOn: now,
           })
       }
     }
