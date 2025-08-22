@@ -13,12 +13,11 @@ async function listSamples(request) {
     .leftJoin('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Person as collector', 's.collectedBy', 'collector.id')
+    .leftJoin('Person as collector', 's.collectedBy', 'collector.userId')
     .leftJoin('Result as r', 's.id', 'r.sampleId')
     .leftJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('Patient as p', 's.patientId', 'p.id')
     .where('s.registeredInAspect', 1)
     .modify(addConstraints, dataConstraints, {
       site: 'site',
@@ -30,7 +29,12 @@ async function listSamples(request) {
       lgaId: 'g.lgaId',
       siteId: 'site.id',
       sampleId: 's.externalId',
-      patientId: 'p.externalId',
+      patientId: knex.raw(`
+        COALESCE(
+          JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")),
+          JSON_UNQUOTE(JSON_EXTRACT(s.sampleData, "$.patientExternalId"))
+        )
+      `),
     })
     .where(function () {
       if (query.minDate && query.maxDate) {
@@ -40,7 +44,13 @@ async function listSamples(request) {
         this.where('s.externalId', query.sampleId)
       }
       if (query.patientId) {
-        this.where('p.externalId', query.patientId)
+        this.whereRaw(
+          `COALESCE(
+            JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")),
+            JSON_UNQUOTE(JSON_EXTRACT(s.sampleData, "$.patientExternalId"))
+          ) = ?`,
+          [query.patientId]
+        )
       }
     })
 
@@ -60,7 +70,12 @@ async function listSamples(request) {
       's.collectedOn as sampleCollectedOn',
       'site.name as sampleCollectionSite',
       'collector.name as sampleCollectedBy',
-      'p.externalId as patientId',
+      knex.raw(`
+        COALESCE(
+          JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")),
+          JSON_UNQUOTE(JSON_EXTRACT(s.sampleData, "$.patientExternalId"))
+        ) as patientId
+      `),
       's.updatedOn as dateUploadedToAspect',
       'r.id as resultId',
       'r.endedOn as resultDate',
