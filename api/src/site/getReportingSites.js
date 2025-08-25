@@ -74,6 +74,7 @@ const getReportingSites = async request => {
   )
   const reportingSites = sites.map(site => {
     return {
+      siteId: site.siteId,
       siteName: site.siteName,
       followUpPending: resultAggregate[site.siteId]?.followUpPending || 0,
       followUpNotPossible: resultAggregate[site.siteId]?.followUpNotPossible || 0,

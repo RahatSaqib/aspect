@@ -33,6 +33,7 @@ function addClientRoutes(server) {
   server.route(require('./forms/endpoints').routes.map(decorateClientAPI('case')))
   server.route(require('./case/endpoints').routes.map(decorateClientAPI('case')))
   server.route(require('./resultCategoryGroup/endpoints').routes.map(decorateClientAPI()))
+  server.route(require('./sample/endpoints').routes.map(decorateClientAPI('sample')))
 }
 
 function addMobileRoutes(server) {

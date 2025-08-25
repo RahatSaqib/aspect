@@ -24,6 +24,7 @@ const reportingSitesResponse = () => {
     .keys({
       data: Joi.array().items(
         Joi.object({
+          siteId: Joi.number().required(),
           siteName: Joi.string().required(),
           samplesRegistered: Joi.number().integer().min(0).required(),
           resultsReporting: Joi.number().integer().min(0).required(),
