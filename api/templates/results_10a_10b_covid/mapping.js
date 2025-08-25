@@ -228,18 +228,62 @@ sheets = [
   },
   /**
    * ********************************************************
-   * 5th sheet 'XDR Cartridges'
+   * 5th sheet 'For NTP use' (No mappings)
    * ********************************************************
-   */ {
-    B19: 'DET-OWN-NEW-SP-TOT',
-    B20: 'DET-OWN-NEW-SP-',
-    B20: 'DET-OWN-NEW-SP-INHR',
-    B21: 'DET-OWN-NEW-SP-INHI',
-    B22: 'DET-OWN-NEW-SP-FLQR',
-    B23: 'DET-OWN-NEW-SP-FLQI',
-    B24: 'DET-OWN-NEW-SP-ETHR',
-    B25: 'DET-OWN-NEW-SP-ETHI',
-   },
+   */
+  {},
+  /**
+   * ********************************************************
+   * 6th sheet 'XDR Cartridges'
+   * ********************************************************
+   */
+  (() => {
+    const columnGroups = [
+      { det: 'DET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
+      { det: 'DET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
+      { det: 'DET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
+      { det: 'DET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
+      { det: 'NDET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
+      { det: 'NDET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
+      { det: 'NDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
+      { det: 'NDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
+    ]
+    const rowMetrics = [
+      'TOT',
+      'MTBDET',
+      'INHR',
+      'INHI',
+      'FLQR',
+      'FLQI',
+      'ETHR',
+      'ETHI',
+      'INHFLQ',
+      'INHETH',
+      'FLQETH',
+      'INHFLQETH',
+    ]
+    const columns = []
+    for (let code = 'B'.charCodeAt(0); code <= 'Y'.charCodeAt(0); code += 1) {
+      columns.push(String.fromCharCode(code))
+    }
+    const colDescs = []
+    for (const g of columnGroups) {
+      for (const sp of g.samples) {
+        colDescs.push({ det: g.det, site: g.site, hist: g.hist, sample: sp })
+      }
+    }
+    const mapping = {}
+    for (let r = 0; r < rowMetrics.length; r += 1) {
+      const rowNum = 19 + r
+      const metric = rowMetrics[r]
+      for (let c = 0; c < columns.length; c += 1) {
+        const col = columns[c]
+        const { det, site, hist, sample } = colDescs[c]
+        mapping[`${col}${rowNum}`] = `${det}-${site}-${hist}-${sample}-${metric}`
+      }
+    }
+    return mapping
+  })(),
 ]
 
 module.exports = sheets

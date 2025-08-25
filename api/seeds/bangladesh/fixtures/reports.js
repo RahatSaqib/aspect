@@ -46,14 +46,11 @@ const resultsDrTb10A10BCovid = {
       query: {
         useNamedData: 'results_10a_for_nt_use',
       },
-      {
-        sortOrder: 50,
-        moduleName: 'result/serviceReportBangladesh/10a10b/xdrCartridges',
-        functionName: 'getXdrCartridgesReport',
-        query: {
-          useNamedData: 'results_10a_for_nt_use',
-        },
-      },
+    },
+    {
+      sortOrder: 50,
+      moduleName: 'result/serviceReportBangladesh/10a10b/xdrCartridgesReport',
+      functionName: 'getDataForReportXdrCartridges',
     },
   ],
 }

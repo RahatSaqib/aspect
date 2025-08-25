@@ -1,21 +1,18 @@
-const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
-const dateFormat = require('date-fns/format')
+const { subMonths } = require('date-fns')
 
-const { getUser } = require('../../auth/service')
-const { addConstraints, getConstraints } = require('../../auth/constraints')
-const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../../db')
-const { getDeviceInfo } = require('../../device/common/db')
-const { getDatesFromQuery } = require('../../shared/date')
-const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
-const { convertCsvToArrayOfNumbers } = require('../../shared/string')
-const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
-const { createFormObject } = require('../../forms/service')
+const { addConstraints, getConstraints } = require('../../../auth/constraints')
+const { knex, filterParams, filterDateRangeParams } = require('../../../db')
 
-async function getDataForXdrCartridgesReport(auth, query) {
+const { getDatesFromQuery } = require('../../../shared/date')
+const { allAssayToId } = require('../../../shared/dictionary')
+
+async function getDataForReportXdrCartridges(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // Resolve date range using shared helper and normalize order
   const { dateFrom, dateTo } = (() => {
+    console.log('\x1b[1;36m', '🚀 ➜ dateFrom, dateTo:')
+
     const dates = getDatesFromQuery(query)
     let { dateFrom: df } = dates
     const { dateTo: dt } = dates
@@ -28,6 +25,80 @@ async function getDataForXdrCartridgesReport(auth, query) {
   const assayIds = await allAssayToId()
 
   // Build subquery as a composable Knex query per database_access.md patterns
+  const data = await getRawData(dataConstraints, dateFrom, dateTo, query, assayIds)
+
+  // Re-process aggregated rows into a label -> value map suited for Excel templating
+  // Use the same sample distribution per group as the Excel layout
+  const columnGroups = [
+    { det: 'DET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
+    { det: 'DET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
+    { det: 'DET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
+    { det: 'DET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
+    { det: 'NDET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
+    { det: 'NDET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
+    { det: 'NDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
+    { det: 'NDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
+  ]
+  const rowLabelPart = [
+    'TOT',
+    'MTBDET',
+    'INHR',
+    'INHI',
+    'FLQR',
+    'FLQI',
+    'ETHR',
+    'ETHI',
+    'INHFLQ',
+    'INHETH',
+    'FLQETH',
+    'INHFLQETH',
+  ]
+
+  const labelToValueMap = {}
+  const allowedBases = new Set()
+  // Initialize only the combinations that exist in the sheet (24 columns x 12 rows)
+  for (const g of columnGroups) {
+    for (const sp of g.samples) {
+      const base = `${g.det}-${g.site}-${g.hist}-${sp}`
+      allowedBases.add(base)
+      for (const metric of rowLabelPart) {
+        labelToValueMap[`${base}-${metric}`] = 0
+      }
+    }
+  }
+
+  // Fill actual values from query result
+  for (const row of data) {
+    const detFlag = row.DET // 'DET' | 'NDET'
+    const siteFlag = row.MtbRifUltraAt // 'OWN' | 'OTH'
+    // Map query 'TRE' to presentation 'PREV'
+    const historyFlag = row.patientHistory === 'TRE' ? 'PREV' : row.patientHistory // 'NEW' | 'PREV'
+    const sampleFlag = row.sampleType // 'SP' | 'EP' | 'ST' | 'CU'
+
+    const base = `${detFlag}-${siteFlag}-${historyFlag}-${sampleFlag}`
+    if (allowedBases.has(base)) {
+      // Assign each metric value to its labeled key
+      for (const metric of rowLabelPart) {
+        if (metric === 'MTBDET') {
+          labelToValueMap[`${base}-MTBDET`] = detFlag === 'DET' ? Number(row.TOT) || 0 : 0
+        } else {
+          const numericValue = Number(row[metric]) || 0
+          labelToValueMap[`${base}-${metric}`] = numericValue
+        }
+      }
+    }
+  }
+
+  return {
+    ok: true,
+    data: labelToValueMap,
+  }
+}
+
+module.exports = {
+  getDataForReportXdrCartridges,
+}
+async function getRawData(dataConstraints, dateFrom, dateTo, query, assayIds) {
   const srcSubquery = knex('Result as r')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as st', 'sp.sampleTypeId', 'st.id')
@@ -78,7 +149,7 @@ async function getDataForXdrCartridgesReport(auth, query) {
     .orderBy('r.id', 'desc')
 
   // Wrap aggregation over the subquery using Knex
-  const data = await knex
+  const dataQ = knex
     .from(srcSubquery.as('src'))
     .select(
       'src.DET',
@@ -100,66 +171,6 @@ async function getDataForXdrCartridgesReport(auth, query) {
     .groupBy('src.DET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType')
     .orderBy(['src.DET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType'])
 
-  // Re-process aggregated rows into a label -> value map suited for Excel templating
-  // Build full grid with zeros so that any missing combination is still present
-  const firstLevelValues = ['DET', 'NDET'] // Detected / Not Detected
-  const secondLevelValues = ['OWN', 'OTH'] // Own Site / Other Site
-  const thirdLevelValues = ['NEW', 'PREV'] // New History / Previously Treated
-  const fourthLevelValues = ['SP', 'EP', 'ST', 'CU'] // Sputum / Extrapulmonary / Stool / Direct Culture
-  const rowLabelPart = [
-    'TOT',
-    'MTBDET',
-    'INHR',
-    'INHI',
-    'FLQR',
-    'FLQI',
-    'ETHR',
-    'ETHI',
-    'INHFLQ',
-    'INHETH',
-    'FLQETH',
-    'INHFLQETH',
-  ]
-
-  const labelToValueMap = {}
-
-  // Initialize all combinations to 0
-  for (const first of firstLevelValues) {
-    for (const second of secondLevelValues) {
-      for (const third of thirdLevelValues) {
-        for (const fourth of fourthLevelValues) {
-          const base = `${first}-${second}-${third}-${fourth}`
-          for (const resistance of rowLabelPart) {
-            labelToValueMap[`${base}-${resistance}`] = 0
-          }
-        }
-      }
-    }
-  }
-
-  // Fill actual values from query result
-  for (const row of data) {
-    const detFlag = row.DET // 'DET' | 'NDET'
-    const siteFlag = row.MtbRifUltraAt // 'OWN' | 'OTH'
-    // Map query 'TRE' to presentation 'PREV'
-    const historyFlag = row.patientHistory === 'TRE' ? 'PREV' : row.patientHistory // 'NEW' | 'PREV'
-    const sampleFlag = row.sampleType // 'SP' | 'EP' | 'ST' | 'CU'
-
-    const base = `${detFlag}-${siteFlag}-${historyFlag}-${sampleFlag}`
-
-    // Assign each metric value to its labeled key
-    for (const metric of rowLabelPart) {
-      const numericValue = Number(row[metric]) || 0
-      labelToValueMap[`${base}-${metric}`] = numericValue
-    }
-  }
-
-  return {
-    ok: true,
-    data: labelToValueMap,
-  }
-}
-
-module.exports = {
-  getDataForXdrCartridgesReport,
+  const data = await dataQ
+  return data
 }
