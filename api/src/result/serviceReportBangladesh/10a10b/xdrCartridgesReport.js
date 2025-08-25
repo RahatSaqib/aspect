@@ -5,22 +5,16 @@ const { knex, filterParams, filterDateRangeParams } = require('../../../db')
 
 const { getDatesFromQuery } = require('../../../shared/date')
 const { allAssayToId } = require('../../../shared/dictionary')
+const { getUser } = require('../../../auth/service')
 
-async function getDataForReportXdrCartridges(auth, query) {
+async function getDataForReportXdrCartridges(auth, query, timezone, options) {
   const dataConstraints = await getConstraints(auth.credentials)
+  const { sharedResults, useNamedData } = options
+  // eslint-disable-next-line prefer-const
+  let { data: sharedData, deviceInfo } = sharedResults[useNamedData]
 
   // Resolve date range using shared helper and normalize order
-  const { dateFrom, dateTo } = (() => {
-    console.log('\x1b[1;36m', '🚀 ➜ dateFrom, dateTo:')
-
-    const dates = getDatesFromQuery(query)
-    let { dateFrom: df } = dates
-    const { dateTo: dt } = dates
-    if (df >= dt) {
-      df = subMonths(dt, 1)
-    }
-    return { dateFrom: df, dateTo: dt }
-  })()
+  const { dateFrom, dateTo } = getDates(query)()
 
   const assayIds = await allAssayToId()
 
@@ -98,6 +92,19 @@ async function getDataForReportXdrCartridges(auth, query) {
 module.exports = {
   getDataForReportXdrCartridges,
 }
+
+function getDates(query) {
+  return () => {
+    const dates = getDatesFromQuery(query)
+    let { dateFrom: df } = dates
+    const { dateTo: dt } = dates
+    if (df >= dt) {
+      df = subMonths(dt, 1)
+    }
+    return { dateFrom: df, dateTo: dt }
+  }
+}
+
 async function getRawData(dataConstraints, dateFrom, dateTo, query, assayIds) {
   const srcSubquery = knex('Result as r')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')

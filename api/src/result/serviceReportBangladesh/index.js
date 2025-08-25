@@ -1100,7 +1100,7 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
   const { sharedResults, nameOfSharedData } = options
 
   const { stateId, lgaId, siteName } = query
-  const { userName, cell, phone, email } = await getUser(auth.credentials.name)
+  const { userName, cell } = await getUser(auth.credentials.name)
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
   const { dateTo } = dates
@@ -1115,7 +1115,7 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
 
   data = await getDataForSheet1or2(
     data,
-    { userName, cell, phone, email }, // current user props
+    { userName, cell }, // current user props
     { stateId, lgaId, siteName }, // props from query
     {
       /**
