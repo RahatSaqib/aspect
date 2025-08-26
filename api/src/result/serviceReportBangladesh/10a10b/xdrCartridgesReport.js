@@ -4,7 +4,8 @@ const { addConstraints, getConstraints } = require('../../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams } = require('../../../db')
 
 const { getDatesFromQuery } = require('../../../shared/date')
-const { allAssayToId } = require('../../../shared/dictionary')
+const { allAssayToId, allResultCategoryToId } = require('../../../shared/dictionary')
+const getPositiveCategoriesExternalIds = require('../../../resultCategory/service')
 
 async function getDataForReportXdrCartridges(auth, query, timezone, options) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -109,6 +110,11 @@ function getDates(query) {
 }
 
 async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
+  const resultCategoryIds = await allResultCategoryToId()
+  const positiveResultCategoriesIds = getPositiveCategoriesExternalIds().map(
+    rcExternalId => resultCategoryIds[rcExternalId]
+  )
+  // const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
   const srcSubquery = knex('Result as r')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as st', 'sp.sampleTypeId', 'st.id')
@@ -133,7 +139,7 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
     .select(
       'rc.externalId as resultCategoryExternalId',
       // Detected vs Not Detected flag
-      knex.raw(`IF(rc.externalId = 'Detected', 'DET', 'NDET') as DET`),
+      knex.raw(`IF(rc.id in (${positiveResultCategoriesIds}), 'DET', 'NDET') as DET`),
       // Own Site vs Other Site
       knex.raw(`IF(r.resultData ->> '$.customFieldData."2000".key' = 0, 'OWN', 'OTH') as MtbRifUltraAt`),
       // Patient history (New/Unknown -> NEW, else TRE)
