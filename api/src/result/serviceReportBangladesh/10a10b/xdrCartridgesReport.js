@@ -5,13 +5,9 @@ const { knex, filterParams, filterDateRangeParams } = require('../../../db')
 
 const { getDatesFromQuery } = require('../../../shared/date')
 const { allAssayToId } = require('../../../shared/dictionary')
-const { getUser } = require('../../../auth/service')
 
 async function getDataForReportXdrCartridges(auth, query, timezone, options) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { sharedResults, useNamedData } = options
-  // eslint-disable-next-line prefer-const
-  let { data: sharedData, deviceInfo } = sharedResults[useNamedData]
 
   // Resolve date range using shared helper and normalize order
   const { dateFrom, dateTo } = getDates(query)()
@@ -19,10 +15,9 @@ async function getDataForReportXdrCartridges(auth, query, timezone, options) {
   const assayIds = await allAssayToId()
 
   // Build subquery as a composable Knex query per database_access.md patterns
-  const data = await getRawData(dataConstraints, dateFrom, dateTo, query, assayIds)
+  const data = await getData(dataConstraints, dateFrom, dateTo, query, assayIds)
 
-  // Re-process aggregated rows into a label -> value map suited for Excel templating
-  // Use the same sample distribution per group as the Excel layout
+  // Re-process aggregated rows into a label -> value map suited for a mapping
   const columnGroups = [
     { det: 'DET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
     { det: 'DET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
@@ -85,7 +80,15 @@ async function getDataForReportXdrCartridges(auth, query, timezone, options) {
 
   return {
     ok: true,
-    data: labelToValueMap,
+    data: {
+      NEW_INVALID: data[0]?.NEW_INVALID || 0,
+      NEW_NORESULT: data[0]?.NEW_NORESULT || 0,
+      NEW_ERROR: data[0]?.NEW_ERROR || 0,
+      PREV_INVALID: data[0]?.PREV_INVALID || 0,
+      PREV_NORESULT: data[0]?.PREV_NORESULT || 0,
+      PREV_ERROR: data[0]?.PREV_ERROR || 0,
+      ...labelToValueMap,
+    },
   }
 }
 
@@ -105,7 +108,7 @@ function getDates(query) {
   }
 }
 
-async function getRawData(dataConstraints, dateFrom, dateTo, query, assayIds) {
+async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
   const srcSubquery = knex('Result as r')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as st', 'sp.sampleTypeId', 'st.id')
@@ -128,6 +131,7 @@ async function getRawData(dataConstraints, dateFrom, dateTo, query, assayIds) {
     })
     .where('a.id', assayIds.GxMtbXdr)
     .select(
+      'rc.externalId as resultCategoryExternalId',
       // Detected vs Not Detected flag
       knex.raw(`IF(rc.externalId = 'Detected', 'DET', 'NDET') as DET`),
       // Own Site vs Other Site
@@ -163,6 +167,12 @@ async function getRawData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       'src.MtbRifUltraAt',
       'src.patientHistory',
       'src.sampleType',
+      knex.raw('IF(src.patientHistory = "NEW" and src.resultCategoryExternalId = "Invalid", 1, 0) as NEW_INVALID'),
+      knex.raw('IF(src.patientHistory = "NEW" and src.resultCategoryExternalId = "NoResult", 1, 0) as NEW_NORESULT'),
+      knex.raw('IF(src.patientHistory = "NEW" and src.resultCategoryExternalId = "Error", 1, 0) as NEW_ERROR'),
+      knex.raw('IF(src.patientHistory = "TRE" and src.resultCategoryExternalId = "Invalid", 1, 0) as PREV_INVALID'),
+      knex.raw('IF(src.patientHistory = "TRE" and src.resultCategoryExternalId = "NoResult", 1, 0) as PREV_NORESULT'),
+      knex.raw('IF(src.patientHistory = "TRE" and src.resultCategoryExternalId = "Error", 1, 0) as PREV_ERROR'),
       knex.raw('SUM(src.TOT) as TOT'),
       knex.raw('SUM(src.INHR) as INHR'),
       knex.raw('SUM(src.INHI) as INHI'),

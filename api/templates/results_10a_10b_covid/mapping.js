@@ -1,4 +1,4 @@
-let sheets = [
+let sheetMappings = [
   /**
    * ********************************************************
    * 1st sheet 'DR-TB 10A (Sputum & EP Sample)'
@@ -184,14 +184,14 @@ let sheets = [
     H44: 'cnt_Xdr_Total_Tests',
   },
 ]
-sheets = [
-  ...sheets,
+sheetMappings = [
+  ...sheetMappings,
   /**
    * ********************************************************
    * 2nd sheet 'DR-TB 10A (Stool)'
    * ********************************************************
    */
-  sheets[0],
+  sheetMappings[0],
   /**
    * ********************************************************
    * 3rd sheet 'DT-TB 10B'
@@ -282,8 +282,16 @@ sheets = [
         mapping[`${col}${rowNum}`] = `${det}-${site}-${hist}-${sample}-${metric}`
       }
     }
-    return mapping
+    return {
+      R13: 'NEW_INVALID',
+      S13: 'NEW_NORESULT',
+      T13: 'NEW_ERROR',
+      U13: 'PREV_INVALID',
+      V13: 'PREV_NORESULT',
+      W13: 'PREV_ERROR',
+      ...mapping,
+    }
   })(),
 ]
 
-module.exports = sheets
+module.exports = sheetMappings
