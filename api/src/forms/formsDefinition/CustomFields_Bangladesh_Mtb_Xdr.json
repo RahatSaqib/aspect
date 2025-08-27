@@ -3,17 +3,17 @@
     {
       "id": 2000,
       "name": "originTestFrom",
-      "i18nKey": "originTestFromi18nKey",
+      "i18nKey": "originTestLocationi18nKey",
       "fieldType": "number",
       "completionWeight": 10,
       "order": 201,
-      "title": "Origin Test From",
-      "caption": "The test that originated this test has been done at",
-      "gxAlertDbColumn": "originTestFrom",
+      "title": "Original test location",
+      "caption": "Indicates whether the original test was performed at this site or a different one",
+      "gxAlertDbColumn": "originTestLocation",
       "i18nKeyCaption": "originTestFromi18nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.2000.value",
-      "source": "resultData.originTestFrom",
+      "source": "resultData.originTestLocation",
       "items": [
         {
           "key": 0,
@@ -22,7 +22,7 @@
         },
         {
           "key": 1,
-          "value": "Different site",
+          "value": "Another site",
           "order": 10
         }
       ],
