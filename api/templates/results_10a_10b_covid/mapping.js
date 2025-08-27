@@ -1,3 +1,5 @@
+const { columnGroups, rowLabels } = require('../../src/result/serviceReportBangladesh/10a10b/xdrCartridgesReport')
+
 let sheetMappings = [
   /**
    * ********************************************************
@@ -236,32 +238,28 @@ sheetMappings = [
    * ********************************************************
    * 6th sheet 'XDR Cartridges'
    * ********************************************************
+   * This code generates the mapping for the XDR Cartridges sheet from B19 to Y30, plus
+   * the summarized table from R13 to W13.
+   * Example:
+  {
+      "R13": "NEW_INVALID",
+      "S13": "NEW_NORESULT",
+      "T13": "NEW_ERROR",
+      "U13": "PREV_INVALID",
+      "V13": "PREV_NORESULT",
+      "W13": "PREV_ERROR",
+      "B19": "DET-OWN-NEW-SP-TOT",
+      "C19": "DET-OWN-NEW-EP-TOT",
+      "D19": "DET-OWN-NEW-ST-TOT",
+      "E19": "DET-OWN-NEW-CU-TOT",
+      "F19": "DET-OWN-PREV-SP-TOT",
+      ...
+      "T30": "NDET-OWN-PREV-CU-INHFLQETH",
+      "X30": "NDET-OTH-PREV-SP-INHFLQETH",
+      "Y30": "NDET-OTH-PREV-ST-INHFLQETH"
+  }
    */
   (() => {
-    const columnGroups = [
-      { det: 'DET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
-      { det: 'DET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
-      { det: 'DET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
-      { det: 'DET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
-      { det: 'NDET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
-      { det: 'NDET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
-      { det: 'NDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
-      { det: 'NDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
-    ]
-    const rowLabels = [
-      'TOT',
-      'MTBDET',
-      'INHR',
-      'INHI',
-      'FLQR',
-      'FLQI',
-      'ETHR',
-      'ETHI',
-      'INHFLQ',
-      'INHETH',
-      'FLQETH',
-      'INHFLQETH',
-    ]
     const columns = []
     for (let code = 'B'.charCodeAt(0); code <= 'Y'.charCodeAt(0); code += 1) {
       columns.push(String.fromCharCode(code))

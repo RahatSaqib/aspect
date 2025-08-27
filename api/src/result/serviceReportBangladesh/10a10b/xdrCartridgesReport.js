@@ -7,6 +7,31 @@ const { getDatesFromQuery } = require('../../../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../../resultCategory/service')
 
+const columnGroups = [
+  { det: 'DET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
+  { det: 'DET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
+  { det: 'DET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
+  { det: 'DET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
+  { det: 'NDET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
+  { det: 'NDET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
+  { det: 'NDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
+  { det: 'NDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
+]
+const rowLabels = [
+  'TOT',
+  'MTBDET',
+  'INHR',
+  'INHI',
+  'FLQR',
+  'FLQI',
+  'ETHR',
+  'ETHI',
+  'INHFLQ',
+  'INHETH',
+  'FLQETH',
+  'INHFLQETH',
+]
+
 async function getDataForReportXdrCartridges(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -18,32 +43,6 @@ async function getDataForReportXdrCartridges(auth, query) {
   // Build subquery as a composable Knex query per database_access.md patterns
   const data = await getData(dataConstraints, dateFrom, dateTo, query, assayIds)
 
-  // Re-process aggregated rows into a label -> value map suited for a mapping
-  const columnGroups = [
-    { det: 'DET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
-    { det: 'DET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
-    { det: 'DET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
-    { det: 'DET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
-    { det: 'NDET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
-    { det: 'NDET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
-    { det: 'NDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
-    { det: 'NDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
-  ]
-  const rowLabelPart = [
-    'TOT',
-    'MTBDET',
-    'INHR',
-    'INHI',
-    'FLQR',
-    'FLQI',
-    'ETHR',
-    'ETHI',
-    'INHFLQ',
-    'INHETH',
-    'FLQETH',
-    'INHFLQETH',
-  ]
-
   const labelToValueMap = {}
   const allowedBases = new Set()
   // Initialize only the combinations that exist in the sheet (24 columns x 12 rows)
@@ -51,7 +50,7 @@ async function getDataForReportXdrCartridges(auth, query) {
     for (const sp of g.samples) {
       const base = `${g.det}-${g.site}-${g.hist}-${sp}`
       allowedBases.add(base)
-      for (const metric of rowLabelPart) {
+      for (const metric of rowLabels) {
         labelToValueMap[`${base}-${metric}`] = 0
       }
     }
@@ -68,7 +67,7 @@ async function getDataForReportXdrCartridges(auth, query) {
     const base = `${detFlag}-${siteFlag}-${historyFlag}-${sampleFlag}`
     if (allowedBases.has(base)) {
       // Assign each metric value to its labeled key
-      for (const metric of rowLabelPart) {
+      for (const metric of rowLabels) {
         const numericValue = Number(row[metric]) || 0
         labelToValueMap[`${base}-${metric}`] = numericValue
       }
@@ -158,7 +157,7 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
     .orderBy('r.id', 'desc')
 
   // Wrap aggregation over the subquery using Knex
-  const dataQ = knex
+  const data = await knex
     .from(srcSubquery.as('src'))
     .select(
       'src.DET',
@@ -185,10 +184,11 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
     )
     .groupBy('src.DET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType')
 
-  const data = await dataQ
   return data
 }
 
 module.exports = {
   getDataForReportXdrCartridges,
+  columnGroups,
+  rowLabels,
 }
