@@ -7,7 +7,7 @@ const { getDatesFromQuery } = require('../../../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../../resultCategory/service')
 
-async function getDataForReportXdrCartridges(auth, query, timezone, options) {
+async function getDataForReportXdrCartridges(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // Resolve date range using shared helper and normalize order
@@ -69,12 +69,8 @@ async function getDataForReportXdrCartridges(auth, query, timezone, options) {
     if (allowedBases.has(base)) {
       // Assign each metric value to its labeled key
       for (const metric of rowLabelPart) {
-        if (metric === 'MTBDET') {
-          labelToValueMap[`${base}-MTBDET`] = detFlag === 'DET' ? Number(row.TOT) || 0 : 0
-        } else {
-          const numericValue = Number(row[metric]) || 0
-          labelToValueMap[`${base}-${metric}`] = numericValue
-        }
+        const numericValue = Number(row[metric]) || 0
+        labelToValueMap[`${base}-${metric}`] = numericValue
       }
     }
   }

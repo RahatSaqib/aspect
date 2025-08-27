@@ -248,7 +248,7 @@ sheetMappings = [
       { det: 'NDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
       { det: 'NDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
     ]
-    const rowMetrics = [
+    const rowLabels = [
       'TOT',
       'MTBDET',
       'INHR',
@@ -273,13 +273,14 @@ sheetMappings = [
       }
     }
     const mapping = {}
-    for (let r = 0; r < rowMetrics.length; r += 1) {
-      const rowNum = 19 + r
-      const metric = rowMetrics[r]
+    for (let r = 0; r < rowLabels.length; r += 1) {
+      const DATA_START_ROW = 19
+      const rowNum = DATA_START_ROW + r
+      const rowLabel = rowLabels[r]
       for (let c = 0; c < columns.length; c += 1) {
         const col = columns[c]
         const { det, site, hist, sample } = colDescs[c]
-        mapping[`${col}${rowNum}`] = `${det}-${site}-${hist}-${sample}-${metric}`
+        mapping[`${col}${rowNum}`] = `${det}-${site}-${hist}-${sample}-${rowLabel}`
       }
     }
     return {
