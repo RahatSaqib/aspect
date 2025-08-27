@@ -89,10 +89,6 @@ async function getDataForReportXdrCartridges(auth, query) {
   }
 }
 
-module.exports = {
-  getDataForReportXdrCartridges,
-}
-
 function getDates(query) {
   return () => {
     const dates = getDatesFromQuery(query)
@@ -137,17 +133,17 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       // Detected vs Not Detected flag
       knex.raw(`IF(rc.id in (${positiveResultCategoriesIds}), 'DET', 'NDET') as DET`),
       // Own Site vs Other Site
-      knex.raw(`IF(r.resultData ->> '$.customFieldData."2000".key' = 0, 'OWN', 'OTH') as MtbRifUltraAt`),
+      knex.raw(`IF(r.resultData ->> '$.originTestLocation' = 'This site', 'OWN', 'OTH') as MtbRifUltraAt`),
       // Patient history (New/Unknown -> NEW, else TRE)
       knex.raw(`
-        IF(r.resultData ->> '$.customFieldData."12012".key' IN ('unknown','new'), 'NEW', 'TRE') as patientHistory
+        IF(r.patientData ->> '$.PatientHistory' IN ('Previously treated'), 'TRE', 'NEW') as patientHistory
       `),
       // Sample type mapping
-      knex.raw(`CASE r.resultData ->> '$.customFieldData."1211".key'
-        WHEN 'pulmonary' THEN 'SP'
-        WHEN 'extra' THEN 'EP'
-        WHEN 'stool' THEN 'ST'
-        WHEN 'culture' THEN 'CU'
+      knex.raw(`CASE r.patientData ->> '$.SampleType'
+        WHEN 'Pulmonary' THEN 'SP'
+        WHEN 'Extra-pulmonary' THEN 'EP'
+        WHEN 'Stool' THEN 'ST'
+        WHEN 'Direct Culture' THEN 'CU'
         ELSE 'SP'
       END as sampleType`),
       // Totals and individual resistance flags
@@ -188,8 +184,11 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHFLQETH')
     )
     .groupBy('src.DET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType')
-    .orderBy(['src.DET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType'])
 
   const data = await dataQ
   return data
+}
+
+module.exports = {
+  getDataForReportXdrCartridges,
 }
