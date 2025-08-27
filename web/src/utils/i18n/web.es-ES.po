@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-16T10:42:20.495Z\n"
+"POT-Creation-Date: 2025-08-13T11:06:59.387Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -331,6 +331,20 @@ msgstr "Abreviatura"
 msgid "Above Average"
 msgstr "Por encima de la media"
 
+#. [pages.DeviceDetailProfile.aboveAverageErrorRate]
+#. defaultMessage is:
+#. Above Average Error Rate
+#: extracted_strings.json
+msgid "Above Average Error Rate"
+msgstr "Tasa de error superior al promedio"
+
+#. [pages.DeviceDetailProfile.aboveAverageUtilizationRate]
+#. defaultMessage is:
+#. Above Average Utilization Rate
+#: extracted_strings.json
+msgid "Above Average Utilization Rate"
+msgstr "Tasa de utilización superior a la media"
+
 #. [pages.deviceDetail.aboveTarget]
 #. defaultMessage is:
 #. Above Target
@@ -523,6 +537,13 @@ msgstr "Ajustar la cantidad"
 #: extracted_strings.json
 msgid "Admin"
 msgstr "Administrador"
+
+#. [jobFunction.adminItTeam]
+#. defaultMessage is:
+#. Admin - (IT team)
+#: extracted_strings.json
+msgid "Admin - (IT team)"
+msgstr "Administrador - (Equipo de TI)"
 
 #. [pages.transferResult.successMessageButton]
 #. defaultMessage is:
@@ -898,19 +919,6 @@ msgstr ""
 "¿Está seguro de que desea eliminar este sitio? Esta acción está pensada sólo "
 "para sitios de prueba, todos los datos del sitio se perderán."
 
-#. [errorResponseMessages.updateConsumable.message]
-#. defaultMessage is:
-#. As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action
-#: extracted_strings.json
-msgid ""
-"As there is unreconciled consumption for the specified cartridge, "
-"{consumableName}, system cant allow delisting of the same at the site. "
-"Please reconcile your inventory to complete this action"
-msgstr ""
-"Como hay consumo no conciliado para el cartucho especificado, "
-"{consumableName}, el sistema no puede permitir la eliminación del mismo en "
-"el sitio. Por favor, concilie su inventario para completar esta acción"
-
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
 #. Aspect Beta
@@ -1061,6 +1069,13 @@ msgstr "Cierre de sesión automático"
 #: extracted_strings.json
 msgid "Automatic include location with reported consumption"
 msgstr "Incluir automáticamente la ubicación con el consumo notificado"
+
+#. [pages.deviceDetail.average]
+#. defaultMessage is:
+#. Average
+#: extracted_strings.json
+msgid "Average"
+msgstr "Promedio"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -2159,6 +2174,13 @@ msgstr "Consumibles aplicables al emplazamiento"
 msgid "Consumables applicable for this site"
 msgstr "Consumibles aplicables a este centro"
 
+#. [pages.consumables.consumablesUpdatedSuccessfully]
+#. defaultMessage is:
+#. Consumables updated successfully
+#: extracted_strings.json
+msgid "Consumables updated successfully"
+msgstr "Consumibles actualizados exitosamente"
+
 #. [p.PkDashboard.consumptionRate]
 #. defaultMessage is:
 #. Consumption Rate
@@ -2888,6 +2910,13 @@ msgstr "Datos"
 #: extracted_strings.json
 msgid "Data Extract for Tableau"
 msgstr "Extracción de datos para Tableau"
+
+#. [jobFunction.dataViewer]
+#. defaultMessage is:
+#. Data Viewer
+#: extracted_strings.json
+msgid "Data Viewer"
+msgstr "Visor de datos"
 
 #. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
@@ -4148,12 +4177,26 @@ msgstr "Error al guardar la nueva contraseña"
 msgid "Error Sending Reset Password Email"
 msgstr "Error al enviar el correo electrónico de reinicio de contraseña"
 
+#. [pages.consumables.errorUpdatingConsumables]
+#. defaultMessage is:
+#. Error updating consumables
+#: extracted_strings.json
+msgid "Error updating consumables"
+msgstr "Error al actualizar consumibles"
+
 #. [pages.DeviceDetailEdit.deviceUpdateError]
 #. defaultMessage is:
 #. Error updating device
 #: extracted_strings.json
 msgid "Error updating device"
 msgstr "Error al actualizar el dispositivo"
+
+#. [pages.InventoryTabs.New.errorUpdatingSites]
+#. defaultMessage is:
+#. Error updating sites
+#: extracted_strings.json
+msgid "Error updating sites"
+msgstr "Error al actualizar sitios"
 
 #. [report.missingDateRangeFilterTitle]
 #. defaultMessage is:
@@ -5722,6 +5765,13 @@ msgstr "Hora"
 msgid "Hours"
 msgstr "Horas"
 
+#. [pages.SiteDetail.fieldHoursOfOperation]
+#. defaultMessage is:
+#. Hours of Operation
+#: extracted_strings.json
+msgid "Hours of Operation"
+msgstr "Horas de operación"
+
 #. [pages.SiteDetail.fieldEndingHours]
 #. defaultMessage is:
 #. Hours of Operation End
@@ -6522,12 +6572,33 @@ msgstr "LPA"
 msgid "Lab Admin"
 msgstr "Administración del laboratorio"
 
+#. [jobFunction.labHead]
+#. defaultMessage is:
+#. Lab Head
+#: extracted_strings.json
+msgid "Lab Head"
+msgstr "Jefe de laboratorio"
+
 #. [jobFunction.labManager]
 #. defaultMessage is:
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
 msgstr "Director de laboratorio"
+
+#. [jobFunction.labSupervisor]
+#. defaultMessage is:
+#. Lab Supervisor
+#: extracted_strings.json
+msgid "Lab Supervisor"
+msgstr "Supervisor de laboratorio"
+
+#. [jobFunction.labTechnician]
+#. defaultMessage is:
+#. Lab Technician
+#: extracted_strings.json
+msgid "Lab Technician"
+msgstr "Técnico de laboratorio"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -7645,6 +7716,13 @@ msgstr "Marzo"
 msgid "May"
 msgstr "Mayo"
 
+#. [jobFunction.medTech]
+#. defaultMessage is:
+#. Med Tech
+#: extracted_strings.json
+msgid "Med Tech"
+msgstr "Tecnología médica"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7995,6 +8073,20 @@ msgstr "NP detectado"
 #: extracted_strings.json
 msgid "NTP"
 msgstr "NTP"
+
+#. [jobFunction.ntpNoResults]
+#. defaultMessage is:
+#. NTP - No Results
+#: extracted_strings.json
+msgid "NTP - No Results"
+msgstr "NTP - Sin resultados"
+
+#. [jobFunction.ntpLevel]
+#. defaultMessage is:
+#. NTP Level
+#: extracted_strings.json
+msgid "NTP Level"
+msgstr "Nivel NTP"
 
 #. [placeholder.name]
 #. defaultMessage is:
@@ -9139,6 +9231,13 @@ msgstr "Numero de parte"
 #: extracted_strings.json
 msgid "Partner"
 msgstr "Asociado"
+
+#. [jobFunction.partners]
+#. defaultMessage is:
+#. Partners
+#: extracted_strings.json
+msgid "Partners"
+msgstr "Fogonadura"
 
 #. [pages.Login.password]
 #. defaultMessage is:
@@ -10507,6 +10606,13 @@ msgstr "Rechazado"
 msgid "Relapses"
 msgstr "Recaídas"
 
+#. [jobFunction.remoteHealthWorker]
+#. defaultMessage is:
+#. Remote Health Worker
+#: extracted_strings.json
+msgid "Remote Health Worker"
+msgstr "Trabajador de salud remoto"
+
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
 #. Remove Inventory
@@ -11410,6 +11516,13 @@ msgstr "Ejemplo de sitio de origen"
 #: extracted_strings.json
 msgid "Sample Type"
 msgstr "Tipo de muestra"
+
+#. [pages.SiteDetail.sampleRegistrationAllowed]
+#. defaultMessage is:
+#. Sample collection allowed
+#: extracted_strings.json
+msgid "Sample collection allowed"
+msgstr "Se permite la recogida de muestras."
 
 #. [filter.popover.sampleOriginSite]
 #. defaultMessage is:
@@ -12421,6 +12534,20 @@ msgstr "El nombre del sitio ya está en uso"
 msgid "Sites"
 msgstr "Sitios"
 
+#. [pages.InventoryTabs.New.sitesByConsumable]
+#. defaultMessage is:
+#. Sites by Consumable
+#: extracted_strings.json
+msgid "Sites by Consumable"
+msgstr "Sitios de Consumible"
+
+#. [pages.InventoryTabs.New.sitesUpdatedSuccessfully]
+#. defaultMessage is:
+#. Sites updated successfully
+#: extracted_strings.json
+msgid "Sites updated successfully"
+msgstr "Sitios actualizados exitosamente"
+
 #. [legends.Unknown.assaySmear]
 #. defaultMessage is:
 #. Smear
@@ -12521,6 +12648,17 @@ msgstr "El mensaje SMS no debe superar los 2000 caracteres"
 msgid "Software Type"
 msgstr "Tipo de software"
 
+#. [errorResponseMessages.updateConsumablesBatch.message]
+#. defaultMessage is:
+#. Some consumables could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"Some consumables could not be updated due to unreconciled consumption. "
+"Please reconcile your inventory to complete this action"
+msgstr ""
+"Algunos consumibles no se pudieron actualizar debido a un consumo no "
+"conciliado. Por favor, concilia tu inventario para completar esta acción."
+
 #. [pages.consumables.consumablesApplicableForThisSiteTooltip]
 #. defaultMessage is:
 #. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
@@ -12532,7 +12670,18 @@ msgstr ""
 "Algunos consumibles pueden aparecer como no disponibles para el cambio de "
 "selección ya que el centro tiene inventario o transacciones no conciliadas"
 
-#. [pages.InventoryTabs.New.trackByLocationTooltip]
+#. [errorResponseMessages.updateConsumableSitesBatch.message]
+#. defaultMessage is:
+#. Some sites could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"Some sites could not be updated due to unreconciled consumption. Please "
+"reconcile your inventory to complete this action"
+msgstr ""
+"Algunos sitios no se pudieron actualizar debido a un consumo no conciliado. "
+"Por favor, concilie su inventario para completar esta acción."
+
+#. [pages.InventoryTabs.New.sitesByConsumableTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
 #: extracted_strings.json
@@ -12811,6 +12960,13 @@ msgstr "Apellido"
 #: extracted_strings.json
 msgid "Susceptible"
 msgstr "Susceptible"
+
+#. [jobFunction.systemOne]
+#. defaultMessage is:
+#. SystemOne
+#: extracted_strings.json
+msgid "SystemOne"
+msgstr "SystemOne"
 
 #. [p.PkDashboard.RRTestingDiagnosis]
 #. defaultMessage is:
@@ -14276,13 +14432,6 @@ msgstr ""
 msgid "Trace Detected"
 msgstr "Rastro detectado"
 
-#. [pages.InventoryTabs.New.trackByLocation]
-#. defaultMessage is:
-#. Track By Location
-#: extracted_strings.json
-msgid "Track By Location"
-msgstr "Seguimiento por ubicación"
-
 #. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
 #. Track by batch
@@ -14566,12 +14715,19 @@ msgstr "No se puede eliminar porque hay entidades asociadas a él"
 msgid "Unable to delete since there are associated entities with it."
 msgstr "No se puede eliminar porque hay entidades asociadas."
 
-#. [errorResponseMessages.updateConsumable.title]
+#. [errorResponseMessages.updateConsumablesBatch.title]
 #. defaultMessage is:
-#. Unable to delist the cartridge !
+#. Unable to update some consumables
 #: extracted_strings.json
-msgid "Unable to delist the cartridge !"
-msgstr "¡No se puede eliminar el cartucho de la lista!"
+msgid "Unable to update some consumables"
+msgstr "No se pueden actualizar algunos consumibles"
+
+#. [errorResponseMessages.updateConsumableSitesBatch.title]
+#. defaultMessage is:
+#. Unable to update some sites
+#: extracted_strings.json
+msgid "Unable to update some sites"
+msgstr "No se pueden actualizar algunos sitios"
 
 #. [pages.Consumable.New.unit]
 #. defaultMessage is:
@@ -16092,6 +16248,21 @@ msgstr "{unit} desde la semana pasada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibraciones totales"
+
+#~ msgid ""
+#~ "As there is unreconciled consumption for the specified cartridge, "
+#~ "{consumableName}, system cant allow delisting of the same at the site. "
+#~ "Please reconcile your inventory to complete this action"
+#~ msgstr ""
+#~ "Como hay consumo no conciliado para el cartucho especificado, "
+#~ "{consumableName}, el sistema no puede permitir la eliminación del mismo "
+#~ "en el sitio. Por favor, concilie su inventario para completar esta acción"
+
+#~ msgid "Track By Location"
+#~ msgstr "Seguimiento por ubicación"
+
+#~ msgid "Unable to delist the cartridge !"
+#~ msgstr "¡No se puede eliminar el cartucho de la lista!"
 
 #~ msgid "Firmware"
 #~ msgstr "Firmware"

@@ -335,7 +335,7 @@ const sendSection = (formatMessage, jobFunctions) => {
                       values.persons = initialValues
                       setFieldValue('persons', initialValues)
                     }
-                    const withJob = filter(data, item => !isEmpty(item.level))
+                    const withJob = filter(data, item => !isEmpty(item.assignments))
                     const withoutJob = xor(data, withJob)
                     map(withJob, ({ id, name, state }) =>
                       options[0].options.push({ label: makeLabel(name, state), value: id, grouped: true })

@@ -13,6 +13,7 @@ import PersonFilter from './FilterContainer.Person'
 import ReporterFilter from './FilterContainer.Reporter'
 import ReportsFilter from './FilterContainer.Reports'
 import ResultFilter from './FilterContainer.Result'
+import SampleFilter from './FilterContainer.Sample'
 import SiteFilter from './FilterContainer.Site'
 import StatesFilter from './FilterContainer.States'
 import XDRByDeviceFilter from './FilterContainer.XDRByDevice'
@@ -30,6 +31,7 @@ export {
   PersonFilter,
   ReporterFilter,
   ReportsFilter,
+  SampleFilter,
   ResultFilter,
   SiteFilter,
   XDRByDeviceFilter,

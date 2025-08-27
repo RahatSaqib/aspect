@@ -114,7 +114,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Number']}`
         const sampleOriginSiteId = originSite ? originSite.id : null
         const reportableSiteId = sampleOriginSiteId || site.deviceDefaultReportableSiteId || site.id
-
+        const now = new Date()
         const numberOfSamples =
           !!payload['Date Collected 3'] ||
           !!payload['Type of Collection 3'] ||
@@ -139,6 +139,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             collectedOn: payload[`Date Collected ${sampleNumber}`],
             sampleTypeId,
             originSiteId: sampleOriginSiteId,
+            updatedOn: now,
           }
           return sample
         })
@@ -158,7 +159,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               await knex('Sample').where('id', existingSample.id).update(sample)
             }
           } else {
-            const [sampleId] = await knex('Sample').insert(sample)
+            const [sampleId] = await knex('Sample').insert({ ...sample, createdOn: now })
             sample.id = sampleId
           }
         })

@@ -40,6 +40,7 @@ const PersonList = lazy(() => import('./pages/Person/List/PersonList'))
 const PkDashboard = lazy(() => import('./pages/PkDashboard'))
 const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
 const ReportIndex = lazy(() => import('./pages/Reports/ReportIndex'))
+const SampleList = lazy(() => import('./pages/Sample/SampleList'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
 const ResultList = lazy(() => import('./oldPages/result/list/ResultList'))
 const SiteDetail = lazy(() => import('./pages/Site/Detail'))
@@ -229,6 +230,8 @@ const LogInApp = () => {
                 ) : null}
 
                 {a(['browse', 'reporter']) ? <Route path="/browse/reporter" element={<ReporterList />} /> : null}
+
+                {a(['browse', 'reporter']) ? <Route path="/browse/samples" element={<SampleList />} /> : null}
 
                 {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
                 {a(['browse', 'result:edit']) ? (

@@ -90,7 +90,7 @@ const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset 
 }
 
 const getMonthYearExpressionFromFieldInTimeZone = (knex, field, alias = 'monthYear', timeZoneIANA) => {
-  return knex.raw(`DATE_FORMAT(CONVERT_TZ(${field}, 'UTC', '${timeZoneIANA}'), '%Y-%m')${alias ? ` AS ${alias}` : ''}`)
+  return knex.raw(`DATE_FORMAT(CONVERT_TZ(${field}, 'UTC', '${timeZoneIANA}'), '%Y-%m')${alias ? ` as ${alias}` : ''}`)
 }
 
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
@@ -483,7 +483,8 @@ function getDateInMilliSeconds(date) {
  *
  * @param {string} minDate - The start date in ISO format (e.g., "2023-01-01T00:00:00.000Z")
  * @param {string} maxDate - The end date in ISO format (e.g., "2023-12-31T23:59:59.999Z")
- * @param {Object} [clientConfig={}] - Value of Partner.customWorkingDays
+ * @param {Object} [clientConfig] - Value of Partner.customWorkingDays, if it's an empty object,
+ * it will skip fixed working days values and will default to Saturday and Sunday as weekend.
  * @param {number} [clientConfig.daysPerYear] - Predefined working days for a full year period
  * @param {number} [clientConfig.daysPerQuarter] - Predefined working days for a full quarter period
  * @param {number} [clientConfig.daysPerMonth] - Predefined working days for a full month period
@@ -507,7 +508,10 @@ function getDateInMilliSeconds(date) {
  * getWorkingDays("2023-01-01T00:00:00.000Z", "2023-01-31T23:59:59.999Z", { excludedDays: "2,3" })
  * // Returns: 13 (excluding Mondays and Tuesdays)
  */
-const getWorkingDays = (minDate, maxDate, clientConfig = {}) => {
+const getWorkingDays = (minDate, maxDate, clientConfig) => {
+  if (!clientConfig) {
+    throw new Error('Client config is required')
+  }
   // Parse the input dates and extract just the date part
   const minDateStr = typeof minDate === 'string' ? minDate : minDate.toISOString()
   const maxDateStr = typeof maxDate === 'string' ? maxDate : maxDate.toISOString()

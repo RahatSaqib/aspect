@@ -231,18 +231,22 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           })
           .first('s.*')) || {}
       let { id: sampleId } = sample
+
       if (!sampleId) {
         ;[sampleId] = await knex('Sample').insert({
           externalId: limsSampleId,
           collectedOn: parseDateOrDefault(sampleDateCollected),
           sampleTypeId: await sampleTypeToId(sampleTypeExternalId),
           originSiteId,
+          createdOn: now,
+          updatedOn: now,
         })
       } else if (!sample.collectedOn && sampleDateCollected) {
         await knex('Sample')
           .where('id', sampleId)
           .update({
             collectedOn: parseDateOrDefault(sampleDateCollected),
+            updatedOn: now,
           })
       }
       const baseResultData = {

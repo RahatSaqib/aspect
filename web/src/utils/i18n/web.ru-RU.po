@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-16T10:42:20.495Z\n"
+"POT-Creation-Date: 2025-08-13T11:06:59.387Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -330,6 +330,20 @@ msgstr "Сокращение"
 msgid "Above Average"
 msgstr "Выше среднего"
 
+#. [pages.DeviceDetailProfile.aboveAverageErrorRate]
+#. defaultMessage is:
+#. Above Average Error Rate
+#: extracted_strings.json
+msgid "Above Average Error Rate"
+msgstr "Частота ошибок выше среднего"
+
+#. [pages.DeviceDetailProfile.aboveAverageUtilizationRate]
+#. defaultMessage is:
+#. Above Average Utilization Rate
+#: extracted_strings.json
+msgid "Above Average Utilization Rate"
+msgstr "Коэффициент использования выше среднего"
+
 #. [pages.deviceDetail.aboveTarget]
 #. defaultMessage is:
 #. Above Target
@@ -522,6 +536,13 @@ msgstr "Настроить количество"
 #: extracted_strings.json
 msgid "Admin"
 msgstr "Администратор"
+
+#. [jobFunction.adminItTeam]
+#. defaultMessage is:
+#. Admin - (IT team)
+#: extracted_strings.json
+msgid "Admin - (IT team)"
+msgstr "Администратор - (ИТ-отдел)"
 
 #. [pages.transferResult.successMessageButton]
 #. defaultMessage is:
@@ -896,19 +917,6 @@ msgstr ""
 "Вы уверены, что хотите удалить этот сайт? Это действие предназначено только "
 "для тестовых сайтов, все данные сайта будут потеряны."
 
-#. [errorResponseMessages.updateConsumable.message]
-#. defaultMessage is:
-#. As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action
-#: extracted_strings.json
-msgid ""
-"As there is unreconciled consumption for the specified cartridge, "
-"{consumableName}, system cant allow delisting of the same at the site. "
-"Please reconcile your inventory to complete this action"
-msgstr ""
-"Поскольку для указанного картриджа, {consumableName}, имеется неучтенный "
-"расход, система не может разрешить делистинг этого картриджа на сайте. "
-"Пожалуйста, проведите сверку инвентаря, чтобы завершить это действие"
-
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
 #. Aspect Beta
@@ -1058,6 +1066,13 @@ msgstr "Автоматический выход"
 #: extracted_strings.json
 msgid "Automatic include location with reported consumption"
 msgstr "Автоматическое включение местоположения в отчет о потреблении"
+
+#. [pages.deviceDetail.average]
+#. defaultMessage is:
+#. Average
+#: extracted_strings.json
+msgid "Average"
+msgstr "Средний"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -2154,6 +2169,13 @@ msgstr "Расходные материалы, применяемые на об�
 msgid "Consumables applicable for this site"
 msgstr "Расходные материалы, применимые для данного участка"
 
+#. [pages.consumables.consumablesUpdatedSuccessfully]
+#. defaultMessage is:
+#. Consumables updated successfully
+#: extracted_strings.json
+msgid "Consumables updated successfully"
+msgstr "Расходные материалы успешно обновлены"
+
 #. [p.PkDashboard.consumptionRate]
 #. defaultMessage is:
 #. Consumption Rate
@@ -2884,12 +2906,19 @@ msgstr "Данные"
 msgid "Data Extract for Tableau"
 msgstr "Извлечение данных для Tableau"
 
+#. [jobFunction.dataViewer]
+#. defaultMessage is:
+#. Data Viewer
+#: extracted_strings.json
+msgid "Data Viewer"
+msgstr "Просмотр данных"
+
 #. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
 #. Data Visualisation For XDR Resistance Over Time
 #: extracted_strings.json
 msgid "Data Visualisation For XDR Resistance Over Time"
-msgstr "Визуализация данных о резистентности к ХЛУ с течением времени"
+msgstr "Визуализация данных об устойчивости к XDR с течением времени"
 
 #. [p.PkDashboard.dataVisualisationForXDR]
 #. defaultMessage is:
@@ -4142,12 +4171,26 @@ msgstr "Ошибка при сохранении нового пароля"
 msgid "Error Sending Reset Password Email"
 msgstr "Ошибка при отправке сообщения о сбросе пароля"
 
+#. [pages.consumables.errorUpdatingConsumables]
+#. defaultMessage is:
+#. Error updating consumables
+#: extracted_strings.json
+msgid "Error updating consumables"
+msgstr "Ошибка обновления расходных материалов"
+
 #. [pages.DeviceDetailEdit.deviceUpdateError]
 #. defaultMessage is:
 #. Error updating device
 #: extracted_strings.json
 msgid "Error updating device"
 msgstr "Ошибка обновления устройства"
+
+#. [pages.InventoryTabs.New.errorUpdatingSites]
+#. defaultMessage is:
+#. Error updating sites
+#: extracted_strings.json
+msgid "Error updating sites"
+msgstr "Ошибка обновления сайтов"
 
 #. [report.missingDateRangeFilterTitle]
 #. defaultMessage is:
@@ -5711,6 +5754,13 @@ msgstr "Час"
 msgid "Hours"
 msgstr "Часов"
 
+#. [pages.SiteDetail.fieldHoursOfOperation]
+#. defaultMessage is:
+#. Hours of Operation
+#: extracted_strings.json
+msgid "Hours of Operation"
+msgstr "Часы работы"
+
 #. [pages.SiteDetail.fieldEndingHours]
 #. defaultMessage is:
 #. Hours of Operation End
@@ -6511,12 +6561,33 @@ msgstr "LPA"
 msgid "Lab Admin"
 msgstr "Администратор лаборатории"
 
+#. [jobFunction.labHead]
+#. defaultMessage is:
+#. Lab Head
+#: extracted_strings.json
+msgid "Lab Head"
+msgstr "Руководитель лаборатории"
+
 #. [jobFunction.labManager]
 #. defaultMessage is:
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
 msgstr "Руководитель лаборатории"
+
+#. [jobFunction.labSupervisor]
+#. defaultMessage is:
+#. Lab Supervisor
+#: extracted_strings.json
+msgid "Lab Supervisor"
+msgstr "Руководитель лаборатории"
+
+#. [jobFunction.labTechnician]
+#. defaultMessage is:
+#. Lab Technician
+#: extracted_strings.json
+msgid "Lab Technician"
+msgstr "Лаборант"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -7634,6 +7705,13 @@ msgstr "Март"
 msgid "May"
 msgstr "Май"
 
+#. [jobFunction.medTech]
+#. defaultMessage is:
+#. Med Tech
+#: extracted_strings.json
+msgid "Med Tech"
+msgstr "Мед Технологии"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -7984,6 +8062,20 @@ msgstr "Обнаружен NP"
 #: extracted_strings.json
 msgid "NTP"
 msgstr "NTP"
+
+#. [jobFunction.ntpNoResults]
+#. defaultMessage is:
+#. NTP - No Results
+#: extracted_strings.json
+msgid "NTP - No Results"
+msgstr "НТП — нет результатов"
+
+#. [jobFunction.ntpLevel]
+#. defaultMessage is:
+#. NTP Level
+#: extracted_strings.json
+msgid "NTP Level"
+msgstr "Уровень NTP"
 
 #. [placeholder.name]
 #. defaultMessage is:
@@ -9127,6 +9219,13 @@ msgstr "Номер запчасти"
 #: extracted_strings.json
 msgid "Partner"
 msgstr "Партнер"
+
+#. [jobFunction.partners]
+#. defaultMessage is:
+#. Partners
+#: extracted_strings.json
+msgid "Partners"
+msgstr "Партнеры"
 
 #. [pages.Login.password]
 #. defaultMessage is:
@@ -10497,6 +10596,13 @@ msgstr "Отклоненный"
 msgid "Relapses"
 msgstr "Рецидивы"
 
+#. [jobFunction.remoteHealthWorker]
+#. defaultMessage is:
+#. Remote Health Worker
+#: extracted_strings.json
+msgid "Remote Health Worker"
+msgstr "Удаленный медицинский работник"
+
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
 #. Remove Inventory
@@ -11400,6 +11506,13 @@ msgstr "Образец исходного сайта"
 #: extracted_strings.json
 msgid "Sample Type"
 msgstr "Тип образца"
+
+#. [pages.SiteDetail.sampleRegistrationAllowed]
+#. defaultMessage is:
+#. Sample collection allowed
+#: extracted_strings.json
+msgid "Sample collection allowed"
+msgstr "Взятие проб разрешено"
 
 #. [filter.popover.sampleOriginSite]
 #. defaultMessage is:
@@ -12406,6 +12519,20 @@ msgstr "Название сайта уже используется"
 msgid "Sites"
 msgstr "Сайты"
 
+#. [pages.InventoryTabs.New.sitesByConsumable]
+#. defaultMessage is:
+#. Sites by Consumable
+#: extracted_strings.json
+msgid "Sites by Consumable"
+msgstr "Сайты по расходным материалам"
+
+#. [pages.InventoryTabs.New.sitesUpdatedSuccessfully]
+#. defaultMessage is:
+#. Sites updated successfully
+#: extracted_strings.json
+msgid "Sites updated successfully"
+msgstr "Сайты успешно обновлены"
+
 #. [legends.Unknown.assaySmear]
 #. defaultMessage is:
 #. Smear
@@ -12506,6 +12633,17 @@ msgstr "Длина Sms-сообщения не должна превышать 2
 msgid "Software Type"
 msgstr "Тип программного обеспечения"
 
+#. [errorResponseMessages.updateConsumablesBatch.message]
+#. defaultMessage is:
+#. Some consumables could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"Some consumables could not be updated due to unreconciled consumption. "
+"Please reconcile your inventory to complete this action"
+msgstr ""
+"Не удалось обновить некоторые расходные материалы из-за несогласованного "
+"потребления. Для завершения этого действия выполните согласование инвентаря."
+
 #. [pages.consumables.consumablesApplicableForThisSiteTooltip]
 #. defaultMessage is:
 #. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
@@ -12517,7 +12655,18 @@ msgstr ""
 "Некоторые расходные материалы могут оказаться недоступными для изменения "
 "выбора, так как на сайте есть инвентаризация или невыверенные транзакции"
 
-#. [pages.InventoryTabs.New.trackByLocationTooltip]
+#. [errorResponseMessages.updateConsumableSitesBatch.message]
+#. defaultMessage is:
+#. Some sites could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"Some sites could not be updated due to unreconciled consumption. Please "
+"reconcile your inventory to complete this action"
+msgstr ""
+"Некоторые сайты не удалось обновить из-за несогласованного потребления. "
+"Пожалуйста, согласуйте свой инвентарь, чтобы завершить это действие."
+
+#. [pages.InventoryTabs.New.sitesByConsumableTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
 #: extracted_strings.json
@@ -12796,6 +12945,13 @@ msgstr "Фамилия"
 #: extracted_strings.json
 msgid "Susceptible"
 msgstr "Восприимчивый"
+
+#. [jobFunction.systemOne]
+#. defaultMessage is:
+#. SystemOne
+#: extracted_strings.json
+msgid "SystemOne"
+msgstr "SystemOne"
 
 #. [p.PkDashboard.RRTestingDiagnosis]
 #. defaultMessage is:
@@ -14247,13 +14403,6 @@ msgstr ""
 msgid "Trace Detected"
 msgstr "Обнаружен след"
 
-#. [pages.InventoryTabs.New.trackByLocation]
-#. defaultMessage is:
-#. Track By Location
-#: extracted_strings.json
-msgid "Track By Location"
-msgstr "Отслеживать по местоположению"
-
 #. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
 #. Track by batch
@@ -14537,12 +14686,19 @@ msgstr "Невозможно удалить, так как с ним связа�
 msgid "Unable to delete since there are associated entities with it."
 msgstr "Невозможно удалить, так как с ним связаны сущности."
 
-#. [errorResponseMessages.updateConsumable.title]
+#. [errorResponseMessages.updateConsumablesBatch.title]
 #. defaultMessage is:
-#. Unable to delist the cartridge !
+#. Unable to update some consumables
 #: extracted_strings.json
-msgid "Unable to delist the cartridge !"
-msgstr "Невозможно исключить картридж из списка!"
+msgid "Unable to update some consumables"
+msgstr "Невозможно обновить некоторые расходные материалы"
+
+#. [errorResponseMessages.updateConsumableSitesBatch.title]
+#. defaultMessage is:
+#. Unable to update some sites
+#: extracted_strings.json
+msgid "Unable to update some sites"
+msgstr "Не удалось обновить некоторые сайты"
 
 #. [pages.Consumable.New.unit]
 #. defaultMessage is:
@@ -16063,6 +16219,21 @@ msgstr "{unit} с прошлой недели"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} суммарные калибровки"
+
+#~ msgid ""
+#~ "As there is unreconciled consumption for the specified cartridge, "
+#~ "{consumableName}, system cant allow delisting of the same at the site. "
+#~ "Please reconcile your inventory to complete this action"
+#~ msgstr ""
+#~ "Поскольку для указанного картриджа, {consumableName}, имеется неучтенный "
+#~ "расход, система не может разрешить делистинг этого картриджа на сайте. "
+#~ "Пожалуйста, проведите сверку инвентаря, чтобы завершить это действие"
+
+#~ msgid "Track By Location"
+#~ msgstr "Отслеживать по местоположению"
+
+#~ msgid "Unable to delist the cartridge !"
+#~ msgstr "Невозможно исключить картридж из списка!"
 
 #~ msgid "Firmware"
 #~ msgstr "Прошивка"
