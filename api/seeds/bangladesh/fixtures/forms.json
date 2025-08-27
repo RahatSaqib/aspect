@@ -13,7 +13,7 @@
   "CustomFields_Bangladesh_Mtb_Ultra": {
     "fileName": "CustomFields_Bangladesh_Mtb_Ultra.json",
     "formDefinition": {
-      "order": 1,
+      "order": 10,
       "title": "Tuberculosis fields - for Mtb-Ultra only",
       "i18nKeyTitle": "CustomFieldsTBUltraI18nkey",
       "externalId": "CustomFields_Bangladesh_Mtb_Ultra",
@@ -25,7 +25,7 @@
   "CustomFields_Bangladesh_Mtb_Xdr": {
     "fileName": "CustomFields_Bangladesh_Mtb_Xdr.json",
     "formDefinition": {
-      "order": 1,
+      "order": 20,
       "title": "Tuberculosis fields - for Mtb-XDR only",
       "i18nKeyTitle": "CustomFieldsTBXdrI18nkey",
       "externalId": "CustomFields_Bangladesh_Mtb_Xdr",
