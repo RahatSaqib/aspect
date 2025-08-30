@@ -8,14 +8,14 @@ const { allAssayToId, allResultCategoryToId } = require('../../../shared/diction
 const getPositiveCategoriesExternalIds = require('../../../resultCategory/service')
 
 const columnGroups = [
-  { det: 'DET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
-  { det: 'DET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
-  { det: 'DET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
-  { det: 'DET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
-  { det: 'NDET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
-  { det: 'NDET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
-  { det: 'NDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
-  { det: 'NDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
+  { det: 'RRDET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
+  { det: 'RRDET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
+  { det: 'RRDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
+  { det: 'RRDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
+  { det: 'RRNDET', site: 'OWN', hist: 'NEW', samples: ['SP', 'EP', 'ST', 'CU'] },
+  { det: 'RRNDET', site: 'OWN', hist: 'PREV', samples: ['SP', 'ST', 'CU'] },
+  { det: 'RRNDET', site: 'OTH', hist: 'NEW', samples: ['SP', 'EP', 'ST'] },
+  { det: 'RRNDET', site: 'OTH', hist: 'PREV', samples: ['SP', 'ST'] },
 ]
 const rowLabels = [
   'TOT',
@@ -50,15 +50,15 @@ async function getDataForReportXdrCartridges(auth, query) {
     for (const sp of g.samples) {
       const base = `${g.det}-${g.site}-${g.hist}-${sp}`
       allowedBases.add(base)
-      for (const metric of rowLabels) {
-        labelToValueMap[`${base}-${metric}`] = 0
+      for (const rowLabel of rowLabels) {
+        labelToValueMap[`${base}-${rowLabel}`] = 0
       }
     }
   }
 
   // Fill actual values from query result
   for (const row of data) {
-    const detFlag = row.DET // 'DET' | 'NDET'
+    const detFlag = row.RRDET // 'DET' | 'NDET'
     const siteFlag = row.MtbRifUltraAt // 'OWN' | 'OTH'
     // Map query 'TRE' to presentation 'PREV'
     const historyFlag = row.patientHistory === 'TRE' ? 'PREV' : row.patientHistory // 'NEW' | 'PREV'
@@ -66,10 +66,10 @@ async function getDataForReportXdrCartridges(auth, query) {
 
     const base = `${detFlag}-${siteFlag}-${historyFlag}-${sampleFlag}`
     if (allowedBases.has(base)) {
-      // Assign each metric value to its labeled key
-      for (const metric of rowLabels) {
-        const numericValue = Number(row[metric]) || 0
-        labelToValueMap[`${base}-${metric}`] = numericValue
+      // Assign each rowLabel value to its labeled key
+      for (const rowLabel of rowLabels) {
+        const numericValue = Number(row[rowLabel]) || 0
+        labelToValueMap[`${base}-${rowLabel}`] = numericValue
       }
     }
   }
@@ -110,6 +110,7 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as st', 'sp.sampleTypeId', 'st.id')
     .leftJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('Site as site', 'site.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 'g.id', 'site.geographyId')
@@ -130,7 +131,8 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
     .select(
       'rc.externalId as resultCategoryExternalId',
       // Detected vs Not Detected flag
-      knex.raw(`IF(rc.id in (${positiveResultCategoriesIds}), 'DET', 'NDET') as DET`),
+      knex.raw(`IF(rc2.id in (${positiveResultCategoriesIds}), 'RRDET', 'RRNDET') as RRDET`),
+      knex.raw(`IF(rc.id in (${positiveResultCategoriesIds}), 1, 0) as MTBDET`),
       // Own Site vs Other Site
       knex.raw(`IF(r.resultData ->> '$.originTestLocation' = 'This site', 'OWN', 'OTH') as MtbRifUltraAt`),
       // Patient history (New/Unknown -> NEW, else TRE)
@@ -160,7 +162,8 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
   const data = await knex
     .from(srcSubquery.as('src'))
     .select(
-      'src.DET',
+      'src.RRDET',
+      'src.MTBDET',
       'src.MtbRifUltraAt',
       'src.patientHistory',
       'src.sampleType',
@@ -182,7 +185,7 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       knex.raw('SUM(CASE WHEN src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as FLQETH'),
       knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHFLQETH')
     )
-    .groupBy('src.DET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType')
+    .groupBy('src.RRDET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType')
 
   return data
 }
