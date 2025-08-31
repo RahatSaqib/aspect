@@ -180,15 +180,15 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       ),
       knex.raw("SUM(IF(src.patientHistory = 'TRE' and src.resultCategoryExternalId = 'Error', 1, 0)) as PREV_ERROR"),
       knex.raw('SUM(src.TOT) as TOT'),
-      knex.raw('SUM(src.INHR) as INHR'),
       knex.raw('SUM(src.INHI) as INHI'),
-      knex.raw('SUM(src.FLQR) as FLQR'),
       knex.raw('SUM(src.FLQI) as FLQI'),
-      knex.raw('SUM(src.ETHR) as ETHR'),
       knex.raw('SUM(src.ETHI) as ETHI'),
-      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 1 THEN 1 ELSE 0 END) as INHFLQ'),
-      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHETH'),
-      knex.raw('SUM(CASE WHEN src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as FLQETH'),
+      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 0 AND src.ETHR = 0 THEN 1 ELSE 0 END) as INHR'),
+      knex.raw('SUM(CASE WHEN src.INHR = 0 AND src.FLQR = 1 AND src.ETHR = 0 THEN 1 ELSE 0 END) as FLQR'),
+      knex.raw('SUM(CASE WHEN src.INHR = 0 AND src.FLQR = 0 AND src.ETHR = 1 THEN 1 ELSE 0 END) as ETHR'),
+      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 1 AND src.ETHR = 0 THEN 1 ELSE 0 END) as INHFLQ'),
+      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 0 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHETH'),
+      knex.raw('SUM(CASE WHEN src.INHR = 0 AND src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as FLQETH'),
       knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHFLQETH')
     )
     .groupBy('src.RRDET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType')
