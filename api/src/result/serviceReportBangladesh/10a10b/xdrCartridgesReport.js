@@ -167,12 +167,18 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       'src.MtbRifUltraAt',
       'src.patientHistory',
       'src.sampleType',
-      knex.raw('IF(src.patientHistory = "NEW" and src.resultCategoryExternalId = "Invalid", 1, 0) as NEW_INVALID'),
-      knex.raw('IF(src.patientHistory = "NEW" and src.resultCategoryExternalId = "NoResult", 1, 0) as NEW_NORESULT'),
-      knex.raw('IF(src.patientHistory = "NEW" and src.resultCategoryExternalId = "Error", 1, 0) as NEW_ERROR'),
-      knex.raw('IF(src.patientHistory = "TRE" and src.resultCategoryExternalId = "Invalid", 1, 0) as PREV_INVALID'),
-      knex.raw('IF(src.patientHistory = "TRE" and src.resultCategoryExternalId = "NoResult", 1, 0) as PREV_NORESULT'),
-      knex.raw('IF(src.patientHistory = "TRE" and src.resultCategoryExternalId = "Error", 1, 0) as PREV_ERROR'),
+      knex.raw("SUM(IF(src.patientHistory = 'NEW' and src.resultCategoryExternalId = 'Invalid', 1, 0)) as NEW_INVALID"),
+      knex.raw(
+        "SUM(IF(src.patientHistory = 'NEW' and src.resultCategoryExternalId = 'NoResult', 1, 0)) as NEW_NORESULT"
+      ),
+      knex.raw("SUM(IF(src.patientHistory = 'NEW' and src.resultCategoryExternalId = 'Error', 1, 0)) as NEW_ERROR"),
+      knex.raw(
+        "SUM(IF(src.patientHistory = 'TRE' and src.resultCategoryExternalId = 'Invalid', 1, 0)) as PREV_INVALID"
+      ),
+      knex.raw(
+        "SUM(IF(src.patientHistory = 'TRE' and src.resultCategoryExternalId = 'NoResult', 1, 0)) as PREV_NORESULT"
+      ),
+      knex.raw("SUM(IF(src.patientHistory = 'TRE' and src.resultCategoryExternalId = 'Error', 1, 0)) as PREV_ERROR"),
       knex.raw('SUM(src.TOT) as TOT'),
       knex.raw('SUM(src.INHR) as INHR'),
       knex.raw('SUM(src.INHI) as INHI'),
