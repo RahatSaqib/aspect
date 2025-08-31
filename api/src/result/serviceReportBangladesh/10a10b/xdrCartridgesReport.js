@@ -1,5 +1,3 @@
-const { subMonths } = require('date-fns')
-
 const { addConstraints, getConstraints } = require('../../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams } = require('../../../db')
 
@@ -35,17 +33,13 @@ const rowLabels = [
 async function getDataForReportXdrCartridges(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  // Resolve date range using shared helper and normalize order
-  const { dateFrom, dateTo } = getDates(query)()
-
+  const { dateFrom, dateTo } = getDatesFromQuery(query)
   const assayIds = await allAssayToId()
-
-  // Build subquery as a composable Knex query per database_access.md patterns
   const data = await getData(dataConstraints, dateFrom, dateTo, query, assayIds)
 
   const labelToValueMap = {}
   const allowedBases = new Set()
-  // Initialize only the combinations that exist in the sheet (24 columns x 12 rows)
+  // Initialize mapping with all the combinations
   for (const g of columnGroups) {
     for (const sp of g.samples) {
       const base = `${g.det}-${g.site}-${g.hist}-${sp}`
@@ -56,12 +50,11 @@ async function getDataForReportXdrCartridges(auth, query) {
     }
   }
 
-  // Fill actual values from query result
+  // Update with actual values from query result
   for (const row of data) {
-    const detFlag = row.RRDET // 'DET' | 'NDET'
+    const detFlag = row.RRDET // 'RRDET' | 'RRNDET'
     const siteFlag = row.MtbRifUltraAt // 'OWN' | 'OTH'
-    // Map query 'TRE' to presentation 'PREV'
-    const historyFlag = row.patientHistory === 'TRE' ? 'PREV' : row.patientHistory // 'NEW' | 'PREV'
+    const historyFlag = row.patientHistory // 'NEW' | 'PREV'
     const sampleFlag = row.sampleType // 'SP' | 'EP' | 'ST' | 'CU'
 
     const base = `${detFlag}-${siteFlag}-${historyFlag}-${sampleFlag}`
@@ -88,20 +81,14 @@ async function getDataForReportXdrCartridges(auth, query) {
   }
 }
 
-function getDates(query) {
-  return () => {
-    const dates = getDatesFromQuery(query)
-    let { dateFrom: df } = dates
-    const { dateTo: dt } = dates
-    if (df >= dt) {
-      df = subMonths(dt, 1)
-    }
-    return { dateFrom: df, dateTo: dt }
-  }
-}
-
 async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
   const resultCategoryIds = await allResultCategoryToId()
+  const invalidCategories = [
+    resultCategoryIds.Invalid,
+    resultCategoryIds.Indeterminate,
+    resultCategoryIds.NoResult,
+    resultCategoryIds.Error,
+  ]
   const positiveResultCategoriesIds = getPositiveCategoriesExternalIds().map(
     rcExternalId => resultCategoryIds[rcExternalId]
   )
@@ -129,15 +116,16 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
     })
     .where('a.id', assayIds.GxMtbXdr)
     .select(
+      'r.resultCategory1 as resultCategory1',
       'rc.externalId as resultCategoryExternalId',
       // Detected vs Not Detected flag
       knex.raw(`IF(rc2.id in (${positiveResultCategoriesIds}), 'RRDET', 'RRNDET') as RRDET`),
       knex.raw(`IF(rc.id in (${positiveResultCategoriesIds}), 1, 0) as MTBDET`),
       // Own Site vs Other Site
       knex.raw(`IF(r.resultData ->> '$.originTestLocation' = 'This site', 'OWN', 'OTH') as MtbRifUltraAt`),
-      // Patient history (New/Unknown -> NEW, else TRE)
+      // Patient history (New/Unknown -> NEW, else PREV)
       knex.raw(`
-        IF(r.patientData ->> '$.PatientHistory' IN ('Previously treated'), 'TRE', 'NEW') as patientHistory
+        IF(r.patientData ->> '$.PatientHistory' IN ('Previously treated'), 'PREV', 'NEW') as patientHistory
       `),
       // Sample type mapping
       knex.raw(`CASE r.patientData ->> '$.SampleType'
@@ -156,14 +144,12 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       knex.raw(`IFNULL(r.resultData ->> '$.allResistances.ETH' = 'Detected', 0) as ETHR`),
       knex.raw(`IFNULL(r.resultData ->> '$.allResistances.ETH' = 'Indeterminate', 0) as ETHI`)
     )
-    .orderBy('r.id', 'desc')
 
   // Wrap aggregation over the subquery using Knex
   const data = await knex
     .from(srcSubquery.as('src'))
     .select(
       'src.RRDET',
-      'src.MTBDET',
       'src.MtbRifUltraAt',
       'src.patientHistory',
       'src.sampleType',
@@ -173,23 +159,45 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       ),
       knex.raw("SUM(IF(src.patientHistory = 'NEW' and src.resultCategoryExternalId = 'Error', 1, 0)) as NEW_ERROR"),
       knex.raw(
-        "SUM(IF(src.patientHistory = 'TRE' and src.resultCategoryExternalId = 'Invalid', 1, 0)) as PREV_INVALID"
+        "SUM(IF(src.patientHistory = 'PREV' and src.resultCategoryExternalId = 'Invalid', 1, 0)) as PREV_INVALID"
       ),
       knex.raw(
-        "SUM(IF(src.patientHistory = 'TRE' and src.resultCategoryExternalId = 'NoResult', 1, 0)) as PREV_NORESULT"
+        "SUM(IF(src.patientHistory = 'PREV' and src.resultCategoryExternalId = 'NoResult', 1, 0)) as PREV_NORESULT"
       ),
-      knex.raw("SUM(IF(src.patientHistory = 'TRE' and src.resultCategoryExternalId = 'Error', 1, 0)) as PREV_ERROR"),
-      knex.raw('SUM(src.TOT) as TOT'),
-      knex.raw('SUM(src.INHI) as INHI'),
-      knex.raw('SUM(src.FLQI) as FLQI'),
-      knex.raw('SUM(src.ETHI) as ETHI'),
-      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 0 AND src.ETHR = 0 THEN 1 ELSE 0 END) as INHR'),
-      knex.raw('SUM(CASE WHEN src.INHR = 0 AND src.FLQR = 1 AND src.ETHR = 0 THEN 1 ELSE 0 END) as FLQR'),
-      knex.raw('SUM(CASE WHEN src.INHR = 0 AND src.FLQR = 0 AND src.ETHR = 1 THEN 1 ELSE 0 END) as ETHR'),
-      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 1 AND src.ETHR = 0 THEN 1 ELSE 0 END) as INHFLQ'),
-      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 0 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHETH'),
-      knex.raw('SUM(CASE WHEN src.INHR = 0 AND src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as FLQETH'),
-      knex.raw('SUM(CASE WHEN src.INHR = 1 AND src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHFLQETH')
+      knex.raw("SUM(IF(src.patientHistory = 'PREV' and src.resultCategoryExternalId = 'Error', 1, 0)) as PREV_ERROR"),
+      knex.raw(`SUM(IF(src.resultCategory1 NOT IN (${invalidCategories}), src.TOT, 0)) as TOT`),
+      knex.raw(`SUM(IF(src.resultCategory1 NOT IN (${invalidCategories}), src.MTBDET, 0)) as MTBDET`),
+      knex.raw(`SUM(IF(src.resultCategory1 NOT IN (${invalidCategories}), src.INHI, 0)) as INHI`),
+      knex.raw(`SUM(IF(src.resultCategory1 NOT IN (${invalidCategories}), src.FLQI, 0)) as FLQI`),
+      knex.raw(`SUM(IF(src.resultCategory1 NOT IN (${invalidCategories}), src.ETHI, 0)) as ETHI`),
+      knex.raw(
+        `SUM(CASE WHEN src.resultCategory1 NOT IN (${invalidCategories})
+        AND src.INHR = 1 AND src.FLQR = 0 AND src.ETHR = 0 THEN 1 ELSE 0 END) as INHR`
+      ),
+      knex.raw(
+        `SUM(CASE WHEN src.resultCategory1 NOT IN (${invalidCategories})
+        AND src.INHR = 0 AND src.FLQR = 1 AND src.ETHR = 0 THEN 1 ELSE 0 END) as FLQR`
+      ),
+      knex.raw(
+        `SUM(CASE WHEN src.resultCategory1 NOT IN (${invalidCategories})
+        AND src.INHR = 0 AND src.FLQR = 0 AND src.ETHR = 1 THEN 1 ELSE 0 END) as ETHR`
+      ),
+      knex.raw(
+        `SUM(CASE WHEN src.resultCategory1 NOT IN (${invalidCategories})
+        AND src.INHR = 1 AND src.FLQR = 1 AND src.ETHR = 0 THEN 1 ELSE 0 END) as INHFLQ`
+      ),
+      knex.raw(
+        `SUM(CASE WHEN src.resultCategory1 NOT IN (${invalidCategories})
+        AND src.INHR = 1 AND src.FLQR = 0 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHETH`
+      ),
+      knex.raw(
+        `SUM(CASE WHEN src.resultCategory1 NOT IN (${invalidCategories})
+        AND src.INHR = 0 AND src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as FLQETH`
+      ),
+      knex.raw(
+        `SUM(CASE WHEN src.resultCategory1 NOT IN (${invalidCategories})
+        AND src.INHR = 1 AND src.FLQR = 1 AND src.ETHR = 1 THEN 1 ELSE 0 END) as INHFLQETH`
+      )
     )
     .groupBy('src.RRDET', 'src.MtbRifUltraAt', 'src.patientHistory', 'src.sampleType')
 
