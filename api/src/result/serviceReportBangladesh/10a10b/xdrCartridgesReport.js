@@ -67,15 +67,31 @@ async function getDataForReportXdrCartridges(auth, query) {
     }
   }
 
+  // Sum up the error/invalid/no result counts across all rows
+  const summaryData = data.reduce(
+    (acc, row) => {
+      acc.NEW_INVALID += row.NEW_INVALID || 0
+      acc.NEW_NORESULT += row.NEW_NORESULT || 0
+      acc.NEW_ERROR += row.NEW_ERROR || 0
+      acc.PREV_INVALID += row.PREV_INVALID || 0
+      acc.PREV_NORESULT += row.PREV_NORESULT || 0
+      acc.PREV_ERROR += row.PREV_ERROR || 0
+      return acc
+    },
+    {
+      NEW_INVALID: 0,
+      NEW_NORESULT: 0,
+      NEW_ERROR: 0,
+      PREV_INVALID: 0,
+      PREV_NORESULT: 0,
+      PREV_ERROR: 0,
+    }
+  )
+
   return {
     ok: true,
     data: {
-      NEW_INVALID: data[0]?.NEW_INVALID || 0,
-      NEW_NORESULT: data[0]?.NEW_NORESULT || 0,
-      NEW_ERROR: data[0]?.NEW_ERROR || 0,
-      PREV_INVALID: data[0]?.PREV_INVALID || 0,
-      PREV_NORESULT: data[0]?.PREV_NORESULT || 0,
-      PREV_ERROR: data[0]?.PREV_ERROR || 0,
+      ...summaryData,
       ...labelToValueMap,
     },
   }
