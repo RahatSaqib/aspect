@@ -50,6 +50,13 @@ class MessageQueue {
     }
   }
 
+  async purgeQueue(queueName) {
+    if (this.channel) {
+      logger.debug(`purgeQueue ${queueName}`, { reLabel: 'aspect:mq:purgeQueue' })
+      return this.channel.purgeQueue(queueName)
+    }
+  }
+
   async close() {
     logger.debug(`close ${this.name}`, { reLabel: 'aspect:mq:close' })
     if (this.channel) {
