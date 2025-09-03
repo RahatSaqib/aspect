@@ -139,7 +139,10 @@ const messageQueuePlugin = {
 
       addLoggers(server, queue)
       await addSubscriptions(queue)
-      await asyncPayloadProcessorStartUp(queue, queue.createMessageContext('aspect_request'))
+
+      if (config.enableAsyncPayloadProcessing) {
+        await asyncPayloadProcessorStartUp(queue, queue.createMessageContext('aspect_request'))
+      }
 
       if (config.scheduler.enabled) {
         const dispatcher = startScheduler(queue)

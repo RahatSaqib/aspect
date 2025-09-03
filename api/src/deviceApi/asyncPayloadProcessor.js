@@ -4,8 +4,16 @@ const { addDeviceDataWithContext } = require('./service')
 const { devicePayloadValidation } = require('./validation')
 const logger = require('../shared/logger')
 const { asyncPayloadReceived } = require('./actions')
+const config = require('../config')
 
 const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
+  if (!config.enableAsyncPayloadProcessing) {
+    logger.warning(
+      `Received async payload to process but async processing is disabled. Skipping DeviceLogId: ${deviceLogId}`
+    )
+    return
+  }
+
   logger.info(`Processing async device payload for DeviceLogId: ${deviceLogId}`)
   const deviceLog = await knex('DeviceLog').where({ id: deviceLogId }).first('rawMessage')
   if (!deviceLog) {
@@ -58,7 +66,7 @@ const asyncPayloadProcessorStartUp = async (queue, messageContext) => {
     messageContext.asyncPayloadReceived(deviceLogId)
   }
 
-  logger.info('Async device payload processor started')
+  logger.info(`Async device payload processor started with ${deviceLogIds.length} unprocessed payloads`)
 }
 
 module.exports = {

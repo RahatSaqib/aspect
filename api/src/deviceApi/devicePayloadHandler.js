@@ -6,13 +6,12 @@ const { deviceApiHandler } = require('./deviceApiHandler')
 const { addDeviceDataWithContext } = require('./service')
 const { normalizeToken } = require('./apiKey')
 const { asyncPayloadReceived } = require('./actions')
-
-const asyncDevicePayloadProcessing = false
+const config = require('../config')
 
 const devicePayloadHandler = async request => {
   const isResultPayload = !!request.payload?.result
 
-  if (!asyncDevicePayloadProcessing || !isResultPayload) {
+  if (!config.enableAsyncPayloadProcessing || !isResultPayload) {
     const response = await deviceApiHandler(addDeviceDataWithContext)(request)
     return response
   }
