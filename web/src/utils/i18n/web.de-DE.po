@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-08-13T11:06:59.387Z\n"
+"POT-Creation-Date: 2025-08-27T11:46:41.873Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3000,6 +3000,13 @@ msgstr "Eingangsdatum der Probe"
 #: extracted_strings.json
 msgid "Date Transferred"
 msgstr "Übertragen am"
+
+#. [samples.dateUploadedToAspect]
+#. defaultMessage is:
+#. Date Uploaded to Aspect
+#: extracted_strings.json
+msgid "Date Uploaded to Aspect"
+msgstr "Datum des Hochladens in Aspect"
 
 #. [pages.dateRangeSelector.day]
 #. defaultMessage is:
@@ -9292,6 +9299,9 @@ msgstr "Patient"
 #. [forms.formItem.patientId]
 #. defaultMessage is:
 #. Patient ID
+#. [samples.patientId]
+#. defaultMessage is:
+#. Patient ID
 #. [pages.ResultList.patientId]
 #. defaultMessage is:
 #. Patient ID
@@ -10971,6 +10981,9 @@ msgstr "Beständig"
 #. [placeholder.result]
 #. defaultMessage is:
 #. Result
+#. [samples.result]
+#. defaultMessage is:
+#. Result
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
@@ -11027,6 +11040,13 @@ msgstr "Ergebnis Kontaminiert"
 #: extracted_strings.json
 msgid "Result Counts by HIV status"
 msgstr "Ergebniszählungen nach HIV-Status"
+
+#. [samples.resultDate]
+#. defaultMessage is:
+#. Result Date
+#: extracted_strings.json
+msgid "Result Date"
+msgstr "Ergebnisdatum"
 
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
@@ -11466,6 +11486,13 @@ msgstr "Speichel"
 msgid "Sample"
 msgstr "Probe"
 
+#. [samples.sampleCollectedBy]
+#. defaultMessage is:
+#. Sample Collected By
+#: extracted_strings.json
+msgid "Sample Collected By"
+msgstr "Probe gesammelt von"
+
 #. [placeholder.result.sample.collected.date]
 #. defaultMessage is:
 #. Sample Collected Date
@@ -11473,7 +11500,17 @@ msgstr "Probe"
 msgid "Sample Collected Date"
 msgstr "Datum der Probenentnahme"
 
+#. [samples.sampleCollectedOn]
+#. defaultMessage is:
+#. Sample Collection Date
+#: extracted_strings.json
+msgid "Sample Collection Date"
+msgstr "Datum der Probenentnahme"
+
 #. [forms.formItem.sampleCollectionSite]
+#. defaultMessage is:
+#. Sample Collection Site
+#. [samples.sampleCollectionSite]
 #. defaultMessage is:
 #. Sample Collection Site
 #. [pages.ResultList.sampleOriginSiteName]
@@ -11490,6 +11527,9 @@ msgstr "Ort der Probenentnahme"
 #. defaultMessage is:
 #. Sample ID
 #. [forms.formItem.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [samples.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.ResultList.sampleId]
@@ -11542,6 +11582,13 @@ msgstr "Ort der Probenentnahme"
 #: extracted_strings.json
 msgid "Sample collection site"
 msgstr "Ort der Probenentnahme"
+
+#. [pages.SampleList.samplesTitle]
+#. defaultMessage is:
+#. Samples
+#: extracted_strings.json
+msgid "Samples"
+msgstr "Proben"
 
 #. [reporters.samplesRegistered]
 #. defaultMessage is:
@@ -12312,6 +12359,17 @@ msgid ""
 msgstr ""
 "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
 "Ergebnis} other {# Ergebnissen} }"
+
+#. [pages.SampleList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# sample} other {# samples} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"sample} other {# samples} }"
+msgstr ""
+"Es werden {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"sample} other {# samples} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
