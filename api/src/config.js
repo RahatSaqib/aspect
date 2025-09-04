@@ -139,6 +139,7 @@ module.exports = {
   serviceStatusFile: process.env.serviceStatusFile,
   maxDaysDeviceNoResults: 14,
   acceptFakeResults: process.env.acceptFakeResults === 'true',
+  enableAsyncPayloadProcessing: process.env.enableAsyncPayloadProcessing === 'true',
 }
 
 configureOptional(module.exports)

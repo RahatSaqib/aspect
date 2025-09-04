@@ -34,9 +34,15 @@ async function getStatus({ query }) {
 
   const lastEmail = await knex('EmailMessage as sm').orderBy('id', 'DESC').first(['createdOn', 'sendResponse'])
 
+  const { count: unprocessedPayloadsCount } = await knex('DeviceLog')
+    .where({ processed: false })
+    .count('id as count')
+    .first()
+
   const response = {
     aspect: { version: cachedVersion },
     lastResult,
+    unprocessedPayloadsCount,
     notification: {
       enabledNotificationCount,
       lastSmsSuccess,
