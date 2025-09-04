@@ -59,7 +59,7 @@ const asyncPayloadProcessorStartUp = async (queue, messageContext) => {
   messageContext.bindActionCreators({ asyncPayloadReceived })
 
   logger.info('Starting up async device payload processor, purging existing messages in queue')
-  queue.purgeQueue('aspect_deviceApi_0_actions_ASYNC_PAYLOAD_RECEIVED')
+  queue.purgeQueues(/.*ASYNC_PAYLOAD_RECEIVED$/)
 
   const deviceLogIds = await knex('DeviceLog').where({ processed: false }).select('id')
   for (const { id: deviceLogId } of deviceLogIds) {

@@ -50,10 +50,13 @@ class MessageQueue {
     }
   }
 
-  async purgeQueue(queueName) {
+  async purgeQueues(queueNameRegex) {
     if (this.channel) {
-      logger.debug(`purgeQueue ${queueName}`, { reLabel: 'aspect:mq:purgeQueue' })
-      return this.channel.purgeQueue(queueName)
+      const queuestoPurge = this.queues.filter(queue => queueNameRegex.test(queue))
+      queuestoPurge.forEach(queue => {
+        logger.debug(`purgeQueue ${queue}`, { reLabel: 'aspect:mq:purgeQueue' })
+        this.channel.purgeQueue(queue)
+      })
     }
   }
 
