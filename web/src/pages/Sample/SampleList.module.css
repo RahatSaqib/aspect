@@ -1,0 +1,17 @@
+.Container {
+  padding: 16px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+}
+
+.SampleDataTable {
+  width: 100%;
+}
+
+/* Override Material-UI container constraints */
+.fullWidth {
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+}

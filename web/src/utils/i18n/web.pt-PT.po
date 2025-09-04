@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-08-13T11:06:59.387Z\n"
+"POT-Creation-Date: 2025-08-27T11:46:41.873Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2997,6 +2997,13 @@ msgstr "Data de receção do espécime"
 #: extracted_strings.json
 msgid "Date Transferred"
 msgstr "Data de transferência"
+
+#. [samples.dateUploadedToAspect]
+#. defaultMessage is:
+#. Date Uploaded to Aspect
+#: extracted_strings.json
+msgid "Date Uploaded to Aspect"
+msgstr "Data de carregamento para Aspect"
 
 #. [pages.dateRangeSelector.day]
 #. defaultMessage is:
@@ -9274,6 +9281,9 @@ msgstr "Paciente"
 #. [forms.formItem.patientId]
 #. defaultMessage is:
 #. Patient ID
+#. [samples.patientId]
+#. defaultMessage is:
+#. Patient ID
 #. [pages.ResultList.patientId]
 #. defaultMessage is:
 #. Patient ID
@@ -10944,6 +10954,9 @@ msgstr "Resistente"
 #. [placeholder.result]
 #. defaultMessage is:
 #. Result
+#. [samples.result]
+#. defaultMessage is:
+#. Result
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
@@ -11000,6 +11013,13 @@ msgstr "Resultado Contaminado"
 #: extracted_strings.json
 msgid "Result Counts by HIV status"
 msgstr "Resultado conta por status de HIV"
+
+#. [samples.resultDate]
+#. defaultMessage is:
+#. Result Date
+#: extracted_strings.json
+msgid "Result Date"
+msgstr "Data do resultado"
 
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
@@ -11439,6 +11459,13 @@ msgstr "Saliva"
 msgid "Sample"
 msgstr "Amostra"
 
+#. [samples.sampleCollectedBy]
+#. defaultMessage is:
+#. Sample Collected By
+#: extracted_strings.json
+msgid "Sample Collected By"
+msgstr "Amostra recolhida por"
+
 #. [placeholder.result.sample.collected.date]
 #. defaultMessage is:
 #. Sample Collected Date
@@ -11446,7 +11473,17 @@ msgstr "Amostra"
 msgid "Sample Collected Date"
 msgstr "Data de coleta da amostra"
 
+#. [samples.sampleCollectedOn]
+#. defaultMessage is:
+#. Sample Collection Date
+#: extracted_strings.json
+msgid "Sample Collection Date"
+msgstr "Data de colheita da amostra"
+
 #. [forms.formItem.sampleCollectionSite]
+#. defaultMessage is:
+#. Sample Collection Site
+#. [samples.sampleCollectionSite]
 #. defaultMessage is:
 #. Sample Collection Site
 #. [pages.ResultList.sampleOriginSiteName]
@@ -11463,6 +11500,9 @@ msgstr "Local de coleta de amostras"
 #. defaultMessage is:
 #. Sample ID
 #. [forms.formItem.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [samples.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.ResultList.sampleId]
@@ -11515,6 +11555,13 @@ msgstr "Colheita de amostra permitida"
 #: extracted_strings.json
 msgid "Sample collection site"
 msgstr "Local de coleta de amostras"
+
+#. [pages.SampleList.samplesTitle]
+#. defaultMessage is:
+#. Samples
+#: extracted_strings.json
+msgid "Samples"
+msgstr "Amostras"
 
 #. [reporters.samplesRegistered]
 #. defaultMessage is:
@@ -12282,6 +12329,17 @@ msgid ""
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 "resultado} other {# resultados} }"
+
+#. [pages.SampleList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# sample} other {# samples} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"sample} other {# samples} }"
+msgstr ""
+"A apresentar {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"sample} other {# samples} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:

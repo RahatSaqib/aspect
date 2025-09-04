@@ -6,8 +6,10 @@ const { resultSourceToId, resultTypeToId, resultWorkflowStatusToId, sampleTypeTo
 const { insertSite } = require('../site/common/db')
 const { getLatestResultWorkflowLog } = require('./result')
 const { getResultCategoriesFromPayload } = require('./utils')
+const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
+const { getSampleIdByExternalId } = require('../sample/common/db')
 
-async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId = null } = {}, context) {
+async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, context) {
   const sampleExternalId = _.get(payload, 'sample.id', null)
 
   const existingResult = await getResultRecord(knex, payload, deviceId, context?.existingResultId)
@@ -52,10 +54,9 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     now
   )
 
-  if (!sampleId) {
-    sampleId = await getExistingSampleIdInCountry(knex, sampleExternalId, payloadSampleTypeId, site.countryId)
-  }
-
+  let sampleId = isValidSampleExternalIdMobileFormat(sampleExternalId)
+    ? await getSampleIdByExternalId(knex, sampleExternalId)
+    : await getExistingSampleIdInCountry(knex, sampleExternalId, payloadSampleTypeId, site.countryId, testStartedOn)
   const opts = { sampleId, sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId }
   const existingSampleDetails = await upsertSample(knex, payload, existingResult, opts)
   ;({ sampleId } = existingSampleDetails)
@@ -415,12 +416,14 @@ async function getSiteIdVarieties(knex, payload, site, now) {
  * @param {string|null} sampleExternalId - The external ID of the sample to search for
  * @param {string|null} sampleTypeExternalId - The external ID of the sample type to match
  * @param {number} countryId - The ID of the country to search within
+ * @param {Date} testStartedOn - The timestamp to filter samples by collection date
  * @returns {Promise<number|null>} The ID of the matching sample if found, null otherwise
  *
  * @description
  * This function searches for an existing sample in the database that matches the given criteria:
  * 1. Has the specified external ID
  * 2. Belongs to the specified country
+ * 3. Was collected before or on the test start date
  *
  * If multiple samples are found, it will:
  * - Return the single match if only one exists
@@ -428,7 +431,7 @@ async function getSiteIdVarieties(knex, payload, site, now) {
  * - If no sample type is provided, prefer samples of type 'Sputum' or with no type
  * - Return null if no matches are found
  */
-async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId) {
+async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
   if (!sampleExternalId) {
     return Promise.resolve(null)
   }
@@ -439,6 +442,7 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
     .where('s.externalId', sampleExternalId)
     .andWhere('s.registeredInAspect', true)
     .andWhere('g.countryId', countryId)
+    .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
     .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
 
@@ -491,6 +495,7 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
 async function upsertSample(knex, payload, existingResult, opts) {
   let { sampleId } = opts
   const { sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId } = opts
+  const now = new Date()
   let existingSample
   if (sampleId == null && existingResult == null) {
     ;[sampleId] = await knex('Sample').insert({
@@ -498,6 +503,8 @@ async function upsertSample(knex, payload, existingResult, opts) {
       collectedOn: _.get(payload, 'sample.collectedOn', null),
       sampleTypeId,
       originSiteId: sampleOriginSiteId,
+      createdOn: now,
+      updatedOn: now,
     })
   } else {
     if (sampleId == null) {
@@ -515,6 +522,7 @@ async function upsertSample(knex, payload, existingResult, opts) {
           collectedOn: payload.sample.collectedOn || existingSample.collectedOn || null,
           sampleTypeId: payloadSampleTypeId ? sampleTypeId : existingSample.sampleTypeId,
           originSiteId: existingSample.originSiteId || sampleOriginSiteId || payloadOriginSiteId,
+          updatedOn: now,
         })
     }
   }

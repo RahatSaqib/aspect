@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-08-13T11:06:59.387Z\n"
+"POT-Creation-Date: 2025-08-27T11:46:41.873Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2994,6 +2994,13 @@ msgstr "Дата получения образца"
 #: extracted_strings.json
 msgid "Date Transferred"
 msgstr "Дата Переведена"
+
+#. [samples.dateUploadedToAspect]
+#. defaultMessage is:
+#. Date Uploaded to Aspect
+#: extracted_strings.json
+msgid "Date Uploaded to Aspect"
+msgstr "Дата загрузки в Aspect"
 
 #. [pages.dateRangeSelector.day]
 #. defaultMessage is:
@@ -9274,6 +9281,9 @@ msgstr "Пациент"
 #. [forms.formItem.patientId]
 #. defaultMessage is:
 #. Patient ID
+#. [samples.patientId]
+#. defaultMessage is:
+#. Patient ID
 #. [pages.ResultList.patientId]
 #. defaultMessage is:
 #. Patient ID
@@ -10949,6 +10959,9 @@ msgstr "Устойчивый"
 #. [placeholder.result]
 #. defaultMessage is:
 #. Result
+#. [samples.result]
+#. defaultMessage is:
+#. Result
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
@@ -11005,6 +11018,13 @@ msgstr "Результат Загрязненные"
 #: extracted_strings.json
 msgid "Result Counts by HIV status"
 msgstr "Подсчет результатов по ВИЧ-статусу"
+
+#. [samples.resultDate]
+#. defaultMessage is:
+#. Result Date
+#: extracted_strings.json
+msgid "Result Date"
+msgstr "Дата результата"
 
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
@@ -11444,6 +11464,13 @@ msgstr "Слюна"
 msgid "Sample"
 msgstr "Пример"
 
+#. [samples.sampleCollectedBy]
+#. defaultMessage is:
+#. Sample Collected By
+#: extracted_strings.json
+msgid "Sample Collected By"
+msgstr "Образец собран"
+
 #. [placeholder.result.sample.collected.date]
 #. defaultMessage is:
 #. Sample Collected Date
@@ -11451,7 +11478,17 @@ msgstr "Пример"
 msgid "Sample Collected Date"
 msgstr "Дата сбора образца"
 
+#. [samples.sampleCollectedOn]
+#. defaultMessage is:
+#. Sample Collection Date
+#: extracted_strings.json
+msgid "Sample Collection Date"
+msgstr "Дата сбора пробы"
+
 #. [forms.formItem.sampleCollectionSite]
+#. defaultMessage is:
+#. Sample Collection Site
+#. [samples.sampleCollectionSite]
 #. defaultMessage is:
 #. Sample Collection Site
 #. [pages.ResultList.sampleOriginSiteName]
@@ -11468,6 +11505,9 @@ msgstr "Сайт взятия проб"
 #. defaultMessage is:
 #. Sample ID
 #. [forms.formItem.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [samples.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.ResultList.sampleId]
@@ -11520,6 +11560,13 @@ msgstr "Взятие проб разрешено"
 #: extracted_strings.json
 msgid "Sample collection site"
 msgstr "Место сбора проб"
+
+#. [pages.SampleList.samplesTitle]
+#. defaultMessage is:
+#. Samples
+#: extracted_strings.json
+msgid "Samples"
+msgstr "Образцы"
 
 #. [reporters.samplesRegistered]
 #. defaultMessage is:
@@ -12288,6 +12335,17 @@ msgid ""
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "результат} other {# Результаты} }"
+
+#. [pages.SampleList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# sample} other {# samples} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"sample} other {# samples} }"
+msgstr ""
+"Показано {firstItemIndex}-{lastItemIndex} из {itemCount, plural, one {# "
+"sample} other {# samples} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
