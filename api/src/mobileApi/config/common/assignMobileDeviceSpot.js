@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const { knex } = require('../../../db')
+const { getDateTimeExpressionInTimeZone } = require('../../../shared/date')
 
 /**
  * Assigns a mobile device spot to a device code
@@ -7,9 +8,10 @@ const { knex } = require('../../../db')
  * Uses SELECT FOR UPDATE to ensure concurrency safety
  * @param {string} deviceCode - The device code to look up
  * @param {number} userId - The user ID for updating records
+ * @param {string} timezoneIANA - The user's timezone for proper date filtering
  * @returns {Promise<Object>} Response containing the appId or error
  */
-async function assignMobileDeviceSpot(deviceCode, userId) {
+async function assignMobileDeviceSpot(deviceCode, userId, timezoneIANA) {
   if (!deviceCode || typeof deviceCode !== 'string') {
     throw new Error('Invalid device code provided')
   }
@@ -29,28 +31,35 @@ async function assignMobileDeviceSpot(deviceCode, userId) {
 
     // Find first available record with priority order using SELECT FOR UPDATE
     // Exclude records where deviceIdentifier has been used in Sample records created today
-    const availableRecord = await trx('MobileDevice')
-      .leftJoin('Sample', function () {
-        this.on('MobileDevice.deviceIdentifier', trx.raw('SUBSTRING(Sample.externalId, 1, 3)'))
-          .andOn('Sample.createdOn', '>=', trx.raw('DATE(NOW())'))
-          .andOn('Sample.externalId', 'regexp', '^\\d{3}-\\d{6}-\\d{3}$')
+    const availableRecord = await trx('MobileDevice as md')
+      .leftJoin('Sample as s', function () {
+        this.on('md.deviceIdentifier', trx.raw('SUBSTRING(s.externalId, 1, 3)'))
+          .andOn('s.createdOn', '>=', trx.raw(`DATE(${getDateTimeExpressionInTimeZone(trx, 'NOW()', timezoneIANA)})`))
+          .andOn('s.externalId', 'regexp', '^\\d{3}-\\d{6}-\\d{3}$')
       })
-      .whereNull('Sample.id') // Exclude records used in today's samples
+      .whereNull('s.id') // Exclude records used in today's samples
       .select(
-        'MobileDevice.*',
+        'md.id',
+        'md.deviceIdentifier',
+        'md.deviceCode',
+        'md.active',
+        'md.createdOn',
+        'md.createdBy',
+        'md.updatedOn',
+        'md.updatedBy',
         trx
           .raw(
             `CASE
-    WHEN MobileDevice.deviceCode IS NULL THEN 1
-    WHEN MobileDevice.active = false THEN 2
-    WHEN MobileDevice.active = true AND MobileDevice.updatedOn < DATE_SUB(NOW(), INTERVAL 3 MONTH) THEN 3
+    WHEN md.deviceCode IS NULL THEN 1
+    WHEN md.active = false THEN 2
+    WHEN md.active = true AND md.updatedOn < DATE_SUB(NOW(), INTERVAL 3 MONTH) THEN 3
     ELSE 4
   END as priority`
           )
           .first()
       )
       .orderBy('priority', 'asc')
-      .orderBy('MobileDevice.updatedOn', 'asc') // Oldest first within same priority
+      .orderBy('md.updatedOn', 'asc') // Oldest first within same priority
       .forUpdate() // Lock the row for update to prevent race conditions
 
     if (!availableRecord) {
@@ -58,7 +67,7 @@ async function assignMobileDeviceSpot(deviceCode, userId) {
     }
 
     // Assign the record to the deviceCode
-    const auditoryData = {
+    const assignmentData = {
       deviceCode,
       active: true,
       updatedBy: userId,
@@ -67,13 +76,13 @@ async function assignMobileDeviceSpot(deviceCode, userId) {
 
     // Only set createdBy and createdOn if they are null (new assignment)
     if (!availableRecord.createdBy) {
-      auditoryData.createdBy = userId
+      assignmentData.createdBy = userId
     }
     if (!availableRecord.createdOn) {
-      auditoryData.createdOn = new Date()
+      assignmentData.createdOn = new Date()
     }
 
-    await trx('MobileDevice').where('id', availableRecord.id).update(auditoryData)
+    await trx('MobileDevice').where('id', availableRecord.id).update(assignmentData)
 
     return {
       appId: availableRecord.deviceIdentifier,

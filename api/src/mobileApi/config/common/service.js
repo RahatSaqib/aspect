@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const { assignMobileDeviceSpot } = require('./assignMobileDeviceSpot')
+const { getUserFromCredentials } = require('../../../auth/constraints')
 
 async function fetchApplicationConfigServiceHandler() {
   return Promise.resolve({
@@ -98,9 +99,13 @@ async function fetchSystemConfigServiceHandler() {
  */
 async function fetchAppIdFromUniqueDeviceCodeHandler({ query, auth }) {
   const deviceCode = query?.deviceCode
-  const userId = auth?.credentials?.id || 1 // Default to admin user if no auth
+  const userId = auth?.credentials?.id
+
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA } = user
+
   try {
-    const result = await assignMobileDeviceSpot(deviceCode, userId)
+    const result = await assignMobileDeviceSpot(deviceCode, userId, timezoneIANA)
     return {
       ok: true,
       data: { appId: result.appId },
