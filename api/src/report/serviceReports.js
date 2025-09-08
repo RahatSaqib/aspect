@@ -49,7 +49,7 @@ async function getSheetData(auth, queryParams, timezone, sheet, sharedResults) {
   try {
     endpointModule = require(`../${moduleName}`) //eslint-disable-line
   } catch (error) {
-    return Boom.preconditionFailed(`Can not load module ${moduleName}: ${error.toString()}`)
+    throw Boom.preconditionFailed(`Can not load module ${moduleName}: ${error.toString()}`)
   }
 
   const dataFunc = endpointModule[functionName]
