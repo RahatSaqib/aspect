@@ -152,7 +152,14 @@ const messagesResult = defineMessages({
     id: 'pages.resultEdit.TBRegistrationNumberCurrentI18nKey',
     defaultMessage: 'TB Registration Number - Current',
   },
-  //
+  originTestLocationi18nKey: {
+    id: 'pages.resultEdit.originTestLocationi18nKey',
+    defaultMessage: 'Original test location',
+  },
+  originTestLocationi18nCaptionKey: {
+    id: 'pages.resultEdit.originTestLocationi18nCaptionKey',
+    defaultMessage: 'Indicates whether the original test was performed at this site or a different one',
+  },
   male: {
     id: 'pages.resultEdit.male',
     defaultMessage: 'Male',
