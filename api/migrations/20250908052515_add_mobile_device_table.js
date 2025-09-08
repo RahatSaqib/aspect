@@ -6,8 +6,10 @@ exports.up = function (knex) {
     table.string('deviceIdentifier', 3).notNullable().unique().index()
     table.string('deviceCode', 100).nullable().index()
     table.boolean('active').defaultTo(false).notNullable().index()
-    table.index(['deviceCode', 'active'])
-    addAuditFields(table)
+    table.integer('createdBy').nullable().unsigned().index().references('id').inTable('User')
+    table.dateTime('createdOn').nullable()
+    table.integer('updatedBy').nullable().unsigned().index().references('id').inTable('User')
+    table.dateTime('updatedOn').nullable()
   })
 }
 
