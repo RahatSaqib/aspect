@@ -1,5 +1,4 @@
-const crypto = require('crypto')
-const { assignMobileDeviceSpot } = require('./assignMobileDeviceSpot')
+const { assignMobileAppSpot } = require('./assignMobileAppSpot')
 const { getUserFromCredentials } = require('../../../auth/constraints')
 
 async function fetchApplicationConfigServiceHandler() {
@@ -105,7 +104,7 @@ async function fetchAppIdFromUniqueDeviceCodeHandler({ query, auth }) {
   const { timezoneIANA } = user
 
   try {
-    const result = await assignMobileDeviceSpot(deviceCode, userId, timezoneIANA)
+    const result = await assignMobileAppSpot(deviceCode, userId, timezoneIANA)
     return {
       ok: true,
       data: { appId: result.appId },

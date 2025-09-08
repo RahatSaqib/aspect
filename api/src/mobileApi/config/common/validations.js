@@ -72,7 +72,7 @@ const retrieveAppIdConfigResponseValidation = () => {
       otherwise: Joi.object().keys({
         error: Joi.string().required().description('Error message describing the problem'),
         statusCode: Joi.number().optional().description('HTTP status code for the error (409 for conflict)'),
-      })
+      }),
     }),
   })
 }
