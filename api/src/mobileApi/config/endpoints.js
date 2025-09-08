@@ -49,14 +49,15 @@ const routes = [
     path: '/v4/config/retrieve-app-id',
     handler: asyncHandler(fetchAppIdFromUniqueDeviceCodeHandler),
     config: {
-      auth: false,
+      auth: { scope: ['result:view'] },
       validate: {
         query: {
-          deviceCode: Joi.string().required(),
+          deviceCode: Joi.string().required().description('Unique hardware device code from the mobile device'),
         },
       },
       description: 'Endpoint for retrieving app-id based on unique device code sent by the mobile app',
-      notes: 'Used for syncing Aspect Mobile configuration options',
+      notes:
+        'Assigns the first available 3-digit app ID based on priority: unassigned records, oldest inactive records, or oldest active records older than 3 months. Returns 409 conflict if all mobile spots are assigned.',
       response: {
         options: { allowUnknown: false },
         schema: retrieveAppIdConfigResponseValidation(),
