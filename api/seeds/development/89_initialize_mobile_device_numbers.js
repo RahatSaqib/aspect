@@ -5,7 +5,11 @@ module.exports = require('../utils').seed(async knex => {
     const deviceIdentifier = i.toString().padStart(3, '0')
     deviceNumbers.push({
       deviceIdentifier,
-      active: false, // Initially inactive until assigned to a real device
+      active: false,
+      createdOn: new Date(),
+      updatedOn: new Date(), // Initially inactive until assigned to a real device
+      createdBy: 1,
+      updatedBy: 1,
     })
   }
 
