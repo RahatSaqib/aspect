@@ -1,3 +1,4 @@
+const Boom = require('@hapi/boom')
 const { knex } = require('../../../db')
 
 /**
@@ -53,7 +54,7 @@ async function assignMobileDeviceSpot(deviceCode, userId) {
       .forUpdate() // Lock the row for update to prevent race conditions
 
     if (!availableRecord) {
-      throw new Error('All mobile spots are assigned.')
+      throw Boom.conflict('All mobile spots are assigned.')
     }
 
     // Assign the record to the deviceCode

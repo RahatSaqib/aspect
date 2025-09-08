@@ -106,11 +106,11 @@ async function fetchAppIdFromUniqueDeviceCodeHandler({ query, auth }) {
       data: { appId: result.appId },
     }
   } catch (error) {
-    if (error.message === 'All mobile spots are assigned.') {
+    if (error.isBoom && error.output.statusCode === 409) {
       return {
         ok: false,
         error: error.message,
-        statusCode: 409
+        statusCode: 409,
       }
     }
     return {
