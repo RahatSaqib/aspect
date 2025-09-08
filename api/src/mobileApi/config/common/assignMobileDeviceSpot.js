@@ -27,26 +27,30 @@ async function assignMobileDeviceSpot(deviceCode, userId) {
     }
 
     // Find first available record with priority order using SELECT FOR UPDATE
+    // Exclude records where deviceIdentifier has been used in Sample records created today
     const availableRecord = await trx('MobileDevice')
-      .where(function () {
-        // Unassigned records (no deviceCode)
-        this.whereNull('deviceCode')
-          .orWhere(function () {
-            // Inactive records (active = false)
-            this.where('active', false)
-          })
-          .orWhere(function () {
-            // Active records older than 3 months
-            this.where('active', true).where('updatedOn', '<', trx.raw('DATE_SUB(NOW(), INTERVAL 3 MONTH)'))
-          })
+      .leftJoin('Sample', function () {
+        this.on('MobileDevice.deviceIdentifier', trx.raw('SUBSTRING(Sample.externalId, 1, 3)'))
+          .andOn('Sample.createdOn', '>=', trx.raw('DATE(NOW())'))
+          .andOn('Sample.externalId', 'regexp', '^\\d{3}-\\d{6}-\\d{3}$')
       })
-      .orderBy([
-        { column: 'deviceCode', order: 'asc', nulls: 'first' }, // Unassigned first
-        { column: 'active', order: 'asc' }, // Inactive before active
-        { column: 'updatedOn', order: 'asc' }, // Oldest first
-      ])
+      .whereNull('Sample.id') // Exclude records used in today's samples
+      .select(
+        'MobileDevice.*',
+        trx
+          .raw(
+            `CASE
+    WHEN MobileDevice.deviceCode IS NULL THEN 1
+    WHEN MobileDevice.active = false THEN 2
+    WHEN MobileDevice.active = true AND MobileDevice.updatedOn < DATE_SUB(NOW(), INTERVAL 3 MONTH) THEN 3
+    ELSE 4
+  END as priority`
+          )
+          .first()
+      )
+      .orderBy('priority', 'asc')
+      .orderBy('MobileDevice.updatedOn', 'asc') // Oldest first within same priority
       .forUpdate() // Lock the row for update to prevent race conditions
-      .first()
 
     if (!availableRecord) {
       throw new Error('All mobile spots are assigned.')
