@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-08-27T11:46:41.873Z\n"
+"POT-Creation-Date: 2025-09-08T21:56:42.802Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.7\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -5949,6 +5949,17 @@ msgstr "Increase/Decrease"
 msgid "Indeterminate"
 msgstr "Indeterminate"
 
+#. [pages.resultEdit.originTestLocationi18nCaptionKey]
+#. defaultMessage is:
+#. Indicates whether the original test was performed at this site or a different one
+#: extracted_strings.json
+msgid ""
+"Indicates whether the original test was performed at this site or a "
+"different one"
+msgstr ""
+"Indicates whether the original test was performed at this site or a "
+"different one"
+
 #. [pages.Notifications.table.notificationsTableHeaderJobFunctionsPersons]
 #. defaultMessage is:
 #. Individual Persons
@@ -6260,7 +6271,7 @@ msgstr "Inventory on Hand"
 #. Inventory settings updated successfully.
 #: extracted_strings.json
 msgid "Inventory settings updated successfully."
-msgstr "Inventory levels have been adjusted successfully"
+msgstr "Inventory settings updated successfully."
 
 #. [pages.DeviceDetailEdit.isDaisyChained]
 #. defaultMessage is:
@@ -9098,6 +9109,14 @@ msgstr "Ordered"
 msgid "Origin Site"
 msgstr "Origin Site"
 
+#. [pages.resultEdit.originTestLocationi18nKey]
+#. defaultMessage is:
+#. Original test location
+#: extracted_strings.json
+#| msgid "Enable this notification"
+msgid "Original test location"
+msgstr "Original test location"
+
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Other]
 #. defaultMessage is:
 #. Other
@@ -10989,10 +11008,8 @@ msgstr "Result Counts by HIV status"
 #. defaultMessage is:
 #. Result Date
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Test Date"
 msgid "Result Date"
-msgstr "Test Date"
+msgstr "Result Date"
 
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
@@ -11436,10 +11453,8 @@ msgstr "Sample"
 #. defaultMessage is:
 #. Sample Collected By
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Sample Collected Date"
 msgid "Sample Collected By"
-msgstr "Sample Collected Date"
+msgstr "Sample Collected By"
 
 #. [placeholder.result.sample.collected.date]
 #. defaultMessage is:
@@ -11452,10 +11467,8 @@ msgstr "Sample Collected Date"
 #. defaultMessage is:
 #. Sample Collection Date
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Sample Collection Site"
 msgid "Sample Collection Date"
-msgstr "Sample Collection Site"
+msgstr "Sample Collection Date"
 
 #. [forms.formItem.sampleCollectionSite]
 #. defaultMessage is:
@@ -11537,10 +11550,8 @@ msgstr "Sample collection site"
 #. defaultMessage is:
 #. Samples
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Sample"
 msgid "Samples"
-msgstr "Sample"
+msgstr "Samples"
 
 #. [reporters.samplesRegistered]
 #. defaultMessage is:
@@ -12312,16 +12323,12 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# sample} other {# samples} }
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#| "supply} other {# supplies} }"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "sample} other {# samples} }"
 msgstr ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"supply} other {# supplies} }"
+"sample} other {# samples} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
