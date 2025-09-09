@@ -1,7 +1,5 @@
-const { addAuditFields } = require('./utils')
-
-exports.up = function (knex) {
-  return knex.schema.createTable('MobileDevice', function (table) {
+module.exports.up = async function up(knex) {
+  await knex.schema.createTable('MobileDevice', function (table) {
     table.increments('id').primary()
     table.string('deviceIdentifier', 3).notNullable().unique().index()
     table.string('deviceCode', 100).nullable().index()
@@ -11,8 +9,12 @@ exports.up = function (knex) {
     table.integer('updatedBy').nullable().unsigned().index().references('id').inTable('User')
     table.dateTime('updatedOn').nullable()
   })
+
+  await knex.schema.alterTable('Sample', function (table) {
+    table.string('source', 35).nullable()
+  })
 }
 
-exports.down = function (knex) {
-  return knex.schema.dropTable('MobileDevice')
+module.exports.down = async function down(knex) {
+  await knex.schema.dropTable('MobileDevice')
 }

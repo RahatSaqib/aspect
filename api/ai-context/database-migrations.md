@@ -26,7 +26,7 @@ module.exports.up = async function up(knex) {
   })
 }
 
-module.exports.down(knex) {
+module.exports.down  = async function(knex) {
   await knex.schema.alterTable('Sample', sample => {
     sample.dropForeign('patientId')
     sample.dropColumn('patientId')

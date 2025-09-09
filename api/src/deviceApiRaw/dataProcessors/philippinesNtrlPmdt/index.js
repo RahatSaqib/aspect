@@ -159,7 +159,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               await knex('Sample').where('id', existingSample.id).update(sample)
             }
           } else {
-            const [sampleId] = await knex('Sample').insert({ ...sample, createdOn: now })
+            const [sampleId] = await knex('Sample').insert({ ...sample, createdOn: now, source: 'result' })
             sample.id = sampleId
           }
         })

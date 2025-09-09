@@ -188,6 +188,7 @@ describe.skip('Dashboard routes - GET /api/dashboard/results-transmitted', () =>
         const sample = {
           externalId: `SMP-TB-${format(new Date(), 'TT')}`,
           collectedOn: getRandomDate(),
+          source: 'result',
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteId,
         }

@@ -501,6 +501,7 @@ async function upsertSample(knex, payload, existingResult, opts) {
     ;[sampleId] = await knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
       collectedOn: _.get(payload, 'sample.collectedOn', null),
+      source: 'result',
       sampleTypeId,
       originSiteId: sampleOriginSiteId,
       createdOn: now,
