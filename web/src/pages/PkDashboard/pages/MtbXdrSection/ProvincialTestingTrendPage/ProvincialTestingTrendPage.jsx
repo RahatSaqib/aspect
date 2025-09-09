@@ -54,9 +54,15 @@ const ProvincialTestingTrendPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
+  const stateName = getCustomMessage(formatMessage, messages, 'state', user, { entity: 'state' })
+
   return (
     <PkPage
-      title={formatMessage(user.isPakistan ? messages.ProvincialTestingTrend : messages.provincialMtbXdrTestingTrends)}
+      title={
+        user.isPakistan
+          ? `${stateName} ${formatMessage(messages.testingTrend)}`
+          : `${stateName} ${formatMessage(messages.MtbXdrTestingTrends)}`
+      }
       filters={
         <>
           <StateAutocomplete
@@ -85,7 +91,7 @@ const ProvincialTestingTrendPage = () => {
           <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
             {user.isCountry('PK') ? undefined : (
               <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-                {formatMessage(messages.provincialXDRTestingTrends)}
+                {stateName} {formatMessage(messages.XDRTestingTrends)}
               </Typography>
             )}
 
@@ -107,7 +113,7 @@ const ProvincialTestingTrendPage = () => {
           <Grid item xs={12} md={4} lg={4} container>
             <ProvinceTrendTable
               rows={tableData}
-              title={user.isCountry('PK') ? undefined : formatMessage(messages.provincialXDRTestingTrendsCurrentYear)}
+              title={`${stateName} ${formatMessage(messages.XDRTestingTrendsCurrentYear)}`}
             />
           </Grid>
         </Grid>

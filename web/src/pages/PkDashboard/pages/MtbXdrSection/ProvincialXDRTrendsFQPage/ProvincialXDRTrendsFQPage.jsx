@@ -56,9 +56,11 @@ const ProvincialXDRTrendsFQPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
+  const stateName = getCustomMessage(formatMessage, messages, 'state', user, { entity: 'state' })
+
   return (
     <PkPage
-      title={formatMessage(messages.provincialDistrictFqrDiagnosisTrends)}
+      title={`${stateName} ${formatMessage(messages.fqrDiagnosisTrends)}`}
       filters={
         <>
           <StateAutocomplete
@@ -86,7 +88,7 @@ const ProvincialXDRTrendsFQPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} lg={8} sx={{ p: 1 }} container>
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-              {formatMessage(messages.provincialFqrDiagnosisTrends)}
+              {`${stateName} ${formatMessage(messages.fqrDiagnosisTrends)}`}
             </Typography>
             {graphData ? (
               <div style={{ width: '100%' }}>
@@ -105,7 +107,7 @@ const ProvincialXDRTrendsFQPage = () => {
           </Grid>
           <Grid item xs={12} lg={4} container>
             <ProvinceTrendTable
-              title={`${formatMessage(messages.provincialFqrDiagnosisTrends)} in current year`}
+              title={`${stateName} ${formatMessage(messages.fqrDiagnosisTrendsCurrentYear)}`}
               rows={tableData}
               resultType={!user.isPakistan ? 'FQ-R' : undefined}
             />

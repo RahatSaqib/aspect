@@ -54,9 +54,11 @@ const ProvincialTestingTrendPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
+  const stateName = getCustomMessage(formatMessage, messages, 'state', user, { entity: 'state' })
+
   return (
     <PkPage
-      title={formatMessage(messages.ProvincialTBTestingTrend)}
+      title={`${stateName}  ${formatMessage(messages.TBTestingTrend)}`}
       filters={
         <>
           <StateAutocomplete
@@ -84,7 +86,7 @@ const ProvincialTestingTrendPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} container>
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-              {formatMessage(messages.provincialTestingTrends)}
+              {stateName} {formatMessage(messages.testingTrends)}
             </Typography>
             {graphData ? (
               <div style={{ width: '100%' }}>
@@ -103,7 +105,10 @@ const ProvincialTestingTrendPage = () => {
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
             {tableData ? (
-              <ProvinceTrendTable title={formatMessage(messages.provincialTestingTrendsYear)} rows={tableData} />
+              <ProvinceTrendTable
+                title={`${stateName} ${formatMessage(messages.testingTrendsYear)}`}
+                rows={tableData}
+              />
             ) : null}
           </Grid>
         </Grid>
