@@ -2,9 +2,9 @@ module.exports = require('../utils').seed(async knex => {
   // Generate all possible 3-digit numbers (000-999)
   const deviceNumbers = []
   for (let i = 0; i <= 999; i++) {
-    const deviceIdentifier = i.toString().padStart(3, '0')
+    const deviceAppSpot = i.toString().padStart(3, '0')
     deviceNumbers.push({
-      deviceIdentifier,
+      deviceAppSpot,
       active: false,
       createdOn: new Date(),
       updatedOn: new Date(), // Initially inactive until assigned to a real device

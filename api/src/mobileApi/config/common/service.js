@@ -94,7 +94,7 @@ async function fetchSystemConfigServiceHandler() {
  * @param {Object} params.auth - Authentication object
  * @param {Object} params.auth.credentials - User credentials
  * @param {number} params.auth.credentials.id - User ID
- * @returns {Promise<Object>} Response containing the deviceIdentifier or error message
+ * @returns {Promise<Object>} Response containing the deviceAppSpot or error message
  */
 async function fetchAppIdFromUniqueDeviceCodeHandler({ query, auth }) {
   const deviceCode = query?.deviceCode
