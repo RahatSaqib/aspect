@@ -99,7 +99,7 @@ async function findFirstAvailableRecord(trx, timezoneIANA) {
 }
 
 const findExistingAssignment = async (trx, deviceCode) =>
-  trx('MobileDevice').where('deviceCode', deviceCode).first().forUpdate()
+  trx('MobileDevice').where('deviceCode', deviceCode).where('active', true).first().forUpdate()
 
 const updateMobileDevice = async (trx, id, data) => trx('MobileDevice').where('id', id).update(data)
 
