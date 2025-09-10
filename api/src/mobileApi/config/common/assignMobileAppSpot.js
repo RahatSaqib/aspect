@@ -71,7 +71,7 @@ async function findFirstAvailableRecord(trx, timezoneIANA) {
     .leftJoin('Sample as s', function () {
       this.on('md.deviceAppSpot', trx.raw('SUBSTRING(s.externalId, 1, 3)'))
         .andOn('s.createdOn', '>=', trx.raw(`DATE(${getDateTimeExpressionInTimeZone(trx, 'NOW()', timezoneIANA)})`))
-        .andOn('s.externalId', 'regexp', '^\\d{3}-\\d{6}-\\d{3}$')
+        .andOn('s.externalId', 'regexp', trx.raw("'^\\\\d{3}-\\\\d{6}-\\\\d{3}$'"))
     })
     .whereNull('s.id') // Exclude spots used in today's samples to avoid repeatitions in a reinstallation of the app
     .select(
