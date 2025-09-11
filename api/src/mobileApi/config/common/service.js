@@ -1,3 +1,4 @@
+const Boom = require('@hapi/boom')
 const { assignMobileAppSpot } = require('./assignMobileAppSpot')
 const { getUserFromCredentials } = require('../../../auth/constraints')
 
@@ -111,16 +112,11 @@ async function fetchAppIdFromUniqueDeviceCodeHandler({ query, auth }) {
     }
   } catch (error) {
     if (error.isBoom && error.output.statusCode === 409) {
-      return {
-        ok: false,
-        error: error.message,
-        statusCode: 409,
-      }
+      // Re-throw Boom errors so they get proper HTTP status codes
+      throw error
     }
-    return {
-      ok: false,
-      error: error.message || 'Failed to assign mobile device',
-    }
+    // For non-Boom errors, wrap them in a Boom error
+    throw Boom.badImplementation(error.message || 'Failed to assign mobile device spot')
   }
 }
 

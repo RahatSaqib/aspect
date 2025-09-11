@@ -32,7 +32,8 @@ async function assignMobileAppSpot(deviceCode, userId, timezoneIANA) {
 
     const availableSpot = await findFirstAvailableRecord(trx, timezoneIANA)
 
-    if (!availableSpot) {
+    if (!availableSpot || availableSpot.priority > 3) {
+      // If priority = 4 => The best candidate is active.
       throw Boom.conflict('All mobile spots are assigned.')
     }
 
