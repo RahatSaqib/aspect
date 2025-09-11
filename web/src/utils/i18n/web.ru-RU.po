@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-09-08T21:56:42.802Z\n"
+"POT-Creation-Date: 2025-09-11T10:53:48.799Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.7\n"
+"X-Generator: Poedit 3.6\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -3556,6 +3556,27 @@ msgstr "Устройства из лаборатории"
 msgid "Devices with Unused Modules"
 msgstr "Устройства с неиспользуемыми модулями"
 
+#. [p.PkDashboard.diagnosisTrends]
+#. defaultMessage is:
+#. Diagnosis Trends
+#: extracted_strings.json
+msgid "Diagnosis Trends"
+msgstr "Тенденции диагностики"
+
+#. [p.PkDashboard.diagnosisTrendsComparisonNew]
+#. defaultMessage is:
+#. Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "Diagnosis Trends Comparison"
+msgstr "Сравнение тенденций диагностики"
+
+#. [p.PkDashboard.tbCasesDiagnosed.currentYearNew]
+#. defaultMessage is:
+#. Diagnosis Trends for the current year
+#: extracted_strings.json
+msgid "Diagnosis Trends for the current year"
+msgstr "Тенденции диагностики на текущий год"
+
 #. [contextualMenu.notifications.disable.status.title]
 #. defaultMessage is:
 #. Disable
@@ -4515,6 +4536,20 @@ msgstr "Сопротивление FLQ"
 #: extracted_strings.json
 msgid "FQ & INH Testing & Diagnosis"
 msgstr "Тестирование и диагностика FQ и INH"
+
+#. [p.PkDashboard.FQDiagnosisTrends]
+#. defaultMessage is:
+#. FQ Diagnosis Trends
+#: extracted_strings.json
+msgid "FQ Diagnosis Trends"
+msgstr "Тенденции диагностики FQ"
+
+#. [p.PkDashboard.FqrDiagnosisTrends]
+#. defaultMessage is:
+#. FQ Diagnosis Trends in current year
+#: extracted_strings.json
+msgid "FQ Diagnosis Trends in current year"
+msgstr "Тенденции диагностики FQ в текущем году"
 
 #. [pages.XDR.cnt_flq]
 #. defaultMessage is:
@@ -7258,6 +7293,13 @@ msgstr "MTB Выявленная резистентность Восприимч
 msgid "MTB Detection"
 msgstr "Обнаружение МТБ"
 
+#. [p.PkDashboard.MtbDetectionTrendsComparison]
+#. defaultMessage is:
+#. MTB Detection Trends Comparison
+#: extracted_strings.json
+msgid "MTB Detection Trends Comparison"
+msgstr "Сравнение тенденций обнаружения MTB"
+
 #. [resultCategoryGroup.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -7589,6 +7631,34 @@ msgstr "Тенденции MTB+ в году"
 msgid "MTB+ and Trace"
 msgstr "MTB+ и Trace"
 
+#. [p.PkDashboard.MTBPositivesTrends.currentYear]
+#. defaultMessage is:
+#. MTB+ detected in current year
+#: extracted_strings.json
+msgid "MTB+ detected in current year"
+msgstr "MTB+ обнаружен в текущем году"
+
+#. [p.PkDashboard.MTBPositivesTrends]
+#. defaultMessage is:
+#. MTB+ detection trends
+#: extracted_strings.json
+msgid "MTB+ detection trends"
+msgstr "Тенденции обнаружения MTB+"
+
+#. [p.PkDashboard.MTBDiagnosisCurrentYear]
+#. defaultMessage is:
+#. MTB+ diagnosed in current year
+#: extracted_strings.json
+msgid "MTB+ diagnosed in current year"
+msgstr "МБТ+ диагностирован в текущем году"
+
+#. [p.PkDashboard.MTBDiagnosis]
+#. defaultMessage is:
+#. MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "MTB+ diagnosis trends"
+msgstr "Тенденции диагностики MTB+"
+
 #. [p.PkDashboard.titlemtbRif]
 #. defaultMessage is:
 #. MTB/RIF
@@ -7612,6 +7682,13 @@ msgstr "МТБ/Риф"
 #: extracted_strings.json
 msgid "MTB/XDR"
 msgstr "MTB/XDR"
+
+#. [p.PkDashboard.MtbXdrTestingTrends]
+#. defaultMessage is:
+#. MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "MTB/XDR Testing Trends"
+msgstr "Тенденции тестирования MTB/XDR"
 
 #. [pages.Status.mtbXDRDrugResistance]
 #. defaultMessage is:
@@ -10061,163 +10138,6 @@ msgstr "Провинция/Регион"
 msgid "Provinces annual utilization rates"
 msgstr "Годовые коэффициенты использования в провинциях"
 
-#. [p.PkDashboard.provincialDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial Diagnosis Trends"
-msgstr "Провинциальные тенденции в диагностике"
-
-#. [p.PkDashboard.provincialDiagnosisTrendsComparison]
-#. defaultMessage is:
-#. Provincial Diagnosis Trends Comparison
-#: extracted_strings.json
-msgid "Provincial Diagnosis Trends Comparison"
-msgstr "Сравнение тенденций провинциальных диагнозов"
-
-#. [p.PkDashboard.tbCasesDiagnosed.currentYear]
-#. defaultMessage is:
-#. Provincial Diagnosis Trends for the current year
-#: extracted_strings.json
-msgid "Provincial Diagnosis Trends for the current year"
-msgstr "Провинциальные диагнозы Тенденции развития в текущем году"
-
-#. [p.PkDashboard.provincialFqrDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial FQ Diagnosis Trends
-#. [p.PkDashboard.ProvincialFQDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial FQ Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial FQ Diagnosis Trends"
-msgstr "Провинциальные тенденции диагностики FQ"
-
-#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
-#. defaultMessage is:
-#. Provincial MTB Detection Trends Comparison
-#: extracted_strings.json
-msgid "Provincial MTB Detection Trends Comparison"
-msgstr "Сравнение тенденций выявления МТБ в провинциях"
-
-#. [p.PkDashboard.provincialMTBPositivesTrends.currentYear]
-#. defaultMessage is:
-#. Provincial MTB+ detected in current year
-#: extracted_strings.json
-msgid "Provincial MTB+ detected in current year"
-msgstr "Провинциальный МТБ+, выявленный в текущем году"
-
-#. [p.PkDashboard.provincialMTBPositivesTrends]
-#. defaultMessage is:
-#. Provincial MTB+ detection trends
-#: extracted_strings.json
-msgid "Provincial MTB+ detection trends"
-msgstr "Провинциальные тенденции выявления МТБ+"
-
-#. [p.PkDashboard.provincialMTBDiagnosisCurrentYear]
-#. defaultMessage is:
-#. Provincial MTB+ diagnosed in current year
-#: extracted_strings.json
-msgid "Provincial MTB+ diagnosed in current year"
-msgstr "Провинциальный МТБ+, диагностированный в текущем году"
-
-#. [p.PkDashboard.provincialMTBDiagnosis]
-#. defaultMessage is:
-#. Provincial MTB+ diagnosis trends
-#: extracted_strings.json
-msgid "Provincial MTB+ diagnosis trends"
-msgstr "Провинциальные тенденции диагностики МТБ+"
-
-#. [p.PkDashboard.provincialMtbXdrTestingTrends]
-#. defaultMessage is:
-#. Provincial MTB/XDR Testing Trends
-#: extracted_strings.json
-msgid "Provincial MTB/XDR Testing Trends"
-msgstr "Тенденции тестирования на МТБ/ШЛУ в провинциях"
-
-#. [p.PkDashboard.provincialRRDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial RR Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial RR Diagnosis Trends"
-msgstr "Провинциальные тенденции в диагностике РР"
-
-#. [p.PkDashboard.provincialRRTBDiagnosisTrendsCurrentYear]
-#. defaultMessage is:
-#. Provincial RR-TB diagnosed in current year
-#: extracted_strings.json
-msgid "Provincial RR-TB diagnosed in current year"
-msgstr "Провинциальный РР-ТБ, диагностированный в текущем году"
-
-#. [p.PkDashboard.provincialRRTBDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial RR-TB diagnosis trends
-#: extracted_strings.json
-msgid "Provincial RR-TB diagnosis trends"
-msgstr "Провинциальные тенденции в диагностике РР-ТБ"
-
-#. [p.PkDashboard.ProvincialRRTBDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial RRTB Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial RRTB Diagnosis Trends"
-msgstr "Тенденции диагностики РРТБ в провинциях"
-
-#. [p.PkDashboard.ProvincialTBDiagnosisTrendsComparison]
-#. defaultMessage is:
-#. Provincial TB Diagnosis Trends Comparison
-#: extracted_strings.json
-msgid "Provincial TB Diagnosis Trends Comparison"
-msgstr "Сравнение тенденций диагностики туберкулеза в регионах"
-
-#. [p.PkDashboard.ProvincialTBTestingTrend]
-#. defaultMessage is:
-#. Provincial TB Testing Trend
-#: extracted_strings.json
-msgid "Provincial TB Testing Trend"
-msgstr "Провинциальная тенденция тестирования на туберкулез"
-
-#. [p.PkDashboard.ProvincialTestingTrend]
-#. defaultMessage is:
-#. Provincial Testing Trend
-#: extracted_strings.json
-msgid "Provincial Testing Trend"
-msgstr "Тенденция провинциального тестирования"
-
-#. [p.PkDashboard.provincialTestingTrendsYear]
-#. defaultMessage is:
-#. Provincial Testing in current year
-#: extracted_strings.json
-msgid "Provincial Testing in current year"
-msgstr "Провинциальное тестирование в текущем году"
-
-#. [p.PkDashboard.provincialXDRTestingTrendsCurrentYear]
-#. defaultMessage is:
-#. Provincial XDR testing in current year
-#: extracted_strings.json
-msgid "Provincial XDR testing in current year"
-msgstr "Тестирование на наличие ХДР в провинциях в текущем году"
-
-#. [p.PkDashboard.provincialXDRTestingTrends]
-#. defaultMessage is:
-#. Provincial XDR testing trends
-#: extracted_strings.json
-msgid "Provincial XDR testing trends"
-msgstr "Тенденции тестирования на ХЛУ в провинциях"
-
-#. [p.PkDashboard.provincial.district.FqrDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial/District FQ Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial/District FQ Diagnosis Trends"
-msgstr "Провинциальные/районные тенденции по диагностике FQ"
-
-#. [p.PkDashboard.provincialTestingTrends]
-#. defaultMessage is:
-#. Provincial/District Testing Trends
-#: extracted_strings.json
-msgid "Provincial/District Testing Trends"
-msgstr "Тенденции тестирования в провинциях и округах"
-
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
 #. Provisioned
@@ -10375,6 +10295,13 @@ msgstr "RIF сопротивление"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Количество положительных результатов"
 
+#. [p.PkDashboard.RRDiagnosisTrends]
+#. defaultMessage is:
+#. RR Diagnosis Trends
+#: extracted_strings.json
+msgid "RR Diagnosis Trends"
+msgstr "Тенденции диагностики RR"
+
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
 #. RR cases diagnosed
@@ -10413,9 +10340,19 @@ msgstr "РР К Тб Всего Процент"
 #. [p.PkDashboard.rrtbDiagnosedCurrentYear]
 #. defaultMessage is:
 #. RR-TB diagnosed in current year
+#. [p.PkDashboard.RRTBDiagnosisTrendsCurrentYear]
+#. defaultMessage is:
+#. RR-TB diagnosed in current year
 #: extracted_strings.json
 msgid "RR-TB diagnosed in current year"
 msgstr "РР-ТБ, диагностированный в текущем году"
+
+#. [p.PkDashboard.RRTBDiagnosisTrends2]
+#. defaultMessage is:
+#. RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "RR-TB diagnosis trends"
+msgstr "Тенденции диагностики РУ-ТБ"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -10458,6 +10395,13 @@ msgstr "Случаев РРТ диагностировано в текущем �
 #: extracted_strings.json
 msgid "RRTB Diagnosis"
 msgstr "Диагностика РРТ"
+
+#. [p.PkDashboard.RRTBDiagnosisTrends]
+#. defaultMessage is:
+#. RRTB Diagnosis Trends
+#: extracted_strings.json
+msgid "RRTB Diagnosis Trends"
+msgstr "Тенденции диагностики РРТБ"
 
 #. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
@@ -13073,6 +13017,13 @@ msgstr "TB DST"
 msgid "TB Diagnosis"
 msgstr "Диагностика туберкулеза"
 
+#. [p.PkDashboard.TBDiagnosisTrendsComparison]
+#. defaultMessage is:
+#. TB Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "TB Diagnosis Trends Comparison"
+msgstr "Сравнение тенденций диагностики туберкулеза"
+
 #. [filter.AssayTypeSelectField.assayTypeTbGnd]
 #. defaultMessage is:
 #. TB G&D
@@ -13131,6 +13082,13 @@ msgstr "Тестирование на ТБ"
 #: extracted_strings.json
 msgid "TB Testing & Diagnosis Trends"
 msgstr "Тенденции в области тестирования и диагностики ТБ"
+
+#. [p.PkDashboard.TBTestingTrend]
+#. defaultMessage is:
+#. TB Testing Trend
+#: extracted_strings.json
+msgid "TB Testing Trend"
+msgstr "Тенденция к тестированию на туберкулез"
 
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
@@ -13300,12 +13258,33 @@ msgstr "История тестирования"
 msgid "Testing"
 msgstr "Тестирование"
 
+#. [p.PkDashboard.testingTrend]
+#. defaultMessage is:
+#. Testing Trend
+#: extracted_strings.json
+msgid "Testing Trend"
+msgstr "Тестирование тренда"
+
+#. [p.PkDashboard.testingTrends]
+#. defaultMessage is:
+#. Testing Trends
+#: extracted_strings.json
+msgid "Testing Trends"
+msgstr "Тенденции тестирования"
+
 #. [pages.Status.TB.testingTrendsInYear.title]
 #. defaultMessage is:
 #. Testing Trends In Year
 #: extracted_strings.json
 msgid "Testing Trends In Year"
 msgstr "Тенденции тестирования в году"
+
+#. [p.PkDashboard.testingTrendsYear]
+#. defaultMessage is:
+#. Testing in current year
+#: extracted_strings.json
+msgid "Testing in current year"
+msgstr "Тестирование в текущем году"
 
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
 #. defaultMessage is:
@@ -15300,6 +15279,20 @@ msgstr "Тестирование на ШЛУ и тенденции выявле�
 msgid "XDR drug resistance trends"
 msgstr "Тенденции развития лекарственной устойчивости к ШЛУ"
 
+#. [p.PkDashboard.XDRTestingTrendsCurrentYear]
+#. defaultMessage is:
+#. XDR testing in current year
+#: extracted_strings.json
+msgid "XDR testing in current year"
+msgstr "Тестирование XDR в текущем году"
+
+#. [p.PkDashboard.XDRTestingTrends]
+#. defaultMessage is:
+#. XDR testing trends
+#: extracted_strings.json
+msgid "XDR testing trends"
+msgstr "Тенденции тестирования XDR"
+
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
 #. Xpert HCV Viral Load Cartridge
@@ -16295,6 +16288,51 @@ msgstr "{unit} с прошлой недели"
 msgid "{unit} total calibrations"
 msgstr "{unit} суммарные калибровки"
 
+#~ msgid "Provincial Diagnosis Trends"
+#~ msgstr "Провинциальные тенденции в диагностике"
+
+#~ msgid "Provincial MTB+ detected in current year"
+#~ msgstr "Провинциальный МТБ+, выявленный в текущем году"
+
+#~ msgid "Provincial MTB+ detection trends"
+#~ msgstr "Провинциальные тенденции выявления МТБ+"
+
+#~ msgid "Provincial MTB+ diagnosed in current year"
+#~ msgstr "Провинциальный МТБ+, диагностированный в текущем году"
+
+#~ msgid "Provincial MTB+ diagnosis trends"
+#~ msgstr "Провинциальные тенденции диагностики МТБ+"
+
+#~ msgid "Provincial MTB/XDR Testing Trends"
+#~ msgstr "Тенденции тестирования на МТБ/ШЛУ в провинциях"
+
+#~ msgid "Provincial RR Diagnosis Trends"
+#~ msgstr "Провинциальные тенденции в диагностике РР"
+
+#~ msgid "Provincial RR-TB diagnosed in current year"
+#~ msgstr "Провинциальный РР-ТБ, диагностированный в текущем году"
+
+#~ msgid "Provincial RR-TB diagnosis trends"
+#~ msgstr "Провинциальные тенденции в диагностике РР-ТБ"
+
+#~ msgid "Provincial RRTB Diagnosis Trends"
+#~ msgstr "Тенденции диагностики РРТБ в провинциях"
+
+#~ msgid "Provincial TB Testing Trend"
+#~ msgstr "Провинциальная тенденция тестирования на туберкулез"
+
+#~ msgid "Provincial Testing Trend"
+#~ msgstr "Тенденция провинциального тестирования"
+
+#~ msgid "Provincial XDR testing trends"
+#~ msgstr "Тенденции тестирования на ХЛУ в провинциях"
+
+#~ msgid "Provincial/District FQ Diagnosis Trends"
+#~ msgstr "Провинциальные/районные тенденции по диагностике FQ"
+
+#~ msgid "Provincial/District Testing Trends"
+#~ msgstr "Тенденции тестирования в провинциях и округах"
+
 #~ msgid ""
 #~ "As there is unreconciled consumption for the specified cartridge, "
 #~ "{consumableName}, system cant allow delisting of the same at the site. "
@@ -16482,9 +16520,6 @@ msgstr "{unit} суммарные калибровки"
 #~ msgstr ""
 #~ "Тенденции в области тестирования и диагностики туберкулеза с "
 #~ "использованием анализатора MTB/Rif"
-
-#~ msgid "TB and RRTB Diagnosis Trends"
-#~ msgstr "Тенденции диагностики ТБ и РРТБ"
 
 #~ msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
 #~ msgstr ""
@@ -16750,9 +16785,6 @@ msgstr "{unit} суммарные калибровки"
 
 #~ msgid "Current FQ Trends"
 #~ msgstr "Текущие тенденции FQ"
-
-#~ msgid "Current TB Testing Trends"
-#~ msgstr "Текущие тенденции тестирования на туберкулез"
 
 #~ msgid "Hiv"
 #~ msgstr "ВИЧ"
