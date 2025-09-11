@@ -5,20 +5,16 @@ module.exports = require('../utils').seed(async knex => {
     const deviceAppSpot = i.toString().padStart(3, '0')
     deviceNumbers.push({
       deviceAppSpot,
-      active: false,
+      active: false, // Initially inactive until assigned to a real device
       createdOn: new Date(),
-      updatedOn: new Date(), // Initially inactive until assigned to a real device
+      updatedOn: new Date(),
       createdBy: 1,
       updatedBy: 1,
     })
   }
 
-  // Insert all numbers in batches to avoid memory issues
-  const batchSize = 100
-  const batches = []
-  for (let i = 0; i < deviceNumbers.length; i += batchSize) {
-    const batch = deviceNumbers.slice(i, i + batchSize)
-    batches.push(knex('MobileDevice').insert(batch))
+  for (let i = 0; i < deviceNumbers.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await knex('MobileDevice').insert(deviceNumbers[i])
   }
-  await Promise.all(batches)
 }, __filename)
