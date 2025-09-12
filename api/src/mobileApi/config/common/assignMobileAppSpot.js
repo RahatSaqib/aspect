@@ -84,7 +84,9 @@ async function findFirstAvailableSpot(trx, deviceCode) {
     .whereNull('recentSamples.id') // Exclude spots used in today's samples to avoid repetitions in case of a reinstallation of the app
     .modify(qb => {
       if (deviceCode) {
-        qb.whereNull('md.deviceCode').orWhereNot('md.deviceCode', deviceCode)
+        qb.where(function () {
+          this.whereNull('md.deviceCode').orWhereNot('md.deviceCode', deviceCode)
+        })
       }
     })
     .select(
@@ -108,6 +110,7 @@ async function findFirstAvailableSpot(trx, deviceCode) {
     )
     .orderBy('priority', 'asc')
     .orderBy('md.updatedOn', 'asc') // Oldest first within same priority
+    .orderBy('md.deviceAppSpot', 'asc')
     .forUpdate() // Lock the row for update to prevent race conditions
     .first()
 }
