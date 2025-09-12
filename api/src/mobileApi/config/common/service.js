@@ -101,11 +101,8 @@ async function fetchAppIdFromUniqueDeviceCodeHandler({ query, auth }) {
   const deviceCode = query?.deviceCode
   const userId = auth?.credentials?.id
 
-  const user = await getUserFromCredentials(auth.credentials)
-  const { timezoneIANA } = user
-
   try {
-    const result = await assignMobileAppSpot(deviceCode, userId, timezoneIANA)
+    const result = await assignMobileAppSpot(deviceCode, userId)
     return {
       ok: true,
       data: { appId: result.appId },

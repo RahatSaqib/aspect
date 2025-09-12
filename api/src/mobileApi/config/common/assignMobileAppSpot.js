@@ -1,6 +1,5 @@
 const Boom = require('@hapi/boom')
 const { knex } = require('../../../db')
-const { getDateTimeExpressionInTimeZone } = require('../../../shared/date')
 
 /**
  * Assigns a mobile device spot to a device code
@@ -11,10 +10,9 @@ const { getDateTimeExpressionInTimeZone } = require('../../../shared/date')
  * Ensures concurrency safety
  * @param {string} deviceCode - The device code to look up
  * @param {number} userId - The userId for updating records
- * @param {string} timezoneIANA - The user's timezone for proper date filtering
  * @returns {Promise<Object>} - Response containing the App Spot or error
  */
-async function assignMobileAppSpot(deviceCode, userId, timezoneIANA) {
+async function assignMobileAppSpot(deviceCode, userId) {
   if (!deviceCode) {
     throw new Error('Missing device code')
   }
@@ -30,7 +28,7 @@ async function assignMobileAppSpot(deviceCode, userId, timezoneIANA) {
       })
     }
 
-    const availableSpot = await findFirstAvailableRecord(trx, timezoneIANA)
+    const availableSpot = await findFirstAvailableRecord(trx)
 
     if (!availableSpot || availableSpot.priority > 3) {
       // If priority = 4 => The best candidate is active.
@@ -64,14 +62,13 @@ async function assignMobileAppSpot(deviceCode, userId, timezoneIANA) {
  * Excludes records where deviceAppSpot has been used in Sample records created today
  * Uses SELECT FOR UPDATE to ensure concurrency safety
  * @param {Object} trx - Database transaction
- * @param {string} timezoneIANA - The user's timezone for proper date filtering
  * @returns {Promise<Object|null>} Available record or null if none found
  */
-async function findFirstAvailableRecord(trx, timezoneIANA) {
+async function findFirstAvailableRecord(trx) {
   return trx('MobileDevice as md')
     .leftJoin('Sample as s', function () {
       this.on('md.deviceAppSpot', trx.raw('SUBSTRING(s.externalId, 1, 3)'))
-        .andOn('s.createdOn', '>=', trx.raw(`DATE(${getDateTimeExpressionInTimeZone(trx, 'NOW()', timezoneIANA)})`))
+        .andOn('s.createdOn', '>=', trx.raw(`DATE_SUB(NOW(), INTERVAL 2 DAY)`))
         .andOn('s.externalId', 'regexp', trx.raw("'^\\\\d{3}-\\\\d{6}-\\\\d{3}$'"))
     })
     .whereNull('s.id') // Exclude spots used in today's samples to avoid repeatitions in a reinstallation of the app
