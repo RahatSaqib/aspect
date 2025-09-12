@@ -49,7 +49,7 @@ const routes = [
     path: '/v4/config/retrieve-app-id',
     handler: asyncHandler(fetchAppIdFromUniqueDeviceCodeHandler),
     config: {
-      auth: { scope: ['result:view'] },
+      auth: { scope: [] },
       validate: {
         query: {
           deviceCode: Joi.string().required().description('Unique hardware device code from the mobile device'),
