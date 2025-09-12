@@ -43,10 +43,6 @@ async function populateUsedRecordsFromSamples(knex) {
     return knex('MobileDevice').where('deviceAppSpot', record.deviceAppSpot).update({
       deviceCode: 'N/A',
       active: true,
-      createdBy: record.createdBy,
-      createdOn: record.firstUsedOn,
-      updatedBy: record.createdBy,
-      updatedOn: record.lastUsedOn,
     })
   })
 

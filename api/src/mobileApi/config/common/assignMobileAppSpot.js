@@ -7,6 +7,7 @@ const { knex } = require('../../../db')
  *   1) Unassigned spots
  *   2) Oldest inactive spot
  *   3) Oldest active spot > 3 months without sending samples
+ *   4) Oldest active spot > 3 months from assignment wihtout any sample created
  * Ensures concurrency safety
  * @param {string} deviceCode - The device code to look up
  * @param {number} userId - The userId for updating records
@@ -28,10 +29,10 @@ async function assignMobileAppSpot(deviceCode, userId) {
       })
     }
 
-    const availableSpot = await findFirstAvailableRecord(trx)
+    const availableSpot = await findFirstAvailableSpot(trx, deviceCode)
 
-    if (!availableSpot || availableSpot.priority > 3) {
-      // If priority = 4 => The best candidate is active.
+    if (!availableSpot || availableSpot.priority > 4) {
+      // If priority > 4 => The best candidate is active.
       throw Boom.conflict('All mobile spots are assigned.')
     }
 
@@ -42,10 +43,8 @@ async function assignMobileAppSpot(deviceCode, userId) {
       updatedOn: new Date(),
     }
 
-    if (!availableSpot.createdBy) {
-      assignmentData.createdBy = userId
-    }
     if (!availableSpot.createdOn) {
+      assignmentData.createdBy = userId
       assignmentData.createdOn = new Date()
     }
 
@@ -62,16 +61,32 @@ async function assignMobileAppSpot(deviceCode, userId) {
  * Excludes records where deviceAppSpot has been used in Sample records created today
  * Uses SELECT FOR UPDATE to ensure concurrency safety
  * @param {Object} trx - Database transaction
+ * @param {string} deviceCode - The device code to exclude
  * @returns {Promise<Object|null>} Available record or null if none found
  */
-async function findFirstAvailableRecord(trx) {
+async function findFirstAvailableSpot(trx, deviceCode) {
   return trx('MobileDevice as md')
-    .leftJoin('Sample as s', function () {
-      this.on('md.deviceAppSpot', trx.raw('SUBSTRING(s.externalId, 1, 3)'))
-        .andOn('s.createdOn', '>=', trx.raw(`DATE_SUB(NOW(), INTERVAL 2 DAY)`))
-        .andOn('s.externalId', 'regexp', trx.raw("'^\\\\d{3}-\\\\d{6}-\\\\d{3}$'"))
+    .leftJoin('Sample as recentSamples', function () {
+      this.on('md.deviceAppSpot', knex.raw('SUBSTRING(recentSamples.externalId, 1, 3)'))
+        .andOn('recentSamples.createdOn', '>=', knex.raw(`DATE_SUB(NOW(), INTERVAL 2 DAY)`))
+        .andOn('recentSamples.externalId', 'regexp', knex.raw("'^\\\\d{3}-\\\\d{6}-\\\\d{3}$'"))
     })
-    .whereNull('s.id') // Exclude spots used in today's samples to avoid repeatitions in a reinstallation of the app
+    .leftJoin(
+      trx('Sample as ls')
+        .select(knex.raw('SUBSTRING(ls.externalId, 1, 3) as deviceAppSpot'), knex.raw('MAX(ls.createdOn) as createdOn'))
+        .where('ls.externalId', 'regexp', knex.raw("'^\\\\d{3}-\\\\d{6}-\\\\d{3}$'"))
+        .groupBy(knex.raw('SUBSTRING(ls.externalId, 1, 3)'))
+        .as('lastSample'),
+      function () {
+        this.on('md.deviceAppSpot', 'lastSample.deviceAppSpot').andOn('lastSample.createdOn', '>', 'md.updatedOn') // the spot could have a previous assignment, let's skip any sample generated in a previous assignment..
+      }
+    )
+    .whereNull('recentSamples.id') // Exclude spots used in today's samples to avoid repetitions in case of a reinstallation of the app
+    .modify(qb => {
+      if (deviceCode) {
+        qb.whereNull('md.deviceCode').orWhereNot('md.deviceCode', deviceCode)
+      }
+    })
     .select(
       'md.id',
       'md.deviceAppSpot',
@@ -81,12 +96,13 @@ async function findFirstAvailableRecord(trx) {
       'md.createdBy',
       'md.updatedOn',
       'md.updatedBy',
-      trx.raw(
+      knex.raw(
         `CASE
     WHEN md.deviceCode IS NULL THEN 1
     WHEN md.active = false THEN 2
-    WHEN md.active = true AND md.updatedOn < DATE_SUB(NOW(), INTERVAL 3 MONTH) THEN 3
-    ELSE 4
+    WHEN lastSample.deviceAppSpot is not null and lastSample.createdOn < DATE_SUB(NOW(), INTERVAL 3 MONTH) THEN 3
+    WHEN lastSample.deviceAppSpot is null and md.updatedOn < DATE_SUB(NOW(), INTERVAL 3 MONTH) THEN 4
+    ELSE 10
   END as priority`
       )
     )

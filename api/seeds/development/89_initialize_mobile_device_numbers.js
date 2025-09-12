@@ -7,10 +7,6 @@ module.exports = require('../utils').seed(async knex => {
     await knex('MobileDevice').insert({
       deviceAppSpot,
       active: false, // Initially inactive until assigned to a real device
-      createdOn: new Date(),
-      updatedOn: new Date(),
-      createdBy: 1,
-      updatedBy: 1,
     })
   }
 }, __filename)
