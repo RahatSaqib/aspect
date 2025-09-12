@@ -244,7 +244,7 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
     })
 
     it('should allow assignment to spots used in samples from previous days', async () => {
-      const yesterday = subDays(new Date(), 1)
+      const aWeekAgo = subDays(new Date(), 7)
 
       await setupTestData(
         [{ deviceAppSpot: '001', deviceCode: null, active: false, updatedOn: subDays(new Date(), 5) }],
@@ -255,8 +255,8 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
       const testSamples = [
         {
           externalId: '001-240909-001',
-          createdOn: yesterday,
-          updatedOn: yesterday,
+          createdOn: aWeekAgo,
+          updatedOn: aWeekAgo,
           createdBy: testUserId,
           updatedBy: testUserId,
         },
