@@ -1,4 +1,4 @@
-const { createAuditTriggers } = require('./utils/createAuditTriggers')
+const { addAuditoryTriggers } = require('./utils/addAuditTriggers')
 
 module.exports.up = async function up(knex) {
   await knex.schema.createTable('MobileDevice', function (table) {
@@ -21,10 +21,10 @@ module.exports.up = async function up(knex) {
     table.dateTime('createdOn').nullable()
     table.integer('updatedBy').nullable()
     table.dateTime('updatedOn').nullable()
-    table.dateTime('timestamp').nullable().defaultTo(knex.fn.now())
+    table.dateTime('auditTime').nullable().defaultTo(knex.fn.now())
   })
 
-  await createAuditTriggers(knex, 'MobileDevice', 'z_MobileDevice')
+  await addAuditoryTriggers(knex, 'MobileDevice', 'z_MobileDevice')
 
   await knex.schema.alterTable('Sample', function (table) {
     table.string('source', 35).nullable()
@@ -46,13 +46,17 @@ module.exports.up = async function up(knex) {
     table.boolean('registeredInAspect').nullable()
     table.dateTime('createdOn').nullable()
     table.integer('createdBy').unsigned().nullable()
-    table.dateTime('timestamp').nullable().defaultTo(knex.fn.now())
+    table.dateTime('auditTime').nullable().defaultTo(knex.fn.now())
   })
 
-  await createAuditTriggers(knex, 'Sample', 'z_Sample')
+  await addAuditoryTriggers(knex, 'Sample', 'z_Sample')
 }
 
 module.exports.down = async function down(knex) {
   await knex.schema.dropTable('z_Sample')
+  await knex.schema.dropTable('z_MobileDevice')
   await knex.schema.dropTable('MobileDevice')
+  await knex.schema.alterTable('Sample', function (table) {
+    table.dropColumn('source')
+  })
 }
