@@ -12,7 +12,7 @@ module.exports.up = async function up(knex) {
     table.dateTime('updatedOn').nullable()
   })
 
-  await knex.schema.createTable('z_MobileDevice', function (table) {
+  await knex.schema.createTable('MobileDevice_AUDIT', function (table) {
     table.integer('id').nullable()
     table.string('deviceAppSpot', 3).nullable()
     table.string('deviceCode', 100).nullable()
@@ -24,13 +24,13 @@ module.exports.up = async function up(knex) {
     table.dateTime('auditTime').nullable().defaultTo(knex.fn.now())
   })
 
-  await addAuditoryTriggers(knex, 'MobileDevice', 'z_MobileDevice')
+  await addAuditoryTriggers(knex, 'MobileDevice', 'MobileDevice_AUDIT')
 
   await knex.schema.alterTable('Sample', function (table) {
     table.string('source', 35).nullable()
   })
 
-  await knex.schema.createTable('z_Sample', function (table) {
+  await knex.schema.createTable('Sample_AUDIT', function (table) {
     table.integer('id').nullable()
     table.string('externalId', 255).nullable()
     table.dateTime('collectedOn').nullable()
@@ -49,12 +49,12 @@ module.exports.up = async function up(knex) {
     table.dateTime('auditTime').nullable().defaultTo(knex.fn.now())
   })
 
-  await addAuditoryTriggers(knex, 'Sample', 'z_Sample')
+  await addAuditoryTriggers(knex, 'Sample', 'Sample_AUDIT')
 }
 
 module.exports.down = async function down(knex) {
-  await knex.schema.dropTable('z_Sample')
-  await knex.schema.dropTable('z_MobileDevice')
+  await knex.schema.dropTable('Sample_AUDIT')
+  await knex.schema.dropTable('MobileDevice_AUDIT')
   await knex.schema.dropTable('MobileDevice')
   await knex.schema.alterTable('Sample', function (table) {
     table.dropColumn('source')
