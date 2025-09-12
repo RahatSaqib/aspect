@@ -1,22 +1,17 @@
 module.exports = require('../utils').seed(async knex => {
   // Generate all possible 3-digit numbers (000-999)
-  const deviceNumbers = []
   for (let i = 0; i <= 999; i++) {
     const deviceAppSpot = i.toString().padStart(3, '0')
-    deviceNumbers.push({
+    // eslint-disable-next-line no-await-in-loop
+    await knex('MobileDevice').insert({
       deviceAppSpot,
       active: false, // Initially inactive until assigned to a real device
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      createdBy: 1,
+      updatedBy: 1,
     })
   }
-
-  // Insert all numbers in batches to avoid memory issues
-  const batchSize = 100
-  const batches = []
-  for (let i = 0; i < deviceNumbers.length; i += batchSize) {
-    const batch = deviceNumbers.slice(i, i + batchSize)
-    batches.push(knex('MobileDevice').insert(batch))
-  }
-  await Promise.all(batches)
 
   // Populate used records from existing Sample data
   await populateUsedRecordsFromSamples(knex)
