@@ -9,14 +9,16 @@ const { run } = require('../../src/db')
 const { expect, assert } = chai
 
 describe('Mobile App Spot Assignment Priority Tests', () => {
+  let lastSample
   const testUserId = 1
   const testTimezone = 'America/New_York'
 
+  before(async () => {
+    lastSample = await knex('Sample').orderBy('id', 'desc').first('id')
+  })
+
   // Helper function to set up test data by updating existing seeded records
   const setupTestData = async (updates, options = {}) => {
-    // Clean up any previous test data first
-    await cleanupTestData()
-
     // Apply the test updates to specific deviceAppSpot records
     const updatePromises = updates.map(update =>
       knex('MobileDevice').where('deviceAppSpot', update.deviceAppSpot).update(update)
@@ -43,14 +45,26 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
     await knex('Sample').insert(samples)
   }
 
+  const generateSamplesForAllSpots = async (skipIfTheSpotHasAlreadyASample = false) => {
+    await knex('Sample')
+      .into(knex.raw('?? (??)', ['Sample', 'externalId']))
+      .insert(
+        knex('MobileDevice as md')
+          .select({
+            externalId: knex.raw("concat(md.deviceAppSpot, '-251001-001')"),
+          })
+          .modify(qb => {
+            if (skipIfTheSpotHasAlreadyASample) {
+              qb.whereNotIn('md.deviceAppSpot', knex('Sample').select(knex.raw('SUBSTRING(externalId, 1, 3)')))
+            }
+          })
+      )
+  }
+
   // Helper function to clean up test data
   const cleanupTestData = async () => {
     // Delete any test Sample records we created
-    await knex('Sample').where('externalId', 'like', 'TEST-%').delete()
-    // Also clean up samples with the pattern used in tests (XXX-XXXXXX-XXX)
-    await knex('Sample').where('externalId', 'regexp', '^\\d{3}-\\d{6}-\\d{3}$').delete()
-    // Clean up samples with invalid patterns used in tests
-    await knex('Sample').whereIn('externalId', ['001-invalid-format', 'not-numeric-001']).delete()
+    await knex('Sample').where('id', '>', lastSample.id).delete()
 
     // Reset ALL MobileDevice records back to their original seeded state
     await knex('MobileDevice').update({
@@ -188,7 +202,7 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
   describe('Sample exclusion: Skip spots that have informed Samples today', () => {
     it('should skip spots that have been used in samples created today', async () => {
       const today = new Date()
-      const yesterday = subDays(new Date(), 1)
+      const aWeekAgo = subDays(new Date(), 7)
 
       await setupTestData(
         [
@@ -209,13 +223,15 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
         },
         {
           externalId: '002-240909-001', // Uses deviceAppSpot '002' but yesterday
-          createdOn: yesterday,
-          updatedOn: yesterday,
+          createdOn: aWeekAgo,
+          updatedOn: aWeekAgo,
           createdBy: testUserId,
           updatedBy: testUserId,
         },
       ]
       await createTestSamples(testSamples)
+
+      await generateSamplesForAllSpots(true)
 
       const spot = await assignMobileAppSpot('TEST-DEVICE-007', testUserId, testTimezone)
 
