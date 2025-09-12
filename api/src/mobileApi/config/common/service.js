@@ -1,6 +1,5 @@
 const Boom = require('@hapi/boom')
 const { assignMobileAppSpot } = require('./assignMobileAppSpot')
-const { getUserFromCredentials } = require('../../../auth/constraints')
 
 async function fetchApplicationConfigServiceHandler() {
   return Promise.resolve({
