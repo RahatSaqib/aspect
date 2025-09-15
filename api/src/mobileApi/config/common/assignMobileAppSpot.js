@@ -24,12 +24,13 @@ async function assignMobileAppSpot(deviceCode, userId) {
     if (existingAssignment) {
       await updateMobileDevice(trx, existingAssignment.id, {
         active: false,
+        deviceCode: null,
         updatedBy: userId,
         updatedOn: new Date(),
       })
     }
 
-    const availableSpot = await findFirstAvailableSpot(trx, deviceCode)
+    const availableSpot = await findFirstAvailableSpot(trx)
 
     if (!availableSpot || availableSpot.priority > 4) {
       // If priority > 4 => The best candidate is active.
@@ -61,10 +62,9 @@ async function assignMobileAppSpot(deviceCode, userId) {
  * Excludes records where deviceAppSpot has been used in Sample records created today
  * Uses SELECT FOR UPDATE to ensure concurrency safety
  * @param {Object} trx - Database transaction
- * @param {string} deviceCode - The device code to exclude
  * @returns {Promise<Object|null>} Available record or null if none found
  */
-async function findFirstAvailableSpot(trx, deviceCode) {
+async function findFirstAvailableSpot(trx) {
   return trx('MobileDevice as md')
     .leftJoin('Sample as recentSamples', function () {
       this.on('md.deviceAppSpot', knex.raw('SUBSTRING(recentSamples.externalId, 1, 3)'))
@@ -82,9 +82,6 @@ async function findFirstAvailableSpot(trx, deviceCode) {
       }
     )
     .whereNull('recentSamples.id') // Exclude spots used in today's samples to avoid repetitions in case of a reinstallation of the app
-    .where(function () {
-      this.whereNull('md.deviceCode').orWhereNot('md.deviceCode', deviceCode) // Ignore previous assignment
-    })
     .select(
       'md.id',
       'md.deviceAppSpot',
