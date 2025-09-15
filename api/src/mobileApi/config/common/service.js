@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const { assignMobileAppSpot } = require('./assignMobileAppSpot')
+const { getUser } = require('../../../auth/service')
 
 async function fetchApplicationConfigServiceHandler() {
   return Promise.resolve({
@@ -97,8 +98,8 @@ async function fetchSystemConfigServiceHandler() {
  * @returns {Promise<Object>} Response containing the deviceAppSpot or error message
  */
 async function fetchAppIdFromUniqueDeviceCodeHandler({ query, auth }) {
-  const deviceCode = query?.deviceCode
-  const userId = auth?.credentials?.id
+  const { deviceCode } = query
+  const { id: userId } = await getUser(auth.credentials.name)
 
   try {
     const result = await assignMobileAppSpot(deviceCode, userId)
