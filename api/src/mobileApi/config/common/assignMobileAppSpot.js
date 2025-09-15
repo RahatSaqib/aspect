@@ -82,12 +82,8 @@ async function findFirstAvailableSpot(trx, deviceCode) {
       }
     )
     .whereNull('recentSamples.id') // Exclude spots used in today's samples to avoid repetitions in case of a reinstallation of the app
-    .modify(qb => {
-      if (deviceCode) {
-        qb.where(function () {
-          this.whereNull('md.deviceCode').orWhereNot('md.deviceCode', deviceCode)
-        })
-      }
+    .where(function () {
+      this.whereNull('md.deviceCode').orWhereNot('md.deviceCode', deviceCode) // Ignore previous assignment
     })
     .select(
       'md.id',
