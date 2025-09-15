@@ -329,7 +329,7 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
       // Old assignment should be deactivated
       const oldAssignment = await knex('MobileDevice').where('deviceAppSpot', '001').first()
       expect(oldAssignment.active).to.equal(0)
-      expect(oldAssignment.deviceCode).to.equal('DEVICE-X') // Still has the device code but inactive
+      expect(oldAssignment.deviceCode).to.equal(null)
 
       // New assignment should be active
       const newAssignment = await knex('MobileDevice').where('deviceCode', 'DEVICE-X').where('active', true).first()
