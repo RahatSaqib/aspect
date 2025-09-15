@@ -85,7 +85,7 @@ async function registerNewSample(request) {
       })
 
       if (config.acceptFakeResults) {
-        await createFakeResult(payload.originSiteId, payload.externalId)
+        await createFakeResult(trx, payload.originSiteId, payload.externalId)
       }
     }
   })
@@ -111,7 +111,7 @@ const getSiteIdsForUser = async auth => {
   return clinics.map(c => c.id)
 }
 
-const createFakeResult = async (siteId, sampleExternalId) => {
+const createFakeResult = async (trx, siteId, sampleExternalId) => {
   const resultCombinations = allResultCategories => [
     {
       resultCategory1: allResultCategories.Detected,
@@ -145,7 +145,7 @@ const createFakeResult = async (siteId, sampleExternalId) => {
   const resultSources = await allResultSourceToId()
   const resultTypes = await allResultTypeToId()
 
-  const device = await knex('Device as d')
+  const device = await trx('Device as d')
     .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .andWhere({ siteId })
     .first('d.id', 'partnerId')
@@ -155,7 +155,7 @@ const createFakeResult = async (siteId, sampleExternalId) => {
   if (device) {
     const { id: deviceId, partnerId } = device
     const now = new Date()
-    const [resultId] = await knex('Result').insert({
+    const [resultId] = await trx('Result').insert({
       externalId: `${sampleExternalId}_${_.random(0, 100)}`,
       assayId: assayIds.GxMtbRif,
       partnerId,
@@ -163,7 +163,7 @@ const createFakeResult = async (siteId, sampleExternalId) => {
       deviceId,
       resultSourceId: resultSources.DiagnosticDevice,
       resultTypeId: resultTypes.Patient,
-      sampleId: await getSampleByExternalId(knex, sampleExternalId).then(s => s.id),
+      sampleId: await getSampleByExternalId(trx, sampleExternalId).then(s => s.id),
       resultDataHash: null,
       assayVersion: '4',
       startedOn: now,
@@ -178,13 +178,13 @@ const createFakeResult = async (siteId, sampleExternalId) => {
       ...resultCombination,
     })
 
-    const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
+    const [resultWorkflowStatusLogId] = await trx('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: resultWorkflowStatuses.Deliverable,
       changedOn: now,
       createdOn: now,
     })
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
+    await trx('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
   }
 }
 
