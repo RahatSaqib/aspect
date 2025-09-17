@@ -41,6 +41,7 @@ const filtersOrdering = {
   patientOrResearchId: 9,
   deviceName: 10,
   siteName: 11,
+  siteId: 11,
   sampleOriginSite: 12,
   originSiteName: 13,
   contactNameOrEmail: 13,
@@ -80,6 +81,9 @@ const buttonMapping = {
     <LgaId stateId={stateId} lgaId={lgaId} remove={remove} blocked={blocked} />
   ),
   siteName: ({ siteName, remove, blocked }) => <SiteName siteName={siteName} remove={remove} blocked={blocked} />,
+  siteId: ({ siteId, siteName, remove, blocked }) => (
+    <SiteId siteId={siteId} siteName={siteName} remove={remove} blocked={blocked} />
+  ),
   parentWarehouseId: ({ parentWarehouseId, remove, blocked }) => (
     <ParentWarehouseId parentWarehouseId={parentWarehouseId} remove={remove} blocked={blocked} />
   ),
@@ -294,6 +298,20 @@ const SiteName = ({ siteName, remove, blocked }) => {
       del={blocked.includes('siteName') ? undefined : () => remove(['siteName'])}
     />
   )
+}
+
+const SiteId = ({ siteId, siteName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const { data } = useSiteList()
+  const site = data?.find(s => s.id === siteId)
+  const siteDisplayName = siteName || site?.name
+
+  return siteDisplayName ? (
+    <Btn
+      lbl={formatMessage(messages.whereSiteNameIncludes, { siteName: siteDisplayName })}
+      del={blocked.includes('siteId') ? undefined : () => remove(['siteId', 'siteName'])}
+    />
+  ) : null
 }
 const ParentWarehouseId = ({ parentWarehouseId, remove, blocked }) => {
   const { formatMessage } = useIntl()

@@ -1,11 +1,12 @@
 import React from 'react'
 import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
+import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { StateSelect, LgaSelect, PeriodSelector } from '../index'
+import { LgaSelect, PeriodSelector, StateSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const SampleFilter = () => {
@@ -20,7 +21,7 @@ const SampleFilter = () => {
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
-            onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
+            onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null, siteId: null })}
             countryId={state.countryId}
           />
         </Grid>
@@ -28,8 +29,20 @@ const SampleFilter = () => {
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
-            onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
+            onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null, siteId: null })}
             stateId={state.stateId}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <SiteAutoCompleteField
+            name="siteName"
+            value={state.siteId || state.siteName || ''}
+            onChange={site => setState({ ...state, siteName: site.name, siteId: site.id })}
+            floatingLabelFixed
+            floatingLabelText={formatMessage(messages.site)}
+            stateId={state.stateId}
+            lgaId={state.lgaId}
+            width="100%"
           />
         </Grid>
         <Grid item xs={3}>
