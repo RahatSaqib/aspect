@@ -68,7 +68,7 @@ async function findFirstAvailableSpot(trx) {
   return trx('MobileDevice as md')
     .leftJoin('Sample as recentSamples', function () {
       this.on('md.deviceAppSpot', knex.raw('SUBSTRING(recentSamples.externalId, 1, 3)'))
-        .andOn('recentSamples.createdOn', '>=', knex.raw(`DATE_SUB(NOW(), INTERVAL 2 DAY)`))
+        .andOn('recentSamples.createdOn', '>=', knex.raw(`DATE_SUB(NOW(), INTERVAL 1 DAY)`))
         .andOn('recentSamples.externalId', 'regexp', knex.raw("'^\\\\d{3}-\\\\d{6}-\\\\d{3}$'"))
     })
     .leftJoin(
@@ -78,10 +78,15 @@ async function findFirstAvailableSpot(trx) {
         .groupBy(knex.raw('SUBSTRING(ls.externalId, 1, 3)'))
         .as('lastSample'),
       function () {
-        this.on('md.deviceAppSpot', 'lastSample.deviceAppSpot').andOn('lastSample.createdOn', '>', 'md.updatedOn') // the spot could have a previous assignment, let's skip any sample generated in a previous assignment..
+        // The spot may have a previous assignment; let's omit any samples generated in a previous assignment:
+        this.on('md.deviceAppSpot', 'lastSample.deviceAppSpot').andOn('lastSample.createdOn', '>', 'md.updatedOn')
       }
     )
     .whereNull('recentSamples.id') // Exclude spots used in today's samples to avoid repetitions in case of a reinstallation of the app
+    .where(function () {
+      // Exclude spots that have been assigned in the last day to avoid repetitions in case of a reinstallation of the app
+      this.whereNull('md.updatedOn').orWhere('md.updatedOn', '<', knex.raw(`DATE_SUB(NOW(), INTERVAL 3 MONTH)`))
+    })
     .select(
       'md.id',
       'md.deviceAppSpot',
