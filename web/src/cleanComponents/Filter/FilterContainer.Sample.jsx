@@ -21,7 +21,7 @@ const SampleFilter = () => {
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
-            onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null, siteId: null })}
+            onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
             countryId={state.countryId}
           />
         </Grid>
@@ -29,15 +29,15 @@ const SampleFilter = () => {
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
-            onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null, siteId: null })}
+            onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
             stateId={state.stateId}
           />
         </Grid>
         <Grid item xs={3}>
           <SiteAutoCompleteField
             name="siteName"
-            value={state.siteId || state.siteName || ''}
-            onChange={site => setState({ ...state, siteName: site.name, siteId: site.id })}
+            value={state.siteName || ''}
+            onChange={site => setState({ ...state, siteName: site.name })}
             floatingLabelFixed
             floatingLabelText={formatMessage(messages.site)}
             stateId={state.stateId}
