@@ -1,11 +1,12 @@
 import React from 'react'
 import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
+import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { StateSelect, LgaSelect, PeriodSelector } from '../index'
+import { LgaSelect, PeriodSelector, StateSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const SampleFilter = () => {
@@ -30,6 +31,18 @@ const SampleFilter = () => {
             value={state.lgaId}
             onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
             stateId={state.stateId}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <SiteAutoCompleteField
+            name="siteName"
+            value={state.siteName || ''}
+            onChange={site => setState({ ...state, siteName: site.name })}
+            floatingLabelFixed
+            floatingLabelText={formatMessage(messages.site)}
+            stateId={state.stateId}
+            lgaId={state.lgaId}
+            width="100%"
           />
         </Grid>
         <Grid item xs={3}>
