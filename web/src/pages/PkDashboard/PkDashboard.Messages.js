@@ -86,13 +86,13 @@ const messages = {
       id: 'p.PkDashboard.monthlyMTBDiagnosis',
       defaultMessage: 'Monthly MTB+ diagnosis trends',
     },
-    provincialMTBDiagnosis: {
-      id: 'p.PkDashboard.provincialMTBDiagnosis',
-      defaultMessage: 'Provincial MTB+ diagnosis trends',
+    MTBDiagnosis: {
+      id: 'p.PkDashboard.MTBDiagnosis',
+      defaultMessage: 'MTB+ diagnosis trends',
     },
-    provincialMTBDiagnosisCurrentYear: {
-      id: 'p.PkDashboard.provincialMTBDiagnosisCurrentYear',
-      defaultMessage: 'Provincial MTB+ diagnosed in current year',
+    MTBDiagnosisCurrentYear: {
+      id: 'p.PkDashboard.MTBDiagnosisCurrentYear',
+      defaultMessage: 'MTB+ diagnosed in current year',
     },
     rrtbDiagnosedCurrentYear: {
       id: 'p.PkDashboard.rrtbDiagnosedCurrentYear',
@@ -106,13 +106,13 @@ const messages = {
       id: 'p.PkDashboard.monthlyRRTBDiagnosis',
       defaultMessage: 'Monthly RR-TB diagnosis trends',
     },
-    provincialRRTBDiagnosisTrends: {
-      id: 'p.PkDashboard.provincialRRTBDiagnosisTrends',
-      defaultMessage: 'Provincial RR-TB diagnosis trends',
+    RRTBDiagnosisTrends2: {
+      id: 'p.PkDashboard.RRTBDiagnosisTrends2',
+      defaultMessage: 'RR-TB diagnosis trends',
     },
-    provincialRRTBDiagnosisTrendsCurrentYear: {
-      id: 'p.PkDashboard.provincialRRTBDiagnosisTrendsCurrentYear',
-      defaultMessage: 'Provincial RR-TB diagnosed in current year',
+    RRTBDiagnosisTrendsCurrentYear: {
+      id: 'p.PkDashboard.RRTBDiagnosisTrendsCurrentYear',
+      defaultMessage: 'RR-TB diagnosed in current year',
     },
     TBXDRTest: {
       id: 'p.PkDashboard.TBXDRTest',
@@ -130,13 +130,13 @@ const messages = {
       id: 'p.PkDashboard.mtbPlusMonthlyDetectionTrends',
       defaultMessage: 'Monthly MTB+ detection trends',
     },
-    provincialXDRTestingTrends: {
-      id: 'p.PkDashboard.provincialXDRTestingTrends',
-      defaultMessage: 'Provincial XDR testing trends',
+    XDRTestingTrends: {
+      id: 'p.PkDashboard.XDRTestingTrends',
+      defaultMessage: 'XDR testing trends',
     },
-    provincialXDRTestingTrendsCurrentYear: {
-      id: 'p.PkDashboard.provincialXDRTestingTrendsCurrentYear',
-      defaultMessage: 'Provincial XDR testing in current year',
+    XDRTestingTrendsCurrentYear: {
+      id: 'p.PkDashboard.XDRTestingTrendsCurrentYear',
+      defaultMessage: 'XDR testing in current year',
     },
     xdrDrugResistance: {
       id: 'p.PkDashboard.xdrDrugResistance',
@@ -146,13 +146,13 @@ const messages = {
       id: 'p.PkDashboard.mtbPositivesCurrentYear',
       defaultMessage: 'MTB positives detected in current year',
     },
-    provincialMTBPositivesTrends: {
-      id: 'p.PkDashboard.provincialMTBPositivesTrends',
-      defaultMessage: 'Provincial MTB+ detection trends',
+    MTBPositivesTrends: {
+      id: 'p.PkDashboard.MTBPositivesTrends',
+      defaultMessage: 'MTB+ detection trends',
     },
-    provincialMTBPositivesTrendsCurrentYear: {
-      id: 'p.PkDashboard.provincialMTBPositivesTrends.currentYear',
-      defaultMessage: 'Provincial MTB+ detected in current year',
+    MTBPositivesTrendsCurrentYear: {
+      id: 'p.PkDashboard.MTBPositivesTrends.currentYear',
+      defaultMessage: 'MTB+ detected in current year',
     },
     xdrFLQAndINHTrends: {
       id: 'p.PkDashboard.xdrFLQAndINHTrends',
@@ -162,9 +162,9 @@ const messages = {
       id: 'p.PkDashboard.testsPerformedYear',
       defaultMessage: 'Tests Performed in current year',
     },
-    provincialTestingTrends: {
-      id: 'p.PkDashboard.provincialTestingTrends',
-      defaultMessage: 'Provincial/District Testing Trends',
+    testingTrends: {
+      id: 'p.PkDashboard.testingTrends',
+      defaultMessage: 'Testing Trends',
     },
     tbCasesDiagnosed: {
       id: 'p.PkDashboard.tbCasesDiagnosed',
@@ -186,29 +186,29 @@ const messages = {
       id: 'p.PkDashboard.provincesUtilizationTrendsAnnual',
       defaultMessage: 'Provinces annual utilization rates',
     },
-    provincialDiagnosisTrendsCurrentYear: {
-      id: 'p.PkDashboard.tbCasesDiagnosed.currentYear',
-      defaultMessage: 'Provincial Diagnosis Trends for the current year',
+    diagnosisTrendsCurrentYear: {
+      id: 'p.PkDashboard.tbCasesDiagnosed.currentYearNew',
+      defaultMessage: 'Diagnosis Trends for the current year',
     },
-    provincialDiagnosisTrendsComparison: {
-      id: 'p.PkDashboard.provincialDiagnosisTrendsComparison',
-      defaultMessage: 'Provincial Diagnosis Trends Comparison',
+    diagnosisTrendsComparison: {
+      id: 'p.PkDashboard.diagnosisTrendsComparisonNew',
+      defaultMessage: 'Diagnosis Trends Comparison',
     },
-    provincialDiagnosisTrends: {
-      id: 'p.PkDashboard.provincialDiagnosisTrends',
-      defaultMessage: 'Provincial Diagnosis Trends',
+    diagnosisTrends: {
+      id: 'p.PkDashboard.diagnosisTrends',
+      defaultMessage: 'Diagnosis Trends',
     },
-    provincialTestingTrendsYear: {
-      id: 'p.PkDashboard.provincialTestingTrendsYear',
-      defaultMessage: 'Provincial Testing in current year',
+    testingTrendsYear: {
+      id: 'p.PkDashboard.testingTrendsYear',
+      defaultMessage: 'Testing in current year',
     },
-    provincialDistrictFqrDiagnosisTrends: {
-      id: 'p.PkDashboard.provincial.district.FqrDiagnosisTrends',
-      defaultMessage: 'Provincial/District FQ Diagnosis Trends',
+    fqrDiagnosisTrends: {
+      id: 'p.PkDashboard.FqrDiagnosisTrends',
+      defaultMessage: 'FQ Diagnosis Trends',
     },
-    provincialFqrDiagnosisTrends: {
-      id: 'p.PkDashboard.provincialFqrDiagnosisTrends',
-      defaultMessage: 'Provincial FQ Diagnosis Trends',
+    fqrDiagnosisTrendsCurrentYear: {
+      id: 'p.PkDashboard.FqrDiagnosisTrends',
+      defaultMessage: 'FQ Diagnosis Trends in current year',
     },
     nationalFqrResistanceTrend: {
       id: 'p.PkDashboard.nationalFqrResistanceTrend',
@@ -230,9 +230,9 @@ const messages = {
       id: 'p.PkDashboard.testsPerformed',
       defaultMessage: 'Tests Performed',
     },
-    provincialRRDiagnosisTrends: {
-      id: 'p.PkDashboard.provincialRRDiagnosisTrends',
-      defaultMessage: 'Provincial RR Diagnosis Trends',
+    RRDiagnosisTrends: {
+      id: 'p.PkDashboard.RRDiagnosisTrends',
+      defaultMessage: 'RR Diagnosis Trends',
     },
     rifCurrentDiagnosisTitle: { id: 'p.PkDashboard.rifCurrentDiagnosisTitle', defaultMessage: 'TB cases diagnosed in' },
     rifCurrentRRTBDiagnosisTitle: {
@@ -288,18 +288,18 @@ const messages = {
       id: 'p.PkDashboard.GXTbNationalDiagnosis',
       defaultMessage: 'National GX-10C Diagnosed Trends in',
     },
-    ProvincialTBTestingTrend: {
-      id: 'p.PkDashboard.ProvincialTBTestingTrend',
-      defaultMessage: 'Provincial TB Testing Trend',
+    TBTestingTrend: {
+      id: 'p.PkDashboard.TBTestingTrend',
+      defaultMessage: 'TB Testing Trend',
     },
     TbDCurrent: { id: 'p.PkDashboard.TbDCurrent', defaultMessage: 'Current TB Diagnosis' },
     TbDNationalTrend: { id: 'p.PkDashboard.TbDNationalTrend', defaultMessage: 'National TB Diagnosis Trends' },
     TbDTestingDiagnosis: { id: 'p.PkDashboard.TbDTestingDiagnosis', defaultMessage: 'TB Testing & Diagnosis Trends' },
     RRCurrent: { id: 'p.PkDashboard.RRCurrent', defaultMessage: 'Current RRTB Diagnosis' },
     RRNationalTrend: { id: 'p.PkDashboard.RRNationalTrend', defaultMessage: 'National RRTB Trends' },
-    ProvincialRRTBDiagnosisTrends: {
-      id: 'p.PkDashboard.ProvincialRRTBDiagnosisTrends',
-      defaultMessage: 'Provincial RRTB Diagnosis Trends',
+    RRTBDiagnosisTrends: {
+      id: 'p.PkDashboard.RRTBDiagnosisTrends',
+      defaultMessage: 'RRTB Diagnosis Trends',
     },
     RRTestingDiagnosis: { id: 'p.PkDashboard.RRTestingDiagnosis', defaultMessage: 'TB & RRTB Diagnosis' },
 
@@ -323,13 +323,13 @@ const messages = {
       id: 'p.PkDashboard.nationalMtbXdrTestingTrends',
       defaultMessage: 'National MTB/XDR Testing Trends',
     },
-    ProvincialTestingTrend: {
-      id: 'p.PkDashboard.ProvincialTestingTrend',
-      defaultMessage: 'Provincial Testing Trend',
+    testingTrend: {
+      id: 'p.PkDashboard.testingTrend',
+      defaultMessage: 'Testing Trend',
     },
-    provincialMtbXdrTestingTrends: {
-      id: 'p.PkDashboard.provincialMtbXdrTestingTrends',
-      defaultMessage: 'Provincial MTB/XDR Testing Trends',
+    MtbXdrTestingTrends: {
+      id: 'p.PkDashboard.MtbXdrTestingTrends',
+      defaultMessage: 'MTB/XDR Testing Trends',
     },
     XDRTestingandDiagnosisTrends: {
       id: 'p.PkDashboard.XDRTestingandDiagnosisTrends',
@@ -346,13 +346,13 @@ const messages = {
       id: 'p.PkDashboard.nationalMtbDetectionTrends',
       defaultMessage: 'National MTB Detection Trends',
     },
-    ProvincialTBDiagnosisTrendsComparison: {
-      id: 'p.PkDashboard.ProvincialTBDiagnosisTrendsComparison',
-      defaultMessage: 'Provincial TB Diagnosis Trends Comparison',
+    TBDiagnosisTrendsComparison: {
+      id: 'p.PkDashboard.TBDiagnosisTrendsComparison',
+      defaultMessage: 'TB Diagnosis Trends Comparison',
     },
-    provincialMtbDetectionTrendsComparison: {
-      id: 'p.PkDashboard.provincialMtbDetectionTrendsComparison',
-      defaultMessage: 'Provincial MTB Detection Trends Comparison',
+    MtbDetectionTrendsComparison: {
+      id: 'p.PkDashboard.MtbDetectionTrendsComparison',
+      defaultMessage: 'MTB Detection Trends Comparison',
     },
     fqInhTestingDiagnosis: {
       id: 'p.PkDashboard.fqInhTestingDiagnosis',
@@ -370,9 +370,9 @@ const messages = {
       id: 'p.PkDashboard.NationalFQResistanceTrend',
       defaultMessage: 'National FQ Resistance Trend',
     },
-    ProvincialFQDiagnosisTrends: {
-      id: 'p.PkDashboard.ProvincialFQDiagnosisTrends',
-      defaultMessage: 'Provincial FQ Diagnosis Trends',
+    FQDiagnosisTrends: {
+      id: 'p.PkDashboard.FQDiagnosisTrends',
+      defaultMessage: 'FQ Diagnosis Trends',
     },
     nationalErrorRates: {
       id: 'p.PkDashboard.nationalErrorRates',

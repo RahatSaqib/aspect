@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { deviceTypeToPlugin } = require('../../../shared/dictionary')
+const { deviceTypeToPlugin, sampleTypeToId } = require('../../../shared/dictionary')
 const { parsePatientId } = require('./customFieldsParser')
 const { parseNotes } = require('./customFieldsParser')
 
@@ -20,6 +20,15 @@ async function transformMergeResultPayload(context) {
     ...context.payload.patient,
     ...customFieldsFromNotes.patientData,
     ...customFieldsFromPatientId.patientData,
+  }
+
+  // Get sample type from custom field "Sample Type" (id: 30)
+  const sampleTypeExternalId = _.get(context, 'payload.data.customFieldData[30].value')
+  if (sampleTypeExternalId) {
+    const sampleTypeId = await sampleTypeToId(sampleTypeExternalId)
+    if (sampleTypeId !== null) {
+      context.payload.sample.type = { id: sampleTypeExternalId }
+    }
   }
 
   return defaultOrDeviceTypeTransformMergeResultPayload(context)

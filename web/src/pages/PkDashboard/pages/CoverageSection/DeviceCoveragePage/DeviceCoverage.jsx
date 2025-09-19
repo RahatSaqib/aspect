@@ -4,6 +4,8 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { objectToArray, Loading } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
+import useAuthState from '../../../../../hooks/useAuthState'
+import { getCustomMessage } from '../../../../../messages'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
@@ -23,8 +25,11 @@ const DeviceCoveragePage = () => {
   const { formatMessage } = useIntl()
   const [filter] = useState()
 
+  const user = useAuthState()
+  const stateName = getCustomMessage(formatMessage, messages, 'state', user, { entity: 'state' })
+
   const columns = [
-    { key: 'Province/Region', name: formatMessage(messages.provinceRegion), prop: 'name' },
+    { key: 'Province/Region', name: stateName, prop: 'name' },
     { key: 'GX Sites', name: formatMessage(messages.gxSites), prop: 'cntSites' },
     { key: 'GX-6C Devices', name: formatMessage(messages.gx6CDevices), prop: 'cnt6cDevices' },
     { key: 'GX-10C Devices', name: formatMessage(messages.gx10CDevices), prop: 'cnt10cDevices' },
