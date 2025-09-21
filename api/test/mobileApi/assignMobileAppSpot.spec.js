@@ -25,9 +25,9 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
     )
     await Promise.all(updatePromises)
 
-    // If options.assignMostRecords is true, assign device codes to most records
+    // If options.assignRemainingRecords is true, assign device codes to most records
     // leaving only the specified test records available
-    if (options.assignMostRecords) {
+    if (options.assignRemainingRecords) {
       const testSpots = updates.map(u => u.deviceAppSpot)
       await knex('MobileDevice').whereNotIn('deviceAppSpot', testSpots).update({
         deviceCode: 'OCCUPIED-DEVICE',
@@ -107,10 +107,10 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
     it('should prefer unassigned records over inactive assigned records', async () => {
       await setupTestData(
         [
-          { deviceAppSpot: '001', deviceCode: 'OLD-DEVICE', active: false, updatedOn: subDays(new Date(), 10) },
-          { deviceAppSpot: '002', deviceCode: null, active: false, updatedOn: subDays(new Date(), 1) },
+          { deviceAppSpot: '001', deviceCode: 'OLD-DEVICE', active: false, updatedOn: subDays(new Date(), 95) },
+          { deviceAppSpot: '002', deviceCode: null, active: false, updatedOn: subDays(new Date(), 95) },
         ],
-        { assignMostRecords: true }
+        { assignRemainingRecords: true }
       )
 
       const spot = await assignMobileAppSpot('TEST-DEVICE-002', testUserId, testTimezone)
@@ -128,11 +128,11 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
     it('should assign oldest inactive record when no unassigned records are available', async () => {
       await setupTestData(
         [
-          { deviceAppSpot: '001', deviceCode: 'DEVICE-A', active: false, updatedOn: subDays(new Date(), 10) },
-          { deviceAppSpot: '002', deviceCode: 'DEVICE-B', active: false, updatedOn: subDays(new Date(), 5) },
-          { deviceAppSpot: '003', deviceCode: 'DEVICE-C', active: true, updatedOn: subMonths(new Date(), 6) },
+          { deviceAppSpot: '001', deviceCode: 'DEVICE-A', active: false, updatedOn: subDays(new Date(), 120) },
+          { deviceAppSpot: '002', deviceCode: 'DEVICE-B', active: false, updatedOn: subDays(new Date(), 95) },
+          { deviceAppSpot: '003', deviceCode: 'DEVICE-C', active: true, updatedOn: subMonths(new Date(), 100) },
         ],
-        { assignMostRecords: true }
+        { assignRemainingRecords: true }
       )
 
       const spot = await assignMobileAppSpot('TEST-DEVICE-003', testUserId, testTimezone)
@@ -148,11 +148,11 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
     it('should order inactive records by updatedOn correctly', async () => {
       await setupTestData(
         [
-          { deviceAppSpot: '001', deviceCode: 'DEVICE-A', active: false, updatedOn: subDays(new Date(), 1) },
-          { deviceAppSpot: '002', deviceCode: 'DEVICE-B', active: false, updatedOn: subDays(new Date(), 20) },
-          { deviceAppSpot: '003', deviceCode: 'DEVICE-C', active: false, updatedOn: subDays(new Date(), 10) },
+          { deviceAppSpot: '001', deviceCode: 'DEVICE-A', active: false, updatedOn: subDays(new Date(), 95) },
+          { deviceAppSpot: '002', deviceCode: 'DEVICE-B', active: false, updatedOn: subDays(new Date(), 120) },
+          { deviceAppSpot: '003', deviceCode: 'DEVICE-C', active: false, updatedOn: subDays(new Date(), 100) },
         ],
-        { assignMostRecords: true }
+        { assignRemainingRecords: true }
       )
 
       const spot = await assignMobileAppSpot('TEST-DEVICE-004', testUserId, testTimezone)
@@ -175,7 +175,7 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
         { deviceAppSpot: '002', deviceCode: 'DEVICE-B', active: true, updatedOn: fiveMonthsAgo },
         { deviceAppSpot: '003', deviceCode: 'DEVICE-C', active: true, updatedOn: subDays(new Date(), 30) }, // Less than 3 months
       ]
-      await setupTestData(testDevices, { assignMostRecords: true })
+      await setupTestData(testDevices, { assignRemainingRecords: true })
 
       const spot = await assignMobileAppSpot('TEST-DEVICE-005', testUserId, testTimezone)
       expect(spot).to.deep.equal({ appId: '002' })
@@ -192,7 +192,7 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
         { deviceAppSpot: '002', deviceCode: 'DEVICE-B', active: true, updatedOn: subDays(new Date(), 60) },
         { deviceAppSpot: '003', deviceCode: 'DEVICE-J', active: true, updatedOn: subDays(new Date(), 300) },
       ]
-      await setupTestData(testDevices, { assignMostRecords: true })
+      await setupTestData(testDevices, { assignRemainingRecords: true })
 
       const spot = await assignMobileAppSpot('TEST-DEVICE-006', testUserId, testTimezone)
       expect(spot).to.deep.equal({ appId: '003' })
@@ -206,23 +206,23 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
 
       await setupTestData(
         [
-          { deviceAppSpot: '001', deviceCode: null, active: false, updatedOn: subDays(new Date(), 5) },
-          { deviceAppSpot: '002', deviceCode: null, active: false, updatedOn: subDays(new Date(), 3) },
+          { deviceAppSpot: '001', deviceCode: null, active: false, updatedOn: subDays(new Date(), 120) },
+          { deviceAppSpot: '002', deviceCode: null, active: false, updatedOn: subDays(new Date(), 95) },
         ],
-        { assignMostRecords: true }
+        { assignRemainingRecords: true }
       )
 
       // Create a sample that uses deviceAppSpot '001' today
       const testSamples = [
         {
-          externalId: '001-240910-001', // Uses deviceAppSpot '001'
+          externalId: '001-250910-001', // Uses deviceAppSpot '001'
           createdOn: today,
           updatedOn: today,
           createdBy: testUserId,
           updatedBy: testUserId,
         },
         {
-          externalId: '002-240909-001', // Uses deviceAppSpot '002' but yesterday
+          externalId: '002-250909-001', // Uses deviceAppSpot '002' but yesterday
           createdOn: aWeekAgo,
           updatedOn: aWeekAgo,
           createdBy: testUserId,
@@ -247,14 +247,14 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
       const aWeekAgo = subDays(new Date(), 7)
 
       await setupTestData(
-        [{ deviceAppSpot: '001', deviceCode: null, active: false, updatedOn: subDays(new Date(), 5) }],
-        { assignMostRecords: true }
+        [{ deviceAppSpot: '001', deviceCode: null, active: false, updatedOn: subDays(new Date(), 95) }],
+        { assignRemainingRecords: true }
       )
 
       // Create a sample that uses deviceAppSpot '001' yesterday
       const testSamples = [
         {
-          externalId: '001-240909-001',
+          externalId: '001-250909-001',
           createdOn: aWeekAgo,
           updatedOn: aWeekAgo,
           createdBy: testUserId,
@@ -277,8 +277,8 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
       const today = new Date()
 
       await setupTestData(
-        [{ deviceAppSpot: '001', deviceCode: null, active: false, updatedOn: subDays(new Date(), 5) }],
-        { assignMostRecords: true }
+        [{ deviceAppSpot: '001', deviceCode: null, active: false, updatedOn: subDays(new Date(), 95) }],
+        { assignRemainingRecords: true }
       )
 
       // Create samples with various externalId patterns
@@ -315,10 +315,10 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
     it('should deactivate existing assignment when reassigning the same deviceCode', async () => {
       await setupTestData(
         [
-          { deviceAppSpot: '001', deviceCode: 'DEVICE-X', active: true, updatedOn: subDays(new Date(), 5) },
-          { deviceAppSpot: '002', deviceCode: null, active: false, updatedOn: subDays(new Date(), 3) },
+          { deviceAppSpot: '001', deviceCode: 'DEVICE-X', active: true, updatedOn: subDays(new Date(), 120) },
+          { deviceAppSpot: '002', deviceCode: null, active: false, updatedOn: subDays(new Date(), 95) },
         ],
-        { assignMostRecords: true }
+        { assignRemainingRecords: true }
       )
 
       // Reassign the same device code
@@ -345,6 +345,31 @@ describe('Mobile App Spot Assignment Priority Tests', () => {
         assert.fail('Should have thrown an error for missing device code')
       } catch (error) {
         expect(error.message).to.equal('Missing device code')
+      }
+    })
+
+    it('should return 409 is there is not spots available', async () => {
+      try {
+        await setupTestData([], { assignRemainingRecords: true })
+        await assignMobileAppSpot('TEST-DEVICE-CODE', testUserId, testTimezone)
+        assert.fail('Should throw a 409 error as there is no free spots')
+      } catch (error) {
+        expect(error.output.payload.statusCode).to.equal(409)
+        expect(error.message).to.equal('All mobile spots are assigned.')
+      }
+    })
+
+    it('should avoid assign spots assigned less than 3 months ago', async () => {
+      try {
+        await setupTestData(
+          [{ deviceAppSpot: '002', deviceCode: 'A-DEVICE-CODE', active: true, updatedOn: subDays(new Date(), 45) }],
+          { assignRemainingRecords: true }
+        )
+        await assignMobileAppSpot('TEST-DEVICE-CODE', testUserId, testTimezone)
+        assert.fail('Should throw a 409 error as there is no free spots')
+      } catch (error) {
+        expect(error.output.payload.statusCode).to.equal(409)
+        expect(error.message).to.equal('All mobile spots are assigned.')
       }
     })
   })
