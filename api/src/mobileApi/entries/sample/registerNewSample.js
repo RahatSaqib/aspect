@@ -81,6 +81,7 @@ async function registerNewSample(request) {
       sampleToSave.createdBy = currentlyLoggedInUser.id
       await trx('Sample').insert({
         ...sampleToSave,
+        source: 'mobile',
         sampleData: JSON.stringify(sampleToSave.sampleData),
       })
 
