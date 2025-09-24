@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-09-11T10:53:48.799Z\n"
+"POT-Creation-Date: 2025-09-24T11:36:32.825Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3552,28 +3552,22 @@ msgstr "Devices with Unused Modules"
 #. defaultMessage is:
 #. Diagnosis Trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Annual diagnosis Trends"
 msgid "Diagnosis Trends"
-msgstr "Annual diagnosis Trends"
+msgstr "Diagnosis Trends"
 
 #. [p.PkDashboard.diagnosisTrendsComparisonNew]
 #. defaultMessage is:
 #. Diagnosis Trends Comparison
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Provincial Diagnosis Trends Comparison"
 msgid "Diagnosis Trends Comparison"
-msgstr "Provincial Diagnosis Trends Comparison"
+msgstr "Diagnosis Trends Comparison"
 
 #. [p.PkDashboard.tbCasesDiagnosed.currentYearNew]
 #. defaultMessage is:
 #. Diagnosis Trends for the current year
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Provincial Diagnosis Trends for the current year"
 msgid "Diagnosis Trends for the current year"
-msgstr "Provincial Diagnosis Trends for the current year"
+msgstr "Diagnosis Trends for the current year"
 
 #. [contextualMenu.notifications.disable.status.title]
 #. defaultMessage is:
@@ -4535,19 +4529,15 @@ msgstr "FQ & INH Testing & Diagnosis"
 #. defaultMessage is:
 #. FQ Diagnosis Trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Provincial FQ Diagnosis Trends"
 msgid "FQ Diagnosis Trends"
-msgstr "Provincial FQ Diagnosis Trends"
+msgstr "FQ Diagnosis Trends"
 
 #. [p.PkDashboard.FqrDiagnosisTrends]
 #. defaultMessage is:
 #. FQ Diagnosis Trends in current year
 #: extracted_strings.json
-#, fuzzy
-#| msgid "FQ-R cases diagnosed in current year"
 msgid "FQ Diagnosis Trends in current year"
-msgstr "FQ-R cases diagnosed in current year"
+msgstr "FQ Diagnosis Trends in current year"
 
 #. [pages.XDR.cnt_flq]
 #. defaultMessage is:
@@ -7288,10 +7278,8 @@ msgstr "MTB Detection"
 #. defaultMessage is:
 #. MTB Detection Trends Comparison
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Provincial MTB Detection Trends Comparison"
 msgid "MTB Detection Trends Comparison"
-msgstr "Provincial MTB Detection Trends Comparison"
+msgstr "MTB Detection Trends Comparison"
 
 #. [resultCategoryGroup.gxMtbRifMtbError]
 #. defaultMessage is:
@@ -7628,37 +7616,29 @@ msgstr "MTB+ and Trace"
 #. defaultMessage is:
 #. MTB+ detected in current year
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Total TB detected in current year"
 msgid "MTB+ detected in current year"
-msgstr "Total TB detected in current year"
+msgstr "MTB+ detected in current year"
 
 #. [p.PkDashboard.MTBPositivesTrends]
 #. defaultMessage is:
 #. MTB+ detection trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Annual MTB+ detection trends"
 msgid "MTB+ detection trends"
-msgstr "Annual MTB+ detection trends"
+msgstr "MTB+ detection trends"
 
 #. [p.PkDashboard.MTBDiagnosisCurrentYear]
 #. defaultMessage is:
 #. MTB+ diagnosed in current year
 #: extracted_strings.json
-#, fuzzy
-#| msgid "RR-TB diagnosed in current year"
 msgid "MTB+ diagnosed in current year"
-msgstr "RR-TB diagnosed in current year"
+msgstr "MTB+ diagnosed in current year"
 
 #. [p.PkDashboard.MTBDiagnosis]
 #. defaultMessage is:
 #. MTB+ diagnosis trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Annual MTB+ diagnosis trends"
 msgid "MTB+ diagnosis trends"
-msgstr "Annual MTB+ diagnosis trends"
+msgstr "MTB+ diagnosis trends"
 
 #. [p.PkDashboard.titlemtbRif]
 #. defaultMessage is:
@@ -7688,10 +7668,8 @@ msgstr "MTB/XDR"
 #. defaultMessage is:
 #. MTB/XDR Testing Trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "National MTB/XDR Testing Trends"
 msgid "MTB/XDR Testing Trends"
-msgstr "National MTB/XDR Testing Trends"
+msgstr "MTB/XDR Testing Trends"
 
 #. [pages.Status.mtbXDRDrugResistance]
 #. defaultMessage is:
@@ -10293,10 +10271,8 @@ msgstr "RIF Resistance Rate (%positive results)"
 #. defaultMessage is:
 #. RR Diagnosis Trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "TB and RRTB Diagnosis Trends"
 msgid "RR Diagnosis Trends"
-msgstr "TB and RRTB Diagnosis Trends"
+msgstr "RR Diagnosis Trends"
 
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
@@ -10347,10 +10323,8 @@ msgstr "RR-TB diagnosed in current year"
 #. defaultMessage is:
 #. RR-TB diagnosis trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Annual RR-TB diagnosis trends"
 msgid "RR-TB diagnosis trends"
-msgstr "Annual RR-TB diagnosis trends"
+msgstr "RR-TB diagnosis trends"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -10398,10 +10372,8 @@ msgstr "RRTB Diagnosis"
 #. defaultMessage is:
 #. RRTB Diagnosis Trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "TB and RRTB Diagnosis Trends"
 msgid "RRTB Diagnosis Trends"
-msgstr "TB and RRTB Diagnosis Trends"
+msgstr "RRTB Diagnosis Trends"
 
 #. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
@@ -13012,10 +12984,8 @@ msgstr "TB Diagnosis"
 #. defaultMessage is:
 #. TB Diagnosis Trends Comparison
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Provincial TB Diagnosis Trends Comparison"
 msgid "TB Diagnosis Trends Comparison"
-msgstr "Provincial TB Diagnosis Trends Comparison"
+msgstr "TB Diagnosis Trends Comparison"
 
 #. [filter.AssayTypeSelectField.assayTypeTbGnd]
 #. defaultMessage is:
@@ -13080,10 +13050,8 @@ msgstr "TB Testing & Diagnosis Trends"
 #. defaultMessage is:
 #. TB Testing Trend
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Current TB Testing Trends"
 msgid "TB Testing Trend"
-msgstr "Current TB Testing Trends"
+msgstr "TB Testing Trend"
 
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
@@ -13257,19 +13225,15 @@ msgstr "Testing"
 #. defaultMessage is:
 #. Testing Trend
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Annual Testing Trends"
 msgid "Testing Trend"
-msgstr "Annual Testing Trends"
+msgstr "Testing Trend"
 
 #. [p.PkDashboard.testingTrends]
 #. defaultMessage is:
 #. Testing Trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Annual Testing Trends"
 msgid "Testing Trends"
-msgstr "Annual Testing Trends"
+msgstr "Testing Trends"
 
 #. [pages.Status.TB.testingTrendsInYear.title]
 #. defaultMessage is:
@@ -13282,10 +13246,8 @@ msgstr "Testing Trends In Year"
 #. defaultMessage is:
 #. Testing in current year
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Provincial Testing in current year"
 msgid "Testing in current year"
-msgstr "Provincial Testing in current year"
+msgstr "Testing in current year"
 
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
 #. defaultMessage is:
@@ -15272,19 +15234,15 @@ msgstr "XDR drug resistance trends"
 #. defaultMessage is:
 #. XDR testing in current year
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Provincial XDR testing in current year"
 msgid "XDR testing in current year"
-msgstr "Provincial XDR testing in current year"
+msgstr "XDR testing in current year"
 
 #. [p.PkDashboard.XDRTestingTrends]
 #. defaultMessage is:
 #. XDR testing trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Monthly XDR testing trends"
 msgid "XDR testing trends"
-msgstr "Monthly XDR testing trends"
+msgstr "XDR testing trends"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
