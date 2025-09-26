@@ -1,0 +1,4 @@
+const MOBILE_SOURCE = 1
+const RESULT_SOURCE = 2
+
+module.exports = { MOBILE_SOURCE, RESULT_SOURCE }

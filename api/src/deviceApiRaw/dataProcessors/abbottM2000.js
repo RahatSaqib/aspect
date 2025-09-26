@@ -18,6 +18,7 @@ const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
 } = require('../../shared/dictionary')
+const { RESULT_SOURCE } = require('../../sample/common/constants')
 
 const mergeDeep = (baseValue, sourceValue) => {
   if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
@@ -677,7 +678,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         sample = {
           externalId: result.sample.externalId,
           collectedOn: result.sample.collectedOn,
-          source: 'result',
+          source: RESULT_SOURCE,
           sampleTypeId: sampleTypeIds[result.sample.sampleTypeExternalId],
           originSiteId: deviceSiteId,
           createdOn: now,
@@ -692,6 +693,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         if (!sample.originSiteId && deviceSiteId) {
           sample.originSiteId = deviceSiteId
         }
+        sample.source = (sample.source || 0) | RESULT_SOURCE // eslint-disable-line no-bitwise
         await knex('Sample')
           .where('id', sample.id)
           .update({

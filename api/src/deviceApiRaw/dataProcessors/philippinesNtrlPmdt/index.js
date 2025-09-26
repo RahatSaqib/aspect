@@ -20,6 +20,7 @@ const dateKeys = require('./dateKeys')
 const { getResultDateOrDefault } = require('../common/utils')
 const { mapPatientData, sampleTypeMapping, resultDataMappings } = require('./mappings')
 const { testTypes } = require('../common/mapping')
+const { RESULT_SOURCE } = require('../../../sample/common/constants')
 
 class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
   constructor(request, messageContext) {
@@ -159,7 +160,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               await knex('Sample').where('id', existingSample.id).update(sample)
             }
           } else {
-            const [sampleId] = await knex('Sample').insert({ ...sample, createdOn: now, source: 'result' })
+            const [sampleId] = await knex('Sample').insert({ ...sample, createdOn: now, source: RESULT_SOURCE })
             sample.id = sampleId
           }
         })

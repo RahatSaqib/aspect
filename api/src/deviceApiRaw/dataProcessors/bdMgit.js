@@ -7,6 +7,7 @@ const { parseDateOrDefault } = require('../../shared/date')
 const { getAstmField } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
+const { RESULT_SOURCE } = require('../../sample/common/constants')
 
 const {
   allAssayToId,
@@ -164,7 +165,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         await knex('Sample').where('id', existingSample.id).update(sampleFields)
       } else {
         // insert sample
-        ;[sampleId] = await knex('Sample').insert({ ...sampleFields, createdOn: now, source: 'result' })
+        ;[sampleId] = await knex('Sample').insert({ ...sampleFields, createdOn: now, source: RESULT_SOURCE })
       }
 
       // It is possible that a single plastic carrier could be used more than once for a particular access number.

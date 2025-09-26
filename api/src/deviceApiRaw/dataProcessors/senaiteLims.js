@@ -16,6 +16,7 @@ const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
 const logger = require('../../shared/logger')
 const { insertSite } = require('../../site/common/db')
+const { RESULT_SOURCE } = require('../../sample/common/constants')
 
 class DefaultSenaiteLIMS extends SynchronousDataProcessor {
   constructor(request, messageContext) {
@@ -238,7 +239,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           collectedOn: parseDateOrDefault(sampleDateCollected),
           sampleTypeId: await sampleTypeToId(sampleTypeExternalId),
           originSiteId,
-          source: 'result',
+          source: RESULT_SOURCE,
           createdOn: now,
           updatedOn: now,
         })
@@ -247,6 +248,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           .where('id', sampleId)
           .update({
             collectedOn: parseDateOrDefault(sampleDateCollected),
+            source: (sample.source || 0) | RESULT_SOURCE, // eslint-disable-line no-bitwise
             updatedOn: now,
           })
       }

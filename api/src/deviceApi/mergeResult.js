@@ -8,6 +8,7 @@ const { getLatestResultWorkflowLog } = require('./result')
 const { getResultCategoriesFromPayload } = require('./utils')
 const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
 const { getSampleIdByExternalId } = require('../sample/common/db')
+const { RESULT_SOURCE } = require('../sample/common/constants')
 
 async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, context) {
   const sampleExternalId = _.get(payload, 'sample.id', null)
@@ -501,7 +502,7 @@ async function upsertSample(knex, payload, existingResult, opts) {
     ;[sampleId] = await knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
       collectedOn: _.get(payload, 'sample.collectedOn', null),
-      source: 'result',
+      source: RESULT_SOURCE,
       sampleTypeId,
       originSiteId: sampleOriginSiteId,
       createdOn: now,
@@ -521,6 +522,8 @@ async function upsertSample(knex, payload, existingResult, opts) {
         .update({
           externalId: _.get(payload, 'sample.id', existingSample.externalId),
           collectedOn: payload.sample.collectedOn || existingSample.collectedOn || null,
+          // eslint-disable-next-line no-bitwise
+          source: (existingSample.source || 0) | RESULT_SOURCE,
           sampleTypeId: payloadSampleTypeId ? sampleTypeId : existingSample.sampleTypeId,
           originSiteId: existingSample.originSiteId || sampleOriginSiteId || payloadOriginSiteId,
           updatedOn: now,
