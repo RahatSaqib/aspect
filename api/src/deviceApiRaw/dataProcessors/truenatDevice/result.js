@@ -365,6 +365,7 @@ async function getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, originS
     ;[sampleId] = await knex('Sample').insert({
       externalId: sampleExternalId,
       sampleTypeId,
+      source: 'result',
       originSiteId,
       createdOn: now,
       updatedOn: now,

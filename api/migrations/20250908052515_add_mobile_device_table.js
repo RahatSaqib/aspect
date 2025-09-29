@@ -1,0 +1,62 @@
+const { addAuditoryTriggers } = require('./utils/addAuditTriggers')
+
+module.exports.up = async function up(knex) {
+  await knex.schema.createTable('MobileDevice', function (table) {
+    table.increments('id').primary()
+    table.string('deviceAppSpot', 3).notNullable().unique().index()
+    table.string('deviceCode', 100).nullable().index()
+    table.boolean('active').defaultTo(false).notNullable().index()
+    table.integer('createdBy').nullable().unsigned().index().references('id').inTable('User')
+    table.dateTime('createdOn').nullable()
+    table.integer('updatedBy').nullable().unsigned().index().references('id').inTable('User')
+    table.dateTime('updatedOn').nullable()
+  })
+
+  await knex.schema.createTable('MobileDevice_AUDIT', function (table) {
+    table.integer('id').nullable()
+    table.string('deviceAppSpot', 3).nullable()
+    table.string('deviceCode', 100).nullable()
+    table.boolean('active').nullable()
+    table.integer('createdBy').nullable()
+    table.dateTime('createdOn').nullable()
+    table.integer('updatedBy').nullable()
+    table.dateTime('updatedOn').nullable()
+    table.dateTime('auditTime').nullable().defaultTo(knex.fn.now())
+  })
+
+  await addAuditoryTriggers(knex, 'MobileDevice', 'MobileDevice_AUDIT')
+
+  await knex.schema.alterTable('Sample', function (table) {
+    table.string('source', 35).nullable()
+  })
+
+  await knex.schema.createTable('Sample_AUDIT', function (table) {
+    table.integer('id').nullable()
+    table.string('externalId', 255).nullable()
+    table.dateTime('collectedOn').nullable()
+    table.integer('sampleTypeId').unsigned().nullable()
+    table.integer('originSiteId').unsigned().nullable()
+    table.integer('patientId').unsigned().nullable()
+    table.json('sampleData').nullable()
+    table.string('sampleStatus', 255).nullable()
+    table.integer('updatedBy').unsigned().nullable()
+    table.string('source', 100).nullable()
+    table.dateTime('updatedOn').nullable()
+    table.integer('collectedBy').unsigned().nullable()
+    table.boolean('registeredInAspect').nullable()
+    table.dateTime('createdOn').nullable()
+    table.integer('createdBy').unsigned().nullable()
+    table.dateTime('auditTime').nullable().defaultTo(knex.fn.now())
+  })
+
+  await addAuditoryTriggers(knex, 'Sample', 'Sample_AUDIT')
+}
+
+module.exports.down = async function down(knex) {
+  await knex.schema.dropTable('Sample_AUDIT')
+  await knex.schema.dropTable('MobileDevice_AUDIT')
+  await knex.schema.dropTable('MobileDevice')
+  await knex.schema.alterTable('Sample', function (table) {
+    table.dropColumn('source')
+  })
+}

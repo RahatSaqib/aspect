@@ -2143,7 +2143,7 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     return sampleId
   }
   sampleData.originSiteId = originSiteId
-  const [id] = await knex('Sample').insert({ ...sampleData, createdOn: now })
+  const [id] = await knex('Sample').insert({ ...sampleData, createdOn: now, source: 'result' })
   return id
 }
 

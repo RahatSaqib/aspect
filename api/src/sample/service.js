@@ -27,7 +27,7 @@ async function listSamples(request) {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
-      siteId: 'site.id',
+      siteName: 'site.name',
       sampleId: 's.externalId',
       patientId: knex.raw(`
         COALESCE(

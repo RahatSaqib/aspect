@@ -45,8 +45,8 @@ const dataConstraints = await getConstraints(auth.credentials)
 3. **Derived** - Auto-joins missing tables (e.g., Result→Assay→AssayType for disease constraints, if an alias is not provided, a join will be added to match the user's constraint)
 
 ### 2. Table Aliases
-
-Standard aliases:
+Always use table aliases in queries.
+Default aliases:
 - `s`: Site
 - `g`: Geography
 - `r`: Result

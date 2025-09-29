@@ -207,6 +207,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
         externalId: `SMP-TB-${format(new Date(), 'TT')}`,
         collectedOn: weekDays[index],
         sampleTypeId: sampleTypeDBSId,
+        source: 'result',
         originSiteId: siteId,
       }
       ;[sample.id] = await knex('Sample').insert(sample)

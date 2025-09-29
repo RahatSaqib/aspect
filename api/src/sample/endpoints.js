@@ -14,7 +14,7 @@ const routes = [
       auth: { scope: ['sample:view'] },
       validate: {
         query: {
-          siteId: Joi.string().allow('').description('Filter for site ID'),
+          siteName: Joi.string().allow('').description('Filter for site name'),
           sampleId: Joi.string().allow('').description('Filter for sample ID'),
           patientId: Joi.string().allow('').description('Filter for patient ID'),
           ...validateAllGeographyFilterParams(),
