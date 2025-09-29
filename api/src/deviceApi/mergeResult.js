@@ -7,13 +7,13 @@ const { insertSite } = require('../site/common/db')
 const { getLatestResultWorkflowLog } = require('./result')
 const { getResultCategoriesFromPayload } = require('./utils')
 const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
-const { getSampleIdByExternalId } = require('../sample/common/db')
-const { RESULT_SOURCE } = require('../sample/common/constants')
+const { getSampleByExternalId } = require('../sample/common/db')
+const { RESULT_SOURCE, isMobileSource } = require('../sample/common/constants')
 
 async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, context) {
   const sampleExternalId = _.get(payload, 'sample.id', null)
 
-  const existingResult = await getResultRecord(knex, payload, deviceId, context?.existingResultId)
+  const { existingResult, isTransferred } = await getResultRecord(knex, payload, deviceId, context?.existingResultId)
 
   const testStartedOn = _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null))
   // Select ResultType if specified, otherwise Patient
@@ -48,19 +48,29 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     }
   }
 
+const existingSample = isValidSampleExternalIdMobileFormat(sampleExternalId)
+    ? await getSampleByExternalId(knex, sampleExternalId)
+    : await getExistingSampleInCountry(knex, sampleExternalId, payloadSampleTypeId, site.countryId, testStartedOn)
+
   const { sampleOriginSiteId, reportableSiteId, payloadOriginSiteId } = await getSiteIdVarieties(
     knex,
     payload,
     site,
+    existingResult,
+    isTransferred,
+    isMobileSource(existingSample?.source),
     now
   )
+\
+  const opts = {
+    sampleId: existingSample?.id,
+    sampleTypeId,
+    sampleOriginSiteId,
+    payloadOriginSiteId,
+    payloadSampleTypeId,
+  }
 
-  let sampleId = isValidSampleExternalIdMobileFormat(sampleExternalId)
-    ? await getSampleIdByExternalId(knex, sampleExternalId)
-    : await getExistingSampleIdInCountry(knex, sampleExternalId, payloadSampleTypeId, site.countryId, testStartedOn)
-  const opts = { sampleId, sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId }
-  const existingSampleDetails = await upsertSample(knex, payload, existingResult, opts)
-  ;({ sampleId } = existingSampleDetails)
+  const sampleId = await upsertSample(knex, payload, existingResult, existingSample, opts)
 
   const { patientData, resultData, resultDataHash, shouldTriggerResultNotification } = mergeResultWithPayload(
     existingResult,
@@ -173,18 +183,21 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
 }
 
 async function getResultRecord(knex, payload, deviceId, resultId) {
-  let result = null
-  const baseQuery = knex('Result as r').first()
+  let resultData = null
+  const baseQuery = knex('Result as r')
+    .leftJoin('RestulTransferLog as rtl', 'r.id', 'rtl.resultId')
+    .first('r.*, rtl is not null as isTransferred')
   if (resultId) {
-    result = await baseQuery.where('r.id', resultId)
+    resultData = await baseQuery.where('r.id', resultId)
   } else if (payload.id) {
-    result = await baseQuery.where({
+    resultData = await baseQuery.where({
       'r.externalId': payload.id,
       'r.deviceId': deviceId,
     })
   }
 
-  return result
+  const { isTransferred, ...resultRecord } = resultData
+  return { result: resultRecord, isTransferred }
 }
 
 async function getResultTypeId(payload, existingResult) {
@@ -248,7 +261,67 @@ async function getResultSourceId(payload, existingResult, assay) {
   return resultSourceId
 }
 
-async function getSiteIdVarieties(knex, payload, site, now) {
+/**
+ * Determines and manages site ID varieties for sample origin and reportable sites.
+ *
+ * This function handles the complex logic of determining the appropriate site IDs for both
+ * sample origin and reportable sites based on the payload data. It creates or updates
+ * geography hierarchies (country, state, LGA) and site records as needed.
+ *
+ * @async
+ * @function getSiteIdVarieties
+ * @param {Object} knex - The Knex database instance for database operations
+ * @param {Object} payload - The incoming data payload containing sample information
+ * @param {Object} site - The current site object with partner and country information
+ * @param {Date|string} now - The current timestamp for record creation/updates
+ *
+ * @param {Object} payload.sample - Sample information from the payload
+ * @param {Object} [payload.sample.originSite] - Origin site information
+ * @param {string} [payload.sample.originSite.id] - External ID of the origin site
+ * @param {string} [payload.sample.originSite.name] - Name of the origin site
+ * @param {string} [payload.sample.originSite.shortName] - Short name of the origin site
+ * @param {string} [payload.sample.originSite.state] - State name for geography hierarchy
+ * @param {string} [payload.sample.originSite.lga] - LGA (Local Government Area) name
+ * @param {string} [payload.sample.originSite.notes] - Additional notes about the site
+ * @param {string} [payload.sample.originSite.city] - City name
+ * @param {string} [payload.sample.originSite.street1] - Primary street address
+ * @param {string} [payload.sample.originSite.street2] - Secondary street address
+ * @param {string} [payload.sample.originSite.zip] - ZIP/postal code
+ * @param {Object} [payload.sample.originSite.location] - Geographic coordinates
+ * @param {string|number} [payload.sample.originSite.location.longitude] - Longitude coordinate
+ * @param {string|number} [payload.sample.originSite.location.latitude] - Latitude coordinate
+ * @param {string} [payload.sample.originSite.timezoneId] - Timezone identifier
+ * @param {string|number} [payload.sample.originSite.hoursStart] - Operating hours start time
+ * @param {string|number} [payload.sample.originSite.hoursEnd] - Operating hours end time
+ *
+ * @param {Object} site - Current site object
+ * @param {number} site.id - ID of the current site
+ * @param {number} site.partnerId - Partner ID associated with the site
+ * @param {number} site.countryId - Country ID for geography hierarchy
+ *
+ * @returns {Promise<Object>} Object containing site ID information
+ * @returns {number} returns.sampleOriginSiteId - ID of the sample origin site
+ * @returns {number} returns.reportableSiteId - ID of the reportable site (usually same as origin)
+ * @returns {string|false} returns.payloadOriginSiteId - External ID from payload, or false if not provided
+ *
+ * @throws {Boom.badRequest} When origin site name is missing for new site creation
+ *
+ * @description
+ * The function performs the following operations:
+ * 2. If payload contains origin site information:
+ *    - Builds geography hierarchy (country → state → LGA) creating records as needed
+ *    - Searches for existing origin site by partner ID and external ID
+ *    - Creates new origin site if not found, or updates existing one
+ *    - Sets both sample origin and reportable site IDs to the origin site ID
+ * 3. Returns the determined site ID varieties
+ *
+ * @example
+ * ```javascript
+ * const result = await getSiteIdVarieties(knex, payload, currentSite, new Date());
+ * // Returns: { sampleOriginSiteId: 123, reportableSiteId: 123, payloadOriginSiteId: "EXT001" }
+ * ```
+ */
+async function getSiteIdVarieties(knex, payload, site, existingResult, isTransferred, isMobileSample, now) {
   let sampleOriginSiteId = site.id
   let reportableSiteId = site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
@@ -405,7 +478,11 @@ async function getSiteIdVarieties(knex, payload, site, now) {
         })
     }
     sampleOriginSiteId = sampleOriginSite.id
-    reportableSiteId = sampleOriginSite.id
+    if ((existingResult && existingResult.reportableSiteId && !isTransferred) || isMobileSample) {
+      reportableSiteId = existingResult.reportableSiteId
+    } else {
+      reportableSiteId = sampleOriginSite.id
+    }
   }
   return { sampleOriginSiteId, reportableSiteId, payloadOriginSiteId }
 }
@@ -432,7 +509,7 @@ async function getSiteIdVarieties(knex, payload, site, now) {
  * - If no sample type is provided, prefer samples of type 'Sputum' or with no type
  * - Return null if no matches are found
  */
-async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
+async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
   if (!sampleExternalId) {
     return Promise.resolve(null)
   }
@@ -445,23 +522,23 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
     .andWhere('g.countryId', countryId)
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
-    .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
+    .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn', 's.source')
 
   if (samplesOfType.length === 1) {
-    return samplesOfType[0].id
+    return samplesOfType[0]
   }
   if (samplesOfType.length > 1) {
     if (sampleTypeExternalId) {
       const samplesWithMatchingTypes = samplesOfType.filter(s => s.sampleTypeExternalId === sampleTypeExternalId)
       if (samplesWithMatchingTypes.length > 0) {
-        return samplesWithMatchingTypes[0].id
+        return samplesWithMatchingTypes[0]
       }
     } else {
       const samplesWithMatchingTypes = samplesOfType.filter(
         s => s.sampleTypeExternalId === 'Sputum' || _.isNil(s.sampleTypeExternalId)
       )
       if (samplesWithMatchingTypes.length > 0) {
-        return samplesWithMatchingTypes[0].id
+        return samplesWithMatchingTypes[0]
       }
     }
   }
@@ -493,11 +570,11 @@ async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeEx
  *    - Preserves existing values when payload data is not provided
  *    - For sample.originSiteId, it is always preserved.
  */
-async function upsertSample(knex, payload, existingResult, opts) {
+async function upsertSample(knex, payload, existingResult, existingSample, opts) {
   let { sampleId } = opts
   const { sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId } = opts
   const now = new Date()
-  let existingSample
+
   if (sampleId == null && existingResult == null) {
     ;[sampleId] = await knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
@@ -513,10 +590,6 @@ async function upsertSample(knex, payload, existingResult, opts) {
       ;({ sampleId } = existingResult)
     }
     if (_.has(payload, 'sample')) {
-      existingSample =
-        (await knex('Sample')
-          .where({ id: sampleId })
-          .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId')) || {}
       await knex('Sample')
         .where({ id: sampleId })
         .update({
@@ -530,7 +603,7 @@ async function upsertSample(knex, payload, existingResult, opts) {
         })
     }
   }
-  return { existingSample, sampleId }
+  return sampleId
 }
 
 async function getSiteAndAssays(knex, payload, existingResult, deviceId) {
