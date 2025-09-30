@@ -187,8 +187,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
 async function getResultRecord(knex, payload, deviceId, resultId) {
   let resultData = null
   const baseQuery = knex('Result as r')
-    .leftJoin('RestulTransferLog as rtl', 'r.id', 'rtl.resultId')
-    .first('r.*, rtl is not null as isTransferred')
+    .leftJoin('ResultTransferLog as rtl', 'r.id', 'rtl.resultId')
+    .first(knex.raw('r.*'), knex.raw('rtl.id is not null as isTransferred'))
   if (resultId) {
     resultData = await baseQuery.where('r.id', resultId)
   } else if (payload.id) {
@@ -196,6 +196,10 @@ async function getResultRecord(knex, payload, deviceId, resultId) {
       'r.externalId': payload.id,
       'r.deviceId': deviceId,
     })
+  }
+
+  if (!resultData) {
+    return { result: null, isTransferred: false }
   }
 
   const { isTransferred, ...resultRecord } = resultData
@@ -361,7 +365,7 @@ async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExte
 async function upsertSample(knex, payload, existingResult, existingSample, opts) {
   const { sampleTypeId, sampleOriginSiteId, payloadSampleTypeId } = opts
   const now = new Date()
-  let sampleId = existingSample.id
+  let sampleId = existingSample?.id
   if (!existingSample) {
     ;[sampleId] = await knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
