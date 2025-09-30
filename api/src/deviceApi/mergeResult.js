@@ -1,14 +1,11 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { mergeResultWithPayload } = require('../result/common/logic')
-const { convertStringToFloat } = require('../shared/string')
 const { resultSourceToId, resultTypeToId, resultWorkflowStatusToId, sampleTypeToId } = require('../shared/dictionary')
-const { insertSite } = require('../site/common/db')
 const { getLatestResultWorkflowLog } = require('./result')
 const { getResultCategoriesFromPayload } = require('./utils')
 const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
 const { getSampleByExternalId } = require('../sample/common/db')
-const { RESULT_SOURCE, isMobileSample } = require('../sample/common/constants')
 
 async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, context) {
   const { existingResult, isTransferred } = await getResultRecord(knex, payload, deviceId, context?.existingResultId)
@@ -62,7 +59,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     site,
     existingResult,
     isTransferred,
-    isMobileSample(existingSample?.source)
+    existingSample?.registeredInMobile || false
   )
 
   const opts = {
@@ -310,7 +307,7 @@ async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExte
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .where('s.externalId', sampleExternalId)
-    .andWhere('s.registeredInAspect', true)
+    .andWhere('s.registeredInMobile', true)
     .andWhere('g.countryId', countryId)
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
@@ -370,7 +367,7 @@ async function upsertSample(knex, payload, existingResult, existingSample, opts)
     ;[sampleId] = await knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
       collectedOn: _.get(payload, 'sample.collectedOn', null),
-      source: RESULT_SOURCE,
+      registeredInMobile: false,
       sampleTypeId,
       originSiteId: sampleOriginSiteId,
       createdOn: now,
@@ -382,8 +379,6 @@ async function upsertSample(knex, payload, existingResult, existingSample, opts)
       .update({
         externalId: payload?.sample?.id || payload?.data?.sampleId || existingSample.externalId,
         collectedOn: payload.sample.collectedOn || existingSample.collectedOn || null,
-        // eslint-disable-next-line no-bitwise
-        source: (existingSample.source || 0) | RESULT_SOURCE,
         sampleTypeId: payloadSampleTypeId ? sampleTypeId : existingSample.sampleTypeId,
         originSiteId: existingSample.originSiteId || sampleOriginSiteId,
         updatedOn: now,

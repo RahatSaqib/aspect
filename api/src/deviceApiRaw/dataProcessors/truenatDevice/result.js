@@ -16,7 +16,6 @@ const {
   allResultWorkflowStatusToId,
 } = require('../../../shared/dictionary')
 const { resultLogged } = require('../../../result/actions')
-const { RESULT_SOURCE } = require('../../../sample/common/constants')
 
 const sampleTypeMappings = { Sputum: 'Sputum' }
 
@@ -366,7 +365,6 @@ async function getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, originS
     ;[sampleId] = await knex('Sample').insert({
       externalId: sampleExternalId,
       sampleTypeId,
-      source: RESULT_SOURCE,
       originSiteId,
       createdOn: now,
       updatedOn: now,

@@ -16,7 +16,6 @@ const {
   allResultStatusToId,
   allResultTreatmentStatusToId,
 } = require('../../src/shared/dictionary')
-const { RESULT_SOURCE } = require('../../src/sample/common/constants')
 
 const { assert } = chai
 
@@ -208,7 +207,6 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
         externalId: `SMP-TB-${format(new Date(), 'TT')}`,
         collectedOn: weekDays[index],
         sampleTypeId: sampleTypeDBSId,
-        source: RESULT_SOURCE,
         originSiteId: siteId,
       }
       ;[sample.id] = await knex('Sample').insert(sample)

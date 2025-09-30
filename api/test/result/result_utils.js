@@ -9,7 +9,6 @@ const {
   resultTypeToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
-const { RESULT_SOURCE } = require('../../src/sample/common/constants')
 
 function calculateDateForResult(withinLastXDays = 60) {
   const daysToSubtract = Math.ceil(Math.random() ** 4 * withinLastXDays)
@@ -89,7 +88,6 @@ async function createResult(
     externalId: `${dateFormat(randomDate, 'yy')}/${randomNumber}`,
     collectedOn: calculateDateForResult(withinLastXDays),
     sampleTypeId,
-    source: RESULT_SOURCE,
     originSiteId: site.id,
     ...sampleDetails,
   }

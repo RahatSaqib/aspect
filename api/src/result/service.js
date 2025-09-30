@@ -52,7 +52,6 @@ const {
   getClinicalIndicatorQueryForResultsTable,
 } = require('./common/db')
 const { replaceOffset } = require('../shared/date')
-const { RESULT_SOURCE } = require('../sample/common/constants')
 
 function buildQueryForResultsListAndExport(query, dataConstraints) {
   const orConstraint = dataConstraints.$or
@@ -2127,7 +2126,7 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     externalId,
     collectedOn,
     sampleTypeId,
-    registeredInAspect: true,
+    registeredInMobile: true,
     updatedOn: now,
   }
 
@@ -2139,13 +2138,12 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
       if (existingSample && existingSample.originSiteId === null && originSiteId) {
         sampleData.originSiteId = originSiteId
       }
-      sampleData.source = (existingSample.source || 0) | RESULT_SOURCE // eslint-disable-line no-bitwise
       await knex('Sample').update(sampleData).where({ id: sampleId })
     }
     return sampleId
   }
   sampleData.originSiteId = originSiteId
-  const [id] = await knex('Sample').insert({ ...sampleData, createdOn: now, source: RESULT_SOURCE })
+  const [id] = await knex('Sample').insert({ ...sampleData, createdOn: now })
   return id
 }
 

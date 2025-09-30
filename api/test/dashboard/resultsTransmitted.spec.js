@@ -16,7 +16,6 @@ const {
 } = require('../../src/shared/dictionary')
 
 const server = require('../utils/testUtils')
-const { RESULT_SOURCE } = require('../../src/sample/common/constants')
 
 const { assert, expect } = chai.use(chaiSubset)
 // helper func for percentages
@@ -189,7 +188,6 @@ describe.skip('Dashboard routes - GET /api/dashboard/results-transmitted', () =>
         const sample = {
           externalId: `SMP-TB-${format(new Date(), 'TT')}`,
           collectedOn: getRandomDate(),
-          source: RESULT_SOURCE,
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteId,
         }

@@ -16,7 +16,6 @@ const {
 const config = require('../../../config')
 const { getBaseAllSamplesRegistered } = require('./common/db')
 const { getSampleByExternalId } = require('../../../sample/common/db')
-const { MOBILE_SOURCE } = require('../../../sample/common/constants')
 
 async function registerNewSample(request) {
   const { payload, auth } = request
@@ -45,7 +44,7 @@ async function registerNewSample(request) {
   const now = new Date()
   const sampleToSave = {
     externalId: payload.externalId,
-    registeredInAspect: true,
+    registeredInMobile: true,
     sampleTypeId,
     collectedOn,
     collectedBy: currentlyLoggedInUser.id,
@@ -74,8 +73,7 @@ async function registerNewSample(request) {
         .where('externalId', payload.externalId)
         .update({
           ...sampleToSave,
-          // eslint-disable-next-line no-bitwise
-          source: (existingSample.source || 0) | MOBILE_SOURCE, // Add mobile to bitmask
+          registeredInMobile: true,
           sampleData: JSON.stringify(sampleToSave.sampleData),
         })
       // Sample collection site prevails over result reportable site
@@ -86,7 +84,7 @@ async function registerNewSample(request) {
       sampleToSave.createdBy = currentlyLoggedInUser.id
       await trx('Sample').insert({
         ...sampleToSave,
-        source: MOBILE_SOURCE,
+        registeredInMobile: true,
         sampleData: JSON.stringify(sampleToSave.sampleData),
       })
 
