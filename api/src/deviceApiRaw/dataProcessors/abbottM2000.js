@@ -19,7 +19,6 @@ const {
   allResultWorkflowStatusToId,
 } = require('../../shared/dictionary')
 
-
 const mergeDeep = (baseValue, sourceValue) => {
   if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
     return sourceValue
