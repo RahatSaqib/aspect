@@ -2126,7 +2126,7 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     externalId,
     collectedOn,
     sampleTypeId,
-    registeredInMobile: true,
+    registeredInAspect: true,
     updatedOn: now,
   }
 

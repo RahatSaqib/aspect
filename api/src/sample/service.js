@@ -18,7 +18,7 @@ async function listSamples(request) {
     .leftJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .where('s.registeredInMobile', 1)
+    .where('s.registeredInAspect', 1)
     .modify(addConstraints, dataConstraints, {
       site: 'site',
       geography: 'g',

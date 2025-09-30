@@ -175,7 +175,7 @@ const getSamplesRegisteredCount = (dataConstraints, query) => {
   return knex('Site as s')
     .join('Geography as g', 'g.id', 's.geographyId')
     .join('Sample', 'Sample.originSiteId', '=', 's.id')
-    .where('registeredInMobile', 1)
+    .where('registeredInAspect', 1)
     .whereBetween('Sample.collectedOn', [minDate, maxDate])
     .groupBy('s.id')
     .modify(addConstraints, dataConstraints, {

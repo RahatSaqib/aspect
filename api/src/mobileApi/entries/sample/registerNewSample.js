@@ -44,7 +44,7 @@ async function registerNewSample(request) {
   const now = new Date()
   const sampleToSave = {
     externalId: payload.externalId,
-    registeredInMobile: true,
+    registeredInAspect: true,
     sampleTypeId,
     collectedOn,
     collectedBy: currentlyLoggedInUser.id,
@@ -73,7 +73,7 @@ async function registerNewSample(request) {
         .where('externalId', payload.externalId)
         .update({
           ...sampleToSave,
-          registeredInMobile: true,
+          registeredInAspect: true,
           sampleData: JSON.stringify(sampleToSave.sampleData),
         })
       // Sample collection site prevails over result reportable site
@@ -84,7 +84,7 @@ async function registerNewSample(request) {
       sampleToSave.createdBy = currentlyLoggedInUser.id
       await trx('Sample').insert({
         ...sampleToSave,
-        registeredInMobile: true,
+        registeredInAspect: true,
         sampleData: JSON.stringify(sampleToSave.sampleData),
       })
 
