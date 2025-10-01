@@ -26,11 +26,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereNotNull('dak.deviceId')
     .pluck('dak.deviceId')
 
-  const deviceResultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
-  const generatedResultIds = await knex('ResultGeneratedResult')
-    .whereIn('sourceResultId', deviceResultIds)
-    .pluck('generatedResultId')
-  const resultIds = deviceResultIds.concat(generatedResultIds)
+  const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
   const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
 
@@ -47,10 +43,6 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
   await knex('InventoryLog').whereIn('resultId', resultIds).delete()
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-  await knex('ResultGeneratedResult')
-    .whereIn('sourceResultId', resultIds)
-    .orWhereIn('generatedResultId', resultIds)
-    .delete()
 
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
