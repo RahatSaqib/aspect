@@ -26,10 +26,10 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const { resultCategory1, resultCategory2 } = await getResultCategoriesFromPayload(payload, existingResult)
 
   // Gets the site that is linked to the device as well as the valid types of assays that can be used on the device
-  const { assays, site } = await getSiteAndAssays(knex, payload, existingResult, deviceId)
+  const { assays, site: deviceSite } = await getSiteAndAssays(knex, payload, existingResult, deviceId)
 
   // Exit on any error
-  const requestErrors = await getResultErrors({ site, resultTypeId, resultCategory1, assays, payload })
+  const requestErrors = await getResultErrors({ site: deviceSite, resultTypeId, resultCategory1, assays, payload })
   if (!_.isEmpty(requestErrors)) {
     throw Boom.badRequest(`Cannot find ${requestErrors.join(', ')}`)
   }
@@ -48,24 +48,26 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
       throw Boom.badRequest(`Cannot find sample type ${payloadSampleTypeId}`)
     }
   }
+  let existingSample = null
   const payloadSampleExternalId = payload.sample?.id
-  const existingSample = isValidSampleExternalIdMobileFormat(payloadSampleExternalId)
-    ? await getSampleByExternalId(knex, payloadSampleExternalId)
-    : await getExistingSampleInCountry(
-        knex,
-        payloadSampleExternalId,
-        payloadSampleTypeId,
-        site.countryId,
-        testStartedOn
-      )
-
+  if (payloadSampleExternalId) {
+    existingSample = isValidSampleExternalIdMobileFormat(payloadSampleExternalId)
+      ? await getSampleByExternalId(knex, payloadSampleExternalId)
+      : await getExistingSampleInCountry(
+          knex,
+          payloadSampleExternalId,
+          payloadSampleTypeId,
+          deviceSite.countryId,
+          testStartedOn
+        )
+  }
   const { sampleOriginSiteId, reportableSiteId } = await getSiteIdVarieties(
     knex,
     payload,
-    site,
+    deviceSite,
     existingResult,
-    isTransferred,
-    existingSample?.registeredInMobile || false
+    existingSample,
+    isTransferred
   )
 
   const opts = {
@@ -75,7 +77,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     payloadSampleTypeId,
   }
 
-  const sampleId = await upsertSample(knex, payload, existingResult, existingSample, opts)
+  const sampleId = await upsertSample(knex, payload, existingSample, opts)
 
   const { patientData, resultData, resultDataHash, shouldTriggerResultNotification } = mergeResultWithPayload(
     existingResult,
@@ -83,8 +85,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   )
 
   const preProcessedResult = {
-    latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', site.latitude)),
-    longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', site.longitude)),
+    latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', deviceSite.latitude)),
+    longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', deviceSite.longitude)),
     assayId: assay.id,
     assayVersion: _.get(payload, 'assay.version', _.get(existingResult, 'assayVersion', null)),
     resultTypeId,
@@ -129,7 +131,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const customFieldsData = await context.extractCustomFieldsFromPayload({
     payload,
     countryAbbreviation,
-    partnerId: site.partnerId,
+    partnerId: deviceSite.partnerId,
     assayId: assay.id,
     deviceId,
   })
@@ -151,8 +153,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const processedResult = {
     externalId: payload.id,
     deviceId,
-    partnerId: site.partnerId,
-    siteId: site.id,
+    partnerId: deviceSite.partnerId,
+    siteId: deviceSite.id,
     createdOn: now,
     ...result,
   }
@@ -270,14 +272,25 @@ async function getResultSourceId(payload, existingResult, assay) {
   return resultSourceId
 }
 
-async function getSiteIdVarieties(knex, payload, site, existingResult, isTransferred, isMobileSample) {
-  const payloadOriginSiteExternalId = payload.sample?.originSite?.id || false
-  const { id: payloadOriginSiteId } = await knex('Site').where('externalId', payloadOriginSiteExternalId).first('id')
-  const sampleOriginSiteId = payloadOriginSiteId || site.id
+async function getSiteIdVarieties(knex, payload, deviceSite, existingResult, existingSample, isTransferred) {
+  // Sample.originSiteId
+  let payloadSampleOriginSiteId = null
+  const payloadSampleOriginSiteExternalId = payload.sample?.originSite?.id || false
+  if (payloadSampleOriginSiteExternalId) {
+    const sampleSiteRow = await knex('Site').where('externalId', payloadSampleOriginSiteExternalId).first('id')
+    payloadSampleOriginSiteId = sampleSiteRow?.id || null
+  }
 
-  let reportableSiteId = site.id
-  if ((existingResult && existingResult.reportableSiteId && !isTransferred) || isMobileSample) {
+  const sampleOriginSiteId = existingSample?.registeredInMobile
+    ? existingSample.originSiteId
+    : payloadSampleOriginSiteId || deviceSite.id
+
+  // Result.reportableSiteId
+  let reportableSiteId = deviceSite.id
+  if (isTransferred) {
     reportableSiteId = existingResult.reportableSiteId
+  } else if (existingSample?.registeredInMobile) {
+    reportableSiteId = existingSample.originSiteId
   }
 
   return { sampleOriginSiteId, reportableSiteId }
@@ -306,9 +319,10 @@ async function getSiteIdVarieties(knex, payload, site, existingResult, isTransfe
  * - Return null if no matches are found
  */
 async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
-  if (!sampleExternalId) {
+  if (!sampleExternalId || sampleExternalId.length < 7) {
     return Promise.resolve(null)
   }
+
   const samplesOfType = await knex('Sample as s')
     .join('Site as site', 's.originSiteId', 'site.id')
     .join('Geography as g', 'site.geographyId', 'g.id')
@@ -366,7 +380,7 @@ async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExte
  *    - Preserves existing values when payload data is not provided
  *    - For sample.originSiteId, it is always preserved.
  */
-async function upsertSample(knex, payload, existingResult, existingSample, opts) {
+async function upsertSample(knex, payload, existingSample, opts) {
   const { sampleTypeId, sampleOriginSiteId, payloadSampleTypeId } = opts
   const now = new Date()
   let sampleId = existingSample?.id

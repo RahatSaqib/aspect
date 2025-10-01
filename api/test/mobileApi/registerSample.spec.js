@@ -39,7 +39,7 @@ describe('Mobile API Sample Registration', () => {
     clinicianAccessToken = await getClinicianAccessToken()
     lastSampleId = await getLastSampleId()
     availableSites = await getAvailableSites(clinicianAccessToken)
-    assert.isAtLeast(availableSites.length, 1, 'Clinician needs to be able to register sample at at least 1 site.')
+    assert.isAtLeast(availableSites.length, 1, 'Clinician needs to be able to register sample at least 1 site.')
   })
 
   afterEach(async () => {
