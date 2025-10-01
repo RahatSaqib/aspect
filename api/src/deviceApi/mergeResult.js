@@ -8,7 +8,12 @@ const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic'
 const { getSampleByExternalId } = require('../sample/common/db')
 
 async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, context) {
-  const { existingResult, isTransferred } = await getResultRecord(knex, payload, deviceId, context?.existingResultId)
+  const { result: existingResult, isTransferred } = await getResultRecord(
+    knex,
+    payload,
+    deviceId,
+    context?.existingResultId
+  )
 
   const testStartedOn = _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null))
   // Select ResultType if specified, otherwise Patient
