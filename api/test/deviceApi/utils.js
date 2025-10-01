@@ -43,8 +43,9 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
   await knex('InventoryLog').whereIn('resultId', resultIds).delete()
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-
+  await knex('Result').whereIn('id', resultIds).update({ resultWorkflowStatusLogId: null })
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
+  await knex('ResultTransferLog').whereIn('resultId', resultIds).delete()
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
   await knex('ResultFileReference').whereIn('resultId', resultIds).delete()
   await knex('ResultNote').whereIn('resultId', resultIds).delete()
@@ -570,8 +571,7 @@ class DeviceApiTestContext {
     }
 
     if (this.siteIds.length > 0) {
-      // Delete all samples that reference these sites (not just device-related ones)
-      // await knex('Sample').whereIn('originSiteId', this.siteIds).delete()
+      await knex('Sample').whereIn('originSiteId', this.siteIds).delete()
       await knex('InventoryItem').whereIn('siteId', this.siteIds).delete()
       await knex('Site').whereIn('id', this.siteIds).delete()
       this.siteIds = []

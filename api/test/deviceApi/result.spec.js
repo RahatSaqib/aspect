@@ -920,7 +920,7 @@ describe('Device Result API routes', () => {
         assert.isNotOk(result1.errorCode)
       }))
 
-    it.only('should merge results with same id', () =>
+    it('should merge results with same id', () =>
       runTest(async knex => {
         const mobileSampleExternalId = '453-250925-002'
         const { deviceId, deviceAuth, now } = context
@@ -965,7 +965,7 @@ describe('Device Result API routes', () => {
 
         const clinicianAccessToken = await getClinicianAccessToken()
         const sampleRegisterPath = '/mobile/api/sample/register'
-        const lala = await server
+        await server
           .post(sampleRegisterPath)
           .set('Authorization', `Bearer ${clinicianAccessToken}`)
           .set('api-version', `4`)

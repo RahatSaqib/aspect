@@ -1,5 +1,3 @@
-const { addAuditoryTriggers } = require('./utils/addAuditTriggers')
-
 exports.up = async function (knex) {
   await knex.schema.dropTable('ResultGeneratedResult')
 }
