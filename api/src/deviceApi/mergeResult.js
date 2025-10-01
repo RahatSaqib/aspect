@@ -65,7 +65,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     site,
     existingResult,
     isTransferred,
-    existingSample?.registeredInAspect || false
+    existingSample?.registeredInMobile || false
   )
 
   const opts = {
@@ -314,7 +314,7 @@ async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExte
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .where('s.externalId', sampleExternalId)
-    .andWhere('s.registeredInAspect', true)
+    .andWhere('s.registeredInMobile', true)
     .andWhere('g.countryId', countryId)
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
@@ -374,7 +374,7 @@ async function upsertSample(knex, payload, existingResult, existingSample, opts)
     ;[sampleId] = await knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
       collectedOn: _.get(payload, 'sample.collectedOn', null),
-      registeredInAspect: false,
+      registeredInMobile: false,
       sampleTypeId,
       originSiteId: sampleOriginSiteId,
       createdOn: now,
