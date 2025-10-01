@@ -59,7 +59,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
         testStartedOn
       )
 
-  const { sampleOriginSiteId, reportableSiteId } = getSiteIdVarieties(
+  const { sampleOriginSiteId, reportableSiteId } = await getSiteIdVarieties(
+    knex,
     payload,
     site,
     existingResult,
@@ -269,8 +270,9 @@ async function getResultSourceId(payload, existingResult, assay) {
   return resultSourceId
 }
 
-function getSiteIdVarieties(payload, site, existingResult, isTransferred, isMobileSample) {
-  const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
+async function getSiteIdVarieties(knex, payload, site, existingResult, isTransferred, isMobileSample) {
+  const payloadOriginSiteExternalId = payload.sample?.originSite?.id || false
+  const { id: payloadOriginSiteId } = await knex('Site').where('externalId', payloadOriginSiteExternalId).first('id')
   const sampleOriginSiteId = payloadOriginSiteId || site.id
 
   let reportableSiteId = site.id
