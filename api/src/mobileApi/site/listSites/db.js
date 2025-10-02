@@ -1,4 +1,5 @@
 const { knex } = require('../../../db')
+const { INTERNAL_DEVICE_IDS } = require('../../../shared/constants')
 const { getSitesQuery } = require('../../../site/service')
 
 const SELECT_LIST_FIELDS = [
@@ -36,15 +37,6 @@ const SELECT_LIST_FIELDS = [
  * @throws {Error} Database errors from knex operations
  */
 const getSitesMobileView = async (dataConstraints, type, sortBy = 'name') => {
-  const userStatesIdsQuery = knex('State as st')
-    .join('Geography as g', 'st.id', 'g.stateId')
-    .join('JobContext as jc', 'g.id', 'jc.geographyId')
-    .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
-    .join('Person as p', 'jc.personId', 'p.id')
-    .whereIn('st.externalId', type)
-    .where('jf.partnerId', dataConstraints.partner.id)
-    .select('g.stateId')
-
   // Query for sites the user has a Job Assignment to (onlyForTransfers = false)
   const assignedSitesQuery = getSitesQuery(dataConstraints).modify(qb => {
     if (type) {
@@ -52,7 +44,7 @@ const getSitesMobileView = async (dataConstraints, type, sortBy = 'name') => {
     }
   })
 
-  // Query for sites in user states, but not the ones with a Job Assignment (onlyForTransfers = true)
+  // Query to fetch all remaining sites, including those outside the user’s scope (onlyForTransfers = true)
   const stateSitesQuery = knex('Site as s')
     .join('SiteType as st', 's.siteTypeId', 'st.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -63,8 +55,9 @@ const getSitesMobileView = async (dataConstraints, type, sortBy = 'name') => {
         qb.andWhere(qbSiteType => qbSiteType.whereIn('st.externalId', type))
       }
     })
-    .whereIn('g.stateId', userStatesIdsQuery)
+    .where('s.partnerId', dataConstraints.partner.id)
     .whereNotIn('s.id', assignedSitesQuery.clone().select('s.id'))
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
 
   // Union the two queries
   const sitesListQ = assignedSitesQuery
