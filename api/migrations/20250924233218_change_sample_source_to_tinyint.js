@@ -1,5 +1,4 @@
 exports.up = async function (knex) {
-  // Drop and recreate Sample.source as tinyint unsigned with default 0
   knex.schema.alterTable('Sample', async function (table) {
     await table.dropColumn('source')
   })
