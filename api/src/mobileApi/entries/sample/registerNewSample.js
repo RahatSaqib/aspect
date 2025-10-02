@@ -77,7 +77,13 @@ async function registerNewSample(request) {
           sampleData: JSON.stringify(sampleToSave.sampleData),
         })
       // Sample collection site prevails over result reportable site
-      await trx('Result').where('sampleId', existingSample.id).update({ reportableSiteId: sampleToSave.originSiteId })
+      // if result has not been transferred
+      await trx('Result as r')
+        .where('sampleId', existingSample.id)
+        .whereNotExists(function () {
+          this.select('rtl.id').from('ResultTransferLog as rtl').whereRaw('rtl.resultId = r.id')
+        })
+        .update({ reportableSiteId: sampleToSave.originSiteId })
     } else {
       // Create new one
       sampleToSave.createdOn = now
