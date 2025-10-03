@@ -1,5 +1,4 @@
 const jwtDecode = require('jwt-decode')
-const supertest = require('supertest')
 const chai = require('chai')
 const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
@@ -15,7 +14,6 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = require('../utils/testUtils')
 const { convertTimezonetoIANA, convertTimezonetoWindowsIANA, arrayofIANATimezone } = require('../../src/shared/date')
 
-const gxAlertServer = supertest.agent(process.env.gxAlertApi)
 const { assert } = chai
 
 describe('Authentication routes', () => {
@@ -68,18 +66,8 @@ describe('Authentication routes', () => {
   )
 
   describe('/api/auth', () => {
-    let isGxAlertAvailable
-
     before(async () => {
       shared.checkToken(server, authPath)
-      await gxAlertServer
-        .get('')
-        .then(() => {
-          isGxAlertAvailable = true
-        })
-        .catch(() => {
-          isGxAlertAvailable = false
-        })
 
       await runTestWithKnex(async knex => {
         const lastPartnerId = 4
@@ -316,7 +304,7 @@ describe('Authentication routes', () => {
           })
           .then(res => {
             // test returns 500 if its run offline
-            assert.equal(res.status, isGxAlertAvailable ? 401 : 409)
+            assert.equal(res.status, 401)
           })
       })
 
