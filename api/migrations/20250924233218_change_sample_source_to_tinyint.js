@@ -1,20 +1,20 @@
 exports.up = async function (knex) {
-  knex.schema.alterTable('Sample', async function (table) {
-    await table.dropColumn('source')
+  await knex.schema.alterTable('Sample', async function (table) {
+    table.dropColumn('source')
   })
 
-  knex.schema.alterTable('Sample_AUDIT', async function (table) {
-    await table.dropColumn('source')
+  await knex.schema.alterTable('Sample_AUDIT', async function (table) {
+    table.dropColumn('source')
   })
 }
 
 exports.down = async function (knex) {
-  knex.schema.alterTable('Sample', async function (table) {
-    await table.string('source', 35).nullable()
+  await knex.schema.alterTable('Sample', async function (table) {
+    table.string('source', 35).nullable()
   })
 
   // Drop and recreate Sample_AUDIT.source as string
-  knex.schema.alterTable('Sample_AUDIT', async function (table) {
-    await table.string('source', 35).nullable()
+  await knex.schema.alterTable('Sample_AUDIT', async function (table) {
+    table.string('source', 35).nullable()
   })
 }
