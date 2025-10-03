@@ -332,7 +332,7 @@ async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExte
     .andWhere('g.countryId', countryId)
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
-    .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn', 's.source')
+    .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
 
   if (samplesOfType.length === 1) {
     return samplesOfType[0]
