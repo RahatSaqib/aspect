@@ -1020,7 +1020,7 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
   const { sharedResults, nameOfSharedData } = options
 
   const { stateId, lgaId, siteName } = query
-  const { userName, cell } = await getUser(auth.credentials.name)
+  const { userName, cell } = await resolveUserFromAuth(auth)
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
   const { dateTo } = dates
@@ -1189,7 +1189,7 @@ async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
   let { data, deviceInfo } = sharedResults[useNamedData]
 
   const { stateId, lgaId, siteName } = query
-  const { userName, cell, phone, email } = await getUser(auth.credentials.name)
+  const { userName, cell, phone, email } = await resolveUserFromAuth(auth)
 
   data = await getDataForSheet1or2(
     data,
@@ -2095,7 +2095,7 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
 
 const getReportCustomFieldsCompletion = async (auth, query) => {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { partnerId } = await getUser(auth.credentials.name)
+  const { partnerId } = await resolveUserFromAuth(auth)
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
   const { dateTo } = dates
@@ -2310,6 +2310,16 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
     ok: true,
     data: dataRR,
   }
+}
+
+async function resolveUserFromAuth(auth) {
+  // In report-based notifications we don't pass a real auth object,
+  // so personal user information may not be available.
+  if (!auth.credentials.name) {
+    return {}
+  }
+
+  return getUser(auth.credentials.name)
 }
 
 module.exports = {
