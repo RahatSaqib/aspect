@@ -57,7 +57,11 @@ async function registerNewSample(request) {
 
   await knex.transaction(async trx => {
     // Lock the sample row for update to prevent concurrency issues
-    const existingSample = await getSampleByExternalId(trx, payload.externalId).forUpdate()
+    const existingSample = await getSampleByExternalId(
+      trx,
+      payload.externalId,
+      currentlyLoggedInUser.countryId
+    ).forUpdate()
     if (existingSample) {
       // Update existing sample
       const existingSampleData = existingSample.sampleData ? JSON.parse(existingSample.sampleData) : {}
@@ -95,7 +99,7 @@ async function registerNewSample(request) {
       })
 
       if (config.acceptFakeResults) {
-        await createFakeResult(trx, payload.originSiteId, payload.externalId)
+        await createFakeResult(trx, payload.originSiteId, payload.externalId, currentlyLoggedInUser.countryId)
       }
     }
   })
@@ -121,7 +125,7 @@ const getSiteIdsForUser = async auth => {
   return clinics.map(c => c.id)
 }
 
-const createFakeResult = async (trx, siteId, sampleExternalId) => {
+const createFakeResult = async (trx, siteId, sampleExternalId, countryId) => {
   const resultCombinations = allResultCategories => [
     {
       resultCategory1: allResultCategories.Detected,
@@ -173,7 +177,7 @@ const createFakeResult = async (trx, siteId, sampleExternalId) => {
       deviceId,
       resultSourceId: resultSources.DiagnosticDevice,
       resultTypeId: resultTypes.Patient,
-      sampleId: await getSampleByExternalId(trx, sampleExternalId).then(s => s.id),
+      sampleId: await getSampleByExternalId(trx, sampleExternalId, countryId).then(s => s.id),
       resultDataHash: null,
       assayVersion: '4',
       startedOn: now,

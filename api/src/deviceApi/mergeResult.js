@@ -52,16 +52,10 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const payloadSampleExternalId = payload.sample?.id
   if (payloadSampleExternalId) {
     existingSample = isValidSampleExternalIdMobileFormat(payloadSampleExternalId)
-      ? await getSampleByExternalId(knex, payloadSampleExternalId)
-      : await getExistingSampleInCountry(
-          knex,
-          payloadSampleExternalId,
-          payloadSampleTypeId,
-          deviceSite.countryId,
-          testStartedOn
-        )
+      ? await getSampleByExternalId(knex, payloadSampleExternalId, deviceSite.countryId)
+      : await getMatchingSample(knex, payloadSampleExternalId, payloadSampleTypeId, deviceSite.countryId, testStartedOn)
   }
-  const { sampleOriginSiteId, reportableSiteId } = await getSiteIdVarieties(
+  const { sampleOriginSiteId, reportableSiteId } = await resolveSiteAssignments(
     knex,
     payload,
     deviceSite,
@@ -272,7 +266,7 @@ async function getResultSourceId(payload, existingResult, assay) {
   return resultSourceId
 }
 
-async function getSiteIdVarieties(knex, payload, deviceSite, existingResult, existingSample, isTransferred) {
+async function resolveSiteAssignments(knex, payload, deviceSite, existingResult, existingSample, isTransferred) {
   // Sample.originSiteId
   let payloadSampleOriginSiteId = null
   const payloadSampleOriginSiteExternalId = payload.sample?.originSite?.id || false
@@ -297,8 +291,7 @@ async function getSiteIdVarieties(knex, payload, deviceSite, existingResult, exi
 }
 
 /**
- * Finds an existing sample ID in a specific country based on various criteria.
- *
+ * Finds an existing unique sample ID in a specific country.
  * @param {Object} knex - The Knex database instance
  * @param {string|null} sampleExternalId - The external ID of the sample to search for
  * @param {string|null} sampleTypeExternalId - The external ID of the sample type to match
@@ -307,18 +300,15 @@ async function getSiteIdVarieties(knex, payload, deviceSite, existingResult, exi
  * @returns {Promise<number|null>} The ID of the matching sample if found, null otherwise
  *
  * @description
- * This function searches for an existing sample in the database that matches the given criteria:
+ * This function searches for an existing unique sample in the database that matches the given criteria:
  * 1. Has the specified external ID
  * 2. Belongs to the specified country
  * 3. Was collected before or on the test start date
  *
- * If multiple samples are found, it will:
- * - Return the single match if only one exists
- * - If multiple exist, try to match by sample type if provided
- * - If no sample type is provided, prefer samples of type 'Sputum' or with no type
- * - Return null if no matches are found
+ * - Returns a single match if only one exists
+ * - Return null if the match is not a single match (zero or multiple samples found)
  */
-async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
+async function getMatchingSample(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
   if (!sampleExternalId || sampleExternalId.length < 7) {
     return Promise.resolve(null)
   }
@@ -328,7 +318,6 @@ async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExte
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .where('s.externalId', sampleExternalId)
-    .andWhere('s.registeredInMobile', true)
     .andWhere('g.countryId', countryId)
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
@@ -336,21 +325,6 @@ async function getExistingSampleInCountry(knex, sampleExternalId, sampleTypeExte
 
   if (samplesOfType.length === 1) {
     return samplesOfType[0]
-  }
-  if (samplesOfType.length > 1) {
-    if (sampleTypeExternalId) {
-      const samplesWithMatchingTypes = samplesOfType.filter(s => s.sampleTypeExternalId === sampleTypeExternalId)
-      if (samplesWithMatchingTypes.length > 0) {
-        return samplesWithMatchingTypes[0]
-      }
-    } else {
-      const samplesWithMatchingTypes = samplesOfType.filter(
-        s => s.sampleTypeExternalId === 'Sputum' || _.isNil(s.sampleTypeExternalId)
-      )
-      if (samplesWithMatchingTypes.length > 0) {
-        return samplesWithMatchingTypes[0]
-      }
-    }
   }
   return null
 }
