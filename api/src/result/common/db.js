@@ -9,31 +9,15 @@ const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { pageParams, sortParams } = require('../../db')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
-const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
-
-function getSitesQuery(dataConstraints) {
-  return knex('Site as s')
-    .join('SiteType as st', 's.siteTypeId', 'st.id')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
-    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
-    .groupBy(['s.id'])
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-}
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const clinics = await getSitesQuery(dataConstraints).select('s.id')
-  const clinicIds = clinics.map(c => c.id)
 
   const { userName } = await getUser(auth.credentials.name)
   const results = await getBaseQueryForResults()
     .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
     .select('rt.excluded', 'rt.id as resultTypeId')
     .where('r.id', resultId)
-    .andWhere(qb => qb.whereIn('r.reportableSiteId', clinicIds))
     .modify(
       addConstraints,
       dataConstraints,
