@@ -56,6 +56,7 @@ const getSitesMobileView = async (dataConstraints, type, sortBy = 'name') => {
       }
     })
     .where('s.partnerId', dataConstraints.partner.id)
+    .where('s.disabled', 0)
     .whereNotIn('s.id', assignedSitesQuery.clone().select('s.id'))
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
 
