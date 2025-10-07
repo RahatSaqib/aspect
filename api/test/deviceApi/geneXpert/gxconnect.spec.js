@@ -1488,7 +1488,7 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.notEqual(
           result2.siteId,
           result2Sample.originSiteId,
-          'Sample.originSiteId must be updated is the Sample is not mobile and the result is not transferred.'
+          'Sample.originSiteId must be updated if the Sample is not mobile and the result is not transferred.'
         )
         assert.equal(result2Sample.externalId, "Bryan's Sputum 2")
 
