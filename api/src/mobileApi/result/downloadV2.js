@@ -5,7 +5,6 @@ const { getUser } = require('../../auth/service')
 const logger = require('../../shared/logger')
 const { getPageParams } = require('../../routes')
 const {
-  getCommentsV2,
   getFollowUpsV2,
   getCountV2,
   getItemsV2,
@@ -35,10 +34,7 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
   // get follow ups for all results in the response for performance (filter later)
   const followUps = await getFollowUpsV2(data)
 
-  // get comments for all results in the response for performance (filter later)
-  const comments = await getCommentsV2(data)
-
-  const transformedData = await getTransformedDataV2(data, setDelivered, followUps, comments)
+  const transformedData = await getTransformedDataV2(data, setDelivered, followUps)
 
   // total pages calculation
   const totalPages = Math.ceil(total / size)

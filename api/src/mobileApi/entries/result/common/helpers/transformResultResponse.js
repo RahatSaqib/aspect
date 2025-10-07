@@ -13,7 +13,7 @@ const { transformSampleData } = require('./transformSample')
 const { transformTestInformation } = require('./transformTestInformation')
 const { transformTreatmentStatus } = require('./transformTreatmentStatus')
 
-function transformResultResponse(data, followUps, comments, acknowledgements, flags, userSiteIds) {
+function transformResultResponse(data, followUps, acknowledgements, flags, userSiteIds) {
   if (_.isEmpty(data)) return
   return _.map(data, result => {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
@@ -58,7 +58,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
       laboratorySiteName: result.laboratorySiteName,
       testEndDate: result.testEndDate,
       resultNotes: result.resultNotes,
-      comments: extractFromDataById(comments, 'resultId', result.id),
+      comments: [],
       followUps: resultFollowUps,
       history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
@@ -72,7 +72,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
       testType: transformEntryType(result),
       transferStatus: generateTransferStatus(result, userSiteIds),
       treatmentStatus: transformTreatmentStatus(result, resultFollowUps, userSiteIds),
-      updatedOn: getResultUpdatedOnDate(result, resultFollowUps, comments),
+      updatedOn: getResultUpdatedOnDate(result, resultFollowUps),
       reportableSite: {
         id: result.reportableSiteId,
         name: result.reportableSiteName,
