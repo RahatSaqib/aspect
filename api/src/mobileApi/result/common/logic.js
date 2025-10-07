@@ -1,11 +1,8 @@
 const _ = require('lodash')
 const { differenceInDays } = require('date-fns')
 const { pipe, find, values } = require('ramda')
-const { subDays } = require('date-fns')
 const isValid = require('date-fns/isValid')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/date')
-const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
-const { knex } = require('../../../db')
 
 const TRANSFERRED = {
   AWAY: 'away',
@@ -252,154 +249,6 @@ const getResultItemTransformedData = (data, setDelivered, followUps) => ({
   diseaseName: data.diseaseName,
 })
 
-// clinical response : get result details by result ID
-async function getResultByResultId(
-  auth,
-  resultId,
-  dataConstraints,
-  userName,
-  results,
-  latestFollowUps,
-  resultWorkflowlog,
-  getAssayForResultFollowup,
-  getFileReferencesForResultFolloup,
-  addConstraints,
-  showResultFolloup,
-  getResultNotesByResultIdForResultFollowup
-) {
-  let data = null
-  // translate result data back to an object and get assay details
-  // if selecting the result was successful
-  if (results.length === 1) {
-    ;[data] = results
-    if (data.resultData) {
-      data.resultData = JSON.parse(data.resultData)
-      // full result text for the result details page
-      data.fullResultText = data.resultData.resultText
-    }
-
-    if (data.formData) {
-      data.formData = JSON.parse(data.formData)
-    }
-    if (data.patientData) {
-      data.patientData = JSON.parse(data.patientData)
-    }
-    if (data.assayId) {
-      data.assay = await getAssayForResultFollowup(data)
-      if (data.assay.resultDataSchema) {
-        data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
-      }
-      if (data.assay.patientDataSchema) {
-        data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
-      }
-    }
-    // select files attached to this result
-    const { data: files } = await showFileReferencesById(
-      resultId,
-      dataConstraints,
-      addConstraints,
-      getFileReferencesForResultFolloup
-    )
-    data.files = files
-
-    const { data: followUps } = await showResultFollowUps(resultId, dataConstraints, showResultFolloup)
-    data.followUps = followUps
-  }
-
-  if (latestFollowUps) {
-    const treatment = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'treatment')
-    const outcome = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'outcome')
-    const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
-    data.clinicalResponse = {
-      recorded: resultWorkflowlog[0].resultWorkflowStatusId === acknowledgedId,
-      confirmedOn: resultWorkflowlog[0].changedOn,
-      treatment: treatment?.externalId,
-      treatmentStarted: treatment?.date,
-      outcome: outcome?.externalId,
-      outcomeOccurred: outcome?.date,
-    }
-  }
-
-  if (data) {
-    getResultTreatmentStatus(data)
-    data.resultNotes = await getResultNotesByResultId(resultId, getResultNotesByResultIdForResultFollowup)
-    data.resultTreatmentStatusCreatedBy = userName
-
-    if (data.resultData && data.resultData.detectedResistance && data.resultData.detectedResistance.length > 0)
-      data.detectedResistance = data.resultData.detectedResistance.join(', ')
-
-    data.customFieldsValues = await getCustomFieldsForResult(data)
-  }
-
-  return { ok: results.length === 1, data }
-}
-
-// Supporting function : getResultByResultId
-async function getCustomFieldsForResult(data) {
-  const { deviceId, partnerId, partnerPluginName, deviceTypePluginName } = data
-  const { getCustomFields } = require('../../../deviceApi/service')
-  const customFieldsRaw = await getCustomFields({
-    knex,
-    device: { id: deviceId, partnerId },
-    partnerPluginName,
-    deviceTypePluginName,
-  })
-  let customFields = customFieldsRaw?.CustomFields?.Fields || []
-  customFields = _.sortBy(customFields, ['DisplayOrder', 'Name'])
-  const customFieldsValues = customFields.map(it => ({
-    caption: it.Label,
-    externalId: `patientData.${_.camelCase(it.ExternalId)}`,
-  }))
-  return customFieldsValues
-}
-
-// Supporting function : getResultByResultId
-async function showFileReferencesById(resultId, dataConstraints, addConstraints, getFileReferencesForResultFolloup) {
-  const fileReferences = await getFileReferencesForResultFolloup(resultId, dataConstraints).then(items =>
-    items.map(ref => {
-      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
-      return ref
-    })
-  )
-  return { data: fileReferences }
-}
-
-// Supporting function : getResultByResultId
-async function showResultFollowUps(resultId, dataConstraints, showResultFolloup) {
-  const followUps = await showResultFolloup(resultId, dataConstraints)
-  return { data: followUps }
-}
-
-// Supporting function : getResultByResultId
-function getResultTreatmentStatus(response) {
-  if (response.requiresTreatment) {
-    const today = new Date()
-    const lastSixteenDays = subDays(today, 16)
-    const lastThirtyTwoDays = subDays(today, 32)
-    const isPastThirtyTwoDays = response.endedOn <= lastThirtyTwoDays
-    const isPastSixteenDays = response.endedOn <= lastSixteenDays && response.endedOn > lastThirtyTwoDays
-    if (response.resultTreatmentStatus === 'OnTreatment') {
-      response.treatmentStatusInfo = 'ok'
-    } else if (response.resultTreatmentStatus === 'NotPossible') {
-      response.treatmentStatusInfo = 'na'
-    } else if (isPastThirtyTwoDays) {
-      response.treatmentStatusInfo = 'alert'
-    } else if (isPastSixteenDays) {
-      response.treatmentStatusInfo = 'warning'
-    } else {
-      response.treatmentStatusInfo = 'na'
-    }
-  } else {
-    response.treatmentStatusInfo = null
-  }
-}
-
-// Supporting function : getResultByResultId
-async function getResultNotesByResultId(resultId, getResultNotesByResultIdForResultFollowup) {
-  const resultNotes = await getResultNotesByResultIdForResultFollowup(resultId)
-  return resultNotes
-}
-
 // refactor transformPatientDataBySchema to use lodash map
 function transformPatientDataBySchema(patientData, patientDataSchema) {
   const transformedData = _.map(patientDataSchema, (value, key) => {
@@ -577,12 +426,10 @@ const getLatestFollowUpsFromFollowUps = (followUps = []) => {
 module.exports = {
   getTransformedData,
   getTransformedDataV2,
-  getResultByResultId,
   getResultItemTransformedData,
   getResultItemTransformedDataV2,
   fieldNameToFollowUpTypeIdMappings,
   getLatestFollowUpsFromFollowUps,
-  getCustomFieldsForResult,
   ACKNOWLEDGED,
   NOT_POSSIBLE_FOLLOW_UP_TYPE,
 }
