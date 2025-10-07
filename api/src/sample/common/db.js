@@ -8,7 +8,15 @@ const getSampleByExternalId = (knex, externalId, countryId) => {
     .andWhere('s.registeredInMobile', true)
     .andWhere('g.countryId', countryId)
     .orderBy('s.collectedOn', 'desc')
-    .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
+    .first(
+      's.id',
+      's.registeredInMobile',
+      's.collectedBy',
+      's.originSiteId',
+      's.sampleTypeId',
+      'st.externalId as sampleTypeExternalId',
+      's.collectedOn'
+    )
 }
 
 module.exports = {

@@ -372,9 +372,9 @@ async function upsertSample(knex, payload, existingSample, opts) {
       .where({ id: sampleId })
       .update({
         externalId: payload?.sample?.id || payload?.data?.sampleId || existingSample.externalId,
-        collectedOn: payload.sample.collectedOn || existingSample.collectedOn || null,
         sampleTypeId: payloadSampleTypeId ? sampleTypeId : existingSample.sampleTypeId,
         originSiteId: sampleOriginSiteId,
+        collectedOn: payload.sample.collectedOn || existingSample.collectedOn || null,
         updatedOn: now,
       })
   }
