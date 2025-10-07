@@ -177,28 +177,6 @@ const getFollowUps = data => {
     )
 }
 
-// get comments for all results in the response for performance (filter later)
-const getComments = data => {
-  return knex('ResultNote as rn')
-    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
-    .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
-    .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
-    .whereIn(
-      'rn.resultId',
-      data.map(r => r.id)
-    )
-    .select(
-      'rn.resultId',
-      'rn.id',
-      'rn.text',
-      'rn.createdOn',
-      'uC.name as createdBy',
-      'rn.changedOn',
-      'uU.name as changedBy',
-      'rnt.name as noteType'
-    )
-}
-
 const insertResultWorkflowLogQuery = (resultId, resultWorkflowStatusId, now, userId) => {
   return knex('ResultWorkflowLog').insert({
     resultId,
@@ -424,28 +402,6 @@ const getFollowUpsV2 = data => {
     )
 }
 
-// get comments for all results in the response for performance (filter later) v2
-const getCommentsV2 = data => {
-  return knex('ResultNote as rn')
-    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
-    .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
-    .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
-    .whereIn(
-      'rn.resultId',
-      data.map(r => r.id)
-    )
-    .select(
-      'rn.resultId',
-      'rn.id',
-      'rn.text',
-      'rn.createdOn',
-      'uC.name as createdBy',
-      'rn.changedOn',
-      'uU.name as changedBy',
-      'rnt.name as noteType'
-    )
-}
-
 // get follow-ups for all results in the response for performance (filter later) v2
 const getFollowUpsOfResultById = resultId => {
   return knex('ResultFollowUp as rfu')
@@ -467,25 +423,6 @@ const getFollowUpsOfResultById = resultId => {
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypeI18nKey'
-    )
-}
-
-// get comments for all results in the response for performance (filter later) v2
-const getCommentsOfResultById = data => {
-  return knex('ResultNote as rn')
-    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
-    .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
-    .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
-    .where({ 'rn.resultId': data.id })
-    .select(
-      'rn.resultId',
-      'rn.id',
-      'rn.text',
-      'rn.createdOn',
-      'uC.name as createdBy',
-      'rn.changedOn',
-      'uU.name as changedBy',
-      'rnt.name as noteType'
     )
 }
 
@@ -688,9 +625,6 @@ module.exports = {
   generateResultQuery,
   generateResultQueryV2,
   getAwaitingTreatment,
-  getComments,
-  getCommentsV2,
-  getCommentsOfResultById,
   getCount,
   getCountV2,
   getFollowUps,

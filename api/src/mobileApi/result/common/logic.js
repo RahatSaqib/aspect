@@ -172,21 +172,21 @@ const getSeverity = (testResult, followUp) => {
 }
 
 // transformed data
-const getTransformedData = (data, setDelivered, followUps, comments) =>
-  _.map(data, d => getResultItemTransformedData(d, setDelivered, followUps, comments))
+const getTransformedData = (data, setDelivered, followUps) =>
+  _.map(data, d => getResultItemTransformedData(d, setDelivered, followUps))
 
 // Transformed data v2
-const getTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
+const getTransformedDataV2 = async (data, setDelivered, followUps) => {
   const transformedData = await Promise.all(
     _.map(data, async d => {
-      const resultItem = await getResultItemTransformedDataV2(d, setDelivered, followUps, comments)
+      const resultItem = await getResultItemTransformedDataV2(d, setDelivered, followUps)
       return resultItem
     })
   )
   return transformedData
 }
 
-const getResultItemTransformedData = (data, setDelivered, followUps, comments) => ({
+const getResultItemTransformedData = (data, setDelivered, followUps) => ({
   id: data.id,
   externalId: data.externalId,
   endedOn: returnIso8601StringWithoutTimeZoneOffset(data.endedOn),
@@ -242,11 +242,7 @@ const getResultItemTransformedData = (data, setDelivered, followUps, comments) =
     _.filter(followUps, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
     ['date', 'updatedOn']
   ),
-  comments: _.orderBy(
-    _.filter(comments, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
-    ['createdOn'],
-    ['desc']
-  ),
+  comments: [],
   // result transferred
   reportableSiteName: data.reportableSiteName,
   transferredOn: data.transferredOn,
@@ -418,7 +414,7 @@ function transformPatientDataBySchema(patientData, patientDataSchema) {
 }
 
 // Transformed data v2 for result by Id
-const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, comments, acknowledgement) => {
+const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, acknowledgement) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
@@ -494,11 +490,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
       daysInCurrentStatus: daysFromTreatmentDateUpdateOn(data, followUps),
     },
     followUps: followUpList,
-    comments: _.orderBy(
-      _.filter(comments, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
-      ['createdOn'],
-      ['desc']
-    ),
+    comments: [],
     // result transferred
     reportableSiteName: data.reportableSiteName,
     testType: resultData ? TESTTYPE.RESULT : TESTTYPE.SAMPLE,

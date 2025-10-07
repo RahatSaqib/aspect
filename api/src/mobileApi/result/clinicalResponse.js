@@ -29,7 +29,6 @@ const {
   deleteResultWorkflowLogs,
   deleteResultFollowUps,
   getFollowUpsOfResultById,
-  getCommentsOfResultById,
   getItemsV2,
   getLatestResultWorkflowLog,
   getLatestResultWorkflowLogBefore,
@@ -559,9 +558,7 @@ async function showResult(resultId, dataConstraints) {
   const [acknowledgement] = await getAcknowledgementsByResultIds([data].filter(_.identity))
   // get follow-ups for all result in the response for performance (filter later)
   const followUps = await getFollowUpsOfResultById(resultId)
-  // get comments for all result in the response for performance (filter later)
-  const comments = await getCommentsOfResultById(data)
-  const result = await getResultItemTransformedDataV2(data, true, followUps, comments, acknowledgement)
+  const result = await getResultItemTransformedDataV2(data, true, followUps, acknowledgement)
   return result || Boom.notFound()
 }
 

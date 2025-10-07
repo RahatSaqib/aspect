@@ -7,7 +7,6 @@ const {
   getCount,
   getItems,
   getFollowUps,
-  getComments,
   addResultDownloadLogQuery,
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
@@ -24,9 +23,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const [{ count: total }, data] = await Promise.all([getCount(resultQuery), getItems(resultQuery, query)])
   // get follow-ups for all results in the response for performance (filter later)
   const followUps = await getFollowUps(data)
-  // get comments for all results in the response for performance (filter later)
-  const comments = await getComments(data)
-  const transformedData = getTransformedData(data, setDelivered, followUps, comments)
+  const transformedData = getTransformedData(data, setDelivered, followUps)
   const result = {
     ok: true,
     total,

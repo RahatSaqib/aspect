@@ -84,7 +84,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
 
   if (data) {
     getResultTreatmentStatus(data)
-    data.resultNotes = await getResultNotesByResultId(resultId)
+    data.resultNotes = []
     data.resultTreatmentStatusCreatedBy = userName
 
     if (data.resultData && data.resultData.detectedResistance && data.resultData.detectedResistance.length > 0)
@@ -407,17 +407,6 @@ async function showResultFollowUps(resultId, dataConstraints) {
       'fut.i18nKey as followUpTypei18nKey'
     )
   return { data: followUps }
-}
-
-async function getResultNotesByResultId(resultId) {
-  const resultNotes = await knex('ResultNote as rn')
-    .leftJoin('User as u', 'rn.createdBy', 'u.id')
-    .leftJoin('ResultNoteType as rt', 'rt.id', 'rn.resultNoteTypeId')
-    .where('rn.resultId', resultId)
-    .orderBy('rn.createdOn', 'desc')
-    .select('u.name as createdBy', 'rn.text', 'rn.id', 'rn.changedOn', 'rn.createdOn', 'rt.name as noteType')
-
-  return resultNotes
 }
 
 function getQueryForDataExtract(query, dataConstraints) {
@@ -797,7 +786,6 @@ module.exports = {
   getResultByResultId,
   getQueryForResultsListAndExport,
   showFileReferencesById,
-  getResultNotesByResultId,
   getBaseQueryForResults,
   getQueryForDataExtract,
   getCustomFieldsForResult,
