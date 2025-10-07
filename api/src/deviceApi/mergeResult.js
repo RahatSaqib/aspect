@@ -309,7 +309,8 @@ async function resolveSiteAssignments(knex, payload, deviceSite, existingResult,
  * - Return null if the match is not a single match (zero or multiple samples found)
  */
 async function getMatchingSample(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
-  if (!sampleExternalId || sampleExternalId.length < 7) {
+  const MINIMUM_SAMPLEID_LENGHT_FOR_CONSIDER_IT_AS_NOT_DUMMY = 7
+  if (!sampleExternalId || sampleExternalId.length < MINIMUM_SAMPLEID_LENGHT_FOR_CONSIDER_IT_AS_NOT_DUMMY) {
     return Promise.resolve(null)
   }
 
