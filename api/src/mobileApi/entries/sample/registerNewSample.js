@@ -15,7 +15,7 @@ const {
 } = require('../../../shared/dictionary')
 const config = require('../../../config')
 const { getBaseAllSamplesRegistered } = require('./common/db')
-const { getSampleByExternalId } = require('../../../sample/common/db')
+const { getMobileSampleByExternalId } = require('../../../sample/common/db')
 
 async function registerNewSample(request) {
   const { payload, auth } = request
@@ -57,7 +57,7 @@ async function registerNewSample(request) {
 
   await knex.transaction(async trx => {
     // Lock the sample row for update to prevent concurrency issues
-    const existingSample = await getSampleByExternalId(
+    const existingSample = await getMobileSampleByExternalId(
       trx,
       payload.externalId,
       currentlyLoggedInUser.countryId

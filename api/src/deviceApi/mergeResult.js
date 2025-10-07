@@ -5,7 +5,7 @@ const { resultSourceToId, resultTypeToId, resultWorkflowStatusToId, sampleTypeTo
 const { getLatestResultWorkflowLog } = require('./result')
 const { getResultCategoriesFromPayload } = require('./utils')
 const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
-const { getSampleByExternalId } = require('../sample/common/db')
+const { getMobileSampleByExternalId, getMatchingSample } = require('../sample/common/db')
 
 async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, context) {
   const { result: existingResult, isTransferred } = await getResultRecord(
@@ -52,7 +52,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const payloadSampleExternalId = payload.sample?.id
   if (payloadSampleExternalId) {
     existingSample = isValidSampleExternalIdMobileFormat(payloadSampleExternalId)
-      ? await getSampleByExternalId(knex, payloadSampleExternalId, deviceSite.countryId)
+      ? await getMobileSampleByExternalId(knex, payloadSampleExternalId, deviceSite.countryId)
       : await getMatchingSample(knex, payloadSampleExternalId, payloadSampleTypeId, deviceSite.countryId, testStartedOn)
   }
   const { sampleOriginSiteId, reportableSiteId } = await resolveSiteAssignments(
@@ -288,44 +288,6 @@ async function resolveSiteAssignments(knex, payload, deviceSite, existingResult,
   }
 
   return { sampleOriginSiteId, reportableSiteId }
-}
-
-/**
- * Finds an existing unique sample ID in a specific country.
- * @param {Object} knex - The Knex database instance
- * @param {string|null} sampleExternalId - The external ID of the sample to search for
- * @param {number} countryId - The ID of the country to search within
- * @param {Date} testStartedOn - The timestamp to filter samples by collection date
- * @returns {Promise<number|null>} The ID of the matching sample if found, null otherwise
- *
- * @description
- * This function searches for an existing unique sample in the database that matches the given criteria:
- * 1. Has the specified external ID
- * 2. Belongs to the specified country
- *
- * - Returns a single match if only one exists
- * - Return null if the match is not a single match (zero or multiple samples found)
- */
-async function getMatchingSample(knex, sampleExternalId, countryId, testStartedOn) {
-  const MINIMUM_SAMPLEID_LENGHT_FOR_CONSIDER_IT_AS_NOT_DUMMY = 7
-  if (!sampleExternalId || sampleExternalId.length < MINIMUM_SAMPLEID_LENGHT_FOR_CONSIDER_IT_AS_NOT_DUMMY) {
-    return Promise.resolve(null)
-  }
-
-  const candidatesSamples = await knex('Sample as s')
-    .join('Site as site', 's.originSiteId', 'site.id')
-    .join('Geography as g', 'site.geographyId', 'g.id')
-    .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
-    .where('s.externalId', sampleExternalId)
-    .andWhere('g.countryId', countryId)
-    .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
-    .orderBy('s.collectedOn', 'desc')
-    .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
-
-  if (candidatesSamples.length === 1) {
-    return candidatesSamples[0]
-  }
-  return null
 }
 
 /**
