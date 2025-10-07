@@ -294,7 +294,6 @@ async function resolveSiteAssignments(knex, payload, deviceSite, existingResult,
  * Finds an existing unique sample ID in a specific country.
  * @param {Object} knex - The Knex database instance
  * @param {string|null} sampleExternalId - The external ID of the sample to search for
- * @param {string|null} sampleTypeExternalId - The external ID of the sample type to match
  * @param {number} countryId - The ID of the country to search within
  * @param {Date} testStartedOn - The timestamp to filter samples by collection date
  * @returns {Promise<number|null>} The ID of the matching sample if found, null otherwise
@@ -303,18 +302,17 @@ async function resolveSiteAssignments(knex, payload, deviceSite, existingResult,
  * This function searches for an existing unique sample in the database that matches the given criteria:
  * 1. Has the specified external ID
  * 2. Belongs to the specified country
- * 3. Was collected before or on the test start date
  *
  * - Returns a single match if only one exists
  * - Return null if the match is not a single match (zero or multiple samples found)
  */
-async function getMatchingSample(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
+async function getMatchingSample(knex, sampleExternalId, countryId, testStartedOn) {
   const MINIMUM_SAMPLEID_LENGHT_FOR_CONSIDER_IT_AS_NOT_DUMMY = 7
   if (!sampleExternalId || sampleExternalId.length < MINIMUM_SAMPLEID_LENGHT_FOR_CONSIDER_IT_AS_NOT_DUMMY) {
     return Promise.resolve(null)
   }
 
-  const samplesOfType = await knex('Sample as s')
+  const candidatesSamples = await knex('Sample as s')
     .join('Site as site', 's.originSiteId', 'site.id')
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
@@ -324,8 +322,8 @@ async function getMatchingSample(knex, sampleExternalId, sampleTypeExternalId, c
     .orderBy('s.collectedOn', 'desc')
     .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
 
-  if (samplesOfType.length === 1) {
-    return samplesOfType[0]
+  if (candidatesSamples.length === 1) {
+    return candidatesSamples[0]
   }
   return null
 }
