@@ -177,7 +177,7 @@ const createFakeResult = async (trx, siteId, sampleExternalId, countryId) => {
       deviceId,
       resultSourceId: resultSources.DiagnosticDevice,
       resultTypeId: resultTypes.Patient,
-      sampleId: await getSampleByExternalId(trx, sampleExternalId, countryId).then(s => s.id),
+      sampleId: await getMobileSampleByExternalId(trx, sampleExternalId, countryId).then(s => s.id),
       resultDataHash: null,
       assayVersion: '4',
       startedOn: now,
