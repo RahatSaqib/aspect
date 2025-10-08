@@ -1998,7 +1998,7 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     // remove undefined (= not part of the POST fields) for updating
     sampleData = _.omitBy(sampleData, _.isUndefined)
     if (!_.isEmpty(sampleData)) {
-      const existingSample = await knex('Sample').where({ id: sampleId }).first('originSiteId')
+      const existingSample = await knex('Sample').where({ id: sampleId }).first('originSiteId', 'registeredInMobile')
       if (existingSample) {
         sampleData.registeredInMobile = existingSample.registeredInMobile
         if (existingSample.originSiteId === null && originSiteId) {
