@@ -344,7 +344,7 @@ describe('This test suite is for testing different triggers conditions', async (
         }`, async () => {
           /**
            Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
-           The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
+           The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module.
            The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
           const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId)
@@ -440,7 +440,7 @@ describe('This test suite is for testing different triggers conditions', async (
         } because their have the same module number and the most important one is the LOT `, async () => {
           /**
            Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
-           The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
+           The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module.
            The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
           const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId)

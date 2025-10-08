@@ -20,15 +20,19 @@ const SAMPLE_PROJECTION = [
  * @returns {Promise<Object|null>} The matching sample object if found, otherwise null.
  */
 const getMobileSampleByExternalId = (knex, externalId, countryId) => {
-  return knex('Sample as s')
+  const query = knex('Sample as s')
     .join('Site as site', 's.originSiteId', 'site.id')
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .where('s.externalId', externalId)
     .andWhere('s.registeredInMobile', true)
-    .andWhere('g.countryId', countryId)
     .orderBy('s.collectedOn', 'desc')
-    .first(SAMPLE_PROJECTION)
+
+  if (countryId != null) {
+    query.andWhere('g.countryId', countryId)
+  }
+
+  return query.first(SAMPLE_PROJECTION)
 }
 
 /**
@@ -53,15 +57,19 @@ async function getMatchingSample(knex, sampleExternalId, countryId, testStartedO
     return Promise.resolve(null)
   }
 
-  const candidatesSamples = await knex('Sample as s')
+  const query = knex('Sample as s')
     .join('Site as site', 's.originSiteId', 'site.id')
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .where('s.externalId', sampleExternalId)
-    .andWhere('g.countryId', countryId)
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
-    .select(SAMPLE_PROJECTION)
+
+  if (countryId != null) {
+    query.andWhere('g.countryId', countryId)
+  }
+
+  const candidatesSamples = await query.select(SAMPLE_PROJECTION)
 
   if (candidatesSamples.length === 1) {
     return candidatesSamples[0]
