@@ -189,31 +189,6 @@ const getFollowUpsByResultIds = results => {
   return knexQuery
 }
 
-const getCommentsOfResultById = comments => {
-  const knexQuery = knex('ResultNote as rn')
-    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
-    .leftOuterJoin('User as createdByUser', 'rn.createdBy', 'createdByUser.id')
-    .leftOuterJoin('Person as createdByPerson', 'createdByUser.id', 'createdByPerson.userId')
-    .leftOuterJoin('User as updatedByUser', 'rn.updatedBy', 'updatedByUser.id')
-    .leftOuterJoin('Person as updatedByPerson', 'updatedByUser.id', 'updatedByPerson.userId')
-    .whereIn(
-      'rn.resultId',
-      _.map(comments, r => r.id)
-    )
-    .groupBy('rn.id')
-    .select(
-      'rn.resultId',
-      'rn.id',
-      'rn.text',
-      'rn.createdOn',
-      'createdByPerson.name as createdBy',
-      'rn.changedOn',
-      'updatedByPerson.name as changedBy',
-      'rnt.name as noteType'
-    )
-  return knexQuery
-}
-
 const getUserSiteIds = async dataConstraints => {
   const sites = await knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -229,7 +204,6 @@ const getUserSiteIds = async dataConstraints => {
 module.exports = {
   fetchResultsBySubmittedSinceQuery,
   fetchResultsQuery,
-  getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
   getFlagsByResultIds,

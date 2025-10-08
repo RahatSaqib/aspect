@@ -55,7 +55,6 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
   await knex('ResultFileReference').whereIn('resultId', resultIds).delete()
-  await knex('ResultNote').whereIn('resultId', resultIds).delete()
   await knex('Result').whereIn('id', resultIds).delete()
   await knex('DeviceOperation').whereIn('id', opIds).delete()
   await knex('DeviceApiKey').whereIn('deviceId', deviceIds).update({ deviceId: null })

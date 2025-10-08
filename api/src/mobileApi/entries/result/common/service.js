@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const {
   fetchResultsBySubmittedSinceQuery,
-  getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
   getFlagsByResultIds,
@@ -48,8 +47,7 @@ async function fetchEntriesServiceHandler(request) {
     await addResultDownloadLog(resultIdsToBeRegistered, user.id)
 
     const followUps = await getFollowUpsByResultIds(results)
-    const comments = await getCommentsOfResultById(results)
-    transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
+    transformedResults = transformResultResponse(results, followUps, acknowledgements, flags, userSiteIds)
   }
 
   const mergedResultData = transformedResults.reduce((mergedResults, result) => {
