@@ -1990,7 +1990,7 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     externalId,
     collectedOn,
     sampleTypeId,
-    registeredInMobile: true,
+    registeredInMobile: false,
     updatedOn: now,
   }
 
@@ -1999,11 +1999,14 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     sampleData = _.omitBy(sampleData, _.isUndefined)
     if (!_.isEmpty(sampleData)) {
       const existingSample = await knex('Sample').where({ id: sampleId }).first('originSiteId')
-      if (existingSample && existingSample.originSiteId === null && originSiteId) {
-        sampleData.originSiteId = originSiteId
+      if (existingSample) {
+        sampleData.registeredInMobile = existingSample.registeredInMobile
+        if (existingSample.originSiteId === null && originSiteId) {
+          sampleData.originSiteId = originSiteId
+        }
       }
-      await knex('Sample').update(sampleData).where({ id: sampleId })
     }
+    await knex('Sample').update(sampleData).where({ id: sampleId })
     return sampleId
   }
   sampleData.originSiteId = originSiteId
