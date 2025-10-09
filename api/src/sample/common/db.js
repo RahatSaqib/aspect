@@ -25,7 +25,6 @@ const getMobileSampleByExternalId = (knex, externalId, countryId) => {
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .where('s.externalId', externalId)
-    .andWhere('s.registeredInMobile', true)
     .orderBy('s.collectedOn', 'desc')
 
   if (countryId != null) {
