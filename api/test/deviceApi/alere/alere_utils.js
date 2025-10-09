@@ -52,15 +52,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, alereDeviceSerialNumbe
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
-  const resultIds = await knex('Result')
-    .whereIn('deviceId', deviceIds)
-    .pluck('id')
-    .union(function () {
-      this.from('ResultGeneratedResult as rgr')
-        .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
-        .whereIn('r.deviceId', deviceIds)
-        .pluck('generatedResultId as id')
-    })
+  const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
   const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
 
@@ -89,10 +81,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, alereDeviceSerialNumbe
 
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultGeneratedResult')
-    .whereIn('sourceResultId', resultIds)
-    .orWhereIn('generatedResultId', resultIds)
-    .delete()
   await knex('ResultTag').delete()
   await knex('Tag').delete()
   await knex('Result').whereIn('id', resultIds).delete()

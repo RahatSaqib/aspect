@@ -84,14 +84,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .leftJoin('Sample as s', 'r.sampleId', 's.id')
       .where('r.deviceId', deviceId)
       .select('r.id', 'r.sampleId', 's.originSiteId')
-      .union(function () {
-        this.from('ResultGeneratedResult as rgr')
-          .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
-          .innerJoin('Result as gr', 'rgr.generatedResultId', 'gr.id')
-          .leftJoin('Sample as s', 'gr.sampleId', 's.id')
-          .where('r.deviceId', deviceId)
-          .select('gr.id', 'gr.sampleId', 's.originSiteId')
-      })
+
     const resultIds = _.uniq(
       _.map(
         _.filter(results, result => result.id !== null),
@@ -139,10 +132,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
     await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
-    await knex('ResultGeneratedResult')
-      .whereIn('sourceResultId', resultIds)
-      .orWhereIn('generatedResultId', resultIds)
-      .delete()
     await knex('ResultTag').whereIn('resultId', resultIds).delete()
     await knex('Result').whereIn('id', resultIds).delete()
     await knex('Device').where('id', deviceId).delete()

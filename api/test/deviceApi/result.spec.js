@@ -73,6 +73,17 @@ describe('Device Result API routes', () => {
 
     const { runTest } = context
 
+    const clinicianUsername = 'admin'
+    const clinicianPassword = 'test07'
+    const getClinicianAccessToken = async () => {
+      const res = await server.post('/api/auth').send({
+        name: clinicianUsername,
+        password: clinicianPassword,
+        clientName: 'Mocha web',
+      })
+      return res.body.access
+    }
+
     beforeEach(async () => {
       await context.createDeviceWithResult()
     })
@@ -911,6 +922,7 @@ describe('Device Result API routes', () => {
 
     it('should merge results with same id', () =>
       runTest(async knex => {
+        const mobileSampleExternalId = '453-250925-002'
         const { deviceId, deviceAuth, now } = context
 
         const resultIds = []
@@ -942,6 +954,23 @@ describe('Device Result API routes', () => {
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults())
 
+        const samplePayload = {
+          externalId: mobileSampleExternalId,
+          collectedOn: new Date().toISOString(),
+          clinicianName: 'Jen Harrelson',
+          patientExternalId: 'J.Harrelson',
+          originSiteId: result1.siteId,
+          sampleTypeExternalId: 'Pus',
+        }
+
+        const clinicianAccessToken = await getClinicianAccessToken()
+        const sampleRegisterPath = '/mobile/api/sample/register'
+        await server
+          .post(sampleRegisterPath)
+          .set('Authorization', `Bearer ${clinicianAccessToken}`)
+          .set('api-version', `4`)
+          .send(samplePayload)
+
         await server
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
@@ -954,6 +983,7 @@ describe('Device Result API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
           })
+
         let lastResultId = await getLastResultId(knex, deviceId)
         assert.equal(lastResultId, resultIds[0])
 
@@ -961,7 +991,7 @@ describe('Device Result API routes', () => {
         assert.equal(result1.externalId, resultExternalIds[0])
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b', c: 'd' })
         assert.isNotOk(result1.errorCode)
-        assert.equal(initialCount + 1, await countResults())
+        assert.equal(initialCount + 1, await countResults(), 'Result count does not match')
 
         await server
           .post(devicePostResultPath)
@@ -971,10 +1001,14 @@ describe('Device Result API routes', () => {
             startedOn: now.toISOString,
             data: { a: 'b' },
             assay: { id: 'DaktariHivVL' },
+            sample: {
+              id: mobileSampleExternalId,
+            },
           })
           .then(res => {
             assert.equal(res.status, 200)
           })
+
         lastResultId = await getLastResultId(knex, deviceId)
         assert.notEqual(lastResultId, resultIds[0])
         resultIds.push(lastResultId)
@@ -989,7 +1023,16 @@ describe('Device Result API routes', () => {
           .where('partnerId', result1SampleSite.partnerId)
           .where('id', '<>', result1.siteId)
           .first()
-
+        // Simulate transfer
+        await knex('ResultTransferLog').insert({
+          resultId: result2.id,
+          reportableSiteId: result2.siteId,
+          sampleOriginSiteId: result2.siteId,
+          previousReportableSiteId: result2.siteId,
+          comment: 'Simulated transfer',
+          createdOn: now,
+          createdBy: 1,
+        })
         await server
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
@@ -1161,15 +1204,22 @@ describe('Device Result API routes', () => {
 
         const result2Sample = await knex('Sample as s').where({ id: result2.sampleId }).first()
 
-        assert.equal(
+        assert.notEqual(
           result2.siteId,
           result2Sample.originSiteId,
-          'Sample origin site Id should not change on result updates'
+          'Sample origin site Id should change on result updates if the sample was not registered in the mobile app'
         )
+
         assert.notEqual(
           result2SampleSite.id,
           result2.siteId,
           'Sample origin site Id should not change on result updates'
+        )
+
+        assert.equal(
+          result2.siteId,
+          result2.reportableSiteId,
+          'Result.reportableSiteId should not change on result updates if the result is transferred'
         )
         assert.equal(result2Sample.externalId, `Sample${now}`)
 
