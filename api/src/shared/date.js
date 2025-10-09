@@ -303,8 +303,8 @@ function getDatesFromQuery(query) {
   const now = new Date()
   const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
   return {
-    dateFrom: _.isString(minDate) ? startOfDayUtc(new Date(minDate)) : minDate,
-    dateTo: _.isString(maxDate) ? endOfDayUtc(new Date(maxDate)) : maxDate,
+    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
+    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
   }
 }
 
