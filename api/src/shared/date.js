@@ -19,8 +19,6 @@ const {
   max,
   addMonths,
   eachDayOfInterval,
-  endOfDay,
-  subDays,
   addMilliseconds,
 } = require('date-fns')
 
