@@ -19,8 +19,6 @@ const {
   max,
   addMonths,
   eachDayOfInterval,
-  endOfDay,
-  subDays,
   addMilliseconds,
 } = require('date-fns')
 
@@ -30,14 +28,6 @@ const { formatInTimeZone, zonedTimeToUtc } = require('date-fns-tz')
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
   return parseDateOrDefault(date, defaultValue)
-}
-
-function getTimezoneOffsetFromNumber(timezoneOffset) {
-  let offset = -Math.round(timezoneOffset / 60)
-  const plusOrMinus = offset >= 0 ? '+' : '-'
-  offset = Math.abs(offset)
-  offset = `${plusOrMinus}${_.padStart(offset, 2, '0')}:00`
-  return offset
 }
 
 /** Slides an UTC date the amount of hours between UTC and the specified IANA timezone
@@ -274,12 +264,6 @@ function startOfDayUtc(date) {
   return addMinutes(startOfDay(date), -date.getTimezoneOffset())
 }
 
-function endOfDayUtc(date) {
-  const timePart = date.toISOString().split('T')[1]
-  if (timePart && timePart === '00:00:00.000Z') return date
-  return subDays(addMinutes(endOfDay(date), -date.getTimezoneOffset()), 1)
-}
-
 function startOfTodayUtc() {
   const date = startOfToday()
   return addMinutes(date, -date.getTimezoneOffset())
@@ -292,14 +276,6 @@ function startOfTodayUtc() {
  */
 function getDateSubstring(isoDateTime) {
   return isoDateTime.substring(0, 10)
-}
-
-function dayOfYear(date) {
-  return parseInt(format(date, 'D', { useAdditionalDayOfYearTokens: true }), 10)
-}
-
-function getWellFormattedDateStringWithTimezone(dateTime) {
-  return format(dateTime, 'yyyy-MM-dd HH:mm:ss.SSSxxx').replace(' ', 'T')
 }
 
 // Return Wed Aug 24 2022 02:25:32 GMT-4
@@ -321,39 +297,12 @@ function daysBetweenDates(date1, date2) {
   return differenceInDays(max([date1, date2]), min([date1, date2]))
 }
 
-/**
- * Retrieves the user timezone from the Person table in the database.
- * @param {knex} knex - Knex instance
- * @param {string} userName - User name
- * @returns {string} - User timezone name or 'UTC' if not found
- */
-async function getTimeZoneFromUser(knex, userName) {
-  const tz = await knex('User as u')
-    .join('Person as p', 'u.id', 'p.userId')
-    .join('TimeZone as tz', 'p.timezone', 'tz.id')
-    .where('u.name', userName)
-    .pluck('tz.timeZone')
-  return tz || 'UTC'
-}
-
-/**
- *  Retrieves the user timezone from the DB and returns its timezone offset.
- * @param {*} knex - Knex instance
- * @param {*} userName - User name (can be taken from `auth.credentials.name`)
- * @returns string - Timezone offset in '[+/-]hh:mm' format (i.e. '+05:00')
- * @note It should be used as fallback for {@link getOffsetFromIsoDateString} when the request doesn't count with a date parameter.
- */
-async function getOffsetFromUser(knex, userName) {
-  const tz = await getTimeZoneFromUser(knex, userName)
-  return getOffsetFromTimeZone(tz)
-}
-
 function getDatesFromQuery(query) {
   const now = new Date()
   const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
   return {
-    dateFrom: _.isString(minDate) ? startOfDayUtc(new Date(minDate)) : minDate,
-    dateTo: _.isString(maxDate) ? endOfDayUtc(new Date(maxDate)) : maxDate,
+    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
+    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
   }
 }
 
@@ -586,8 +535,6 @@ const getWorkingDays = (minDate, maxDate, clientConfig) => {
   return totalWorkingDays
 }
 
-const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
-
 /**
  * Converts MySQL DAYOFWEEK() format to date-fns getDay() format
  * @param {number} day - MySQL day of week (1-7), Sunday is 1
@@ -622,7 +569,6 @@ module.exports = {
   getLocalDateInUtc,
   getTimeZoneById,
   startOfDayUtc,
-  endOfDayUtc,
   startOfTodayUtc,
   startOfMonthUTC,
   endOfMonthUTC,
@@ -631,8 +577,6 @@ module.exports = {
   getMonthYearField,
   getMonthYearUserTimeZoneField,
   getDateTimeExpressionInTimeZone,
-  dayOfYear,
-  getWellFormattedDateStringWithTimezone,
   getFormattedDateTimeWithTimezone,
   getFormattedDate,
   getDatesFromQuery,
@@ -642,9 +586,6 @@ module.exports = {
   replaceOffset,
   getOffsetFromIsoDateString,
   getOffsetFromIsoDateStringInMinutes,
-  getTimeZoneFromUser,
-  getOffsetFromUser,
-  getTimezoneOffsetFromNumber,
   convertTimezonetoIANA,
   convertTimezonetoWindowsIANA,
   daysBetweenDates,
@@ -656,7 +597,6 @@ module.exports = {
   getDateInMilliSeconds,
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
-  adjustDate,
   getMonthYearExpressionFromFieldInTimeZone,
   convertMysqlDayOfWeekToDateFns,
   isWeekend,
