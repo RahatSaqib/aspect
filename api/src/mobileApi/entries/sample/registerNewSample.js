@@ -15,7 +15,7 @@ const {
 } = require('../../../shared/dictionary')
 const config = require('../../../config')
 const { getBaseAllSamplesRegistered } = require('./common/db')
-const { getSampleByExternalId } = require('../../../sample/common/db')
+const { getMobileSampleByExternalId } = require('../../../sample/common/db')
 
 async function registerNewSample(request) {
   const { payload, auth } = request
@@ -44,7 +44,7 @@ async function registerNewSample(request) {
   const now = new Date()
   const sampleToSave = {
     externalId: payload.externalId,
-    registeredInAspect: true,
+    registeredInMobile: true,
     sampleTypeId,
     collectedOn,
     collectedBy: currentlyLoggedInUser.id,
@@ -57,7 +57,11 @@ async function registerNewSample(request) {
 
   await knex.transaction(async trx => {
     // Lock the sample row for update to prevent concurrency issues
-    const existingSample = await getSampleByExternalId(trx, payload.externalId).forUpdate()
+    const existingSample = await getMobileSampleByExternalId(
+      trx,
+      payload.externalId,
+      currentlyLoggedInUser.countryId
+    ).forUpdate()
     if (existingSample) {
       // Update existing sample
       const existingSampleData = existingSample.sampleData ? JSON.parse(existingSample.sampleData) : {}
@@ -73,20 +77,29 @@ async function registerNewSample(request) {
         .where('externalId', payload.externalId)
         .update({
           ...sampleToSave,
+          registeredInMobile: true,
           sampleData: JSON.stringify(sampleToSave.sampleData),
         })
+      // Sample collection site prevails over result reportable site
+      // if result has not been transferred
+      await trx('Result as r')
+        .where('sampleId', existingSample.id)
+        .whereNotExists(function () {
+          this.select('rtl.id').from('ResultTransferLog as rtl').whereRaw('rtl.resultId = r.id')
+        })
+        .update({ reportableSiteId: sampleToSave.originSiteId })
     } else {
       // Create new one
       sampleToSave.createdOn = now
       sampleToSave.createdBy = currentlyLoggedInUser.id
       await trx('Sample').insert({
         ...sampleToSave,
-        source: 'mobile',
+        registeredInMobile: true,
         sampleData: JSON.stringify(sampleToSave.sampleData),
       })
 
       if (config.acceptFakeResults) {
-        await createFakeResult(trx, payload.originSiteId, payload.externalId)
+        await createFakeResult(trx, payload.originSiteId, payload.externalId, currentlyLoggedInUser.countryId)
       }
     }
   })
@@ -112,7 +125,7 @@ const getSiteIdsForUser = async auth => {
   return clinics.map(c => c.id)
 }
 
-const createFakeResult = async (trx, siteId, sampleExternalId) => {
+const createFakeResult = async (trx, siteId, sampleExternalId, countryId) => {
   const resultCombinations = allResultCategories => [
     {
       resultCategory1: allResultCategories.Detected,
@@ -164,7 +177,7 @@ const createFakeResult = async (trx, siteId, sampleExternalId) => {
       deviceId,
       resultSourceId: resultSources.DiagnosticDevice,
       resultTypeId: resultTypes.Patient,
-      sampleId: await getSampleByExternalId(trx, sampleExternalId).then(s => s.id),
+      sampleId: await getMobileSampleByExternalId(trx, sampleExternalId, countryId).then(s => s.id),
       resultDataHash: null,
       assayVersion: '4',
       startedOn: now,

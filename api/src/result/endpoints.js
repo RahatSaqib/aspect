@@ -2,7 +2,6 @@ const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams, validateDateRangeParams } = require('../routes')
 const {
   listResultsBaseConfig,
-  getResponseForComments,
   getResultAggregationsValidate,
   clinicalIndicatorsValidGroups,
   resultAggregationsResponseItem,
@@ -34,9 +33,6 @@ const {
   setResultFollowUp,
   updateResultFollowUp,
   deleteResultFollowUp,
-  addResultNote,
-  allResultNotes,
-  deleteResultNote,
   transferResult,
   updateTransferNotification,
   followUpAggregations,
@@ -261,61 +257,6 @@ const routes = [
           data: Joi.object().required().description('Return current result').keys(validateResultDetailResponse()),
         }),
       },
-    },
-  },
-  {
-    method: 'POST',
-    path: '/result/result-note/{resultId}',
-    handler: asyncHandler(addResultNote),
-    config: {
-      description: 'Add result note to result',
-      notes: 'Add result note to result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: {
-          resultId: Joi.number().integer().positive().required().description('Result Id'),
-        },
-        payload: {
-          note: Joi.string(),
-          resultNoteType: Joi.string().allow('', null),
-          commentId: Joi.number().integer().positive().allow(null).description('Comment Id to update'),
-          changedOn: Joi.date().description('Date when the note was added/edited.').iso().allow(null),
-        },
-      },
-      response: getResponseForComments(),
-    },
-  },
-  {
-    method: 'GET',
-    path: '/result/result-all-notes/{resultId}',
-    handler: asyncHandler(allResultNotes),
-    config: {
-      description: 'Get all notes for specified result ',
-      notes: 'Get all notes for specified result',
-      auth: { scope: ['result:view'] },
-      validate: {
-        params: {
-          resultId: Joi.number().integer().positive().required().description('Result Id'),
-        },
-      },
-      response: getResponseForComments(),
-    },
-  },
-  {
-    method: 'DELETE',
-    path: '/result/result-note/{resultId}/{commentId}',
-    handler: asyncHandler(deleteResultNote),
-    config: {
-      description: 'Remove a specified comment from a result',
-      notes: 'Removes a specified comment from a result',
-      auth: { scope: ['result:view'] },
-      validate: {
-        params: {
-          resultId: Joi.number().required().integer().positive().description('Result ID'),
-          commentId: Joi.number().required().integer().positive().description('Result Comment ID'),
-        },
-      },
-      response: getResponseForComments(),
     },
   },
   {

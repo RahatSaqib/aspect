@@ -419,31 +419,6 @@ function listResultsBaseConfig() {
   }
 }
 
-function getResponseForComments() {
-  return {
-    options: {
-      allowUnknown: false,
-    },
-    schema: Joi.object().keys({
-      ok: Joi.bool().required().description('False if there was some sort of error'),
-      length: Joi.number().required(),
-      data: Joi.array()
-        .required()
-        .description('The result comments')
-        .items(
-          Joi.object().keys({
-            id: Joi.number().required().description('Unique ID of the comment'),
-            text: Joi.string().required().description('Comment text'),
-            createdBy: Joi.string().description('User name who created comment'),
-            createdOn: Joi.date().required().description('When comment was created'),
-            changedOn: Joi.date().required().description('When comment was updated'),
-            noteType: Joi.string().required().description('Comment type'),
-          })
-        ),
-    }),
-  }
-}
-
 function treatmentTrackingValidationQuery() {
   return {
     query: {
@@ -481,7 +456,6 @@ function validateResponseResultCounts() {
 
 module.exports = {
   listResultsBaseConfig,
-  getResponseForComments,
   getResultAggregationsValidate,
   clinicalIndicatorsValidGroups,
   resultAggregationsResponseItem,

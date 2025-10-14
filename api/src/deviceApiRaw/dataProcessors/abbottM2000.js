@@ -677,7 +677,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         sample = {
           externalId: result.sample.externalId,
           collectedOn: result.sample.collectedOn,
-          source: 'result',
           sampleTypeId: sampleTypeIds[result.sample.sampleTypeExternalId],
           originSiteId: deviceSiteId,
           createdOn: now,

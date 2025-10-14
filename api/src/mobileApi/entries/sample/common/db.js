@@ -39,7 +39,7 @@ const getAllSamplesRegistered = (query, originSiteIds) => {
   const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where(queryBuilder =>
     queryBuilder
       .where(qb => qb.where('sample.collectedOn', '>=', submittedSince))
-      .andWhere('sample.registeredInAspect', true)
+      .andWhere('sample.registeredInMobile', true)
       .andWhere(qb => {
         if (modifiedSince) {
           qb.where('sample.updatedOn', '>=', modifiedSince).orWhereNull('sample.updatedOn')

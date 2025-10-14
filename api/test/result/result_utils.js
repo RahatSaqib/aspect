@@ -88,7 +88,6 @@ async function createResult(
     externalId: `${dateFormat(randomDate, 'yy')}/${randomNumber}`,
     collectedOn: calculateDateForResult(withinLastXDays),
     sampleTypeId,
-    source: 'result',
     originSiteId: site.id,
     ...sampleDetails,
   }

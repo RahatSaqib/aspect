@@ -4,7 +4,6 @@ const { getConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
 const logger = require('../../shared/logger')
 const {
-  getCommentsOfResultById,
   getFollowUpsOfResultById,
   getItems,
   generateResultQuery,
@@ -28,10 +27,8 @@ async function getDownloadResultById(resultId, auth, setDelivered = false) {
   if (data) {
     // get follow ups for all result in the response for performance (filter later)
     const followUps = await getFollowUpsOfResultById(resultId)
-    // get comments for all result in the response for performance (filter later)
-    const comments = await getCommentsOfResultById(data)
 
-    transformedData = getResultItemTransformedData(data, setDelivered, followUps, comments)
+    transformedData = getResultItemTransformedData(data, setDelivered, followUps)
   }
 
   const result = {

@@ -164,7 +164,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         await knex('Sample').where('id', existingSample.id).update(sampleFields)
       } else {
         // insert sample
-        ;[sampleId] = await knex('Sample').insert({ ...sampleFields, createdOn: now, source: 'result' })
+        ;[sampleId] = await knex('Sample').insert({ ...sampleFields, createdOn: now })
       }
 
       // It is possible that a single plastic carrier could be used more than once for a particular access number.

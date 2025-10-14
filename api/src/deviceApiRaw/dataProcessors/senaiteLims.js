@@ -238,7 +238,6 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           collectedOn: parseDateOrDefault(sampleDateCollected),
           sampleTypeId: await sampleTypeToId(sampleTypeExternalId),
           originSiteId,
-          source: 'result',
           createdOn: now,
           updatedOn: now,
         })
