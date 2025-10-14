@@ -13,7 +13,6 @@ import report from './report'
 import resultCategory from './resultCategory'
 import resultCategoryType from './resultCategoryType'
 import resultTreatmentStatusMessages from './resultTreatmentStatusMessages'
-import resultWorkflowStatusMessages from './resultWorkflowStatusMessages'
 import sampleType from './sampleType'
 import validationErrorMessages from './validationErrorMessages'
 
@@ -31,7 +30,6 @@ export {
   cronMessages,
   resultCategory,
   resultCategoryType,
-  resultWorkflowStatusMessages,
   resultTreatmentStatusMessages,
   report,
   notificationCategories,

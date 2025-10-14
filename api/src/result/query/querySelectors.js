@@ -14,9 +14,6 @@ const COMMON_LIST_FIELDS_UTC = {
   lgaName: 'lg.name',
   resultCategory1Name: 'rc1.name',
   resultCategory2Name: 'rc2.name',
-  resultWorkflowStatusId: 'rs.id',
-  resultWorkflowStatus: 'rs.name',
-  resultWorkflowStatusExternalId: 'rs.externalId',
   resultTreatmentStatus: 'rts.externalId',
   resultData: 'r.resultData',
   formData: 'r.formData',
@@ -47,8 +44,6 @@ const COMMON_LIST_FIELDS_UTC = {
     "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end"
   ),
   patientData: 'r.patientData',
-  resultWorkflowLogReason: 'rsl.reason',
-  resultWorkflowLogOperator: 'rsl.operator',
   resultTreatmentMethod: 'rtsl.method',
   resultTreatmentData: 'rtsl.data',
   resultTreatmentStatusId: 'rtsl.resultTreatmentStatusId',
@@ -65,13 +60,10 @@ const COMMON_LIST_FIELDS_UTC = {
   // datetime fields UTC:
   startedOn: 'r.startedOn',
   endedOn: 'r.endedOn',
-  resultWorkflowChangedOn: 'rsl.changedOn',
   consumableExpirationDate: 'r.consumableExpirationDate',
   createdOn: 'r.createdOn',
   updatedOn: 'r.updatedOn',
   sampleCollectedOn: 'sp.collectedOn',
-  resultWorkflowLogCreatedOn: 'rsl.createdOn',
-  resultWorkflowLogChangedOn: 'rsl.changedOn',
   resultTreatmentStatusChangedOn: 'rtsl.changedOn',
   transferredOn: 'rslog.createdOn',
   firstViewedOn: 'r.firstViewedOn',
@@ -119,8 +111,6 @@ const LIST_FIELDS_UTC = {
     `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, '')))`
   ),
   errorCode: 'r.errorCode',
-  resultWorkflowStatus: 'rs.name',
-  resultWorkflowStatusI18nkey: 'rs.i18nkey',
   resultTreatmentStatus: 'rts.externalId',
   resultTreatmentStatusI18nKey: knex.raw(
     "CASE WHEN GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 THEN NULL ELSE CASE WHEN rts.i18nKey IS NOT NULL THEN rts.i18nKey ELSE 'ResultTreatmentStatusNotAvailable' END END"
@@ -229,7 +219,6 @@ const SORT_FIELDS = [
   'sampleId',
   'errorCode',
   'resultText',
-  'resultWorkflowStatus',
   'treatmentStatusInfo',
   'resultTreatmentStatusChangedOn',
   'requiresTreatment',

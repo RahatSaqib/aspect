@@ -8,13 +8,7 @@ const { getAstmField } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
 
-const {
-  allAssayToId,
-  resultTypeToId,
-  resultSourceToId,
-  resultCategoryToId,
-  resultWorkflowStatusToId,
-} = require('../../shared/dictionary')
+const { allAssayToId, resultTypeToId, resultSourceToId, resultCategoryToId } = require('../../shared/dictionary')
 
 class DefaultBDMGIT extends SynchronousDataProcessor {
   constructor(request, messageContext) {
@@ -105,33 +99,26 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       // Use test status to determine workflow status and result category 1:
       const mgitTestStatus = getAstmField(astm, 'R,4,1,1')
       let resultCategory1 = null
-      let resultWorkflowStatusId = null
 
       switch (mgitTestStatus) {
         case 'INST_POSITIVE':
           resultCategory1 = await resultCategoryToId('Detected')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Processed')
           break
         case 'INST_NEGATIVE':
           resultCategory1 = await resultCategoryToId('NotDetected')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Processed')
           break
         case 'INST_COMPLETE':
           resultCategory1 = await resultCategoryToId('Success')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Processed')
           break
         case 'INST_REMOVED':
           resultCategory1 = await resultCategoryToId('Missing')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Purged')
           break
         case 'INST_ERROR':
           resultCategory1 = await resultCategoryToId('Error')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
           break
         case 'INST_ONGOING':
         default:
           resultCategory1 = await resultCategoryToId('Unknown')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('InProgress')
           break
       }
 
@@ -275,25 +262,6 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
             createdOn: now,
           })
         )
-      }
-
-      // Save workflow status
-      let newStatus = false
-      if (result && result.resultWorkflowStatusLogId) {
-        const log = await knex('ResultWorkflowLog').where('id', result.resultWorkflowStatusLogId)
-
-        newStatus = log.resultWorkflowStatusId !== resultWorkflowStatusId
-      }
-
-      if (newStatus || !result || !result.resultWorkflowStatusLogId) {
-        const [logId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId,
-          changedOn: now,
-          createdOn: now,
-        })
-
-        await knex('Result').where('id', resultId).update('resultWorkflowStatusLogId', logId)
       }
 
       await knex('DeviceLog').where('id', deviceLogId).update({ resultId })

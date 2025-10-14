@@ -11,7 +11,6 @@ const {
   resultSourceToId,
   resultTypeToId,
   allResultCategoryToId,
-  allResultWorkflowStatusToId,
 } = require('../../../shared/dictionary')
 const expectedKeys = require('./expectedKeys')
 const dateKeys = require('./dateKeys')
@@ -171,7 +170,6 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         const resultSourceId = await resultSourceToId('LIMS')
         const resultTypeId = await resultTypeToId('Patient')
         const resultCategories = await allResultCategoryToId()
-        const resultWorkflowStatuses = await allResultWorkflowStatusToId()
         const baseNewResult = {
           partnerId: site.partnerId,
           siteId: site.id,
@@ -320,7 +318,6 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             dstResultOverwritePriority
           )
         }
@@ -422,7 +419,6 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               patientData,
               utcNow,
               resultCategories,
-              resultWorkflowStatuses,
               cultureResultOverwritePriority
             )
           })
@@ -537,7 +533,6 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               patientData,
               utcNow,
               resultCategories,
-              resultWorkflowStatuses,
               smearResultOverwritePriority
             )
           })
@@ -622,7 +617,6 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }
@@ -685,7 +679,6 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }

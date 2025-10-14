@@ -54,7 +54,6 @@ const cacheConfig = {
   ResultStatus: {},
   ResultTreatmentStatus: {},
   ResultType: {},
-  ResultWorkflowStatus: {},
   Report: {},
   SampleType: {},
   SiteType: {},

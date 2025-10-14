@@ -4616,18 +4616,6 @@ describe('Device API Raw Philippines NTRL', () => {
           senderOperator: payload['DST Lab Tech'],
           reportableSiteId: databaseRecords.Site.id,
         })
-
-        const insertedResultWorkflowStatusLogs = insertSpy
-          .getCalls()
-          .filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-          .map(insert => insert.lastArg)
-        expect(insertedResultWorkflowStatusLogs).to.containSubset([
-          {
-            resultId: dstResult.id,
-            resultWorkflowStatusId: staticDatabaseData.ResultWorkflowStatus.Validated,
-            operator: pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples.DSTSignedOffBy3,
-          },
-        ])
       })
 
       it('should insert Culture results when Culture values are in the record', async () => {
@@ -5122,18 +5110,6 @@ describe('Device API Raw Philippines NTRL', () => {
           senderOperator: payload['Smear Lab Tech'] || payload['Gx Examiner'],
           reportableSiteId: databaseRecords.Site.id,
         })
-
-        const insertedResultWorkflowStatusLogs = insertSpy
-          .getCalls()
-          .filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-          .map(insert => insert.lastArg)
-        expect(insertedResultWorkflowStatusLogs).to.containSubset([
-          {
-            resultId: tbLampResult.id,
-            resultWorkflowStatusId: staticDatabaseData.ResultWorkflowStatus.Validated,
-            operator: pmdtRecordPayload03795TbLampPositiveSample.TBLAMPSignedOffBy3,
-          },
-        ])
       })
 
       it('should create a single sample when only one sample has been captured', async () => {
@@ -7065,18 +7041,6 @@ describe('Device API Raw Philippines NTRL', () => {
           senderOperator: payload['GX Performed by'],
           reportableSiteId: databaseRecords.Site.id,
         })
-
-        const insertedResultWorkflowStatusLogs = insertSpy
-          .getCalls()
-          .filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-          .map(insert => insert.lastArg)
-        expect(insertedResultWorkflowStatusLogs).to.containSubset([
-          {
-            resultId: gxResult.id,
-            resultWorkflowStatusId: staticDatabaseData.ResultWorkflowStatus.Validated,
-            operator: ritmRecordPayload0423GeneXpertNotDetected1Sample.GeneXpertSignedOffBy3,
-          },
-        ])
       })
 
       it('should create a single sample when only one sample has been captured', async () => {

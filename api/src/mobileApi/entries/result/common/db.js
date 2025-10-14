@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex } = require('../../../../db')
-const { ACKNOWLEDGED, FLAGGED, MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
+const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 const { allResultCategoryToId } = require('../../../../shared/dictionary')
@@ -54,9 +54,6 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       'resultTreatmentStatus.i18nKey as resultTreatmentStatusI18nKey',
       'resultTreatmentStatus.name as resultTreatmentStatusName',
       'resultTreatmentStatusLog.changedOn as resultTreatmentStatusChangedOn',
-      'resultWorkflowLog.changedOn as resultWorkflowStatusChangedOn',
-      'resultWorkflowLog.resultWorkflowStatusId as resultWorkflowStatusId',
-      'resultWorkflowLog.reason as resultWorkflowStatusReason',
       'sp.id as sampleId',
       'sp.sampleData',
       'sp.sampleStatus as sampleStatus',
@@ -76,7 +73,6 @@ const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
       'si.id as laboratorySiteId',
       'si.externalId as laboratorySiteExternalId',
       'si.name as laboratorySiteName',
-      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
       'sampleCollectedBy.name as sampleClinicianName',
       'transferReportableSite.name as transferSiteName',
       'transferOriginSite.name as transferOriginSiteName',
@@ -98,12 +94,6 @@ const fetchResultsQuery = (query, dataConstraints) => {
     .leftJoin('Site as sampleOriginSite', 'sp.originSiteId', 'sampleOriginSite.id')
     .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
     .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
-    .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'r.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
-    .leftJoin(
-      'ResultWorkflowStatus as resultWorkflowStatus',
-      'resultWorkflowLog.resultWorkflowStatusId',
-      'resultWorkflowStatus.id'
-    )
     .leftJoin(
       'ResultTreatmentStatusLog as resultTreatmentStatusLog',
       'r.treatmentStatusLogId',
@@ -136,29 +126,6 @@ const fetchResultsQuery = (query, dataConstraints) => {
         qb.where('r.id', resultId)
       }
     })
-}
-
-const getWorkflowLogsByResultIds = (results, resultWorkflowStatusExternalId) => {
-  return knex('ResultWorkflowLog as rwl')
-    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
-    .whereIn(
-      'rwl.resultId',
-      _.map(results, r => r.id)
-    )
-    .andWhere('rws.externalId', resultWorkflowStatusExternalId)
-}
-
-const getAcknowledgementsByResultIds = results => {
-  return getWorkflowLogsByResultIds(results, ACKNOWLEDGED)
-    .select('rwl.resultId', knex.raw('MAX(rwl.changedOn) as acknowledgedOn'))
-    .groupBy('rwl.resultId')
-}
-
-const getFlagsByResultIds = results => {
-  return getWorkflowLogsByResultIds(results, FLAGGED)
-    .whereNotNull('rwl.reason')
-    .andWhere('rwl.reason', '<>', '')
-    .distinct('rwl.resultId', 'rwl.changedOn as flaggedOn', 'rwl.reason')
 }
 
 const getFollowUpsByResultIds = results => {
@@ -205,7 +172,5 @@ module.exports = {
   fetchResultsBySubmittedSinceQuery,
   fetchResultsQuery,
   getFollowUpsByResultIds,
-  getAcknowledgementsByResultIds,
-  getFlagsByResultIds,
   getUserSiteIds,
 }

@@ -10,7 +10,6 @@ const {
   resultCategoryToId,
   resultSourceToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const { insertSite } = require('../../src/site/common/db')
@@ -43,8 +42,6 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
   await knex('InventoryLog').whereIn('resultId', resultIds).delete()
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-  await knex('Result').whereIn('id', resultIds).update({ resultWorkflowStatusLogId: null })
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   await knex('ResultTransferLog').whereIn('resultId', resultIds).delete()
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
   await knex('ResultFileReference').whereIn('resultId', resultIds).delete()
@@ -241,7 +238,6 @@ async function createResult(
     resultData,
     startedOn,
     endedOn,
-    resultWorkflowStatusId,
   }
 ) {
   const now = new Date()
@@ -251,7 +247,6 @@ async function createResult(
   if (!resultData) resultData = JSON.stringify({})
   if (!startedOn) startedOn = subHours(now, 2)
   if (!endedOn) endedOn = now
-  if (!resultWorkflowStatusId) resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
 
   const { siteId, partnerId } = await knex('Device as d').where({ id: deviceId }).first()
 
@@ -283,16 +278,6 @@ async function createResult(
     endedOn,
     reportableSiteId: siteId,
     instrumentSerial,
-  })
-  const [lastLogId] = await knex('ResultWorkflowLog').insert({
-    resultWorkflowStatusId,
-    resultId,
-    changedOn: startedOn,
-    createdOn: startedOn,
-    createdBy: 1,
-  })
-  await knex('Result').where('id', resultId).update({
-    resultWorkflowStatusLogId: lastLogId,
   })
   await knex('DeviceLog').insert({
     deviceId,
@@ -348,16 +333,7 @@ class DeviceApiTestContext {
 
   async getResultProps(props) {
     const now = new Date()
-    let {
-      externalId,
-      resultSourceId,
-      resultTypeId,
-      resultCategory1,
-      resultData,
-      resultWorkflowStatusId,
-      startedOn,
-      endedOn,
-    } = props
+    let { externalId, resultSourceId, resultTypeId, resultCategory1, resultData, startedOn, endedOn } = props
     if (!externalId) externalId = `NEW RESULT ${new Date().getTime()}`
     if (!resultSourceId) resultSourceId = await resultSourceToId('Generated')
     if (!resultTypeId) resultTypeId = await resultTypeToId('Patient')
@@ -365,7 +341,6 @@ class DeviceApiTestContext {
     if (!resultData) resultData = JSON.stringify({})
     if (!startedOn) startedOn = subHours(now, 2)
     if (!endedOn) endedOn = now
-    if (!resultWorkflowStatusId) resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
     return {
       sampleType: this.sampleType,
       assayName: this.assayName,
@@ -374,7 +349,6 @@ class DeviceApiTestContext {
       resultTypeId,
       resultCategory1,
       resultData,
-      resultWorkflowStatusId,
       startedOn,
       endedOn,
     }

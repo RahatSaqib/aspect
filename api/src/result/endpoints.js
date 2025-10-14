@@ -19,11 +19,8 @@ const {
   downloadResultsList,
   showResult,
   listResultTypes,
-  updateWorkflowStatus,
   updateTreatmentStatusPost,
   listTreatmentStatusTypes,
-  listWorkflowStatusTypes,
-  listWorkflowStatusLog,
   showDeviceLogs,
   showFileReferences,
   downloadFile,
@@ -202,38 +199,6 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/result/workflow-status/{resultId}',
-    handler: asyncHandler(updateWorkflowStatus),
-    config: {
-      description: 'Update Result Status',
-      notes: 'Update the status of a result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: {
-          resultId: Joi.number().integer().positive().description('Result Id'),
-        },
-        payload: {
-          resultWorkflowStatusId: Joi.number().integer().allow(null),
-          updatedOn: Joi.date().iso().allow(null).description('Status updated date'),
-          externalId: Joi.string().allow('', null),
-          reason: Joi.string().description('Reason for the latest workflow status change').allow(null, '').max(255),
-          operator: Joi.string().description('The sender operator').allow(null, '').max(255),
-          changedOn: Joi.date().description('Date when the status was updated.').iso().allow(null),
-        },
-      },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool().required().description('False if there was some sort of error'),
-          data: Joi.object().required().description('The results').keys(validateResultDetailResponse()),
-        }),
-      },
-    },
-  },
-  {
-    method: 'PUT',
     path: '/result/transfer/{resultId}',
     handler: asyncHandler(updateTransferNotification),
     config: {
@@ -256,32 +221,6 @@ const routes = [
           ok: Joi.bool().required().description('False if there was some sort of error'),
           data: Joi.object().required().description('Return current result').keys(validateResultDetailResponse()),
         }),
-      },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/result/workflow-status-types',
-    handler: asyncHandler(listWorkflowStatusTypes),
-    config: {
-      description: 'Result Workflow Status List',
-      notes: 'Dictionary set of Result Workflow Status options',
-      auth: { scope: ['result:view'] },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/result/workflow-status-logs/{resultId}',
-    handler: asyncHandler(listWorkflowStatusLog),
-    config: {
-      description: 'Result Workflow Status Logs',
-      notes: 'Pageable and sortable list of workflow status logs for current result',
-      auth: { scope: ['result'] },
-      validate: {
-        query: validateSortPageParams(),
-        params: {
-          resultId: Joi.string().description('Result ID').required(),
-        },
       },
     },
   },

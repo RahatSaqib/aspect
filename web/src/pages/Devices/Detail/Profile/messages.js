@@ -135,10 +135,6 @@ const messages = {
       id: 'pages.DeviceDetailProfile.resultText',
       defaultMessage: 'Result',
     },
-    resultWorkflowStatus: {
-      id: 'pages.DeviceDetailProfile.resultWorkflowStatus',
-      defaultMessage: 'Result Workflow Status',
-    },
     patientId: {
       id: 'pages.DeviceDetailProfile.patientId',
       defaultMessage: 'Patient ID',

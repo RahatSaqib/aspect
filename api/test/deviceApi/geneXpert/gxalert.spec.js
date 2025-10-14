@@ -564,12 +564,6 @@ describe.skip('Device API routes for GxAlert Device', () => {
       const result2Source = await knex('ResultSource as rs').where({ id: result2.resultSourceId }).first('externalId')
       assert.equal(result2Source.externalId, 'EnteredByHand')
 
-      const result2Status = await knex('ResultWorkflowStatus as rs')
-        .innerJoin('ResultWorkflowLog as rsl', 'rs.id', 'rsl.ResultWorkflowStatusId')
-        .where('rsl.id', result2.resultWorkflowStatusLogId)
-        .first('externalId')
-      assert.equal(result2Status.externalId, 'Acknowledged')
-
       const result2Assay = await knex('Assay as assay').where({ id: result2.assayId }).first('externalId', 'name')
       assert.equal(result2Assay.externalId, 'GxMtbRif')
       assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
@@ -1393,32 +1387,6 @@ describe.skip('Device API routes for GxAlert Device', () => {
         const lastResult = await getLastResult()
         expect(lastResult).to.containSubset({
           resultWorkflowStatus: 'Deliverable',
-        })
-      })
-    })
-
-    describe('when a workflow status has been specified in the result payload', () => {
-      it('should set the workflow status of the result accordingly', async () => {
-        const now = new Date()
-        const testResultId = 'UNIQUE-ID-WITH-WORKFLOW-RESULT'
-
-        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
-        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
-            result: {
-              id: testResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              workflow: { status: { id: 'Acknowledged' } },
-            },
-          }),
-        })
-
-        const lastResult = await getLastResult()
-        expect(lastResult).to.containSubset({
-          resultWorkflowStatus: 'Acknowledged',
         })
       })
     })

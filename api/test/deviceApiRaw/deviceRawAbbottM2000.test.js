@@ -120,13 +120,6 @@ L|1`
       Invalid: 17,
       Indeterminate: 18,
     },
-    ResultWorkflowStatus: {
-      Processed: 15,
-      OK: 16,
-      Ordered: 17,
-      InProgress: 18,
-      Error: 19,
-    },
   }
   const databaseRecords = {
     DeviceApiKey: {
@@ -247,7 +240,6 @@ L|1`
         resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
         resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
         allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
-        allResultWorkflowStatusToId: resolveWith(staticDatabaseData.ResultWorkflowStatus),
       },
       '../../shared/request': {
         getRemoteAddress: () => deviceIpAddress,
@@ -586,11 +578,6 @@ L|1`
           },
         },
       ])
-
-      const insertResultWorkflowLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-      expect(insertResultWorkflowLogCalls).to.have.lengthOf(93)
-      const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
-      expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
     })
   })
 
@@ -918,11 +905,6 @@ L|1`
           },
         },
       ])
-
-      const insertResultWorkflowLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-      expect(insertResultWorkflowLogCalls).to.have.lengthOf(93)
-      const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
-      expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
     })
   })
 
@@ -1229,11 +1211,6 @@ L|1`
           },
         },
       ])
-
-      const insertResultWorkflowLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-      expect(insertResultWorkflowLogCalls).to.have.lengthOf(45)
-      const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
-      expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
     })
   })
 
@@ -1562,11 +1539,6 @@ L|1`
           result => result.resultCategory1
         )
       )
-
-      const insertResultWorkflowLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-      expect(insertResultWorkflowLogCalls).to.have.lengthOf(94)
-      const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
-      expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
     })
 
     const controlResults = `5H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
@@ -2122,13 +2094,6 @@ ${controlResults}`,
             resultCategory2: null,
           },
         ])
-
-        const insertResultWorkflowLogCalls = insertCalls.filter(
-          insertCall => insertCall.args[0] === 'ResultWorkflowLog'
-        )
-        expect(insertResultWorkflowLogCalls).to.have.lengthOf(46)
-        const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
-        expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
       })
     })
   })

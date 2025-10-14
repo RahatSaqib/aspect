@@ -20,7 +20,6 @@ const {
   deviceApprovalToId,
   sampleTypeToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
 } = require('../../src/shared/dictionary')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
@@ -814,9 +813,6 @@ async function seed(knex) {
   await upsertConsumables(knex, true, ['DaktariCD4', 'DaktariHivVL'])
   const consumableGxTbCartridgeId = await consumableToId('GxMtbRifCartridge')
 
-  // Result Workflow Status
-  const deliverable = await resultWorkflowStatusToId('Deliverable')
-
   // Create geographic hierarchy
   const countries = {}
   const siteDatas = []
@@ -1169,14 +1165,6 @@ async function seed(knex) {
   const createdOn = subMinutes(now, 90)
   await Promise.each(resultDatas, async (resultData, i) => {
     const [resultId] = await knex('Result').insert(resultData)
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: deliverable,
-      operator: 'Aaron',
-      changedOn: createdOn,
-      createdOn,
-      createdBy: adminId,
-    })
 
     // Insert one result status log (ensure we log one of each status)
     let rdm = (i + 1) % resultStatusesIds.length
@@ -1194,8 +1182,6 @@ async function seed(knex) {
       createdOn,
       createdBy: adminId,
     })
-
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   await upsertPermissionFixture(knex)

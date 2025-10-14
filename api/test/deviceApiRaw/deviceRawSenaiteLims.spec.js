@@ -131,7 +131,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .delete()
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-    await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
     await knex('ResultTag').whereIn('resultId', resultIds).delete()
     await knex('Result').whereIn('id', resultIds).delete()
     await knex('Device').where('id', deviceId).delete()

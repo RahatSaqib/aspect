@@ -37,7 +37,6 @@ const tables = [
   'ResultStatus',
   'ResultType',
   'ResultTreatmentStatus',
-  'ResultWorkflowStatus',
   'SampleType',
   'FollowUpType',
   // TODO ASP-757 Standardize static data key on externalId

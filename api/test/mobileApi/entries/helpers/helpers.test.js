@@ -162,19 +162,18 @@ describe('Entries helpers', () => {
     const data = {
       updatedOn: '2022-01-01',
       sampleCollectedOn: '2022-01-05',
-      resultWorkflowStatusChangedOn: '2022-01-10',
     }
-    const followUps = [{ updatedOn: '2022-01-03' }, { updatedOn: '2022-01-06' }]
 
     it('returns correct date for the provided input data', () => {
+      const followUps = [{ updatedOn: '2022-01-03' }, { updatedOn: '2022-01-06' }]
       const result = getResultUpdatedOnDate(data, followUps)
-      expect(result).to.eq('2022-01-10')
+      expect(result).to.eq('2022-01-06')
     })
 
     it('returns correct date if no followUps are provided', () => {
       const followUps = []
       const result = getResultUpdatedOnDate(data, followUps)
-      expect(result).to.eq('2022-01-10')
+      expect(result).to.eq('2022-01-05')
     })
   })
 
@@ -322,7 +321,6 @@ describe('Entries helpers', () => {
     it('should transform clinical response correctly when result is recorded and treatment and outcome are present', () => {
       const data = {
         id: 123,
-        resultWorkflowStatusChangedOn: '2023-01-01T00:00:00Z',
       }
 
       const followUps = [
