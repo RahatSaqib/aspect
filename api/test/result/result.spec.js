@@ -23,7 +23,6 @@ const getClinicianAccessToken = async () => {
 describe('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
-  const assayId = 1
   let clinicianAssayId = 1
   let clinicianResultId = 1
 
