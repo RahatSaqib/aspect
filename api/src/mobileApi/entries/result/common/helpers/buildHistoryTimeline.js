@@ -12,7 +12,7 @@ const { generateTransferStatus } = require('./generateTransferStatus')
  * @returns {array} - An array of objects containing the history timeline, sorted by update date in descending order.
  */
 
-function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
+function buildHistoryTimeline(data, followUps, userSiteIds) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
@@ -72,22 +72,6 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       updatedOn: followUp.date,
       type: followUp.followUpTypeName,
       clinicianName: followUp.clinicianName,
-    }
-    const matchingFlag = resultFlags?.find(rf => {
-      try {
-        return (
-          rf.flaggedOn &&
-          followUp.date &&
-          isValid(new Date(rf.flaggedOn)) &&
-          isValid(new Date(followUp.date)) &&
-          format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
-        )
-      } catch (error) {
-        return false
-      }
-    })
-    if (matchingFlag?.reason) {
-      followUpHistoryItem.reason = matchingFlag.reason
     }
     output.push(followUpHistoryItem)
   })

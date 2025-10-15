@@ -24,7 +24,7 @@ const {
   updateResultFollowUp,
   deleteResultFollowUpTreatment,
 } = require('./common/db')
-const { getAcknowledgementsByResultIds, fetchResultsQuery } = require('../entries/result/common/db')
+const { fetchResultsQuery } = require('../entries/result/common/db')
 const { knex } = require('../../db')
 const { getFormsByFormDefinitionExternalIds } = require('../../forms/service')
 const { getBaseQueryForResults } = require('../../result/common/db')
@@ -420,10 +420,9 @@ async function showResult(resultId, dataConstraints) {
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
   if (!data) return getPossibleReasonsForNoResult(resultId)
-  const [acknowledgement] = await getAcknowledgementsByResultIds([data].filter(_.identity))
   // get follow-ups for all result in the response for performance (filter later)
   const followUps = await getFollowUpsOfResultById(resultId)
-  const result = await getResultItemTransformedDataV2(data, true, followUps, acknowledgement)
+  const result = await getResultItemTransformedDataV2(data, true, followUps)
   return result || Boom.notFound()
 }
 

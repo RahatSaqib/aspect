@@ -2030,7 +2030,7 @@ describe('Device API routes for GxConnect Devices', () => {
     })
 
     describe('when an error code has been specified in the result payload', () => {
-      it('should set the workflow status of the result to error', () =>
+      it('should set the resultCategory1 of the result to error', () =>
         runTest(async () => {
           const { basicDevicePayload, deviceAuth } = context
 

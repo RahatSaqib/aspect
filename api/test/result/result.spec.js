@@ -471,7 +471,6 @@ describe('Result routes', () => {
 
       const { treatmentStatus } = res.body.data
 
-      // check if resultWorkflowStatus was updated
       assert.equal(treatmentStatus.externalId, 'OnTreatment')
     })
 

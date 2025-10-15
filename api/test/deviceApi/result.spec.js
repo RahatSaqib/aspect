@@ -39,28 +39,6 @@ describe('Device Result API routes', () => {
   }
 
   const apiResultPath = '/api/result'
-  function setResultAsDeliverable(context, resultId, changedOn, testStatus = true) {
-    const { clientAuth } = context
-    const status = { externalId: 'Deliverable' }
-    if (changedOn) status.updatedOn = changedOn.toISOString()
-    const clientSingleResultPath = `${apiResultPath}/`
-    return server
-      .put(`${clientSingleResultPath}workflow-status/${resultId}`)
-      .send(status)
-      .set('Authorization', clientAuth)
-      .then(res => {
-        assert.equal(res.status, 200, res && res.body && res.body.message ? res.body.message : '')
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data, 'Object')
-        if (testStatus) assert.equal(res.body.data.resultWorkflowStatus, 'Ready for delivery')
-        return res
-      })
-  }
-
-  function setResultAsDeliverableAndApprove(context, resultId) {
-    return setResultAsDeliverable(context, resultId)
-  }
 
   describe('admin result updates', () => {
     const context = createTestContext(knex, server, {
@@ -196,12 +174,6 @@ describe('Device Result API routes', () => {
             data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
             type: { id: 'Study' },
             source: { id: 'EnteredByHand' },
-            workflow: {
-              status: { id: 'Acknowledged' },
-              operator: 'Goody Two Shoes',
-              reason: 'Reason 1',
-              changedOn: '2013-12-01T01:35',
-            },
             category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
             assay: {
               id: 'DaktariHivVL',
@@ -397,12 +369,6 @@ describe('Device Result API routes', () => {
           data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
           type: { id: 'Study' },
           source: { id: 'EnteredByHand' },
-          workflow: {
-            status: { id: 'Acknowledged' },
-            operator: 'Goody Two Shoes',
-            reason: 'Reason 1',
-            changedOn: '2013-12-01T01:35',
-          },
           category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
           assay: {
             id: 'DaktariHivVL',
@@ -494,8 +460,6 @@ describe('Device Result API routes', () => {
           d: false,
           e: { f: 'g' },
         })
-
-        await setResultAsDeliverableAndApprove(context, resultId2)
 
         const postNewResultResponse4 = await server
           .post(devicePath)
@@ -651,8 +615,6 @@ describe('Device Result API routes', () => {
 
         resultIds.push(await getLastResultId(knex, deviceId))
 
-        await setResultAsDeliverableAndApprove(context, _.last(resultIds))
-
         const result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
 
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
@@ -680,8 +642,6 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
         resultIds.push(await getLastResultId(knex, deviceId))
-
-        await setResultAsDeliverableAndApprove(context, _.last(resultIds))
 
         const result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
 
@@ -738,8 +698,6 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
         resultIds.push(await getLastResultId(knex, deviceId))
-
-        await setResultAsDeliverableAndApprove(context, _.last(resultIds))
 
         const result4 = await knex('Result as r').where({ id: resultIds[3] }).first()
         assert.deepEqual(JSON.parse(result4.resultData), { a: 'e' })
@@ -951,7 +909,6 @@ describe('Device Result API routes', () => {
             data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
             type: { id: 'Study' },
             source: { id: 'EnteredByHand' },
-            workflow: { status: { id: 'Acknowledged' } },
             category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
             assay: {
               id: 'DaktariHivVL',
@@ -1201,7 +1158,6 @@ describe('Device Result API routes', () => {
         assert.isOk(deviceLogUpdates2[0].id)
         assert.equal(deviceLogUpdates2[0].resultId, deviceLogResult2.id)
 
-        await setResultAsDeliverableAndApprove(context, _.last(resultIds))
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
@@ -1239,8 +1195,6 @@ describe('Device Result API routes', () => {
         assert.equal(deviceLogUpdates3.length, 1)
         assert.isOk(deviceLogUpdates3[0].id)
         assert.isOk(deviceLogUpdates3[0].resultId)
-
-        await setResultAsDeliverableAndApprove(context, _.last(resultIds))
       }))
 
     describe.skip('the reportable site of a result', () => {

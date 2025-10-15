@@ -3300,7 +3300,6 @@ const aspectPayloadBig = {
     location: null,
     type: null,
     source: null,
-    workflow: null,
     sample: { id: '24-4206', collectedOn: null, group: null, runNumber: null, type: null, originSite: null },
     category: null,
     consumable: [{ serial: '602567135', lot: '52717', expirationDate: '2024-12-22T00:00:00Z' }],

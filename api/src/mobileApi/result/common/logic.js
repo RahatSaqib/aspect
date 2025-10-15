@@ -242,7 +242,7 @@ function transformPatientDataBySchema(patientData, patientDataSchema) {
 }
 
 // Transformed data v2 for result by Id
-const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, acknowledgement) => {
+const getResultItemTransformedDataV2 = async (data, setDelivered, followUps) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
@@ -311,10 +311,6 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, ack
       backgroundColor: assayAvatar.backgroundColor,
       foregroundColor: assayAvatar.foregroundColor,
       contentIcon: assayAvatar.contentIcon,
-    },
-    clinicalResponse: {
-      recorded: !!acknowledgement,
-      confirmedOn: acknowledgement?.acknowledgedOn ?? null,
     },
     testInformation: [],
     resultRequiresTreatment,

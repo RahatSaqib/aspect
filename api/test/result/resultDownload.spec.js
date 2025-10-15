@@ -8,7 +8,7 @@ const patients = require('../../seeds/test/fixtures/patients.json')
 
 const { knex } = require('../../src/db')
 
-const { resultCategoryToId, resultWorkflowStatusToId } = require('../../src/shared/dictionary')
+const { resultCategoryToId } = require('../../src/shared/dictionary')
 
 const server = require('../utils/testUtils')
 const { getBaseQueryForResults } = require('../../src/result/common/db')
@@ -44,12 +44,6 @@ describe('Result download routes', () => {
     results = await generateResults(knex, userId, partnerId, patients, [], 'US', false, 30, 0, 0, 0)
 
     await setTreatmentStatusToResults(knex, results, ['OnTreatment'])
-
-    // set all to deliverable
-    const resultWorkflowStatusId = await resultWorkflowStatusToId('Deliverable')
-    await knex('ResultWorkflowLog')
-      .whereIn('resultId', _.map(results, 'id'))
-      .update('resultWorkflowStatusId', resultWorkflowStatusId)
 
     // set all to a reportable result (=detected)
     const resultCategoryId = await resultCategoryToId('Detected')
@@ -104,31 +98,11 @@ describe('Result download routes', () => {
       assert.property(response.body, 'data')
     }
 
-    function assertReporterResultDownloadResponseContainingNoResults(response) {
-      assertReporterResultDownloadResponse(response)
-      assert.isAtLeast(response.body.total, 0)
-      assert.equal(response.body.length, 0)
-
-      assert.typeOf(response.body.data, 'array')
-      assert.equal(response.body.data.length, 0)
-    }
-
     function assertReporterResultDownloadResponseContainingResults(response, numberOfResults) {
       assertReporterResultDownloadResponse(response)
 
       assert.equal(response.body.total, numberOfResults)
       assert.equal(response.body.length, numberOfResults)
-      expect(response).to.containSubset({
-        body: {
-          data: [
-            {
-              workflowStatus: {
-                externalId: 'Delivered',
-              },
-            },
-          ],
-        },
-      })
 
       assert.equal(Object.keys(response.body.data[0]).length, 24)
       assert.property(response.body.data[0], 'id')
@@ -143,7 +117,6 @@ describe('Result download routes', () => {
       assert.property(response.body.data[0], 'deviceName')
       assert.property(response.body.data[0], 'resultCategory1ExternalId')
       assert.property(response.body.data[0], 'resultCategory2ExternalId')
-      assert.property(response.body.data[0], 'workflowStatus')
       assert.property(response.body.data[0], 'treatmentStatus')
       assert.property(response.body.data[0], 'patientData')
       assert.property(response.body.data[0], 'resultData')
@@ -178,8 +151,6 @@ describe('Result download routes', () => {
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
-        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
         .whereIn(
           'rdl.resultId',
           _.map(res.body.data, elem => elem.id)
@@ -206,12 +177,6 @@ describe('Result download routes', () => {
         .set('Authorization', `Bearer ${shared.token}`)
       await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
-
-      res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
-        .set('Authorization', `Bearer ${shared.token}`)
-      await Promise.delay(500)
-      assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
