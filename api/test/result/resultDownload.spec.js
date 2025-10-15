@@ -104,7 +104,7 @@ describe('Result download routes', () => {
       assert.equal(response.body.total, numberOfResults)
       assert.equal(response.body.length, numberOfResults)
 
-      assert.equal(Object.keys(response.body.data[0]).length, 24)
+      assert.equal(Object.keys(response.body.data[0]).length, 23)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -139,7 +139,7 @@ describe('Result download routes', () => {
       }
     }
 
-    it('should return a paged list of results and update them to delivered', async () => {
+    it('should return a paged list of results', async () => {
       const res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -155,7 +155,6 @@ describe('Result download routes', () => {
           'rdl.resultId',
           _.map(res.body.data, elem => elem.id)
         )
-        .where('rs.externalId', 'Delivered')
         .count('rdl.id as count')
         .first()
 
