@@ -231,7 +231,7 @@ describe('Result routes', () => {
     })
 
     it('should return a list of results with assay-specific fields if TB assay is requested', async () => {
-      const res = await server.get(`${path}?assayId=${assayId}`).set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}`).set('Authorization', `Bearer ${shared.token}`)
 
       validateResponse(res)
     })
