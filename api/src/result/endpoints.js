@@ -654,8 +654,6 @@ const routes = [
                 resultData: Joi.object().required().description('The result data'),
                 resultSiteName: Joi.string().required().description('The result site name'),
                 resultNotes: Joi.string().required().allow(null).description('The result notes'),
-                resultStatus: Joi.string().required().allow(null).description('The result status'),
-                resultStatusLog: Joi.date().iso().required().allow(null).description('The Result status log date'),
                 resultTreatmentStatusLogDate: Joi.date()
                   .iso()
                   .required()
