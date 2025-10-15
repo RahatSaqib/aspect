@@ -287,9 +287,6 @@ async function getDownloadResultsList(query, auth) {
             .orWhereIn('rc2.externalId', params.resultCategories.split(','))
         )
       }
-      if (params.workflowStatus) {
-        queryBuilder.where('rs.externalId', params.workflowStatus)
-      }
       if (params.isTransferred) {
         // return only results transferred "to me" (to r.reportableSiteId)
         queryBuilder.whereRaw('sp.originSiteId != r.reportableSiteId')

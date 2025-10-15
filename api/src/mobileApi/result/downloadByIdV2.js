@@ -8,9 +8,6 @@ const {
   getItemsV2,
   generateResultQueryV2,
   addResultDownloadLogQuery,
-  insertResultWorkflowLogQuery,
-  updateResultWorkflowLogQuery,
-  getResultWorkflowStatusQuery,
 } = require('./common/db')
 const { getResultItemTransformedDataV2 } = require('./common/logic')
 
@@ -48,9 +45,6 @@ async function downloadResultByIdV2(request) {
   const myProm = async () => {
     if (result?.data?.id) {
       await addResultDownloadLog([result.data.id], user.id)
-      if (result.data.workflowStatus.setDelivered) {
-        await updateResultWorkflowStatus([result.data.id], user.id, 'Delivered')
-      }
     }
   }
   myProm().catch(err => {
@@ -62,20 +56,6 @@ async function downloadResultByIdV2(request) {
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
   return Promise.each(idsToBeRegistered, async resultId => addResultDownloadLogQuery(resultId, now, userId))
-}
-
-const updateResultWorkflowStatus = async (idsToUpdate, userId, resultWorkflowStatusExternalId) => {
-  const { id: resultWorkflowStatusId } = await getResultWorkflowStatusQuery(resultWorkflowStatusExternalId)
-  const now = new Date()
-  return Promise.each(idsToUpdate, async resultId => {
-    const [resultWorkflowStatusLogId] = await insertResultWorkflowLogQuery(
-      resultId,
-      resultWorkflowStatusId,
-      now,
-      userId
-    )
-    await updateResultWorkflowLogQuery(resultId, userId, now, resultWorkflowStatusLogId)
-  })
 }
 
 module.exports = {

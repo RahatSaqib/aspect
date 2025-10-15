@@ -11,9 +11,6 @@ const {
   getAwaitingTreatment,
   generateResultQueryV2,
   addResultDownloadLogQuery,
-  insertResultWorkflowLogQuery,
-  updateResultWorkflowLogQuery,
-  getResultWorkflowStatusQuery,
 } = require('./common/db')
 const { getTransformedDataV2 } = require('./common/logic')
 
@@ -65,14 +62,7 @@ async function downloadResultsListV2(request) {
   const user = await getUser(auth.credentials.name)
   const results = await getDownloadResultsListV2(query, auth, true)
   const myProm = async () => {
-    const idsToUpdate = _.uniq(
-      _.map(
-        _.pickBy(results.data, elem => elem.workflowStatus.setDelivered),
-        elem => elem.id
-      )
-    )
     const idsToBeRegistered = _.uniq(_.map(results.data, elem => elem.id))
-    if (idsToUpdate && idsToUpdate.length > 0) await updateResultWorkflowStatus(idsToUpdate, user.id, 'Delivered')
     if (idsToBeRegistered && idsToBeRegistered.length > 0) await addResultDownloadLog(idsToBeRegistered, user.id)
   }
   myProm().catch(err => {
@@ -84,20 +74,6 @@ async function downloadResultsListV2(request) {
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
   return Promise.each(idsToBeRegistered, async resultId => addResultDownloadLogQuery(resultId, now, userId))
-}
-
-const updateResultWorkflowStatus = async (idsToUpdate, userId, resultWorkflowStatusExternalId) => {
-  const { id: resultWorkflowStatusId } = await getResultWorkflowStatusQuery(resultWorkflowStatusExternalId)
-  const now = new Date()
-  return Promise.each(idsToUpdate, async resultId => {
-    const [resultWorkflowStatusLogId] = await insertResultWorkflowLogQuery(
-      resultId,
-      resultWorkflowStatusId,
-      now,
-      userId
-    )
-    await updateResultWorkflowLogQuery(resultId, userId, now, resultWorkflowStatusLogId)
-  })
 }
 
 module.exports = {

@@ -17,8 +17,6 @@ const generateResultQuery = (query, dataConstraints, resultId) => {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -32,7 +30,6 @@ const generateResultQuery = (query, dataConstraints, resultId) => {
     )
     // only results which are reportable for either ResultCategory
     .where(qb => qb.where('rca.reportable', 1).orWhere('rca2.reportable', 1))
-    .whereIn('rs.externalId', ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged'])
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
       assayType: 'at',
@@ -89,9 +86,6 @@ const generateResultQuery = (query, dataConstraints, resultId) => {
             .orWhereIn('rc2.externalId', params.resultCategories.split(','))
         )
       }
-      if (params.workflowStatus) {
-        qb.where('rs.externalId', params.workflowStatus)
-      }
       if (params.isTransferred) {
         // return only results transferred "to me" (to r.reportableSiteId)
         qb.whereRaw('sp.originSiteId != r.reportableSiteId')
@@ -135,11 +129,6 @@ const getItems = (resultQuery, query) => {
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
-      'rs.name as resultWorkflowStatusName',
-      'rs.externalId as resultWorkflowStatusExternalId',
-      'rs.i18nKey as resultWorkflowStatusi18nKey',
-      'rsl.reason as resultWorkflowStatusReason',
-      'rsl.changedOn as resultWorkflowStatusChangedOn',
       'rtsl.changedOn as resultTreatmentStatusChangedOn',
       'rts.name as resultTreatmentStatusName',
       'rts.externalId as resultTreatmentStatusExternalId',
@@ -177,28 +166,6 @@ const getFollowUps = data => {
     )
 }
 
-const insertResultWorkflowLogQuery = (resultId, resultWorkflowStatusId, now, userId) => {
-  return knex('ResultWorkflowLog').insert({
-    resultId,
-    resultWorkflowStatusId,
-    changedOn: now,
-    createdOn: now,
-    createdBy: userId,
-    reason: 'Download Results Api',
-    operator: 'Reporter App',
-  })
-}
-
-const updateResultWorkflowLogQuery = (resultId, currentUserId, now, resultWorkflowStatusLogId) => {
-  return knex('Result')
-    .where('id', resultId)
-    .update({ resultWorkflowStatusLogId, updatedBy: currentUserId, updatedOn: now })
-}
-
-const getResultWorkflowStatusQuery = resultWorkflowStatusExternalId => {
-  return knex('ResultWorkflowStatus').where('externalId', resultWorkflowStatusExternalId).first('id')
-}
-
 const addResultDownloadLogQuery = resultDownloadLogs => {
   return knex('ResultDownloadLog').insert(resultDownloadLogs)
 }
@@ -217,8 +184,6 @@ const generateResultQueryV2 = (query, dataConstraints, resultId) => {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -232,8 +197,6 @@ const generateResultQueryV2 = (query, dataConstraints, resultId) => {
     )
     // only results which are reportable for either ResultCategory
     .where(qb => qb.where('rca.reportable', 1).orWhere('rca2.reportable', 1))
-    .whereIn('rs.externalId', ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged'])
-
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
       assayType: 'at',
@@ -290,9 +253,6 @@ const generateResultQueryV2 = (query, dataConstraints, resultId) => {
             .orWhereIn('rc2.externalId', params.resultCategories.split(','))
         )
       }
-      if (params.workflowStatus) {
-        qb.where('rs.externalId', params.workflowStatus)
-      }
       if (params.isTransferred) {
         // return only results transferred "to me" (to r.reportableSiteId)
         qb.whereRaw('sp.originSiteId != r.reportableSiteId')
@@ -342,12 +302,6 @@ const getItemsV2 = (resultQuery, query) => {
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
-      'rs.name as resultWorkflowStatusName',
-      'rs.externalId as resultWorkflowStatusExternalId',
-      'rs.i18nKey as resultWorkflowStatusi18nKey',
-      'rsl.reason as resultWorkflowStatusReason',
-      'rsl.changedOn as resultWorkflowStatusChangedOn',
-      'rsl.resultWorkflowStatusId',
       'rtsl.changedOn as resultTreatmentStatusChangedOn',
       'rts.name as resultTreatmentStatusName',
       'rts.externalId as resultTreatmentStatusExternalId',
@@ -506,25 +460,6 @@ const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
   })
 }
 
-const insertResultWorkflowLog = resultWorkflowLogEntry => {
-  return knex('ResultWorkflowLog').insert(resultWorkflowLogEntry)
-}
-
-const deleteResultWorkflowLogs = (resultId, resultWorkflowStatusId) => {
-  return knex('ResultWorkflowLog')
-    .where('resultId', resultId)
-    .andWhere('resultWorkflowStatusId', resultWorkflowStatusId)
-    .delete()
-}
-
-const updateResultWithResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
-  return knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
-    resultWorkflowStatusLogId: lastLogId,
-    updatedBy: resultWorkflowLogEntry.createdBy,
-    updatedOn: now,
-  })
-}
-
 const updateMostRecentResultFollowUp = async (resultId, followUpExternalId, date, updatedBy, updatedOn) => {
   let { id: resultFollowUpId } =
     (await knex('ResultFollowUp as rfu')
@@ -554,31 +489,6 @@ const updateMostRecentResultFollowUp = async (resultId, followUpExternalId, date
     })
   }
 }
-
-const getCurrentResultWorkflowStatus = resultId => {
-  return knex('Result as r')
-    .leftJoin('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
-    .leftJoin('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
-    .where('r.id', resultId)
-    .first('rws.*')
-}
-
-const getLatestResultWorkflowLog = resultId => {
-  return knex('ResultWorkflowLog')
-    .where('resultId', resultId)
-    .orderBy('createdOn', 'desc')
-    .first('id', 'resultWorkflowStatusId', 'changedOn as resultWorkflowChangedOn')
-}
-
-const getLatestResultWorkflowLogBefore = (resultId, resultWorkflowStatusExternalId) => {
-  return knex('ResultWorkflowLog as rwl')
-    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
-    .where('rwl.resultId', resultId)
-    .andWhere('rws.externalId', resultWorkflowStatusExternalId)
-    .orderBy('rwl.createdOn', 'desc')
-    .first('rwl.resultWorkflowStatusId', 'rwl.changedOn as resultWorkflowChangedOn')
-}
-
 const getFollowUpsNotPossibleByResultById = resultId => {
   return knex('ResultFollowUp as rfu')
     .where({ 'rfu.resultId': resultId })
@@ -634,20 +544,11 @@ module.exports = {
   getItems,
   getItemsV2,
   getLastTreatmentStatusByResult,
-  getLatestResultWorkflowLog,
-  getLatestResultWorkflowLogBefore,
-  getResultWorkflowStatusQuery,
-  insertResultWorkflowLog,
-  deleteResultWorkflowLogs,
   deleteResultFollowUpNotPossible,
   deleteResultFollowUps,
-  insertResultWorkflowLogQuery,
   setTreatmentStatusLog,
   updateResult,
-  updateResultWithResultWorkflowLog,
-  updateResultWorkflowLogQuery,
   updateMostRecentResultFollowUp,
-  getCurrentResultWorkflowStatus,
   getFollowUpsNotPossibleByResultById,
   updateResultFollowUp,
   deleteResultFollowUpTreatment,

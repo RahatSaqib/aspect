@@ -272,7 +272,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       errorCode: 'r.errorCode',
-      workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
       patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',
