@@ -72,7 +72,6 @@ const expected347 = [
     },
     clinicalResponse: {
       resultId: 347,
-      recorded: false,
     },
     resultRequiresTreatment: false,
     hasFollowUp: false,
@@ -294,7 +293,6 @@ const expected450 = [
     },
     clinicalResponse: {
       resultId: 450,
-      recorded: false,
       treatment: 'dstb-2rhze',
       treatmentStarted: '2023-05-20T19:45:55.000Z',
     },
@@ -650,7 +648,6 @@ const xdrExpectedResult = [
     },
     clinicalResponse: {
       resultId: 3521,
-      recorded: false,
     },
     errorCode: '400',
     laboratorySiteName: 'Gage Clinic',

@@ -318,7 +318,7 @@ describe('Entries helpers', () => {
   })
 
   describe('transformClinicalResponse', () => {
-    it('should transform clinical response correctly when result is recorded and treatment and outcome are present', () => {
+    it('should transform clinical response correctly when the treatment and outcome are present', () => {
       const data = {
         id: 123,
       }
@@ -338,9 +338,7 @@ describe('Entries helpers', () => {
 
       const expectedOutput = {
         resultId: 123,
-        confirmedOn: '2023-01-01T00:00:00Z',
         outcomeOccurred: '2023-03-01T00:00:00Z',
-        recorded: true,
         treatmentStarted: '2023-02-01T00:00:00Z',
       }
       const acknowledgement = {
@@ -351,7 +349,7 @@ describe('Entries helpers', () => {
       expect(result).to.eql(expectedOutput)
     })
 
-    it('should return object when result is not recorded and treatment and outcome are not present', () => {
+    it('should return object when result treatment and outcome are not present', () => {
       const data = {
         id: 123,
       }
@@ -359,7 +357,6 @@ describe('Entries helpers', () => {
       const followUps = []
 
       const expectedOutput = {
-        recorded: false,
         resultId: 123,
       }
 
