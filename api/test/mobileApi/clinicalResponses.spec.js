@@ -89,13 +89,11 @@ describe('Mobile API Clinical Response', () => {
       })
 
       if (response.body.data.clinicalResponse) {
-        assert.property(response.body.data.clinicalResponse, 'recorded')
-        assert.property(response.body.data.clinicalResponse, 'confirmedOn')
         assert.property(response.body.data.clinicalResponse, 'treatment')
         assert.property(response.body.data.clinicalResponse, 'treatmentStarted')
         assert.property(response.body.data.clinicalResponse, 'outcome')
         assert.property(response.body.data.clinicalResponse, 'outcomeOccurred')
-        assert.equal(Object.keys(response.body.data.clinicalResponse).length, 6)
+        assert.equal(Object.keys(response.body.data.clinicalResponse).length, 4)
       }
     }
 
@@ -225,9 +223,7 @@ describe('Mobile API Clinical Response', () => {
       expect(firstResponse.body).to.containSubset({
         ok: true,
         data: {
-          clinicalResponse: {
-            recorded: false,
-          },
+          clinicalResponse: {},
         },
       })
       const resultCustomFields = await knex('ResultCustomField').where('resultId', currentResultId).select('*')
