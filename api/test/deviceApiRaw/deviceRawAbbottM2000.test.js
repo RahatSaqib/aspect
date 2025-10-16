@@ -426,7 +426,7 @@ L|1`
       const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
       const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
       expect(insertResultCalls).to.have.lengthOf(92)
-      expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
+      expect(updateResultCalls).to.have.lengthOf(1)
       const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
       const runLevelProperties = insertedResults.map(result => ({
         ..._.pick(result, [
@@ -743,7 +743,7 @@ L|1`
       const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
       const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
       expect(insertResultCalls).to.have.lengthOf(92)
-      expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
+      expect(updateResultCalls).to.have.lengthOf(1)
       const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
       const runLevelProperties = insertedResults.map(result => ({
         ..._.pick(result, [
@@ -1066,7 +1066,7 @@ L|1`
       const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
       const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
       expect(insertResultCalls).to.have.lengthOf(44)
-      expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
+      expect(updateResultCalls).to.have.lengthOf(1)
       const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
       const runLevelProperties = insertedResults.map(result => ({
         ..._.pick(result, [
@@ -1395,7 +1395,7 @@ L|1`
       const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
       const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
       expect(insertResultCalls).to.have.lengthOf(94)
-      expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length)
+      expect(updateResultCalls).to.have.lengthOf(0)
       const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
       const runLevelProperties = insertedResults.map(result => ({
         ..._.pick(result, [
@@ -1803,7 +1803,7 @@ ${controlResults}`,
         const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
         const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
         expect(insertResultCalls).to.have.lengthOf(45)
-        expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
+        expect(updateResultCalls).to.have.lengthOf(1)
         const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
         const runLevelProperties = insertedResults.map(result => ({
           ..._.pick(result, [
