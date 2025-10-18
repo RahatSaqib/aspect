@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const { upsertForms } = require('../utils')
 
 async function seed(knex) {
-  const fixturesDirectory = `${process.env['seeds.directory'].replace('./seeds/', '')}fixtures`
+  const fixturesDirectory = `${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures`
   const {
     partner: { externalId: partnerExternalId },
     // eslint-disable-next-line import/no-dynamic-require
