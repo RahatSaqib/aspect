@@ -4876,5 +4876,4 @@ async function seed(knex) {
 
   // Create DashboardWidget
   await upsertDashboardWidgets(knex, partnerOneId, dashboardWidget)
-
 }
