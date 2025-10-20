@@ -87,6 +87,9 @@ describe('Merge Devices', () => {
   })
 
   after(async () => {
+    // Wait a bit to ensure any background fact generation operations complete
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     await knex('Notification')
       .whereIn('issueId', knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).select('id'))
       .del()
@@ -102,14 +105,14 @@ describe('Merge Devices', () => {
     await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceOperation').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
-    const deleteFactTablesPromises = [
-      knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDevice').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDeviceByAssay').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDeviceByCategory1').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-    ]
-    await Promise.all(deleteFactTablesPromises)
+
+    // Delete fact tables sequentially to avoid deadlocks
+    await knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('FactResultsDevice').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('FactResultsDeviceByAssay').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('FactResultsDeviceByCategory1').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+
     await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).del()
     await knex('Site').whereIn('id', [targetSiteId, sourceSiteId]).del()
   })
