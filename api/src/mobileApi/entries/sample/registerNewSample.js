@@ -7,7 +7,6 @@ const { getConstraints } = require('../../../auth/constraints')
 const { getSite, getSitesQuery } = require('../../../site/service')
 const { knex } = require('../../../db')
 const {
-  allResultWorkflowStatusToId,
   allAssayToId,
   allResultCategoryToId,
   allResultSourceToId,
@@ -153,7 +152,6 @@ const createFakeResult = async (trx, siteId, sampleExternalId, countryId) => {
     },
   ]
 
-  const resultWorkflowStatuses = await allResultWorkflowStatusToId()
   const assayIds = await allAssayToId()
   const resultCategories = await allResultCategoryToId()
   const resultSources = await allResultSourceToId()
@@ -169,7 +167,7 @@ const createFakeResult = async (trx, siteId, sampleExternalId, countryId) => {
   if (device) {
     const { id: deviceId, partnerId } = device
     const now = new Date()
-    const [resultId] = await trx('Result').insert({
+    await trx('Result').insert({
       externalId: `${sampleExternalId}_${_.random(0, 100)}`,
       assayId: assayIds.GxMtbRif,
       partnerId,
@@ -191,14 +189,6 @@ const createFakeResult = async (trx, siteId, sampleExternalId, countryId) => {
       reportableSiteId: siteId,
       ...resultCombination,
     })
-
-    const [resultWorkflowStatusLogId] = await trx('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: resultWorkflowStatuses.Deliverable,
-      changedOn: now,
-      createdOn: now,
-    })
-    await trx('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
   }
 }
 

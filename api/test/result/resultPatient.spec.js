@@ -34,8 +34,6 @@ describe('Result routes', () => {
       assert.property(res.body.data[0], 'resultData')
       assert.property(res.body.data[0], 'resultSiteName')
       assert.property(res.body.data[0], 'resultNotes')
-      assert.property(res.body.data[0], 'resultStatus')
-      assert.property(res.body.data[0], 'resultStatusLog')
       assert.property(res.body.data[0], 'resultTreatmentStatusLogDate')
       assert.property(res.body.data[0], 'resultTreatmentId')
       assert.property(res.body.data[0], 'patientData')

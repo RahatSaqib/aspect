@@ -150,7 +150,6 @@ const transformPayload = (gxAlertPayload, isResultPayload, timeZoneData = {}, cu
       location: null,
       type: null,
       source: null,
-      workflow: null,
       sample: {
         id: gxAlertPayload.SampleId,
         collectedOn: null,

@@ -112,10 +112,6 @@ const messages = {
       id: 'filter.btnGroup.whoseNameOrEmailIncludes',
       defaultMessage: 'name/email includes "{contactNameOrEmail}"',
     },
-    withWorkflowStatus: {
-      id: 'filter.btnGroup.withWorkflowStatus',
-      defaultMessage: 'workflow status is {workflowStatusName}',
-    },
     withTreatmentStatus: {
       id: 'filter.btnGroup.withTreatmentStatus',
       defaultMessage: 'treatment status is {treatmentStatusName}',

@@ -52,19 +52,6 @@ describe('Truenat Result Upload Data Processor', () => {
       Error: 9,
       Missing: 10,
     },
-    resultWorkflowStatus: {
-      Purged: 11,
-      Flagged: 12,
-      Acknowledged: 13,
-      Delivered: 14,
-      Deliverable: 15,
-      Validated: 16,
-      Error: 17,
-      Processed: 18,
-      InProgress: 19,
-      Ordered: 20,
-      OK: 30,
-    },
   }
   let mockDeviceService
   let mockSharedRequestService
@@ -79,8 +66,7 @@ describe('Truenat Result Upload Data Processor', () => {
     sampleId,
     newSampleId,
     existingResult,
-    newResultId,
-    newResultWorkflowStatusLogId
+    newResultId
   ) {
     mockDeviceService = {
       postPayloadFromDevice: async () => Promise.resolve(987),
@@ -169,9 +155,6 @@ describe('Truenat Result Upload Data Processor', () => {
       if (newResultId && knexSpy.chainedCalls.lastTable() === 'Result') {
         return Promise.resolve([newResultId])
       }
-      if (newResultWorkflowStatusLogId && knexSpy.chainedCalls.lastTable() === 'ResultWorkflowLog') {
-        return Promise.resolve([newResultWorkflowStatusLogId])
-      }
       return Promise.resolve()
     }
     knexUpdateSpies = {}
@@ -208,7 +191,6 @@ describe('Truenat Result Upload Data Processor', () => {
         resultTypeToId: async resultTypeExternalId => Promise.resolve(staticData.resultType[resultTypeExternalId]),
         allSampleTypeToId: async () => Promise.resolve(staticData.sampleType),
         allResultCategoryToId: async () => Promise.resolve(staticData.resultCategory),
-        allResultWorkflowStatusToId: async () => Promise.resolve(staticData.resultWorkflowStatus),
       },
     })
   }
@@ -272,7 +254,6 @@ describe('Truenat Result Upload Data Processor', () => {
     const defaultNewSampleId = 333
     const defaultExisitingResult = undefined
     const defaultNewResultId = 444
-    const defaultNewResultWorkflowStatusLogId = 555
 
     let messageContext
     beforeEach(() => {
@@ -287,7 +268,6 @@ describe('Truenat Result Upload Data Processor', () => {
       let newSampleId = defaultNewSampleId
       let existingResult = defaultExisitingResult
       let newResultId = defaultNewResultId
-      let newResultWorkflowStatusLogId = defaultNewResultWorkflowStatusLogId
       const mockTruenatResultUploadDataProcessorBuilder = {
         build: () => {
           return mockTruenatResultUploadDataProcessor(
@@ -296,8 +276,7 @@ describe('Truenat Result Upload Data Processor', () => {
             sampleId,
             newSampleId,
             existingResult,
-            newResultId,
-            newResultWorkflowStatusLogId
+            newResultId
           )
         },
       }
@@ -325,11 +304,6 @@ describe('Truenat Result Upload Data Processor', () => {
         newResultId = specifiedNewResultId
         return mockTruenatResultUploadDataProcessorBuilder
       }
-      mockTruenatResultUploadDataProcessorBuilder.withNewResultWorkflowStatusLogId =
-        specifiedNewResultWorkflowStatusLogId => {
-          newResultWorkflowStatusLogId = specifiedNewResultWorkflowStatusLogId
-          return mockTruenatResultUploadDataProcessorBuilder
-        }
       return mockTruenatResultUploadDataProcessorBuilder
     }
 
@@ -393,7 +367,6 @@ describe('Truenat Result Upload Data Processor', () => {
             siteId: defaultDeviceApiKeyDetails.siteId,
             deviceId: defaultDeviceApiKeyDetails.deviceId,
             patientCaseId: 551,
-            resultWorkflowStatusLogId: 5734,
             treatmentStatusLogId: 5734,
             longitude: defaultDeviceApiKeyDetails.longitude,
             latitude: defaultDeviceApiKeyDetails.latitude,
@@ -508,7 +481,6 @@ describe('Truenat Result Upload Data Processor', () => {
             siteId: defaultDeviceApiKeyDetails.siteId,
             deviceId: defaultDeviceApiKeyDetails.deviceId,
             patientCaseId: 551,
-            resultWorkflowStatusLogId: 5734,
             treatmentStatusLogId: 5734,
             longitude: defaultDeviceApiKeyDetails.longitude,
             latitude: defaultDeviceApiKeyDetails.latitude,

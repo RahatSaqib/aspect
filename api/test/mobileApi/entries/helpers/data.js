@@ -30,8 +30,6 @@ const data347 = {
   resultTreatmentStatusI18nKey: null,
   resultTreatmentStatusName: null,
   resultTreatmentStatusChangedOn: null,
-  resultWorkflowStatusChangedOn: '2023-05-03T18:15:57.000Z',
-  resultWorkflowStatusId: 7,
   sampleExternalId: 'SMP-TB-31',
   sampleId: 172,
   sampleStatus: null,
@@ -74,7 +72,6 @@ const expected347 = [
     },
     clinicalResponse: {
       resultId: 347,
-      recorded: false,
     },
     resultRequiresTreatment: false,
     hasFollowUp: false,
@@ -241,8 +238,6 @@ const data450 = {
   resultTreatmentStatusI18nKey: 'ResultTreatmentStatusAwaitingTreatment',
   resultTreatmentStatusName: 'Awaiting Treatment',
   resultTreatmentStatusChangedOn: null,
-  resultWorkflowStatusChangedOn: '2023-05-20T18:15:55.000Z',
-  resultWorkflowStatusId: 7,
   sampleExternalId: 'SMP-TB-14',
   sampleId: 155,
   sampleStatus: null,
@@ -298,7 +293,6 @@ const expected450 = [
     },
     clinicalResponse: {
       resultId: 450,
-      recorded: false,
       treatment: 'dstb-2rhze',
       treatmentStarted: '2023-05-20T19:45:55.000Z',
     },
@@ -533,8 +527,6 @@ const data558 = {
   resultTreatmentStatusI18nKey: 'ResultTreatmentStatusOnTreatment',
   resultTreatmentStatusName: 'On Treatment',
   resultTreatmentStatusChangedOn: '2023-05-10T19:25:56.000Z',
-  resultWorkflowStatusChangedOn: '2023-05-10T14:15:56.000Z',
-  resultWorkflowStatusId: 9,
   sampleExternalId: 'SMP-HIV-37',
   sampleId: 278,
   sampleStatus: null,
@@ -621,9 +613,6 @@ const xdrTestData = {
   resultTreatmentStatusI18nKey: null,
   resultTreatmentStatusName: null,
   resultTreatmentStatusChangedOn: null,
-  resultWorkflowStatusChangedOn: '2023-10-06T10:40:53.000Z',
-  resultWorkflowStatusId: 8,
-  resultWorkflowStatusReason: 'Download Results Api',
   sampleExternalId: 'SMP-TB-1696588796709',
   sampleId: 7812,
   sampleData: null,
@@ -643,7 +632,6 @@ const xdrTestData = {
   laboratorySiteId: 117,
   laboratorySiteExternalId: 'Nebraska_1_2',
   laboratorySiteName: 'Gage Clinic',
-  resultWorkflowStatusExternalId: 'Delivered',
   sampleClinicianName: 'test user',
 }
 
@@ -660,7 +648,6 @@ const xdrExpectedResult = [
     },
     clinicalResponse: {
       resultId: 3521,
-      recorded: false,
     },
     errorCode: '400',
     laboratorySiteName: 'Gage Clinic',

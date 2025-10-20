@@ -23,13 +23,11 @@ const { getLinkedResultDate, getDateFields } = require('./utils')
 const { getMGITResultFromTBPositive } = require('./commonTB')
 const {
   allResultCategoryToId,
-  allResultWorkflowStatusToId,
   allResultSourceToId,
   allSampleTypeToId,
   resultTypeToId,
   allDeviceApprovalToId,
   resultTreatmentStatusToId,
-  resultWorkflowStatusToId,
   resultSourceToId,
   sampleTypeToId,
 } = require('../src/shared/dictionary')
@@ -332,9 +330,6 @@ async function addCovidResults(
   } = await allResultCategoryToId()
   const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
   const resultTypePatientId = await resultTypeToId('Patient')
-  const resultWorkflowStatusProcessedId = await resultWorkflowStatusToId('Processed')
-  const resultWorkflowStatusValidatedId = await resultWorkflowStatusToId('Validated')
-  const resultWorkflowStatusDeliverableId = await resultWorkflowStatusToId('Deliverable')
 
   const quantity = positiveResults ? Math.ceil(positiveResults.length * _.random(0.4, 0.8)) : resultCovidNumber
   // seed samples
@@ -529,24 +524,6 @@ async function addCovidResults(
     resultToInsert.id = resultId
 
     results.push(resultToInsert)
-    const rndWorkflow = _.random(0, 100)
-    const resultWorkflowStatusId =
-      rndWorkflow < 20
-        ? resultWorkflowStatusProcessedId
-        : rndWorkflow < 30
-        ? resultWorkflowStatusValidatedId
-        : resultWorkflowStatusDeliverableId
-
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      operator: 'John',
-      changedOn: addMinutes(randomDate, 120),
-      createdOn: addMinutes(randomDate, 120),
-      createdBy: auditFields.createdBy,
-    })
-
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   return results
@@ -566,12 +543,6 @@ async function addHivVlResults(
   date = null
 ) {
   if (resultHivVlNumber) return []
-  // Result Workflow Status
-  const {
-    Validated: validated,
-    Deliverable: deliverable,
-    Acknowledged: acknowledged,
-  } = await allResultWorkflowStatusToId()
   // some HIV VL samples:
   const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
   const samples = []
@@ -652,8 +623,6 @@ async function addHivVlResults(
   const assayGeneXpertHiv1VlId = _.find(assays, elem => elem.externalId === 'GxHiv1Vl').id
   const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
   const patientNumber = patients.length - 1
-  // make sure we have at least one result with these status
-  const ensureResultIds = [acknowledged, validated, deliverable]
   await Promise.each(_.range(resultHivVlNumber), async i => {
     if (devicesGeneXpert.length === 0) return
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
@@ -688,9 +657,6 @@ async function addHivVlResults(
     resultData.copies = copies
     resultData.log = log
     resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
-
-    const resultStatus =
-      ensureResultIds.shift() || _.random(1) < 0.3 ? deliverable : _.random(1) < 0.5 ? validated : acknowledged
 
     const [resultId] = await knex('Result').insert({
       ...auditFields,
@@ -734,17 +700,6 @@ async function addHivVlResults(
       ...auditFields,
     }
     resultIds.push(resultInserted)
-
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: resultStatus,
-      operator: 'Marsha',
-      changedOn: subHours(randomDate, 2),
-      createdOn: subHours(randomDate, 3),
-      createdBy: auditFields.createdBy,
-    })
-
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
   return resultIds
 }
@@ -786,14 +741,6 @@ async function addTBResults(
     }
   })
   const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
-  // Result Workflow Status
-  const {
-    Validated: validated,
-    Deliverable: deliverable,
-    Acknowledged: acknowledged,
-  } = await allResultWorkflowStatusToId()
-  // make sure we have at least one result with these status
-  const ensureResultIds = [acknowledged, validated, deliverable]
 
   const positiveMTBResults = []
   const resultIds = []
@@ -879,9 +826,6 @@ async function addTBResults(
       resultData[assay.externalId].allResistances = allResistances
     }
 
-    const resultStatus =
-      ensureResultIds.shift() || _.random(1) < 0.3 ? deliverable : _.random(1) < 0.5 ? validated : acknowledged
-
     const resultElement = {
       ...auditFields,
       externalId: `UQTB-${i}-${uid}-D`,
@@ -947,15 +891,6 @@ async function addTBResults(
       assayId: resultElement.assayId,
       ...auditFields,
     })
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: resultStatus,
-      operator: 'Marsha',
-      changedOn: subHours(randomDate, 25),
-      createdOn: subHours(randomDate, 26),
-      createdBy: auditFields.createdBy,
-    })
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   // insert 80% of mgit results when tb is positive on mgit.
@@ -1125,15 +1060,6 @@ async function addEbolaResults(
       }
 
       resultIds.push(insertedResult)
-      const [lastLogId] = await knex('ResultWorkflowLog').insert({
-        resultId,
-        resultWorkflowStatusId: await resultWorkflowStatusToId('Processed'),
-        operator: 'John',
-        changedOn: addHours(randomDate, 2),
-        createdOn: addHours(randomDate, 1),
-        createdBy: auditFields.createdBy,
-      })
-      await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
     }
   })
   return resultIds

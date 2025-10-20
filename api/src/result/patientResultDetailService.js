@@ -19,8 +19,6 @@ async function getPatientResultsDetails(request) {
     .leftJoin('ResultFollowUp as rfu', 'r.id', 'rfu.resultId')
     .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('User as u', 'rtsl.createdBy', 'u.id')
     .leftJoin('Person as p', 'u.id', 'p.UserId')
@@ -50,8 +48,6 @@ async function getPatientResultsDetails(request) {
       'r.patientData as patientData',
       'resultSite.name as resultSiteName',
       'r.notes as resultNotes',
-      'rs.externalid as resultStatus',
-      'rsl.createdon as resultStatusLog',
       'rtsl.createdon as resultTreatmentStatusLogDate',
       'rts.name as resultTreatmentName',
       'rts.externalid as resultTreatmentId',

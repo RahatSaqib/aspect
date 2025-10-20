@@ -162,19 +162,18 @@ describe('Entries helpers', () => {
     const data = {
       updatedOn: '2022-01-01',
       sampleCollectedOn: '2022-01-05',
-      resultWorkflowStatusChangedOn: '2022-01-10',
     }
-    const followUps = [{ updatedOn: '2022-01-03' }, { updatedOn: '2022-01-06' }]
 
     it('returns correct date for the provided input data', () => {
+      const followUps = [{ updatedOn: '2022-01-03' }, { updatedOn: '2022-01-06' }]
       const result = getResultUpdatedOnDate(data, followUps)
-      expect(result).to.eq('2022-01-10')
+      expect(result).to.eq('2022-01-06')
     })
 
     it('returns correct date if no followUps are provided', () => {
       const followUps = []
       const result = getResultUpdatedOnDate(data, followUps)
-      expect(result).to.eq('2022-01-10')
+      expect(result).to.eq('2022-01-05')
     })
   })
 
@@ -319,10 +318,9 @@ describe('Entries helpers', () => {
   })
 
   describe('transformClinicalResponse', () => {
-    it('should transform clinical response correctly when result is recorded and treatment and outcome are present', () => {
+    it('should transform clinical response correctly when the treatment and outcome are present', () => {
       const data = {
         id: 123,
-        resultWorkflowStatusChangedOn: '2023-01-01T00:00:00Z',
       }
 
       const followUps = [
@@ -340,9 +338,7 @@ describe('Entries helpers', () => {
 
       const expectedOutput = {
         resultId: 123,
-        confirmedOn: '2023-01-01T00:00:00Z',
         outcomeOccurred: '2023-03-01T00:00:00Z',
-        recorded: true,
         treatmentStarted: '2023-02-01T00:00:00Z',
       }
       const acknowledgement = {
@@ -353,7 +349,7 @@ describe('Entries helpers', () => {
       expect(result).to.eql(expectedOutput)
     })
 
-    it('should return object when result is not recorded and treatment and outcome are not present', () => {
+    it('should return object when result treatment and outcome are not present', () => {
       const data = {
         id: 123,
       }
@@ -361,7 +357,6 @@ describe('Entries helpers', () => {
       const followUps = []
 
       const expectedOutput = {
-        recorded: false,
         resultId: 123,
       }
 

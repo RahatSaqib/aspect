@@ -108,7 +108,6 @@ const sanitizerByConfigKey = {
   revoked: defaultSanitizer,
   reportableSiteName: defaultSanitizer,
   reportableSiteId: defaultSanitizer,
-  workflowStatus: makeKeySanitizer('workflowStatusId'),
   consumable: makeKeySanitizer('consumableId'),
   deviceApproval: makeKeySanitizer('deviceApprovalId'),
   deviceMaintenanceStatus: makeKeySanitizer('deviceMaintenanceStatusId'),

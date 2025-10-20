@@ -103,7 +103,6 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
   await knex('ResultTag').delete()
   await knex('SiteTag').delete()
   await knex('Tag').delete()
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('Result').whereIn('id', resultIds).delete()
 
@@ -276,8 +275,6 @@ class GxAlertApiTestContext {
         .join('Result as r', 'dl.resultId', 'r.id')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin('Site as si', 'r.siteId', 'si.id')
-        .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
-        .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
         .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
@@ -299,7 +296,6 @@ class GxAlertApiTestContext {
           'r.latitude',
           'r.longitude',
           'a.externalId as assay',
-          'rws.externalId as resultWorkflowStatus',
           'rs.externalId as resultSource',
           'rt.externalId as resultType',
           'rc1.externalId as resultCategory1',
@@ -339,8 +335,6 @@ class GxAlertApiTestContext {
       const resultDetails = await knex('Result as r')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin('Site as si', 'r.siteId', 'si.id')
-        .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
-        .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
         .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
@@ -359,7 +353,6 @@ class GxAlertApiTestContext {
           'r.latitude',
           'r.longitude',
           'a.externalId as assay',
-          'rws.externalId as resultWorkflowStatus',
           'rs.externalId as resultSource',
           'rt.externalId as resultType',
           'rc1.externalId as resultCategory1',

@@ -9,7 +9,7 @@ const _ = require('lodash')
  */
 
 function getResultUpdatedOnDate(data, followUps) {
-  const otherDates = _.pick(data, ['updatedOn', 'sampleCollectedOn', 'resultWorkflowStatusChangedOn'])
+  const otherDates = _.pick(data, ['updatedOn', 'sampleCollectedOn'])
   const resultDates = _.map(otherDates, value => value)
   const followUpUpdatedOn = _.map(followUps, 'updatedOn')
   const allUpdatedOn = _.concat(followUpUpdatedOn, resultDates)

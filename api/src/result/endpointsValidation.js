@@ -147,7 +147,6 @@ const baseResultResponse = {
   patientId: Joi.string().allow(null, '').description('The patient Id'),
   treatmentStatusInfo: Joi.string().allow(null, '').description('treatment status info'),
   errorCode: Joi.string().allow(null, '').description('If an error occurred, contains the error code from the device'),
-  resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
   caseExternalId: Joi.string().optional().allow(null, '').description('The id of the case'),
   diseaseId: Joi.number().positive().allow(null).optional().description('the Id of the disease'),
   diseaseName: Joi.string().optional().allow(null).description('the name of the disease'),
@@ -213,14 +212,10 @@ function validateResultDetailResponse() {
     stateId: asPositiveInteger.allow(null).description('The id of the state'),
     stateName: Joi.string().allow(null, '').description("The device's state name"),
     lgaName: Joi.string().allow(null, '').description("The device's lga name"),
-    resultWorkflowChangedOn: Joi.date().allow(null).description('The date when status was changed'),
     resultCategory1: asPositiveInteger.allow(null).description('Value of ResultCategory1'),
     resultCategory2: asPositiveInteger.allow(null).description('Value of ResultCategory1'),
     resultCategory1Name: Joi.string().allow(null, '').description("The result's category 1 name"),
     resultCategory2Name: Joi.string().allow(null, '').description("The result's category 2 name"),
-    resultWorkflowStatusId: Joi.number().allow(null, '').integer().description("The result's workflow status id"),
-    resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
-    resultWorkflowStatusExternalId: Joi.string().allow(null, '').description("The result's Workflow status name"),
     resultData: Joi.object().description('The result data'),
     files: Joi.array().description('Result Files'),
     formData: Joi.object().allow(null).description('The form data'),
@@ -269,16 +264,12 @@ function validateResultDetailResponse() {
       .allow(null, '')
       .description('The name of the test made for the second result category'),
     treatmentStatus: Joi.object().allow(null).description('The treatment status object'),
-    resultWorkflowLogReason: Joi.string().allow(null, '').description('Value of Reason from latest ResultWorkflowLog'),
-    resultWorkflowLogOperator: Joi.string().allow(null, '').description('Operator from the latest ResultWorkflowLog'),
-    resultWorkflowLogCreatedOn: Joi.date().allow(null).description('CreatedOn date from the latest ResultWorkflowLog'),
     resultTreatmentStatusChangedOn: Joi.date()
       .allow(null)
       .description('ChangedOn date from the latest ResultTreatmentStatusLog'),
     resultTreatmentStatusCreatedOn: Joi.date()
       .allow(null)
       .description('CreatedOn date from the latest ResultTreatmentStatusLog'),
-    resultWorkflowLogChangedOn: Joi.date().allow(null).description('ChangedOn date from the latest ResultWorkflowLog'),
     resultTreatmentStatusId: Joi.number().allow(null).description('ID of the result treatment status'),
     resultTreatmentMethod: Joi.string().allow(null, '').description('Method from latest ResultTreatmentWorkflowLog'),
     resultTreatmentStatus: Joi.string().allow(null, '').description('ExternalId of the result treatment status'),
@@ -362,7 +353,6 @@ function listResultsBaseConfig() {
         patientOrResearchId: Joi.string().allow(null, '').description('Filter for patient/research ID'),
         sampleId: Joi.string().allow(null, '').description('Filter for sample ID'),
         sampleOriginSite: Joi.string().allow(null, '').description('Filter for sample origin site ID'),
-        workflowStatusId: Joi.number().allow(null, '').description('Filter for Result Workflow Status ID'),
         onlyTreatmentRequired: Joi.bool().description(
           'Filter for only results that require treatment, defined on their result category and assay'
         ),

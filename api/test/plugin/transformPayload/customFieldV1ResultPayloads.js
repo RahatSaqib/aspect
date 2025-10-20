@@ -3179,7 +3179,6 @@ const gxConnectResultPayloadWithCustomFieldsV1 = {
     location: null,
     type: null,
     source: null,
-    workflow: null,
     sample: {
       id: '920-24',
       collectedOn: null,

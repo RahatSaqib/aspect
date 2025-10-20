@@ -98,8 +98,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('SiteTag').delete()
   await knex('Tag').delete()
 
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
-
   const sitesAndDevices = await knex('Result').whereIn('id', resultIds).select('siteId', 'deviceId')
   await knex('Result').whereIn('id', resultIds).delete()
 
@@ -387,8 +385,6 @@ class GxConnectApiTestContext {
       const resultDetails = await knex('DeviceLog as dl')
         .join('Result as r', 'dl.resultId', 'r.id')
         .leftJoin('Site as si', 'r.siteId', 'si.id')
-        .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
-        .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
         .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
@@ -407,7 +403,6 @@ class GxConnectApiTestContext {
           'r.latitude',
           'r.longitude',
           'a.externalId as assay',
-          'rws.externalId as resultWorkflowStatus',
           'rs.externalId as resultSource',
           'rt.externalId as resultType',
           'rc1.externalId as resultCategory1',

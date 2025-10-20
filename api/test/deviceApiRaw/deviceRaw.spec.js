@@ -139,7 +139,6 @@ describe('Device API Raw routes', () => {
         .delete()
       await knex('InventoryLog').whereIn('resultId', resultIds).delete()
       await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-      await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
       await knex('ResultTag').whereIn('sourceResultId', resultIds).delete()
       await knex('Result').whereIn('id', resultIds).delete()
       await knex('Sample').where('originSiteId', siteId).delete()

@@ -101,15 +101,6 @@ const resultPayload = {
     .keys({
       id: Joi.string().required().description('The Result Source. Defaults to "Diagnostic Device".'),
     }),
-  workflow: Joi.object()
-    .allow(null)
-    .keys({
-      status: Joi.object().keys({
-        id: Joi.string().required().description('The workflow status. Default Error if error specified, otherwise OK'),
-      }),
-      operator: Joi.string().allow('', null).description('The person who updated the workflow'),
-      changedOn: Joi.date().iso().description('Date and optional time the workflow changed.'),
-    }),
   sample: Joi.object().keys({
     id: Joi.string().allow('', null).description('Client specific identifier of the sample tested.'),
     collectedOn: Joi.date().allow(null).iso().description('Date and optional time the sample was collected.'),

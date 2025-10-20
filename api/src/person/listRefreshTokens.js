@@ -48,8 +48,6 @@ async function listRefreshTokens(request) {
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'rtsl.id', 'rt.treatmentStatusLogId')
     .leftJoin('ResultTreatmentStatus as rts', 'rts.id', 'rtsl.resultTreatmentStatusId')
-    .leftJoin('ResultWorkflowLog as rwl', 'rwl.id', 'rt.resultWorkflowStatusLogId')
-    .leftJoin('ResultWorkflowStatus as rws', 'rws.id', 'rwl.resultWorkflowStatusId')
     .leftJoin('ResultCategoryAssay as rca', queryBuilder => {
       queryBuilder.on('rca.resultCategoryId', 'rt.resultCategory1').andOn('rca.assayId', 'rt.assayId')
     })
