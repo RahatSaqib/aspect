@@ -42,7 +42,6 @@ const {
   getXdrDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { insertSite } = require('../../src/site/common/db')
-const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -4877,6 +4876,4 @@ async function seed(knex) {
 
   // Create DashboardWidget
   await upsertDashboardWidgets(knex, partnerOneId, dashboardWidget)
-
-  await addDefaultCustomFieldDefinitions(knex, partnerOneId)
 }
