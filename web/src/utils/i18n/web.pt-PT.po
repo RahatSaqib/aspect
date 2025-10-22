@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-10-10T12:43:33.759Z\n"
+"POT-Creation-Date: 2025-10-22T10:10:01.066Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -396,13 +396,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Account Details"
 msgstr "Detalhes da Conta"
-
-#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
-#: extracted_strings.json
-msgid "Acknowledged"
-msgstr "Reconhecido"
 
 #. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
@@ -3175,13 +3168,6 @@ msgstr "Excluir"
 msgid "Delete (Only 0 triggers)"
 msgstr "Excluir (apenas 0 gatilhos)"
 
-#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
-#. defaultMessage is:
-#. Delivered
-#: extracted_strings.json
-msgid "Delivered"
-msgstr "Entregue"
-
 #. [filter.AssayTypeSelectField.assayTypeDengue]
 #. defaultMessage is:
 #. Dengue
@@ -4100,9 +4086,6 @@ msgstr "Digite o nome do site..."
 #. [resultCategoryGroup.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
-#. [pages.deviceDetail.ResultWorkflowStatusError]
-#. defaultMessage is:
-#. Error
 #. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
@@ -4735,13 +4718,6 @@ msgstr "Primeiro Resultado"
 #: extracted_strings.json
 msgid "First or second"
 msgstr "Primeiro ou segundo"
-
-#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
-#. defaultMessage is:
-#. Flagged
-#: extracted_strings.json
-msgid "Flagged"
-msgstr "Marcado"
 
 #. [pages.resultEdit.followUp]
 #. defaultMessage is:
@@ -5920,13 +5896,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Implementing Partner"
 msgstr "Parceiro de implementação"
-
-#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
-#. defaultMessage is:
-#. In Progress
-#: extracted_strings.json
-msgid "In Progress"
-msgstr "Em Progresso"
 
 #. [errorResponseMessages.common.filterError.resolution]
 #. defaultMessage is:
@@ -9024,12 +8993,6 @@ msgstr "Números Incluídos"
 msgid "OCT"
 msgstr "outubro"
 
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
-#. [pages.ResultList.ResultWorkflowStatusValidated]
-#. defaultMessage is:
-#. OK
 #. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
@@ -9193,13 +9156,6 @@ msgstr "Operações"
 #: extracted_strings.json
 msgid "Operational Data"
 msgstr "Dados operacionais"
-
-#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
-#. defaultMessage is:
-#. Ordered
-#: extracted_strings.json
-msgid "Ordered"
-msgstr "Encomendado"
 
 #. [filter.popover.originSiteName]
 #. defaultMessage is:
@@ -10061,13 +10017,6 @@ msgstr "Preço em $"
 msgid "Proceed"
 msgstr "Prosseguir"
 
-#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
-#. defaultMessage is:
-#. Processed
-#: extracted_strings.json
-msgid "Processed"
-msgstr "Processado"
-
 #. [pages.transferResult.processing]
 #. defaultMessage is:
 #. Processing ...
@@ -10149,13 +10098,6 @@ msgstr "Aprovisionado"
 #: extracted_strings.json
 msgid "Pulmonary"
 msgstr "Pulmonar"
-
-#. [pages.deviceDetail.ResultWorkflowStatusPurged]
-#. defaultMessage is:
-#. Purged
-#: extracted_strings.json
-msgid "Purged"
-msgstr "Purgado"
 
 #. [filter.sampleType.sampleTypePus]
 #. defaultMessage is:
@@ -10400,13 +10342,6 @@ msgstr "Diagnóstico de TBRR"
 #: extracted_strings.json
 msgid "RRTB Diagnosis Trends"
 msgstr "Tendências de diagnóstico de RRTB"
-
-#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
-#. defaultMessage is:
-#. Ready for delivery
-#: extracted_strings.json
-msgid "Ready for delivery"
-msgstr "Pronto para entrega"
 
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
@@ -11192,13 +11127,6 @@ msgstr "Resultado final"
 msgid "Result Viewer - Yes"
 msgstr "Visualizador de resultados - Sim"
 
-#. [pages.DeviceDetailProfile.resultWorkflowStatus]
-#. defaultMessage is:
-#. Result Workflow Status
-#: extracted_strings.json
-msgid "Result Workflow Status"
-msgstr "Resultado Status do fluxo de trabalho"
-
 #. [pages.transferResult.successMessagePatient]
 #. defaultMessage is:
 #. Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"
@@ -11803,9 +11731,6 @@ msgstr "Selecione o resultado..."
 msgid "Select revoked status..."
 msgstr "Selecione o status revogado..."
 
-#. [filter.popover.selectWorkflowStatus]
-#. defaultMessage is:
-#. Select status...
 #. [filter.popover.selectTreatmentStatus]
 #. defaultMessage is:
 #. Select status...
@@ -14943,13 +14868,6 @@ msgstr "Resultados Válidos"
 msgid "Valid Tests"
 msgstr "Testes Válidos"
 
-#. [pages.deviceDetail.ResultWorkflowStatusValidated]
-#. defaultMessage is:
-#. Validated
-#: extracted_strings.json
-msgid "Validated"
-msgstr "Validado"
-
 #. [errorResponseMessages.stateMutation.title]
 #. defaultMessage is:
 #. Validation error
@@ -15207,16 +15125,6 @@ msgstr "Quando o resultado é"
 #: extracted_strings.json
 msgid "Within 2 hours of testing"
 msgstr "Dentro de 2 horas de testes"
-
-#. [filter.popover.workflowStatus]
-#. defaultMessage is:
-#. Workflow Status
-#. [pages.ResultList.resultWorkflowStatus]
-#. defaultMessage is:
-#. Workflow Status
-#: extracted_strings.json
-msgid "Workflow Status"
-msgstr "Status do fluxo de trabalho"
 
 #. [pages.workload.workloadTitle]
 #. defaultMessage is:
@@ -16107,13 +16015,6 @@ msgstr "com resultado {resultCategoryGroupName}"
 msgid "with result {resultCategoryName}"
 msgstr "com resultado {resultCategoryName}"
 
-#. [filter.btnGroup.withWorkflowStatus]
-#. defaultMessage is:
-#. workflow status is {workflowStatusName}
-#: extracted_strings.json
-msgid "workflow status is {workflowStatusName}"
-msgstr "o status do fluxo de trabalho é {workflowStatusName}"
-
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. {consumableName}
@@ -16276,6 +16177,42 @@ msgstr "{unit} desde a semana passada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
+
+#~ msgid "Acknowledged"
+#~ msgstr "Reconhecido"
+
+#~ msgid "Delivered"
+#~ msgstr "Entregue"
+
+#~ msgid "Flagged"
+#~ msgstr "Marcado"
+
+#~ msgid "In Progress"
+#~ msgstr "Em Progresso"
+
+#~ msgid "Ordered"
+#~ msgstr "Encomendado"
+
+#~ msgid "Processed"
+#~ msgstr "Processado"
+
+#~ msgid "Purged"
+#~ msgstr "Purgado"
+
+#~ msgid "Ready for delivery"
+#~ msgstr "Pronto para entrega"
+
+#~ msgid "Result Workflow Status"
+#~ msgstr "Resultado Status do fluxo de trabalho"
+
+#~ msgid "Validated"
+#~ msgstr "Validado"
+
+#~ msgid "Workflow Status"
+#~ msgstr "Status do fluxo de trabalho"
+
+#~ msgid "workflow status is {workflowStatusName}"
+#~ msgstr "o status do fluxo de trabalho é {workflowStatusName}"
 
 #~ msgid "Provincial Diagnosis Trends"
 #~ msgstr "Tendências do diagnóstico provincial"
