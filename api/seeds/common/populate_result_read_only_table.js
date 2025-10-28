@@ -7,7 +7,11 @@ const {
 
 async function populateResultReadOnlyTable(knex) {
   const start = new Date()
+  // eslint-disable-next-line no-console
+  console.log(`\x1b[33mDeleting Triggers on Result_read table....`)
   await dropResultReadTriggers(knex)
+  // eslint-disable-next-line no-console
+  console.log(`\x1b[33mDeleting Indexes on Result_read table....`)
   await dropResultReadTableIndexes(knex)
 
   const latestDeviceMaintenanceStatus = knex('DeviceMaintenanceStatusLog as dmsl')
@@ -19,6 +23,7 @@ async function populateResultReadOnlyTable(knex) {
 
   // Get max ID
   const { id: maxResultId } = await knex('Result').max('id as id').first()
+
   const maxId = parseInt(maxResultId, 10)
 
   const batches = Math.ceil(maxId / BATCH_SIZE)
@@ -137,7 +142,11 @@ async function populateResultReadOnlyTable(knex) {
     console.log(`\x1b[36mBatch ${i + 1}/${batches}\x1b[0m: id ${startId}-${endId} (\x1b[32m${batchElapsed}s\x1b[0m)`)
   }
 
+  // eslint-disable-next-line no-console
+  console.log(`\x1b[33mCreating Indexes on Result_read table....`)
   await createResultReadTableIndexes(knex)
+  // eslint-disable-next-line no-console
+  console.log(`\x1b[33mCreating Triggers on Result_read table....`)
   await createResultReadTriggers(knex)
   const end = new Date()
   // eslint-disable-next-line no-console
