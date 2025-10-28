@@ -247,7 +247,7 @@ function addPartnerConstraints(queryBuilder, constraints, { result, partner }) {
 }
 
 function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
-  const { result: resultAlias } = aliases
+  const { result: resultAlias, result_read: resultReadAlias } = aliases
   if (resultAlias) {
     if (_.get(constraints, 'assay.id')) {
       queryBuilder.where(qb => isNullInOrEqual(qb, `${resultAlias}.assayId`, constraints.assay.id))
@@ -265,25 +265,39 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
         `${aliases.geography}.id`
       )
     }
-    if ((constraints.disease || constraints.assayType) && !aliases.assay) {
-      aliases.assay = alias('Assay')
-      queryBuilder.leftOuterJoin(`Assay as ${aliases.assay}`, `${resultAlias}.assayId`, `${aliases.assay}.id`)
-    }
-    if (constraints.disease && !aliases.assayType) {
-      aliases.assayType = alias('AssayType')
-      queryBuilder.leftOuterJoin(
-        `AssayType as ${aliases.assayType}`,
-        `${aliases.assay}.assayTypeId`,
-        `${aliases.assayType}.id`
-      )
-    }
-    if (_.get(constraints, 'disease.id')) {
-      queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assayType}.diseaseId`, constraints.disease.id))
-    }
-    if (_.get(constraints, 'assayType.id')) {
-      queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assay}.assayTypeId`, constraints.assayType.id))
+
+    if (!resultReadAlias) {
+      if ((constraints.disease || constraints.assayType) && !aliases.assay) {
+        aliases.assay = alias('Assay')
+        queryBuilder.leftOuterJoin(`Assay as ${aliases.assay}`, `${resultAlias}.assayId`, `${aliases.assay}.id`)
+      }
+      if (constraints.disease && !aliases.assayType) {
+        aliases.assayType = alias('AssayType')
+        queryBuilder.leftOuterJoin(
+          `AssayType as ${aliases.assayType}`,
+          `${aliases.assay}.assayTypeId`,
+          `${aliases.assayType}.id`
+        )
+      }
+      if (_.get(constraints, 'disease.id')) {
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assayType}.diseaseId`, constraints.disease.id))
+      }
+      if (_.get(constraints, 'assayType.id')) {
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assay}.assayTypeId`, constraints.assayType.id))
+      }
+    } else {
+      // read model has built-in disease and assay type fields
+      if (constraints.disease?.id) {
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.resultReadAlias}.disease_id`, constraints.disease.id))
+      }
+      if (constraints.assayType?.id) {
+        queryBuilder.where(qb =>
+          isNullInOrEqual(qb, `${aliases.resultReadAlias}.assayType_id`, constraints.assayType.id)
+        )
+      }
     }
   } else {
+    // Queries not involving Result table
     if (aliases.assay && _.get(constraints, 'assayType.id')) {
       queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assay}.assayTypeId`, constraints.assayType.id))
     }
@@ -567,6 +581,11 @@ function addConstraints(
     return
   }
   const aliases = _.cloneDeep(receivedAliases)
+
+  // Hook Read models
+  if (aliases.result_read) {
+    aliases.result = 'result_read'
+  }
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases

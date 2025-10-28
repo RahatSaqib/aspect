@@ -881,6 +881,23 @@ function getQueryForResultsListAndExport2(query, dataConstraints) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        assay: 'a',
+        assayType: 'at',
+        device: 'd',
+        deviceType: 'dt',
+        sample: 'sp',
+        site: 'si',
+        geography: 'g',
+        result: 'r',
+        country: 'c',
+        disease: 'dis',
+      },
+      { showUnapprovedDevices, showDecommissionedDevices, displayResult }
+    )
     .modify(queryBuilder => {
       if (query.withTags) {
         queryBuilder.leftJoin(
