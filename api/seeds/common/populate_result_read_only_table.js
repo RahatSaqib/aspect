@@ -1,10 +1,13 @@
 const {
   createResultReadTableIndexes,
   dropResultReadTableIndexes,
+  dropResultReadTriggers,
+  createResultReadTriggers,
 } = require('../../migrations/utils/recreateResultReadTable')
 
 async function populateResultReadOnlyTable(knex) {
   const start = new Date()
+  await dropResultReadTriggers(knex)
   await dropResultReadTableIndexes(knex)
 
   const latestDeviceMaintenanceStatus = knex('DeviceMaintenanceStatusLog as dmsl')
@@ -135,6 +138,7 @@ async function populateResultReadOnlyTable(knex) {
   }
 
   await createResultReadTableIndexes(knex)
+  await createResultReadTriggers(knex)
   const end = new Date()
   // eslint-disable-next-line no-console
   console.log(

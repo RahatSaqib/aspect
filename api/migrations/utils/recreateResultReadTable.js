@@ -76,9 +76,6 @@ async function recreateResultReadTable(knex) {
   await knex.schema.alterTable('Result_read', function (table) {
     table.unique('id')
   })
-
-  await createResultReadTriggers(knex)
-
 }
 
 async function createResultReadTableIndexes(knex) {
@@ -409,5 +406,6 @@ module.exports = {
   recreateResultReadTable,
   createResultReadTableIndexes,
   dropResultReadTableIndexes,
+  createResultReadTriggers,
   dropResultReadTriggers,
 }

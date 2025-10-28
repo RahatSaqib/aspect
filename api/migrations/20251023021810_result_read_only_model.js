@@ -2,8 +2,6 @@ const { recreateResultReadTable, createResultReadTriggers } = require('./utils/r
 
 exports.up = async function (knex) {
   await recreateResultReadTable(knex)
-  // Create triggers that will handle inserts/updates going forward
-  await createResultReadTriggers(knex)
 }
 
 // order by r.id;
