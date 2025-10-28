@@ -4,7 +4,13 @@ const dateFormat = require('date-fns/format')
 const { format, addMonths, startOfDay, endOfDay } = require('date-fns')
 const Promise = require('bluebird')
 const { getAllMonthsInRange, getMonthYearField, returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
-const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
+const {
+  getReportCommonFieldsTZ,
+  LIST_FIELDS_UTC,
+  LIST_FIELDS_UTC2,
+  SORT_FIELDS,
+  RESULT_STRING_TEMPLATE_FIELDS,
+} = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const {
   addConstraints,
@@ -37,6 +43,7 @@ const { GRAPH_FLAGS } = require('../shared/constants')
 const {
   getResultByResultId,
   getQueryForResultsListAndExport,
+  getQueryForResultsListAndExport2,
   showFileReferencesById,
   getFactResultCountBase,
   FACT_FIELD_SCOPE,
@@ -75,7 +82,7 @@ function buildQueryForResultsListAndExport(query, dataConstraints) {
   return getQueryForResultsListAndExport(query, dataConstraints)
 }
 
-async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
+async function getListResults(query, auth, fields = LIST_FIELDS_UTC2) {
   // for now call existing function, but later add here a query with different aggregations
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -140,7 +147,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
           const alias = key.replace('.', '_')
           if (!sortableFields.includes(alias)) {
             selectFields[alias] = knex.raw('JSON_EXTRACT(resultData, ?)', [`$.${key}`])
-
             sortableFields.push(alias)
           }
           assayColumns.push({
@@ -162,9 +168,10 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   }
 
   // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
+  // const dataConstraints = await getConstraints(auth.credentials)
 
-  const resultQuery = buildQueryForResultsListAndExport(query, dataConstraints)
+  // const resultQuery = buildQueryForResultsListAndExport(query, dataConstraints)
+  const resultQuery = buildQueryForResultsListAndExport(query, {})
 
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
@@ -209,6 +216,144 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
+  return result
+}
+
+function buildQueryForResultsListAndExport2(query, dataConstraints) {
+  if (dataConstraints.$or) {
+    const orConstraint = dataConstraints.$or
+
+    const isSiteLevelAccess = _.some(orConstraint, obj => _.has(obj, 'site'))
+
+    if (isSiteLevelAccess) {
+      const filteredOrConstraint = _.map(orConstraint, obj => {
+        if (query.reportableSiteId) {
+          return _.omit(obj, 'site')
+        }
+        if (obj.result && obj.result.reportableSiteId) {
+          return {
+            ...obj,
+            result: _.omit(obj.result, 'reportableSiteId'),
+          }
+        }
+        return obj
+      })
+      dataConstraints.$or = filteredOrConstraint
+    }
+  }
+
+  return getQueryForResultsListAndExport2(query, dataConstraints)
+}
+
+async function getListResults2(query, auth, fields = LIST_FIELDS_UTC2) {
+  const selectFields = _.clone(fields)
+  const sortableFields = _.clone(SORT_FIELDS)
+
+  query.minDate = query.minDate instanceof Date ? query.minDate : new Date(query.minDate)
+  query.maxDate = query.maxDate instanceof Date ? query.maxDate : new Date(query.maxDate)
+
+  const assayColumns = []
+
+  if (query.assayId && !_.isArray(query.assayId)) {
+    const { assayId } = query
+    const assay = await knex('Assay as a').where('a.id', assayId).first()
+
+    if (assay.resultCategory1Label) {
+      if (!sortableFields.includes('resultCategory1Name')) {
+        selectFields.resultCategory1Name = 'rc1.name'
+        sortableFields.push('resultCategory1Name')
+      }
+      assayColumns.push({
+        db: 'resultCategory1Name',
+        fieldName: 'resultCategory1Name',
+        type: 'string',
+        title: assay.resultCategory1Label,
+        i18nKey: assay.resultCategory1i18nKey,
+      })
+    }
+
+    if (assay.resultCategory2Label) {
+      if (!sortableFields.includes('resultCategory2Name')) {
+        selectFields.resultCategory2Name = 'rc2.name'
+        sortableFields.push('resultCategory2Name')
+      }
+      assayColumns.push({
+        db: 'resultCategory2Name',
+        fieldName: 'resultCategory2Name',
+        type: 'string',
+        title: assay.resultCategory2Label,
+        i18nKey: assay.resultCategory2i18nKey,
+      })
+    }
+
+    if (assay.resultDataSchema) {
+      const resultDataSchema = JSON.parse(assay.resultDataSchema)
+      _.each(resultDataSchema, (value, key) => {
+        if (value.list) {
+          const alias = key.replace('.', '_')
+          if (!sortableFields.includes(alias)) {
+            selectFields[alias] = knex.raw('JSON_EXTRACT(r.resultText, ?)', [`$.${key}`])
+
+            sortableFields.push(alias)
+          }
+          assayColumns.push({
+            db: alias,
+            type: value.type,
+            title: value.title,
+            i18nKey: value.i18nKey,
+            formatter: value.formatter,
+            // postProcess: resultData => JSON.parse(resultData),
+          })
+        }
+      })
+    }
+  }
+
+  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
+    return Boom.badRequest()
+  }
+
+  const resultQuery = buildQueryForResultsListAndExport2(query, {})
+
+  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
+
+  const resultFields = {
+    resultCategory2Name: 'rc2.name',
+    resultCategory2I18nKey: 'rc2.i18nKey',
+    resultCategory2Titlei18nKey: 'a.resultCategory2i18nKey',
+    resultCategory1Titlei18nKey: 'a.resultCategory1i18nKey',
+    resultCategory1Title: 'a.resultCategory1label',
+    resultCategory2Title: 'a.resultCategory2label',
+    deviceStateName: 'stdpn.name',
+  }
+
+  const getItems = resultQuery
+    .clone()
+    .groupBy('r.id')
+    .modify(sortPageParams, query, 'endedOn')
+    .select(selectFields)
+    .modify(function (qb) {
+      qb.select(resultFields)
+    })
+
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  applyExtraColumns(data, assayColumns)
+  sanitizeExtraColumns(assayColumns)
+
+  const result = {
+    ok: true,
+    total,
+    length: data.length,
+    data,
+    extraColumns: assayColumns,
+  }
+  return result
+}
+
+async function listResults2(request) {
+  const { query, auth } = request
+  const result = await getListResults2(query, auth)
   return result
 }
 
@@ -2082,6 +2227,7 @@ async function xdrAssayGraphAggregations(request) {
 module.exports = {
   updateTransferNotification,
   listResults,
+  listResults2,
   getResultsForReport,
   downloadResultsList,
   showResult,
@@ -2104,6 +2250,7 @@ module.exports = {
   followUpAggregations,
   queryResultFollowUpLastItems,
   getListResults,
+  getListResults2,
   createResult,
   addPartnerQueryConstraints,
   addResultDownloadLog,
@@ -2119,4 +2266,5 @@ module.exports = {
   processGroupedQuery,
   getQuarterByMonth,
   buildQueryForResultsListAndExport,
+  buildQueryForResultsListAndExport2,
 }

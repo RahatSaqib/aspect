@@ -138,6 +138,33 @@ const LIST_FIELDS_UTC = {
   requiresTreatment: 'rca.requiresTreatment',
 }
 
+const LIST_FIELDS_UTC2 = {
+  id: 'r.id',
+  endedOn: 'r.endedOn',
+  externalId: 'r.externalId',
+  deviceName: 'd.name',
+  sampleOriginSiteName: 'so.name',
+  sampleId: 'r.sample_externalId',
+  resultText: 'r.resultText',
+  errorCode: 'r.errorCode',
+  resultTreatmentStatus: 'rts.externalId',
+  resultTreatmentStatusI18nKey: knex.raw('null'), // not used
+  treatmentStatusInfo: knex.raw('null'), // not used
+  patientId: 'r.patient_externalId',
+  assayId: 'r.assayId',
+  resultCategory1Name: 'rc1.name',
+  resultCategory1I18nKey: 'r.resultCategory1_i18nKey',
+  stateName: 'st.name',
+  siteName: 'si.name',
+  assayName: 'r.assay_name',
+  assayI18nKey: 'r.assay_i18nKey',
+  caseExternalId: knex.raw('null'), // not used
+  diseaseId: 'r.disease_id',
+  diseaseName: 'r.disease_name',
+  diseaseExternalId: 'dis.externalId',
+  requiresTreatment: 'r.resultCategoryAssay_requiresTreatment',
+}
+
 /**
  * Knex result projection for use in @see {service.getResultByResultId}, excluding exports and reports. Datetime fields are in UTC.
  */
@@ -202,11 +229,11 @@ const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
   mtbErrorByCode: errorCode =>
     knex.raw(`IFNULL(SUM(CASE WHEN rc1.externalId = 'Error' and r.errorCode = '${errorCode}' THEN 1 ELSE 0 END), 0)`),
   mtbOtherErrorsNotIn: errorCodesCsv =>
-    knex.raw(`IFNULL(SUM(CASE 
+    knex.raw(`IFNULL(SUM(CASE
     WHEN rc1.externalId = 'Error' AND
       (
         r.errorCode IS NULL OR r.errorCode NOT IN (${errorCodesCsv})
-      ) 
+      )
     THEN 1 ELSE 0 END), 0)`),
 }
 
@@ -597,6 +624,7 @@ module.exports = {
   COMMON_LIST_FIELDS_UTC,
   SELECT_FIELDS_UTC,
   LIST_FIELDS_UTC,
+  LIST_FIELDS_UTC2,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
