@@ -42,9 +42,13 @@ async function recreateResultReadTable(knex) {
     table.dateTime('reconciliationDate').nullable()
     // Related fields
     table.integer('country_id').unsigned().nullable()
+    table.string('assay_externalId', 15).notNullable()
     table.string('assay_name', 30).notNullable()
     table.string('assay_i18nKey', 20).notNullable()
-    table.string('assay_externalId', 15).notNullable()
+    table.integer('assayType_id').unsigned().nullable()
+    table.string('assayType_externalId', 20).notNullable()
+    table.string('assayType_name', 25).notNullable()
+    table.string('assayType_i18nKey', 25).notNullable()
     table.boolean('site_disabled').nullable()
     table.string('deviceMaintenanceStatus_externalId', 50).nullable()
     table.string('deviceApproval_token', 50).nullable()
@@ -146,7 +150,7 @@ async function createResultReadTriggers(knex) {
 
   // Common SQL for both triggers - inserts or updates into Result_read
   const upsertQuery = `
-      INSERT INTO \`Result_read\` (
+      INSERT INTO Result_read (
         id,
         partnerId,
         assayId,
@@ -183,9 +187,13 @@ async function createResultReadTriggers(knex) {
         updatedBy,
         reconciliationDate,
         country_id,
+        assay_externalId,
         assay_name,
         assay_i18nKey,
-        assay_externalId,
+        assayType_id,
+        assayType_externalId,
+        assayType_name,
+        assayType_i18nKey,
         site_disabled,
         deviceMaintenanceStatus_externalId,
         deviceApproval_token,
@@ -249,9 +257,13 @@ async function createResultReadTriggers(knex) {
         r.updatedBy,
         r.reconciliationDate,
         g.countryId as country_id,
+        LEFT(a.externalId, 15) as assay_externalId,
         LEFT(a.name, 30) as assay_name,
         LEFT(a.i18nKey, 20) as assay_i18nKey,
-        LEFT(a.externalId, 15) as assay_externalId,
+        at.id as assayType_id,
+        LEFT(at.externalId, 20) as assayType_externalId,
+        LEFT(at.name, 25) as assayType_name,
+        LEFT(at.i18nKey, 25) as assayType_i18nKey,
         si.disabled as site_disabled,
         LEFT(dms.externalId, 50) as deviceMaintenanceStatus_externalId,
         LEFT(da.token, 50) as deviceApproval_token,
@@ -283,32 +295,32 @@ async function createResultReadTriggers(knex) {
           300
         ) as resultText,
         LEFT(r.notes, 400) as notes
-      FROM \`Result\` as r
-      INNER JOIN \`Assay\` as a ON r.assayId = a.id
-      INNER JOIN \`AssayType\` as at ON a.assayTypeId = at.id
-      INNER JOIN \`Device\` as d ON r.deviceId = d.id
-      INNER JOIN \`ResultSource\` as rso ON r.resultSourceId = rso.id
-      INNER JOIN \`ResultType\` as rt ON r.resultTypeId = rt.id
-      LEFT JOIN \`DeviceType\` as dt ON d.deviceTypeId = dt.id
-      LEFT JOIN \`Disease\` as dis ON at.diseaseId = dis.id
-      LEFT JOIN \`Site\` as si ON r.siteId = si.id
-      LEFT JOIN \`Geography\` as g ON si.geographyId = g.id
-      LEFT JOIN \`Country\` as c ON g.countryId = c.id
-      LEFT JOIN \`State\` as st ON g.stateId = st.id
-      LEFT JOIN \`Lga\` as lg ON g.lgaId = lg.id
-      LEFT JOIN \`ResultCategory\` as rc1 ON r.resultCategory1 = rc1.id
-      LEFT JOIN \`ResultCategory\` as rc2 ON r.resultCategory2 = rc2.id
-      LEFT JOIN \`Sample\` as sp ON r.sampleId = sp.id
-      LEFT JOIN \`SampleType\` as stp ON sp.sampleTypeId = stp.id
-      LEFT JOIN \`Site\` as so ON sp.originSiteId = so.id
-      LEFT JOIN \`ResultCategoryAssay\` as rca ON r.assayId = rca.assayId AND r.resultCategory1 = rca.resultCategoryId
+      FROM Result as r
+      INNER JOIN Assay as a ON r.assayId = a.id
+      INNER JOIN AssayType as at ON a.assayTypeId = at.id
+      INNER JOIN Device as d ON r.deviceId = d.id
+      INNER JOIN ResultSource as rso ON r.resultSourceId = rso.id
+      INNER JOIN ResultType as rt ON r.resultTypeId = rt.id
+      LEFT JOIN DeviceType as dt ON d.deviceTypeId = dt.id
+      LEFT JOIN Disease as dis ON at.diseaseId = dis.id
+      LEFT JOIN Site as si ON r.siteId = si.id
+      LEFT JOIN Geography as g ON si.geographyId = g.id
+      LEFT JOIN Country as c ON g.countryId = c.id
+      LEFT JOIN State as st ON g.stateId = st.id
+      LEFT JOIN Lga as lg ON g.lgaId = lg.id
+      LEFT JOIN ResultCategory as rc1 ON r.resultCategory1 = rc1.id
+      LEFT JOIN ResultCategory as rc2 ON r.resultCategory2 = rc2.id
+      LEFT JOIN Sample as sp ON r.sampleId = sp.id
+      LEFT JOIN SampleType as stp ON sp.sampleTypeId = stp.id
+      LEFT JOIN Site as so ON sp.originSiteId = so.id
+      LEFT JOIN ResultCategoryAssay as rca ON r.assayId = rca.assayId AND r.resultCategory1 = rca.resultCategoryId
       LEFT JOIN (
         SELECT dmsl.*,
                ROW_NUMBER() OVER (PARTITION BY deviceId ORDER BY id DESC) as rn
-        FROM \`DeviceMaintenanceStatusLog\` as dmsl
+        FROM DeviceMaintenanceStatusLog as dmsl
       ) as dmsl ON d.id = dmsl.deviceId AND dmsl.rn = 1
-      LEFT JOIN \`DeviceMaintenanceStatus\` as dms ON dmsl.deviceMaintenanceStatusId = dms.id
-      LEFT JOIN \`DeviceApproval\` as da ON d.deviceApprovalId = da.id
+      LEFT JOIN DeviceMaintenanceStatus as dms ON dmsl.deviceMaintenanceStatusId = dms.id
+      LEFT JOIN DeviceApproval as da ON d.deviceApprovalId = da.id
       WHERE r.id = NEW.id
       ON DUPLICATE KEY UPDATE
         partnerId = VALUES(partnerId),
@@ -346,9 +358,13 @@ async function createResultReadTriggers(knex) {
         updatedBy = VALUES(updatedBy),
         reconciliationDate = VALUES(reconciliationDate),
         country_id = VALUES(country_id),
+        assay_externalId = VALUES(assay_externalId),
         assay_name = VALUES(assay_name),
         assay_i18nKey = VALUES(assay_i18nKey),
-        assay_externalId = VALUES(assay_externalId),
+        assayType_id = VALUES(assayType_id),
+        assayType_externalId = VALUES(assayType_externalId),
+        assayType_name = VALUES(assayType_name),
+        assayType_i18nKey = VALUES(assayType_i18nKey),
         site_disabled = VALUES(site_disabled),
         deviceMaintenanceStatus_externalId = VALUES(deviceMaintenanceStatus_externalId),
         deviceApproval_token = VALUES(deviceApproval_token),
@@ -378,8 +394,8 @@ async function createResultReadTriggers(knex) {
 
   // Create INSERT trigger
   await knex.raw(`
-    CREATE TRIGGER \`trg_result_read_insert\`
-    AFTER INSERT ON \`Result\`
+    CREATE TRIGGER trg_result_read_insert
+    AFTER INSERT ON Result
     FOR EACH ROW
     BEGIN
     ${upsertQuery}
@@ -388,8 +404,8 @@ async function createResultReadTriggers(knex) {
 
   // Create UPDATE trigger
   await knex.raw(`
-    CREATE TRIGGER \`trg_result_read_update\`
-    AFTER UPDATE ON \`Result\`
+    CREATE TRIGGER trg_result_read_update
+    AFTER UPDATE ON Result
     FOR EACH ROW
     BEGIN
     ${upsertQuery}
