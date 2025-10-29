@@ -82,7 +82,7 @@ function buildQueryForResultsListAndExport(query, dataConstraints) {
   return getQueryForResultsListAndExport(query, dataConstraints)
 }
 
-async function getListResults(query, auth, fields = LIST_FIELDS_UTC2) {
+async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -168,10 +168,9 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC2) {
   }
 
   // get data constraints
-  // const dataConstraints = await getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  // const resultQuery = buildQueryForResultsListAndExport(query, dataConstraints)
-  const resultQuery = buildQueryForResultsListAndExport(query, {})
+  const resultQuery = buildQueryForResultsListAndExport(query, dataConstraints)
 
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
@@ -274,7 +273,7 @@ async function getListResults2(query, auth, fields = LIST_FIELDS_UTC2) {
 
     if (assay.resultCategory2Label) {
       if (!sortableFields.includes('resultCategory2Name')) {
-        selectFields.resultCategory2Name = 'rc2.name'
+        selectFields.resultCategory2Name = 'resultCategory2_name'
         sortableFields.push('resultCategory2Name')
       }
       assayColumns.push({
@@ -313,23 +312,27 @@ async function getListResults2(query, auth, fields = LIST_FIELDS_UTC2) {
     return Boom.badRequest()
   }
 
-  const resultQuery = buildQueryForResultsListAndExport2(query, {})
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
 
+  const resultQuery = buildQueryForResultsListAndExport2(query, dataConstraints)
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
+  // const getCount = resultQuery.clone().countDistinct('r.id as count').first()
+
   const resultFields = {
-    resultCategory2Name: 'rc2.name',
-    resultCategory2I18nKey: 'rc2.i18nKey',
-    resultCategory2Titlei18nKey: 'a.resultCategory2i18nKey',
-    resultCategory1Titlei18nKey: 'a.resultCategory1i18nKey',
-    resultCategory1Title: 'a.resultCategory1label',
-    resultCategory2Title: 'a.resultCategory2label',
+    resultCategory2Name: 'r.resultCategory2_name',
+    resultCategory2I18nKey: 'r.resultCategory2_i18nKey',
+    resultCategory2Titlei18nKey: 'r.assay_resultCategory2Label_i18nKey',
+    resultCategory1Titlei18nKey: 'r.assay_resultCategory1Label_i18nKey',
+    resultCategory1Title: 'r.assay_resultCategory1Label',
+    resultCategory2Title: 'r.assay_resultCategory2Label',
     deviceStateName: 'stdpn.name',
   }
 
   const getItems = resultQuery
     .clone()
-    .groupBy('r.id')
+
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
     .modify(function (qb) {

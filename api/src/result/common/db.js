@@ -892,7 +892,7 @@ function getQueryForResultsListAndExport2(query, dataConstraints) {
         sample: 'sp',
         site: 'si',
         geography: 'g',
-        result: 'r',
+        result_read: 'r',
         country: 'c',
         disease: 'dis',
       },

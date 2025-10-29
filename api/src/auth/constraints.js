@@ -546,7 +546,7 @@ function addResultConstraints(queryBuilder, constraints, aliases, options = {}) 
 
 function filterExcludedResults(queryBuilder, aliases, options) {
   if (aliases.result && options.displayResult !== 'all') {
-    if (!aliases.resultType) {
+    if (!aliases.resultType && !aliases.result_read) {
       aliases.resultType = alias('ResultType')
       queryBuilder.innerJoin(
         `ResultType as ${aliases.resultType}`,
@@ -555,7 +555,11 @@ function filterExcludedResults(queryBuilder, aliases, options) {
       )
     }
     const onlyExcluded = options.displayResult === 'excluded'
-    queryBuilder.where({ [`${aliases.resultType}.excluded`]: onlyExcluded })
+    if (aliases.result_read) {
+      queryBuilder.where({ [`${aliases.result_read}.resultType_excluded`]: onlyExcluded })
+    } else {
+      queryBuilder.where({ [`${aliases.resultType}.excluded`]: onlyExcluded })
+    }
   }
 }
 
@@ -584,7 +588,7 @@ function addConstraints(
 
   // Hook Read models
   if (aliases.result_read) {
-    aliases.result = 'result_read'
+    aliases.result = aliases.result_read
   }
 
   // TODO generalize constraint building
