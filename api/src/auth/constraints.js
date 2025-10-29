@@ -399,25 +399,25 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
           )
 
         queryBuilder.whereRaw(`
-          ifnull(deviceMaintenanceStatus.externalId, '') != 'inactiveDecommissioned'
+            (deviceMaintenanceStatus.externalId is null or deviceMaintenanceStatus.externalId != 'inactiveDecommissioned')
         `)
         /**
          * any deviceApproval except 'decommissioned'
          */
         queryBuilder.whereRaw(`
-          ifnull(deviceApproval.token, '') != 'decommissioned'
+          (deviceApproval.token is null or deviceApproval.token <> 'decommissioned')
         `)
         if (hideUnapprovedDevices) {
           /**
            * deviceApproval is null or 'approved' only
            */
-          queryBuilder.whereRaw(`ifnull(deviceApproval.token, 'approved') = 'approved'`)
+          queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token = 'approved')`)
         }
       } else if (hideUnapprovedDevices /* showDecommissionedDevices = true */) {
         /**
          * deviceApproval is null or 'approved' or 'decommissioned' only
          */
-        queryBuilder.whereRaw(`ifnull(deviceApproval.token, 'approved') in ('approved', 'decommissioned')`)
+        queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token in ('approved', 'decommissioned')`)
       }
     }
   }
