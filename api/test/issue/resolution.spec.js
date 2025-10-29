@@ -413,7 +413,6 @@ describe('Issue Resolution', () => {
       let now
       let admin
       let gxMtbRifAssay
-      let resultWorkflowStatus
       let resultSource
       let resultType
       let sampleType
@@ -446,15 +445,6 @@ describe('Issue Resolution', () => {
           endedOn: now,
         })
 
-        const [resultWorkflowStatusId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: resultWorkflowStatus.id,
-          changedOn: now,
-          createdOn: now,
-        })
-        await knex('Result').where('id', resultId).update({
-          resultWorkflowStatusLogId: resultWorkflowStatusId,
-        })
         return resultId
       }
 
@@ -505,7 +495,6 @@ describe('Issue Resolution', () => {
         now = new Date()
         admin = await knex('User').where({ name: 'myanmar_admin' }).first()
         gxMtbRifAssay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first()
-        resultWorkflowStatus = await knex('ResultWorkflowStatus').where({ externalId: 'OK' }).first()
         resultSource = await knex('ResultSource').where({ externalId: 'DiagnosticDevice' }).first()
         resultType = await knex('ResultType').where({ externalId: 'Patient' }).first()
         sampleType = await knex('SampleType').where({ externalId: 'Sputum' }).first()

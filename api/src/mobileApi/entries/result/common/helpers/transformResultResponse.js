@@ -13,20 +13,18 @@ const { transformSampleData } = require('./transformSample')
 const { transformTestInformation } = require('./transformTestInformation')
 const { transformTreatmentStatus } = require('./transformTreatmentStatus')
 
-function transformResultResponse(data, followUps, acknowledgements, flags, userSiteIds) {
+function transformResultResponse(data, followUps, userSiteIds) {
   if (_.isEmpty(data)) return
   return _.map(data, result => {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
     const patientData = JSON.parse(result?.patientData)
     const patientSampleData = result.sampleData ? JSON.parse(result.sampleData) : null
-    const acknowledgement = acknowledgements?.find(ack => ack.resultId === result.id)
-    const resultFlags = flags?.filter(flag => flag.resultId === result.id)
     const resultRequiresTreatment = !!(
       result?.resultCategoryAssay1RequiresTreatment || result?.resultCategoryAssay2RequiresTreatment
     )
-    const clinicalResponse = transformClinicalResponse(result, resultFollowUps, acknowledgement)
+    const clinicalResponse = transformClinicalResponse(result, resultFollowUps)
     const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
-    const noFollowUpPossibleComment = noFollowUpPossible ? result?.resultWorkflowStatusReason : undefined
+    const noFollowUpPossibleComment = undefined
     const hasFollowUp = !!clinicalResponse?.treatment && resultRequiresTreatment && !noFollowUpPossible
 
     const requiresFollowUp = resultRequiresTreatment && !hasFollowUp && !noFollowUpPossible
@@ -60,7 +58,7 @@ function transformResultResponse(data, followUps, acknowledgements, flags, userS
       resultNotes: result.resultNotes,
       comments: [],
       followUps: resultFollowUps,
-      history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds),
+      history: buildHistoryTimeline(result, resultFollowUps, userSiteIds),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
       patientId: patientData?.id || patientSampleData?.patientExternalId || null,
       sample: transformSampleData(result),

@@ -7,7 +7,7 @@ const patients = require('../../seeds/test/fixtures/patients.json')
 
 const { knex } = require('../../src/db')
 
-const { resultCategoryToId, resultWorkflowStatusToId } = require('../../src/shared/dictionary')
+const { resultCategoryToId } = require('../../src/shared/dictionary')
 
 const server = require('../utils/testUtils')
 const { getBaseQueryForResults } = require('../../src/result/common/db')
@@ -26,12 +26,6 @@ describe('Mobile API Clinical Response', () => {
     results = await generateResults(knex, userId, partnerId, patients, [], 'US', false, 30, 0, 0, 0)
 
     await setTreatmentStatusToResults(knex, results, ['OnTreatment'])
-
-    // set all to deliverable
-    const resultWorkflowStatusId = await resultWorkflowStatusToId('Deliverable')
-    await knex('ResultWorkflowLog')
-      .whereIn('resultId', _.map(results, 'id'))
-      .update('resultWorkflowStatusId', resultWorkflowStatusId)
 
     // set all to a reportable result (=detected)
     const resultCategoryId = await resultCategoryToId('Detected')
@@ -95,13 +89,11 @@ describe('Mobile API Clinical Response', () => {
       })
 
       if (response.body.data.clinicalResponse) {
-        assert.property(response.body.data.clinicalResponse, 'recorded')
-        assert.property(response.body.data.clinicalResponse, 'confirmedOn')
         assert.property(response.body.data.clinicalResponse, 'treatment')
         assert.property(response.body.data.clinicalResponse, 'treatmentStarted')
         assert.property(response.body.data.clinicalResponse, 'outcome')
         assert.property(response.body.data.clinicalResponse, 'outcomeOccurred')
-        assert.equal(Object.keys(response.body.data.clinicalResponse).length, 6)
+        assert.equal(Object.keys(response.body.data.clinicalResponse).length, 4)
       }
     }
 
@@ -231,9 +223,7 @@ describe('Mobile API Clinical Response', () => {
       expect(firstResponse.body).to.containSubset({
         ok: true,
         data: {
-          clinicalResponse: {
-            recorded: false,
-          },
+          clinicalResponse: {},
         },
       })
       const resultCustomFields = await knex('ResultCustomField').where('resultId', currentResultId).select('*')

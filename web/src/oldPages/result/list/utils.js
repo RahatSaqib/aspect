@@ -39,13 +39,6 @@ export const getBaseColumns = (extraColumns = [], formatMessage) => {
       })),
       { key: 'errorCode', label: formatMessage(messages.errorCode), sortable: true, hiddenOn: 'lg' },
       {
-        key: 'resultWorkflowStatus',
-        label: formatMessage(messages.resultWorkflowStatus),
-        sortable: true,
-        hiddenOn: 'md',
-        auth: ['+reporter'],
-      },
-      {
         key: 'treatmentStatusInfo',
         label: formatMessage(messages.resultTreatmentStatus),
         sortable: true,

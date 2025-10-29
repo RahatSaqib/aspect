@@ -145,15 +145,6 @@ async function preProcessMergeResult(context) {
   if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
-
-    // Only set workflow status to "Deliverable" by default if result is new and not an error
-    if (
-      !_.get(payload, 'workflow.status.id') &&
-      !payload.error &&
-      (!_.get(payload, 'data.resultText') || _.get(payload, 'data.resultText').toUpperCase().indexOf('ERROR') === -1)
-    ) {
-      _.set(payload, 'workflow.status.id', 'Deliverable')
-    }
   } else {
     context.existingResultId = existingResult.id // adding the existing result id to the context to make it available for the rest of the process
     // Are we setting this result to NO RESULT?

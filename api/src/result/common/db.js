@@ -185,8 +185,6 @@ const getBaseQueryForResults = () =>
       q.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
     })
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -274,7 +272,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       errorCode: 'r.errorCode',
-      workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
       patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',

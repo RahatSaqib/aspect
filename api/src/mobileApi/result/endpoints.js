@@ -9,12 +9,8 @@ const {
   downloadResultResponseValidationV2,
   addClinicalResponseParamValidation,
   addClinicalResponsePayloadValidation,
-  workflowStatusParamsValidation,
-  workFlowStatusPayloadValidation,
-  workFlowStatusResponseValidation,
 } = require('./common/validations')
 const { clinicalResponse } = require('./clinicalResponse')
-const { updateWorkflowStatusToFlagged } = require('./updateWorkflowStatus')
 const { asyncHandler } = require('../../routes')
 // -----------------------------------------------------
 // routes
@@ -176,46 +172,6 @@ const routes = [
           allowUnknown: false,
         },
         schema: downloadResultResponseValidationV2,
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/v1/results/flag-workflow-status/{resultId}',
-    handler: updateWorkflowStatusToFlagged,
-    config: {
-      description: 'Update workflow status to flagged',
-      notes: 'Update the status of a result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: workflowStatusParamsValidation(),
-        payload: workFlowStatusPayloadValidation(),
-      },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: workFlowStatusResponseValidation,
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/v3/samples/flag-workflow-status/{resultId}',
-    handler: updateWorkflowStatusToFlagged,
-    config: {
-      description: 'Update workflow status to flagged',
-      notes: 'Update the status of a result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: workflowStatusParamsValidation(),
-        payload: workFlowStatusPayloadValidation(),
-      },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: workFlowStatusResponseValidation,
       },
     },
   },

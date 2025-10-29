@@ -53,14 +53,6 @@ describe('Device API Raw Philippines NTRL', () => {
       Positive2: 33,
       Positive3: 34,
     },
-    ResultWorkflowStatus: {
-      Processed: 35,
-      OK: 36,
-      Ordered: 37,
-      InProgress: 38,
-      Error: 39,
-      Validated: 40,
-    },
   }
   const databaseRecords = {
     DeviceApiKey: {
@@ -181,14 +173,6 @@ describe('Device API Raw Philippines NTRL', () => {
           if (whereParams.length === 3 && whereParams[1] === 'externalId' && whereParams[2] === 'IVA - ANTIPOLO CHO') {
             filteredQueryResults = [databaseRecords.ivaAntipoloChoSite]
           }
-        } else if (table === 'ResultWorkflowLog') {
-          if (whereParams.length === 3 && whereParams[1] === 'id' && whereParams[2] === 11) {
-            filteredQueryResults = [
-              {
-                resultWorkflowStatusId: staticDatabaseData.ResultWorkflowStatus.Error,
-              },
-            ]
-          }
         }
         if (_.isUndefined(filteredQueryResults)) {
           filteredQueryResults = [databaseRecords[table]] || []
@@ -260,7 +244,6 @@ describe('Device API Raw Philippines NTRL', () => {
         resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
         resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
         allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
-        allResultWorkflowStatusToId: resolveWith(staticDatabaseData.ResultWorkflowStatus),
       },
       '../../../shared/request': {
         getRemoteAddress: () => deviceIpAddress,
@@ -4144,7 +4127,6 @@ describe('Device API Raw Philippines NTRL', () => {
           sampleId: existingSample.id,
           updatedOn: '2019-09-15T08:09:10.123Z',
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
-          resultWorkflowStatusLogId: 11,
           errorCode: 'OPEN',
           notes: '',
           createdOn: '2019-09-14T08:09:10.123Z',
@@ -4188,7 +4170,6 @@ describe('Device API Raw Philippines NTRL', () => {
           sampleId: existingSample.id,
           updatedOn: '2019-09-15T08:09:10.123Z',
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
-          resultWorkflowStatusLogId: 12,
           errorCode: 'OPEN',
           notes: '',
           createdOn: '2019-09-14T08:09:10.123Z',
@@ -4230,7 +4211,6 @@ describe('Device API Raw Philippines NTRL', () => {
           sampleId: existingSample.id,
           updatedOn: '2019-09-16T08:09:10.123Z',
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
-          resultWorkflowStatusLogId: 12,
           errorCode: 'OPEN',
           notes: '',
           createdOn: '2019-09-14T08:09:10.123Z',
@@ -4263,7 +4243,6 @@ describe('Device API Raw Philippines NTRL', () => {
           sampleId: existingSample.id,
           updatedOn: '2019-09-16T08:09:10.123Z',
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
-          resultWorkflowStatusLogId: 12,
           errorCode: 'OPEN',
           notes: '',
           createdOn: '2019-09-14T08:09:10.123Z',
@@ -4616,18 +4595,6 @@ describe('Device API Raw Philippines NTRL', () => {
           senderOperator: payload['DST Lab Tech'],
           reportableSiteId: databaseRecords.Site.id,
         })
-
-        const insertedResultWorkflowStatusLogs = insertSpy
-          .getCalls()
-          .filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-          .map(insert => insert.lastArg)
-        expect(insertedResultWorkflowStatusLogs).to.containSubset([
-          {
-            resultId: dstResult.id,
-            resultWorkflowStatusId: staticDatabaseData.ResultWorkflowStatus.Validated,
-            operator: pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples.DSTSignedOffBy3,
-          },
-        ])
       })
 
       it('should insert Culture results when Culture values are in the record', async () => {
@@ -5122,18 +5089,6 @@ describe('Device API Raw Philippines NTRL', () => {
           senderOperator: payload['Smear Lab Tech'] || payload['Gx Examiner'],
           reportableSiteId: databaseRecords.Site.id,
         })
-
-        const insertedResultWorkflowStatusLogs = insertSpy
-          .getCalls()
-          .filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-          .map(insert => insert.lastArg)
-        expect(insertedResultWorkflowStatusLogs).to.containSubset([
-          {
-            resultId: tbLampResult.id,
-            resultWorkflowStatusId: staticDatabaseData.ResultWorkflowStatus.Validated,
-            operator: pmdtRecordPayload03795TbLampPositiveSample.TBLAMPSignedOffBy3,
-          },
-        ])
       })
 
       it('should create a single sample when only one sample has been captured', async () => {
@@ -7065,18 +7020,6 @@ describe('Device API Raw Philippines NTRL', () => {
           senderOperator: payload['GX Performed by'],
           reportableSiteId: databaseRecords.Site.id,
         })
-
-        const insertedResultWorkflowStatusLogs = insertSpy
-          .getCalls()
-          .filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
-          .map(insert => insert.lastArg)
-        expect(insertedResultWorkflowStatusLogs).to.containSubset([
-          {
-            resultId: gxResult.id,
-            resultWorkflowStatusId: staticDatabaseData.ResultWorkflowStatus.Validated,
-            operator: ritmRecordPayload0423GeneXpertNotDetected1Sample.GeneXpertSignedOffBy3,
-          },
-        ])
       })
 
       it('should create a single sample when only one sample has been captured', async () => {

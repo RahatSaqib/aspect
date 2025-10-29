@@ -12,7 +12,6 @@ const {
   resultSourceToId,
   resultTypeToId,
   allResultCategoryToId,
-  allResultWorkflowStatusToId,
 } = require('../../../shared/dictionary')
 const facilityMappings = require('./facilityMappings')
 const expectedKeys = require('./expectedKeys')
@@ -169,7 +168,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         const resultSourceId = await resultSourceToId('LIMS')
         const resultTypeId = await resultTypeToId('Patient')
         const resultCategories = await allResultCategoryToId()
-        const resultWorkflowStatuses = await allResultWorkflowStatusToId()
 
         const baseNewResult = {
           partnerId: site.partnerId,
@@ -328,7 +326,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }
@@ -430,7 +427,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               patientData,
               utcNow,
               resultCategories,
-              resultWorkflowStatuses,
               resultOverwritePriority
             )
           })
@@ -529,7 +525,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }
@@ -641,7 +636,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               patientData,
               utcNow,
               resultCategories,
-              resultWorkflowStatuses,
               resultOverwritePriority
             )
           })
@@ -719,7 +713,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }
@@ -782,7 +775,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }

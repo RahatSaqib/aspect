@@ -2,13 +2,12 @@ const _ = require('lodash')
 const { getFollowUpByType } = require('./getFollowUpByType')
 const { FOLLOW_UP_TYPES } = require('../../../common/consts')
 
-function transformClinicalResponse(data, followUps, acknowledgement) {
+function transformClinicalResponse(data, followUps) {
   const treatment = getFollowUpByType(followUps, FOLLOW_UP_TYPES.TREATMENT)
   const outcome = getFollowUpByType(followUps, FOLLOW_UP_TYPES.OUTCOME)
   const output = _.pickBy(
     {
       resultId: data.id,
-      confirmedOn: acknowledgement?.acknowledgedOn ?? null,
       outcome: outcome?.followUpExternalId ?? null,
       outcomeOccurred: outcome?.updatedOn ?? null,
       treatment: treatment?.followUpExternalId ?? null,
@@ -16,7 +15,7 @@ function transformClinicalResponse(data, followUps, acknowledgement) {
     },
     _.identity
   )
-  return { ...output, recorded: !!acknowledgement }
+  return output
 }
 
 module.exports = { transformClinicalResponse }

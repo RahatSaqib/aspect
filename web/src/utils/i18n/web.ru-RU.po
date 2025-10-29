@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-10-10T12:43:33.759Z\n"
+"POT-Creation-Date: 2025-10-22T10:10:01.066Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -396,13 +396,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Account Details"
 msgstr "Детали учетной записи"
-
-#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
-#: extracted_strings.json
-msgid "Acknowledged"
-msgstr "Подтвержденный"
 
 #. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
@@ -3173,13 +3166,6 @@ msgstr "Удалить"
 msgid "Delete (Only 0 triggers)"
 msgstr "Удалить (Только 0 триггеров)"
 
-#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
-#. defaultMessage is:
-#. Delivered
-#: extracted_strings.json
-msgid "Delivered"
-msgstr "Доставлено"
-
 #. [filter.AssayTypeSelectField.assayTypeDengue]
 #. defaultMessage is:
 #. Dengue
@@ -4098,9 +4084,6 @@ msgstr "Введите имя сайта..."
 #. [resultCategoryGroup.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
-#. [pages.deviceDetail.ResultWorkflowStatusError]
-#. defaultMessage is:
-#. Error
 #. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
@@ -4731,13 +4714,6 @@ msgstr "Первый результат"
 #: extracted_strings.json
 msgid "First or second"
 msgstr "Первый или второй"
-
-#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
-#. defaultMessage is:
-#. Flagged
-#: extracted_strings.json
-msgid "Flagged"
-msgstr "Помечено"
 
 #. [pages.resultEdit.followUp]
 #. defaultMessage is:
@@ -5916,13 +5892,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Implementing Partner"
 msgstr "Партнер-исполнитель"
-
-#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
-#. defaultMessage is:
-#. In Progress
-#: extracted_strings.json
-msgid "In Progress"
-msgstr "Выполняется"
 
 #. [errorResponseMessages.common.filterError.resolution]
 #. defaultMessage is:
@@ -9023,12 +8992,6 @@ msgstr "Номера в комплекте"
 msgid "OCT"
 msgstr "октябрь"
 
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
-#. [pages.ResultList.ResultWorkflowStatusValidated]
-#. defaultMessage is:
-#. OK
 #. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
@@ -9193,13 +9156,6 @@ msgstr "Операция"
 #: extracted_strings.json
 msgid "Operational Data"
 msgstr "Оперативные данные"
-
-#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
-#. defaultMessage is:
-#. Ordered
-#: extracted_strings.json
-msgid "Ordered"
-msgstr "Упорядоченный"
 
 #. [filter.popover.originSiteName]
 #. defaultMessage is:
@@ -10063,13 +10019,6 @@ msgstr "Цена в $"
 msgid "Proceed"
 msgstr "Продолжить"
 
-#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
-#. defaultMessage is:
-#. Processed
-#: extracted_strings.json
-msgid "Processed"
-msgstr "Обработанный"
-
 #. [pages.transferResult.processing]
 #. defaultMessage is:
 #. Processing ...
@@ -10151,13 +10100,6 @@ msgstr "Выделено"
 #: extracted_strings.json
 msgid "Pulmonary"
 msgstr "Легочная"
-
-#. [pages.deviceDetail.ResultWorkflowStatusPurged]
-#. defaultMessage is:
-#. Purged
-#: extracted_strings.json
-msgid "Purged"
-msgstr "Очищен"
 
 #. [filter.sampleType.sampleTypePus]
 #. defaultMessage is:
@@ -10402,13 +10344,6 @@ msgstr "Диагностика РРТ"
 #: extracted_strings.json
 msgid "RRTB Diagnosis Trends"
 msgstr "Тенденции диагностики РРТБ"
-
-#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
-#. defaultMessage is:
-#. Ready for delivery
-#: extracted_strings.json
-msgid "Ready for delivery"
-msgstr "Готов к доставке"
 
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
@@ -11197,13 +11132,6 @@ msgstr "Конечный результат"
 msgid "Result Viewer - Yes"
 msgstr "Просмотрщик результатов - Да"
 
-#. [pages.DeviceDetailProfile.resultWorkflowStatus]
-#. defaultMessage is:
-#. Result Workflow Status
-#: extracted_strings.json
-msgid "Result Workflow Status"
-msgstr "Результат Статус рабочего процесса"
-
 #. [pages.transferResult.successMessagePatient]
 #. defaultMessage is:
 #. Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"
@@ -11808,9 +11736,6 @@ msgstr "Выберите результат..."
 msgid "Select revoked status..."
 msgstr "Выберите отмененный статус..."
 
-#. [filter.popover.selectWorkflowStatus]
-#. defaultMessage is:
-#. Select status...
 #. [filter.popover.selectTreatmentStatus]
 #. defaultMessage is:
 #. Select status...
@@ -14952,13 +14877,6 @@ msgstr "Достоверные результаты"
 msgid "Valid Tests"
 msgstr "Надёжные испытания"
 
-#. [pages.deviceDetail.ResultWorkflowStatusValidated]
-#. defaultMessage is:
-#. Validated
-#: extracted_strings.json
-msgid "Validated"
-msgstr "Подтверждено"
-
 #. [errorResponseMessages.stateMutation.title]
 #. defaultMessage is:
 #. Validation error
@@ -15216,16 +15134,6 @@ msgstr "Когда результат"
 #: extracted_strings.json
 msgid "Within 2 hours of testing"
 msgstr "В течение 2 часов после тестирования"
-
-#. [filter.popover.workflowStatus]
-#. defaultMessage is:
-#. Workflow Status
-#. [pages.ResultList.resultWorkflowStatus]
-#. defaultMessage is:
-#. Workflow Status
-#: extracted_strings.json
-msgid "Workflow Status"
-msgstr "Статус процесса"
 
 #. [pages.workload.workloadTitle]
 #. defaultMessage is:
@@ -16120,13 +16028,6 @@ msgstr "с результатом {resultCategoryGroupName}"
 msgid "with result {resultCategoryName}"
 msgstr "с результатом {resultCategoryName}"
 
-#. [filter.btnGroup.withWorkflowStatus]
-#. defaultMessage is:
-#. workflow status is {workflowStatusName}
-#: extracted_strings.json
-msgid "workflow status is {workflowStatusName}"
-msgstr "статус рабочего процесса: {workflowStatusName}"
-
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. {consumableName}
@@ -16287,6 +16188,42 @@ msgstr "{unit} с прошлой недели"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} суммарные калибровки"
+
+#~ msgid "Acknowledged"
+#~ msgstr "Подтвержденный"
+
+#~ msgid "Delivered"
+#~ msgstr "Доставлено"
+
+#~ msgid "Flagged"
+#~ msgstr "Помечено"
+
+#~ msgid "In Progress"
+#~ msgstr "Выполняется"
+
+#~ msgid "Ordered"
+#~ msgstr "Упорядоченный"
+
+#~ msgid "Processed"
+#~ msgstr "Обработанный"
+
+#~ msgid "Purged"
+#~ msgstr "Очищен"
+
+#~ msgid "Ready for delivery"
+#~ msgstr "Готов к доставке"
+
+#~ msgid "Result Workflow Status"
+#~ msgstr "Результат Статус рабочего процесса"
+
+#~ msgid "Validated"
+#~ msgstr "Подтверждено"
+
+#~ msgid "Workflow Status"
+#~ msgstr "Статус процесса"
+
+#~ msgid "workflow status is {workflowStatusName}"
+#~ msgstr "статус рабочего процесса: {workflowStatusName}"
 
 #~ msgid "Provincial Diagnosis Trends"
 #~ msgstr "Провинциальные тенденции в диагностике"

@@ -1,11 +1,8 @@
-const { consumeInventoryFromPayload, addResultWorkflowLogIfChanged } = require('../../../deviceApi/result')
+const { consumeInventoryFromPayload } = require('../../../deviceApi/result')
 
-async function postProcessMergeResult(context, result, previousResult) {
-  const { knex, payload, now, messageContext, userId } = context
+async function postProcessMergeResult(context, result) {
+  const { knex, payload, messageContext, userId } = context
 
-  const { pickedUpOn } = JSON.parse(result.resultData)
-
-  await addResultWorkflowLogIfChanged(knex, payload, result, previousResult, 'Device API Update', now, pickedUpOn)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
   await consumeInventoryFromPayload(knex, payload, result, messageContext, userId)

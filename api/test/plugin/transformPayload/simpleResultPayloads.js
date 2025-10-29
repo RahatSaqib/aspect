@@ -267,7 +267,6 @@ const gxConnectResultPayload = {
     location: null,
     type: null,
     source: null,
-    workflow: null,
     sample: { id: 'S8-01-392-24', collectedOn: null, group: null, runNumber: null, type: null, originSite: null },
     category: null,
     consumable: [{ serial: '1848307130', lot: '44717', expirationDate: '2024-08-18T00:00:00Z' }],

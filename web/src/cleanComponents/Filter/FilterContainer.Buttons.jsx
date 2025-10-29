@@ -15,7 +15,6 @@ import { useConsumable } from '../../hooks/inventory/useConsumable'
 import useNotificationType from '../../hooks/notification/useNotificationType'
 import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
-import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
 import useSiteList from '../../hooks/site/useSiteList'
 import useSiteType from '../../hooks/site/useSiteType'
 import { commonDefinitions } from '../../messages/customMessages'
@@ -48,7 +47,6 @@ const filtersOrdering = {
   destinationSiteName: 160,
   externalId: 170,
   contactStatus: 180,
-  workflowStatusId: 190,
   deviceApprovalId: 200,
   minDate: 210,
   maxDate: 220,
@@ -202,9 +200,6 @@ const buttonMapping = {
   ),
   sampleOriginSite: ({ sampleOriginSite, remove, blocked }) => (
     <SampleOriginSiteId sampleOriginSite={sampleOriginSite} remove={remove} blocked={blocked} />
-  ),
-  workflowStatusId: ({ workflowStatusId, remove, blocked }) => (
-    <WorkflowStatusId workflowStatusId={workflowStatusId} remove={remove} blocked={blocked} />
   ),
   treatmentStatus: ({ treatmentStatus, remove, blocked }) => (
     <TreatmentStatus treatmentStatus={treatmentStatus} remove={remove} blocked={blocked} />
@@ -791,23 +786,6 @@ const SampleOriginSiteId = ({ sampleOriginSite, remove, blocked }) => {
       del={blocked.includes('sampleOriginSite') ? undefined : () => remove(['sampleOriginSite'])}
     />
   )
-}
-
-const WorkflowStatusId = ({ workflowStatusId, remove, blocked }) => {
-  const { formatMessage } = useIntl()
-  const { data } = useWorkflowStatus()
-
-  if (data) {
-    const wfName = data.find(it => it.id === workflowStatusId).i18nKey
-
-    return (
-      <Btn
-        lbl={formatMessage(messages.withWorkflowStatus, { workflowStatusName: formatMessage(messages[wfName]) })}
-        del={blocked.includes('workflowStatusId') ? undefined : () => remove(['workflowStatusId'])}
-      />
-    )
-  }
-  return null
 }
 
 const TreatmentStatus = ({ treatmentStatus, remove, blocked }) => {

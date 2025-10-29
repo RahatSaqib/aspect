@@ -1,8 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { mergeResultWithPayload } = require('../result/common/logic')
-const { resultSourceToId, resultTypeToId, resultWorkflowStatusToId, sampleTypeToId } = require('../shared/dictionary')
-const { getLatestResultWorkflowLog } = require('./result')
+const { resultSourceToId, resultTypeToId, sampleTypeToId } = require('../shared/dictionary')
 const { getResultCategoriesFromPayload } = require('./utils')
 const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
 const { getMobileSampleByExternalId, getMatchingSample } = require('../sample/common/db')
@@ -18,9 +17,6 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const testStartedOn = _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null))
   // Select ResultType if specified, otherwise Patient
   const resultTypeId = await getResultTypeId(payload, existingResult)
-
-  // Select Workflow Status if specified, otherwise Error or OK depending on error payload
-  const resultWorkflowStatusId = await getResultWorkflowStatusId(knex, payload, existingResult)
 
   // Categories if specified, otherwise Error or Success depending on error payload
   const { resultCategory1, resultCategory2 } = await getResultCategoriesFromPayload(payload, existingResult)
@@ -161,19 +157,6 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     ;[resultId] = await knex('Result').insert(processedResult)
   }
 
-  const [lastLogId] = await knex('ResultWorkflowLog').insert({
-    resultId,
-    resultWorkflowStatusId,
-    createdOn: now,
-    changedOn: now,
-    createdBy: 1,
-  })
-  await knex('Result').where({ id: resultId }).update({
-    resultWorkflowStatusLogId: lastLogId,
-    updatedOn: now,
-  })
-  processedResult.resultWorkflowStatusLogId = lastLogId
-  processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   processedResult.id = resultId
   processedResult.updatedOn = now
   return {
@@ -215,23 +198,6 @@ async function getResultTypeId(payload, existingResult) {
     resultTypeId = await resultTypeToId('Patient')
   }
   return resultTypeId
-}
-
-async function getResultWorkflowStatusId(knex, payload, existingResult) {
-  let resultWorkflowStatusId = null
-  if (_.has(payload, 'workflow.status.id')) {
-    resultWorkflowStatusId = await resultWorkflowStatusToId(_.get(payload, 'workflow.status.id', ''))
-  } else if (
-    payload.error ||
-    (_.get(payload, 'data.resultText') && _.get(payload, 'data.resultText').toUpperCase().indexOf('ERROR') !== -1)
-  ) {
-    resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
-  } else if (existingResult) {
-    ;({ resultWorkflowStatusId } = await getLatestResultWorkflowLog(knex, existingResult.id))
-  } else {
-    resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
-  }
-  return resultWorkflowStatusId
 }
 
 async function getResultErrors({ site, resultTypeId, resultCategory1, assays, payload }) {

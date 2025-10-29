@@ -4,7 +4,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { addMilliseconds, addHours, addMinutes, subDays, subHours, subMinutes, subMonths } = require('date-fns')
+const { addMilliseconds, addMinutes, subDays, subMinutes, subMonths } = require('date-fns')
 const { insertSite } = require('../../src/site/common/db')
 const { upsertJobFunctionFixture } = require('../common')
 const patients = require('./fixtures/patients.json')
@@ -13,7 +13,6 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
 const {
   allResultCategoryToId,
-  allResultWorkflowStatusToId,
   assayTypeToId,
   partnerTypeToId,
   deviceTypeToId,
@@ -513,8 +512,6 @@ async function seed(knex) {
 
   const { id: assayIdHivVl } = await knex('Assay').where('externalId', 'abbottM2000DBSHivVL').first()
 
-  const { Validated: validated, Deliverable: deliverable } = await allResultWorkflowStatusToId()
-
   const resultSourceLimsId = await resultSourceToId('LIMS')
 
   const resultTypePatientId = await resultTypeToId('Patient')
@@ -571,7 +568,7 @@ async function seed(knex) {
     const resultData = { resultText: result.resultText }
     const resultExternalId = await createUniqueResultIdForDevice(sample.externalId, device.id)
 
-    const [resultId] = await knex('Result').insert({
+    await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
       assayId: assayIdEid,
@@ -615,23 +612,6 @@ async function seed(knex) {
         eidRegistrationNumber: patient.artHccNumber,
       }),
     })
-
-    await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: validated,
-      changedOn: subHours(randomDate, 25),
-      createdOn: subHours(randomDate, 26),
-      createdBy: adminId,
-    })
-
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: deliverable,
-      changedOn: addHours(randomDate, 2),
-      createdOn: addHours(randomDate, 1),
-      createdBy: adminId,
-    })
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultEidNumber)) {
@@ -720,7 +700,7 @@ async function seed(knex) {
       resultText: copies ? result.resultText.replace('X', copies) : result.resultText,
     }
     const resultExternalId = await createUniqueResultIdForDevice(sample.externalId, device.id)
-    const [resultId] = await knex('Result').insert({
+    await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
       assayId: assayIdHivVl,
@@ -761,23 +741,6 @@ async function seed(knex) {
         dateOfBirth: patient.dob,
       }),
     })
-
-    await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: validated,
-      changedOn: subHours(randomDate, 25),
-      createdOn: subHours(randomDate, 26),
-      createdBy: adminId,
-    })
-
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: deliverable,
-      changedOn: addHours(randomDate, 2),
-      createdOn: addHours(randomDate, 1),
-      createdBy: adminId,
-    })
-    await knex('Result').where({ id: resultId }).update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultHivVlNumber)) {

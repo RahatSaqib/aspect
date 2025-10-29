@@ -16,7 +16,6 @@ describe('Result create and update routes', () => {
   let firstResultCase = {}
   const resultIds = []
   const path = '/api/result'
-  const reason = 'Manual Result Entry'
   const now = new Date(dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss.000'Z'"))
   const resultFieldNames = [
     'id',
@@ -51,9 +50,6 @@ describe('Result create and update routes', () => {
     'updatedOn',
     'assayId',
     'assay',
-    'resultWorkflowLogReason',
-    'resultWorkflowLogCreatedOn',
-    'resultWorkflowLogOperator',
     'resultTreatmentMethod',
     'resultTreatmentData',
     'resultNotes',
@@ -133,40 +129,6 @@ describe('Result create and update routes', () => {
 
       // check assay was set correctly
       assert.equal(res.body.data.assay.externalId, 'DaktariHivVL')
-
-      // check that workflow status is set to deliverable
-      assert.equal(res.body.data.resultWorkflowStatus, 'Ready for delivery')
-      assert.equal(res.body.data.resultWorkflowLogReason, reason)
-      assert.closeTo(new Date(res.body.data.updatedOn).getTime(), new Date().getTime(), 5000)
-
-      // remember for deletion
-      resultIds.push(resultId)
-    })
-
-    it('Should create a new result and set workflow status to error if result was error.', async () => {
-      const resultPayload = {
-        siteId: 1,
-        deviceId: 2,
-        assayId: await assayToId('DaktariHivVL'),
-        startedOn: now,
-        endedOn: addHours(now, 2),
-        sampleId: 'A-SAMPLE-ID',
-        sampleTypeId: 1,
-        sampleCollectedOn: now,
-        sampleOriginSiteId: 1,
-        caseExternalId: 'A-CASE-ID',
-        resultCategory1: await resultCategoryToId('Error'),
-      }
-
-      // update with external ID
-      const res = await server.post(path).send(resultPayload).set('Authorization', `Bearer${shared.token}`)
-
-      assert.equal(res.status, 200)
-      resultId = res.body.data.id
-
-      // check that workflow status is set to error
-      assert.equal(res.body.data.resultWorkflowStatus, 'Error')
-      assert.equal(res.body.data.resultWorkflowLogReason, reason)
       assert.closeTo(new Date(res.body.data.updatedOn).getTime(), new Date().getTime(), 5000)
 
       // remember for deletion

@@ -17,12 +17,10 @@ const { getUser, getUserByUserId, getPersonByPersonId } = require('../auth/servi
 const {
   allAssayToId,
   allResultCategoryToId,
-  resultWorkflowStatusToId,
   resultTreatmentStatusToId,
   resultStatusToId,
   resultSourceToId,
   resultTypeToId,
-  resultCategoryToId,
 } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { getPathFromFileReferenceId } = require('../file/service')
@@ -214,7 +212,7 @@ async function listResults(request) {
   return result
 }
 
-async function getDownloadResultsList(query, auth, setDelivered = false) {
+async function getDownloadResultsList(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -231,8 +229,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -246,7 +242,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     })
     // only results which are reportable for either ResultCategory
     .where(builder => builder.where('rca.reportable', 1).orWhere('rca2.reportable', 1))
-    .whereIn('rs.externalId', ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged'])
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
@@ -291,9 +286,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
             .whereIn('rc1.externalId', params.resultCategories.split(','))
             .orWhereIn('rc2.externalId', params.resultCategories.split(','))
         )
-      }
-      if (params.workflowStatus) {
-        queryBuilder.where('rs.externalId', params.workflowStatus)
       }
       if (params.isTransferred) {
         // return only results transferred "to me" (to r.reportableSiteId)
@@ -340,11 +332,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
-      'rs.name as resultWorkflowStatusName',
-      'rs.externalId as resultWorkflowStatusExternalId',
-      'rs.i18nKey as resultWorkflowStatusi18nKey',
-      'rsl.reason as resultWorkflowStatusReason',
-      'rsl.changedOn as resultWorkflowStatusChangedOn',
       'rtsl.changedOn as resultTreatmentStatusChangedOn',
       'rts.name as resultTreatmentStatusName',
       'rts.externalId as resultTreatmentStatusExternalId',
@@ -406,24 +393,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
           }
         : null,
     },
-    workflowStatus: {
-      name: setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered' ? 'Delivered' : d.resultWorkflowStatusName,
-      externalId:
-        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'Delivered'
-          : d.resultWorkflowStatusExternalId,
-      i18nKey:
-        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'ResultWorkflowStatusDelivered'
-          : d.resultWorkflowStatusi18nKey,
-      reason:
-        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'Download Results Api'
-          : d.resultWorkflowStatusReason,
-      changedOn:
-        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered' ? new Date() : d.resultWorkflowStatusChangedOn,
-      setDelivered: setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered',
-    },
     treatmentStatus: {
       changedOn: d.resultTreatmentStatusChangedOn,
       name: d.resultTreatmentStatusName,
@@ -458,14 +427,7 @@ async function downloadResultsList(request) {
   const user = await getUser(auth.credentials.name)
   const results = await getDownloadResultsList(query, auth, true)
   const myProm = async () => {
-    const idsToUpdate = _.uniq(
-      _.map(
-        _.pickBy(results.data, elem => elem.workflowStatus.setDelivered),
-        elem => elem.id
-      )
-    )
     const idsToBeRegistered = _.uniq(_.map(results.data, elem => elem.id))
-    if (idsToUpdate && idsToUpdate.length > 0) await updateResultWorkflowStatus(idsToUpdate, user.id, 'Delivered')
     if (idsToBeRegistered && idsToBeRegistered.length > 0) await addResultDownloadLog(idsToBeRegistered, user.id)
   }
   myProm().catch(err => {
@@ -484,29 +446,6 @@ async function addResultDownloadLog(idsToBeRegistered, userId) {
       createdBy: userId,
     })
   )
-}
-
-async function updateResultWorkflowStatus(idsToUpdate, userId, resultWorkflowStatusExternalId) {
-  const { id: resultWorkflowStatusId } = await knex('ResultWorkflowStatus')
-    .where('externalId', resultWorkflowStatusExternalId)
-    .first('id')
-  const now = new Date()
-  return Promise.each(idsToUpdate, async resultId => {
-    const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      changedOn: now,
-      createdOn: now,
-      createdBy: userId,
-      reason: 'Download Results Api',
-      operator: 'Reporter App',
-    })
-    await knex('Result')
-      .where({
-        id: resultId,
-      })
-      .update({ resultWorkflowStatusLogId })
-  })
 }
 
 async function showResult(request) {
@@ -657,77 +596,6 @@ async function listResultTypes(request) {
   const result = { ok: true, total, length: data.length, data }
 
   return result
-}
-
-async function updateWorkflowStatus(request) {
-  const { auth, params, payload } = request
-  const { resultId } = params
-  const { id: currentUserId } = await getUser(auth.credentials.name)
-
-  // get the result so we can check access and if status changed
-  const result = await getResultByResultId(auth, resultId)
-  if (!result.ok) {
-    return Boom.notFound()
-  }
-  const { resultWorkflowStatusId } = payload
-  const { changedOn, operator, reason, updatedOn } = payload
-
-  const resultWorkflowLogEntry = {
-    resultId,
-    resultWorkflowStatusId,
-    createdBy: currentUserId,
-    operator,
-    reason,
-    changedOn: changedOn || new Date(),
-  }
-
-  const errorMessage = await updateResultWorkflowStatusByResultId(
-    knex,
-    resultWorkflowLogEntry,
-    payload.externalId,
-    updatedOn,
-    result.data.resultWorkflowStatusId,
-    result.data.resultWorkflowChangedOn
-  )
-
-  if (errorMessage) {
-    return Boom.badRequest(errorMessage)
-  }
-
-  const response = await showResult(request)
-  return response
-}
-
-async function updateResultWorkflowStatusByResultId(
-  knex,
-  resultWorkflowLogEntry,
-  resultWorkflowStatusExternalId,
-  updatedOn,
-  currentResultWorkflowStatusId,
-  resultWorkflowChangedOn
-) {
-  const now = new Date()
-
-  // check if a externalId is provided
-  if (resultWorkflowStatusExternalId) {
-    resultWorkflowLogEntry.resultWorkflowStatusId = await resultWorkflowStatusToId(resultWorkflowStatusExternalId)
-    if (!resultWorkflowLogEntry.resultWorkflowStatusId) {
-      return 'Invalid ResultWorkflowStatus ID'
-    }
-  }
-
-  // update the resultWorkflowStatusId.
-  if (resultWorkflowLogEntry.resultWorkflowStatusId !== currentResultWorkflowStatusId) {
-    const [lastLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLogEntry)
-
-    if (!updatedOn || resultWorkflowChangedOn < updatedOn) {
-      await knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
-        resultWorkflowStatusLogId: lastLogId,
-        updatedBy: resultWorkflowLogEntry.createdBy,
-        updatedOn: now,
-      })
-    }
-  }
 }
 
 async function listTreatmentStatusTypes() {
@@ -891,66 +759,6 @@ async function getTreatmentStatusByResultId(resultId) {
       'ts.externalId',
       'ts.i18nKey'
     )
-}
-
-async function listWorkflowStatusTypes() {
-  const resultQuery = knex('ResultWorkflowStatus as rs')
-
-  // get total count for paging
-  const getCount = resultQuery.clone().count('rs.id as count').first()
-
-  // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name', 'i18nKey')
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
-}
-
-async function listWorkflowStatusLog(request) {
-  const result = await getWorkflowStatusLogByResultId(request)
-  return result.ok ? result : Boom.notFound()
-}
-
-async function getWorkflowStatusLogByResultId(request) {
-  const { query, params } = request
-
-  const selectFields = [
-    'log.id',
-    'log.operator',
-    'log.changedOn',
-    'log.createdOn',
-    'log.createdBy',
-    'rs.name as statusName',
-    'rs.i18nKey',
-    'rs.externalId',
-  ]
-  const sortableFields = ['operator', 'changedOn', 'statusName']
-
-  // now we know if the sort that was passed is valid:
-  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
-    return Boom.badRequest()
-  }
-
-  const resultQuery = knex('ResultWorkflowLog as log')
-    .innerJoin('ResultWorkflowStatus as rs', 'log.resultWorkflowStatusId', 'rs.id')
-    .where('log.resultId', params.resultId)
-
-  // get total count for paging
-  const getCount = resultQuery.clone().count('log.id as count').first()
-
-  // get rows
-  const getItems = resultQuery.clone().modify(sortPageParams, query, 'changedOn').select(selectFields)
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
 }
 
 /*
@@ -1935,27 +1743,6 @@ async function updateOrCreateResult(request, result = {}) {
   // update or insert tags
   await updateTagsById(result.id, 'result', payload.tags, auth)
 
-  // update/insert workflow status
-  const resultWorkflowStatusExternalId =
-    result.resultCategory1 === (await resultCategoryToId('Error')) ? 'Error' : 'Deliverable'
-
-  const resultWorkflowLogEntry = {
-    resultId: result.id,
-    createdBy: userId,
-    operator: null,
-    reason: 'Manual Result Entry',
-    changedOn: now,
-    createdOn: now,
-  }
-  await updateResultWorkflowStatusByResultId(
-    knex,
-    resultWorkflowLogEntry,
-    resultWorkflowStatusExternalId,
-    null,
-    result.resultWorkflowStatusId,
-    result.resultWorkflowChangedOn
-  )
-
   // insert treatment status (can't be changed manually, so only do on insert)
   if (isCreating) {
     const resultTreatmentStatusId = await resultTreatmentStatusToId('AwaitingTreatment')
@@ -2300,11 +2087,8 @@ module.exports = {
   showResult,
   getResultForStringTemplateProcessing,
   listResultTypes,
-  updateWorkflowStatus,
   updateTreatmentStatusPost,
   listTreatmentStatusTypes,
-  listWorkflowStatusTypes,
-  listWorkflowStatusLog,
   showDeviceLogs,
   showFileReferences,
   downloadFile,

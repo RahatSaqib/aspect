@@ -208,27 +208,6 @@ const getResultItemTransformedData = (data, setDelivered, followUps) => ({
         }
       : null,
   },
-  workflowStatus: {
-    name:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered' ? 'Delivered' : data.resultWorkflowStatusName,
-    externalId:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-        ? 'Delivered'
-        : data.resultWorkflowStatusExternalId,
-    i18nKey:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-        ? 'ResultWorkflowStatusDelivered'
-        : data.resultWorkflowStatusi18nKey,
-    reason:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-        ? 'Download Results Api'
-        : data.resultWorkflowStatusReason,
-    changedOn:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-        ? new Date()
-        : data.resultWorkflowStatusChangedOn,
-    setDelivered: setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered',
-  },
   treatmentStatus: {
     changedOn: data.resultTreatmentStatusChangedOn,
     name: data.resultTreatmentStatusName,
@@ -263,7 +242,7 @@ function transformPatientDataBySchema(patientData, patientDataSchema) {
 }
 
 // Transformed data v2 for result by Id
-const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, acknowledgement) => {
+const getResultItemTransformedDataV2 = async (data, setDelivered, followUps) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
@@ -306,29 +285,6 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, ack
       sampleCollectionDate: data.sampleCollectionOn,
       ...getSampleStatus(severity),
     },
-    workflowStatus: {
-      name:
-        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'Delivered'
-          : data.resultWorkflowStatusName,
-      externalId:
-        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'Delivered'
-          : data.resultWorkflowStatusExternalId,
-      i18nKey:
-        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'ResultWorkflowStatusDelivered'
-          : data.resultWorkflowStatusi18nKey,
-      reason:
-        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'Download Results Api'
-          : data.resultWorkflowStatusReason,
-      changedOn:
-        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-          ? new Date()
-          : data.resultWorkflowStatusChangedOn,
-      setDelivered: setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered',
-    },
     treatmentStatus: {
       changedOn: data.resultTreatmentStatusChangedOn,
       name: data.resultTreatmentStatusName,
@@ -355,10 +311,6 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, ack
       backgroundColor: assayAvatar.backgroundColor,
       foregroundColor: assayAvatar.foregroundColor,
       contentIcon: assayAvatar.contentIcon,
-    },
-    clinicalResponse: {
-      recorded: !!acknowledgement,
-      confirmedOn: acknowledgement?.acknowledgedOn ?? null,
     },
     testInformation: [],
     resultRequiresTreatment,

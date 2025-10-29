@@ -52,13 +52,11 @@ module.exports = async (auth, query) => {
       : []),
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
-    { key: 'resultWorkflowStatus', header: 'Result Status' },
     { key: 'resultTreatmentStatus', header: 'Follow Up Status' },
     { key: 'followUpName', header: 'Follow Up' },
     { key: 'followUpDate', header: 'Follow Up Date' },
     { key: 'followUpComment', header: 'Follow Up Comment' },
     { key: 'recordedInRegister', header: 'Recorded In Register' },
-    { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
     { key: 'consumableSerial', header: 'Consumable Serial' },
     { key: 'consumableLot', header: 'Consumable Lot' },
     { key: 'consumableExpirationDate', header: 'Consumable Expiration Date' },
@@ -91,7 +89,6 @@ module.exports = async (auth, query) => {
       { key: 'deviceName', header: 'Device' },
       { key: 'assayName', header: 'Assay' },
       { key: 'errorCode', header: 'Error Code' },
-      { key: 'resultWorkflowStatus', header: 'Workflow Status' },
       { key: 'patientId', header: 'Patient Id' },
     ],
     dataSelector: (
@@ -123,13 +120,10 @@ async function getResultsForExport(auth, query) {
     // override datetime fields with user time offset:
     startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
     endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
-    resultWorkflowChangedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rsl.changedOn', timezoneIANA),
     consumableExpirationDate: getDateTimeProjectionInTimeZoneIANA(knex, 'r.consumableExpirationDate', timezoneIANA),
     createdOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.createdOn', timezoneIANA),
     updatedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.updatedOn', timezoneIANA),
     sampleCollectedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'sp.collectedOn', timezoneIANA),
-    resultWorkflowLogCreatedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rsl.createdOn', timezoneIANA),
-    resultWorkflowLogChangedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rsl.changedOn', timezoneIANA),
     resultTreatmentStatusChangedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rtsl.changedOn', timezoneIANA),
     transferredOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rslog.createdOn', timezoneIANA),
     firstViewedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.firstViewedOn', timezoneIANA),
@@ -186,19 +180,8 @@ async function getResultsForExport(auth, query) {
   const data = await knex
     .from(baseQuery.as('baseQ'))
     .leftJoin(getLatestFollowUps().as('lastestFollowUps'), 'baseQ.id', 'lastestFollowUps.resultId')
-    .leftJoin(
-      getLatestResultWorkflowLog().as('latestResultWorkflowLog'),
-      'baseQ.id',
-      'latestResultWorkflowLog.resultId'
-    )
     .modify(sortPageParams, query, 'endedOn')
-    .select(
-      'baseQ.*',
-      'lastestFollowUps.followUpName',
-      'lastestFollowUps.followUpDate',
-      'latestResultWorkflowLog.followUpComment',
-      'latestResultWorkflowLog.recordedInRegister'
-    )
+    .select('baseQ.*', 'lastestFollowUps.followUpName', 'lastestFollowUps.followUpDate')
 
   return {
     data,
@@ -251,28 +234,6 @@ const getLatestFollowUps = () => {
     .join('FollowUpType as fut', 'fut.id', 'fup.followUpTypeId')
     .where('rf.rowNumber', 1)
     .andWhere('fut.externalId', 'treatment')
-}
-
-const getLatestResultWorkflowLog = () => {
-  const subQuery = knex('ResultWorkflowLog')
-    .select('resultId', 'resultWorkflowStatusId', 'reason', 'changedOn', 'createdOn')
-    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY createdOn DESC) AS rowNumber'))
-
-  return knex
-    .from(subQuery.as('rwl'))
-    .leftJoin('ResultWorkflowStatus as rwsInner', 'rwl.resultWorkflowStatusId', 'rwsInner.id')
-    .whereIn('rwsInner.externalId', ['acknowledged', 'flagged'])
-    .andWhere('rwl.rowNumber', 1)
-    .select(
-      'rwl.resultId',
-      'rwl.reason as followUpComment',
-      knex.raw(`
-        CASE
-          WHEN rwsInner.externalId = 'acknowledged' THEN rwl.changedOn
-          ELSE NULL
-        END AS recordedInRegister
-      `)
-    )
 }
 
 const queryIncludesXdr = (query, xdrAssayId) => {

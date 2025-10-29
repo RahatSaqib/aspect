@@ -9,7 +9,6 @@ const {
   resultCategoryToId,
   resultSourceToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../shared/dictionary')
 const { deviceSeen } = require('../../device/actions')
@@ -493,74 +492,13 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           const senaiteResultModificationDate = parseDateOrDefault(testResultAnalysis.modification_date) // "2018/03/20 06:23:4.257171 GMT+2"
           resultRecord.resultData.senaiteResult.modificationDate = senaiteResultModificationDate
 
-          const resultWorkflowStatusSenaiteMapping = {
-            sample_received: 'Ordered',
-            to_be_verified: 'Processed',
-            verified: 'Validated',
-          }
-          const proposedResultWorkflowStatus = resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state]
-          let resultWorkflowStatus = null
-          if (testResultAnalysis.review_state && proposedResultWorkflowStatus) {
-            let currentResultWorkflowStatus = 'null'
-            if (resultRecord.resultWorkflowStatusLogId) {
-              ;({ externlId: currentResultWorkflowStatus } = (await knex('ResultWorkflowLog as rwl')
-                .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
-                .where('rwl.id', resultRecord.resultWorkflowStatusLogId)
-                .first('rws.externalId')) || { externalId: 'null' })
-            }
-            if (proposedResultWorkflowStatus !== currentResultWorkflowStatus) {
-              const resultWorkflowPriority = {
-                null: 1,
-                OK: 2,
-                Ordered: 3,
-                InProgress: 4,
-                Processed: 5,
-                Error: 6,
-                Validated: 7,
-                Deliverable: 8,
-                Delivered: 9,
-                Acknowledged: 10,
-                Flagged: 11,
-                Purged: 12,
-              }
-              if (
-                resultWorkflowPriority[proposedResultWorkflowStatus] >
-                resultWorkflowPriority[currentResultWorkflowStatus]
-              ) {
-                resultWorkflowStatus = proposedResultWorkflowStatus
-              }
-            }
-          }
           resultRecord.patientData = JSON.stringify(resultRecord.patientData)
           resultRecord.resultData = JSON.stringify(resultRecord.resultData)
           if (resultRecord.id) {
-            if (resultWorkflowStatus) {
-              const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
-                resultId: resultRecord.id,
-                resultWorkflowStatusId: await resultWorkflowStatusToId(resultWorkflowStatus),
-                reason: `Senaite LIMS Reported ${testResultAnalysis.review_state}}`,
-                operator: testResultAnalysis.Verificators || testResultAnalysis.Analyst || testResultAnalysis.Creator,
-                changedOn: senaiteResultModificationDate || now,
-                createdOn: now,
-              })
-              resultRecord.resultWorkflowStatusLogId = resultWorkflowStatusLogId
-            }
             await knex('Result').where('id', resultRecord.id).update(resultRecord)
           } else {
             resultRecord.reportableSiteId = reportableSiteId
-            const [resultId] = await knex('Result').insert(resultRecord)
-            if (resultWorkflowStatus) {
-              const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
-                resultId,
-                resultWorkflowStatusId: await resultWorkflowStatusToId(resultWorkflowStatus),
-                reason: `Senaite LIMS Reported ${testResultAnalysis.review_state}}`,
-                operator: testResultAnalysis.Verificators || testResultAnalysis.Analyst || testResultAnalysis.Creator,
-                changedOn: senaiteResultModificationDate || now,
-                createdOn: now,
-              })
-              resultRecord.resultWorkflowStatusLogId = resultWorkflowStatusLogId
-              await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
-            }
+            await knex('Result').insert(resultRecord)
           }
         })
       }
