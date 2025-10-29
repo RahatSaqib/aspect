@@ -147,12 +147,12 @@ const LIST_FIELDS_UTC2 = {
   sampleId: 'r.sample_externalId',
   resultText: 'r.resultText',
   errorCode: 'r.errorCode',
-  resultTreatmentStatus: 'rts.externalId',
+  resultTreatmentStatus: knex.raw('null'), // not used
   resultTreatmentStatusI18nKey: knex.raw('null'), // not used
   treatmentStatusInfo: knex.raw('null'), // not used
   patientId: 'r.patient_externalId',
   assayId: 'r.assayId',
-  resultCategory1Name: 'rc1.name',
+  resultCategory1Name: 'r.resultCategory1_name',
   resultCategory1I18nKey: 'r.resultCategory1_i18nKey',
   stateName: 'st.name',
   siteName: 'si.name',
@@ -161,7 +161,7 @@ const LIST_FIELDS_UTC2 = {
   caseExternalId: knex.raw('null'), // not used
   diseaseId: 'r.disease_id',
   diseaseName: 'r.disease_name',
-  diseaseExternalId: 'dis.externalId',
+  diseaseExternalId: 'disease_externalId',
   requiresTreatment: 'r.resultCategoryAssay_requiresTreatment',
 }
 
