@@ -125,6 +125,7 @@ async function populateResultReadOnlyTable(knex) {
           knex.raw('LEFT(a.resultCategory2label, 25) as assay_resultCategory2Label'),
           knex.raw('LEFT(a.resultCategory2i18nKey, 40) as assay_resultCategory2Label_i18nKey'),
           'rca.requiresTreatment as resultCategoryAssay_requiresTreatment',
+          'rca.reportable as resultCategoryAssay_reportable',
           'dis.id as disease_id',
           knex.raw('LEFT(dis.name, 25) as disease_name'),
           knex.raw('LEFT(dis.externalId, 10) as disease_externalId'),

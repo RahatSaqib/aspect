@@ -52,12 +52,12 @@ async function recreateResultReadTable(knex) {
     table.boolean('site_disabled').nullable()
     table.string('deviceMaintenanceStatus_externalId', 50).nullable()
     table.string('deviceApproval_token', 50).nullable()
-    table.string('sample_externalId', 32).nullable()
+    table.string('sample_externalId', 32).notNullable()
     table.string('resultSource_name', 25).notNullable()
     table.string('resultSource_externalId', 30).notNullable()
     table.string('resultType_name', 25).notNullable()
     table.string('resultType_externalId', 15).notNullable()
-    table.boolean('resultType_excluded').notNullable()
+    table.boolean('resultType_excluded').nullable()
     table.string('resultCategory1_name', 25).nullable()
     table.string('resultCategory1_i18nKey', 40).nullable()
     table.string('resultCategory2_name', 25).nullable()
@@ -67,9 +67,10 @@ async function recreateResultReadTable(knex) {
     table.string('assay_resultCategory2Label', 25).nullable()
     table.string('assay_resultCategory2Label_i18nKey', 40).nullable()
     table.boolean('resultCategoryAssay_requiresTreatment').nullable()
-    table.integer('disease_Id').unsigned().nullable()
-    table.string('disease_name', 25).nullable()
-    table.string('disease_externalId', 10).nullable()
+    table.boolean('resultCategoryAssay_reportable').nullable()
+    table.integer('disease_Id').unsigned().notNullable()
+    table.string('disease_name', 25).notNullable()
+    table.string('disease_externalId', 10).notNullable()
     table.string('patient_externalId', 100).nullable() // json extracted
     table.string('copies', 15).nullable() // json extracted
     table.string('resultText', 300).nullable() // json extracted, resultData->>$.resultText (2025 max in prod: 286 chars), fallback to resultCategory1_name | resultCategory2_name
@@ -212,6 +213,7 @@ async function createResultReadTriggers(knex) {
         assay_resultCategory2Label,
         assay_resultCategory2Label_i18nKey,
         resultCategoryAssay_requiresTreatment,
+        resultCategoryAssay_reportable,
         disease_Id,
         disease_name,
         disease_externalId,
@@ -282,6 +284,7 @@ async function createResultReadTriggers(knex) {
         LEFT(a.resultCategory2label, 25) as assay_resultCategory2Label,
         LEFT(a.resultCategory2i18nKey, 40) as assay_resultCategory2Label_i18nKey,
         rca.requiresTreatment as resultCategoryAssay_requiresTreatment,
+        rca.reportable as resultCategoryAssay_reportable,
         dis.id as disease_Id,
         LEFT(dis.name, 25) as disease_name,
         LEFT(dis.externalId, 10) as disease_externalId,
@@ -383,6 +386,7 @@ async function createResultReadTriggers(knex) {
         assay_resultCategory2Label = VALUES(assay_resultCategory2Label),
         assay_resultCategory2Label_i18nKey = VALUES(assay_resultCategory2Label_i18nKey),
         resultCategoryAssay_requiresTreatment = VALUES(resultCategoryAssay_requiresTreatment),
+        resultCategoryAssay_reportable = VALUES(resultCategoryAssay_reportable),
         disease_Id = VALUES(disease_Id),
         disease_name = VALUES(disease_name),
         disease_externalId = VALUES(disease_externalId),
