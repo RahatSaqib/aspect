@@ -232,8 +232,8 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       treatmentStatusId: 'rts.id',
       patientCaseId: null, // 'r.patientCaseId',
       diseaseId: 'dis.id',
-      onlyReportableResults: 'rca.reportable',
-      resultCategoryGroupId: 'rcg.externalId',
+      onlyReportableResults: 'r.resultCategoryAssay_reportable',
+      resultCategoryGroupId: 'r.resultCategoryGroup_externalId',
       assayId: 'a.id',
     })
     .modify((queryBuilder, params) => {
