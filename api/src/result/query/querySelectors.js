@@ -138,33 +138,6 @@ const LIST_FIELDS_UTC = {
   requiresTreatment: 'rca.requiresTreatment',
 }
 
-const LIST_FIELDS_UTC2 = {
-  id: 'r.id',
-  endedOn: 'r.endedOn',
-  externalId: 'r.externalId',
-  deviceName: 'd.name',
-  sampleOriginSiteName: 'so.name',
-  sampleId: 'r.sample_externalId',
-  resultText: 'r.resultText',
-  errorCode: 'r.errorCode',
-  resultTreatmentStatus: knex.raw('null'), // not used
-  resultTreatmentStatusI18nKey: knex.raw('null'), // not used
-  treatmentStatusInfo: knex.raw('null'), // not used
-  patientId: 'r.patient_externalId',
-  assayId: 'r.assayId',
-  resultCategory1Name: 'r.resultCategory1_name',
-  resultCategory1I18nKey: 'r.resultCategory1_i18nKey',
-  stateName: 'st.name',
-  siteName: 'si.name',
-  assayName: 'r.assay_name',
-  assayI18nKey: 'r.assay_i18nKey',
-  caseExternalId: knex.raw('null'), // not used
-  diseaseId: 'r.disease_id',
-  diseaseName: 'r.disease_name',
-  diseaseExternalId: 'disease_externalId',
-  requiresTreatment: 'r.resultCategoryAssay_requiresTreatment',
-}
-
 /**
  * Knex result projection for use in @see {service.getResultByResultId}, excluding exports and reports. Datetime fields are in UTC.
  */
@@ -624,7 +597,6 @@ module.exports = {
   COMMON_LIST_FIELDS_UTC,
   SELECT_FIELDS_UTC,
   LIST_FIELDS_UTC,
-  LIST_FIELDS_UTC2,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,

@@ -14,8 +14,8 @@ const {
   validateResponseResultCounts,
   optionalId,
 } = require('./endpointsValidation')
+const { listResults } = require('./listResults')
 const {
-  listResults2,
   downloadResultsList,
   showResult,
   listResultTypes,
@@ -78,7 +78,7 @@ const routes = [
   {
     method: 'GET',
     path: '/result',
-    handler: asyncHandler(listResults2),
+    handler: asyncHandler(listResults),
     config: {
       description: 'Result List',
       notes: 'Pageable and sortable list of results',

@@ -195,7 +195,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
       qb.select(resultFields)
     })
   // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const [data] = await Promise.all([getItems])
 
   // Create extra columns based on the assay configuration
   applyExtraColumns(data, assayColumns)
@@ -204,7 +204,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
 
   const result = {
     ok: true,
-    total,
+    total: 500000,
     length: data.length,
     data,
     extraColumns: assayColumns,
@@ -215,148 +215,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
-  return result
-}
-
-function buildQueryForResultsListAndExport2(query, dataConstraints) {
-  if (dataConstraints.$or) {
-    const orConstraint = dataConstraints.$or
-
-    const isSiteLevelAccess = _.some(orConstraint, obj => _.has(obj, 'site'))
-
-    if (isSiteLevelAccess) {
-      const filteredOrConstraint = _.map(orConstraint, obj => {
-        if (query.reportableSiteId) {
-          return _.omit(obj, 'site')
-        }
-        if (obj.result && obj.result.reportableSiteId) {
-          return {
-            ...obj,
-            result: _.omit(obj.result, 'reportableSiteId'),
-          }
-        }
-        return obj
-      })
-      dataConstraints.$or = filteredOrConstraint
-    }
-  }
-
-  return getQueryForResultsListAndExport2(query, dataConstraints)
-}
-
-async function getListResults2(query, auth, fields = LIST_FIELDS_UTC2) {
-  const selectFields = _.clone(fields)
-  const sortableFields = _.clone(SORT_FIELDS)
-
-  query.minDate = query.minDate instanceof Date ? query.minDate : new Date(query.minDate)
-  query.maxDate = query.maxDate instanceof Date ? query.maxDate : new Date(query.maxDate)
-
-  const assayColumns = []
-
-  if (query.assayId && !_.isArray(query.assayId)) {
-    const { assayId } = query
-    const assay = await knex('Assay as a').where('a.id', assayId).first()
-
-    if (assay.resultCategory1Label) {
-      if (!sortableFields.includes('resultCategory1Name')) {
-        selectFields.resultCategory1Name = 'rc1.name'
-        sortableFields.push('resultCategory1Name')
-      }
-      assayColumns.push({
-        db: 'resultCategory1Name',
-        fieldName: 'resultCategory1Name',
-        type: 'string',
-        title: assay.resultCategory1Label,
-        i18nKey: assay.resultCategory1i18nKey,
-      })
-    }
-
-    if (assay.resultCategory2Label) {
-      if (!sortableFields.includes('resultCategory2Name')) {
-        selectFields.resultCategory2Name = 'resultCategory2_name'
-        sortableFields.push('resultCategory2Name')
-      }
-      assayColumns.push({
-        db: 'resultCategory2Name',
-        fieldName: 'resultCategory2Name',
-        type: 'string',
-        title: assay.resultCategory2Label,
-        i18nKey: assay.resultCategory2i18nKey,
-      })
-    }
-
-    if (assay.resultDataSchema) {
-      const resultDataSchema = JSON.parse(assay.resultDataSchema)
-      _.each(resultDataSchema, (value, key) => {
-        if (value.list) {
-          const alias = key.replace('.', '_')
-          if (!sortableFields.includes(alias)) {
-            selectFields[alias] = knex.raw('JSON_EXTRACT(r.resultText, ?)', [`$.${key}`])
-
-            sortableFields.push(alias)
-          }
-          assayColumns.push({
-            db: alias,
-            type: value.type,
-            title: value.title,
-            i18nKey: value.i18nKey,
-            formatter: value.formatter,
-            // postProcess: resultData => JSON.parse(resultData),
-          })
-        }
-      })
-    }
-  }
-
-  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
-    return Boom.badRequest()
-  }
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const resultQuery = buildQueryForResultsListAndExport2(query, dataConstraints)
-  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
-
-  // const getCount = resultQuery.clone().countDistinct('r.id as count').first()
-
-  const resultFields = {
-    resultCategory2Name: 'r.resultCategory2_name',
-    resultCategory2I18nKey: 'r.resultCategory2_i18nKey',
-    resultCategory2Titlei18nKey: 'r.assay_resultCategory2Label_i18nKey',
-    resultCategory1Titlei18nKey: 'r.assay_resultCategory1Label_i18nKey',
-    resultCategory1Title: 'r.assay_resultCategory1Label',
-    resultCategory2Title: 'r.assay_resultCategory2Label',
-    deviceStateName: 'stdpn.name',
-  }
-
-  const getItems = resultQuery
-    .clone()
-
-    .modify(sortPageParams, query, 'endedOn')
-    .select(selectFields)
-    .modify(function (qb) {
-      qb.select(resultFields)
-    })
-
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  applyExtraColumns(data, assayColumns)
-  sanitizeExtraColumns(assayColumns)
-
-  const result = {
-    ok: true,
-    total,
-    length: data.length,
-    data,
-    extraColumns: assayColumns,
-  }
-  return result
-}
-
-async function listResults2(request) {
-  const { query, auth } = request
-  const result = await getListResults2(query, auth)
   return result
 }
 
@@ -2230,7 +2088,6 @@ async function xdrAssayGraphAggregations(request) {
 module.exports = {
   updateTransferNotification,
   listResults,
-  listResults2,
   getResultsForReport,
   downloadResultsList,
   showResult,
@@ -2253,7 +2110,6 @@ module.exports = {
   followUpAggregations,
   queryResultFollowUpLastItems,
   getListResults,
-  getListResults2,
   createResult,
   addPartnerQueryConstraints,
   addResultDownloadLog,
@@ -2269,5 +2125,4 @@ module.exports = {
   processGroupedQuery,
   getQuarterByMonth,
   buildQueryForResultsListAndExport,
-  buildQueryForResultsListAndExport2,
 }
