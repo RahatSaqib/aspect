@@ -417,7 +417,9 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
         /**
          * deviceApproval is null or 'approved' or 'decommissioned' only
          */
-        queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token in ('approved', 'decommissioned')`)
+        queryBuilder.whereRaw(
+          `(deviceApproval.token is null or deviceApproval.token in ('approved', 'decommissioned'))`
+        )
       }
     }
   }
