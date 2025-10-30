@@ -4,13 +4,7 @@ const dateFormat = require('date-fns/format')
 const { format, addMonths, startOfDay, endOfDay } = require('date-fns')
 const Promise = require('bluebird')
 const { getAllMonthsInRange, getMonthYearField, returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
-const {
-  getReportCommonFieldsTZ,
-  LIST_FIELDS_UTC,
-  LIST_FIELDS_UTC2,
-  SORT_FIELDS,
-  RESULT_STRING_TEMPLATE_FIELDS,
-} = require('./query')
+const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const {
   addConstraints,
@@ -195,7 +189,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
       qb.select(resultFields)
     })
   // return result when both queries are finished
-  const [data] = await Promise.all([getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   // Create extra columns based on the assay configuration
   applyExtraColumns(data, assayColumns)
@@ -204,7 +198,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
 
   const result = {
     ok: true,
-    total: 500000,
+    total,
     length: data.length,
     data,
     extraColumns: assayColumns,

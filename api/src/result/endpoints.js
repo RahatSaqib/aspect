@@ -14,7 +14,7 @@ const {
   validateResponseResultCounts,
   optionalId,
 } = require('./endpointsValidation')
-const { listResults } = require('./listResults')
+const { listResults } = require('./listResults/listResults')
 const {
   downloadResultsList,
   showResult,

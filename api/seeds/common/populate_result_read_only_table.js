@@ -120,6 +120,7 @@ async function populateResultReadOnlyTable(knex) {
           knex.raw('LEFT(rc1.i18nKey, 40) as resultCategory1_i18nKey'),
           knex.raw('LEFT(rc2.name, 25) as resultCategory2_name'),
           knex.raw('LEFT(rc2.i18nKey, 40) as resultCategory2_i18nKey'),
+
           knex.raw('LEFT(a.resultCategory1label, 25) as assay_resultCategory1Label'),
           knex.raw('LEFT(a.resultCategory1i18nKey, 40) as assay_resultCategory1Label_i18nKey'),
           knex.raw('LEFT(a.resultCategory2label, 25) as assay_resultCategory2Label'),
