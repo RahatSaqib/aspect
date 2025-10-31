@@ -63,6 +63,11 @@ async function populateResultReadOnlyTable(knex) {
         })
         .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
         .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+        .leftJoin('ResultCategoryGroup as rcg', join => {
+          join.on('r.resultCategory1', 'rcg.resultCategory1Id')
+          join.andOn(knex.raw('r.resultCategory2 <=> rcg.resultCategory2Id'))
+          join.andOn('r.assayId', 'rcg.assayId')
+        })
         .select(
           'r.id',
           'r.partnerId',
@@ -120,7 +125,10 @@ async function populateResultReadOnlyTable(knex) {
           knex.raw('LEFT(rc1.i18nKey, 40) as resultCategory1_i18nKey'),
           knex.raw('LEFT(rc2.name, 25) as resultCategory2_name'),
           knex.raw('LEFT(rc2.i18nKey, 40) as resultCategory2_i18nKey'),
-
+          'rcg.id as resultCategoryGroup_id',
+          knex.raw('LEFT(rcg.externalId, 47) as resultCategoryGroup_externalId'),
+          knex.raw('LEFT(rcg.name, 45) as resultCategoryGroup_name'),
+          knex.raw('LEFT(rcg.i18nKey, 65) as resultCategoryGroup_i18nKey'),
           knex.raw('LEFT(a.resultCategory1label, 25) as assay_resultCategory1Label'),
           knex.raw('LEFT(a.resultCategory1i18nKey, 40) as assay_resultCategory1Label_i18nKey'),
           knex.raw('LEFT(a.resultCategory2label, 25) as assay_resultCategory2Label'),
