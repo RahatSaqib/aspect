@@ -94,6 +94,8 @@ async function createResultReadTableIndexes(knex) {
     table.index(['partnerId', 'sample_externalId'], 'idx_result_read_partnerId_sample_externalId')
   })
 
+  await knex.schema.raw('CREATE INDEX idx_result_read_partnerId_endedOn_desc ON Result_read (partnerId, endedOn DESC)')
+
   // Composite indexes for common query patterns
   await knex.schema.raw(
     'CREATE INDEX idx_result_read_partnerId_assayId_endedOn_desc ON Result_read (partnerId, assayId, endedOn DESC)'
