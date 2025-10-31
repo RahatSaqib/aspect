@@ -212,6 +212,10 @@ async function createResultReadTriggers(knex) {
         resultCategory1_i18nKey,
         resultCategory2_name,
         resultCategory2_i18nKey,
+        resultCategoryGroup_id,
+        resultCategoryGroup_externalId,
+        resultCategoryGroup_name,
+        resultCategoryGroup_i18nKey,
         assay_resultCategory1Label,
         assay_resultCategory1Label_i18nKey,
         assay_resultCategory2Label,
@@ -283,6 +287,10 @@ async function createResultReadTriggers(knex) {
         LEFT(rc1.i18nKey, 40) as resultCategory1_i18nKey,
         LEFT(rc2.name, 25) as resultCategory2_name,
         LEFT(rc2.i18nKey, 40) as resultCategory2_i18nKey,
+        rcg.id as resultCategoryGroup_id,
+        LEFT(rcg.externalId, 47) as resultCategoryGroup_externalId,
+        LEFT(rcg.name, 45) as resultCategoryGroup_name,
+        LEFT(rcg.i18nKey, 65) as resultCategoryGroup_i18nKey,
         LEFT(a.resultCategory1label, 25) as assay_resultCategory1Label,
         LEFT(a.resultCategory1i18nKey, 40) as assay_resultCategory1Label_i18nKey,
         LEFT(a.resultCategory2label, 25) as assay_resultCategory2Label,
@@ -328,6 +336,9 @@ async function createResultReadTriggers(knex) {
       ) as dmsl ON d.id = dmsl.deviceId AND dmsl.rn = 1
       LEFT JOIN DeviceMaintenanceStatus as dms ON dmsl.deviceMaintenanceStatusId = dms.id
       LEFT JOIN DeviceApproval as da ON d.deviceApprovalId = da.id
+      LEFT JOIN ResultCategoryGroup as rcg ON r.resultCategory1 = rcg.resultCategory1Id
+        AND r.resultCategory2 <=> rcg.resultCategory2Id
+        AND r.assayId = rcg.assayId
       WHERE r.id = NEW.id
       ON DUPLICATE KEY UPDATE
         partnerId = VALUES(partnerId),
@@ -385,6 +396,10 @@ async function createResultReadTriggers(knex) {
         resultCategory1_i18nKey = VALUES(resultCategory1_i18nKey),
         resultCategory2_name = VALUES(resultCategory2_name),
         resultCategory2_i18nKey = VALUES(resultCategory2_i18nKey),
+        resultCategoryGroup_id = VALUES(resultCategoryGroup_id),
+        resultCategoryGroup_externalId = VALUES(resultCategoryGroup_externalId),
+        resultCategoryGroup_name = VALUES(resultCategoryGroup_name),
+        resultCategoryGroup_i18nKey = VALUES(resultCategoryGroup_i18nKey),
         assay_resultCategory1Label = VALUES(assay_resultCategory1Label),
         assay_resultCategory1Label_i18nKey = VALUES(assay_resultCategory1Label_i18nKey),
         assay_resultCategory2Label = VALUES(assay_resultCategory2Label),
