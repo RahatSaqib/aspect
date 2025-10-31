@@ -72,7 +72,7 @@ async function recreateResultReadTable(knex) {
     table.string('assay_resultCategory2Label_i18nKey', 40).nullable()
     table.boolean('resultCategoryAssay_requiresTreatment').nullable()
     table.boolean('resultCategoryAssay_reportable').nullable()
-    table.integer('disease_Id').unsigned().notNullable()
+    table.integer('disease_id').unsigned().notNullable()
     table.string('disease_name', 25).notNullable()
     table.string('disease_externalId', 10).notNullable()
     table.string('patient_externalId', 100).nullable() // json extracted
@@ -222,7 +222,7 @@ async function createResultReadTriggers(knex) {
         assay_resultCategory2Label_i18nKey,
         resultCategoryAssay_requiresTreatment,
         resultCategoryAssay_reportable,
-        disease_Id,
+        disease_id,
         disease_name,
         disease_externalId,
         patient_externalId,
@@ -297,7 +297,7 @@ async function createResultReadTriggers(knex) {
         LEFT(a.resultCategory2i18nKey, 40) as assay_resultCategory2Label_i18nKey,
         rca.requiresTreatment as resultCategoryAssay_requiresTreatment,
         rca.reportable as resultCategoryAssay_reportable,
-        dis.id as disease_Id,
+        dis.id as disease_id,
         LEFT(dis.name, 25) as disease_name,
         LEFT(dis.externalId, 10) as disease_externalId,
         LEFT(JSON_UNQUOTE(JSON_EXTRACT(r.patientData, '$.id')), 100) as patient_externalId,
@@ -406,7 +406,7 @@ async function createResultReadTriggers(knex) {
         assay_resultCategory2Label_i18nKey = VALUES(assay_resultCategory2Label_i18nKey),
         resultCategoryAssay_requiresTreatment = VALUES(resultCategoryAssay_requiresTreatment),
         resultCategoryAssay_reportable = VALUES(resultCategoryAssay_reportable),
-        disease_Id = VALUES(disease_Id),
+        disease_id = VALUES(disease_id),
         disease_name = VALUES(disease_name),
         disease_externalId = VALUES(disease_externalId),
         patient_externalId = VALUES(patient_externalId),
