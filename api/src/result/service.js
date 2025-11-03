@@ -37,7 +37,6 @@ const { GRAPH_FLAGS } = require('../shared/constants')
 const {
   getResultByResultId,
   getQueryForResultsListAndExport,
-  getQueryForResultsListAndExport2,
   showFileReferencesById,
   getFactResultCountBase,
   FACT_FIELD_SCOPE,

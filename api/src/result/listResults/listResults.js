@@ -126,16 +126,9 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
       qb.select(resultFields)
     })
 
-  const start = new Date()
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
   applyExtraColumns(data, assayColumns)
   sanitizeExtraColumns(assayColumns)
-  const end = new Date()
-
-  // ANSI escape code for green text
-  const green = '\x1b[32m'
-  const reset = '\x1b[0m'
-  console.log(`${green}Time taken: ${end - start} milliseconds${reset}`)
 
   const result = {
     ok: true,
