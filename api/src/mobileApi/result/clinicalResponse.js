@@ -58,7 +58,7 @@ async function clinicalResponse(request) {
       payload.filter(fuv => fuv.fieldName === ACKNOWLEDGED_FIELD_NAME),
       fuv => fuv.clientTime
     ).reverse()[0]
-    if (confirmedValueCaptured && resultEntry.clinicalResponse.recorded !== confirmedValueCaptured.value) {
+    if (confirmedValueCaptured) {
       if (confirmedValueCaptured.value) {
         resultEntry = await showResult(resultId, dataConstraints)
       } else {
@@ -114,28 +114,11 @@ async function clinicalResponse(request) {
         ),
         fu => fu.updatedOn
       )[0]
-      if (
-        !existingTreatmentAfter &&
-        (resultEntry.clinicalResponse.treatment !== mostRecentTreatmentInPayload.externalId ||
-          (resultEntry.clinicalResponse.treatmentStarted?.toISOString() || '') !==
-            (mostRecentTreatmentInPayload.date?.toISOString() || ''))
-      ) {
+      if (!existingTreatmentAfter) {
         if (mostRecentTreatmentInPayload.externalId === null) {
           await deleteResultFollowUps(
             mostRecentTreatmentInPayload.resultId,
             mostRecentTreatmentInPayload.followUpTypeExternalId,
-            mostRecentTreatmentInPayload.updatedBy,
-            mostRecentTreatmentInPayload.updatedOn
-          )
-        } else if (resultEntry.clinicalResponse.treatment !== mostRecentTreatmentInPayload.externalId) {
-          const followUp = await getFollowUpByExternalId(mostRecentTreatmentInPayload.externalId)
-          await addResultFollowUp(
-            mostRecentTreatmentInPayload.resultId,
-            mostRecentTreatmentInPayload.externalId,
-            followUp.id,
-            mostRecentTreatmentInPayload.date,
-            mostRecentTreatmentInPayload.createdBy,
-            mostRecentTreatmentInPayload.createdOn,
             mostRecentTreatmentInPayload.updatedBy,
             mostRecentTreatmentInPayload.updatedOn
           )
@@ -179,29 +162,12 @@ async function clinicalResponse(request) {
         ),
         fu => fu.updatedOn
       )[0]
-      if (
-        !existingOutcomeAfter &&
-        (resultEntry.clinicalResponse.outcome !== mostRecentOutcomeInPayload.externalId ||
-          (resultEntry.clinicalResponse.outcomeOccurred?.toISOString() || '') !==
-            (mostRecentOutcomeInPayload.date?.toISOString() || ''))
-      ) {
+      if (!existingOutcomeAfter) {
         if (mostRecentOutcomeInPayload.externalId === null) {
           await deleteResultFollowUps(
             mostRecentOutcomeInPayload.resultId,
             mostRecentOutcomeInPayload.followUpTypeExternalId,
             mostRecentOutcomeInPayload.updatedBy
-          )
-        } else if (resultEntry.clinicalResponse.outcome !== mostRecentOutcomeInPayload.externalId) {
-          const followUp = await getFollowUpByExternalId(mostRecentOutcomeInPayload.externalId)
-          await addResultFollowUp(
-            mostRecentOutcomeInPayload.resultId,
-            mostRecentOutcomeInPayload.externalId,
-            followUp.id,
-            mostRecentOutcomeInPayload.date,
-            mostRecentOutcomeInPayload.createdBy,
-            mostRecentOutcomeInPayload.createdOn,
-            mostRecentOutcomeInPayload.updatedBy,
-            mostRecentOutcomeInPayload.updatedOn
           )
         } else {
           await updateMostRecentResultFollowUp(
