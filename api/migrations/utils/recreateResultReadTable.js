@@ -6,18 +6,18 @@ async function recreateResultReadTable(knex) {
     // SampleRunNumber skipped, not in use
     // SampleGroup skipped, not in use
     table.increments('id').primary()
-    table.integer('partnerId').unsigned().notNullable() // use join
-    table.integer('assayId').unsigned().notNullable() // use join
+    table.integer('partnerId').unsigned().nullable() // use join
+    table.integer('assayId').unsigned().nullable() // use join
     table.integer('siteId').unsigned().nullable() // use join
-    table.integer('deviceId').unsigned().notNullable() // usejoin
+    table.integer('deviceId').unsigned().nullable() // usejoin
     table.string('externalId', 100).nullable()
     table.integer('reportableSiteId').unsigned().nullable()
     table.integer('referringSiteId').unsigned().nullable()
-    table.integer('resultSourceId').unsigned().notNullable() // denormalized
-    table.integer('resultTypeId').unsigned().notNullable() // denormalized
+    table.integer('resultSourceId').unsigned().nullable() // denormalized
+    table.integer('resultTypeId').unsigned().nullable() // denormalized
     table.float('longitude', 10, 6).nullable()
     table.float('latitude', 10, 6).nullable()
-    table.integer('sampleId').unsigned().notNullable() // use join
+    table.integer('sampleId').unsigned().nullable() // use join
     table.integer('resultCategory1').unsigned().nullable() // denormalized
     table.integer('resultCategory2').unsigned().nullable() // denormalized
     table.integer('resultStatusLogId').unsigned().nullable() // use join
@@ -35,14 +35,14 @@ async function recreateResultReadTable(knex) {
     table.string('senderOperator', 50).nullable()
     table.string('oemData', 4).nullable()
     table.string('errorCode', 4).nullable()
-    table.dateTime('createdOn').notNullable()
+    table.dateTime('createdOn').nullable()
     table.integer('createdBy').unsigned().nullable()
-    table.dateTime('updatedOn').notNullable()
+    table.dateTime('updatedOn').nullable()
     table.integer('updatedBy').unsigned().nullable()
     table.dateTime('reconciliationDate').nullable()
     // Related fields
     table.integer('country_id').unsigned().nullable()
-    table.string('assay_externalId', 15).notNullable()
+    table.string('assay_externalId', 15).nullable()
     table.string('assay_name', 30).notNullable()
     table.string('assay_i18nKey', 20).notNullable()
     table.integer('assayType_id').unsigned().nullable()
@@ -52,7 +52,7 @@ async function recreateResultReadTable(knex) {
     table.boolean('site_disabled').nullable()
     table.string('deviceMaintenanceStatus_externalId', 50).nullable()
     table.string('deviceApproval_token', 50).nullable()
-    table.string('sample_externalId', 32).notNullable()
+    table.string('sample_externalId', 32).nullable()
     table.string('resultSource_name', 25).notNullable()
     table.string('resultSource_externalId', 30).notNullable()
     table.string('resultType_name', 25).notNullable()
