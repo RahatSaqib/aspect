@@ -17,7 +17,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
       if (query.consumableId)
         queryBuilder.join('InventoryLog as il', 'il.resultId', 'r.id').where('il.consumableId', query.consumableId)
-      if (!assayId) {
+      if (query.assayId) {
         queryBuilder.whereIn('r.assayId', assayId)
       }
       if (query.reportableSiteId || query.reportableSiteName) {
