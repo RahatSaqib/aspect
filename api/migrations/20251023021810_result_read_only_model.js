@@ -6,5 +6,5 @@ exports.up = async function (knex) {
 
 // order by r.id;
 exports.down = async function (knex) {
-  await knex.schema.dropTableIfExists('Result_read')
+  await knex.schema.dropTableIfExists('Result_READ')
 }

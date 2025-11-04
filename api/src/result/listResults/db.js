@@ -127,7 +127,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
 }
 
 const getBaseResults = () =>
-  knex(`Result_read as r`)
+  knex(`Result_READ as r`)
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')

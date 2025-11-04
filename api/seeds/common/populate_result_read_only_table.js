@@ -8,10 +8,10 @@ const {
 async function populateResultReadOnlyTable(knex) {
   const start = new Date()
   // eslint-disable-next-line no-console
-  console.log(`\x1b[33mDeleting Triggers on Result_read table....`)
+  console.log(`\x1b[33mDeleting Triggers on Result_READ table....`)
   await dropResultReadTriggers(knex)
   // eslint-disable-next-line no-console
-  console.log(`\x1b[33mDeleting Indexes on Result_read table....`)
+  console.log(`\x1b[33mDeleting Indexes on Result_READ table....`)
   await dropResultReadTableIndexes(knex)
 
   const latestDeviceMaintenanceStatus = knex('DeviceMaintenanceStatusLog as dmsl')
@@ -36,7 +36,7 @@ async function populateResultReadOnlyTable(knex) {
     const endId = (i + 1) * BATCH_SIZE
     const batchStart = new Date()
     // eslint-disable-next-line no-await-in-loop
-    await knex('Result_read').insert(function () {
+    await knex('Result_READ').insert(function () {
       return this.from('Result as r')
         .innerJoin('Assay as a', 'r.assayId', 'a.id')
         .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -157,10 +157,10 @@ async function populateResultReadOnlyTable(knex) {
   }
 
   // eslint-disable-next-line no-console
-  console.log(`\x1b[33mCreating Indexes on Result_read table....`)
+  console.log(`\x1b[33mCreating Indexes on Result_READ table....`)
   await createResultReadTableIndexes(knex)
   // eslint-disable-next-line no-console
-  console.log(`\x1b[33mCreating Triggers on Result_read table....`)
+  console.log(`\x1b[33mCreating Triggers on Result_READ table....`)
   await createResultReadTriggers(knex)
   const end = new Date()
   // eslint-disable-next-line no-console

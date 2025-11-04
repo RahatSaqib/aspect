@@ -1,6 +1,6 @@
 async function recreateResultReadTable(knex) {
-  await knex.raw('DROP TABLE IF EXISTS Result_read')
-  await knex.schema.createTable('Result_read', function (table) {
+  await knex.raw('DROP TABLE IF EXISTS Result_READ')
+  await knex.schema.createTable('Result_READ', function (table) {
     // PatientCase skipped, not in use
     // TreatmentStatus skipped, not in use
     // SampleRunNumber skipped, not in use
@@ -82,47 +82,47 @@ async function recreateResultReadTable(knex) {
   })
 
   // Create the primary key on id for the upsert operations
-  await knex.schema.alterTable('Result_read', function (table) {
+  await knex.schema.alterTable('Result_READ', function (table) {
     table.unique('id')
   })
 }
 
 async function createResultReadTableIndexes(knex) {
-  await knex.schema.table('Result_read', function (table) {
+  await knex.schema.table('Result_READ', function (table) {
     table.index('partnerId', 'idx_result_read_partnerId')
     table.index(['partnerId', 'reconciliationDate'], 'idx_result_read_partnerId_reconciliationDate')
     table.index(['partnerId', 'sample_externalId'], 'idx_result_read_partnerId_sample_externalId')
   })
 
-  await knex.schema.raw('CREATE INDEX idx_result_read_partnerId_endedOn_desc ON Result_read (partnerId, endedOn DESC)')
+  await knex.schema.raw('CREATE INDEX idx_result_read_partnerId_endedOn_desc ON Result_READ (partnerId, endedOn DESC)')
 
   // Composite indexes for common query patterns
   await knex.schema.raw(
-    'CREATE INDEX idx_result_read_partnerId_assayId_endedOn_desc ON Result_read (partnerId, assayId, endedOn DESC)'
+    'CREATE INDEX idx_result_read_partnerId_assayId_endedOn_desc ON Result_READ (partnerId, assayId, endedOn DESC)'
   ) // getQueryForResultsListAndExport, getClinicalIndicatorQueryForResultsTable
 
   await knex.schema.raw(
-    'CREATE INDEX idx_result_read_partnerId_siteId_endedOn_desc ON Result_read (partnerId, siteId, endedOn DESC)'
+    'CREATE INDEX idx_result_read_partnerId_siteId_endedOn_desc ON Result_READ (partnerId, siteId, endedOn DESC)'
   ) // getQueryForResultsListAndExport, getQueryForDataExtract, confirmedTreatmentTracking
 
   await knex.schema.raw(
-    'CREATE INDEX idx_result_read_partnerId_deviceId_endedOn_desc ON Result_read (partnerId, deviceId, endedOn DESC)'
+    'CREATE INDEX idx_result_read_partnerId_deviceId_endedOn_desc ON Result_READ (partnerId, deviceId, endedOn DESC)'
   ) // getQueryForResultsListAndExport, getQueryForDataExtract, getDeviceErrorHistoryForAttachment
 
   await knex.schema.raw(
-    'CREATE INDEX idx_result_read_partnerId_reportableSiteId_endedOn_desc ON Result_read (partnerId, reportableSiteId, endedOn DESC)'
+    'CREATE INDEX idx_result_read_partnerId_reportableSiteId_endedOn_desc ON Result_READ (partnerId, reportableSiteId, endedOn DESC)'
   ) // getQueryForResultsListAndExport, transferResult queries
 
   await knex.schema.raw(
-    'CREATE INDEX idx_result_read_partnerId_resultCategory1_endedOn_desc ON Result_read (partnerId, resultCategory1, endedOn DESC)'
+    'CREATE INDEX idx_result_read_partnerId_resultCategory1_endedOn_desc ON Result_READ (partnerId, resultCategory1, endedOn DESC)'
   ) // getQueryForResultsListAndExport, getClinicalIndicatorQueryForResultsTable, confirmedTreatmentTracking
 
   await knex.schema.raw(
-    'CREATE INDEX idx_result_read_partnerId_assayId_resultCategory1_endedOn_desc ON Result_read (partnerId, assayId, resultCategory1, endedOn DESC)'
+    'CREATE INDEX idx_result_read_partnerId_assayId_resultCategory1_endedOn_desc ON Result_READ (partnerId, assayId, resultCategory1, endedOn DESC)'
   ) // Common query pattern with category filtering
 
   await knex.schema.raw(
-    'CREATE INDEX idx_result_read_partnerId_externalId_endedOn_desc ON Result_read (partnerId, externalId, endedOn DESC)'
+    'CREATE INDEX idx_result_read_partnerId_externalId_endedOn_desc ON Result_READ (partnerId, externalId, endedOn DESC)'
   ) // ExternalId lookups with ordering
 }
 
@@ -143,7 +143,7 @@ async function dropResultReadTableIndexes(knex) {
   for (const indexName of indexNames) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      await knex.schema.raw(`DROP INDEX ${indexName} ON Result_read`)
+      await knex.schema.raw(`DROP INDEX ${indexName} ON Result_READ`)
     } catch (err) {
       // Index doesn't exist, ignore error
     }
@@ -156,9 +156,9 @@ async function createResultReadTriggers(knex) {
   await knex.raw('DROP TRIGGER IF EXISTS `trg_result_read_update`')
   await knex.raw('DROP TRIGGER IF EXISTS `trg_result_read_delete`')
 
-  // Common SQL for both triggers - inserts or updates into Result_read
+  // Common SQL for both triggers - inserts or updates into Result_READ
   const upsertQuery = `
-      INSERT INTO Result_read (
+      INSERT INTO Result_READ (
         id,
         partnerId,
         assayId,
@@ -443,7 +443,7 @@ async function createResultReadTriggers(knex) {
     AFTER DELETE ON Result
     FOR EACH ROW
     BEGIN
-    DELETE FROM Result_read WHERE id = OLD.id;
+    DELETE FROM Result_READ WHERE id = OLD.id;
     END
   `)
 }
