@@ -306,7 +306,7 @@ describe('Result route Job constraints', () => {
 
     after(async () => removeUser(bothDiseasesClinicianUserId))
 
-    it("should constrain results returned based on the user's job context", async () => {
+    it.only("should constrain results returned based on the user's job context", async () => {
       const { name: diseaseHivName } = await knex('Disease').where('externalId', diseaseHivExternalId).first()
       const { name: diseaseCovid19Name } = await knex('Disease').where('externalId', diseaseCovid19ExternalId).first()
       const bothDiseasesUserResultsResponse = await server

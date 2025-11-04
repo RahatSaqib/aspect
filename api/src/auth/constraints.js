@@ -288,12 +288,10 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
     } else {
       // read model has built-in disease and assay type fields
       if (constraints.disease?.id) {
-        queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.resultReadAlias}.disease_id`, constraints.disease.id))
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${resultReadAlias}.disease_id`, constraints.disease.id))
       }
       if (constraints.assayType?.id) {
-        queryBuilder.where(qb =>
-          isNullInOrEqual(qb, `${aliases.resultReadAlias}.assayType_id`, constraints.assayType.id)
-        )
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${resultReadAlias}.assayType_id`, constraints.assayType.id))
       }
     }
   } else {
@@ -454,14 +452,17 @@ function addOrConstraints(
     sample,
     deviceType,
     issue,
+    result_read: resultReadAlias,
   }
 ) {
   // data filter constraints are ORed
   if (!_.isEmpty(_.get(constraints, '$or'))) {
-    for (const constraint of constraints.$or) {
-      if (constraint.disease && assay && !disease && !assayType) {
-        assayType = alias('AssayType')
-        queryBuilder.leftOuterJoin(`AssayType as ${assayType}`, `${assay}.assayTypeId`, `${assayType}.id`)
+    if (assay && !disease && !assayType && !resultReadAlias) {
+      for (const constraint of constraints.$or) {
+        if (constraint.disease) {
+          assayType = alias('AssayType')
+          queryBuilder.leftOuterJoin(`AssayType as ${assayType}`, `${assay}.assayTypeId`, `${assayType}.id`)
+        }
       }
     }
 
@@ -472,7 +473,9 @@ function addOrConstraints(
       personAlias: person,
       personConstraint: constraint.person,
       allowAdminThrough,
+      resultReadAlias,
     })
+
     queryBuilder.andWhere(qb => {
       for (const constraint of constraints.$or) {
         qb.orWhere(qb => {

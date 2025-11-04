@@ -30,7 +30,7 @@ const LIST_FIELDS_UTC = {
   caseExternalId: knex.raw('null'), // not used
   diseaseId: 'r.disease_id',
   diseaseName: 'r.disease_name',
-  diseaseExternalId: 'disease_externalId',
+  diseaseExternalId: 'r.disease_externalId',
   requiresTreatment: knex.raw(
     'COALESCE(r.resultCategory1Assay_requiresTreatment,0) OR COALESCE(r.resultCategory2Assay_requiresTreatment,0)'
   ),

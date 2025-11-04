@@ -91,8 +91,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       addConstraints,
       dataConstraints,
       {
-        assay: 'a',
-        assayType: 'at',
         device: 'd',
         deviceType: 'dt',
         sample: 'sp',
@@ -100,7 +98,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         geography: 'g',
         result_read: 'r',
         country: 'c',
-        disease: 'dis',
+        // disease: 'dis',
       },
       { showUnapprovedDevices, showDecommissionedDevices, displayResult }
     )
