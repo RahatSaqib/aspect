@@ -70,7 +70,8 @@ async function recreateResultReadTable(knex) {
     table.string('assay_resultCategory1Label_i18nKey', 40).nullable()
     table.string('assay_resultCategory2Label', 25).nullable()
     table.string('assay_resultCategory2Label_i18nKey', 40).nullable()
-    table.boolean('resultCategoryAssay_requiresTreatment').nullable()
+    table.boolean('resultCategory1Assay_requiresTreatment').nullable()
+    table.boolean('resultCategory2Assay_requiresTreatment').nullable()
     table.boolean('resultCategoryAssay_reportable').nullable()
     table.integer('disease_id').unsigned().nullable()
     table.string('disease_name', 25).nullable()
@@ -223,7 +224,8 @@ async function createResultReadTriggers(knex) {
         assay_resultCategory1Label_i18nKey,
         assay_resultCategory2Label,
         assay_resultCategory2Label_i18nKey,
-        resultCategoryAssay_requiresTreatment,
+        resultCategory1Assay_requiresTreatment,
+        resultCategory2Assay_requiresTreatment,
         resultCategoryAssay_reportable,
         disease_id,
         disease_name,
@@ -298,8 +300,9 @@ async function createResultReadTriggers(knex) {
         LEFT(a.resultCategory1i18nKey, 40) as assay_resultCategory1Label_i18nKey,
         LEFT(a.resultCategory2label, 25) as assay_resultCategory2Label,
         LEFT(a.resultCategory2i18nKey, 40) as assay_resultCategory2Label_i18nKey,
-        rca.requiresTreatment as resultCategoryAssay_requiresTreatment,
-        rca.reportable as resultCategoryAssay_reportable,
+        rca1.requiresTreatment as resultCategory1Assay_requiresTreatment,
+        rca2.requiresTreatment as resultCategory2Assay_requiresTreatment,
+        rca1.reportable as resultCategoryAssay_reportable,
         dis.id as disease_id,
         LEFT(dis.name, 25) as disease_name,
         LEFT(dis.externalId, 10) as disease_externalId,
@@ -331,7 +334,8 @@ async function createResultReadTriggers(knex) {
       LEFT JOIN Sample as sp ON r.sampleId = sp.id
       LEFT JOIN SampleType as stp ON sp.sampleTypeId = stp.id
       LEFT JOIN Site as so ON sp.originSiteId = so.id
-      LEFT JOIN ResultCategoryAssay as rca ON r.assayId = rca.assayId AND r.resultCategory1 = rca.resultCategoryId
+      LEFT JOIN ResultCategoryAssay as rca1 ON r.assayId = rca1.assayId AND r.resultCategory1 = rca1.resultCategoryId
+      LEFT JOIN ResultCategoryAssay as rca2 ON r.assayId = rca2.assayId AND r.resultCategory2 = rca2.resultCategoryId
       LEFT JOIN (
         SELECT dmsl.*,
                ROW_NUMBER() OVER (PARTITION BY deviceId ORDER BY id DESC) as rn
@@ -407,7 +411,8 @@ async function createResultReadTriggers(knex) {
         assay_resultCategory1Label_i18nKey = VALUES(assay_resultCategory1Label_i18nKey),
         assay_resultCategory2Label = VALUES(assay_resultCategory2Label),
         assay_resultCategory2Label_i18nKey = VALUES(assay_resultCategory2Label_i18nKey),
-        resultCategoryAssay_requiresTreatment = VALUES(resultCategoryAssay_requiresTreatment),
+        resultCategory1Assay_requiresTreatment = VALUES(resultCategory1Assay_requiresTreatment),
+        resultCategory2Assay_requiresTreatment = VALUES(resultCategory2Assay_requiresTreatment),
         resultCategoryAssay_reportable = VALUES(resultCategoryAssay_reportable),
         disease_id = VALUES(disease_id),
         disease_name = VALUES(disease_name),

@@ -55,8 +55,11 @@ async function populateResultReadOnlyTable(knex) {
         .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
         .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
         .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-        .leftJoin('ResultCategoryAssay as rca', function () {
-          this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
+        .leftJoin('ResultCategoryAssay as rca1', function () {
+          this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
+        })
+        .leftJoin('ResultCategoryAssay as rca2', function () {
+          this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
         })
         .leftJoin(latestDeviceMaintenanceStatus, function () {
           this.on('d.id', 'dmsl.deviceId').andOn('dmsl.rn', knex.raw('1'))
@@ -133,8 +136,9 @@ async function populateResultReadOnlyTable(knex) {
           knex.raw('LEFT(a.resultCategory1i18nKey, 40) as assay_resultCategory1Label_i18nKey'),
           knex.raw('LEFT(a.resultCategory2label, 25) as assay_resultCategory2Label'),
           knex.raw('LEFT(a.resultCategory2i18nKey, 40) as assay_resultCategory2Label_i18nKey'),
-          'rca.requiresTreatment as resultCategoryAssay_requiresTreatment',
-          'rca.reportable as resultCategoryAssay_reportable',
+          knex.raw('rca1.requiresTreatment as resultCategory1Assay_requiresTreatment'),
+          knex.raw('rca2.requiresTreatment as resultCategory2Assay_requiresTreatment'),
+          'rca1.reportable as resultCategoryAssay_reportable',
           'dis.id as disease_id',
           knex.raw('LEFT(dis.name, 25) as disease_name'),
           knex.raw('LEFT(dis.externalId, 10) as disease_externalId'),

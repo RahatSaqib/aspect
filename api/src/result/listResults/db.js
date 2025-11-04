@@ -60,7 +60,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       errorCode: 'r.errorCode',
-      treatmentStatusId: 'rts.id',
       patientCaseId: null, // 'r.patientCaseId',
       diseaseId: 'dis.id',
       onlyReportableResults: 'r.resultCategoryAssay_reportable',
@@ -70,9 +69,12 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     .modify((queryBuilder, params) => {
       if (params.onlyDownloadedByReporter) queryBuilder.innerJoin('ResultDownloadLog as rdl', 'r.id', 'rdl.resultId')
 
-      if (params.onlyTreatmentRequired || params.treatmentStatus) {
+      if (params.onlyTreatmentRequired) {
         queryBuilder.andWhere(b => {
-          b.where('rca.requiresTreatment', true).orWhere('rca2.requiresTreatment', true)
+          b.where('r.resultCategory1Assay_requiresTreatment', true).orWhere(
+            'r.resultCategory2Assay_requiresTreatment',
+            true
+          )
         })
       }
 
@@ -82,13 +84,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             .whereRaw('LOWER(r.patient_externalId) like LOWER(?)', [`%${params.patientOrResearchId}%`])
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
-      }
-      if (params.treatmentStatus === 'AwaitingTreatment') {
-        queryBuilder.where(builder =>
-          builder.where('rts.externalId', params.treatmentStatus).orWhereNull('rts.externalId')
-        )
-      } else if (params.treatmentStatus) {
-        queryBuilder.where('rts.externalId', params.treatmentStatus)
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
