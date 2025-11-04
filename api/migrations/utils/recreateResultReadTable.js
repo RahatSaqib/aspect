@@ -10,8 +10,8 @@ async function recreateResultReadTable(knex) {
     table.integer('assayId').unsigned().notNullable() // use join
     table.integer('siteId').unsigned().nullable() // use join
     table.integer('deviceId').unsigned().notNullable() // usejoin
-    table.string('externalId', 100).notNullable()
-    table.integer('reportableSiteId').unsigned().notNullable()
+    table.string('externalId', 100).nullable()
+    table.integer('reportableSiteId').unsigned().nullable()
     table.integer('referringSiteId').unsigned().nullable()
     table.integer('resultSourceId').unsigned().notNullable() // denormalized
     table.integer('resultTypeId').unsigned().notNullable() // denormalized
@@ -72,9 +72,9 @@ async function recreateResultReadTable(knex) {
     table.string('assay_resultCategory2Label_i18nKey', 40).nullable()
     table.boolean('resultCategoryAssay_requiresTreatment').nullable()
     table.boolean('resultCategoryAssay_reportable').nullable()
-    table.integer('disease_id').unsigned().notNullable()
-    table.string('disease_name', 25).notNullable()
-    table.string('disease_externalId', 10).notNullable()
+    table.integer('disease_id').unsigned().nullable()
+    table.string('disease_name', 25).nullable()
+    table.string('disease_externalId', 10).nullable()
     table.string('patient_externalId', 100).nullable() // json extracted
     table.string('copies', 15).nullable() // json extracted
     table.string('resultText', 300).nullable() // json extracted, resultData->>$.resultText (2025 max in prod: 286 chars), fallback to resultCategory1_name | resultCategory2_name
@@ -154,6 +154,7 @@ async function createResultReadTriggers(knex) {
   // Drop existing triggers if they exist
   await knex.raw('DROP TRIGGER IF EXISTS `trg_result_read_insert`')
   await knex.raw('DROP TRIGGER IF EXISTS `trg_result_read_update`')
+  await knex.raw('DROP TRIGGER IF EXISTS `trg_result_read_delete`')
 
   // Common SQL for both triggers - inserts or updates into Result_read
   const upsertQuery = `
@@ -434,6 +435,15 @@ async function createResultReadTriggers(knex) {
     FOR EACH ROW
     BEGIN
     ${upsertQuery}
+    END
+  `)
+
+  await knex.raw(`
+    CREATE TRIGGER trg_result_read_delete
+    AFTER DELETE ON Result
+    FOR EACH ROW
+    BEGIN
+    DELETE FROM Result_read WHERE id = OLD.id;
     END
   `)
 }
