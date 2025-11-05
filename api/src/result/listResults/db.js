@@ -64,7 +64,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       diseaseId: 'disease_id',
       onlyReportableResults: 'r.resultCategoryAssay_reportable',
       resultCategoryGroupId: 'r.resultCategoryGroup_externalId',
-      assayId: 'assay_id',
+      assayId: 'assayId',
     })
     .modify((queryBuilder, params) => {
       if (params.onlyDownloadedByReporter) queryBuilder.innerJoin('ResultDownloadLog as rdl', 'r.id', 'rdl.resultId')
