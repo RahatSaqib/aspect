@@ -61,10 +61,10 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       sampleOriginSite: 'so.name',
       errorCode: 'r.errorCode',
       patientCaseId: null, // 'r.patientCaseId',
-      diseaseId: 'dis.id',
+      diseaseId: 'disease_id',
       onlyReportableResults: 'r.resultCategoryAssay_reportable',
       resultCategoryGroupId: 'r.resultCategoryGroup_externalId',
-      assayId: 'a.id',
+      assayId: 'assay_id',
     })
     .modify((queryBuilder, params) => {
       if (params.onlyDownloadedByReporter) queryBuilder.innerJoin('ResultDownloadLog as rdl', 'r.id', 'rdl.resultId')

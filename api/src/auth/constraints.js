@@ -285,17 +285,17 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
       if (_.get(constraints, 'assayType.id')) {
         queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assay}.assayTypeId`, constraints.assayType.id))
       }
-    } else if (resultReadAlias) {
+    } else {
       // read model has built-in disease and assay type fields
       // Skip top-level disease/assayType constraints when $or constraints exist (they handle it per OR clause)
-      if (!constraints.$or || _.isEmpty(constraints.$or)) {
-        if (constraints.disease?.id) {
-          queryBuilder.where(qb => isNullInOrEqual(qb, `${resultReadAlias}.disease_id`, constraints.disease.id))
-        }
-        if (constraints.assayType?.id) {
-          queryBuilder.where(qb => isNullInOrEqual(qb, `${resultReadAlias}.assayType_id`, constraints.assayType.id))
-        }
+      // if (!constraints.$or || _.isEmpty(constraints.$or)) {
+      if (constraints.disease?.id) {
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${resultReadAlias}.disease_id`, constraints.disease.id))
       }
+      if (constraints.assayType?.id) {
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${resultReadAlias}.assayType_id`, constraints.assayType.id))
+      }
+      // }
     }
   } else {
     // Queries not involving Result table
