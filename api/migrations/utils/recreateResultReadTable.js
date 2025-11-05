@@ -456,6 +456,7 @@ async function createResultReadTriggers(knex) {
 async function dropResultReadTriggers(knex) {
   await knex.raw('DROP TRIGGER IF EXISTS `trg_result_read_insert`')
   await knex.raw('DROP TRIGGER IF EXISTS `trg_result_read_update`')
+  await knex.raw('DROP TRIGGER IF EXISTS `trg_result_read_delete`')
 }
 
 module.exports = {
