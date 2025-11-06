@@ -286,9 +286,6 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
         queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assay}.assayTypeId`, constraints.assayType.id))
       }
     } else {
-      // read model has built-in disease and assay type fields
-      // Skip top-level disease/assayType constraints when $or constraints exist (they handle it per OR clause)
-      // if (!constraints.$or || _.isEmpty(constraints.$or)) {
       if (constraints.disease?.id) {
         queryBuilder.where(qb => isNullInOrEqual(qb, `${resultReadAlias}.disease_id`, constraints.disease.id))
       }
@@ -406,7 +403,7 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
          * any deviceApproval except 'decommissioned'
          */
         queryBuilder.whereRaw(`
-          (deviceApproval.token is null or deviceApproval.token <> 'decommissioned')
+          (deviceApproval.token is null or deviceApproval.token != 'decommissioned')
         `)
         if (hideUnapprovedDevices) {
           /**
@@ -617,6 +614,9 @@ function addConstraints(
   const aliases = _.cloneDeep(receivedAliases)
 
   // Hook Read models
+  // Map result_read to result alias to allow downstream code to reference
+  // aliases.result uniformly, regardless of whether the denormalized
+  // Result_READ table or the standard Result table is being queried.
   if (aliases.result_read) {
     aliases.result = aliases.result_read
   }

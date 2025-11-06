@@ -65,7 +65,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
 
     if (assay.resultCategory2Label) {
       if (!sortableFields.includes('resultCategory2Name')) {
-        selectFields.resultCategory2Name = 'resultCategory2_name'
+        selectFields.resultCategory2Name = 'r.resultCategory2_name'
         sortableFields.push('resultCategory2Name')
       }
       assayColumns.push({
