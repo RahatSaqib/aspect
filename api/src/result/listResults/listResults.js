@@ -83,7 +83,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
         if (value.list) {
           const alias = key.replace('.', '_')
           if (!sortableFields.includes(alias)) {
-            selectFields[alias] = knex.raw('JSON_EXTRACT(r.resultText, ?)', [`$.${key}`])
+            selectFields[alias] = knex.raw('JSON_EXTRACT(r.resultData, ?)', [`$.${key}`])
 
             sortableFields.push(alias)
           }
