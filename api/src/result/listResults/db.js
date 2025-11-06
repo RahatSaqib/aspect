@@ -17,7 +17,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
       if (query.consumableId)
         queryBuilder.join('InventoryLog as il', 'il.resultId', 'r.id').where('il.consumableId', query.consumableId)
-      if (query.assayId) {
+      if (Array.isArray(assayId) && assayId.length > 0) {
         queryBuilder.whereIn('r.assayId', assayId)
       }
       if (query.reportableSiteId || query.reportableSiteName) {
@@ -79,11 +79,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
 
       if (params.patientOrResearchId) {
-        queryBuilder.where(builder =>
-          builder
-            .whereRaw('LOWER(r.patient_externalId) like LOWER(?)', [`%${params.patientOrResearchId}%`])
-            .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
-        )
+        queryBuilder.whereRaw('LOWER(r.patient_externalId) like LOWER(?)', [`%${params.patientOrResearchId}%`])
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
@@ -123,6 +119,7 @@ const getBaseResults = () =>
   knex(`Result_READ as r`)
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
