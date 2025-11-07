@@ -65,11 +65,11 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
 
     if (assay.resultCategory1Label) {
       if (!sortableFields.includes('resultCategory1Name')) {
-        selectFields.resultCategory1Name = 'rc1.name'
+        selectFields.resultCategory1Name = 'r.resultCategory1_name'
         sortableFields.push('resultCategory1Name')
       }
       assayColumns.push({
-        db: 'resultCategory1Name',
+        db: 'resultCategory1_name',
         fieldName: 'resultCategory1Name',
         type: 'string',
         title: assay.resultCategory1Label,
@@ -83,7 +83,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
         sortableFields.push('resultCategory2Name')
       }
       assayColumns.push({
-        db: 'resultCategory2Name',
+        db: 'resultCategory2_name',
         fieldName: 'resultCategory2Name',
         type: 'string',
         title: assay.resultCategory2Label,

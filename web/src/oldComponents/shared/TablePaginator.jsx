@@ -1,6 +1,6 @@
+import React from 'react'
 import { Button } from '@mui/material'
 import min from 'lodash/min'
-import React from 'react'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import { defineMessages, useIntl } from 'react-intl'
 import { compose, pure, withHandlers, withProps } from 'recompose'
