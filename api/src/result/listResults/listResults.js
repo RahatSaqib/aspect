@@ -77,26 +77,26 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
       })
     }
 
-    if (assay.resultDataSchema) {
-      const resultDataSchema = JSON.parse(assay.resultDataSchema)
-      _.each(resultDataSchema, (value, key) => {
-        if (value.list) {
-          const alias = key.replace('.', '_')
-          if (!sortableFields.includes(alias)) {
-            selectFields[alias] = knex.raw('JSON_EXTRACT(r.resultData, ?)', [`$.${key}`])
+    // if (assay.resultDataSchema) {
+    //   const resultDataSchema = JSON.parse(assay.resultDataSchema)
+    //   _.each(resultDataSchema, (value, key) => {
+    //     if (value.list) {
+    //       const alias = key.replace('.', '_')
+    //       if (!sortableFields.includes(alias)) {
+    //         selectFields[alias] = knex.raw('JSON_EXTRACT(r.resultData, ?)', [`$.${key}`])
 
-            sortableFields.push(alias)
-          }
-          assayColumns.push({
-            db: alias,
-            type: value.type,
-            title: value.title,
-            i18nKey: value.i18nKey,
-            formatter: value.formatter,
-          })
-        }
-      })
-    }
+    //         sortableFields.push(alias)
+    //       }
+    //       assayColumns.push({
+    //         db: alias,
+    //         type: value.type,
+    //         title: value.title,
+    //         i18nKey: value.i18nKey,
+    //         formatter: value.formatter,
+    //       })
+    //     }
+    //   })
+    // }
   }
 
   if (query.sortCol && !sortableFields.includes(query.sortCol)) {
