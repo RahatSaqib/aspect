@@ -1,9 +1,9 @@
-import React from 'react'
 import { Button } from '@mui/material'
 import min from 'lodash/min'
+import React from 'react'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import { defineMessages, useIntl } from 'react-intl'
-import { compose, withProps, withHandlers, pure } from 'recompose'
+import { compose, pure, withHandlers, withProps } from 'recompose'
 import styles from './TablePaginator.module.css'
 
 export const ALL_KEY = 'All'
@@ -47,11 +47,15 @@ const enhance = compose(
     // Otherwise, use total count
     const effectiveTotal = totalLoading ? undefined : total
     const effectiveHasNextPage = totalLoading
-      ? (hasNextPageFromItems ?? false)
-      : (effectiveTotal ? effectiveTotal > pageSize * (1 + pageAt) : false)
+      ? hasNextPageFromItems ?? false
+      : effectiveTotal
+      ? effectiveTotal > pageSize * (1 + pageAt)
+      : false
     const effectiveHasLastPage = totalLoading
       ? false
-      : (effectiveTotal ? effectiveTotal > pageSize * (1 + pageAt) : false)
+      : effectiveTotal
+      ? effectiveTotal > pageSize * (1 + pageAt)
+      : false
 
     return {
       hasFirstPage: pageAt !== 0,
@@ -124,7 +128,6 @@ const enhance = compose(
   }),
   pure
 )
-// lala
 const TablePaginator = ({
   timedMessageUsed = false,
   paginatorStatus,
@@ -140,7 +143,6 @@ const TablePaginator = ({
   lastItemIndex,
   hasNextPage,
   hasLastPage,
-  a,
   total,
   totalLoading,
   effectiveTotal,
@@ -181,9 +183,7 @@ const TablePaginator = ({
           <FaAngleLeft />
           {formatMessage(timedMessageUsed ? messages.newer : messages.previous)}
         </Button>
-        <div className={styles.Left__Status}>
-          {formatMessage(statusMessage, statusValues)}
-        </div>
+        <div className={styles.Left__Status}>{formatMessage(statusMessage, statusValues)}</div>
         <Button
           classes={{
             root: [styles.Left__Button],

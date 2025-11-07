@@ -1,9 +1,9 @@
-import React from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isNil from 'lodash/isNil'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
+import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
@@ -70,7 +70,7 @@ export default function ResultList() {
   // Deferred query for total count - cached until filters change
   const { data: totalData, isLoading: isLoadingTotal } = useQuery(
     [RESULT_LIST_TOTAL.KEY, { ...totalParams }],
-    () => fetchWrapperForQueries({ endpoint: RESULT_LIST_TOTAL.ENDPOINT, params: params }),
+    () => fetchWrapperForQueries({ endpoint: RESULT_LIST_TOTAL.ENDPOINT, params: totalParams }),
     {
       enabled: true,
       select: ({ total }) => total,
