@@ -59,11 +59,85 @@ async function clinicalResponse(request) {
       fuv => fuv.clientTime
     ).reverse()[0]
     if (confirmedValueCaptured) {
+      /*
+2025-11-07 06:57:00.100 [aspect:api:request:payload] info: [
+   {
+      "clientTime": "2025-11-07T06:56:49.087Z",
+      "fieldName": "confirmed",
+      "value": true
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "treatment",
+      "value": null
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "outcome",
+      "value": null
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "followUpNotPossible",
+      "value": false
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "followUpNotPossibleReason",
+      "value": ""
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "PatientAge",
+      "value": "",
+      "formDefinitionExternalId": "ClinicalResponse",
+      "fieldType": "custom-field"
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "InfantBreastfeeding",
+      "value": "",
+      "formDefinitionExternalId": "ClinicalResponse",
+      "fieldType": "custom-field"
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "EIDSampleType",
+      "value": "",
+      "formDefinitionExternalId": "ClinicalResponse",
+      "fieldType": "custom-field"
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "ReasonForTesting",
+      "value": "",
+      "formDefinitionExternalId": "ClinicalResponse",
+      "fieldType": "custom-field"
+   },
+   {
+      "clientTime": "2025-11-07T06:56:51.222Z",
+      "fieldName": "NameOfRequestingFacility",
+      "value": "",
+      "formDefinitionExternalId": "ClinicalResponse",
+      "fieldType": "custom-field"
+   }
+]
+      */
       if (confirmedValueCaptured.value) {
-        resultEntry = await showResult(resultId, dataConstraints)
+        // Only replace recordedInRegister when it is not already set
+        await knex('Result').where('id', resultId).whereNull('recordedInRegister').update({
+          recordedInRegister: new Date(),
+          updatedOn: new Date(),
+          updatedBy: currentUserId,
+        })
       } else {
-        resultEntry = await showResult(resultId, dataConstraints)
+        await knex('Result').where('id', resultId).update({
+          recordedInRegister: null,
+          updatedOn: new Date(),
+          updatedBy: currentUserId,
+        })
       }
+      resultEntry = await showResult(resultId, dataConstraints)
     }
 
     // Find the standard treatment & outcome follow-up values & dates that have been sent in the payload
@@ -193,6 +267,7 @@ async function clinicalResponse(request) {
       payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_REASON_FIELD_NAME),
       fuv => fuv.clientTime
     ).reverse()[0]
+    const followUpReason = notPossibleReasonValueCaptured ? notPossibleReasonValueCaptured.value : ''
 
     const followUpNotPossibleExist = await getFollowUpsNotPossibleByResultById(resultId)
 
@@ -216,6 +291,7 @@ async function clinicalResponse(request) {
               resultId,
               NOT_POSSIBLE_FOLLOW_UP_TYPE,
               followUp.id,
+              followUpReason,
               mostRecentNotPossibleValueCaptured.clientTime,
               currentUserId,
               mostRecentNotPossibleValueCaptured.clientTime,
@@ -235,7 +311,11 @@ async function clinicalResponse(request) {
     }
 
     if (followUpNotPossibleExist && notPossibleReasonValueCaptured) {
-      await updateResultFollowUp(followUpNotPossibleExist.resultFollowUpId, notPossibleReasonValueCaptured.clientTime)
+      await updateResultFollowUp(
+        followUpNotPossibleExist.resultFollowUpId,
+        followUpReason,
+        notPossibleReasonValueCaptured.clientTime
+      )
     }
     const resultFollowUps = await getFollowUpsOfResultById(resultId)
     const latestTreatment =

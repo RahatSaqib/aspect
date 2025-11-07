@@ -439,11 +439,22 @@ const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, change
   })
 }
 
-const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, createdOn, updatedBy, updatedOn) => {
+const addResultFollowUp = (
+  resultId,
+  externalId,
+  followUpId,
+  followUpReason,
+  date,
+  createdBy,
+  createdOn,
+  updatedBy,
+  updatedOn
+) => {
   return knex('ResultFollowUp').insert({
     resultId,
     externalId,
     followUpId,
+    reason: followUpReason,
     date,
     createdBy,
     createdOn,
@@ -498,8 +509,9 @@ const getFollowUpsNotPossibleByResultById = resultId => {
     .select('rfu.id as resultFollowUpId')
 }
 
-const updateResultFollowUp = (resultFollowUpId, updatedOn) => {
+const updateResultFollowUp = (resultFollowUpId, followUpReason, updatedOn) => {
   return knex('ResultFollowUp').where('id', resultFollowUpId).update({
+    reason: followUpReason,
     date: updatedOn,
     updatedOn,
   })
