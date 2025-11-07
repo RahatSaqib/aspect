@@ -12,7 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { DetailHeader, ResultFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import { RESULT_LIST } from '../../../components/QueryFetch/Result'
+import { RESULT_LIST, RESULT_LIST_TOTAL } from '../../../components/QueryFetch/Result'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -42,16 +42,34 @@ export default function ResultList() {
   const validTimeZone = getTimezoneById(timezoneId)
 
   const params = omitBy(omit({ sortCol, sortDir, page, size, ...filters }, ['assayOverride']), isNil)
+  // Request pageSize + 1 items to determine if there's a next page
+  const paramsWithExtraItem = { ...params, size: size + 1 }
+
   const { isLoading, isError, data, error } = useQuery(
-    [RESULT_LIST.KEY, { ...params }],
-    () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params }),
+    [RESULT_LIST.KEY, { ...paramsWithExtraItem }],
+    () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params: paramsWithExtraItem }),
     {
-      select: ({ data, total, extraColumns }) => ({
-        items: data,
-        total,
-        extraColumns,
-        columns: getBaseColumns(extraColumns, intl.formatMessage),
-      }),
+      select: ({ data, extraColumns }) => {
+        // If we got pageSize + 1 items, there's a next page. Only show pageSize items.
+        const hasNextPage = data.length > size
+        const items = hasNextPage ? data.slice(0, size) : data
+        return {
+          items,
+          hasNextPage,
+          extraColumns,
+          columns: getBaseColumns(extraColumns, intl.formatMessage),
+        }
+      },
+    }
+  )
+
+  // Deferred query for total count - runs in parallel but doesn't block UI
+  const { data: totalData, isLoading: isLoadingTotal } = useQuery(
+    [RESULT_LIST_TOTAL.KEY, { ...params }],
+    () => fetchWrapperForQueries({ endpoint: RESULT_LIST_TOTAL.ENDPOINT, params }),
+    {
+      enabled: true, // Run in parallel, non-blocking
+      select: ({ total }) => total,
     }
   )
 
@@ -120,7 +138,10 @@ export default function ResultList() {
                 intl={intl}
                 timedMessageUsed={sortCol === 'endedOn'}
                 paginatorStatus={messages.paginatorStatus}
-                total={data?.total}
+                paginatorStatusLoading={messages.paginatorStatusLoading}
+                total={totalData}
+                totalLoading={isLoadingTotal}
+                hasNextPageFromItems={data?.hasNextPage}
                 pageAt={page}
                 pageSize={size}
                 pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}

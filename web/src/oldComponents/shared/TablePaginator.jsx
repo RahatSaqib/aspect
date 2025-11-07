@@ -42,14 +42,28 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
-  withProps(({ pageAt, pageSize, total }) => ({
-    hasFirstPage: pageAt !== 0,
-    hasPreviousPage: pageAt > 0,
-    firstItemIndex: 1 + pageSize * pageAt,
-    lastItemIndex: min([total, pageSize * (1 + pageAt)]),
-    hasNextPage: total > pageSize * (1 + pageAt),
-    hasLastPage: total > pageSize * (1 + pageAt),
-  })),
+  withProps(({ pageAt, pageSize, total, totalLoading, hasNextPageFromItems }) => {
+    // When total is loading, use hasNextPageFromItems to determine pagination
+    // Otherwise, use total count
+    const effectiveTotal = totalLoading ? undefined : total
+    const effectiveHasNextPage = totalLoading
+      ? (hasNextPageFromItems ?? false)
+      : (effectiveTotal ? effectiveTotal > pageSize * (1 + pageAt) : false)
+    const effectiveHasLastPage = totalLoading
+      ? false
+      : (effectiveTotal ? effectiveTotal > pageSize * (1 + pageAt) : false)
+
+    return {
+      hasFirstPage: pageAt !== 0,
+      hasPreviousPage: pageAt > 0,
+      firstItemIndex: 1 + pageSize * pageAt,
+      lastItemIndex: effectiveTotal ? min([effectiveTotal, pageSize * (1 + pageAt)]) : pageSize * (1 + pageAt),
+      hasNextPage: effectiveHasNextPage,
+      hasLastPage: effectiveHasLastPage,
+      totalLoading,
+      effectiveTotal,
+    }
+  }),
   withHandlers({
     onFirstClick:
       ({ onPageChange }) =>
@@ -70,9 +84,11 @@ const enhance = compose(
       },
 
     onLastClick:
-      ({ total, pageSize, onPageChange }) =>
+      ({ total, effectiveTotal, pageSize, onPageChange }) =>
       () => {
-        const lastPage = total % pageSize === 0 ? total / pageSize - 1 : total / pageSize
+        const totalToUse = effectiveTotal || total
+        if (!totalToUse) return
+        const lastPage = totalToUse % pageSize === 0 ? totalToUse / pageSize - 1 : totalToUse / pageSize
         onPageChange(Math.floor(lastPage))
       },
 
@@ -101,17 +117,18 @@ const enhance = compose(
       },
 
     onPageSizeChangeAll:
-      ({ onPageSizeChange, total }) =>
+      ({ onPageSizeChange, total, effectiveTotal }) =>
       () => {
-        onPageSizeChange(total)
+        onPageSizeChange(effectiveTotal || total || 0)
       },
   }),
   pure
 )
-
+// lala
 const TablePaginator = ({
   timedMessageUsed = false,
   paginatorStatus,
+  paginatorStatusLoading,
   className,
   onFirstClick,
   onPreviousClick,
@@ -123,12 +140,20 @@ const TablePaginator = ({
   lastItemIndex,
   hasNextPage,
   hasLastPage,
+  a,
   total,
+  totalLoading,
+  effectiveTotal,
   pageSize,
   pageSizeButtonKeys = PAGE_SIZE_BUTTON_KEYS,
   ...restProps
 }) => {
   const { formatMessage } = useIntl()
+  const statusMessage = totalLoading && paginatorStatusLoading ? paginatorStatusLoading : paginatorStatus
+  const statusValues = totalLoading
+    ? { firstItemIndex, lastItemIndex }
+    : { firstItemIndex, lastItemIndex, itemCount: effectiveTotal }
+
   return (
     <div className={`${styles[className]} ${styles.Container}`}>
       <div className={styles.Left}>
@@ -157,11 +182,7 @@ const TablePaginator = ({
           {formatMessage(timedMessageUsed ? messages.newer : messages.previous)}
         </Button>
         <div className={styles.Left__Status}>
-          {formatMessage(paginatorStatus, {
-            firstItemIndex,
-            lastItemIndex,
-            itemCount: total,
-          })}
+          {formatMessage(statusMessage, statusValues)}
         </div>
         <Button
           classes={{

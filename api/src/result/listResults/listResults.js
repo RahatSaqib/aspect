@@ -36,6 +36,20 @@ const LIST_FIELDS_UTC = {
   ),
 }
 
+async function getResultCount(query, auth) {
+  query.minDate = query.minDate instanceof Date ? query.minDate : new Date(query.minDate)
+  query.maxDate = query.maxDate instanceof Date ? query.maxDate : new Date(query.maxDate)
+
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultQuery = buildQueryForResultsListAndExport(query, dataConstraints)
+  const { count: total } = await resultQuery.clone().countDistinct('r.id as count').first()
+
+  return {
+    ok: true,
+    total,
+  }
+}
+
 async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -104,10 +118,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   }
 
   const dataConstraints = await getConstraints(auth.credentials)
-
   const resultQuery = buildQueryForResultsListAndExport(query, dataConstraints)
-
-  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
   const resultFields = {
     resultCategory2Name: 'r.resultCategory2_name',
@@ -119,22 +130,19 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     deviceStateName: 'stdpn.name',
   }
 
-  const getItems = resultQuery
+  const data = await resultQuery
     .clone()
-
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
     .modify(function (qb) {
       qb.select(resultFields)
     })
 
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
   applyExtraColumns(data, assayColumns)
   sanitizeExtraColumns(assayColumns)
 
   const result = {
     ok: true,
-    total,
     length: data.length,
     data,
     extraColumns: assayColumns,
@@ -174,4 +182,10 @@ async function listResults(request) {
   return result
 }
 
-module.exports = { listResults, getQueryForResultsListAndExport }
+async function resultCount(request) {
+  const { query, auth } = request
+  const result = await getResultCount(query, auth)
+  return result
+}
+
+module.exports = { listResults, resultCount, getQueryForResultsListAndExport }
