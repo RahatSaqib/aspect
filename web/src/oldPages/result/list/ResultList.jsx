@@ -63,13 +63,19 @@ export default function ResultList() {
     }
   )
 
-  // Deferred query for total count - runs in parallel but doesn't block UI
+  // Params for total count - only include filters, exclude page/size/sort
+  // Total only changes when filters change, not when paginating or sorting
+  const totalParams = omitBy(omit({ ...filters }, ['assayOverride']), isNil)
+
+  // Deferred query for total count - cached until filters change
   const { data: totalData, isLoading: isLoadingTotal } = useQuery(
-    [RESULT_LIST_TOTAL.KEY, { ...params }],
-    () => fetchWrapperForQueries({ endpoint: RESULT_LIST_TOTAL.ENDPOINT, params }),
+    [RESULT_LIST_TOTAL.KEY, { ...totalParams }],
+    () => fetchWrapperForQueries({ endpoint: RESULT_LIST_TOTAL.ENDPOINT, params: params }),
     {
-      enabled: true, // Run in parallel, non-blocking
+      enabled: true,
       select: ({ total }) => total,
+      staleTime: Infinity, // Never consider this data stale
+      cacheTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
     }
   )
 
