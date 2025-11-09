@@ -132,6 +132,7 @@ async function dropResultReadTableIndexes(knex) {
     'idx_result_read_partnerId',
     'idx_result_read_partnerId_reconciliationDate',
     'idx_result_read_partnerId_sample_externalId',
+    'idx_result_read_partnerId_endedOn_desc',
     'idx_result_read_partnerId_assayId_endedOn_desc',
     'idx_result_read_partnerId_siteId_endedOn_desc',
     'idx_result_read_partnerId_deviceId_endedOn_desc',
