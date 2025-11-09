@@ -123,7 +123,7 @@ const enhance = compose(
     onPageSizeChangeAll:
       ({ onPageSizeChange, total, effectiveTotal }) =>
       () => {
-        onPageSizeChange(effectiveTotal || total || 0)
+        onPageSizeChange(effectiveTotal || total || 'all')
       },
   }),
   pure
