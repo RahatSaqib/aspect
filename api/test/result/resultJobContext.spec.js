@@ -132,7 +132,7 @@ describe('Result route Job constraints', () => {
           assayExternalId: assayGxEbolaExternalId,
         },
       ])
-      gxEbolaClinicianAuthAccessToken = await getAccessToken(gxEbolaClinicianUsername, gxEbolaClinicianPassword)
+
       bothAssaysClinicianUserId = await createUser(
         'Partner One',
         'US',
