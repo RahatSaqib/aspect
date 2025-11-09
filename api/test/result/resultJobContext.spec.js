@@ -41,8 +41,6 @@ describe('Result route Job constraints', () => {
     const gxEbolaClinicianUsername = 'gx_ebola_clinician'
     const gxEbolaClinicianPassword = 'gx-ebola-clinician-pass'
     let gxEbolaClinicianUserId
-    let gxEbolaClinicianAuthAccessToken
-
     const bothAssaysClinicianUsername = 'both_assay_clinician'
     const bothAssaysClinicianPassword = 'both-assay-clinician-pass'
     let bothAssaysClinicianUserId
