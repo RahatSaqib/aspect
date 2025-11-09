@@ -191,9 +191,6 @@ describe('Result route Job constraints', () => {
       })
       assert.typeOf(daktariHivVlUserResultsResponse.body.extraColumns, 'array')
 
-      const gxEbolaUserResultsResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${gxEbolaClinicianAuthAccessToken}`)
       const { name: gxEbolaAssayName } = await knex('Assay').where('externalId', assayGxEbolaExternalId).first()
       const bothAssaysUserResultsResponse = await server
         .get(path)
