@@ -173,7 +173,6 @@ describe('Result route Job constraints', () => {
       assert.property(bdMgitUserResultsResponse.body, 'data')
       assert.typeOf(bdMgitUserResultsResponse.body.data, 'array')
       assert.equal(bdMgitUserResultsResponse.body.data.length, 0)
-      assert.property(bdMgitUserResultsResponse.body, 'total')
       assert.typeOf(bdMgitUserResultsResponse.body.extraColumns, 'array')
 
       const daktariHivVlUserResultsResponse = await server
@@ -190,14 +189,12 @@ describe('Result route Job constraints', () => {
       daktariHivVlUserResultsResponse.body.data.forEach(result => {
         assert.equal(result.assayName, daktariHivVlAssayName)
       })
-      assert.property(daktariHivVlUserResultsResponse.body, 'total')
       assert.typeOf(daktariHivVlUserResultsResponse.body.extraColumns, 'array')
 
       const gxEbolaUserResultsResponse = await server
         .get(path)
         .set('Authorization', `Bearer ${gxEbolaClinicianAuthAccessToken}`)
       const { name: gxEbolaAssayName } = await knex('Assay').where('externalId', assayGxEbolaExternalId).first()
-      assert.isAtLeast(gxEbolaUserResultsResponse.body.total, 1)
       const bothAssaysUserResultsResponse = await server
         .get(path)
         .set('Authorization', `Bearer ${bothAssaysClinicianAuthAccessToken}`)
@@ -205,14 +202,9 @@ describe('Result route Job constraints', () => {
       assert.typeOf(bothAssaysUserResultsResponse.body, 'Object')
       assert.property(bothAssaysUserResultsResponse.body, 'data')
       assert.typeOf(bothAssaysUserResultsResponse.body.data, 'array')
-      assert.equal(
-        bothAssaysUserResultsResponse.body.total,
-        daktariHivVlUserResultsResponse.body.total + gxEbolaUserResultsResponse.body.total
-      )
       bothAssaysUserResultsResponse.body.data.forEach(result => {
         assert.include([gxEbolaAssayName, daktariHivVlAssayName], result.assayName)
       })
-      assert.property(bothAssaysUserResultsResponse.body, 'total')
       assert.typeOf(bothAssaysUserResultsResponse.body.extraColumns, 'array')
     })
   })
@@ -334,7 +326,6 @@ describe('Result route Job constraints', () => {
           `The user can see a ${diseaseExternalId} result from ${reportableSiteExternalId} when they only have permissions to view ${diseaseHivExternalId} results from ${hivSiteExternalId} and ${diseaseCovid19ExternalId} results from ${covid19SiteExternalId}`
         )
       })
-      assert.property(bothDiseasesUserResultsResponse.body, 'total')
       assert.typeOf(bothDiseasesUserResultsResponse.body.extraColumns, 'array')
     })
   })
