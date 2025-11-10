@@ -129,7 +129,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     resultCategory2Title: 'r.assay_resultCategory2Label',
     deviceStateName: 'stdpn.name',
   }
-
+  query.size -= 1
   const data = await resultQuery
     .clone()
     .modify(sortPageParams, query, 'endedOn')

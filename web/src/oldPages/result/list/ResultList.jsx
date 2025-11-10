@@ -1,9 +1,9 @@
-import React from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isNil from 'lodash/isNil'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
+import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
@@ -147,7 +147,7 @@ export default function ResultList() {
                 paginatorStatusLoading={messages.paginatorStatusLoading}
                 total={totalData}
                 totalLoading={isLoadingTotal}
-                hasNextPageFromItems={data?.hasNextPage}
+                hasNextPageFromItems={data?.length ?? size + 1 > size}
                 pageAt={page}
                 pageSize={size}
                 pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
