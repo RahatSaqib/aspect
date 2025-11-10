@@ -22,27 +22,39 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
       if (query.reportableSiteId || query.reportableSiteName) {
         if (query.onlyEverTransferred) {
-          const siteOperationAndValue = query.reportableSiteId
-            ? `= ${query.reportableSiteId}`
-            : `IN (
-                SELECT s_transfer.id
-                FROM Site s_transfer
-                WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
-              )`
-          queryBuilder.whereRaw(
-            `EXISTS (
-              SELECT rslog_transfer.resultId
-              FROM ResultStatusLog as rslog_transfer
-                INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
-              WHERE rslog_transfer.resultId = r.id
-                and rs_transfer.externalId = 'Transfer'
-                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) ${siteOperationAndValue}
-            )`
-          )
+          if (query.reportableSiteId) {
+            queryBuilder.whereRaw(
+              `EXISTS (
+                SELECT rslog_transfer.resultId
+                FROM ResultStatusLog as rslog_transfer
+                  INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
+                WHERE rslog_transfer.resultId = r.id
+                  and rs_transfer.externalId = 'Transfer'
+                  and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) = ?
+              )`,
+              [query.reportableSiteId]
+            )
+          } else {
+            queryBuilder.whereRaw(
+              `EXISTS (
+                SELECT rslog_transfer.resultId
+                FROM ResultStatusLog as rslog_transfer
+                  INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
+                WHERE rslog_transfer.resultId = r.id
+                  and rs_transfer.externalId = 'Transfer'
+                  and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) IN (
+                    SELECT s_transfer.id
+                    FROM Site s_transfer
+                    WHERE s_transfer.name LIKE ?
+                  )
+              )`,
+              [`%${query.reportableSiteName}%`]
+            )
+          }
         } else if (query.reportableSiteId) {
           queryBuilder.where('sirep.id', query.reportableSiteId)
         } else {
-          queryBuilder.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
+          queryBuilder.whereRaw('sirep.name LIKE ?', [`%${query.reportableSiteName}%`])
         }
       }
     })
