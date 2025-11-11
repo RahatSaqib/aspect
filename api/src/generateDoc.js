@@ -1,3 +1,13 @@
+/*
+This routine generates a markdown file with the security schema for all job functions and permissions.
+To run the routine, use the following command from package.json:
+
+yarn doc — Generate security schema for all countries
+yarn doc <country> — Generate security schema for a specific country
+
+The output is a markdown file in the `src` folder of the project.
+*/
+
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/no-dynamic-require */
 const _ = require('lodash')
@@ -9,7 +19,8 @@ const CRLF = `
 
 async function run() {
   // allEndpoints()
-  allJobFunctions()
+  const countryParam = process.argv[2] // Get country parameter from command line
+  allJobFunctions(countryParam)
 }
 
 /**
@@ -99,7 +110,7 @@ function getSeedFolders(dirPath) {
   })
 }
 
-function allJobFunctions() {
+function allJobFunctions(countryParam) {
   const dirPath = path.join(__dirname, `../seeds`)
 
   const commonJobFunctions = require(`../seeds/fixtures/jobFunctions`)
@@ -107,7 +118,7 @@ function allJobFunctions() {
   const permissionsDefinition = require(`../seeds/fixtures/PermissionsDefinition`)
   // const permissions = require(`../seeds/fixtures/Permission`)
 
-  const seedFolders = _.reduce(
+  let seedFolders = _.reduce(
     getSeedFolders(dirPath),
     (acc, folderName) => {
       let folders = [folderName]
@@ -125,8 +136,31 @@ function allJobFunctions() {
     []
   )
 
+  // Filter by country if parameter is provided
+  if (countryParam) {
+    const countryParamLower = countryParam.toLowerCase()
+    seedFolders = seedFolders.filter(({ country, folders }) => {
+      // Check if country folder name matches (case-insensitive)
+      if (country.toLowerCase() === countryParamLower) {
+        return true
+      }
+      // Check if any subfolder matches (for nested structures like Lesotho)
+      return folders.some(folder => {
+        const folderParts = folder.split(path.sep)
+        return folderParts.some(part => part.toLowerCase() === countryParamLower)
+      })
+    })
+
+    if (seedFolders.length === 0) {
+      console.error(`No country found matching: ${countryParam}`)
+      // eslint-disable-next-line no-console
+      console.log('Available countries:', getSeedFolders(dirPath).join(', '))
+      process.exit(1)
+    }
+  }
+
   const getAnchorText = txt => txt.toLowerCase().split(' ').join('-')
-  let contents = ['# <a name="top" id="top"></a> Contents']
+  let contents = ['# Aspect Job Functions and Permissions', '## <a name="top" id="top"></a> Contents']
 
   let data = []
   seedFolders.forEach(({ folders }) => {
@@ -168,14 +202,7 @@ function allJobFunctions() {
       const anchorCountry = getAnchorText(countryName)
       const linkCountry = `[${countryName}](#${anchorCountry})`
       contents = [...contents, ` - Country - **${linkCountry}** (${jobFunctions?.length || 0} job functions)`]
-      data = [
-        ...data,
-        '### &nbsp;',
-        '### &nbsp;',
-        '### &nbsp;',
-        '---',
-        `# Country <a name="${anchorCountry}" id="${anchorCountry}">${countryName}</a>`,
-      ]
+      data = [...data, '---', `## Country <a name="${anchorCountry}" id="${anchorCountry}">${countryName}</a>`]
 
       /**
        *
@@ -227,7 +254,7 @@ function allJobFunctions() {
             '```bash',
             `  "${description}"`,
             '',
-            `  sheets: ${sheets},  externalId: "${externalId}"`,
+            `  sheets: ${sheets}`,
             '```',
           ]
         })
@@ -254,7 +281,10 @@ function allJobFunctions() {
     })
   })
   data = [...contents, ...data]
-  fs.writeFileSync(path.join(__dirname, `./_stats-jobFunctions.md`), data.join(CRLF))
+  const outputFileName = `./security-schema-${countryParam ? countryParam.toLowerCase() : 'all'}.md`
+  fs.writeFileSync(path.join(__dirname, outputFileName), data.join(CRLF))
+  // eslint-disable-next-line no-console
+  console.log(`Markdown file generated: ${outputFileName}`)
 }
 
 run()
