@@ -292,7 +292,6 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
       if (constraints.assayType?.id) {
         queryBuilder.where(qb => isNullInOrEqual(qb, `${resultReadAlias}.assayType_id`, constraints.assayType.id))
       }
-      // }
     }
   } else {
     // Queries not involving Result table
