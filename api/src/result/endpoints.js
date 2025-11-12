@@ -99,6 +99,9 @@ const routes = [
             .required()
             .description('The results')
             .items(Joi.object().keys(validateResultListResponse())),
+          hasNextPage: Joi.bool()
+            .required()
+            .description('True if there are more results available beyond the current page'),
         }),
       },
     },

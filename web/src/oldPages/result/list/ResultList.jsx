@@ -1,9 +1,10 @@
 import { LinearProgress, TableBody } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 import isNil from 'lodash/isNil'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
@@ -38,23 +39,49 @@ export default function ResultList() {
     pageSize: size,
   } = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })({ location })
 
+  // Track previous filters to detect changes
+  const prevFiltersRef = useRef(filters)
+  const isInitialMount = useRef(true)
+
+  // Reset page to 0 when filters change (but not when just paginating or sorting)
+  useEffect(() => {
+    // Skip on initial mount
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      prevFiltersRef.current = filters
+      return
+    }
+
+    // Only reset page if filters actually changed (not just page/sort)
+    const filtersChanged = !isEqual(prevFiltersRef.current, filters)
+
+    if (filtersChanged && page !== 0) {
+      const searchParams = new URLSearchParams(location.search)
+      searchParams.set('pageAt', '0')
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
+    }
+
+    prevFiltersRef.current = filters
+  }, [filters, page, location, navigate])
+
   const { timezoneId } = useSelector(({ user }) => user)
   const validTimeZone = getTimezoneById(timezoneId)
 
   const params = omitBy(omit({ sortCol, sortDir, page, size, ...filters }, ['assayOverride']), isNil)
-  // Request pageSize + 1 items to determine if there's a next page
-  const paramsWithExtraItem = { ...params, size: size + 1 }
 
   const { isLoading, isError, data, error } = useQuery(
-    [RESULT_LIST.KEY, { ...paramsWithExtraItem }],
-    () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params: paramsWithExtraItem }),
+    [RESULT_LIST.KEY, { ...params }],
+    () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params }),
     {
-      select: ({ data, extraColumns }) => {
-        // If we got pageSize + 1 items, there's a next page. Only show pageSize items.
-        const hasNextPage = data.length > size
-        const items = hasNextPage ? data.slice(0, size) : data
+      select: ({ data, extraColumns, hasNextPage }) => {
         return {
-          items,
+          items: data,
           hasNextPage,
           extraColumns,
           columns: getBaseColumns(extraColumns, intl.formatMessage),
@@ -147,7 +174,7 @@ export default function ResultList() {
                 paginatorStatusLoading={messages.paginatorStatusLoading}
                 total={totalData}
                 totalLoading={isLoadingTotal}
-                hasNextPageFromItems={data?.length ?? size + 1 > size}
+                hasNextPageFromItems={data?.hasNextPage}
                 pageAt={page}
                 pageSize={size}
                 pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}

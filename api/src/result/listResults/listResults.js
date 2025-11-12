@@ -129,23 +129,31 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     resultCategory2Title: 'r.assay_resultCategory2Label',
     deviceStateName: 'stdpn.name',
   }
-  query.size -= 1
+
+  // The list use async total count to improve performance, so request pageSize + 1 to determine if there's a next page
+  const getExtraItemToCheckNextPage = true
   const data = await resultQuery
     .clone()
-    .modify(sortPageParams, query, 'endedOn')
+    .modify(sortPageParams, query, 'endedOn', null, getExtraItemToCheckNextPage)
     .select(selectFields)
     .modify(function (qb) {
       qb.select(resultFields)
     })
 
-  applyExtraColumns(data, assayColumns)
+  // Check if there's a next page and strip the extra record
+  const requestedSize = query.size || 50
+  const hasNextPage = data.length > requestedSize
+  const paginatedData = hasNextPage ? data.slice(0, requestedSize) : data
+
+  applyExtraColumns(paginatedData, assayColumns)
   sanitizeExtraColumns(assayColumns)
 
   const result = {
     ok: true,
-    length: data.length,
-    data,
+    length: paginatedData.length,
+    data: paginatedData,
     extraColumns: assayColumns,
+    hasNextPage,
   }
   return result
 }

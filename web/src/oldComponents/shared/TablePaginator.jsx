@@ -47,7 +47,7 @@ const enhance = compose(
     // Otherwise, use total count
     const effectiveTotal = totalLoading ? undefined : total
     const effectiveHasNextPage = totalLoading
-      ? hasNextPageFromItems ?? true
+      ? hasNextPageFromItems ?? false
       : effectiveTotal
       ? effectiveTotal > pageSize * (1 + pageAt)
       : false
