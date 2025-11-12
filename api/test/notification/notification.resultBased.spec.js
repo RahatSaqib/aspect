@@ -444,7 +444,7 @@ describe('Result Notifications triggers', () => {
       assert.equal(smsMessages.length, 1, 'Only one sms message should exists')
       assert.equal(
         smsMessages[0].message,
-        'result for this patient is Detected, Detected to RIF, ETH, INH',
+        'result for this patient is Detected, Detected to ETH, INH',
         'The placeholder must be correct'
       )
     })
