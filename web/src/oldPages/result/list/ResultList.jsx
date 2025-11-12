@@ -1,10 +1,10 @@
+import React, { useEffect, useRef } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import isNil from 'lodash/isNil'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
-import React, { useEffect, useRef } from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
@@ -102,7 +102,7 @@ export default function ResultList() {
       enabled: true,
       select: ({ total }) => total,
       staleTime: Infinity, // Never consider this data stale
-      cacheTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+      cacheTime: 2 * 60 * 1000, // Keep in cache for 2 minutes
     }
   )
 
