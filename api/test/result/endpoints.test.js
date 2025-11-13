@@ -17,11 +17,16 @@ describe('result endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/result', {
-          async listResults() {
-            return expectedResponse
+        endpoint = setupRoute(
+          'GET',
+          '/result',
+          {
+            async listResults() {
+              return expectedResponse
+            },
           },
-        })
+          './listResults/listResults'
+        )
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils

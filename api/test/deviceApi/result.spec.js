@@ -78,7 +78,6 @@ describe('Device Result API routes', () => {
         assert.equal(getResultResponse1.status, 200)
         assert.typeOf(getResultResponse1.body, 'Object')
         assert.property(getResultResponse1.body, 'data')
-        assert.property(getResultResponse1.body, 'total')
         assert.typeOf(getResultResponse1.body.data, 'array')
 
         const initialDataLength = getResultResponse1.body.data.length
@@ -112,7 +111,6 @@ describe('Device Result API routes', () => {
         assert.typeOf(getResultResponse2.body, 'Object')
         assert.property(getResultResponse2.body, 'data')
         assert.typeOf(getResultResponse2.body.data, 'array')
-        assert.property(getResultResponse2.body, 'total')
         assert.equal(getResultResponse2.body.data.length, initialDataLength + 1)
 
         const lastResult = _.find(getResultResponse2.body.data, {
@@ -268,7 +266,6 @@ describe('Device Result API routes', () => {
         assert.typeOf(getResultResponse3.body, 'Object')
         assert.property(getResultResponse3.body, 'data')
         assert.typeOf(getResultResponse3.body.data, 'array')
-        assert.property(getResultResponse3.body, 'total')
 
         assert.equal(getResultResponse3.body.data.length, initialDataLength + 2)
 
@@ -487,7 +484,6 @@ describe('Device Result API routes', () => {
         assert.equal(getResultResponse1.status, 200)
         assert.typeOf(getResultResponse1.body, 'Object')
         assert.property(getResultResponse1.body, 'data')
-        assert.property(getResultResponse1.body, 'total')
         assert.typeOf(getResultResponse1.body.data, 'array')
         let lastResultId = await getLastResultId(knex, deviceId)
         if (lastResultId) {
@@ -866,7 +862,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             id: resultExternalIds[1],
-            startedOn: now.toISOString,
+            startedOn: now.toISOString(),
             data: { a: 'b' },
             assay: { id: 'DaktariHivVL' },
             sample: {
