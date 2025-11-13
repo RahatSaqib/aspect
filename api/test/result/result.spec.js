@@ -64,7 +64,6 @@ describe('Result routes', () => {
       assert.property(res.body.data[0], 'diseaseName')
       assert.property(res.body.data[0], 'diseaseExternalId')
       assert.property(res.body.data[0], 'caseExternalId')
-      assert.property(res.body, 'total')
       assert.typeOf(res.body.extraColumns, 'array')
     }
 
@@ -226,7 +225,6 @@ describe('Result routes', () => {
       assert.property(res.body.data[0], 'patientId')
       assert.property(res.body.data[0], 'assayId')
       assert.property(res.body.data[0], 'caseExternalId')
-      assert.property(res.body, 'total')
     })
 
     it('should return a list of results with assay-specific fields if TB assay is requested', async () => {

@@ -139,6 +139,10 @@ const messages = {
         other {# results}
       }`,
     },
+    paginatorStatusLoading: {
+      id: 'pages.ResultList.paginatorStatusLoading',
+      defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of (loading total...)`,
+    },
     assayBdMgitAst: {
       id: 'pages.ResultList.assayBdMgitAst',
       defaultMessage: 'BD MGIT AST',
