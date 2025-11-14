@@ -326,7 +326,8 @@ const getItemsV2 = (resultQuery, query) => {
       'rca2.emphasize as resultCategory2Emphasize',
       'r.resultCategory1',
       'r.resultCategory2',
-      knex.raw('r.resultData->>"$.copies" as copies')
+      knex.raw('r.resultData->>"$.copies" as copies'),
+      'r.recordedInRegister'
     )
 }
 

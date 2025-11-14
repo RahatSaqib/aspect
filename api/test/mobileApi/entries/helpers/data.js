@@ -71,6 +71,7 @@ const expected347 = [
       foregroundColor: 'secondary',
     },
     clinicalResponse: {
+      recorded: false,
       resultId: 347,
     },
     resultRequiresTreatment: false,
@@ -295,6 +296,7 @@ const expected450 = [
       resultId: 450,
       treatment: 'dstb-2rhze',
       treatmentStarted: '2023-05-20T19:45:55.000Z',
+      recorded: false,
     },
     resultRequiresTreatment: true,
     hasFollowUp: true,
@@ -333,6 +335,7 @@ const expected450 = [
         updatedOn: '2023-05-20T19:45:55.000Z',
         clinicianName: 'test clinician',
         type: 'Treatment',
+        reason: undefined,
       },
       {
         id: 155,
@@ -648,6 +651,7 @@ const xdrExpectedResult = [
     },
     clinicalResponse: {
       resultId: 3521,
+      recorded: false,
     },
     errorCode: '400',
     laboratorySiteName: 'Gage Clinic',
