@@ -23,8 +23,9 @@ function transformResultResponse(data, followUps, userSiteIds) {
       result?.resultCategoryAssay1RequiresTreatment || result?.resultCategoryAssay2RequiresTreatment
     )
     const clinicalResponse = transformClinicalResponse(result, resultFollowUps)
+    const followUpNotPossible = resultFollowUps.find(fu => fu.externalId === 'notPossible')
     const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
-    const noFollowUpPossibleComment = undefined
+    const noFollowUpPossibleComment = noFollowUpPossible ? followUpNotPossible?.reason : undefined
     const hasFollowUp = !!clinicalResponse?.treatment && resultRequiresTreatment && !noFollowUpPossible
 
     const requiresFollowUp = resultRequiresTreatment && !hasFollowUp && !noFollowUpPossible

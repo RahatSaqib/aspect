@@ -70,6 +70,7 @@ function buildHistoryTimeline(data, followUps, userSiteIds) {
       updatedOn: followUp.date,
       type: followUp.followUpTypeName,
       clinicianName: followUp.clinicianName,
+      reason: followUp.reason,
     }
     output.push(followUpHistoryItem)
   })
