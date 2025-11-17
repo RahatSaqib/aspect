@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-10-22T10:10:01.066Z\n"
+"POT-Creation-Date: 2025-11-17T11:14:59.356Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -12149,6 +12149,14 @@ msgid ""
 msgstr ""
 "Zeigt alle Standorte/Geräte und die Anzahl der Tage, an denen sie im letzten "
 "Monat keinen Bestand hatten."
+
+#. [pages.ResultList.paginatorStatusLoading]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of (loading total...)
+#: extracted_strings.json
+msgid "Showing {firstItemIndex}-{lastItemIndex} of (loading total...)"
+msgstr ""
+"Anzeige von {firstItemIndex}-{lastItemIndex} von (Gesamtzahl wird geladen...)"
 
 #. [pages.inventoryList.paginatorStatus]
 #. defaultMessage is:
