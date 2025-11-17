@@ -1,4 +1,5 @@
 const {
+  recreateResultReadTable,
   createResultReadTableIndexes,
   dropResultReadTableIndexes,
   dropResultReadTriggers,
@@ -10,9 +11,14 @@ async function populateResultReadOnlyTable(knex) {
   // eslint-disable-next-line no-console
   console.log(`\x1b[33mDeleting Triggers on Result_READ table....`)
   await dropResultReadTriggers(knex)
+
   // eslint-disable-next-line no-console
   console.log(`\x1b[33mDeleting Indexes on Result_READ table....`)
   await dropResultReadTableIndexes(knex)
+
+  // eslint-disable-next-line no-console
+  console.log(`\x1b[33mDeleting  Result_READ table....`)
+  await recreateResultReadTable(knex)
 
   const latestDeviceMaintenanceStatus = knex('DeviceMaintenanceStatusLog as dmsl')
     .select('dmsl.*')
