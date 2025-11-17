@@ -10,12 +10,14 @@ function transformClinicalResponse(data, followUps) {
       resultId: data.id,
       outcome: outcome?.followUpExternalId ?? null,
       outcomeOccurred: outcome?.updatedOn ?? null,
+      reason: outcome?.followUpReason ?? '',
+      confirmedOn: data.recordedInRegister,
       treatment: treatment?.followUpExternalId ?? null,
       treatmentStarted: treatment?.updatedOn ?? null,
     },
     _.identity
   )
-  return output
+  return { ...output, recorded: !!data.recordedInRegister }
 }
 
 module.exports = { transformClinicalResponse }

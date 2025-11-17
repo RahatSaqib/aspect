@@ -21,7 +21,7 @@ const CountrySelectField = ({ allItemText, countryId, onCountryIdChange, floatin
       value={countryId}
       onChange={handleSelectFieldChange}
       label={floatingLabelText}
-      style={{ width: '98%', margin: '0 1%' }}
+      style={{ width: '98%', margin: '0' }}
     >
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {(countries || []).map(c => (

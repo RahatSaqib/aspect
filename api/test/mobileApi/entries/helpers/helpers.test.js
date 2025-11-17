@@ -110,6 +110,7 @@ describe('Entries helpers', () => {
           type: 'sample follow up type',
           updatedOn: '2023-05-03T00:00:00Z',
           clinicianName: 'test clinician',
+          reason: undefined,
         },
         {
           id: 123,
@@ -340,6 +341,7 @@ describe('Entries helpers', () => {
         resultId: 123,
         outcomeOccurred: '2023-03-01T00:00:00Z',
         treatmentStarted: '2023-02-01T00:00:00Z',
+        recorded: false,
       }
       const acknowledgement = {
         resultId: 123,
@@ -358,6 +360,7 @@ describe('Entries helpers', () => {
 
       const expectedOutput = {
         resultId: 123,
+        recorded: false,
       }
 
       const result = transformClinicalResponse(data, followUps)

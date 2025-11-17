@@ -175,7 +175,7 @@ async function getResultsForExport(auth, query) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const baseQuery = getQueryForResultsListAndExport(query, dataConstraints).groupBy('r.id').select(selectFields)
+  const baseQuery = getQueryForResultsListAndExport(query, dataConstraints).select(selectFields)
 
   const data = await knex
     .from(baseQuery.as('baseQ'))

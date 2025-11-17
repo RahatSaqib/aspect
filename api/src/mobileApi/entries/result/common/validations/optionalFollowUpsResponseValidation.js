@@ -10,6 +10,7 @@ const optionalFollowUpsResponseValidation = Joi.object()
           id: Joi.number().required().description('Result follow up ID'),
           resultId: Joi.number().required().description('Result ID'),
           externalId: Joi.string().allow(null, '').description('External ID of the follow up'),
+          reason: Joi.string().allow(null, '').description('Reason for the follow up'),
           date: Joi.date().allow(null, '').description('When the follow up started'),
           createdOn: Joi.date().required().description('When the follow up was first created in Aspect'),
           updatedOn: Joi.date().required().description('When the follow up was last updated in Aspect'),

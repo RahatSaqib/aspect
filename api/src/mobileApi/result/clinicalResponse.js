@@ -60,10 +60,20 @@ async function clinicalResponse(request) {
     ).reverse()[0]
     if (confirmedValueCaptured && resultEntry.clinicalResponse.recorded !== confirmedValueCaptured.value) {
       if (confirmedValueCaptured.value) {
-        resultEntry = await showResult(resultId, dataConstraints)
+        // Only replace recordedInRegister when it is not already set
+        await knex('Result').where('id', resultId).whereNull('recordedInRegister').update({
+          recordedInRegister: new Date(),
+          updatedOn: new Date(),
+          updatedBy: currentUserId,
+        })
       } else {
-        resultEntry = await showResult(resultId, dataConstraints)
+        await knex('Result').where('id', resultId).update({
+          recordedInRegister: null,
+          updatedOn: new Date(),
+          updatedBy: currentUserId,
+        })
       }
+      resultEntry = await showResult(resultId, dataConstraints)
     }
 
     // Find the standard treatment & outcome follow-up values & dates that have been sent in the payload
@@ -133,6 +143,7 @@ async function clinicalResponse(request) {
             mostRecentTreatmentInPayload.resultId,
             mostRecentTreatmentInPayload.externalId,
             followUp.id,
+            null,
             mostRecentTreatmentInPayload.date,
             mostRecentTreatmentInPayload.createdBy,
             mostRecentTreatmentInPayload.createdOn,
@@ -197,6 +208,7 @@ async function clinicalResponse(request) {
             mostRecentOutcomeInPayload.resultId,
             mostRecentOutcomeInPayload.externalId,
             followUp.id,
+            null,
             mostRecentOutcomeInPayload.date,
             mostRecentOutcomeInPayload.createdBy,
             mostRecentOutcomeInPayload.createdOn,
@@ -244,12 +256,15 @@ async function clinicalResponse(request) {
           !mostRecentTreatmentValueCaptured ||
           mostRecentTreatmentValueCaptured.clientTime <= mostRecentNotPossibleValueCaptured.clientTime
         ) {
+          const notPossibleReasonValue = notPossibleReasonValueCaptured ? notPossibleReasonValueCaptured.value : ''
+
           if (_.isEmpty(followUpNotPossibleExist)) {
             const followUp = await getFollowUpByExternalId(NOT_POSSIBLE_FOLLOW_UP_TYPE)
             await addResultFollowUp(
               resultId,
               NOT_POSSIBLE_FOLLOW_UP_TYPE,
               followUp.id,
+              notPossibleReasonValue,
               mostRecentNotPossibleValueCaptured.clientTime,
               currentUserId,
               mostRecentNotPossibleValueCaptured.clientTime,

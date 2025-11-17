@@ -296,6 +296,10 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps) => 
     },
     followUps: followUpList,
     comments: [],
+    clinicalResponse: {
+      recorded: !!data.recordedInRegister,
+      confirmedOn: data.recordedInRegister,
+    },
     // result transferred
     reportableSiteName: data.reportableSiteName,
     testType: resultData ? TESTTYPE.RESULT : TESTTYPE.SAMPLE,

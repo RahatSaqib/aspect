@@ -93,7 +93,7 @@ describe('Mobile API Clinical Response', () => {
         assert.property(response.body.data.clinicalResponse, 'treatmentStarted')
         assert.property(response.body.data.clinicalResponse, 'outcome')
         assert.property(response.body.data.clinicalResponse, 'outcomeOccurred')
-        assert.equal(Object.keys(response.body.data.clinicalResponse).length, 4)
+        assert.equal(Object.keys(response.body.data.clinicalResponse).length, 6)
       }
     }
 

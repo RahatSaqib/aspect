@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-22T10:10:01.066Z\n"
+"POT-Creation-Date: 2025-11-17T11:14:59.356Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -12142,6 +12142,14 @@ msgid ""
 msgstr ""
 "Affichage de tous les sites/appareils et du nombre de jours où ils n'ont pas "
 "eu de stock au cours du mois dernier."
+
+#. [pages.ResultList.paginatorStatusLoading]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of (loading total...)
+#: extracted_strings.json
+msgid "Showing {firstItemIndex}-{lastItemIndex} of (loading total...)"
+msgstr ""
+"Affichage de {firstItemIndex}-{lastItemIndex} sur (chargement total...)"
 
 #. [pages.inventoryList.paginatorStatus]
 #. defaultMessage is:

@@ -172,6 +172,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
       isEmpty(editSite.shortName) ||
       isEmpty(editSite.countryId?.toString()) ||
       isEmpty(editSite.externalId) ||
+      !editSite.siteTypeId ||
       (!isWarehouse && isEmpty(editSite.stateId?.toString())))
 
   return (
@@ -229,6 +230,8 @@ const SiteForm = ({ site, onLatLongChange }) => {
               label={formatMessage(messages.fieldSiteType)}
               value={editSite.siteTypeId}
               onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
+              error={!isPristine && !editSite.siteTypeId}
+              helperText={!isPristine && !editSite.siteTypeId && `${formatMessage(messages.fieldSiteType)} is required`}
             />
             <TextField
               className={styles.container__field}
