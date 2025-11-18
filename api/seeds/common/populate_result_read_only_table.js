@@ -1,4 +1,5 @@
 const {
+  recreateResultReadTable,
   createResultReadTableIndexes,
   dropResultReadTableIndexes,
   dropResultReadTriggers,
@@ -10,30 +11,32 @@ async function populateResultReadOnlyTable(knex) {
   // eslint-disable-next-line no-console
   console.log(`\x1b[33mDeleting Triggers on Result_READ table....`)
   await dropResultReadTriggers(knex)
+
   // eslint-disable-next-line no-console
   console.log(`\x1b[33mDeleting Indexes on Result_READ table....`)
   await dropResultReadTableIndexes(knex)
 
-  const latestDeviceMaintenanceStatus = knex('DeviceMaintenanceStatusLog as dmsl')
-    .select('dmsl.*')
-    .select(knex.raw('ROW_NUMBER() OVER (PARTITION BY deviceId ORDER BY id DESC) as rn'))
-    .as('dmsl')
+  // eslint-disable-next-line no-console
+  console.log(`\x1b[33mDeleting  Result_READ table....`)
+  await recreateResultReadTable(knex)
 
   const BATCH_SIZE = 100000
+  const MIN_ID = 0
+  const MAX_ID = 99999999
 
-  // Get max ID
   const { id: maxResultId } = await knex('Result').max('id as id').first()
 
-  const maxId = parseInt(maxResultId, 10)
+  const maxId = MAX_ID ? Math.min(maxResultId, MAX_ID) : maxResultId
 
-  const batches = Math.ceil(maxId / BATCH_SIZE)
+  const totalRecords = maxId - MIN_ID + 1
+  const batches = Math.ceil(totalRecords / BATCH_SIZE)
 
   // eslint-disable-next-line no-console
-  console.log(`\x1b[33mProcessing records with id 1-${maxId} in ${batches} batches\x1b[0m`)
+  console.log(`\x1b[33mProcessing records with id ${MIN_ID}-${maxId} in ${batches} batches\x1b[0m`)
 
   for (let i = 0; i < batches; i++) {
-    const startId = i * BATCH_SIZE + 1
-    const endId = (i + 1) * BATCH_SIZE
+    const startId = MIN_ID + i * BATCH_SIZE
+    const endId = Math.min(MIN_ID + (i + 1) * BATCH_SIZE - 1, maxId)
     const batchStart = new Date()
     // eslint-disable-next-line no-await-in-loop
     await knex('Result_READ').insert(function () {
@@ -61,11 +64,6 @@ async function populateResultReadOnlyTable(knex) {
         .leftJoin('ResultCategoryAssay as rca2', function () {
           this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
         })
-        .leftJoin(latestDeviceMaintenanceStatus, function () {
-          this.on('d.id', 'dmsl.deviceId').andOn('dmsl.rn', knex.raw('1'))
-        })
-        .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-        .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
         .leftJoin('ResultCategoryGroup as rcg', join => {
           join.on('r.resultCategory1', 'rcg.resultCategory1Id')
           join.andOn(knex.raw('r.resultCategory2 <=> rcg.resultCategory2Id'))
@@ -116,8 +114,6 @@ async function populateResultReadOnlyTable(knex) {
           knex.raw('LEFT(at.name, 25) as assayType_name'),
           knex.raw('LEFT(at.i18nKey, 25) as assayType_i18nKey'),
           'si.disabled as site_disabled',
-          knex.raw('LEFT(dms.externalId, 50) as deviceMaintenanceStatus_externalId'),
-          knex.raw('LEFT(da.token, 50) as deviceApproval_token'),
           knex.raw('LEFT(sp.externalId, 32) as sample_externalId'),
           knex.raw('LEFT(rso.name, 25) as resultSource_name'),
           knex.raw('LEFT(rso.externalId, 30) as resultSource_externalId'),
