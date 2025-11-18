@@ -50,8 +50,6 @@ async function recreateResultReadTable(knex) {
     table.string('assayType_name', 25).notNullable()
     table.string('assayType_i18nKey', 25).notNullable()
     table.boolean('site_disabled').nullable()
-    table.string('deviceMaintenanceStatus_externalId', 50).nullable()
-    table.string('deviceApproval_token', 50).nullable()
     table.string('sample_externalId', 32).nullable()
     table.string('resultSource_name', 25).notNullable()
     table.string('resultSource_externalId', 30).notNullable()
@@ -205,8 +203,6 @@ async function createResultReadTriggers(knex) {
         assayType_name,
         assayType_i18nKey,
         site_disabled,
-        deviceMaintenanceStatus_externalId,
-        deviceApproval_token,
         sample_externalId,
         resultSource_name,
         resultSource_externalId,
@@ -281,8 +277,6 @@ async function createResultReadTriggers(knex) {
         LEFT(at.name, 25) as assayType_name,
         LEFT(at.i18nKey, 25) as assayType_i18nKey,
         si.disabled as site_disabled,
-        LEFT(dms.externalId, 50) as deviceMaintenanceStatus_externalId,
-        LEFT(da.token, 50) as deviceApproval_token,
         LEFT(sp.externalId, 32) as sample_externalId,
         LEFT(rso.name, 25) as resultSource_name,
         LEFT(rso.externalId, 30) as resultSource_externalId,
@@ -337,13 +331,6 @@ async function createResultReadTriggers(knex) {
       LEFT JOIN Site as so ON sp.originSiteId = so.id
       LEFT JOIN ResultCategoryAssay as rca1 ON r.assayId = rca1.assayId AND r.resultCategory1 = rca1.resultCategoryId
       LEFT JOIN ResultCategoryAssay as rca2 ON r.assayId = rca2.assayId AND r.resultCategory2 = rca2.resultCategoryId
-      LEFT JOIN (
-        SELECT dmsl.*,
-               ROW_NUMBER() OVER (PARTITION BY deviceId ORDER BY id DESC) as rn
-        FROM DeviceMaintenanceStatusLog as dmsl
-      ) as dmsl ON d.id = dmsl.deviceId AND dmsl.rn = 1
-      LEFT JOIN DeviceMaintenanceStatus as dms ON dmsl.deviceMaintenanceStatusId = dms.id
-      LEFT JOIN DeviceApproval as da ON d.deviceApprovalId = da.id
       LEFT JOIN ResultCategoryGroup as rcg ON r.resultCategory1 = rcg.resultCategory1Id
         AND r.resultCategory2 <=> rcg.resultCategory2Id
         AND r.assayId = rcg.assayId
@@ -392,8 +379,6 @@ async function createResultReadTriggers(knex) {
         assayType_name = VALUES(assayType_name),
         assayType_i18nKey = VALUES(assayType_i18nKey),
         site_disabled = VALUES(site_disabled),
-        deviceMaintenanceStatus_externalId = VALUES(deviceMaintenanceStatus_externalId),
-        deviceApproval_token = VALUES(deviceApproval_token),
         sample_externalId = VALUES(sample_externalId),
         resultSource_name = VALUES(resultSource_name),
         resultSource_externalId = VALUES(resultSource_externalId),
