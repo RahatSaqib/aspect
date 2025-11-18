@@ -157,7 +157,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       )
       .select(
         'r.deviceId',
-        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        knex.raw(`r.patientData->>'$.SampleType' as sampleType`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         knex.raw(`d.moduleBayCapacity as cntModules`),
         knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive` from CTE
@@ -180,7 +180,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
        * better and faster to use joins with Sample/SampleType tables to get sample types for
        * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
        * and because of that read sample type directly from
-       * r.resultData ->> '$.customFieldData."1211".value'
+       * r.patientData->>'$.SampleType'
        */
       // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
       // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
@@ -201,7 +201,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       })
       .select(
         'r.deviceId',
-        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        knex.raw(`r.patientData->>'$.SampleType' as sampleType`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         /**
          * Notice that we below group by `deviceId`
@@ -359,18 +359,12 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_Presumptive_TB_Cases_MtbDetectedRifTraces: inTypeOfPatient(
           presumptiveTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
-          or
-          r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
-        `
+          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}`
         ),
         cnt_Presumptive_DR_TB_Cases_MtbDetectedRifTraces: inTypeOfPatient(
           presumptiveDrTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
-          or
-          r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
-        `
+          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}`
         ),
         cnt_Total_MtbDetectedRifNotDetected: counter(
           'r.id',
@@ -985,7 +979,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * better and faster to use joins with Sample/SampleType tables to get sample types for
          * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
          * and because of that - below we read sample type directly from
-         * r.resultData ->> '$.customFieldData."1211".value'
+         * r.patientData->>'$.SampleType'
          */
         // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
         // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
@@ -1004,7 +998,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          */
         .whereIn('r.referringSiteId', siteIds)
         .whereNotIn('r.siteId', siteIds)
-        .where(knex.raw(`r.resultData ->> '$.customFieldData."1211".value' = '${sampleType}'`))
+        .where(knex.raw(`r.patientData->>'$.SampleType' = '${sampleType}'`))
         .count({
           cnt_Xdr_Total_Tests: knex.raw(`DISTINCT r.id`),
         })
@@ -1348,9 +1342,9 @@ async function getDataForReportDrTb10B(auth, query) {
       //   END as sampleType`),
       knex.raw(`
         CASE
-          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Pulmonary' THEN 'Sputum'
-          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Extra-pulmonary' THEN 'Others'
-          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Stool' THEN 'Stool'
+          WHEN r.patientData->>'$.SampleType' = 'Pulmonary' THEN 'Sputum'
+          WHEN r.patientData->>'$.SampleType' = 'Extra-pulmonary' THEN 'Others'
+          WHEN r.patientData->>'$.SampleType' = 'Stool' THEN 'Stool'
           ELSE ''
         END as sampleType`),
 
