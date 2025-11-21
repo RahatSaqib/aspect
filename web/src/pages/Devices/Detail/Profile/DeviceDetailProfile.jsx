@@ -14,10 +14,8 @@ import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../../hooks/useFilterValues'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
-import requirePermissions from '../../../../oldComponents/shared/requirePermissions'
 import Summary from '../../../../oldComponents/Summary'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
-import Results from '../../../../oldPages/result/historyResults/HistoryResults'
 import {
   showDialog,
   hideDialog,
@@ -25,7 +23,6 @@ import {
   updateDeviceMaintenanceStatus,
   exportDeviceLogs,
 } from '../../../../store/DeviceRedux'
-import { fetchResults, exportResults } from '../../../../store/ResultRedux'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import {
   makeSortPageSelector,
@@ -72,14 +69,11 @@ const enhance = compose(
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
-      const { items, table } = state.result
       const { culture } = state.user
       return {
         activeDialog,
         performanceReport,
         culture,
-        items,
-        table,
       }
     },
     {
@@ -87,8 +81,6 @@ const enhance = compose(
       hideDialog,
       updateDeviceMaintenanceStatus,
       updateDeviceMaintenance,
-      fetchResults,
-      exportResults,
       exportDeviceLogs,
     }
   ),
@@ -99,29 +91,6 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad:
-      ({ device, location, fetchResults, sortCol, sortDir, pageAt, pageSize }) =>
-      () => {
-        const { sanitized, value: filtersParams } = filtersFromLocation(location)
-
-        if (!sanitized) {
-          filtersParams.set('showUnapprovedDevices', true)
-          filtersParams.set('showDecommissionedDevices', true)
-          filtersParams.set('deviceId', device.get('id'))
-          fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
-        }
-      },
-    onExportClick:
-      ({ device, location, exportResults, sortCol, sortDir, pageAt, pageSize }) =>
-      () => {
-        const { sanitized, value: filtersParams } = filtersFromLocation(location)
-        if (!sanitized) {
-          filtersParams.set('showUnapprovedDevices', true)
-          filtersParams.set('showDecommissionedDevices', true)
-          filtersParams.set('deviceId', device.get('id'))
-          exportResults(filtersParams, 'xlsx', sortCol, sortDir, pageAt, pageSize, 'xlsx', 'deviceResults')
-        }
-      },
     onExportDeviceLogsClick:
       ({ device, location, exportDeviceLogs }) =>
       () => {
@@ -131,15 +100,6 @@ const enhance = compose(
           exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
         }
       },
-    onRowClick:
-      ({ navigate }) =>
-      ({
-        currentTarget: {
-          dataset: { resultId },
-        },
-        // TODO: correct path?
-      }) =>
-        navigate(`/browse/result/${resultId}`),
     onToggleDeviceApproval:
       ({ device, updateSingleDevice }) =>
       () =>
@@ -185,16 +145,6 @@ const enhance = compose(
         )
       }
     },
-
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
   })
 )
 
@@ -219,10 +169,6 @@ const DeviceDetailProfile = ({
   onMaintenanceSubmit,
   onCalibrationSubmit,
   onWarrantySubmit,
-  table,
-  items,
-  onRowClick,
-  onExportClick,
   onExportDeviceLogsClick,
 }) => {
   const deviceListFilter = useFilterValues('/browse/device/list')
@@ -245,18 +191,6 @@ const DeviceDetailProfile = ({
     !device.get('maintenanceStatusNotes') || device.get('maintenanceStatusNotes') === ''
       ? null
       : device.get('maintenanceStatusNotes')
-  const resultColumns = [
-    { key: 'endedOn', label: formatMessage(messages.endedOn), formatter: value => formatDate(value), sortable: true },
-    { key: 'sampleOriginSiteName', label: formatMessage(messages.sampleOriginSiteName), sortable: true },
-    { key: 'sampleId', label: formatMessage(messages.sampleId), sortable: true },
-    { key: 'errorCode', label: formatMessage(messages.errorCode), sortable: true },
-    { key: 'patientId', label: formatMessage(messages.patientId), sortable: true },
-    { key: 'resultText', label: formatMessage(messages.resultText), sortable: false, formatter: () => true },
-  ]
-
-  const AuthenticatedResults = requirePermissions({
-    permissions: ['result:view'],
-  })(Results)
 
   const maintenanceStatusText = device.get('maintenanceStatusI18nKey')
     ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
@@ -553,21 +487,6 @@ const DeviceDetailProfile = ({
           />{' '}
         </ErrorBoundary>
       </PermissionChecker>
-
-      <AuthenticatedResults
-        navigate={navigate}
-        location={location}
-        sortDir={sortDir}
-        sortCol={sortCol}
-        pageAt={pageAt}
-        pageSize={pageSize}
-        columns={resultColumns}
-        table={table}
-        items={items}
-        onRowClick={onRowClick}
-        onExportClick={onExportClick}
-        title={formatMessage(messages.testHistory)}
-      />
     </div>
   )
 }
@@ -591,10 +510,6 @@ DeviceDetailProfile.propTypes = {
   onMaintenanceSubmit: PropTypes.func.isRequired,
   onCalibrationSubmit: PropTypes.func.isRequired,
   onWarrantySubmit: PropTypes.func.isRequired,
-  table: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  items: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  onRowClick: PropTypes.func.isRequired,
-  onExportClick: PropTypes.func.isRequired,
   onExportDeviceLogsClick: PropTypes.func.isRequired,
 }
 
