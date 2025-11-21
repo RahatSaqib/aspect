@@ -3,9 +3,12 @@ import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Button, Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
+import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import DeviceResultHistory from '../../../../cleanComponents/DeviceResultHistory/DeviceResultHistory'
+import PermissionChecker from '../../../../components/PermissionChecker'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../../hooks/useFilterValues'
@@ -538,6 +541,18 @@ const DeviceDetailProfile = ({
         location={location}
         culture={culture}
       />
+
+      <PermissionChecker permissions={['result:view']}>
+        <ErrorBoundary>
+          <DeviceResultHistory
+            deviceId={device.get('id')}
+            sortDir={sortDir}
+            sortCol={sortCol}
+            pageAt={pageAt}
+            pageSize={pageSize}
+          />{' '}
+        </ErrorBoundary>
+      </PermissionChecker>
 
       <AuthenticatedResults
         navigate={navigate}
