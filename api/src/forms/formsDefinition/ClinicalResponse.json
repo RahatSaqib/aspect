@@ -1,0 +1,175 @@
+{
+  "fields": [
+    {
+      "name": "PatientAge",
+      "title": "Age in years (> 1 year old)",
+      "i18nKey": "PatientAgeI18nKey",
+      "fieldType": "number",
+      "order": 1,
+      "caption": "Age in years (> 1 year old)",
+      "i18nKeyCaption": "PatientAgeI18nCaptionKey",
+      "controlType": "textBox",
+      "mandatory": false,
+      "validation": [
+        {
+          "validationType": "integer",
+          "min": "1",
+          "max": "120",
+          "errorMessage": "The age in years (> 1 year old) should be a number between 1-120",
+          "errorMessageI18nKey": "PatientAgeValidationFieldi18nKey"
+        }
+      ],
+      "condition": []
+    },
+    {
+      "name": "DateOfBirth",
+      "title": "Date of birth",
+      "fieldType": "datetime",
+      "order": 15,
+      "controlType": "dateTimePicker",
+      "mandatory": false
+    },
+    {
+      "name": "InfantBreastfeeding",
+      "title": "Infant breastfeeding?",
+      "fieldType": "text",
+      "order": 16,
+      "controlType": "comboBox",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Yes",
+          "value": "Yes"
+        },
+        {
+          "key": "No",
+          "value": "No"
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": 0,
+          "operator": "!=",
+          "conjunction": "and"
+        },
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": null,
+          "operator": "!=",
+          "conjunction": "and"
+        },
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": "",
+          "operator": "!=",
+          "conjunction": "and"
+        }
+      ]
+    },
+    {
+      "name": "EIDSampleType",
+      "title": "Sample type",
+      "fieldType": "text",
+      "order": 90,
+      "controlType": "comboBox",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Capillary EDTA",
+          "value": "Capillary EDTA"
+        },
+        {
+          "key": "Venous EDTA",
+          "value": "Venous EDTA"
+        },
+        {
+          "key": "DBS",
+          "value": "DBS"
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": 0,
+          "operator": "!=",
+          "conjunction": "and"
+        },
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": null,
+          "operator": "!=",
+          "conjunction": "and"
+        },
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": "",
+          "operator": "!=",
+          "conjunction": "and"
+        }
+      ]
+    },
+    {
+      "name": "ReasonForTesting",
+      "title": "Reasons for testing",
+      "fieldType": "text",
+      "order": 130,
+      "controlType": "comboBox",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Initial <2 months",
+          "value": "Initial <2 months"
+        },
+        {
+          "key": "High risk",
+          "value": "High risk"
+        },
+        {
+          "key": "recommended 6-8 weeks",
+          "value": "recommended 6-8 weeks"
+        },
+        {
+          "key": "confirmatory test",
+          "value": "confirmatory test"
+        },
+        {
+          "key": "following a positive RDT test",
+          "value": "following a positive RDT test"
+        },
+        {
+          "key": "Post weaning",
+          "value": "Post weaning"
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": 0,
+          "operator": "!=",
+          "conjunction": "and"
+        },
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": null,
+          "operator": "!=",
+          "conjunction": "and"
+        },
+        {
+          "propToCompare": "PatientAgeDays",
+          "valueToCompare": "",
+          "operator": "!=",
+          "conjunction": "and"
+        }
+      ]
+    },
+    {
+      "name": "NameOfRequestingFacility",
+      "title": "Name of requesting facility",
+      "fieldType": "text",
+      "order": 75,
+      "controlType": "textBox",
+      "mandatory": false
+    }
+  ]
+}

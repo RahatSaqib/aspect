@@ -102,6 +102,15 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
   return qb
 }
 
+function getBaseQueryForFactResults(knex, deviceId, from) {
+  return knex('Result as r')
+    .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
+    .where('r.deviceId', deviceId)
+    .where('r.endedOn', '>=', from)
+    .where('rt.excluded', false)
+}
+
 module.exports = {
   getBaseQueryForFactResultsDeviceByTimeFrame,
+  getBaseQueryForFactResults,
 }

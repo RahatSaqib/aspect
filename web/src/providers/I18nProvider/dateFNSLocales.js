@@ -5,8 +5,6 @@ import frLocale from 'date-fns/locale/fr'
 import ptLocale from 'date-fns/locale/pt'
 import ruLocale from 'date-fns/locale/ru'
 import ukLocale from 'date-fns/locale/uk'
-import tgLocale from 'date-fns/locale/uz-Cyrl'
-import viLocale from 'date-fns/locale/vi'
 
 const dateFNSLocales = {
   de: deLocale,
@@ -23,9 +21,6 @@ const dateFNSLocales = {
   'uk-UA': ukLocale,
   es: esLocale,
   'es-ES': esLocale,
-  tg: tgLocale,
-  'tg-TJ': tgLocale,
-  vi: viLocale,
 }
 
 export default dateFNSLocales

@@ -1,7 +1,7 @@
-const { listPeople: listPeopleBase } = require('./common/db')
+const { listPeople: listPeopleQuery } = require('./common/db')
 
 async function listPeople(request) {
-  const response = await listPeopleBase(request)
+  const response = await listPeopleQuery(request)
   return response
 }
 

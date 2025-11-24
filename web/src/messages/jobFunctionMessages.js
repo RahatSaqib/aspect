@@ -57,4 +57,52 @@ export default defineMessages({
     id: 'jobFunction.regionalOfficer',
     defaultMessage: 'Regional Officer',
   },
+  inventoryManager: {
+    id: 'jobFunction.inventoryManager',
+    defaultMessage: 'Inventory Manager',
+  },
+  remoteHealthWorker: {
+    id: 'jobFunction.remoteHealthWorker',
+    defaultMessage: 'Remote Health Worker',
+  },
+  labSupervisor: {
+    id: 'jobFunction.labSupervisor',
+    defaultMessage: 'Lab Supervisor',
+  },
+  medTech: {
+    id: 'jobFunction.medTech',
+    defaultMessage: 'Med Tech',
+  },
+  dataViewer: {
+    id: 'jobFunction.dataViewer',
+    defaultMessage: 'Data Viewer',
+  },
+  ntpNoResults: {
+    id: 'jobFunction.ntpNoResults',
+    defaultMessage: 'NTP - No Results',
+  },
+  systemOne: {
+    id: 'jobFunction.systemOne',
+    defaultMessage: 'SystemOne',
+  },
+  adminItTeam: {
+    id: 'jobFunction.adminItTeam',
+    defaultMessage: 'Admin - (IT team)',
+  },
+  labHead: {
+    id: 'jobFunction.labHead',
+    defaultMessage: 'Lab Head',
+  },
+  labTechnician: {
+    id: 'jobFunction.labTechnician',
+    defaultMessage: 'Lab Technician',
+  },
+  partners: {
+    id: 'jobFunction.partners',
+    defaultMessage: 'Partners',
+  },
+  ntpLevel: {
+    id: 'jobFunction.ntpLevel',
+    defaultMessage: 'NTP Level',
+  },
 })

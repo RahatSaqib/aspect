@@ -35,7 +35,7 @@ function listContactBaseConfig() {
           .description('The array of {tagName,tagId} assigned to persons'),
         contactStatus: Joi.number().allow('').description('Filter for person enabled/disabled'),
         ...validateAllGeographyFilterParams(),
-        ...validateSortPageParams('name', 'level', 'state', 'lga', 'tags'),
+        ...validateSortPageParams('name', 'assignments', 'state', 'lga', 'email', 'cell', 'phone', 'lastLogin'),
       },
     },
   }
@@ -324,7 +324,7 @@ const routes = [
     path: '/person/record-page-view',
     handler: asyncHandler(recordPageView),
     config: {
-      auth: { scope: ['person:view'] },
+      auth: { scope: ['browse'] },
       description: 'RecordPage View',
       notes: 'Increase count of viewed pages for user',
       response: {

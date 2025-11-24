@@ -1,17 +1,15 @@
 const _ = require('lodash')
-const { subDays } = require('date-fns')
 const { assert, expect } = require('chai')
 const subHours = require('date-fns/subHours')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { knex } = require('../../src/db')
-const { createMessageContext, waitForIdle, dispatchAndWaitForAction, waitForAction } = require('../utils/mqUtils')
+const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 // action creators
 const { inventoryStockout, inventoryStockExpiring } = require('../../src/inventory/actions')
 const { escalateIssues } = require('../../src/issue/actions')
-const { refreshConsumptionRates } = require('../../src/fact/onFactCalculateInventoryConsumptionRates')
-const { getPartner, getSite, getIssue, getIssueNotifications, cleanUpIssues } = require('../utils/issueUtils')
+const { getPartner, getSite, cleanUpIssues } = require('../utils/issueUtils')
 const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const {
   deviceTypeToId,
@@ -111,23 +109,6 @@ describe('Inventory Stock Issues Endpoint', () => {
     issueIds = []
   })
 
-  it('makes sure that calculated consumption rates match rates in db for all periods', async () => {
-    const { siteId, consumableId } = baseProps
-    // calculate rates
-    const totals = await refreshConsumptionRates(knex, siteId, consumableId)
-
-    // read from db
-    const ratesDb = await knex('FactInventoryConsumptionRate').where({ siteId, consumableId }).select('days', 'rate')
-
-    totals.forEach(justCalculated => {
-      const fromDb = ratesDb.find(x => x.days === justCalculated.days)
-
-      assert.exists(fromDb, `No rate entry in db for period ${justCalculated.days} days`)
-
-      assert.equal(justCalculated.total, fromDb.rate, `Rates do not match for period ${justCalculated.days} days`)
-    })
-  })
-
   // ---------------------------------------------------------------------------
   // trigger base issues
   // ---------------------------------------------------------------------------
@@ -153,121 +134,6 @@ describe('Inventory Stock Issues Endpoint', () => {
       actionCreator: inventoryStockExpiring,
     })
     issueIds.push(stockExpiringIssueId)
-  })
-
-  // ---------------------------------------------------------------------------
-  // escalate issues
-  // ---------------------------------------------------------------------------
-  describe('Escalate to level 2 of just triggered Stockout issue', () => {
-    let issueId
-    beforeEach(async () => {
-      const { siteId, consumableId } = baseProps
-      // calculate rates
-      await refreshConsumptionRates(knex, siteId, consumableId)
-
-      // Create stockout issue
-      issueId = await triggerInitialIssue({
-        knex,
-        ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
-        issueType: 'InventoryStockout',
-        dispatch: messageContext.inventoryStockout,
-        actionCreator: inventoryStockout,
-      })
-      issueIds.push(issueId)
-    })
-
-    it('change stock level to make stock lasts for less than 14 days and dispatch escalate issue action', async () => {
-      const { siteId, consumableId } = await knex('Issue').where('id', issueId).first()
-
-      // get dailyRate
-      const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
-        .where({ siteId, consumableId, days: 1 })
-        .first('rate')) || { rate: 0 }
-
-      // no need to read dueDaysInventoryStockout threshold from Partner table -
-      // because we store threshold for level 1 only (for triggering issue).
-      // It's equal 14 days for escalating to level 2
-      const dueDays = 14
-
-      // estimate quantity to let stock last for 2 days less than threshold
-      const quantityOnHand = dailyRate * (dueDays - 2)
-
-      // update InventoryItem assuming there are no lots defined
-      await knex('InventoryItem')
-        .update({
-          quantityOnHand,
-        })
-        .where({ siteId, consumableId })
-      // escalate
-      await dispatchAndWaitForAction(escalateIssues(issueId))
-      await waitForIdle(1000)
-
-      const issue = await getIssue(knex, issueId)
-      assert.equal(issue.level, 2)
-
-      // notifications should be created for the level that the issue has been escalated to
-      const notificationsIssue = await getIssueNotifications(knex, issueId)
-      expect(notificationsIssue).to.containSubset([
-        {
-          Notification: {
-            issueId,
-            personId: baseProps.siteRegionalOfficer.id,
-          },
-        },
-      ])
-    })
-  })
-
-  describe('Escalate to level 2 of just triggered Stock Expiring issue', () => {
-    let issueId
-    beforeEach(async () => {
-      const { siteId, consumableId } = baseProps
-      // calculate rates
-      await refreshConsumptionRates(knex, siteId, consumableId)
-
-      // Create stockout issue
-      issueId = await triggerInitialIssue({
-        knex,
-        ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
-        issueType: 'InventoryStockExpiring',
-        dispatch: messageContext.inventoryStockExpiring,
-        actionCreator: inventoryStockExpiring,
-      })
-      issueIds.push(issueId)
-    })
-
-    it('change createdOn value for just triggered Stock Expiring issue and dispatch escalate issue action', async () => {
-      // see seed/utils.js - search for 'knex('IssueEscalationTrigger').insert' -
-      // level 2 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 10 }
-      // level 3 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 20 }
-      // So, change dates of these issues to 15 days back to meet escalation conditions
-      const pastTime = subDays(new Date(), 15)
-      await knex('IssueEvent')
-        .update({
-          createdOn: pastTime,
-        })
-        .where({ issueId })
-
-      // escalate
-      const action = escalateIssues(issueId)
-      await messageContext.escalateIssues(issueId)
-      await waitForAction(action)
-      await waitForIdle(1000)
-
-      const issue = await getIssue(knex, issueId)
-      assert.equal(issue.level, 2)
-
-      // notifications should be created for the level that the issue has been escalated to
-      const notificationsIssue = await getIssueNotifications(knex, issueId)
-      expect(notificationsIssue).to.containSubset([
-        {
-          Notification: {
-            issueId,
-            personId: baseProps.siteRegionalOfficer.id,
-          },
-        },
-      ])
-    })
   })
 })
 

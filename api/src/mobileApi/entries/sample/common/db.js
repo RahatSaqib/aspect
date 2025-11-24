@@ -1,10 +1,7 @@
 const subMonths = require('date-fns/subMonths')
-const addDays = require('date-fns/addDays')
-const { format } = require('date-fns')
 const { knex } = require('../../../../db')
 const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
-const { getConstraints, addConstraints } = require('../../../../auth/constraints')
-const { getSitesQuery } = require('../../../../site/service')
+const { addConstraints } = require('../../../../auth/constraints')
 
 const getBaseAllSamplesRegistered = originSiteIds => {
   const knexQuery = knex('Sample as sample')
@@ -37,69 +34,19 @@ const getBaseAllSamplesRegistered = originSiteIds => {
 }
 
 const getAllSamplesRegistered = (query, originSiteIds) => {
-  const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
+  const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
+  const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
   const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where(queryBuilder =>
     queryBuilder
-      .where(qb => qb.where('sample.collectedOn', '>=', minUpdatedOn).orWhere('sample.updatedOn', '>=', minUpdatedOn))
-      .andWhere('sample.registeredInAspect', true)
+      .where(qb => qb.where('sample.collectedOn', '>=', submittedSince))
+      .andWhere('sample.registeredInMobile', true)
+      .andWhere(qb => {
+        if (modifiedSince) {
+          qb.where('sample.updatedOn', '>=', modifiedSince).orWhereNull('sample.updatedOn')
+        }
+      })
   )
   return knexQuery
-}
-
-const getSamplesRegisteredById = async (sampleId, originSiteIds) => {
-  const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where({ 'sample.id': sampleId })
-  return knexQuery
-}
-
-const getSamplesRegisteredAtSiteOnDayWithSampleId = async (
-  sampleExternalId,
-  sampleTypeId,
-  collectedOn,
-  originSiteId,
-  originSiteIds
-) => {
-  const knexQuery = getBaseAllSamplesRegistered(originSiteIds).modify(qb => {
-    qb.where({
-      'sample.externalId': sampleExternalId,
-      'sample.originSiteId': originSiteId,
-    })
-    if (sampleTypeId) {
-      qb.andWhere(sampleTypeIdQb =>
-        sampleTypeIdQb.whereNull('sample.sampleTypeId').orWhere('sample.sampleTypeId', sampleTypeId)
-      )
-    }
-    if (collectedOn) {
-      qb.andWhere(collectedOnQb =>
-        collectedOnQb
-          .whereNull('sample.collectedOn')
-          .orWhere(collectedOnQbBetween =>
-            collectedOnQbBetween.whereBetween('sample.collectedOn', [
-              format(collectedOn, 'yyyy-MM-dd'),
-              format(addDays(collectedOn, 1), 'yyyy-MM-dd'),
-            ])
-          )
-      )
-    }
-  })
-  return knexQuery
-}
-
-const getSiteIdsForUser = async auth => {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const clinics = await getSitesQuery(dataConstraints).select('s.id')
-  return clinics.map(c => c.id)
-}
-
-const updateExistingSample = async (sampleId, payload, auth) => {
-  await knex('Sample').where('id', sampleId).update(payload)
-  const clinicIds = await getSiteIdsForUser(auth)
-  return getSamplesRegisteredById(sampleId, clinicIds)
-}
-
-const insertNewSample = async (payload, auth) => {
-  const [newSampleId] = await knex('Sample').insert({ ...payload })
-  const clinicIds = await getSiteIdsForUser(auth)
-  return getSamplesRegisteredById(newSampleId, clinicIds)
 }
 
 const getTransferHistory = dataConstraints => {
@@ -113,9 +60,7 @@ const getTransferHistory = dataConstraints => {
 }
 
 module.exports = {
+  getBaseAllSamplesRegistered,
   getAllSamplesRegistered,
-  getSamplesRegisteredAtSiteOnDayWithSampleId,
-  updateExistingSample,
-  insertNewSample,
   getTransferHistory,
 }

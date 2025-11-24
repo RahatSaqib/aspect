@@ -8,7 +8,7 @@ const { upsertJobFunctionFixture } = require('../common')
 const jobFunctionsFixtureMyanmar = require('./fixtures/jobFunctions_myanmar')
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
-let patients = require('./fixtures/patients.json')
+const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { rowsAsObject, seedNotificationTypes, seedIssues } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
@@ -18,13 +18,9 @@ const {
   partnerTypeToId,
   resultSourceToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const { insertSite } = require('../../src/site/common/db')
-
-const { loadPlugin } = require('../../src/plugin/loadPlugin')
-const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -77,14 +73,6 @@ async function seed(knex) {
     serverUrl: 'https://myanmar.aspect.id',
   })
 
-  // -------------------------
-  // add and randomly populate DataCategory fields
-  const partnerPluginName = 'deprecatedMyanmar'
-  const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
-  const { addDataCategoryFields } = plugin
-  if (addDataCategoryFields) {
-    patients = addDataCategoryFields(patients)
-  }
   // -------------------------
 
   const [myanmarCountry] = await knex('Country as c').where({ 'c.a3': 'MMR' }).select('c.id', 'c.culture', 'c.timezone')
@@ -139,7 +127,6 @@ async function seed(knex) {
   }
   const baseProps = {
     partnerId,
-    pluginName: partnerPluginName,
     jobFunctionIds,
     auditFields,
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
@@ -200,7 +187,6 @@ async function seed(knex) {
     Error: resultCategoryErrorId,
   } = await allResultCategoryToId()
 
-  const resultWorkflowStatusId = await resultWorkflowStatusToId('Ordered')
   const resultSourceId = await resultSourceToId('DiagnosticDevice')
   const resultTypeId = await resultTypeToId('Patient')
 
@@ -322,6 +308,8 @@ async function seed(knex) {
             collectedOn: calculateDateForResult(i, 500, millisInMinute),
             sampleTypeId: sampleTypeDBSId,
             originSiteId: siteData.id,
+            createdOn: now,
+            updatedOn: now,
           }
 
           ;[sample.id] = await knex('Sample').insert(sample)
@@ -366,7 +354,7 @@ async function seed(knex) {
               const result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
 
               resultData.resultText = result.resultText
-              const [rid] = await knex('Result').insert({
+              await knex('Result').insert({
                 ...auditFields,
                 externalId: `UQTB-${i}`,
                 assayId: assays.GxMtbRif.id,
@@ -403,14 +391,6 @@ async function seed(knex) {
                 errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
                 errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
               })
-              const [lastLogId] = await knex('ResultWorkflowLog').insert({
-                resultId: rid,
-                resultWorkflowStatusId,
-                changedOn: now,
-                createdOn: now,
-                createdBy: adminId,
-              })
-              await knex('Result').where('id', rid).update({ resultWorkflowStatusLogId: lastLogId })
             })
           )
         })
@@ -740,8 +720,6 @@ async function seed(knex) {
   )
 
   await seedIssues(knex, baseProps)
-
-  await seedDataCategory(knex, 'mohs', partnerPluginName)
 }
 
 function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {

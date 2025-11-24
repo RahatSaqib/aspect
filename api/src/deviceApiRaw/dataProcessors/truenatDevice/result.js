@@ -13,9 +13,7 @@ const {
   resultTypeToId,
   allSampleTypeToId,
   allResultCategoryToId,
-  allResultWorkflowStatusToId,
 } = require('../../../shared/dictionary')
-const { resultLogged } = require('../../../result/actions')
 
 const sampleTypeMappings = { Sputum: 'Sputum' }
 
@@ -223,7 +221,7 @@ class TruenatResult extends SynchronousDataProcessor {
           await knex('Result').where('id', result.id).update(newResultDetails)
         }
 
-        const deviceLogId = await postPayloadFromDevice(
+        await postPayloadFromDevice(
           {
             deviceId,
             source: 'Diagnostic Device POST',
@@ -232,19 +230,6 @@ class TruenatResult extends SynchronousDataProcessor {
             rawMessage: JSON.stringify(request.plugins.rawPayload),
           },
           knex
-        )
-
-        await logResultWorkflow(
-          knex,
-          this.messageContext,
-          result.id,
-          resultStatus,
-          validityStatus,
-          senderOperator,
-          labName,
-          utcNow,
-          result.resultWorkflowStatusLogId,
-          deviceLogId
         )
 
         this.messageContext.dispatch(deviceSeen(deviceId))
@@ -361,10 +346,13 @@ async function getSampleTypeId(sampleTypeName) {
 async function getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, originSiteId) {
   let { id: sampleId } = (await knex('Sample').where('externalId', sampleExternalId).first('id')) || {}
   if (!sampleId) {
+    const now = new Date()
     ;[sampleId] = await knex('Sample').insert({
       externalId: sampleExternalId,
       sampleTypeId,
       originSiteId,
+      createdOn: now,
+      updatedOn: now,
     })
   }
   return sampleId
@@ -417,68 +405,6 @@ async function determineResultCategory1Id(
   }
 
   return resultCategory1Id
-}
-
-async function logResultWorkflow(
-  knex,
-  messageContext,
-  resultId,
-  resultStatus,
-  validityStatus,
-  operator,
-  labName,
-  utcNow,
-  currentResultWorkflowStatusLogId,
-  deviceLogId
-) {
-  const resultWorkflowStatuses = await allResultWorkflowStatusToId()
-  let resultWorkflowStatusId = resultWorkflowStatuses.InProgress
-  if (validityStatus === 'Error') {
-    resultWorkflowStatusId = resultWorkflowStatuses.Error
-  } else if (['Aborted', 'User Stopped', 'Complete', 'Completed'].includes(resultStatus)) {
-    resultWorkflowStatusId = resultWorkflowStatuses.Processed
-  }
-  const resultWorkflowLog = {
-    resultId,
-    resultWorkflowStatusId,
-    operator,
-    reason: `Data from ${labName}`,
-    changedOn: utcNow,
-    createdOn: utcNow,
-  }
-  let resultWorkflowStatusLogId = null
-  const resultWorkflowStatusPriority = [
-    resultWorkflowStatuses.Purged,
-    resultWorkflowStatuses.Flagged,
-    resultWorkflowStatuses.Acknowledged,
-    resultWorkflowStatuses.Delivered,
-    resultWorkflowStatuses.Deliverable,
-    resultWorkflowStatuses.Validated,
-    resultWorkflowStatuses.Error,
-    resultWorkflowStatuses.Processed,
-    resultWorkflowStatuses.InProgress,
-    resultWorkflowStatuses.Ordered,
-    resultWorkflowStatuses.OK,
-  ]
-  if (!currentResultWorkflowStatusLogId) {
-    ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
-    messageContext.dispatch(resultLogged(resultId, deviceLogId))
-  } else {
-    const existingResultWorkflowLog = await knex('ResultWorkflowLog')
-      .where('id', currentResultWorkflowStatusLogId)
-      .first()
-    if (
-      !existingResultWorkflowLog ||
-      resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
-        resultWorkflowStatusPriority.indexOf(existingResultWorkflowLog.resultWorkflowStatusId)
-    ) {
-      ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
-      messageContext.dispatch(resultLogged(resultId, deviceLogId))
-    }
-  }
-  if (resultWorkflowStatusLogId) {
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
-  }
 }
 
 module.exports = TruenatResult

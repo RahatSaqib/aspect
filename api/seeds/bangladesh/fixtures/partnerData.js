@@ -42,4 +42,10 @@ module.exports = {
   apiUrl: 'https://bangladesh.aspect.id/api',
   excludePattern: '\\b(EQA|VN-XPERT-23-B\\d[\\w]*)\\b',
   deviceCapacityFactor: 2,
+  customWorkingDays: JSON.stringify({
+    excludedDays: '6', // Exclude Fridays. the function DAYOFWEEK starts from Sunday 1-7, where 1 is Sunday and 7 is Saturday
+    daysPerMonth: 24,
+    daysPerQuarter: 72,
+    daysPerYear: 288,
+  }),
 }

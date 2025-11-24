@@ -518,7 +518,7 @@ async function updateTagsForPerson(knex, { partnerId, personId, tagTitles = [] }
     tagInDatabase => !_.some(personTagsInDatabase, { tagId: tagInDatabase.id })
   )
   return Promise.map(tagsToAppendToPerson, async tag => knex('PersonTag').insert({ tagId: tag.id, personId }), {
-    concurrency: config.db.connectionLimit,
+    concurrency: 5,
   })
 }
 

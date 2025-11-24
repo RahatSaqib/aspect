@@ -62,12 +62,4 @@ module.exports = seed(async knex => {
    * upsert issue escalation triggers
    */
   await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
-
-  /**
-   * TODO: discuss if we should start using IssueResolutionTrigger table for all
-   * issue types.
-   * Some issue types are auto-resolved (like DEVICE_OFFLINE issue is
-   * auto-resolved by issue type DEVICE_ONLINE)
-   */
-  // await seedIssueResolutionTrigger(knex, { partnerId, pluginName, auditFields })
 }, __filename)

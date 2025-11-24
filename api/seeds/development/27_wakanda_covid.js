@@ -4,7 +4,6 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { subMonths } = require('date-fns')
-const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
 const { resultCategoryToId, allSiteTypeToId } = require('../../src/shared/dictionary')
 const { commonUpserts } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
@@ -318,5 +317,4 @@ async function seed(knex) {
 
   // add follow ups
   await utils.upsertFollowUps(knex, followUp, [partnerId])
-  await addDefaultCustomFieldDefinitions(knex, partnerId)
 }

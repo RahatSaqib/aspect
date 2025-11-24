@@ -98,12 +98,13 @@ async function addIssueTypes(
           webhookTemplateId,
         })
       }
-      if (!insertedIssueTypes.includes(issues[elem].issueType.externalId)) {
-        await knex('IssueType').insert({
+      await knex('IssueType')
+        .insert({
           ...issues[elem].issueType,
           defaultMessageTypeId: messageTypeId,
         })
-      }
+        .onConflict(['externalId'])
+        .merge()
     }
   })
 
@@ -112,31 +113,12 @@ async function addIssueTypes(
   return true
 }
 
-async function addDefaultCustomFieldDefinitions(knex, _partnerId, formsNeeded = Object.keys(forms)) {
+async function addDefaultCustomFieldDefinitions(knex, partnerId, formsNeeded = Object.keys(forms)) {
   const existingSchemas = await knex('FormDefinition').select()
   if (!_.isEmpty(existingSchemas)) {
     return
   }
 
-  let partnerId = _partnerId
-  if (!partnerId) {
-    try {
-      // eslint-disable-next-line prefer-const
-      ;({ partnerId } = await knex('User as u')
-        .join('Person as p', 'u.id', 'p.userId')
-        .join('JobContext as jc', 'p.id', 'jc.personId')
-        .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
-        .where('jf.name', 'Super Admin')
-        .first('p.lastPartnerId as partnerId'))
-      if (!partnerId) {
-        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('Error inserting forms', e)
-      return false
-    }
-  }
   const forms = await getBaseForms()
   const insertedForms = await knex('FormDefinition').where({ partnerId }).pluck('externalId')
 

@@ -36,12 +36,18 @@ class TruenatLogin extends SynchronousDataProcessor {
   async processRequest() {
     const { request } = this
     const { payload } = request
-    if (payload.Username === '') {
+
+    // Basic payload validation
+    if (!payload) {
+      throw Boom.badRequest('Request payload is required')
+    }
+    if (!payload.Username) {
       throw Boom.badRequest('Username cannot be empty')
     }
-    if (payload.Password === '') {
+    if (!payload.Password) {
       throw Boom.badRequest('Password cannot be empty')
     }
+
     const deviceApiKeyAuthResult = await lookupUsingCredentials(payload.Username, payload.Password)
     const deviceId = _.get(deviceApiKeyAuthResult, 'data.deviceId')
     if (deviceId) {

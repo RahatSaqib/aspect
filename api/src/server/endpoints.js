@@ -6,6 +6,7 @@ const { getStatistics } = require('./getStatistics')
 const { getVersion } = require('./getVersion')
 const { getStatus } = require('./getStatus')
 const { listJobs } = require('../scheduler/listJobs')
+const { testSentryError } = require('./testSentryError')
 
 const countryBase = {
   CountryId: Joi.number().integer().positive().required().description('Country Id'),
@@ -178,6 +179,14 @@ const routes = [
           jobName: Joi.string().description('JobName'),
         },
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/test-sentry-error',
+    handler: asyncHandler(testSentryError),
+    config: {
+      auth: false,
     },
   },
 ]

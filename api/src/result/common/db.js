@@ -9,31 +9,15 @@ const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { pageParams, sortParams } = require('../../db')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
-const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
-
-function getSitesQuery(dataConstraints) {
-  return knex('Site as s')
-    .join('SiteType as st', 's.siteTypeId', 'st.id')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
-    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
-    .groupBy(['s.id'])
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-}
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const clinics = await getSitesQuery(dataConstraints).select('s.id')
-  const clinicIds = clinics.map(c => c.id)
 
   const { userName } = await getUser(auth.credentials.name)
   const results = await getBaseQueryForResults()
     .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
     .select('rt.excluded', 'rt.id as resultTypeId')
     .where('r.id', resultId)
-    .andWhere(qb => qb.whereIn('r.reportableSiteId', clinicIds))
     .modify(
       addConstraints,
       dataConstraints,
@@ -100,7 +84,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
 
   if (data) {
     getResultTreatmentStatus(data)
-    data.resultNotes = await getResultNotesByResultId(resultId)
+    data.resultNotes = []
     data.resultTreatmentStatusCreatedBy = userName
 
     if (data.resultData && data.resultData.detectedResistance && data.resultData.detectedResistance.length > 0)
@@ -201,8 +185,6 @@ const getBaseQueryForResults = () =>
       q.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
     })
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -225,13 +207,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     })
     .modify(queryBuilder => {
       if (query.onlyUnreconciled) {
-        queryBuilder
-          .innerJoin('MissingInventoryLots as mil', 'r.id', 'mil.resultId') // Join based on resultId
-          .whereNotNull('mil.resultId')
-          .modify(filterParams, query, {
-            lotNumber: 'mil.lotNumber',
-            expiresOn: 'mil.expirationDate',
-          })
+        queryBuilder.whereNull('r.reconciliationDate')
       }
       if (query.consumableId)
         queryBuilder.join('InventoryLog as il', 'il.resultId', 'r.id').where('il.consumableId', query.consumableId)
@@ -296,7 +272,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       errorCode: 'r.errorCode',
-      workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
       patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',
@@ -429,17 +404,6 @@ async function showResultFollowUps(resultId, dataConstraints) {
       'fut.i18nKey as followUpTypei18nKey'
     )
   return { data: followUps }
-}
-
-async function getResultNotesByResultId(resultId) {
-  const resultNotes = await knex('ResultNote as rn')
-    .leftJoin('User as u', 'rn.createdBy', 'u.id')
-    .leftJoin('ResultNoteType as rt', 'rt.id', 'rn.resultNoteTypeId')
-    .where('rn.resultId', resultId)
-    .orderBy('rn.createdOn', 'desc')
-    .select('u.name as createdBy', 'rn.text', 'rn.id', 'rn.changedOn', 'rn.createdOn', 'rt.name as noteType')
-
-  return resultNotes
 }
 
 function getQueryForDataExtract(query, dataConstraints) {
@@ -819,7 +783,6 @@ module.exports = {
   getResultByResultId,
   getQueryForResultsListAndExport,
   showFileReferencesById,
-  getResultNotesByResultId,
   getBaseQueryForResults,
   getQueryForDataExtract,
   getCustomFieldsForResult,

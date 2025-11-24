@@ -37,6 +37,7 @@ import {
   ReporterFilter,
   ReportsFilter,
   ResultFilter,
+  SampleFilter,
   SiteFilter,
   XDRByDeviceFilter,
   LgasFilter,
@@ -92,7 +93,6 @@ import PeriodSelector from './PeriodSelector'
 import ReportSelector from './ReportSelector'
 import ResultCategoryGroupSelect from './ResultCategoryGroupSelect'
 import ResultTreatmentStatusSelect from './ResultTreatmentStatusSelect'
-import ResultWorkflowStatusSelect from './ResultWorkflowStatusSelect'
 import RevokeSelect from './RevokeSelect'
 import { SimpleTableHeader, SimpleTablePagination } from './SimpleTable'
 import SiteListSelect from './SiteListSelect'
@@ -137,7 +137,6 @@ export {
   ReportSelector,
   ResultCategoryGroupSelect,
   ResultTreatmentStatusSelect,
-  ResultWorkflowStatusSelect,
   RevokeSelect,
   SiteListSelect,
   SiteSelect,
@@ -189,6 +188,7 @@ export {
   ReporterFilter,
   ReportsFilter,
   ResultFilter,
+  SampleFilter,
   SiteFilter,
   XDRByDeviceFilter,
   LgasFilter,

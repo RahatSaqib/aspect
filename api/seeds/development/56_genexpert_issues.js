@@ -1,7 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
-const Promise = require('bluebird')
 const { subDays } = require('date-fns')
 
 const { issueTypeToId, issueStatusToId } = require('../../src/shared/dictionary')
@@ -98,5 +97,5 @@ async function seed(knex) {
     }
   })
 
-  await Promise.each(issues, issue => knex('Issue').insert(issue))
+  await knex('Issue').insert(issues)
 }

@@ -8,6 +8,7 @@ const {
   technician,
   aspectBeta,
   regionalAdmin,
+  inventoryManager,
 } = require('../../fixtures/jobFunctionBase')
 
 const ntpLevel = {
@@ -131,4 +132,5 @@ module.exports = [
   ntpLevel,
   partners,
   aspectBeta,
+  inventoryManager,
 ]

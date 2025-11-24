@@ -1,4 +1,6 @@
-const crypto = require('crypto')
+const Boom = require('@hapi/boom')
+const { assignMobileAppSpot } = require('./assignMobileAppSpot')
+const { getUser } = require('../../../auth/service')
 
 async function fetchApplicationConfigServiceHandler() {
   return Promise.resolve({
@@ -86,39 +88,32 @@ async function fetchSystemConfigServiceHandler() {
 }
 
 /**
- * Generates a unique app ID from a device code
- * @param {string} deviceCode - The device code to generate the app ID from
- * @returns {string} A 12-character uppercase alphanumeric code
- * @throws {Error} If deviceCode is missing or invalid
- */
-function generateAppId(deviceCode) {
-  if (!deviceCode || typeof deviceCode !== 'string') {
-    throw new Error('Invalid device code provided')
-  }
-
-  const hash = crypto.createHash('sha256').update(deviceCode).digest('hex')
-  return hash.slice(0, 10).toUpperCase()
-}
-
-/**
- * Handles the request to generate an app ID from a device code
+ * Handles the request to assign a mobile device identifier to a device code
  * @param {Object} params - Request parameters
  * @param {Object} params.query - Query parameters
- * @param {string} params.query.deviceCode - The device code to generate the app ID from
- * @returns {Promise<Object>} Response containing the generated app ID or error message
+ * @param {string} params.query.deviceCode - The device code to assign a mobile device to
+ * @param {Object} params.auth - Authentication object
+ * @param {Object} params.auth.credentials - User credentials
+ * @param {number} params.auth.credentials.id - User ID
+ * @returns {Promise<Object>} Response containing the deviceAppSpot or error message
  */
-async function fetchAppIdFromUniqueDeviceCodeHandler({ query: { deviceCode } }) {
+async function fetchAppIdFromUniqueDeviceCodeHandler({ query, auth }) {
+  const { deviceCode } = query
+  const { id: userId } = await getUser(auth.credentials.name)
+
   try {
-    const appId = generateAppId(deviceCode)
+    const result = await assignMobileAppSpot(deviceCode, userId)
     return {
       ok: true,
-      data: { appId },
+      data: { appId: result.appId },
     }
   } catch (error) {
-    return {
-      ok: false,
-      error: error.message || 'Failed to generate app ID',
+    if (error.isBoom && error.output.statusCode === 409) {
+      // Re-throw Boom errors so they get proper HTTP status codes
+      throw error
     }
+    // For non-Boom errors, wrap them in a Boom error
+    throw Boom.badImplementation(error.message || 'Failed to assign mobile device spot')
   }
 }
 

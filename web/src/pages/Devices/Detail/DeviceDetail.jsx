@@ -18,7 +18,6 @@ import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintena
 import isEditable from '../../../utils/selectors/isEditable'
 import { getReturnUrl } from '../../../utils/utils/browser'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
-import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
 
 const messages = {
@@ -133,12 +132,6 @@ export const DeviceDetail = props => {
                   onCalibrationSubmit={onCalibrationSubmit}
                   onWarrantySubmit={onWarrantySubmit}
                 />
-              }
-            />
-            <Route
-              path="operation"
-              element={
-                <DeviceDetailOperation intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
               }
             />
             <Route

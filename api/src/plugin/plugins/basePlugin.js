@@ -5,7 +5,7 @@ const findResult = require('../result/geneXpert/resultIdentification/findResult_
 const issueTriggers = require('../issueTriggers')
 const issueResolutions = require('../issueResolutions')
 const filtersOpenIssues = require('../../issue/filterConditions')
-const inventoryStrategy = require('../../inventory/strategies')
+const { extractSampleId } = require('../deviceType/extractSampleId')
 
 const DEFAULT_SETTINGS = {
   displayPreferences: {
@@ -55,7 +55,6 @@ const basePlugin = {
   issueEscalations: {},
   dataCategories: {},
   filtersOpenIssues,
-  inventoryStrategy,
   transformInitialPayload,
   getDeviceSeenOn,
   getDevicePingOn,
@@ -82,6 +81,7 @@ const basePlugin = {
   getCustomFields,
   findResult,
   extractCustomFieldsFromPayload,
+  extractSampleId,
 }
 
 /**

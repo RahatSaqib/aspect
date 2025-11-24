@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears, subMonths } = require('date-fns')
+const { addMilliseconds, addMinutes, addHours, subDays, addDays, subYears, subMonths } = require('date-fns')
 const uuid = require('node-uuid')
 
 const config = require('../../src/config')
@@ -18,7 +18,6 @@ const {
   allResultCategoryToId,
   allResultSourceToId,
   allResultStatusToId,
-  allResultWorkflowStatusToId,
   allSampleTypeToId,
   allSiteTypeToId,
   assayTypeToId,
@@ -40,7 +39,7 @@ const { upsertSingle } = require('../utils')
 const upsertReports = require('../common/upsert_reports')
 const upsertConsumables = require('../common/upsert_consumables')
 const {
-  getDetectedResistanceCategoryTypes,
+  getXdrDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { insertSite } = require('../../src/site/common/db')
 
@@ -101,6 +100,12 @@ async function seed(knex) {
     deviceLogHistoryDays: 14,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
+    customWorkingDays: JSON.stringify({
+      daysPerYear: 252,
+      daysPerMonth: 21,
+      excludedDays: '6,7',
+      daysPerQuarter: 63,
+    }),
   })
 
   const [partnerTwoId] = await knex('Partner').insert({
@@ -3188,15 +3193,6 @@ async function seed(knex) {
     GxHiv1VlCartridge: consumableGxHiv1VlCartridgeId,
   } = await allConsumableToId()
 
-  // Result Workflow Status
-  const {
-    Ordered: ordered,
-    Processed: processed,
-    Validated: validated,
-    Deliverable: deliverable,
-    Acknowledged: acknowledged,
-  } = await allResultWorkflowStatusToId()
-
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
@@ -3262,23 +3258,25 @@ async function seed(knex) {
               if (!preventRandomSitesForCountries.includes(countryData.abbreviation)) {
                 await Promise.all(
                   _.map(_.range(1, 6 - (lgaData.id % 5)), async siteNumber => {
+                    const siteType = labStrings[_.random(0, labStrings.length - 1)]
+                    const siteTypeId = siteTypeIds[siteType === 'Clinic' ? 'clinic' : 'lab']
                     const city = lga.cities && lga.cities[siteNumber - 1] ? lga.cities[siteNumber - 1] : null
                     const siteData = {
                       partnerId: partnerOneId,
                       geographyId,
                       externalId: `${state.name}_${siteNumber}_${(incremental += 1)}`,
-                      name: city
-                        ? `${city} ${labStrings[_.random(0, labStrings.length - 1)]}`
-                        : `${lga.name} County ${siteNumber % 2 ? 'Lab' : 'Clinic'} ${siteNumber}`,
-                      siteTypeId: siteTypeIds[siteNumber % 2 ? 'lab' : 'clinic'],
+                      name: city ? `${city} ${siteType}` : `${lga.name} County ${siteType} ${siteNumber}`,
+                      siteTypeId,
                       shortName: city || `${lga.name}, ${stateKey} ${siteNumber}`,
                       city: city || `${lga.name} City`,
                       street1: `${lgaData.id} Main Street`,
                       zip: `12345-${lgaData.id}`,
                       latitude: _.has(state, 'lat') ? state.lat + _.random(-0.5, 0.5, true) : undefined,
                       longitude: _.has(state, 'lng') ? state.lng + _.random(-0.5, 0.5, true) : undefined,
+                      sampleRegistrationAllowed: siteType === 'Clinic', // true if it's clinic
                       ...auditFields,
                     }
+
                     const [siteId] = await insertSite(knex, siteData)
                     siteData.id = siteId
                     countryData.sites.push(siteData)
@@ -3488,6 +3486,7 @@ async function seed(knex) {
         // not all sites will have a router - we only added routers to some site
         deviceId: routerId || null,
         moduleBayCapacity: 4,
+        dailyTestCapacity: 12,
         createdOn: subDays(now, _.random(0, 120)),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
@@ -3528,52 +3527,53 @@ async function seed(knex) {
       const operationNumber = _.random(3, 11)
 
       // Create DeviceOperation (calibrations and errors)
-      await Promise.each(_.range(operationNumber), async () => {
+      const operations = _.range(operationNumber).map(() => {
         const bayNumber = _.random(1, 4, false)
-        await knex('DeviceOperation').insert({
+        const data = _.sample([
+          {
+            type: 'gx-log',
+            details: {
+              Errors: [],
+              RawText: `<ModuleStartCalibrationTask>Site A${bayNumber}: calibration was successful`,
+              Calibrations: [
+                {
+                  Site: `Site A${bayNumber}`,
+                  Source: 'ModuleStartCalibrationTask',
+                  Message: 'calibration was successful',
+                },
+              ],
+            },
+            logLevel: 'INFO',
+            logFileName: 'C:\\GeneXpert\\XpertCal\\log\\XpertCal-2015.11.05_12.33.00.000-0.log',
+          },
+          {
+            type: 'gx-log',
+            details: {
+              Errors: [
+                {
+                  Message:
+                    'Operation terminated during test at B1: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
+                  ErrorCode: '2034',
+                },
+              ],
+              RawText:
+                '<_e>Operation terminated during test at B1:\r\nError 2034: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
+              Calibrations: [],
+            },
+            logLevel: 'ERROR',
+            logFileName: 'C:\\GeneXpert\\log\\genexpert-2020.11.23_08.57.21.741-0.log',
+          },
+        ])
+
+        return {
           deviceId: device.id,
-          data: JSON.stringify(
-            _.sample([
-              {
-                type: 'gx-log',
-                details: {
-                  Errors: [],
-                  RawText: `<ModuleStartCalibrationTask>Site A${bayNumber}: calibration was successful`,
-                  Calibrations: [
-                    {
-                      Site: `Site A${bayNumber}`,
-                      Source: 'ModuleStartCalibrationTask',
-                      Message: 'calibration was successful',
-                    },
-                  ],
-                },
-                logLevel: 'INFO',
-                logFileName: 'C:\\GeneXpert\\XpertCal\\log\\XpertCal-2015.11.05_12.33.00.000-0.log',
-              },
-              {
-                type: 'gx-log',
-                details: {
-                  Errors: [
-                    {
-                      Message:
-                        'Operation terminated during test at B1: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
-                      ErrorCode: '2034',
-                    },
-                  ],
-                  RawText:
-                    '<_e>Operation terminated during test at B1:\r\nError 2034: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
-                  Calibrations: [],
-                },
-                logLevel: 'ERROR',
-                logFileName: 'C:\\GeneXpert\\log\\genexpert-2020.11.23_08.57.21.741-0.log',
-              },
-            ])
-          ),
+          data: JSON.stringify(data),
           startedOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
           guid: uuid.v4(),
-        })
+        }
       })
+      await knex('DeviceOperation').insert(operations)
     })
 
     // Insert Inventory Items
@@ -3583,7 +3583,7 @@ async function seed(knex) {
         new Date(now.getTime() + _.random(-millisInNormalYear / 2, millisInNormalYear * 2)).setHours(0, 0, 0, 0)
       )
       let quantityOnHand = _.random(0, 1000)
-      const consumableReasons = await knex('ConsumableReason').where('reset', 0).select()
+      const consumableReasons = await knex('ConsumableReason').whereNot('effectOnStock', 'resetToValue').select()
 
       let lotNumber = null
       // TB Cartridges
@@ -3674,6 +3674,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -3806,28 +3808,10 @@ async function seed(knex) {
         })
         const savedResult = await knex('Result').where('id', resultId).first()
 
-        await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: ordered,
-          operator: 'Marsha',
-          changedOn: subHours(randomDate, 25),
-          createdOn: subHours(randomDate, 26),
-          createdBy: adminId,
-        })
-
-        const [lastLogId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: _.random(0, 100) < 90 ? deliverable : acknowledged,
-          operator: 'John',
-          changedOn: addHours(randomDate, 2),
-          createdOn: addHours(randomDate, 1),
-          createdBy: adminId,
-        })
-
         const resultStatuses = await allResultStatusToId()
         const resultStatusesIds = Object.values(resultStatuses)
 
-        const resultWithLogInfo = { resultWorkflowStatusLogId: lastLogId }
+        const resultWithLogInfo = {}
 
         // Insert another random result status log
         const rdm = _.random(0, resultStatusesIds.length - 1)
@@ -3953,6 +3937,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbUltraNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4090,26 +4076,6 @@ async function seed(knex) {
           errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
         })
 
-        await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: ordered,
-          operator: 'Marsha',
-          changedOn: subHours(randomDate, 25),
-          createdOn: subHours(randomDate, 26),
-          createdBy: adminId,
-        })
-
-        const [lastLogId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: _.random(0, 100) < 90 ? deliverable : acknowledged,
-          operator: 'John',
-          changedOn: addHours(randomDate, 2),
-          createdOn: addHours(randomDate, 1),
-          createdBy: adminId,
-        })
-
-        await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
-
         await knex('DeviceLog').insert({
           deviceId: device.id,
           createdOn: addHours(randomDate, 1),
@@ -4174,6 +4140,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbXdrNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4282,7 +4250,7 @@ async function seed(knex) {
 
         resultData.resultText = result.resultText
 
-        const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(result.resultText)
+        const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(result.resultText)
         resultData.detectedResistance = detectedResistance
         resultData.allResistances = allResistances
 
@@ -4323,26 +4291,6 @@ async function seed(knex) {
           errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
           errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
         })
-
-        await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: ordered,
-          operator: 'Marsha',
-          changedOn: subHours(randomDate, 25),
-          createdOn: subHours(randomDate, 26),
-          createdBy: adminId,
-        })
-
-        const [lastLogId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: _.random(0, 100) < 90 ? deliverable : acknowledged,
-          operator: 'John',
-          changedOn: addHours(randomDate, 2),
-          createdOn: addHours(randomDate, 1),
-          createdBy: adminId,
-        })
-
-        await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
 
         await knex('DeviceLog').insert({
           deviceId: device.id,
@@ -4409,6 +4357,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultEbolaNumber, millisInMinute),
           sampleTypeId: sampleTypePlasmaId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4491,7 +4441,7 @@ async function seed(knex) {
           j += 1
           if (_.random(5) === 0) {
             resultData.resultText = result.resultText
-            const [resultId] = await knex('Result').insert({
+            await knex('Result').insert({
               ...auditFields,
               externalId: `UQEB-${i}-${j}`,
               assayId: assayGeneXpertEbolaId,
@@ -4528,35 +4478,6 @@ async function seed(knex) {
               errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
               errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
             })
-
-            await knex('ResultWorkflowLog').insert({
-              resultId,
-              resultWorkflowStatusId: ordered,
-              operator: 'Bill',
-              changedOn: subHours(randomDate, 34),
-              createdOn: subHours(randomDate, 35),
-              createdBy: adminId,
-            })
-
-            const [lastLogId] = await knex('ResultWorkflowLog').insert({
-              resultId,
-              resultWorkflowStatusId: processed,
-              operator: 'Marsha',
-              changedOn: subHours(randomDate, 13),
-              createdOn: subHours(randomDate, 12),
-              createdBy: adminId,
-            })
-
-            await knex('ResultWorkflowLog').insert({
-              resultId,
-              resultWorkflowStatusId: acknowledged,
-              operator: 'John',
-              changedOn: addHours(randomDate, 41),
-              createdOn: addHours(randomDate, 42),
-              createdBy: adminId,
-            })
-
-            await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
           }
         })
       })
@@ -4570,6 +4491,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultHivVlNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4640,8 +4563,6 @@ async function seed(knex) {
         },
       }
 
-      // make sure we have at least one result with these status
-      const ensureResultIds = [acknowledged, validated, deliverable]
       await Promise.each(_.range(resultHivVlNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
         const siteData = siteDatas.find(site => site.id === device.siteId)
@@ -4669,10 +4590,7 @@ async function seed(knex) {
         resultData.log = log
         resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
-        const resultStatus =
-          ensureResultIds.shift() || _.random(1) < 0.3 ? deliverable : _.random(1) < 0.5 ? validated : acknowledged
-
-        const [resultId] = await knex('Result').insert({
+        await knex('Result').insert({
           ...auditFields,
           externalId: `UQHIV-${i}`,
           assayId: assayGeneXpertHiv1VlId,
@@ -4707,17 +4625,6 @@ async function seed(knex) {
           errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
           errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
         })
-
-        const [lastLogId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: resultStatus,
-          operator: 'Marsha',
-          changedOn: subHours(randomDate, 2),
-          createdOn: subHours(randomDate, 3),
-          createdBy: adminId,
-        })
-
-        await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
       })
 
       // some HCV samples for GeneXpert
@@ -4728,6 +4635,8 @@ async function seed(knex) {
             externalId: `SMP-HCV-GX-${i}`,
             collectedOn: calculateDateForResult(i, resultHcvNumber, millisInMinute),
             sampleTypeId: sampleTypeDBSId,
+            createdOn: now,
+            updatedOn: now,
           }
 
           ;[sample.id] = await knex('Sample').insert(sample)
@@ -4818,7 +4727,7 @@ async function seed(knex) {
           _.map(possibleResults, async result => {
             j += 1
             if (_.random(5) === 0) {
-              const [resultId] = await knex('Result').insert({
+              await knex('Result').insert({
                 ...auditFields,
                 externalId: `UQHCV-${i}-${j}`,
                 assayId: assayGeneXpertHcvId,
@@ -4855,35 +4764,6 @@ async function seed(knex) {
                 errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
                 errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
               })
-
-              await knex('ResultWorkflowLog').insert({
-                resultId,
-                resultWorkflowStatusId: ordered,
-                operator: 'Bill',
-                changedOn: subHours(randomDate, 34),
-                createdOn: subHours(randomDate, 35),
-                createdBy: adminId,
-              })
-
-              const [lastLogId] = await knex('ResultWorkflowLog').insert({
-                resultId,
-                resultWorkflowStatusId: processed,
-                operator: 'Marsha',
-                changedOn: subHours(randomDate, 13),
-                createdOn: subHours(randomDate, 12),
-                createdBy: adminId,
-              })
-
-              await knex('ResultWorkflowLog').insert({
-                resultId,
-                resultWorkflowStatusId: acknowledged,
-                operator: 'John',
-                changedOn: addHours(randomDate, 41),
-                createdOn: addHours(randomDate, 42),
-                createdBy: adminId,
-              })
-
-              await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
             }
           })
         )
@@ -4977,20 +4857,23 @@ async function seed(knex) {
   const tagIds = [tagOneId, tagTwoId, tagThreeId]
 
   const results = await knex('Result').select('id').limit(20)
-  await Promise.all(
-    _.map(results, async result => {
-      await Promise.all(
-        _.map(tagIds, async tagId => {
-          if (_.random(2) === 0) {
-            await knex('ResultTag').insert({
-              resultId: result.id,
-              tagId,
-            })
-          }
+  const resultTagsToInsert = []
+
+  for (const result of results) {
+    for (const tagId of tagIds) {
+      if (_.random(2) === 0) {
+        resultTagsToInsert.push({
+          resultId: result.id,
+          tagId,
         })
-      )
-    })
-  )
+      }
+    }
+  }
+
+  if (resultTagsToInsert.length > 0) {
+    await knex('ResultTag').insert(resultTagsToInsert)
+  }
+
   // Create DashboardWidget
   await upsertDashboardWidgets(knex, partnerOneId, dashboardWidget)
 }

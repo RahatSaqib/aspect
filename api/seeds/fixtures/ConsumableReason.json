@@ -1,88 +1,74 @@
 {
   "data": [
     {
-      "name": "Asserted Zero Inventory",
-      "i18nKey": "ConsumableReason_AssertedZeroInventory",
-      "decrease": 0,
-      "reset": 1,
-      "externalId": "zero"
+      "name": "Manual Addition",
+      "i18nKey": "ConsumableReason_ManualAddition",
+      "effectOnStock": "increase",
+      "userSelectable": 1,
+      "externalId": "manual_addition"
     },
     {
       "name": "Test Conducted",
       "i18nKey": "ConsumableReason_TestConducted",
-      "decrease": 1,
-      "reset": 0,
-      "externalId": "used"
+      "effectOnStock": "decrease",
+      "userSelectable": 0,
+      "externalId": "test_conducted"
     },
     {
       "name": "Transfer Sent",
       "i18nKey": "ConsumableReason_TransferSent",
-      "decrease": 1,
-      "reset": 0,
-      "externalId": "sent"
+      "effectOnStock": "decrease",
+      "userSelectable": 0,
+      "externalId": "transfer_sent"
     },
     {
       "name": "Transfer Received",
       "i18nKey": "ConsumableReason_TransferReceived",
-      "decrease": 0,
-      "reset": 0,
-      "externalId": "received"
+      "effectOnStock": "increase",
+      "userSelectable": 0,
+      "externalId": "transfer_received"
     },
     {
       "name": "Expired",
       "i18nKey": "ConsumableReason_Expired",
-      "decrease": 1,
-      "reset": 0,
+      "effectOnStock": "decrease",
+      "userSelectable": 1,
       "externalId": "expired"
-    },
-    {
-      "name": "Imported",
-      "i18nKey": "ConsumableReason_Imported",
-      "decrease": 0,
-      "reset": 1,
-      "externalId": "imported"
     },
     {
       "name": "Stolen",
       "i18nKey": "ConsumableReason_Stolen",
-      "decrease": 1,
-      "reset": 0,
+      "effectOnStock": "decrease",
+      "userSelectable": 1,
       "externalId": "stolen"
     },
     {
       "name": "Lost",
       "i18nKey": "ConsumableReason_Lost",
-      "decrease": 1,
-      "reset": 0,
+      "effectOnStock": "decrease",
+      "userSelectable": 1,
       "externalId": "lost"
     },
     {
-      "name": "Captured",
-      "i18nKey": "ConsumableReason_Captured",
-      "decrease": 0,
-      "reset": 1,      
-      "externalId": "captured"
+      "name": "Physical Count",
+      "i18nKey": "ConsumableReason_PhysicalCount",
+      "effectOnStock": "resetToValue",
+      "userSelectable": 1,
+      "externalId": "physical_count"
     },
     {
-      "name": "Damage",
-      "i18nKey": "ConsumableReason_Damage",
-      "decrease": 1,
-      "reset": 0,      
-      "externalId": "deteriorated"
+      "name": "Damaged",
+      "i18nKey": "ConsumableReason_Damaged",
+      "effectOnStock": "decrease",
+      "userSelectable": 1,
+      "externalId": "damaged"
     },
     {
-      "name": "Asserted Inventory On Hand Increase",
-      "i18nKey": "ConsumableReason_AssertedInventoryOnHandAdd",
-      "decrease": 0,
-      "reset": 1,      
-      "externalId": "asserted_increase"
-    },
-    {
-      "name": "Asserted Inventory On Hand Decrease",
-      "i18nKey": "ConsumableReason_AssertedInventoryOnHandRemove",
-      "decrease": 1,
-      "reset": 1,      
-      "externalId": "asserted_decrease"
+      "name": "Other",
+      "i18nKey": "ConsumableReason_Other",
+      "effectOnStock": "decrease",
+      "userSelectable": 1,
+      "externalId": "other"
     }
   ]
 }

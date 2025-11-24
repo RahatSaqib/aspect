@@ -6,6 +6,4 @@ export default [
   { culture: 'ru-RU', languageName: ' русский (RU)', isoAlpha2Code: 'RU' },
   { culture: 'uk-UA', languageName: ' Український (UA)', isoAlpha2Code: 'UA' },
   { culture: 'en-US', languageName: ' English (US)', isoAlpha2Code: 'US' },
-  { culture: 'tg-TJ', languageName: ' тоҷикӣ, تاجیکی (TJ)', isoAlpha2Code: 'TJ' },
-  { culture: 'vi', languageName: ' Tiếng Việt (VN)', isoAlpha2Code: 'VN' },
 ]

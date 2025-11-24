@@ -1,6 +1,6 @@
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
-import { object, string, number, date } from 'yup'
+import { date, number, object, string } from 'yup'
 import { types } from '../../../store/InventoryRedux'
 import {
   newInventoryMessages,
@@ -10,11 +10,8 @@ import {
   validationMessages,
 } from './messages'
 
-export const strategyRequireExpirationDate = strategy => !!strategy?.includes('ExpirationDate')
-export const strategyRequireLot = strategy => !!strategy?.includes('Lot')
-
 export function transformValues(values) {
-  const { consumable, reason, ...rest } = values
+  const { consumable, reason, inventoryItem, ...rest } = values
   return omitBy(
     {
       ...rest,
@@ -25,24 +22,8 @@ export function transformValues(values) {
   )
 }
 
-/**
- * helper funcs
- * Check if partner has defined this strategy, then see in consumable
- */
-export const withExpirationDate = (partner, consumable) => {
-  return (
-    strategyRequireExpirationDate(partner?.inventoryStrategy) ||
-    (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
-  )
-}
-export const withLotNumber = (partner, consumable) => {
-  return (
-    strategyRequireLot(partner?.inventoryStrategy) ||
-    (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))
-  )
-}
-
-export function getValidations(format, actionType, { partner, inventory }) {
+export function getValidations(format, actionType, { requireExpirationDate, requireLotNumber, inventory }) {
+  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
   const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
@@ -74,7 +55,7 @@ export function getValidations(format, actionType, { partner, inventory }) {
      * because value of `consumable` field depend on corresponding toSite.siteConsumables and no need
      * to bother user's eyes with `consumable` validation message when toSite is not selected
      */
-    if (actionType === types.SHOW_NEW_INVENTORY_DIALOG) {
+    if (uiAdd) {
       schema = schema.shape({
         consumable: object()
           .nullable()
@@ -91,15 +72,21 @@ export function getValidations(format, actionType, { partner, inventory }) {
       expiresOn: date()
         .nullable()
         .when(['consumable'], {
-          is: () => withExpirationDate(partner) && !skipValidation,
+          is: () => requireExpirationDate && !skipValidation,
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         }),
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => withLotNumber(partner, undefined) && !skipValidation,
+          is: () => requireLotNumber && !skipValidation,
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
+    })
+  }
+
+  if (uiTransfer && !inventory?.expiresOn && !inventory?.lotNumber) {
+    schema = schema.shape({
+      inventoryItem: string().required(format(validationMessages.inventoryItemRequired)),
     })
   }
 
@@ -109,8 +96,16 @@ export function getValidations(format, actionType, { partner, inventory }) {
     })
   }
 
-  if (actionType === types.SHOW_REMOVE_INVENTORY_DIALOG) {
-    schema = schema.shape({ reason: object().nullable().required(format(validationMessages.reasonRequired)) })
+  if (uiAdd || uiRemove) {
+    schema = schema.shape({
+      reason: object().nullable().required(format(validationMessages.reasonRequired)),
+      notes: string()
+        .nullable()
+        .when('reason', {
+          is: reason => reason?.externalId === 'other',
+          then: sch => sch.required(format(validationMessages.notesRequired)),
+        }),
+    })
   }
 
   return schema
@@ -120,11 +115,21 @@ export function getQuantityOnHand(actionType, inventory, values) {
   let nextQuantity
   switch (actionType) {
     case types.SHOW_REMOVE_INVENTORY_DIALOG:
-    case types.SHOW_TRANSFER_INVENTORY_DIALOG:
-      nextQuantity = inventory.quantityOnHand - Number(values?.quantity ?? 0)
+    case types.SHOW_TRANSFER_INVENTORY_DIALOG: {
+      const quantityOnHand = values.lotNumber || values.expiresOn ? inventory.quantityOnHand : 0
+      nextQuantity = quantityOnHand - Number(values?.quantity ?? 0)
       break
+    }
     case types.SHOW_RECEIVE_INVENTORY_DIALOG:
       nextQuantity = values?.quantity
+      break
+    case types.SHOW_ADD_INVENTORY_DIALOG:
+      // If the reason is 'physical_count', just return the entered quantity
+      if (values?.reason?.externalId === 'physical_count') {
+        nextQuantity = Number(values.quantity)
+      } else {
+        nextQuantity = Number(inventory.quantityOnHand) + Number(values.quantity)
+      }
       break
     default:
       nextQuantity = inventory.quantityOnHand + Number(values?.quantity ?? 0)
@@ -168,7 +173,7 @@ export function transformInitialValue(inventory, actionType) {
       consumable: {
         id: inventory.consumableId,
         name: inventory.consumableName,
-        showExpirationDate: inventory.showExpirationDate,
+        requireExpirationDate: inventory.requireExpirationDate,
         showLot: inventory.showLot,
         unitShortName: inventory.unitShortName,
         i18nKey: inventory.consumableNameI18nKey,

@@ -3,9 +3,6 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const crypto = require('crypto')
-const { knex } = require('../db')
-const { getRemoteAddress } = require('../shared/request')
-const { asyncHandler } = require('../routes')
 const { deviceApprovalToId, deviceMaintenanceTypeToId } = require('../shared/dictionary')
 const { resultLogged, resultLoggedProcessed, resultReadyForNotification } = require('../result/actions')
 const { cepheidc360InstrumentLogsReceived } = require('../device/actions')
@@ -17,20 +14,18 @@ const {
   addDeviceOperation,
   getSite,
 } = require('./device')
-const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./mergeResult')
 const { loadPlugin } = require('../plugin/loadPlugin')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')
 
-const { DeviceApiContext } = require('./DeviceApiContext')
-
-const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 const { DEVICE_LOG_TYPE_OPTIONAL, DEVICE_LOG_TYPE_RESULT, DEVICE_LOG_TYPE_OPERATION } = require('./constants')
-const { removeAdditionalData } = require('../result/common/logic')
 const { findOpenModuleDisabledIssues } = require('../issue/common/db')
 const { resolveIssues } = require('../issue/actions')
+const { deviceApiHandler } = require('./deviceApiHandler')
+
+const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 
 const getDeviceDataHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_OPTIONAL,
@@ -44,7 +39,6 @@ const getResultHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_RESULT,
 })
 
-const addDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext)
 const addDeviceDataFastHandler = deviceApiHandler(addDeviceDataWithContext, {}, true)
 
 const addPluginDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
@@ -56,138 +50,6 @@ const updateDeviceConfigurationHandler = deviceApiHandler(updateDeviceConfigurat
 const addDeviceOperationHandler = deviceApiHandler(addDeviceOperationWithContext)
 
 const mergeResultHandler = deviceApiHandler(mergeResultWithContext)
-
-async function getHandlerOptionsFromContext(
-  handler,
-  { partnerPluginName, deviceTypePluginName },
-  defaultHandlerOptions = {}
-) {
-  const handlerOptionGroups = await loadPlugin(partnerPluginName, deviceTypePluginName, 'handlerOptions')
-  return _.merge({}, defaultHandlerOptions, handlerOptionGroups[handler.name] || {})
-}
-
-function deviceApiHandler(handler, defaultHandlerOptions = {}, isFastImport = false) {
-  return asyncHandler(async request => {
-    logger.debug('createDeviceApiContext', {
-      reLabel: 'deviceApi:createDeviceApiContext',
-    })
-    const { error, context } = await DeviceApiContext.createDeviceApiContext(handler, request, defaultHandlerOptions)
-    if (error) {
-      logger.debug('Update logs because an error', {
-        reLabel: 'deviceApi:deviceApiHandler',
-      })
-      await updateLogs(request)
-      return error
-    }
-    logger.debug('getting handler options from context', {
-      reLabel: 'deviceApi:deviceApiHandler',
-    })
-
-    let handlerOptions = await getHandlerOptionsFromContext(handler, context, defaultHandlerOptions)
-    const { updateDeviceLog = false } = handlerOptions
-    const { device, now } = context
-    const deviceId = device.id
-    // TODO Does Hapi Remote address work through proxies? Check headers?
-    const remoteAddress = getRemoteAddress(request)
-
-    // Insert Device Log and Update Ping prior to calling handler and
-    // in separate transaction so it is recorded even if handler fails
-    let deviceLogId = null
-    let deviceLogRawMessage = null
-    if (updateDeviceLog) {
-      const formattedResult = removeAdditionalData(request.plugins.rawPayload)
-
-      // TODO DeviceLog handle non-JSON payloads
-      deviceLogRawMessage = JSON.stringify(formattedResult)
-
-      logger.debug('need to ensure DeviceLog is inserted even if failure below', {
-        reLabel: 'deviceApi:deviceApiHandler',
-      })
-
-      // need to ensure DeviceLog is inserted even if failure below
-      ;[deviceLogId] = await knex('DeviceLog').insert({
-        deviceId,
-        source: _.get(context.payload, 'log.source', ''),
-        createdOn: now,
-        senderIp: remoteAddress,
-        rawMessage: deviceLogRawMessage,
-      })
-    }
-
-    let response = {}
-    await context.messageContext.transact(async knex => {
-      context.knex = knex
-      context.deviceLogId = deviceLogId
-      context.isFastImport = isFastImport
-
-      // update timestamps as necessary for original device
-      const originalDeviceId = context.device.id
-      if (!isFastImport) {
-        await updateDeviceData(context, handlerOptions, remoteAddress)
-      }
-
-      // invoke delegate handler
-      response = await handler(context)
-
-      // If handler changes device (e.g. GxAlert plugin), update timestamps
-      // for new device as necessary
-      if (context.device.id !== originalDeviceId) {
-        handlerOptions = await getHandlerOptionsFromContext(handler, context, defaultHandlerOptions)
-        if (!isFastImport) {
-          await updateDeviceData(context, handlerOptions, remoteAddress)
-        }
-      }
-
-      // Update DeviceLog with changes added to context when calling handler
-      if (deviceLogId !== null) {
-        const { deviceLogUpdate } = context
-        if (deviceLogUpdate != null && !isFastImport) {
-          await knex('DeviceLog').where({ id: deviceLogId }).update(deviceLogUpdate)
-        }
-      }
-    })
-    return response
-  })
-}
-
-async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
-  const { knex, partnerPluginName, deviceTypePluginName, device, payload } = context
-  const { updatePing = false } = handlerOptions
-
-  const deviceUpdates = {}
-
-  const getDeviceSeenOn = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getDeviceSeenOn')
-  const deviceSeenOn = await getDeviceSeenOn(context)
-  if (deviceSeenOn != null) {
-    logger.debug('update deviceSeenOn', {
-      reLabel: 'deviceApi:updateDeviceData',
-    })
-
-    // flag as seen even if handler fails
-    deviceUpdates.lastSeenOn = deviceSeenOn
-    context.messageContext.dispatch(deviceSeen(device.id))
-  }
-
-  if (updatePing) {
-    logger.debug('update device ping on', {
-      reLabel: 'deviceApi:updateDeviceData',
-    })
-
-    const getDevicePingOn = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getDevicePingOn')
-    const devicePingOn = await getDevicePingOn(context)
-    if (devicePingOn != null) {
-      deviceUpdates.lastPingOn = devicePingOn
-      deviceUpdates.lastPingFromIp = remoteAddress
-    }
-  }
-
-  const instrumentSerial = _.get(payload, 'result.instrument.serial', null)
-  if (instrumentSerial) deviceUpdates.lastInstrumentSerial = instrumentSerial
-
-  if (!_.isEmpty(deviceUpdates)) {
-    await knex('Device').where({ id: device.id }).update(deviceUpdates)
-  }
-}
 
 async function addDeviceDataWithContext(context) {
   let response = {}
@@ -753,30 +615,6 @@ async function onResultLogged(action, context) {
   })
 }
 
-function addDeviceLog(error) {
-  return asyncHandler(async request => {
-    await updateLogs(request)
-    return error
-  })
-}
-
-async function updateLogs(request) {
-  const { auth } = request
-  const device = await knex('DeviceApiKey as k')
-    .innerJoin('Device as d', 'k.deviceId', 'd.id')
-    .where('k.token', auth.credentials.token)
-    .first('d.id')
-
-  await knex('DeviceLog').insert({
-    deviceId: (device && device.id) || null,
-    resultId: null,
-    source: _.get(request.payload, 'log.source', ''),
-    createdOn: new Date(),
-    senderIp: getRemoteAddress(request),
-    rawMessage: JSON.stringify(request.plugins.rawPayload),
-  })
-}
-
 async function getDevicesByCountry(knex) {
   return knex('Device as d')
     .join('Site as s', 'd.siteId', 's.id')
@@ -868,16 +706,15 @@ module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
   getResultHandler,
-  addDeviceDataHandler,
   addDeviceDataFastHandler,
   addPluginDeviceDataHandler,
   updateDeviceConfigurationHandler,
   addDeviceOperationHandler,
   mergeResultHandler,
-  addDeviceLog,
   onResultUpdated,
   onResultLogged,
   getHealthStatsHandler,
   getCustomFields,
   getResultPakistanHandler,
+  addDeviceDataWithContext,
 }

@@ -11,16 +11,22 @@ const cacheConfig = {
     keyColumn: 'name',
   },
   AsyncReportStatus: {},
-  Consumable: {},
+  Consumable: {
+    keyColumn: 'externalId',
+    additionalColumns: ['includeLocation'],
+  },
   ConsumableReason: {
-    keyColumn: 'name',
+    keyColumn: 'externalId',
+    additionalColumns: ['effectOnStock'],
   },
   DeviceApiRawStatus: {},
   DeviceApproval: {
     keyColumn: 'token',
   },
   DeviceMaintenanceStatus: {},
-  DeviceMaintenanceType: {},
+  DeviceMaintenanceType: {
+    keyColumn: 'externalId',
+  },
   DeviceType: {
     additionalColumns: ['plugin'],
   },
@@ -48,7 +54,6 @@ const cacheConfig = {
   ResultStatus: {},
   ResultTreatmentStatus: {},
   ResultType: {},
-  ResultWorkflowStatus: {},
   Report: {},
   SampleType: {},
   SiteType: {},
@@ -61,40 +66,48 @@ const cacheConfig = {
 }
 
 async function rowsByColumn(table) {
-  let cache = tableCache[table]
-  if (cache == null) {
-    const { keyColumn = 'externalId', additionalColumns = [] } = cacheConfig[table]
-
-    // this gives us { [key1]: {[col1]: row1[col1], [col2]: row2[col2]...
-    const columns = ['id', ...additionalColumns]
-    const rowsAsObject = await knex(table)
-      .select(keyColumn, ...columns)
-      .then(items =>
-        items.reduce((memo, row) => {
-          const key = row[keyColumn]
-          memo[key] = row
-          return memo
-        }, {})
-      )
-
-    // we want { [col1]: { [key1]: row1[col1], [key2]: row2[col1]...
-    cache = _.reduce(
-      columns,
-      (memo, column) => {
-        memo[column] = _.mapValues(rowsAsObject, column)
-        return memo
-      },
-      {}
-    )
-
-    tableCache[table] = cache
+  const cache = tableCache[table]
+  if (cache) {
+    return cache
   }
-  return cache
+
+  const { keyColumn = 'externalId', additionalColumns = [] } = cacheConfig[table]
+
+  // this gives us { [key1]: {[col1]: row1[col1], [col2]: row2[col2]...
+  const columns = ['id', ...additionalColumns]
+  const rows = await knex(table).select(keyColumn, ...columns)
+
+  const rowsAsObject = rows.reduce((memo, row) => {
+    const key = row[keyColumn]
+    memo[key] = row
+    return memo
+  }, {})
+
+  // we want { [col1]: { [key1]: row1[col1], [key2]: row2[col1]...
+  const cacheEntryByColumns = columns.reduce((memo, column) => {
+    memo[column] = _.mapValues(rowsAsObject, column)
+    return memo
+  }, {})
+
+  const cacheEntryById = rows.reduce((memo, row) => {
+    memo[row.id] = row
+    return memo
+  }, {})
+
+  tableCache[table] = { ...cacheEntryByColumns, objectById: cacheEntryById }
+  return tableCache[table]
 }
 
 async function lookupKeyByColumn(table, column) {
   const cache = await rowsByColumn(table)
   return cache[column]
+}
+
+function objectById(table) {
+  return async id => {
+    const cache = await rowsByColumn(table)
+    return cache == null ? null : cache.objectById[id]
+  }
 }
 
 function keyToObject(table, column) {
@@ -114,11 +127,17 @@ _.each(cacheConfig, (config, table) => {
   // deviceTypeToPlugin etc. for each configured additional column
   const name = _.lowerFirst(table)
   const columns = ['id', ...additionalColumns]
+
+  const lookupById = `${name}ById`
+  exports[lookupById] = objectById(table)
+
   _.each(columns, column => {
     const columnName = _.upperFirst(column)
+
     const lookupSingleItem = `${name}To${columnName}`
-    const lookupDictionary = `all${table}To${columnName}`
     exports[lookupSingleItem] = keyToValue(table, column)
+
+    const lookupDictionary = `all${table}To${columnName}`
     exports[lookupDictionary] = keyToObject(table, column)
   })
 })

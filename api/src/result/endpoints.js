@@ -2,7 +2,6 @@ const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams, validateDateRangeParams } = require('../routes')
 const {
   listResultsBaseConfig,
-  getResponseForComments,
   getResultAggregationsValidate,
   clinicalIndicatorsValidGroups,
   resultAggregationsResponseItem,
@@ -15,16 +14,13 @@ const {
   validateResponseResultCounts,
   optionalId,
 } = require('./endpointsValidation')
+const { listResults, resultCount } = require('./listResults/listResults')
 const {
-  listResults,
   downloadResultsList,
   showResult,
   listResultTypes,
-  updateWorkflowStatus,
   updateTreatmentStatusPost,
   listTreatmentStatusTypes,
-  listWorkflowStatusTypes,
-  listWorkflowStatusLog,
   showDeviceLogs,
   showFileReferences,
   downloadFile,
@@ -34,9 +30,6 @@ const {
   setResultFollowUp,
   updateResultFollowUp,
   deleteResultFollowUp,
-  addResultNote,
-  allResultNotes,
-  deleteResultNote,
   transferResult,
   updateTransferNotification,
   followUpAggregations,
@@ -96,7 +89,6 @@ const routes = [
         },
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False if there was some sort of error'),
-          total: Joi.number().required().description('The total number of results that match the given filters'),
           length: Joi.number().required().description('The number of results included in this response'),
           extraColumns: Joi.array()
             .allow(null)
@@ -107,6 +99,28 @@ const routes = [
             .required()
             .description('The results')
             .items(Joi.object().keys(validateResultListResponse())),
+          hasNextPage: Joi.bool()
+            .required()
+            .description('True if there are more results available beyond the current page'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result-count',
+    handler: asyncHandler(resultCount),
+    config: {
+      description: 'Result Count',
+      notes: 'Returns the total count of results that match the given filters',
+      ...listResultsBaseConfig(),
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of results that match the given filters'),
         }),
       },
     },
@@ -206,38 +220,6 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/result/workflow-status/{resultId}',
-    handler: asyncHandler(updateWorkflowStatus),
-    config: {
-      description: 'Update Result Status',
-      notes: 'Update the status of a result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: {
-          resultId: Joi.number().integer().positive().description('Result Id'),
-        },
-        payload: {
-          resultWorkflowStatusId: Joi.number().integer().allow(null),
-          updatedOn: Joi.date().iso().allow(null).description('Status updated date'),
-          externalId: Joi.string().allow('', null),
-          reason: Joi.string().description('Reason for the latest workflow status change').allow(null, '').max(255),
-          operator: Joi.string().description('The sender operator').allow(null, '').max(255),
-          changedOn: Joi.date().description('Date when the status was updated.').iso().allow(null),
-        },
-      },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool().required().description('False if there was some sort of error'),
-          data: Joi.object().required().description('The results').keys(validateResultDetailResponse()),
-        }),
-      },
-    },
-  },
-  {
-    method: 'PUT',
     path: '/result/transfer/{resultId}',
     handler: asyncHandler(updateTransferNotification),
     config: {
@@ -260,87 +242,6 @@ const routes = [
           ok: Joi.bool().required().description('False if there was some sort of error'),
           data: Joi.object().required().description('Return current result').keys(validateResultDetailResponse()),
         }),
-      },
-    },
-  },
-  {
-    method: 'POST',
-    path: '/result/result-note/{resultId}',
-    handler: asyncHandler(addResultNote),
-    config: {
-      description: 'Add result note to result',
-      notes: 'Add result note to result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: {
-          resultId: Joi.number().integer().positive().required().description('Result Id'),
-        },
-        payload: {
-          note: Joi.string(),
-          resultNoteType: Joi.string().allow('', null),
-          commentId: Joi.number().integer().positive().allow(null).description('Comment Id to update'),
-          changedOn: Joi.date().description('Date when the note was added/edited.').iso().allow(null),
-        },
-      },
-      response: getResponseForComments(),
-    },
-  },
-  {
-    method: 'GET',
-    path: '/result/result-all-notes/{resultId}',
-    handler: asyncHandler(allResultNotes),
-    config: {
-      description: 'Get all notes for specified result ',
-      notes: 'Get all notes for specified result',
-      auth: { scope: ['result:view'] },
-      validate: {
-        params: {
-          resultId: Joi.number().integer().positive().required().description('Result Id'),
-        },
-      },
-      response: getResponseForComments(),
-    },
-  },
-  {
-    method: 'DELETE',
-    path: '/result/result-note/{resultId}/{commentId}',
-    handler: asyncHandler(deleteResultNote),
-    config: {
-      description: 'Remove a specified comment from a result',
-      notes: 'Removes a specified comment from a result',
-      auth: { scope: ['result:view'] },
-      validate: {
-        params: {
-          resultId: Joi.number().required().integer().positive().description('Result ID'),
-          commentId: Joi.number().required().integer().positive().description('Result Comment ID'),
-        },
-      },
-      response: getResponseForComments(),
-    },
-  },
-  {
-    method: 'GET',
-    path: '/result/workflow-status-types',
-    handler: asyncHandler(listWorkflowStatusTypes),
-    config: {
-      description: 'Result Workflow Status List',
-      notes: 'Dictionary set of Result Workflow Status options',
-      auth: { scope: ['result:view'] },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/result/workflow-status-logs/{resultId}',
-    handler: asyncHandler(listWorkflowStatusLog),
-    config: {
-      description: 'Result Workflow Status Logs',
-      notes: 'Pageable and sortable list of workflow status logs for current result',
-      auth: { scope: ['result'] },
-      validate: {
-        query: validateSortPageParams(),
-        params: {
-          resultId: Joi.string().description('Result ID').required(),
-        },
       },
     },
   },
@@ -375,7 +276,6 @@ const routes = [
             ),
           assayExternalIds: Joi.string().optional().description('a csv string with the assay externalId'),
           resultCategories: Joi.string().optional().description('an array with the assay type abbreviation'),
-          workflowStatus: Joi.string().optional().description('External Id of the workflow status'),
           treatmentStatus: Joi.string().optional().description('External Id of the treatment status'),
           deviceType: Joi.string()
             .optional()
@@ -421,20 +321,6 @@ const routes = [
                 deviceName: Joi.string().required().description('Name of the device'),
                 resultCategory1ExternalId: Joi.string().allow(null).description('Category of the first result'),
                 resultCategory2ExternalId: Joi.string().allow(null).description('Category of the second result'),
-                workflowStatus: Joi.object()
-                  .description('Current workflow status of the result')
-                  .keys({
-                    changedOn: Joi.date().description('Date of the latest change to the workflow status'),
-                    createdOn: Joi.date().description('Date of creation of the workflow status'),
-                    externalId: Joi.string().description('External ID of the workflow status'),
-                    i18nKey: Joi.string().description('i18nKey ID of the workflow status'),
-                    name: Joi.string().description('Name of the workflow status'),
-                    reason: Joi.string().description('Reason for the latest workflow status change').allow(null, ''),
-                    setDelivered: Joi.boolean()
-                      .optional()
-                      .allow(null)
-                      .description('Tells if the record was updated manually'),
-                  }),
                 treatmentStatus: Joi.object()
                   .allow(null)
                   .description('Current treatment status of the result')
@@ -789,8 +675,6 @@ const routes = [
                 resultData: Joi.object().required().description('The result data'),
                 resultSiteName: Joi.string().required().description('The result site name'),
                 resultNotes: Joi.string().required().allow(null).description('The result notes'),
-                resultStatus: Joi.string().required().allow(null).description('The result status'),
-                resultStatusLog: Joi.date().iso().required().allow(null).description('The Result status log date'),
                 resultTreatmentStatusLogDate: Joi.date()
                   .iso()
                   .required()

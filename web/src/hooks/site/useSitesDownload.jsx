@@ -1,7 +1,6 @@
 import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
-import { useDispatch } from 'react-redux'
 import { getFilters } from '../../oldComponents/utils'
 import {
   filterFieldsRejectedError,
@@ -59,14 +58,12 @@ const getDownload = async (filtersParams, sortCol, sortDir, page, pageSize, file
 
 const useSitesDownload = ({ filtersParams, sortCol, sortDir, page, pageSize, fileFormat, enabled }) => {
   const queryClient = useQueryClient()
-  const dispatch = useDispatch()
 
   return useQuery(
     [SITE_KEY, 'download'],
     () => getDownload(filtersParams, sortCol, sortDir, page, pageSize, fileFormat),
     {
       onSuccess: () => {
-        dispatch({ type: 'EXPORT_RESPONSE_FILE_RECEIVED' })
         queryClient.invalidateQueries([SITE_KEY, 'download'])
       },
       enabled,

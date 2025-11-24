@@ -1,25 +1,21 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
-const setMilliseconds = require('date-fns/setMilliseconds')
-const { isNil } = require('lodash')
 const { insertSite } = require('../../site/common/db')
-const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
-const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
 const { updateDeviceDetails } = require('../../deviceApi/device')
-const { shouldTriggerModuleDisabled } = require('../utils')
+const { shouldTriggerModuleDisabled, getPartnerPluginName } = require('../utils')
 const {
   result1CategoryMapping,
   mapResultCategory2,
   getResultCategoriesHivVL,
+  getResultCategoriesHcv,
   getVLCopies,
-  getDetectedResistanceCategoryTypes,
+  getXdrDetectedResistanceCategoryTypes,
   getBacterialLoad,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
-const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
 const { assayNameToExternalId } = require('../../shared/assayNameToExternalId')
 /*
 The purpose of this plugin is to ensure that results are captured
@@ -96,13 +92,20 @@ async function preProcessMergeResult(context) {
   _.set(payload, 'assay.id', mappedAssayExternalId)
 
   if (!_.isEmpty(payload.data)) {
-    payload.category = getResultCategories(payload)
+    const resultText = _.get(payload, 'data.resultText')
+    payload.category = getResultCategories(mappedAssayExternalId, resultText)
   } else {
     payload.data = {}
   }
   const instrumentSerial = _.get(payload, 'instrument.serial', null)
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
-  const sampleId = _.get(payload, 'sample.id')
+
+  const partnerPluginName = await getPartnerPluginName({ partnerId: device.partnerId })
+  // Lazy load the loadPlugin function to avoid circular dependency, as we are in a plugin function already
+  const { loadPlugin } = require('../loadPlugin')
+  const extractSampleIdPlugin = await loadPlugin(partnerPluginName, null, 'extractSampleId')
+  const sampleId = extractSampleIdPlugin(payload)
+  _.set(payload, 'sample.id', sampleId)
 
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id
@@ -142,15 +145,6 @@ async function preProcessMergeResult(context) {
   if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
-
-    // Only set workflow status to "Deliverable" by default if result is new and not an error
-    if (
-      !_.get(payload, 'workflow.status.id') &&
-      !payload.error &&
-      (!_.get(payload, 'data.resultText') || _.get(payload, 'data.resultText').toUpperCase().indexOf('ERROR') === -1)
-    ) {
-      _.set(payload, 'workflow.status.id', 'Deliverable')
-    }
   } else {
     context.existingResultId = existingResult.id // adding the existing result id to the context to make it available for the rest of the process
     // Are we setting this result to NO RESULT?
@@ -208,7 +202,9 @@ function getAdditionalDataFromPayload(payload, assays) {
   }
 
   if (assays.includes('GxMtbXdr')) {
-    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(_.get(payload, 'data.resultText'))
+    const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(
+      _.get(payload, 'data.resultText')
+    )
     data.detectedResistance = detectedResistance
     data.allResistances = allResistances
   }
@@ -231,74 +227,8 @@ async function transformMergeResultPayload({ deviceId, payload, knex }) {
   return Promise.resolve(payload)
 }
 
-async function postProcessAddDeviceOperation({ device, payload, now, messageContext, userId }) {
-  let inventoryItemIds = []
-  const inventoryChanges = _.get(payload, 'data.inventoryChanges')
-  if (!_.isEmpty(inventoryChanges)) {
-    const { partnerId, id: deviceId } = device
-    const inventoryStrategy = await getInventoryStrategy({ partnerId, deviceId })
-
-    const sortedInventoryChanges = _.sortBy(inventoryChanges, inventoryChange =>
-      parseDateOrDefault(inventoryChange.dateChanged)
-    )
-    inventoryItemIds = await Promise.all(
-      _.map(sortedInventoryChanges, async inventoryChange => {
-        const matchingConsumables = await findConsumables({
-          name: inventoryChange.consumableName,
-        })
-        if (matchingConsumables.length === 1) {
-          const matchingConsumable = matchingConsumables[0]
-          const matchingConsumableReason = await findConsumableReason(inventoryChange.consumableReasonName)
-          if (matchingConsumableReason) {
-            const absoluteQuantity = Math.abs(inventoryChange.quantity)
-            const isDecrease =
-              (matchingConsumableReason.reset && inventoryChange.quantity < 0) || matchingConsumableReason.decrease
-            if (!device.siteId && device.id) {
-              const deviceData = await getDevice(device.id)
-              device.siteId = deviceData.siteId
-            }
-            if (!device.siteId) {
-              throw Boom.notFound('Cannot determine which site this request came from')
-            }
-
-            const { siteId } = device
-            const consumableId = matchingConsumable.id
-            const expiresOn = parseDateOrDefault(inventoryChange.expirationDate)
-
-            const operation = `${isDecrease ? 'remove' : 'add'} from GxConnect`
-
-            /**
-             * return object { inventoryItemId, inventoryLogId }
-             */
-            return changeInventoryQuantity(inventoryStrategy, {
-              consumableId,
-              siteId,
-              expiresOn,
-              // lotNumber, // <--- lot is not set here
-              quantity: absoluteQuantity,
-              quantityOnHand: inventoryChange.resultingQuantityOnHand,
-              operation,
-              now,
-              messageContext,
-              userId,
-              logProps: {
-                consumableReasonId: matchingConsumableReason.id,
-                adjustedFrom: inventoryChange.dateChanged
-                  ? setMilliseconds(parseDateOrDefault(inventoryChange.dateChanged), 0)
-                  : null,
-                operation,
-              },
-            })
-          }
-        }
-        return null
-      })
-    )
-    inventoryItemIds = inventoryItemIds.filter(x => !isNil(x) && !Boom.isBoom(x)).map(x => x.inventoryItemId)
-  }
-  return {
-    inventoryItemIds,
-  }
+async function postProcessAddDeviceOperation() {
+  return {}
 }
 
 async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now, isFastImport }) {
@@ -462,14 +392,14 @@ async function findDevices(availableDeviceDetails, knex) {
     }
     if (_.isEmpty(matchingDevices) && countryCode) {
       const partnerCountryDeviceQuery = partnerDeviceQuery.clone().andWhere('c.abbreviation', countryCode)
-      if (hostId && deviceSerialNumber) {
+      if (isValidHostId(hostId) && deviceSerialNumber) {
         matchingDevices = await partnerCountryDeviceQuery
           .clone()
           .andWhere('d.hostId', hostId)
           .andWhere('d.serial', deviceSerialNumber)
           .select(fields)
       }
-      if (hostId) {
+      if (isValidHostId(hostId)) {
         if (_.isEmpty(matchingDevices)) {
           matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.hostId', hostId).select(fields)
           // There are multiple devices using this Host ID
@@ -511,6 +441,10 @@ async function findDevices(availableDeviceDetails, knex) {
     }
   }
   return _.uniqBy(matchingDevices, 'id')
+}
+
+const isValidHostId = hostId => {
+  return hostId && hostId !== '0'
 }
 
 async function getOrCreateSite(knex, device, payload, now, countryCode, deviceName, deviceShortName, fromGxAlert) {
@@ -642,22 +576,22 @@ async function assignGxUnknownAssayIfNotExists(knex, payload) {
   }
 }
 
-function getResultCategories(payload) {
-  const payloadCategories = _.get(payload, 'category')
-  if (!_.isEmpty(payloadCategories)) return payloadCategories
-
+function getResultCategories(assayExternalId, resultText) {
   const categories = []
-  const assayId = _.get(payload, 'assay.id')
-  const text = _.get(payload, 'data.resultText')
 
-  if (text) {
-    const parts = splitResultTextValues(text)
+  if (resultText) {
+    const parts = splitResultTextValues(resultText)
 
     if (parts.length === 0) return categories
 
-    let status = sanitizeResultTextValue(parts[0])
+    const status = sanitizeResultTextValue(parts[0])
 
-    if (assayId === 'GxHiv1Vl') {
+    if (assayExternalId === 'GxHcv') {
+      const hivCategory = getResultCategoriesHcv(status)
+      return [{ id: hivCategory }]
+    }
+
+    if (assayExternalId === 'GxHiv1Vl') {
       const hivCategory = getResultCategoriesHivVL(status)
       if (hivCategory) categories.push({ id: hivCategory })
     }
@@ -667,23 +601,9 @@ function getResultCategories(payload) {
       if (category1) categories.push({ id: category1 })
     }
 
-    const category2 = mapResultCategory2(assayId, parts)
+    const category2 = mapResultCategory2(assayExternalId, parts)
     if (category2) categories.push({ id: category2 })
-
-    // fallback logic
-    if (categories.length === 0) {
-      if (assayId === 'GxHcv') {
-        const regexp = /^([\w\s]+)\s*\d/g
-        const matches = regexp.exec(text)
-        if (matches && matches.length > 1) {
-          const rawStatus = matches[1]
-          status = sanitizeResultTextValue(rawStatus)
-          const category1 = result1CategoryMapping[status]
-          if (category1) categories.push({ id: category1 })
-        }
-      }
-    }
-  } else if (assayId === 'GxHiv1Vl') categories.push({ id: 'NoResult' })
+  } else if (assayExternalId === 'GxHiv1Vl') categories.push({ id: 'NoResult' })
 
   return categories
 }

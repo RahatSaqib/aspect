@@ -1,15 +1,5 @@
 const { knex } = require('../../db')
 
-const CONCATENATED_ID = `CONCAT(
-  c.id,
-  '-',
-  s.id,
-  '-',
-  IFNULL(ii.expiresOn, ''), '-', 
-  IFNULL(ii.lotNumber, ''), '-',
-  IFNULL(ii.inTransitFromSiteId, '')
-)`
-
 const INVENTORY_COMMON_FIELDS = [
   'c.id as consumableId',
   'c.name as consumableName',
@@ -35,6 +25,7 @@ function createInventoryItemSelect(includeStrategy = true) {
     'ii.id',
     'itfs.name as inTransitFromSiteName',
     'ii.inTransitFromSiteId',
+    'ii.reconciliationStartDate',
   ]
 
   if (includeStrategy) {
@@ -55,108 +46,6 @@ function createInventoryItemSelect(includeStrategy = true) {
 
 const INVENTORY_ITEM_SELECT = createInventoryItemSelect()
 const INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY = createInventoryItemSelect(false)
-
-const INVENTORY_LOG_LIST = {
-  createdOn: 'il.createdOn',
-  consumableName: 'c.name',
-  assayId: 'ca.assayId',
-  consumableNameI18nKey: 'c.i18nKey',
-  lotNumber: 'il.lotNumber',
-  reconcilationAdjustment: 'il.reconcilationAdjustment',
-  reconcilationStrategy: 'il.reconcilationStrategy',
-  expirationDate: 'il.expiresOn',
-  siteName: 's.name',
-  quantity: knex.raw('CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE il.quantity END'),
-  consumableReason: 'cr.name',
-  refSiteName: 'refSite.name',
-  movementReason: knex.raw(`
-      CASE
-        WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
-        WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
-        ELSE cr.name
-      END`),
-  notes: knex.raw(`case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`),
-  consumableReasonI18nKey: 'cr.i18nKey',
-  consumableReasonExternalId: 'cr.externalId',
-  transactionDate: 'il.adjustedFrom',
-  resultEndedOn: 'r.endedOn',
-}
-
-const INVENTORY_LOG_UILIST = {
-  createdOn: 'il.createdOn',
-  consumableName: 'c.name',
-  lotNumber: 'il.lotNumber',
-  expirationDate: 'il.expiresOn',
-  siteName: 's.name',
-  quantity: knex.raw('CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE il.quantity END'),
-  consumableReasonI18nKey: 'cr.i18nKey',
-  refSiteName: 'refSite.name',
-  notes: knex.raw(`case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`),
-}
-
-const INVENTORY_TRANSFER = {
-  consumableName: 'c.name',
-  consumableNameI18nKey: 'c.i18nKey',
-  lotNumber: 'oil.lotNumber',
-  originSiteName: 'originSite.name',
-  destinationSiteName: 'destinationSite.name',
-  sentQuantity: 'oil.quantity',
-  receivedQuantity: 'iil.quantity',
-  expirationDate: 'oil.expiresOn',
-  sentOn: 'oil.createdOn',
-  receivedOn: 'iil.createdOn',
-}
-
-// Select for inventory grouped by site and consumable
-const INVENTORY_ITEM_SELECT_LIST_FIELDS = [...INVENTORY_COMMON_FIELDS, knex.raw('SUM(ii.quantityOnHand)')]
-
-// Select for inventory split by lot
-const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
-  knex.raw(`
-    CONCAT(
-        c.id, '-', 
-        s.id, '-', 
-        IFNULL(ii.expiresOn, ''), '-', 
-        IFNULL(ii.lotNumber, ''), '-',
-        IFNULL(ii.inTransitFromSiteId, '')
-    ) AS id
-  `),
-
-  // Filter fields from INVENTORY_ITEM_SELECT
-  ...INVENTORY_ITEM_SELECT.filter(field => {
-    if (typeof field === 'string') {
-      return field !== 'ii.id' && field !== 'ii.quantityOnHand'
-    }
-    // For knex objects, convert to string before filtering
-    const fieldString = field.toString()
-    return (
-      !fieldString.includes('CASE WHEN p.inventoryStrategy') &&
-      !fieldString.includes('ii.id') &&
-      !fieldString.includes('ii.quantityOnHand')
-    )
-  }),
-  'ii.lotNumber AS lotNumber',
-  'ii.expiresOn AS expiresOn',
-  knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
-]
-
-const INVENTORY_LOG_SORT_FIELDS = {
-  consumableName: 'c.name',
-  siteName: 's.name',
-  countryName: 'co.name',
-  stateName: 'st.name',
-  lgaName: 'l.name',
-  quantityOnHand: 'il.quantity',
-  expiresOn: 'il.expiresOn',
-  lotNumber: 'il.lotNumber',
-  movementReason: knex.raw(`
-  CASE
-    WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
-    WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
-    ELSE cr.name
-  END`),
-  transactionDate: 'il.adjustedFrom',
-}
 
 const INVENTORY_ITEM_SORT_FIELDS = {
   consumableName: 'c.name',
@@ -223,20 +112,13 @@ const SUPPLY_IN_STOCK_FIELDS = [
 ]
 
 module.exports = {
-  INVENTORY_LOG_LIST,
-  INVENTORY_LOG_UILIST,
-  INVENTORY_TRANSFER,
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
-  INVENTORY_ITEM_SELECT_LIST_FIELDS,
-  INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
-  INVENTORY_LOG_SORT_FIELDS,
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
   INVENTORY_ITEM_SELECT,
   INVENTORY_COMMON_FIELDS,
   STOCK_LEFT_FILTER_FIELDS,
-  CONCATENATED_ID,
   INVENTORY_ITEM_SELECT_WITHOUT_STRATEGY,
 }

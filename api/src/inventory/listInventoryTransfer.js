@@ -1,9 +1,11 @@
 const { subDays } = require('date-fns')
 const { getConstraints } = require('../auth/constraints')
 const { getInventoryTransfer } = require('./common/db')
+const { getUser } = require('../auth/service')
 
 module.exports = async function (request) {
   const { auth, query } = request
+  const { timezoneIANA } = await getUser(auth.credentials.name)
 
   const dataConstraints = await getConstraints(auth.credentials)
   const now = new Date()
@@ -15,6 +17,6 @@ module.exports = async function (request) {
     query.maxDate = now.toISOString()
   }
 
-  const { total, data } = await getInventoryTransfer(query, dataConstraints)
+  const { total, data } = await getInventoryTransfer(query, dataConstraints, timezoneIANA)
   return { ok: true, total, length: data.length, data }
 }

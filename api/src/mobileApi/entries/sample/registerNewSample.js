@@ -1,113 +1,173 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { getUser } = require('../../../auth/service')
-const { getSamplesRegisteredAtSiteOnDayWithSampleId, updateExistingSample, insertNewSample } = require('./common/db')
 const { transformSampleData } = require('../result/common/helpers/transformSample')
 const { sampleTypeToId } = require('../../../shared/dictionary')
 const { getConstraints } = require('../../../auth/constraints')
 const { getSite, getSitesQuery } = require('../../../site/service')
 const { knex } = require('../../../db')
 const {
-  allResultWorkflowStatusToId,
   allAssayToId,
   allResultCategoryToId,
   allResultSourceToId,
   allResultTypeToId,
 } = require('../../../shared/dictionary')
+const config = require('../../../config')
+const { getBaseAllSamplesRegistered } = require('./common/db')
+const { getMobileSampleByExternalId } = require('../../../sample/common/db')
 
 async function registerNewSample(request) {
-  const {
-    payload,
-    auth: { credentials },
-  } = request
-  const dataConstraints = await getConstraints(credentials)
+  const { payload, auth } = request
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
+  const dataConstraints = await getConstraints(auth.credentials)
   const site = await getSite(payload.originSiteId, dataConstraints)
   if (_.isEmpty(site)) {
     throw Boom.forbidden('Unauthorised Origin Site')
   }
+
   const collectedOnUnSanitised = new Date(payload?.collectedOn ?? '')
   const collectedOn = _.isNaN(collectedOnUnSanitised.getTime()) ? null : collectedOnUnSanitised
-  const sampleTypeId =
-    payload.sampleTypeExternalId === 'Other' ? null : await sampleTypeToId(payload.sampleTypeExternalId ?? 'Sputum')
-  const clinics = await getSitesQuery(dataConstraints).select('s.id')
-  const existingSamples = await getSamplesRegisteredAtSiteOnDayWithSampleId(
-    payload.externalId,
+
+  // sampleTypeId is SampleType.sampleTypeSputum defaults to Sputum for most MTB tests
+  const sampleTypeId = await sampleTypeToId(payload.sampleTypeExternalId ?? 'Sputum')
+
+  const sampleData = {
+    clinicianName: _.trim(payload?.clinicianName).toString() ?? null,
+    userId: currentlyLoggedInUser.id,
+    partnerId: currentlyLoggedInUser.partnerId,
+    countryId: currentlyLoggedInUser.countryId,
+    clientType: payload?.clientType || 'reporter_app',
+    patientExternalId: _.trim(payload?.patientExternalId).toString() ?? null,
+  }
+
+  const now = new Date()
+  const sampleToSave = {
+    externalId: payload.externalId,
+    registeredInMobile: true,
     sampleTypeId,
     collectedOn,
-    payload.originSiteId,
-    clinics.map(c => c.id)
-  )
-  const currentlyLoggedInUser = await getUser(credentials.name)
-  const now = new Date()
-  const payloadForDb = {
-    externalId: payload.externalId,
-    registeredInAspect: true,
+    collectedBy: currentlyLoggedInUser.id,
+    originSiteId: payload.originSiteId,
+    sampleData,
+    sampleStatus: 'SAMPLE_REGISTERED',
     updatedBy: currentlyLoggedInUser.id,
     updatedOn: now,
   }
-  if (existingSamples.length === 1) {
-    const existingSample = existingSamples[0]
-    const sampleTypeIdOrOther = sampleTypeId ?? existingSample.sampleTypeId ?? (await sampleTypeToId('Other'))
-    _.set(payloadForDb, 'sampleTypeId', sampleTypeIdOrOther)
-    _.set(payloadForDb, 'collectedOn', collectedOn ?? existingSample.sampleCollectedOn)
-    _.set(payloadForDb, 'originSiteId', payload.originSiteId ?? existingSample.originSiteId)
-    _.set(payloadForDb, 'sampleStatus', existingSample.sampleStatus ?? 'SAMPLE_REGISTERED')
-    _.set(payloadForDb, 'collectedBy', existingSample.sampleCollectedBy ?? currentlyLoggedInUser.id)
 
-    const sampleData = existingSample.sampleData ? JSON.parse(existingSample.sampleData) : {}
-    _.set(sampleData, 'clinicianName', _.trim(payload?.clinicianName) ?? sampleData.clinicianName)
-    _.set(sampleData, 'userId', currentlyLoggedInUser.id)
-    _.set(sampleData, 'partnerId', currentlyLoggedInUser.partnerId)
-    _.set(sampleData, 'countryId', currentlyLoggedInUser.countryId)
-    _.set(sampleData, 'clientType', payload?.clientType ?? sampleData.clientType ?? 'reporter_app')
-    _.set(sampleData, 'patientExternalId', _.trim(payload?.patientExternalId) ?? sampleData.patientExternalId ?? null)
-    _.set(payloadForDb, 'sampleData', JSON.stringify(sampleData))
+  await knex.transaction(async trx => {
+    // Lock the sample row for update to prevent concurrency issues
+    const existingSample = await getMobileSampleByExternalId(
+      trx,
+      payload.externalId,
+      currentlyLoggedInUser.countryId
+    ).forUpdate()
+    if (existingSample) {
+      // Update existing sample
+      const existingSampleData = existingSample.sampleData ? JSON.parse(existingSample.sampleData) : {}
 
-    const updatedSample = await updateExistingSample(existingSample.id, payloadForDb, request.auth)
-    return { ok: !_.isEmpty(updatedSample), data: transformSampleData(updatedSample[0]) }
+      sampleToSave.sampleTypeId = sampleTypeId ?? existingSample.sampleTypeId
+      sampleToSave.collectedOn = collectedOn ?? existingSample.collectedOn
+      sampleToSave.originSiteId = payload.originSiteId ?? existingSample.originSiteId
+      sampleToSave.sampleStatus = existingSample.sampleStatus ?? 'SAMPLE_REGISTERED'
+      sampleToSave.collectedBy = existingSample.collectedBy ?? currentlyLoggedInUser.id
+      sampleToSave.sampleData = { ...existingSampleData, ...sampleData }
+
+      await trx('Sample')
+        .where('externalId', payload.externalId)
+        .update({
+          ...sampleToSave,
+          registeredInMobile: true,
+          sampleData: JSON.stringify(sampleToSave.sampleData),
+        })
+      // Sample collection site prevails over result reportable site
+      // if result has not been transferred
+      await trx('Result as r')
+        .where('sampleId', existingSample.id)
+        .whereNotExists(function () {
+          this.select('rtl.id').from('ResultTransferLog as rtl').whereRaw('rtl.resultId = r.id')
+        })
+        .update({ reportableSiteId: sampleToSave.originSiteId })
+    } else {
+      // Create new one
+      sampleToSave.createdOn = now
+      sampleToSave.createdBy = currentlyLoggedInUser.id
+      await trx('Sample').insert({
+        ...sampleToSave,
+        registeredInMobile: true,
+        sampleData: JSON.stringify(sampleToSave.sampleData),
+      })
+
+      if (config.acceptFakeResults) {
+        await createFakeResult(trx, payload.originSiteId, payload.externalId, currentlyLoggedInUser.countryId)
+      }
+    }
+  })
+
+  // Response
+  const clinicIds = await getSiteIdsForUser(auth)
+  const [sampleRegistrated] = await getSamplesRegisteredByExternalId(payload.externalId, clinicIds)
+
+  return {
+    ok: true,
+    data: transformSampleData(sampleRegistrated),
   }
-  // sampleTypeId is SampleType.sampleTypeSputum defaults to Sputum for most MTB tests
-  const sampleTypeIdOrOther = sampleTypeId ?? (await sampleTypeToId('Other'))
-  _.set(payloadForDb, 'sampleTypeId', sampleTypeIdOrOther)
-  _.set(payloadForDb, 'collectedOn', collectedOn)
-  _.set(payloadForDb, 'originSiteId', payload.originSiteId)
-  _.set(payloadForDb, 'sampleStatus', 'SAMPLE_REGISTERED')
-  _.set(payloadForDb, 'collectedBy', currentlyLoggedInUser.id)
-
-  const sampleData = {}
-  _.set(sampleData, 'clinicianName', _.trim(payload?.clinicianName).toString() ?? null)
-  _.set(sampleData, 'userId', currentlyLoggedInUser.id)
-  _.set(sampleData, 'partnerId', currentlyLoggedInUser.partnerId)
-  _.set(sampleData, 'countryId', currentlyLoggedInUser.countryId)
-  _.set(sampleData, 'clientType', payload?.clientType || 'reporter_app')
-  _.set(sampleData, 'patientExternalId', _.trim(payload?.patientExternalId).toString() ?? null)
-  _.set(payloadForDb, 'sampleData', JSON.stringify(sampleData))
-
-  const [newSample] = await insertNewSample(payloadForDb, request.auth)
-
-  if (process.env['seeds.directory'] === './seeds/development') {
-    await createFakeResult(payload.originSiteId, newSample)
-  }
-  return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample) }
 }
 
-const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
-  const resultWorkflowStatuses = await allResultWorkflowStatusToId()
+const getSamplesRegisteredByExternalId = async (externalId, originSiteIds) => {
+  const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where({ 'sample.externalId': externalId })
+  return knexQuery
+}
+
+const getSiteIdsForUser = async auth => {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const clinics = await getSitesQuery(dataConstraints).select('s.id')
+  return clinics.map(c => c.id)
+}
+
+const createFakeResult = async (trx, siteId, sampleExternalId, countryId) => {
+  const resultCombinations = allResultCategories => [
+    {
+      resultCategory1: allResultCategories.Detected,
+      resultCategory2: allResultCategories.Detected,
+      resultData: JSON.stringify({
+        assay: 'Xpert MTB-RIF Assay G4',
+        resultText: 'MTB Detected|Rif Resistance Detected',
+      }),
+    },
+    {
+      resultCategory1: allResultCategories.NotDetected,
+      resultCategory2: null,
+      resultData: JSON.stringify({
+        assay: 'Xpert MTB-RIF Assay G4',
+        resultText: 'MTB Not Detected|Rif Resistance Not Detected',
+      }),
+    },
+    {
+      resultCategory1: allResultCategories.Detected,
+      resultCategory2: allResultCategories.NotDetected,
+      resultData: JSON.stringify({
+        assay: 'Xpert MTB-RIF Assay G4',
+        resultText: 'MTB Detected|Rif Resistance Not Detected',
+      }),
+    },
+  ]
+
   const assayIds = await allAssayToId()
   const resultCategories = await allResultCategoryToId()
   const resultSources = await allResultSourceToId()
   const resultTypes = await allResultTypeToId()
 
-  const device = await knex('Device as d')
+  const device = await trx('Device as d')
     .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .where('dt.externalId', 'CepheidGeneXpert')
     .andWhere({ siteId })
     .first('d.id', 'partnerId')
+
+  const resultCombination = resultCombinations(resultCategories)[_.random(0, 2)]
 
   if (device) {
     const { id: deviceId, partnerId } = device
     const now = new Date()
-    const [resultId] = await knex('Result').insert({
+    await trx('Result').insert({
       externalId: `${sampleExternalId}_${_.random(0, 100)}`,
       assayId: assayIds.GxMtbRif,
       partnerId,
@@ -115,10 +175,7 @@ const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
       deviceId,
       resultSourceId: resultSources.DiagnosticDevice,
       resultTypeId: resultTypes.Patient,
-      sampleId,
-      resultCategory1: resultCategories.NotDetected,
-      resultCategory2: null,
-      resultData: '{"assay": "Xpert MTB-RIF Assay G4", "resultText": "Not Detected"}',
+      sampleId: await getMobileSampleByExternalId(trx, sampleExternalId, countryId).then(s => s.id),
       resultDataHash: null,
       assayVersion: '4',
       startedOn: now,
@@ -130,15 +187,8 @@ const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
       updatedOn: now,
       updatedBy: 1,
       reportableSiteId: siteId,
+      ...resultCombination,
     })
-
-    const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: resultWorkflowStatuses.Deliverable,
-      changedOn: now,
-      createdOn: now,
-    })
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
   }
 }
 

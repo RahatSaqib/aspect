@@ -37,12 +37,10 @@ const tables = [
   'ResultStatus',
   'ResultType',
   'ResultTreatmentStatus',
-  'ResultWorkflowStatus',
   'SampleType',
   'FollowUpType',
-  'ResultNoteType',
   // TODO ASP-757 Standardize static data key on externalId
-  ['ConsumableReason', 'name'],
+  'ConsumableReason',
   ['DeviceApproval', 'token'],
   ['PartnerType', 'name'],
   ['DeviceTypeCategory', 'name'],
@@ -504,10 +502,20 @@ async function seedTable(knex, fixtureItem, overridedSeeds = { seedsFolder: null
   if (_.isFunction(keyColumn)) {
     await keyColumn(knex, fixture)
   } else {
-    await Promise.each(fixture.data || [], async datum => {
-      const existingDatum = await knex(table).where(keyColumn, datum[keyColumn]).first('id')
-      if (existingDatum == null) {
-        const elementToInsert = _.reduce(
+    const data = fixture.data || []
+
+    const existingRows = await knex(table)
+      .whereIn(
+        keyColumn,
+        data.map(d => d[keyColumn])
+      )
+      .select(keyColumn)
+
+    const existingKeys = new Set(existingRows.map(row => row[keyColumn]))
+    const elementsToInsert = data
+      .filter(datum => !existingKeys.has(datum[keyColumn]))
+      .map(datum => {
+        return _.reduce(
           _.keys(datum),
           (result, key) => {
             result[key] = _.isObject(datum[key]) ? JSON.stringify(datum[key]) : datum[key]
@@ -515,9 +523,11 @@ async function seedTable(knex, fixtureItem, overridedSeeds = { seedsFolder: null
           },
           {}
         )
-        await knex(table).insert(elementToInsert)
-      }
-    })
+      })
+    if (elementsToInsert.length > 0) {
+      await knex(table).insert(elementsToInsert)
+    }
+
     await Promise.each(fixture.relationships || [], async relationship => {
       const updates = {}
       const existingDatum = await knex(table)
@@ -543,6 +553,38 @@ async function seedTable(knex, fixtureItem, overridedSeeds = { seedsFolder: null
       }
     })
   }
+}
+
+/**
+ * Builds an array of update objects by comparing fixture data with original data.
+ * For each fixture item, it finds the matching original item by the specified key column
+ * and creates an update object containing only the fields that have changed.
+ *
+ * @param {Object} fixture - The fixture object containing data to compare against
+ * @param {Array<Object>} fixture.data - Array of objects containing the new/desired data
+ * @param {Array<Object>} originalData - Array of objects containing the existing data to compare against
+ * @param {string} [keyColumn='externalId'] - The column name to use for matching fixture and original data
+ * @returns {Array<Object>} Array of update objects, each containing:
+ *   - id: The ID of the record to update
+ *   - ...changes: Object containing only the fields that have changed from original to fixture data
+ * @example
+ * // Given:
+ * // fixture.data = [{ externalId: '1', name: 'New Name', status: 'active' }]
+ * // originalData = [{ id: 1, externalId: '1', name: 'Old Name', status: 'active' }]
+ * // Returns: [{ id: 1, name: 'New Name' }]
+ */
+const buildUpdates = function (fixture, originalData, keyColumn = 'externalId') {
+  return fixture.data.reduce((accUpdates, f) => {
+    const e = originalData.find(e => e[keyColumn] === f[keyColumn])
+    if (!e) return accUpdates
+    const changes = Object.keys(f).reduce((accChanges, key) => {
+      if (e && e[key] !== f[key]) {
+        accChanges[key] = f[key]
+      }
+      return accChanges
+    }, {})
+    return Object.keys(changes).length ? [...accUpdates, { id: e.id, ...changes }] : accUpdates
+  }, [])
 }
 
 async function warnNotExistingOverridedSeeds(overridedSeeds) {
@@ -623,6 +665,7 @@ async function upsertFollowUps(knex, fixture, partnerIds = [], assaysWhitelist =
     }
     const assaysWithFollowUp = _.isNil(assays) ? assaysWhitelist : assays
     /* eslint-disable no-await-in-loop */
+    const followUpAssaysToInsert = []
     for (const partnerId of partnerIds) {
       if (assaysWithFollowUp && assaysWithFollowUp.length > 0) {
         for (const assay of assaysWithFollowUp) {
@@ -633,30 +676,21 @@ async function upsertFollowUps(knex, fixture, partnerIds = [], assaysWhitelist =
             followUpId,
             assayId: assayDb.id,
           }
-          const existingFollowUpAssay = await knex('FollowUpAssay')
-            .where(followUpAssay)
-            .whereNull('resultCategory1')
-            .whereNull('resultCategory2')
-            .first('assayId')
-          if (existingFollowUpAssay == null) {
-            await knex('FollowUpAssay').insert(followUpAssay)
-          }
+          followUpAssaysToInsert.push(followUpAssay)
         }
       } else {
         const followUpAssay = {
           partnerId,
           followUpId,
         }
-        const existingFollowUpAssay = await knex('FollowUpAssay')
-          .where(followUpAssay)
-          .whereNull('assayId')
-          .whereNull('resultCategory1')
-          .whereNull('resultCategory2')
-          .first('assayId')
-        if (existingFollowUpAssay == null) {
-          await knex('FollowUpAssay').insert(followUpAssay)
-        }
+        followUpAssaysToInsert.push(followUpAssay)
       }
+    }
+    if (followUpAssaysToInsert.length > 0) {
+      await knex('FollowUpAssay')
+        .insert(followUpAssaysToInsert)
+        .onConflict(['partnerId', 'followUpId', 'assayId'])
+        .ignore()
     }
   }
 }
@@ -1405,7 +1439,7 @@ async function upsertIssueEscalationTrigger(knex, items) {
 }
 
 // ***********************************************************************
-async function seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields }) {
+async function seedIssueEscalationTrigger(knex, { partnerId, auditFields }) {
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
 
@@ -1421,23 +1455,6 @@ async function seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFi
       ...auditDates,
     },
     {
-      issueTypeId: issueTypes.DeviceOffline.id,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'issue-age',
-            evaluationParameter: { days: 30 },
-          }),
-      ...auditDates,
-    },
-    {
       issueTypeId: issueTypes.DeviceNoResults.id,
       partnerId,
       escalateToLevel: 2,
@@ -1445,23 +1462,6 @@ async function seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFi
         evaluationMethod: 'issue-age',
         evaluationParameter: { days: 7 },
       }),
-      ...auditDates,
-    },
-    {
-      issueTypeId: issueTypes.DeviceNoResults.id,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'issue-age',
-            evaluationParameter: { days: 7 },
-          }),
       ...auditDates,
     },
     {
@@ -1582,43 +1582,11 @@ async function upsertIssueResolutionTrigger(knex, items) {
 }
 
 // ***********************************************************************
-async function seedIssueResolutionTrigger(knex, { partnerId, pluginName, auditFields }) {
+async function seedIssueResolutionTrigger(knex, { partnerId, auditFields }) {
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
 
   await upsertIssueResolutionTrigger(knex, [
-    {
-      issueTypeId: issueTypes.DeviceOffline.id,
-      partnerId,
-      resolutionConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldResolveDeviceOffline.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'plugin-function',
-            evaluationParameter: 'resolveDeviceOfflineError',
-          }),
-      ...auditDates,
-    },
-    {
-      issueTypeId: issueTypes.DeviceNoResults.id,
-      partnerId,
-      resolutionConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldResolveDeviceNoResults.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'plugin-function',
-            evaluationParameter: 'resolveDeviceNoResultsError',
-          }),
-      ...auditDates,
-    },
     {
       issueTypeId: issueTypes.ModuleFailureError.id,
       partnerId,
@@ -2024,10 +1992,7 @@ async function updateUnknownErrorOnModuleMessage(knex) {
 }
 
 // ***********************************************************************
-async function seedIssues(
-  knex,
-  { partnerId, pluginName, auditFields, issueTypeBlacklist = [], issueTypeWhitelist = [] }
-) {
+async function seedIssues(knex, { partnerId, auditFields, issueTypeBlacklist = [], issueTypeWhitelist = [] }) {
   await seedStockIssues(knex)
   await seedStockIssuesUpdate(knex, 'mohs')
   await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
@@ -2037,8 +2002,8 @@ async function seedIssues(
   })
 
   // issue triggers
-  await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
-  await seedIssueResolutionTrigger(knex, { partnerId, pluginName, auditFields })
+  await seedIssueEscalationTrigger(knex, { partnerId, auditFields })
+  await seedIssueResolutionTrigger(knex, { partnerId, auditFields })
 }
 
 // ***********************************************************************
@@ -2461,24 +2426,22 @@ async function seedPartnerAssay(knex) {
   const partnerIds = await knex('Partner').pluck('id')
   const assays = await knex('Assay').select('id', 'assayTypeId')
 
-  // for all Partners ...
-  await Promise.each(partnerIds, async partnerId =>
-    Promise.each(assays, async ({ id: assayId, assayTypeId }) => {
-      const isCovid19 = assayTypeId === assayTypeCovid19Id
-      // ... upsert entry to PartnerAssay
-      const partnerAssay = await knex('PartnerAssay').where({ partnerId, assayId }).first()
-      if (!partnerAssay) {
-        await knex('PartnerAssay').insert({
-          partnerId,
-          assayId,
+  const partnerAssayEntries = []
 
-          canCreate: isCovid19,
-          canDelete: isCovid19,
-          canEdit: isCovid19,
-        })
-      }
+  partnerIds.forEach(partnerId => {
+    assays.forEach(({ id: assayId, assayTypeId }) => {
+      const isCovid19 = assayTypeId === assayTypeCovid19Id
+      partnerAssayEntries.push({
+        partnerId,
+        assayId,
+        canCreate: isCovid19,
+        canDelete: isCovid19,
+        canEdit: isCovid19,
+      })
     })
-  )
+  })
+
+  await knex('PartnerAssay').insert(partnerAssayEntries).onConflict(['partnerId', 'assayId']).merge()
 }
 
 async function seedPartnerDisease(knex) {
@@ -2994,7 +2957,6 @@ module.exports = {
   seedIssueEscalationTrigger,
   upsertIssueEscalationTrigger,
 
-  seedIssueResolutionTrigger,
   upsertIssueResolutionTrigger,
 
   seedUnknownErrorsIssue,
@@ -3041,4 +3003,5 @@ module.exports = {
   updateIssueNotificationTemplates,
 
   upsertForms,
+  buildUpdates,
 }

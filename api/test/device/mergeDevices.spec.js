@@ -1,7 +1,7 @@
 const { expect, assert } = require('chai')
 const { addDays, subDays } = require('date-fns')
 const uuid = require('node-uuid')
-const { deviceMaintenanceTypeToId, resultCategoryToId } = require('../../src/shared/dictionary')
+const { deviceMaintenanceTypeToId, resultCategoryToId, consumableReasonToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
@@ -87,6 +87,9 @@ describe('Merge Devices', () => {
   })
 
   after(async () => {
+    // Wait a bit to ensure any background fact generation operations complete
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     await knex('Notification')
       .whereIn('issueId', knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).select('id'))
       .del()
@@ -102,16 +105,14 @@ describe('Merge Devices', () => {
     await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceOperation').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
-    const deleteFactTablesPromises = [
-      knex('FactDeviceExternalSource').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDevice').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDeviceByAssay').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDeviceByCategory1').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-      knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
-    ]
-    await Promise.all(deleteFactTablesPromises)
+
+    // Delete fact tables sequentially to avoid deadlocks
+    await knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('FactResultsDevice').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('FactResultsDeviceByAssay').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('FactResultsDeviceByCategory1').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+
     await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).del()
     await knex('Site').whereIn('id', [targetSiteId, sourceSiteId]).del()
   })
@@ -175,9 +176,6 @@ describe('Merge Devices', () => {
 })
 
 async function assertFactTables(deviceId) {
-  const dataInFactDeviceExternalSource = await knex('FactDeviceExternalSource').where({ deviceId }).select('deviceId')
-  assert.equal(dataInFactDeviceExternalSource.length, 0, 'FactDeviceExternalSource should be empty')
-
   const dataInFactDeviceFlag = await knex('FactDeviceFlag').where({ deviceId }).select('deviceId')
   assert.equal(dataInFactDeviceFlag.length, 0, 'FactDeviceFlag should be empty')
 
@@ -191,11 +189,6 @@ async function assertFactTables(deviceId) {
     .where({ deviceId })
     .select('deviceId')
   assert.equal(dataInFactResultsDeviceByCategory1.length, 0, 'FactResultsDeviceByCategory1 should be empty')
-
-  const dataInFactResultsDeviceByCategory1And2 = await knex('FactResultsDeviceByCategory1And2')
-    .where({ deviceId })
-    .select('deviceId')
-  assert.equal(dataInFactResultsDeviceByCategory1And2.length, 0, 'FactResultsDeviceByCategory1And2 should be empty')
 
   const dataInFactResultsDeviceByTimeFrame = await knex('FactResultsDeviceByTimeFrame')
     .where({ deviceId })
@@ -304,9 +297,8 @@ async function setInventoryItemAndInventoryLog(repeatedSourceResultId) {
       inventoryItemId,
       consumableId,
       siteId,
-      consumableReasonId: 2, // 'Test Conducted'
+      consumableReasonId: await consumableReasonToId('test_conducted'),
       resultId: repeatedSourceResultId,
-      operation: 'result',
       lotNumber,
       expiresOn,
       quantity,

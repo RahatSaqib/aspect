@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const {
-  getDetectedResistanceCategoryTypes,
+  getXdrDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 
 module.exports = require('../utils').seed(async knex => {
@@ -27,7 +27,7 @@ module.exports = require('../utils').seed(async knex => {
        * for getting `detectedResistance` and `allResistances` do the same as in
        * func `preProcessMergeResult(...)` in file `api/src/plugin/deviceType/gxUtils.js`
        */
-      const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(resultText)
+      const { detectedResistance, allResistances } = getXdrDetectedResistanceCategoryTypes(resultText)
       resultData = { ...resultData, detectedResistance, allResistances }
 
       await knex('Result')

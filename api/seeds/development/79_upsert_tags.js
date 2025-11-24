@@ -1,5 +1,3 @@
-const Promise = require('bluebird')
-
 async function seed(knex) {
   await knex('Tag').insert({ title: 'PMDT', partnerId: '1' }).onConflict('title').ignore()
 
@@ -21,7 +19,7 @@ async function seed(knex) {
   const { id: tagId } = await knex('Tag').where('title', 'PMDT').first()
 
   // Set the 'PMDT' tag to reportable sites
-  await Promise.each(siteIds, async siteId => knex('SiteTag').insert({ siteId, tagId }))
+  await knex('SiteTag').insert(siteIds.map(siteId => ({ siteId, tagId })))
 }
 
 module.exports = require('../utils').seed(seed, __filename)

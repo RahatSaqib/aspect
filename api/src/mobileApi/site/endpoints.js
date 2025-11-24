@@ -1,5 +1,5 @@
-const { downloadSitesResponseValidationV4, downloadSitesRequestValidationV4 } = require('./common/validations')
-const { listSites } = require('./common/service')
+const { downloadSitesResponseValidationV4, downloadSitesRequestValidationV4 } = require('./listSites/validations')
+const { listSites } = require('./listSites')
 const { asyncHandler } = require('../../routes')
 
 // -----------------------------------------------------

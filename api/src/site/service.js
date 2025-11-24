@@ -8,14 +8,7 @@ const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getNotDecommissionedDevices } = require('../device/common/db')
-const {
-  getLinkedResults,
-  getSamplesRegisteredCount,
-  getSites,
-  getSitesQuery,
-  getSiteListQuery,
-  getSiteListModifiedQuery,
-} = require('./common/db')
+const { getSitesQuery, getSiteListQuery, getSiteListModifiedQuery } = require('./common/db')
 const { SELECT_SHOW_FIELDS } = require('./common/constants')
 
 async function listSites(request) {
@@ -54,13 +47,14 @@ function getSite(siteId, dataConstraints) {
     .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Site as spw', 's.parentWarehouseId', 'spw.id')
     .where('s.id', siteId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .first([
       ...SELECT_SHOW_FIELDS,
       getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
     ])
-    .select('st.name as siteType')
+    .select('st.name as siteType', 'st.externalId as siteTypeExternalId', 'spw.name as parentWarehouseName')
 }
 
 async function showSite(request) {
@@ -72,12 +66,11 @@ async function showSite(request) {
   const siteQuery = getSite(params.siteId, dataConstraints)
     // Add active consumables at the site (current or unreconciled)
     .leftJoin(
-      knex
-        .select('m.siteId', 'ca.consumableId')
-        .from('MissingInventoryLots as m')
-        .leftJoin('Result as r', 'r.id', 'm.resultId')
+      knex('Result as r')
         .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
-        .where('m.siteId', params.siteId)
+        .where('r.siteId', params.siteId)
+        .whereNull('r.reconciliationDate')
+        .select('r.siteId', 'ca.consumableId')
         .unionAll(function () {
           this.select('ii.siteid', 'ii.consumableId')
             .from('InventoryItem as ii')
@@ -88,7 +81,7 @@ async function showSite(request) {
       'ac.siteId',
       's.id'
     )
-    .select([knex.raw('GROUP_CONCAT(DISTINCT ac.consumableId) as activeConsumables')])
+    .select({ activeConsumables: knex.raw('GROUP_CONCAT(DISTINCT ac.consumableId)') })
 
   const site = await siteQuery
   if (!site || site.id === null) {
@@ -100,7 +93,7 @@ async function showSite(request) {
 
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
 
-  site.consumableIds = await getSiteConsumables(site.id)
+  site.consumableIds = await knex('SiteConsumable').where('siteId', site.id).pluck('consumableId')
 
   site.devices = await getNotDecommissionedDevices(dataConstraints)
     .where('siteId', params.siteId)
@@ -188,6 +181,7 @@ async function listSitesForTransferSelectList(request) {
 
 async function getListSitesForSelectList(dataConstraints, opt = {}) {
   const { excludeSiteIds, mode, siteTypeExternalIds, tags } = opt
+
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('SiteType as sType', 's.siteTypeId', 'sType.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -242,6 +236,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     .distinct()
 
   const sites = await sitesQuery
+
   /**
    * convert csv string of siteConsumables into array of numbers
    */
@@ -413,148 +408,6 @@ async function listSitesWithReporters(request) {
   return { ok: true, total, length: data.length, data }
 }
 
-const paginateAndSort = (data, query) => {
-  const defaultSortCol = 'siteName'
-  const defaultSortDirection = 'asc'
-  const { page = 0, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query
-
-  // Sorting the data
-  const sortedData = _.orderBy(
-    data,
-    [item => (typeof item[sortCol] === 'string' ? item[sortCol].toLowerCase() : item[sortCol])],
-    [sortDir]
-  )
-
-  // Calculating pagination
-  const start = page * size
-  const end = (page + 1) * size
-
-  // Slicing the data for pagination
-  const paginatedData = sortedData.slice(start, end)
-
-  return paginatedData
-}
-
-const getReportingSites = async request => {
-  const { query, auth } = request
-
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  // get sites
-  const sites = await getSites(dataConstraints, query)
-
-  // get linkedResults
-  const linkedResults = await getLinkedResults(dataConstraints, query)
-
-  const resultIds = linkedResults.map(item => item.resultId)
-
-  // get unique downloaded result
-  const resultDownloaded = await knex('ResultDownloadLog')
-    .distinct('ResultDownloadLog.resultId as resultDownloaded')
-    .whereIn('resultId', resultIds)
-    .select('ResultDownloadLog.resultId as resultId')
-
-  const mappedDownloadResultIds = resultDownloaded.reduce((obj, item) => {
-    obj[item.resultId] = true
-    return obj
-  }, {})
-
-  // Determine treatment status and format result data
-  const resultsWithTreatmentStatus = _.map(linkedResults, result => {
-    const requiresFollowUp = result.rc1Treatment === 1 || result.rc2Treatment === 1 ? 1 : 0
-    let followUpPending = 0
-    let followUpNotPossible = 0
-    let followUpConfirmed = 0
-
-    if (requiresFollowUp) {
-      if (result.treatmentStatus === 'OnTreatment') {
-        followUpConfirmed = 1
-      }
-      if (result.treatmentStatus === 'NotPossible') {
-        followUpNotPossible = 1
-      }
-      if (result.treatmentStatus === 'AwaitingTreatment' || result.treatmentStatus === null) {
-        followUpPending = 1
-      }
-    }
-
-    return {
-      ...result,
-      requiresFollowUp,
-      followUpPending,
-      followUpNotPossible,
-      followUpConfirmed,
-      downloaded: _.has(mappedDownloadResultIds, result.resultId) ? 1 : 0,
-    }
-  })
-
-  // get Sample count
-  const sampleCounts = await getSamplesRegisteredCount(dataConstraints, query)
-
-  const sampleKeyAndValue = {}
-
-  // map site to sample count
-  sampleCounts.forEach(sample => {
-    sampleKeyAndValue[sample.siteId] = sample.SampleCount
-  })
-
-  // sum up result details
-  const resultAggregate = _.reduce(
-    resultsWithTreatmentStatus,
-    (acc, elem) => {
-      const site = elem.reportableSite
-      if (!acc[site]) {
-        acc[site] = {
-          reportableSite: site,
-          followUpPending: 0,
-          followUpNotPossible: 0,
-          followUpConfirmed: 0,
-          requiresFollowUp: 0,
-          resultsReporting: 0,
-          downloaded: 0,
-        }
-      }
-      // Sum the fields for existing reportableSite
-      acc[site].followUpPending += elem.followUpPending || 0
-      acc[site].followUpNotPossible += elem.followUpNotPossible || 0
-      acc[site].followUpConfirmed += elem.followUpConfirmed || 0
-      acc[site].requiresFollowUp += elem.requiresFollowUp || 0
-      acc[site].resultsReporting += 1
-      acc[site].downloaded += elem.downloaded || 0
-
-      return acc
-    },
-    {}
-  )
-
-  // Aggregate data for site
-  const reportingSites = sites.map(site => {
-    return {
-      siteName: site.siteName,
-      followUpPending: resultAggregate[site.siteId]?.followUpPending || 0,
-      followUpNotPossible: resultAggregate[site.siteId]?.followUpNotPossible || 0,
-      followUpConfirmed: resultAggregate[site.siteId]?.followUpConfirmed || 0,
-      requiresFollowUp: resultAggregate[site.siteId]?.requiresFollowUp || 0,
-      resultsReporting: resultAggregate[site.siteId]?.resultsReporting || 0,
-      resultsDownloaded: resultAggregate[site.siteId]?.downloaded || 0,
-      samplesRegistered: sampleKeyAndValue[site.siteId] || 0,
-    }
-  })
-
-  const paginatedData = paginateAndSort(reportingSites, query)
-
-  return {
-    ok: !!paginatedData,
-    total: _.size(sites),
-    length: _.size(paginatedData),
-    data: paginatedData,
-  }
-}
-
-const getSiteConsumables = siteId => {
-  return knex('SiteConsumable').where('siteId', siteId).pluck('consumableId')
-}
-
 module.exports = {
   getSitesQuery,
   listSites,
@@ -566,5 +419,4 @@ module.exports = {
   listSitesWithReporters,
   getListSitesForSelectList,
   disableSite,
-  getReportingSites,
 }

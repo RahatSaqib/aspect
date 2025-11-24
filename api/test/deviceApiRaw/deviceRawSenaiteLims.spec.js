@@ -84,14 +84,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .leftJoin('Sample as s', 'r.sampleId', 's.id')
       .where('r.deviceId', deviceId)
       .select('r.id', 'r.sampleId', 's.originSiteId')
-      .union(function () {
-        this.from('ResultGeneratedResult as rgr')
-          .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
-          .innerJoin('Result as gr', 'rgr.generatedResultId', 'gr.id')
-          .leftJoin('Sample as s', 'gr.sampleId', 's.id')
-          .where('r.deviceId', deviceId)
-          .select('gr.id', 'gr.sampleId', 's.originSiteId')
-      })
+
     const resultIds = _.uniq(
       _.map(
         _.filter(results, result => result.id !== null),
@@ -120,7 +113,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     await knex('FactResultsDevice').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
-    await knex('FactResultsDeviceByCategory1And2').where('deviceId', deviceId).delete()
     await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
     await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
     const inventoryItemIds = await knex('InventoryItem as ii')
@@ -139,12 +131,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .delete()
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-    await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
-    await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
-    await knex('ResultGeneratedResult')
-      .whereIn('sourceResultId', resultIds)
-      .orWhereIn('generatedResultId', resultIds)
-      .delete()
     await knex('ResultTag').whereIn('resultId', resultIds).delete()
     await knex('Result').whereIn('id', resultIds).delete()
     await knex('Device').where('id', deviceId).delete()
@@ -2219,8 +2205,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .join('Geography as g', 'si.geographyId', 'g.id')
       .join('State as st', 'g.stateId', 'st.id')
       .join('Lga as l', 'g.lgaId', 'l.id')
-      .join('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
-      .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
       .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
       .where('r.sampleId', sampleIdsAfter[0])
       .select(
@@ -2228,7 +2212,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
         'r.externalId',
         'r.resultData',
         'r.patientData',
-        'rws.externalId as workflowStatus',
         'si.name as referringFacilityName',
         'st.name as stateName',
         'l.name as lgaName',
@@ -2296,11 +2279,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           Positive: 'Positive',
         },
       },
-    }
-    const resultWorkflowStatusSenaiteMapping = {
-      sample_received: 'Ordered',
-      to_be_verified: 'Processed',
-      verified: 'Validated',
     }
     results.forEach(result => {
       const sampleType = sampleTypeMapping[payload.SampleTypeTitle] || 'Other'
@@ -2390,9 +2368,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           assayId: assayResultMappings[testResultAnalysis.id].assayId,
           result1: expectedResult,
         })
-      }
-      if (resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state]) {
-        assert.equal(result.workflowStatus, resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state])
       }
     })
   })

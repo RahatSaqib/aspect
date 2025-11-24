@@ -7,6 +7,7 @@ import PermissionChecker from '../../components/PermissionChecker'
 import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/allMessages'
+import { routePaths } from '../../routes/constants'
 import styles from './styles.module.css'
 
 const submenuSelected = (href, location) => location.pathname.startsWith(`${href}/`)
@@ -144,6 +145,11 @@ const getRawLinks = (f, user) => [
       {
         href: '/browse/admin/inventory-list',
         label: getCustomMessage(f, messages, 'inventoryItems', user),
+        perm: ['admin', 'edit'],
+      },
+      {
+        href: routePaths.ADMIN_INVENTORY_RECONCILIATION_FORM,
+        label: getCustomMessage(f, messages, 'inventoryManagementConfiguration', user),
         perm: ['admin', 'edit'],
       },
     ],

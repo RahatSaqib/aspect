@@ -1,32 +1,25 @@
 const Boom = require('@hapi/boom')
 const { transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
-const { getLgasByValue, upsertGeography } = require('./common/db')
+const { createGeography, getGeographyByLgaNameAndStateId } = require('./common/db')
 
 async function createLga({ auth, payload }, h) {
   const dataConstraints = await getConstraints(auth.credentials)
-  await validate(payload, dataConstraints)
+  const existingLgas = await getGeographyByLgaNameAndStateId(payload.name, payload.stateId, dataConstraints)
+
+  if (existingLgas.length > 0) {
+    throw Boom.conflict('There are lgas with the same name')
+  }
+
   let lgaId
 
   await transact(async trknex => {
     lgaId = await createLgaData(trknex, payload, auth.credentials)
-    await upsertGeography(trknex, payload, lgaId, dataConstraints)
+    await createGeography(trknex, payload, lgaId, dataConstraints)
   })
 
   const data = { id: lgaId, name: payload.name }
   return h.response({ ok: true, data }).code(201)
-}
-
-async function validate(values, dataConstraints) {
-  const { name } = values
-  await validateDuplicateValues(name, dataConstraints)
-}
-
-async function validateDuplicateValues(name, dataConstraints) {
-  const candidates = await getLgasByValue(name, dataConstraints)
-  if (candidates.length > 0) {
-    throw Boom.conflict('There are lgas with the same name')
-  }
 }
 
 async function createLgaData(knex, { name }, credentials) {

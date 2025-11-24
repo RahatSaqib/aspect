@@ -1,16 +1,17 @@
-#### What Does This PR Do?
+### What does this PR do?
 
-#### Description Of Task To Be Completed
+### List of the changes done
 
-
-#### Any Background Context You Want To Provide?
+### Any background context you want to provide?
 N/A
 
-#### How can this be manually tested?
+### How can this be manually tested?
 N/A
 
-#### What are the relevant stories?
+### What are the relevant stories?
 N/A
 
-#### Screenshot(s)
+### Screenshot(s)
 N/A
+
+---

@@ -9,7 +9,7 @@ const messages = {
       defaultMessage: 'Reconciliation Configuration',
     },
     inventoryItemName: { id: 'pages.inventoryList.InventoryItemName', defaultMessage: 'Inventory Item Name' },
-    trackByDate: { id: 'pages.inventoryList.trackByDate', defaultMessage: 'Track by expiry date' },
+    trackByBatch: { id: 'pages.inventoryList.New.trackByBatch', defaultMessage: 'Track by batch' },
     locationTracking: { id: 'pages.inventoryList.locationTracking', defaultMessage: 'Location Tracking' },
     totalOnHand: { id: 'pages.inventoryList.totalOnHand', defaultMessage: 'Total On Hand' },
     unit: { id: 'pages.inventoryList.unit', defaultMessage: 'Unit' },

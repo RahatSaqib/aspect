@@ -253,7 +253,7 @@ jobs:
       fail-fast: false
       matrix:
         # find seeds -mindepth 1 -maxdepth 1 -type d ! -path "seeds/relatedObjects" ! -path "seeds/test" ! -path "seeds/daily_new_results" ! -path "seeds/zz_shared" ! -path "seeds/fixtures" ! -path "seeds/common" ! -path "seeds/scripts"
-        seed: ['./seeds/philippines','./seeds/pakistan','./seeds/bangladesh','./seeds/timorLeste','./seeds/ukraine','./seeds/png','./seeds/tanzania','./seeds/nigeria','./seeds/angola','./seeds/eswatini','./seeds/drc','./seeds/ghana','./seeds/vietnam','./seeds/zimbabwe','./seeds/malawi','./seeds/myanmar','./seeds/mozambique','./seeds/tajikistan','./seeds/development','./seeds/ethiopia','./seeds/lesotho','./seeds/chad']
+        seed: ['./seeds/pakistan','./seeds/bangladesh','./seeds/ukraine','./seeds/png','./seeds/tanzania','./seeds/nigeria','./seeds/angola','./seeds/eswatini','./seeds/ghana','./seeds/zimbabwe','./seeds/malawi','./seeds/myanmar','./seeds/mozambique','./seeds/development','./seeds/lesotho','./seeds/chad']
     steps:
       - name: Setup MySQL
         if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}

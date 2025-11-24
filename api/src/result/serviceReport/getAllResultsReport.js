@@ -3,12 +3,12 @@ const { subDays } = require('date-fns')
 const _ = require('lodash')
 const flat = require('flat')
 const startCase = require('lodash/startCase')
-const { allAssayToId } = require('../../shared/dictionary')
+const { assayToId } = require('../../shared/dictionary')
 const { knex, sortPageParams } = require('../../db')
-const { getPersonByPersonId } = require('../../auth/service')
+const { getPersonByPersonId, getUser } = require('../../auth/service')
 const { getAllAssaySchemas } = require('../../assay/service')
-const { getSelectCommonListFieldsTZ, SORT_FIELDS } = require('../query')
-const { getOffsetFromIsoDateString } = require('../../shared/date')
+const { SORT_FIELDS, COMMON_LIST_FIELDS_UTC } = require('../query')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 const { getQueryForResultsListAndExport, getCustomFieldsForResult } = require('../common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { XDR_RESISTANCES } = require('../../shared/constants')
@@ -23,43 +23,21 @@ module.exports = async (auth, query) => {
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = 0
-  // For performance issues we are going to limit this report to max 50k results.
-  query.size = query.maxNumberOfRecords || 50000
+  // For performance issues we are going to limit this report to max 1m results.
+  query.size = query.maxNumberOfRecords || 1000000
 
   // For performance issues this enforce to use the result_partner_endedOn_index Index, because it helps to reduce query time down to  60%
   if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 360)
 
-  const { data: resultFromBaseQuery, extraColumns = [], total } = await getResultsForExport(auth, query)
-
-  const resultIds = _.map(resultFromBaseQuery, result => result.id)
-
-  // get follow ups using the resultIds from initial query
-  const followUps = await getLatestFollowUpsByResultIds(resultIds)
-
-  // get result workflow log using the resultId from initial query
-  const resultWorkflowData = await getLatestResultWorkflowLogByResultIds(resultIds)
-
-  // merge the responses above to the original results
-  const data = _.map(resultFromBaseQuery, resultItem => {
-    const matchedFollowUp = followUps.find(followUp => followUp.resultId === resultItem.id)
-
-    const matchedWorkflow = resultWorkflowData.find(workflow => workflow.resultId === resultItem.id)
-
-    return {
-      ...resultItem,
-      ...matchedFollowUp,
-      ...matchedWorkflow,
-    }
-  })
-
+  const { data, extraColumns = [] } = await getResultsForExport(auth, query)
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
   const columnsFromCustomFields = await getColumnsFromCustomFields({ partnerId, assayId: query.assayId })
-  const { GxMtbXdr: xdrAssayId } = await allAssayToId()
+  const xdrAssayId = await assayToId('GxMtbXdr')
   const dataIncludesResistances = queryIncludesXdr(query, xdrAssayId)
   const columns = [
-    ..._.map(extraColumns, column => ({
+    ...extraColumns.map(column => ({
       key: column.db,
       header: column.title,
     })),
@@ -74,13 +52,11 @@ module.exports = async (auth, query) => {
       : []),
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
-    { key: 'resultWorkflowStatus', header: 'Result Status' },
     { key: 'resultTreatmentStatus', header: 'Follow Up Status' },
     { key: 'followUpName', header: 'Follow Up' },
     { key: 'followUpDate', header: 'Follow Up Date' },
     { key: 'followUpComment', header: 'Follow Up Comment' },
     { key: 'recordedInRegister', header: 'Recorded In Register' },
-    { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
     { key: 'consumableSerial', header: 'Consumable Serial' },
     { key: 'consumableLot', header: 'Consumable Lot' },
     { key: 'consumableExpirationDate', header: 'Consumable Expiration Date' },
@@ -101,8 +77,8 @@ module.exports = async (auth, query) => {
 
   const dataset = {
     ok: true,
-    total,
-    length: _.get(data, 'length', 0),
+    total: data.length,
+    length: data.length,
     data,
     dynamicColumns: columns,
     fixedColumns: [
@@ -113,7 +89,6 @@ module.exports = async (auth, query) => {
       { key: 'deviceName', header: 'Device' },
       { key: 'assayName', header: 'Assay' },
       { key: 'errorCode', header: 'Error Code' },
-      { key: 'resultWorkflowStatus', header: 'Workflow Status' },
       { key: 'patientId', header: 'Patient Id' },
     ],
     dataSelector: (
@@ -138,9 +113,20 @@ module.exports = async (auth, query) => {
 }
 
 async function getResultsForExport(auth, query) {
-  const offset = getOffsetFromIsoDateString(query.maxDate)
+  const { timezoneIANA } = await getUser(auth.credentials.name)
+
   const selectFields = {
-    ...getSelectCommonListFieldsTZ(offset),
+    ...COMMON_LIST_FIELDS_UTC,
+    // override datetime fields with user time offset:
+    startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
+    endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
+    consumableExpirationDate: getDateTimeProjectionInTimeZoneIANA(knex, 'r.consumableExpirationDate', timezoneIANA),
+    createdOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.createdOn', timezoneIANA),
+    updatedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.updatedOn', timezoneIANA),
+    sampleCollectedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'sp.collectedOn', timezoneIANA),
+    resultTreatmentStatusChangedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rtsl.changedOn', timezoneIANA),
+    transferredOn: getDateTimeProjectionInTimeZoneIANA(knex, 'rslog.createdOn', timezoneIANA),
+    firstViewedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.firstViewedOn', timezoneIANA),
     deviceStateName: 'stdpn.name',
     resultCategoryGroup: 'rcg.name',
   }
@@ -189,22 +175,18 @@ async function getResultsForExport(auth, query) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
+  const baseQuery = getQueryForResultsListAndExport(query, dataConstraints).select(selectFields)
 
-  const getCount = resultQuery.clone().count('r.id as total').first()
+  const data = await knex
+    .from(baseQuery.as('baseQ'))
+    .leftJoin(getLatestFollowUps().as('lastestFollowUps'), 'baseQ.id', 'lastestFollowUps.resultId')
+    .modify(sortPageParams, query, 'endedOn')
+    .select('baseQ.*', 'lastestFollowUps.followUpName', 'lastestFollowUps.followUpDate')
 
-  const getData = resultQuery.clone().groupBy('r.id').modify(sortPageParams, query, 'endedOn').select(selectFields)
-
-  const [{ total }, data] = await Promise.all([getCount, getData])
-
-  const result = {
-    ok: true,
+  return {
     data,
-    total,
     extraColumns: assayColumns,
   }
-
-  return result
 }
 
 async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
@@ -239,52 +221,19 @@ async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
   return columns
 }
 
-const getLatestFollowUpsByResultIds = async resultIds => {
+const getLatestFollowUps = () => {
   const subQuery = knex('ResultFollowUp')
     .select('resultId', 'followUpId', 'date', 'updatedOn')
-    .whereIn('resultId', resultIds)
     .andWhere('isDeleted', false)
     .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY updatedOn DESC) AS rowNumber'))
 
-  const result = await knex('FollowUp as fup')
+  return knex('FollowUp as fup')
     .select('rf.resultId', 'fup.name as followUpName', 'rf.date as followUpDate')
     .from(subQuery.as('rf'))
     .leftJoin('FollowUp as fup', 'rf.followUpId', 'fup.id')
     .join('FollowUpType as fut', 'fut.id', 'fup.followUpTypeId')
     .where('rf.rowNumber', 1)
     .andWhere('fut.externalId', 'treatment')
-
-  return result
-}
-
-const getLatestResultWorkflowLogByResultIds = async resultIds => {
-  const subQuery = knex('ResultWorkflowLog')
-    .select('resultId', 'resultWorkflowStatusId', 'reason', 'changedOn', 'createdOn')
-    .whereIn('resultId', resultIds)
-    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY createdOn DESC) AS rowNumber'))
-
-  const acknowledgedWorkflow = await getWorkflowStatus('acknowledged', subQuery)
-
-  const flaggedWorkflow = await getWorkflowStatus('flagged', subQuery)
-
-  return [...acknowledgedWorkflow, ...flaggedWorkflow]
-}
-
-const getWorkflowStatus = async (externalId, subQuery) => {
-  let query = knex('ResultWorkflowStatus')
-    .select('rwl.resultId', 'rwl.reason as followUpComment')
-    .from(subQuery.as('rwl'))
-    .leftJoin('ResultWorkflowStatus as rwsInner', 'rwl.resultWorkflowStatusId', 'rwsInner.id')
-    .where('rwl.rowNumber', 1)
-    .andWhere(builder => {
-      builder.where('rwsInner.externalId', externalId)
-    })
-
-  if (externalId === 'acknowledged') {
-    query = query.select('rwl.changedOn as recordedInRegister')
-  }
-
-  return query
 }
 
 const queryIncludesXdr = (query, xdrAssayId) => {

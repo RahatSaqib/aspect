@@ -62,12 +62,21 @@ const downloadSystemConfigResponseValidation = () => {
 }
 
 const retrieveAppIdConfigResponseValidation = () => {
-  return Joi.object().keys({
-    ok: Joi.bool().required().description('False if there was some sort of problem'),
-    data: Joi.object().keys({
-      appId: Joi.string().required().description('Unique ID of the application'),
+  return Joi.alternatives().try(
+    // Success response
+    Joi.object().keys({
+      ok: Joi.bool().valid(true).required().description('True when successful'),
+      data: Joi.object().keys({
+        appId: Joi.string().required().description('3-digit app ID assigned to the device'),
+      }),
     }),
-  })
+    // Boom error response (409 conflict)
+    Joi.object().keys({
+      statusCode: Joi.number().valid(409).required().description('HTTP status code'),
+      error: Joi.string().valid('Conflict').required().description('Error type'),
+      message: Joi.string().required().description('Error message describing the problem'),
+    })
+  )
 }
 
 module.exports = {

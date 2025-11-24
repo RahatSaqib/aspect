@@ -17,20 +17,35 @@ async function getStatesByValue(name, abbreviation, dataConstraints) {
     .select('st.id', 'st.name', 'st.abbreviation')
 }
 
-async function getLgasByValue(name, dataConstraints) {
-  return knex('Lga as l')
-    .where('l.name', name)
+async function getGeographyByLgaAndStateId(lgaId, stateId, dataConstraints) {
+  return knex('Geography as g')
     .modify(addConstraints, dataConstraints, { lga: 'l' })
-    .select('l.id', 'l.name')
+    .where('g.lgaId', lgaId)
+    .where('g.stateId', stateId)
+    .where('g.countryId', dataConstraints.country.id)
+    .first()
 }
 
-async function getGeographyByLgaId(knex, lgaId, dataConstraints) {
-  return knex('Geography as g').modify(addConstraints, dataConstraints, { lga: 'l' }).where('g.lgaId', lgaId).first()
+async function getGeographyByLgaNameAndStateId(name, stateId, dataConstraints) {
+  return knex('Geography as g')
+    .join('Lga as l', 'l.id', 'g.lgaId')
+    .modify(addConstraints, dataConstraints, { lga: 'l' })
+    .where('l.name', name)
+    .where('g.stateId', stateId)
+    .where('g.countryId', dataConstraints.country.id)
+    .select('g.id', 'g.stateId', 'g.lgaId')
+}
+
+async function updateGeography(trknex, lgaId, payload, dataConstraints) {
+  await trknex('Geography')
+    .modify(addConstraints, dataConstraints, { lga: 'l' })
+    .where({ lgaId })
+    .update({ stateId: payload.stateId })
 }
 
 async function upsertGeography(trknex, payload, lgaId, dataConstraints) {
   if (payload.stateId) {
-    const geography = await getGeographyByLgaId(trknex, lgaId, dataConstraints)
+    const geography = await getGeographyByLgaAndStateId(lgaId, payload.stateId, dataConstraints)
     if (geography) {
       if (geography.stateId !== payload.stateId) {
         await trknex('Geography').where({ id: geography.id }).update({ stateId: payload.stateId })
@@ -41,10 +56,22 @@ async function upsertGeography(trknex, payload, lgaId, dataConstraints) {
   }
 }
 
+async function createGeography(trknex, payload, lgaId, dataConstraints) {
+  const [geography] = await trknex('Geography').insert({
+    stateId: payload.stateId,
+    lgaId,
+    countryId: dataConstraints.country.id,
+  })
+  return geography.id
+}
+
 module.exports = {
   getState,
   getStatesByValue,
   getLga,
-  getLgasByValue,
   upsertGeography,
+  getGeographyByLgaAndStateId,
+  getGeographyByLgaNameAndStateId,
+  createGeography,
+  updateGeography,
 }

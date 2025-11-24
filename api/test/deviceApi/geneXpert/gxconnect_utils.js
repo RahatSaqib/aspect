@@ -51,15 +51,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .orWhereIn('siteId', siteIds)
     .delete()
 
-  const resultIds = await knex('Result')
-    .whereIn('deviceId', deviceIds)
-    .pluck('id')
-    .union(function () {
-      this.from('ResultGeneratedResult as rgr')
-        .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
-        .whereIn('r.deviceId', deviceIds)
-        .pluck('generatedResultId as id')
-    })
+  const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
   const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
   await knex('EmailMessage').whereIn('resultId', resultIds).delete()
@@ -83,8 +75,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
@@ -104,17 +94,9 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultGeneratedResult')
-    .whereIn('sourceResultId', resultIds)
-    .orWhereIn('generatedResultId', resultIds)
-    .delete()
-
   await knex('ResultTag').delete()
   await knex('SiteTag').delete()
   await knex('Tag').delete()
-
-  await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   const sitesAndDevices = await knex('Result').whereIn('id', resultIds).select('siteId', 'deviceId')
   await knex('Result').whereIn('id', resultIds).delete()
@@ -403,8 +385,6 @@ class GxConnectApiTestContext {
       const resultDetails = await knex('DeviceLog as dl')
         .join('Result as r', 'dl.resultId', 'r.id')
         .leftJoin('Site as si', 'r.siteId', 'si.id')
-        .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
-        .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
         .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
@@ -423,7 +403,6 @@ class GxConnectApiTestContext {
           'r.latitude',
           'r.longitude',
           'a.externalId as assay',
-          'rws.externalId as resultWorkflowStatus',
           'rs.externalId as resultSource',
           'rt.externalId as resultType',
           'rc1.externalId as resultCategory1',

@@ -9,7 +9,7 @@ const routes = [
     config: {
       description: 'Device Type List',
       notes: "List of device type ID's and names",
-      auth: { scope: ['device:view'] },
+      auth: { scope: ['device:view', 'browse'] },
     },
   },
 ]

@@ -114,6 +114,19 @@ async function createNewIssue(knex, issueType, action) {
 
   const issueContext = await lookupIssueContext(action, knex)
 
+  // Check if device has a valid site
+  if (action.deviceId) {
+    const deviceSite = await knex('Device as d')
+      .join('Site as s', 'd.siteId', 's.id')
+      .where('d.id', action.deviceId)
+      .first('s.id')
+
+    if (!deviceSite) {
+      // Skip creating issue if device has no valid site
+      return null
+    }
+  }
+
   const issue = {
     issueStatusId,
     issueTypeId,

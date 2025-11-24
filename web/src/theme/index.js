@@ -1,12 +1,11 @@
 import { createTheme, lighten, alpha } from '@mui/material'
 import { cyan, grey, lightGreen, orange } from '@mui/material/colors'
-import { deDE, enUS, frFR, ptPT, ruRU, ukUA, esES, viVN } from '@mui/material/locale'
+import { deDE, enUS, frFR, ptPT, ruRU, ukUA, esES } from '@mui/material/locale'
 import { deDE as xdeDE, enUS as xenUS, frFR as xfrFR, esES as xesES, ptBR } from '@mui/x-date-pickers'
 import isEmpty from 'lodash/isEmpty'
 import { customPropertiesVariables } from './colors'
 import xruRU from './ruRUlocale'
 import xukUA from './ukUAlocale'
-import xviVN from './viVNlocale'
 
 const locale = {
   'de-DE': deDE,
@@ -16,8 +15,6 @@ const locale = {
   'ru-RU': ruRU,
   'uk-UA': ukUA,
   'es-ES': esES,
-  'tg-TJ': ruRU,
-  'vi-VN': viVN,
 }
 const xlocale = {
   'de-DE': xdeDE,
@@ -27,8 +24,6 @@ const xlocale = {
   'ru-RU': xruRU,
   'uk-UA': xukUA,
   'es-ES': xesES,
-  'tg-TJ': xruRU,
-  'vi-VN': xviVN,
 }
 const themedColors = {
   text: customPropertiesVariables['--aspect-color-white'],

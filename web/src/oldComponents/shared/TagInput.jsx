@@ -140,7 +140,7 @@ const TagInput = ({
           <div className={classNameValues.container}>
             <Grid container spacing={4} alignItems="stretch">
               {selectedItem.length > 0 && (
-                <Grid item>
+                <Grid>
                   {selectedItem.map(item => {
                     const name = item[tagName]
                     return (
@@ -156,7 +156,7 @@ const TagInput = ({
                   })}
                 </Grid>
               )}
-              <Grid item className={classNameValues.inputContainer}>
+              <Grid className={classNameValues.inputContainer}>
                 <Input
                   fullWidth={fullWidth}
                   ref={popperNode}

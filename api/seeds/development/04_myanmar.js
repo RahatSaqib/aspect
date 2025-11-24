@@ -2,9 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
 
-const { rowsAsObject, updateUnknownErrorOnModuleMessage } = require('../utils')
-const { upsertIssueResolutionTrigger } = require('../utils')
-const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
+const { updateUnknownErrorOnModuleMessage } = require('../utils')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -43,63 +41,6 @@ async function seed(knex) {
     })
 
   const { id: partnerId } = await knex('Partner').where({ externalId: 'mohs' }).first()
-
-  await knex('IssueEscalationTrigger')
-    .update({
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'sql-script',
-        evaluationParameter: './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql',
-      }),
-    })
-    .whereRaw('escalationConditions->>"$.evaluationParameter" LIKE "%/deviceOfflineLevel3ROEscalatedNetwork.sql"')
-    .andWhere('partnerId', partnerId)
-
-  await knex('IssueEscalationTrigger')
-    .update({
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'sql-script',
-        evaluationParameter: './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql',
-      }),
-    })
-    .whereRaw('escalationConditions->>"$.evaluationParameter" LIKE "%/deviceNoResultsLevel3ROEscalatedNoResults.sql"')
-    .andWhere('partnerId', partnerId)
-
-  await knex('IssueResolutionTrigger')
-    .update({
-      resolutionConditions: JSON.stringify({
-        evaluationMethod: 'sql-script',
-        evaluationParameter: './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceOffline.sql',
-      }),
-    })
-    .whereRaw('resolutionConditions->>"$.evaluationParameter" LIKE "%deviceOfflineResolveLUNetwork.sql"')
-    .andWhere('partnerId', partnerId)
-
-  const deviceNoResultsIssueResolutionTrigger = await knex('IssueResolutionTrigger as irt')
-    .join('Partner as p', 'irt.partnerId', 'p.id')
-    .join('IssueType as it', 'irt.issueTypeId', 'it.id')
-    .whereRaw(
-      `irt.resolutionConditions->"$.evaluationParameter" = './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql'`
-    )
-    .andWhere({
-      'p.name': 'MoHS',
-      'it.externalId': 'DeviceNoResults',
-    })
-    .first()
-  if (!deviceNoResultsIssueResolutionTrigger) {
-    const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
-    const now = new Date()
-
-    await upsertIssueResolutionTrigger(knex, {
-      issueTypeId: issueTypes.DeviceNoResults.id,
-      partnerId,
-      resolutionConditions: JSON.stringify({
-        evaluationMethod: 'sql-script',
-        evaluationParameter: './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql',
-      }),
-      createdOn: now,
-      updatedOn: now,
-    })
-  }
 
   // SD-589 Format Issue Dates
   await knex('AlertTemplate')
@@ -270,7 +211,4 @@ async function seed(knex) {
   })
 
   await updateUnknownErrorOnModuleMessage(knex)
-
-  // correction requested in SD-769
-  await updateDataCategoryNotificationTypeForRO(knex, 'MoHS', 'deprecatedMyanmar')
 }

@@ -1,4 +1,4 @@
-const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_functions')
+const updateReportsAndJobFunctions = require('../common/upsert_reports_and_job_functions')
 const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
 

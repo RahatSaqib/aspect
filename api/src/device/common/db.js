@@ -5,7 +5,6 @@ const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('.
 const { allResultCategoryToId, resultCategoryToId, deviceMaintenanceTypeToId } = require('../../shared/dictionary')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { usedAssay } = require('../../assay/common/db')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 const { XDR_RESISTANCES } = require('../../shared/constants')
@@ -355,18 +354,6 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
   }
 }
 
-async function getLastUploadDateBySites(siteIds, timeOffset) {
-  return knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
-    .whereIn('s.id', siteIds)
-    .groupBy('s.id')
-    .select({
-      siteId: 's.id',
-      lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', timeOffset),
-    })
-}
-
 async function getSourceDevices(sourceDevicesIds) {
   return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId', 'deviceTypeId')
 }
@@ -557,12 +544,6 @@ async function deleteMessages(deviceId, trknex) {
   await trknex('WebhookMessage').where('deviceId', deviceId).del()
 }
 
-async function deleteMissingInventoryLots(deviceId, trknex) {
-  await trknex('MissingInventoryLots')
-    .whereIn('resultId', knex('Result').where('deviceId', deviceId).select('id'))
-    .del()
-}
-
 async function deleteResults(deviceId, trknex) {
   await trknex('Result').where('deviceId', deviceId).del()
 }
@@ -598,13 +579,11 @@ async function deleteDeviceFromDeviceTag(deviceId, trknex) {
 }
 
 async function deleteDeviceFromFactTables(deviceId, trknex) {
-  await trknex('FactDeviceExternalSource').where({ deviceId }).del()
   await trknex('FactDeviceFlag').where({ deviceId }).del()
   await trknex('FactDeviceModulesCount').where({ deviceId }).del()
   await trknex('FactResultsDevice').where({ deviceId }).del()
   await trknex('FactResultsDeviceByAssay').where({ deviceId }).del()
   await trknex('FactResultsDeviceByCategory1').where({ deviceId }).del()
-  await trknex('FactResultsDeviceByCategory1And2').where({ deviceId }).del()
   await trknex('FactResultsDeviceByTimeFrame').where({ deviceId }).del()
 }
 
@@ -971,8 +950,6 @@ module.exports = {
   moduleDisabledIssues,
   modulesWithLastResult,
   getDeviceByIdBaseQuery,
-  getLastUploadDateBySites,
-  deleteMissingInventoryLots,
   getUnusedModulesReportData,
   getDeviceInfo,
 }

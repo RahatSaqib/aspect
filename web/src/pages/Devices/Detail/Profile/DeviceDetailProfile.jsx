@@ -15,7 +15,6 @@ import requirePermissions from '../../../../oldComponents/shared/requirePermissi
 import Summary from '../../../../oldComponents/Summary'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
 import Results from '../../../../oldPages/result/historyResults/HistoryResults'
-import resultMessages from '../../../../oldPages/result/list/messages.js'
 import {
   showDialog,
   hideDialog,
@@ -55,7 +54,6 @@ const FILTERS_CONFIG = {
   errorCode: true,
   siteName: true,
   sampleOriginSite: true,
-  workflowStatus: true,
 }
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -249,12 +247,6 @@ const DeviceDetailProfile = ({
     { key: 'sampleOriginSiteName', label: formatMessage(messages.sampleOriginSiteName), sortable: true },
     { key: 'sampleId', label: formatMessage(messages.sampleId), sortable: true },
     { key: 'errorCode', label: formatMessage(messages.errorCode), sortable: true },
-    {
-      key: 'resultWorkflowStatusI18nkey',
-      formatter: value => (value ? formatMessage(resultMessages[value]) : ''),
-      label: formatMessage(messages.resultWorkflowStatus),
-      sortable: true,
-    },
     { key: 'patientId', label: formatMessage(messages.patientId), sortable: true },
     { key: 'resultText', label: formatMessage(messages.resultText), sortable: false, formatter: () => true },
   ]

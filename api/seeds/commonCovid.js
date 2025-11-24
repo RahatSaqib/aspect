@@ -112,12 +112,13 @@ async function upsertCovidDeviceTypes(knex) {
           )
       )
 
-      await Promise.each(categoriesToInsert, elem =>
-        knex('ResultCategoryAssay').insert({
-          resultCategoryId: elem,
-          assayId: assayCovidId,
-        })
-      )
+      const rows = categoriesToInsert.map(resultCategoryId => ({
+        resultCategoryId,
+        assayId: assayCovidId,
+      }))
+      if (rows.length > 0) {
+        await knex('ResultCategoryAssay').insert(rows)
+      }
 
       covidDeviceTypes.push(deviceType)
     }

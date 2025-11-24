@@ -139,14 +139,8 @@ function onDeviceUpdateFlag(updates) {
         flagUpdates.maintenanceDueOn = null
       }
 
-      const updatedRows = await knex('FactDeviceFlag').where({ deviceId }).update(flagUpdates)
-      if (updatedRows === 0) {
-        const existingFact = await knex('FactDeviceFlag').where({ deviceId }).first()
-        if (!existingFact) {
-          // If we don't have a flag for this device yet, create it!
-          await knex('FactDeviceFlag').insert({ deviceId, ...flagUpdates })
-        }
-      }
+      const record = { deviceId, ...flagUpdates }
+      await knex('FactDeviceFlag').insert(record).onConflict(['deviceId']).merge()
 
       // flags have been updated, check connectivity again for this device with
       // updated flags in case resolved updates triggered different issue conditions
@@ -245,30 +239,8 @@ async function updateFactDeviceModulesCount(deviceId, resultEndedOn, knex) {
   const moduleBaysUsed = Object.keys(device.moduleBays).length
   const modulesUsed = Object.keys(device.modules).length
 
-  let needUpdate = true
-  const row = await knex('FactDeviceModulesCount as f')
-    .where('f.deviceId', deviceId)
-    .where('f.date', date)
-    .first('f.moduleBaysUsed', 'f.modulesUsed')
-
-  if (row && moduleBaysUsed <= row.moduleBaysUsed && modulesUsed <= row.modulesUsed) {
-    needUpdate = false
-  }
-
-  if (needUpdate) {
-    await knex.raw('INSERT INTO FactDeviceModulesCount SET ? ON DUPLICATE KEY UPDATE ?', [
-      {
-        deviceId,
-        date,
-        moduleBaysUsed,
-        modulesUsed,
-      },
-      {
-        moduleBaysUsed,
-        modulesUsed,
-      },
-    ])
-  }
+  const record = { deviceId, date, moduleBaysUsed, modulesUsed }
+  await knex('FactDeviceModulesCount').insert(record).onConflict(['deviceId', 'date']).merge()
 }
 
 // ----------------------------------------------
@@ -532,17 +504,6 @@ async function onFactNewResultsAvailableCheck(action, { messageContext }) {
   })
 }
 
-// ----------------------------------------------
-// This function is triggered by scheduler, and checks external sources to update fact tables
-// ----------------------------------------------
-async function onFactExternalSourceCheck({ sourceName }, context) {
-  // eslint-disable-next-line import/no-dynamic-require
-  const externalSourceHandler = require(`./externalSourceHandlers/${sourceName}`)
-  if (externalSourceHandler) {
-    return externalSourceHandler(context)
-  }
-}
-
 async function onFactCompletionRatePerSite(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     siteWithLowCompletionRateIssue,
@@ -580,6 +541,5 @@ module.exports = {
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
   MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
   onFactNewResultsAvailableCheck,
-  onFactExternalSourceCheck,
   onFactCompletionRatePerSite,
 }

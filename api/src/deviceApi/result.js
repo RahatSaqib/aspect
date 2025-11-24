@@ -1,7 +1,5 @@
 const _ = require('lodash')
-const { resultWorkflowStatusToId } = require('../shared/dictionary')
-const { getDevice } = require('../device/service')
-const inventoryUtils = require('../inventory/common/logic')
+const { consumeInventoryForResult } = require('../inventory/consumeInventoryForResult')
 
 // ----------------------------------------------------------
 async function getResult(knex, resultId) {
@@ -14,8 +12,6 @@ async function getResult(knex, resultId) {
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
-    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .where('r.id', resultId)
     .first(
       'r.externalId as resultExternalId',
@@ -48,7 +44,6 @@ async function getResult(knex, resultId) {
       'r.longitude',
       'rt.externalId as resultTypeId',
       'rsc.externalId as resultSourceId',
-      'rs.externalId as resultWorkflowStatusId',
       'r.sampleRunNumber',
       's.externalId as sampleId',
       's.collectedOn as sampleCollectedOn',
@@ -62,12 +57,6 @@ async function getResult(knex, resultId) {
     // TODO when is this null??
     return null
   }
-
-  const resultWorkflowLog = await knex('ResultWorkflowLog')
-    .where({ resultId: row.resultId })
-    .orderBy('createdOn', 'desc')
-    .orderBy('id', 'desc')
-    .first('operator', 'changedOn')
 
   const result = { formData: null }
 
@@ -86,13 +75,6 @@ async function getResult(knex, resultId) {
   }
   result.type = { id: row.resultTypeId }
   result.source = { id: row.resultSourceId }
-  result.workflow = { status: { id: row.resultWorkflowStatusId } }
-  if (resultWorkflowLog) {
-    result.workflow.changedOn = resultWorkflowLog.changedOn
-    if (resultWorkflowLog.operator != null) {
-      result.workflow.operator = resultWorkflowLog.operator
-    }
-  }
 
   const sample = {}
   if (row.sampleId != null) {
@@ -194,34 +176,31 @@ async function getResult(knex, resultId) {
   return result
 }
 
-async function postProcessMergeResult(context, result, previousResult) {
-  const { knex, payload, now, messageContext, userId } = context
+async function postProcessMergeResult(context, result) {
+  const { knex, payload, messageContext, userId } = context
 
-  await addResultWorkflowLogIfChanged(knex, payload, result, previousResult, 'Device API Update', now)
   await resolveAutoTagging(knex, result)
-  // // TODO ASP-355 consume inventory using a message listener instead
-  // // of within plugin/same transaction
-  await consumeInventoryForResult(knex, payload, result, messageContext, userId)
+  await consumeInventoryFromPayload(knex, payload, result, messageContext, userId)
   return {}
 }
 
 /**
  * Consumes inventory for the new result
  */
-async function consumeInventoryForResult(knex, payload, result, messageContext, userId) {
-  // TODO ASP-355 Move consumeInventory for Result to listener
-  // Update Inventory Levels at Site
+async function consumeInventoryFromPayload(knex, payload, result, messageContext, userId) {
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
+  const expirationDate = consumablesInResultData[0]?.expirationDate
+  const lotNumber = consumablesInResultData[0]?.lot
 
-  await inventoryUtils.consumeInventoryForResult({
+  await consumeInventoryForResult({
+    knex,
     resultId: result.id,
     assayId: result.assayId,
     siteId: result.siteId,
-    consumablesInResultData,
+    lotNumber,
+    expirationDate,
     partnerId: result.partnerId,
     testStartedOn: result.startedOn,
-    testEndedOn: result.endedOn,
-    knex,
     messageContext,
     userId,
   })
@@ -315,83 +294,9 @@ async function getExistingTagByPartner(knex, partnerId, taggingResults, resultId
     .whereIn('t.title', taggingResults)
 }
 
-async function addResultWorkflowLogIfChanged(
-  knex,
-  payload,
-  result,
-  previousResult,
-  reason,
-  now = new Date(),
-  changedOn
-) {
-  // Log Result Workflow Update if any field changed
-  let resultWorkflowChanged = !previousResult || previousResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
-  let latestResultWorkflowLog
-  if (!resultWorkflowChanged && (_.has(payload, 'workflow.operator') || _.has(payload, 'workflow.changedOn'))) {
-    // check to see if operator or changedOn is different from latest log
-    latestResultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
-    resultWorkflowChanged =
-      !latestResultWorkflowLog ||
-      _.get(payload, 'workflow.operator', null) !== latestResultWorkflowLog.operator ||
-      +_.get(payload, 'workflow.changedOn', NaN) !== +latestResultWorkflowLog.changedOn
-  }
-  if (!resultWorkflowChanged && changedOn) {
-    // check to see if specified changedOn is different from latest log
-    if (!latestResultWorkflowLog) {
-      latestResultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
-    }
-    resultWorkflowChanged = !latestResultWorkflowLog || +changedOn !== +latestResultWorkflowLog.changedOn
-  }
-  const device = await getDevice(result.deviceId)
-  if (resultWorkflowChanged) {
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId: result.id,
-      resultWorkflowStatusId: result.resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
-      reason: reason || 'Device Api Update',
-      operator: _.get(payload, 'workflow.operator', null) || _.get(payload, 'sender.operator', null) || device.name,
-      changedOn: _.get(payload, 'workflow.changedOn', changedOn || now),
-      createdOn: now,
-    })
-    await knex('Result').where('id', result.id).update({ resultWorkflowStatusLogId: lastLogId })
-  }
-  return resultWorkflowChanged
-}
-
-async function updateResultWorkflowStatus(knex, resultId, workflowStatusExternalId, reason, now = new Date()) {
-  // get internal workflow status id based on the external id we got
-  const resultWorkflowStatusId = await resultWorkflowStatusToId(workflowStatusExternalId)
-  if (resultWorkflowStatusId === null) {
-    throw new Error(`Workflow status with external ID "${workflowStatusExternalId}" not found`)
-  }
-
-  const [lastLogId] = await knex('ResultWorkflowLog').insert({
-    resultId,
-    resultWorkflowStatusId: resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
-    reason,
-    changedOn: now,
-    createdOn: now,
-  })
-
-  await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
-
-  return {}
-}
-
-async function getLatestResultWorkflowLog(knex, resultId) {
-  const latestResultWorkFlowLog = await knex('ResultWorkflowLog')
-    .where({ resultId })
-    .orderBy('createdOn', 'desc')
-    .orderBy('id', 'desc')
-    .first('operator', 'changedOn', 'resultWorkflowStatusId')
-  return latestResultWorkFlowLog
-}
-
 module.exports = {
   getResult,
   postProcessMergeResult,
-  consumeInventoryForResult,
-  addResultWorkflowLogIfChanged,
-  updateResultWorkflowStatus,
+  consumeInventoryFromPayload,
   getAllResultTags,
-  getLatestResultWorkflowLog,
 }

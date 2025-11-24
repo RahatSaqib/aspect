@@ -34,7 +34,7 @@ async function sendSmsAdn(cellNumber, message, adnConf) {
     const data = await response.json()
     return data
   } catch (e) {
-    logger.error(e)
+    logger.warning(e)
     throw e
   }
 }
@@ -56,7 +56,7 @@ async function sendSmsTwilio(cellNumber, message, twilioConf) {
 
     return clientCreated
   } catch (e) {
-    logger.error(e)
+    logger.warning(e)
     throw e
   }
 }
@@ -88,7 +88,7 @@ async function sendSmsTermii(cellNumber, message, termiiConf) {
     const data = await response.json()
     return data
   } catch (e) {
-    logger.error(e)
+    logger.warning(e)
     throw e
   }
 }

@@ -101,15 +101,6 @@ const resultPayload = {
     .keys({
       id: Joi.string().required().description('The Result Source. Defaults to "Diagnostic Device".'),
     }),
-  workflow: Joi.object()
-    .allow(null)
-    .keys({
-      status: Joi.object().keys({
-        id: Joi.string().required().description('The workflow status. Default Error if error specified, otherwise OK'),
-      }),
-      operator: Joi.string().allow('', null).description('The person who updated the workflow'),
-      changedOn: Joi.date().iso().description('Date and optional time the workflow changed.'),
-    }),
   sample: Joi.object().keys({
     id: Joi.string().allow('', null).description('Client specific identifier of the sample tested.'),
     collectedOn: Joi.date().allow(null).iso().description('Date and optional time the sample was collected.'),
@@ -268,6 +259,24 @@ const testAggRequestQueryValidation = () => {
   }
 }
 
+const devicePayloadValidation = Joi.object().keys({
+  ...devicePayload,
+  includeDeviceConfiguration: Joi.bool()
+    .allow(null)
+    .optional()
+    .description(
+      'This flag will determine (When true) if the service is going to respond as part of the response the general configuration of the device'
+    ),
+  log: Joi.object().allow(null).keys(logPayload).description('Device Log Data'),
+  configuration: Joi.object().allow(null).keys(configurationPayload).description('Device Configuration Data'),
+  operation: Joi.object().allow(null).keys(operationPayload).description('Device Operation Data'),
+  result: Joi.object().allow(null).keys(resultPayload).description('Device Result Data.'),
+  getFormsDefinition: Joi.bool()
+    .optional()
+    .allow(null)
+    .description('This is a flag to tell the API if the request source is a daily details POST'),
+})
+
 module.exports = {
   testAggResponseValidation,
   testAggRequestQueryValidation,
@@ -278,4 +287,5 @@ module.exports = {
   resultPayload,
   logPayload,
   errorPayload,
+  devicePayloadValidation,
 }

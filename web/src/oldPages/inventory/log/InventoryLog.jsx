@@ -1,5 +1,5 @@
 import React from 'react'
-import { LinearProgress, Switch, TableBody, Typography, Stack } from '@mui/material'
+import { LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -13,7 +13,8 @@ import {
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
+import { INVENTORY_KEY, INVENTORY_KEY_TYPE_LOG_ENDPOINT } from '../../../hooks/inventory/inventoryKeys'
+import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -21,6 +22,7 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { getTimezoneById } from '../../../utils/utils/timezone'
+import { strategyRequireExpirationDate, strategyRequireLot } from '../strategyHelper'
 import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
 import messages from './messages'
 import styles from './styles.module.css'
@@ -56,10 +58,14 @@ export const InventoryLogWithProps = ({
   disableFilters,
 }) => {
   const user = useAuthState()
+  const { isLoadingPartner, data: partner } = usePartner()
+  const requireExpirationDate = strategyRequireExpirationDate(partner?.inventoryStrategy)
+  const requireLotNumber = strategyRequireLot(partner?.inventoryStrategy)
+
   const columns = [
     {
       key: 'createdOn',
-      label: intl.formatMessage(messages.date),
+      label: intl.formatMessage(messages.registrationDate),
       sortable: true,
     },
     {
@@ -76,11 +82,13 @@ export const InventoryLogWithProps = ({
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
       sortable: true,
+      isHidden: !requireLotNumber,
     },
     {
       key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
+      isHidden: !requireExpirationDate,
     },
     {
       key: 'quantity',
@@ -93,23 +101,13 @@ export const InventoryLogWithProps = ({
       sortable: true,
     },
     {
-      key: 'transactionDate',
-      label: intl.formatMessage(messages.transactionDate),
-      sortable: true,
-    },
-    {
       key: 'notes',
       label: intl.formatMessage(messages.notes),
       sortable: true,
     },
     {
-      key: 'reconcilationStrategy',
-      label: intl.formatMessage(messages.reconcilationStrategy),
-      sortable: true,
-    },
-    {
-      key: 'reconcilationAdjustment',
-      label: intl.formatMessage(messages.reconcilationAdjustment),
+      key: 'transactionDate',
+      label: intl.formatMessage(messages.transactionDate),
       sortable: true,
     },
   ]
@@ -122,7 +120,11 @@ export const InventoryLogWithProps = ({
       <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack />
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
-        <InventoryLogFilter disabled={disableFilters} />
+        <InventoryLogFilter
+          disabled={disableFilters}
+          requireLotNumber={requireLotNumber}
+          requireExpirationDate={requireExpirationDate}
+        />
         <Stack sx={{ flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
             <HierarchicalView
@@ -148,7 +150,7 @@ export const InventoryLogWithProps = ({
                 {intl.formatMessage(messages.hierarchicalView)}
               </Typography>
             </Stack>
-            {isLoading ? (
+            {isLoading || isLoadingPartner ? (
               <LinearProgress />
             ) : !hasItems ? (
               <BrowseEmptyList />
@@ -168,6 +170,8 @@ export const InventoryLogWithProps = ({
                         key={`InventoryLog---${location.key}--${index}`}
                         inventoryLogItem={inventoryLogItem}
                         timeZone={validTimeZone}
+                        requireExpirationDate={requireExpirationDate}
+                        requireLotNumber={requireLotNumber}
                       />
                     ))}
                   </TableBody>
@@ -239,7 +243,8 @@ const InventoryLog = () => {
     error,
   } = useQuery(
     [
-      INVENTORY_LOG.KEY,
+      INVENTORY_KEY,
+      'inventory_logs',
       {
         sortCol,
         sortDir,
@@ -250,7 +255,7 @@ const InventoryLog = () => {
     ],
     async () =>
       fetchWrapperForQueries({
-        endpoint: INVENTORY_LOG.ENDPOINT,
+        endpoint: INVENTORY_KEY_TYPE_LOG_ENDPOINT,
         params: {
           sortCol,
           sortDir,
@@ -281,5 +286,4 @@ const InventoryLog = () => {
   }
   return <InventoryLogWithProps {...props} />
 }
-
 export default InventoryLog

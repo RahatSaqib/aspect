@@ -15,7 +15,7 @@ describe('PUT', () => {
   let lga
   const lgasToDelete = []
   before(() => shared.checkToken(server, path))
-  before(async () => {
+  beforeEach(async () => {
     return run(async knex => {
       const lgaId = await knex('Lga').insert({ name: 'oldLgaName' })
       const { id: countryId } = await knex('Country').where('name', 'United States').first()
@@ -26,7 +26,7 @@ describe('PUT', () => {
     })
   })
 
-  after(async () => {
+  afterEach(async () => {
     return run(async knex => {
       await knex('Geography').whereIn('lgaId', lgasToDelete).del()
       await knex('Lga').whereIn('id', lgasToDelete).del()
@@ -54,6 +54,17 @@ describe('PUT', () => {
       const res = await server
         .put(`${path}/${lga.id}`)
         .send({ name: newName, stateId })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 200)
+    })
+
+    it('should throw error when lgas with same name exists in same state', async () => {
+      const dupLgaId = await knex('Lga').insert({ name: newName })
+      await knex('Geography').insert({ lgaId: dupLgaId, stateId })
+      lgasToDelete.push(dupLgaId)
+      const res = await server
+        .put(`${path}/${dupLgaId}`)
+        .send({ name: 'oldLgaName', stateId })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 409)
     })

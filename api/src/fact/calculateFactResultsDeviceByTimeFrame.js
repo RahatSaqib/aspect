@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { format, startOfMonth, endOfMonth, startOfDay, endOfDay, parseISO } = require('date-fns')
-const { replaceOffset, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
+const { replaceOffset, getDateTimeProjectionInTimeZoneIANA } = require('../shared/date')
 const { XDR_RESISTANCES, /* XDR_RESISTANCES_COMBO, */ XDR_RESISTANCE_VALUES } = require('../shared/constants')
 const {
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY: { mtbNoResultInvalidIndeterminate, mtbErrorByCode, mtbOtherErrorsNotIn },
@@ -76,7 +76,7 @@ const sumSingleXdrResistance = knex =>
       const item = knex.raw(`
           SUM(
             CASE
-              WHEN 
+              WHEN
                 (r.resultData ->> '$.allResistances.${resistanceName}') = '${resistanceValue}'
                 ${
                   resistanceValue === 'NotDetected'
@@ -130,6 +130,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
     .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .whereNotNull('r.assayId')
     .whereNotNull('r.resultCategory1')
+    .whereRaw('COALESCE(r.endedOn, r.startedOn) IS NOT NULL')
     .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame', 'r.siteId')
     .count('r.id as resultCount')
     .modify(qb => {
@@ -160,7 +161,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
     `),
       knex.raw(
         `DATE_FORMAT(
-        ${getDateTimeProjectionInUserTimeZone(knex, knex.raw(`IFNULL(r.endedOn, r.startedOn)`), timeZoneIANA)}, 
+        ${getDateTimeProjectionInTimeZoneIANA(knex, knex.raw(`IFNULL(r.endedOn, r.startedOn)`), timeZoneIANA)},
         "${timeFrameFormat}"
       ) as startedOnTimeFrame`
       ),
@@ -267,12 +268,12 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
 }
 
 async function calculateFactResultsDeviceByTimeFrame(
+  knex,
   deviceId,
   assayId,
   resultCategory1,
   resultCategory2,
-  endedOn,
-  knex
+  endedOn
 ) {
   const device = await knex('Device as d')
     .join('Site as s', 's.id', 'd.siteId')

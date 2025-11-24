@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
+import { toast } from 'react-toastify'
 import { DetailHeader } from '../../../../cleanComponents'
 import usePartner from '../../../../hooks/partner/usePartner'
 import { useUpdatePartnerInventory } from '../../../../hooks/partner/useUpdatePartnerInventory'
@@ -25,7 +26,7 @@ export default function InventoryReconciliationForm() {
   const { mutateAsync: updatePartnerInventory } = useUpdatePartnerInventory()
   return (
     <>
-      <DetailHeader name={formatMessage(messages.reconciliationConfiguration)} />
+      <DetailHeader name={formatMessage(messages.inventoryManagementConfiguration)} />
       <Card sx={{ width: '100%', margin: '10px' }}>
         {isLoading ? (
           <LinearProgress />
@@ -45,8 +46,9 @@ export default function InventoryReconciliationForm() {
                     })
                     await refetch()
                     resetForm({ values: { strategy, adjustment } })
-                    // eslint-disable-next-line no-empty
+                    toast.success(formatMessage(messages.updateInventoryConfigurationSuccessMessage))
                   } catch (e) {
+                    toast.error(formatMessage(messages.updateInventoryConfigurationFailedMessage))
                   } finally {
                     setSubmitting(false)
                   }
@@ -56,7 +58,7 @@ export default function InventoryReconciliationForm() {
                   <>
                     <FormControl sx={{ mt: '15px' }}>
                       <FormLabel id="strategy-radio-buttons-group-label">
-                        {formatMessage(messages.cartridgesManagedThrough)}
+                        {formatMessage(messages.cartridgeBatchManagement)}
                       </FormLabel>
                       <RadioGroup
                         value={values?.strategy}

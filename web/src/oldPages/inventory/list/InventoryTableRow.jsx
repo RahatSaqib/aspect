@@ -23,9 +23,17 @@ import {
   showRemoveInventoryDialog,
   showTransferInventoryDialog,
 } from '../../../store/InventoryRedux'
+import { formatDate } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
-const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refetch }) => {
+const InventoryTableRow = ({
+  inventoryItem,
+  breakOutByLot,
+  inventoryOnHand,
+  requireExpirationDate,
+  requireLotNumber,
+  refetch,
+}) => {
   const { formatMessage, formatNumber } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
@@ -63,13 +71,13 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       {
         icon: 'FaExchangeAlt',
         text: formatMessage(messages.transferInventory),
-        disabled: isInTransit || !breakOutByLot,
+        disabled: isInTransit,
         action: ({ inventoryItemId }) => dispatch(showTransferInventoryDialog(inventoryItemId)),
       },
       {
         icon: 'FaMinus',
         text: formatMessage(messages.removeInventory),
-        disabled: isInTransit || !breakOutByLot,
+        disabled: isInTransit,
         action: ({ inventoryItemId }) => dispatch(showRemoveInventoryDialog(inventoryItemId)),
       },
     ]
@@ -171,54 +179,52 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
             </small>
           </span>
         )}
-        {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
+        {!breakOutByLot && requireExpirationDate && inventoryItem.get('qtyExpired') !== 0 ? (
           <span className={styles.alert}>
             &nbsp; ({inventoryItem.get('qtyExpired')} {formatMessage(messages.expired)})
           </span>
         ) : null}
       </TableCell>
-      {!breakOutByLot ? (
-        <TableCell
-          onClick={() => {
-            if (inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse') {
-              addFilter(
-                omitBy(
-                  {
-                    onlyUnreconciled: true,
-                    countryId,
-                    assayId: inventoryItem.get('assayId'),
-                    stateId: inventoryItem.get('stateId'),
-                    lgaId: inventoryItem.get('lgaId'),
-                    siteName: inventoryItem.get('siteName'),
-                  },
-                  isNil
-                ),
-                '/browse/result'
-              )
-              navigate('/browse/result')
-            }
-          }}
-          sx={
-            inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse'
-              ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
-              : {}
+      <TableCell
+        onClick={() => {
+          if (inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse') {
+            addFilter(
+              omitBy(
+                {
+                  onlyUnreconciled: true,
+                  countryId,
+                  assayId: inventoryItem.get('assayId'),
+                  stateId: inventoryItem.get('stateId'),
+                  lgaId: inventoryItem.get('lgaId'),
+                  siteName: inventoryItem.get('siteName'),
+                },
+                isNil
+              ),
+              '/browse/result'
+            )
+            navigate('/browse/result')
           }
-          className={styles.TableCell}
-        >
-          {inventoryItem.get('unreconciledQuantity')}
-        </TableCell>
-      ) : null}
+        }}
+        sx={
+          inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse'
+            ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
+            : {}
+        }
+        className={styles.TableCell}
+      >
+        {inventoryItem.get('unreconciledQuantity')}
+      </TableCell>
       {inventoryItem.get('dailyConsumptionRate') !== undefined ? (
         <TableCell className={styles.TableCell} rowSpan={rowSpan('dailyConsumptionRate')}>
           {hasDailyConsumption(inventoryItem.get('dailyConsumptionRate'))}
         </TableCell>
       ) : null}
-      {inventoryItem.get('lotNumber') !== undefined ? (
+      {requireLotNumber && inventoryItem.get('lotNumber') !== undefined ? (
         <TableCell className={styles.TableCell} rowSpan={rowSpan('lotNumber')}>
           {inventoryItem.get('lotNumber') ? inventoryItem.get('lotNumber') : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
-      {inventoryItem.get('expiresOn') !== undefined ? (
+      {requireExpirationDate && inventoryItem.get('expiresOn') !== undefined ? (
         <TableCell className={styles.TableCell} rowSpan={rowSpan('expiresOn')}>
           <span
             className={
@@ -228,7 +234,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
             }
           >
             {inventoryItem.get('expiresOn')
-              ? inventoryItem.get('expiresOn').split('T')[0]
+              ? formatDate(inventoryItem.get('expiresOn'))
               : formatMessage(messages.notAvailable)}
           </span>
         </TableCell>

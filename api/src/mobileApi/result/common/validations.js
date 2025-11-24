@@ -14,7 +14,6 @@ const downloadResultValidation = () => {
       ),
     assayExternalIds: Joi.string().optional().description('a csv string with the assay externalId'),
     resultCategories: Joi.string().optional().description('an array with the assay type abbreviation'),
-    workflowStatus: Joi.string().optional().description('External Id of the workflow status'),
     treatmentStatus: Joi.string().optional().description('External Id of the treatment status'),
     deviceType: Joi.string().optional().description('External Id Device type, the default value is CepheidGeneXpert'),
     isTransferred: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
@@ -54,20 +53,6 @@ const downloadResultResponseValidation = () => {
           deviceName: Joi.string().required().description('Name of the device'),
           resultCategory1ExternalId: Joi.string().allow(null).description('Category of the first result'),
           resultCategory2ExternalId: Joi.string().allow(null).description('Category of the second result'),
-          workflowStatus: Joi.object()
-            .description('Current workflow status of the result')
-            .keys({
-              changedOn: Joi.date().description('Date of the latest change to the workflow status'),
-              createdOn: Joi.date().description('Date of creation of the workflow status'),
-              externalId: Joi.string().description('External ID of the workflow status'),
-              i18nKey: Joi.string().description('i18nKey ID of the workflow status'),
-              name: Joi.string().description('Name of the workflow status'),
-              reason: Joi.string().description('Reason for the latest workflow status change').allow(null, ''),
-              setDelivered: Joi.boolean()
-                .optional()
-                .allow(null)
-                .description('Tells if the record was updated manually'),
-            }),
           treatmentStatus: Joi.object()
             .allow(null)
             .description('Current treatment status of the result')
@@ -154,7 +139,6 @@ const downloadResultValidationV2 = () => {
       ),
     assayExternalIds: Joi.string().optional().description('a csv string with the assay externalId'),
     resultCategories: Joi.string().optional().description('an array with the assay type abbreviation'),
-    workflowStatus: Joi.string().optional().description('External Id of the workflow status'),
     treatmentStatus: Joi.string().optional().description('External Id of the treatment status'),
     deviceType: Joi.string().optional().description('External Id Device type, the default value is CepheidGeneXpert'),
     isTransferred: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
@@ -199,20 +183,6 @@ const downloadResultResponseValidationV2 = () => {
           deviceName: Joi.string().required().description('Name of the device'),
           resultCategory1ExternalId: Joi.string().allow(null).description('Category of the first result'),
           resultCategory2ExternalId: Joi.string().allow(null).description('Category of the second result'),
-          workflowStatus: Joi.object()
-            .description('Current workflow status of the result')
-            .keys({
-              changedOn: Joi.date().description('Date of the latest change to the workflow status'),
-              createdOn: Joi.date().description('Date of creation of the workflow status'),
-              externalId: Joi.string().description('External ID of the workflow status'),
-              i18nKey: Joi.string().description('i18nKey ID of the workflow status'),
-              name: Joi.string().description('Name of the workflow status'),
-              reason: Joi.string().description('Reason for the latest workflow status change').allow(null, ''),
-              setDelivered: Joi.boolean()
-                .optional()
-                .allow(null)
-                .description('Tells if the record was updated manually'),
-            }),
           treatmentStatus: Joi.object()
             .allow(null)
             .description('Current treatment status of the result')
@@ -355,7 +325,6 @@ const baseResultResponse = {
   patientId: Joi.string().allow(null, '').description('The patient Id'),
   treatmentStatusInfo: Joi.string().allow(null, '').description('treatment status info'),
   errorCode: Joi.string().allow(null, '').description('If an error occurred, contains the error code from the device'),
-  resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
   caseExternalId: Joi.string().optional().allow(null, '').description('The id of the case'),
   diseaseId: Joi.number().positive().allow(null).required().description('the Id of the disease'),
   diseaseName: Joi.string().required().allow(null).description('the name of the disease'),
@@ -392,14 +361,10 @@ const validateResultDetailResponse = () => {
     stateId: Joi.number().integer().positive().allow(null).description('The id of the state'),
     stateName: Joi.string().allow(null, '').description("The device's state name"),
     lgaName: Joi.string().allow(null, '').description("The device's lga name"),
-    resultWorkflowChangedOn: Joi.date().allow(null).description('The date when status was changed'),
     resultCategory1: Joi.number().integer().positive().allow(null).description('Value of ResultCategory1'),
     resultCategory2: Joi.number().integer().positive().allow(null).description('Value of ResultCategory1'),
     resultCategory1Name: Joi.string().allow(null, '').description("The result's category 1 name"),
     resultCategory2Name: Joi.string().allow(null, '').description("The result's category 2 name"),
-    resultWorkflowStatusId: Joi.number().integer().description("The result's workflow status id"),
-    resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
-    resultWorkflowStatusExternalId: Joi.string().allow(null, '').description("The result's Workflow status name"),
     resultData: Joi.object().description('The result data'),
     files: Joi.array().description('Result Files'),
     formData: Joi.object().allow(null).description('The form data'),
@@ -447,16 +412,12 @@ const validateResultDetailResponse = () => {
       .allow(null, '')
       .description('The name of the test made for the second result category'),
     treatmentStatus: Joi.object().allow(null).description('The treatment status object'),
-    resultWorkflowLogReason: Joi.string().allow(null, '').description('Value of Reason from latest ResultWorkflowLog'),
-    resultWorkflowLogOperator: Joi.string().allow(null, '').description('Operator from the latest ResultWorkflowLog'),
-    resultWorkflowLogCreatedOn: Joi.date().allow(null).description('CreatedOn date from the latest ResultWorkflowLog'),
     resultTreatmentStatusChangedOn: Joi.date()
       .allow(null)
       .description('ChangedOn date from the latest ResultTreatmentStatusLog'),
     resultTreatmentStatusCreatedOn: Joi.date()
       .allow(null)
       .description('CreatedOn date from the latest ResultTreatmentStatusLog'),
-    resultWorkflowLogChangedOn: Joi.date().allow(null).description('ChangedOn date from the latest ResultWorkflowLog'),
     resultTreatmentStatusId: Joi.number().allow(null).description('ID of the result treatment status'),
     resultTreatmentMethod: Joi.string().allow(null, '').description('Method from latest ResultTreatmentWorkflowLog'),
     resultTreatmentStatus: Joi.string().allow(null, '').description('ExternalId of the result treatment status'),
@@ -530,19 +491,34 @@ const addClinicalResponseParamValidation = () => {
 const addClinicalResponsePayloadValidation = () => {
   return Joi.array().items(
     Joi.object().keys({
-      fieldName: Joi.string()
-        .valid(
-          'confirmed',
-          'treatment',
-          'treatmentOccurred',
-          'outcome',
-          'outcomeOccurred',
-          'followUpNotPossible',
-          'followUpNotPossibleReason'
-        )
-        .description(
-          'Optional either confirmed, treatment, treatmentOccurred, outcome, outcomeOccurred, followUpNotPossible or followUpNotPossibleReason.'
-        ),
+      fieldName: Joi.string().when('fieldType', {
+        is: 'custom-field',
+        then: Joi.string().required(),
+        otherwise: Joi.string()
+          .valid(
+            'confirmed',
+            'treatment',
+            'treatmentOccurred',
+            'outcome',
+            'outcomeOccurred',
+            'followUpNotPossible',
+            'followUpNotPossibleReason'
+          )
+          .description(
+            'Optional either confirmed, treatment, treatmentOccurred, outcome, outcomeOccurred, followUpNotPossible or followUpNotPossibleReason.'
+          ),
+      }),
+      fieldType: Joi.string()
+        .valid('custom-field')
+        .optional()
+        .description('When set to custom-field, allows any string value for fieldName'),
+      formDefinitionExternalId: Joi.string()
+        .when('fieldType', {
+          is: 'custom-field',
+          then: Joi.string().required(),
+          otherwise: Joi.string().optional(),
+        })
+        .description('Required when fieldType is custom-field, specifies which form definition this field belongs to'),
       value: [
         Joi.bool()
           .required()
@@ -557,6 +533,7 @@ const addClinicalResponsePayloadValidation = () => {
           .allow('', null)
           .iso()
           .description('The date/time value when fieldName is treatmentOccurred or outcomeOccurred'),
+        Joi.number().description('Numeric value for custom fields'),
       ],
       clientTime: Joi.date()
         .iso()
@@ -575,26 +552,6 @@ const addClinicalResponseResultValidation = () => {
   })
 }
 
-const workflowStatusParamsValidation = () => {
-  return Joi.object().keys({
-    resultId: Joi.number().integer().positive().description('Result Id'),
-  })
-}
-
-const workFlowStatusPayloadValidation = () => {
-  return Joi.object().keys({
-    reason: Joi.string().description('Reason for the latest workflow status change').max(255),
-    changedOn: Joi.date().description('Date when the status was updated.').iso(),
-  })
-}
-
-const workFlowStatusResponseValidation = () => {
-  return Joi.object().keys({
-    ok: Joi.bool().required().description('False if there was some sort of error'),
-    data: Joi.string().description('Success of workflow status update'),
-  })
-}
-
 module.exports = {
   downloadResultValidation,
   downloadResultResponseValidation,
@@ -603,7 +560,4 @@ module.exports = {
   addClinicalResponseParamValidation,
   addClinicalResponsePayloadValidation,
   addClinicalResponseResultValidation,
-  workflowStatusParamsValidation,
-  workFlowStatusPayloadValidation,
-  workFlowStatusResponseValidation,
 }

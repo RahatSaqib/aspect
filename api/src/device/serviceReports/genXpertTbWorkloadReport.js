@@ -2,10 +2,10 @@ const { knex, sortPageParams, filterDateRangeParams } = require('../../db')
 const { getFactResultCountBase, FACT_FIELD_SCOPE } = require('../../result/common/db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { getBaseQuery: getResultBaseQuery } = require('../../result/query')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 const { getBasicsForDevicesReport } = require('../common/db')
 
-async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
+async function getDevicesWithCountsForTB(dataConstraints, query, timezoneIANA) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
 
   const resultCategoryIds = await allResultCategoryToId()
@@ -63,12 +63,12 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
       'd.lastInstrumentSerial AS lastInstrumentSerial',
       'dms.name AS maintenanceStatusName',
       knex.raw("dmsl.data->>'$.options.data.notes' AS maintenanceStatusNotes"),
-      getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', timezone, 'lastPingOn'),
+      getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastPingOn', timezoneIANA, 'lastPingOn'),
       'd.lastPingFromIp AS lastPingFromIp',
-      getDateTimeProjectionInUserTimeZone(
+      getDateTimeProjectionInTimeZoneIANA(
         knex,
         'COALESCE(configurationData->>"$.systemTime.localTime", configurationData->>"$.systemTime")',
-        timezone,
+        timezoneIANA,
         'informationDate'
       ),
       knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS computerOsVersion'),
@@ -78,10 +78,10 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
       knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
       knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
       // The deviceApi doesn't populate d.putInService well, so we are going to get it from configurationData until we fix that
-      getDateTimeProjectionInUserTimeZone(
+      getDateTimeProjectionInTimeZoneIANA(
         knex,
         'COALESCE(d.putInService, d.configurationData->>"$.putInService")',
-        timezone,
+        timezoneIANA,
         'instalationDate'
       ),
       knex.raw('d.ConfigurationData ->> "$.routerNumber" AS routerNumber'),
@@ -105,15 +105,22 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
       knex.raw('IFNULL(factResultCount.cnt_NoResult, 0) AS mtbNoResult'),
       knex.raw('IFNULL(factResultCount.cnt_Invalid, 0) AS mtbInvalid'),
       knex.raw('IFNULL(factResultCount.cntAll, 0) AS totalXpertResults'),
-      getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', timezone, 'lastPingOn'),
-      getDateTimeProjectionInUserTimeZone(knex, 'resultsCount.lastResultUploadedOn', timezone, 'lastResultUploadedOn'),
-      getDateTimeProjectionInUserTimeZone(
+      getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastPingOn', timezoneIANA, 'lastPingOn'),
+      getDateTimeProjectionInTimeZoneIANA(
+        knex,
+        'resultsCount.lastResultUploadedOn',
+        timezoneIANA,
+        'lastResultUploadedOn'
+      ),
+      getDateTimeProjectionInTimeZoneIANA(
         knex,
         'resultsCount.lastResultConductedOn',
-        timezone,
+        timezoneIANA,
         'lastResultConductedOn'
       ),
     ])
 }
 
-module.exports = getDevicesWithCountsForTB
+module.exports = {
+  getDevicesWithCountsForTB,
+}

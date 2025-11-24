@@ -130,30 +130,6 @@ describe('Missing inventory lot resolver', () => {
       { ...baseDeviceLog, resultId: resultId3 },
     ])
 
-    await knex('MissingInventoryLots').insert([
-      {
-        resultId: resultId1,
-        expirationDate: expiryDate,
-        lotNumber: testLotNumber,
-        siteId: site.id,
-        createdOn: now,
-      },
-      {
-        resultId: resultId2,
-        expirationDate: expiryDate,
-        lotNumber: testLotNumber,
-        siteId: site.id,
-        createdOn: now,
-      },
-      {
-        resultId: resultId3,
-        expirationDate: expiryDate,
-        lotNumber: testLotNumber,
-        siteId: site.id,
-        createdOn: now,
-      },
-    ])
-
     return [resultId1, resultId2, resultId3]
   }
 
@@ -161,7 +137,8 @@ describe('Missing inventory lot resolver', () => {
     await knex('DeviceLog')
       .whereIn('deviceId', await knex('Device').whereIn('siteId', sitesToRemove).pluck('id'))
       .delete()
-    await knex('MissingInventoryLots').whereIn('siteId', sitesToRemove).delete()
+
+    await knex('FactInventoryConsumptionRate').whereIn('siteId', sitesToRemove).delete()
     const inventoryItemsToRemove = await knex('InventoryItem').whereIn('siteId', sitesToRemove).pluck('id')
     const inventoryLogsToRemove = await knex('InventoryLog')
       .whereIn('inventoryItemId', inventoryItemsToRemove)
@@ -217,22 +194,22 @@ describe('Missing inventory lot resolver', () => {
     await waitForCreated
     await waitForIdle(5000)
 
-    const missingInventoryLotsCount = await knex('MissingInventoryLots')
+    const { missingInventoryLotsCount } = await knex('Result')
       .where('siteId', sitesToRemove[0])
-      .count()
+      .whereNull('reconciliationDate')
+      .count('* as missingInventoryLotsCount')
       .first()
-    assert.equal(missingInventoryLotsCount['count(*)'], 1)
+    assert.equal(missingInventoryLotsCount, 1, 'The quantity of unreconciled consumptions should be 1')
 
-    const transfersCount = await knex('InventoryTransfer as it')
+    const { transfersCount } = await knex('InventoryTransfer as it')
       .leftJoin('InventoryLog as il', 'il.id', 'it.incomeInventoryLogId')
       .where('il.siteId', sitesToRemove[0])
-      .count()
+      .count('* as transfersCount')
       .first()
-    assert.equal(transfersCount['count(*)'], 1)
+    assert.equal(transfersCount, 1)
 
     const { id: consumableId } = await knex('Consumable').where('name', consumableName).first('id')
     const { total: totalSite1 } = await knex('InventoryItem')
-      .whereNull('inTransitFromSiteId')
       .andWhere('siteId', sitesToRemove[0])
       .andWhere('consumableId', consumableId)
       .andWhere('expiresOn', expiryDate)
@@ -241,7 +218,6 @@ describe('Missing inventory lot resolver', () => {
       })
       .first()
     const { total: totalSite2 } = await knex('InventoryItem')
-      .whereNull('inTransitFromSiteId')
       .andWhere('siteId', sitesToRemove[1])
       .andWhere('consumableId', consumableId)
       .andWhere('expiresOn', expiryDate)

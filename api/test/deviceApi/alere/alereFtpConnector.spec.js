@@ -306,7 +306,6 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           siteId: currentAlereDevice.siteId,
           geographyId: currentAlereDevice.geographyId,
           assay: resultPayloadWithNewStartDate.assay.id,
-          resultWorkflowStatus: 'OK',
           resultSource: 'DiagnosticDevice',
           resultType: 'Patient',
           resultCategory1: 'Detected',
@@ -359,7 +358,6 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           siteId: currentAlereDevice.siteId,
           geographyId: currentAlereDevice.geographyId,
           assay: basicResultPayload.assay.id,
-          resultWorkflowStatus: 'OK',
           resultSource: 'DiagnosticDevice',
           resultType: 'Patient',
           resultCategory1: 'Detected',
@@ -398,7 +396,6 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           geographyId: afterResultDetailsFirstResponse.geographyId,
           assay: afterResultDetailsFirstResponse.assay,
           assayVersion: afterResultDetailsFirstResponse.assayVersion,
-          resultWorkflowStatus: afterResultDetailsFirstResponse.resultWorkflowStatus,
           resultSource: afterResultDetailsFirstResponse.resultSource,
           resultType: afterResultDetailsFirstResponse.resultType,
           resultCategory1: afterResultDetailsFirstResponse.resultCategory1,
@@ -582,7 +579,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
               siteId: alereDevice.siteId,
               consumableReason: 'Test Conducted',
               resultId: resultDetails.id,
-              quantity: consumableAssay.quantity,
+              quantity: -consumableAssay.quantity,
             },
           ])
           expect(inventoryLogsAfter).to.have.lengthOf(inventoryLogsBefore.length + 1)
@@ -671,7 +668,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                 siteId: alereDevice.siteId,
                 consumableReason: 'Test Conducted',
                 resultId: resultDetailsAfterFirstPost.id,
-                quantity: consumableAssay.quantity,
+                quantity: -consumableAssay.quantity,
               },
             ])
 
@@ -698,29 +695,6 @@ describe('Device API routes for Alere FTP Connector Device', () => {
             expect(inventoryLogsAfterSecondPost).to.deep.equal(inventoryLogsAfterFirstPost)
           }))
       })
-    })
-
-    describe('when an error code has been specified in the result payload', () => {
-      it('should set the workflow status of the result to error', () =>
-        runTest(async () => {
-          const sampleId = 'test error'
-          const { deviceAuth, basicDevicePayload } = context
-          const resultPayloadWithTestData = _.merge({}, basicResultPayload, {
-            sample: { id: sampleId },
-            error: { code: '12345' },
-          })
-          await postToDeviceApi({
-            authHeader: deviceAuth,
-            payload: _.merge({}, basicDevicePayload, {
-              result: resultPayloadWithTestData,
-            }),
-          })
-          const resultDetails = await getLastResult()
-          expect(resultDetails).to.containSubset({
-            errorCode: resultPayloadWithTestData.error.code,
-            resultWorkflowStatus: 'Error',
-          })
-        }))
     })
   })
 })

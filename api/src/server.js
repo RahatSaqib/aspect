@@ -1,14 +1,22 @@
 // eslint-disable-next-line import/order
 require('../newrelic')
-// =======================
-// configuration =========
-// =======================
+// eslint-disable-next-line import/order
+const { Sentry, initSentry } = require('./shared/sentry')
+// Initialize Sentry before creating the server
+initSentry()
+
+const fs = require('fs')
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
-const Sentry = require('@sentry/node')
-const fs = require('fs')
+const Boom = require('@hapi/boom')
+
 const config = require('./config')
+const { knex, getCurrentSslCipher } = require('./db')
+
+// =======================
+// configuration =========
+// =======================
 const { version } = require('../package.json')
 const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
@@ -24,6 +32,7 @@ const { port } = config
 
 const AspectCacheSingleton = require('../aspectCache')
 const { registerMessageQueue } = require('./messageQueue')
+const { asyncPayloadProcessorStartUp } = require('./deviceApi/asyncPayloadProcessor')
 
 // version is cached to indicate the new version only when Aspect api restarts,
 // instead of doing so directly when package.json is updated.
@@ -49,6 +58,21 @@ const server = new Hapi.server({
         throw err
       },
     },
+    response: {
+      failAction: async (request, h, err) => {
+        // Log the validation error
+        logger.error('Response validation failed:', err.details)
+
+        // Format the validation error using Boom
+        const error = Boom.badData('Response validation failed', err.details || err.message)
+        error.output.payload.validation = {
+          source: err.details?.[0]?.path?.join('.') || 'unknown',
+          keys: err.details?.map(detail => detail.path.join('.')) || [],
+        }
+        error.output.payload.message = 'Response validation failed'
+        throw error
+      },
+    },
   },
 })
 server.validator(Joi)
@@ -56,26 +80,6 @@ server.validator(Joi)
 const {
   swagger: { enabled: swaggerEnabled },
 } = config
-
-const sentryPlugins =
-  config.sentry && !config.isDevelopment
-    ? [
-        {
-          plugin: require('hapi-sentry'),
-          options: {
-            client: {
-              dsn: config.sentry.dsn,
-              environment: config.environment,
-              ignoreErrors: config.sentry.ignoreErrors,
-              sanitizeKeys: config.sentry.sanitizeKeys,
-            },
-            scope: {
-              tags: [{ name: 'Country', value: config.countryName }],
-            },
-          },
-        },
-      ]
-    : []
 
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
@@ -135,6 +139,11 @@ const messageQueuePlugin = {
 
       addLoggers(server, queue)
       await addSubscriptions(queue)
+
+      if (config.enableAsyncPayloadProcessing) {
+        await asyncPayloadProcessorStartUp(queue, queue.createMessageContext('aspect_request'))
+      }
+
       if (config.scheduler.enabled) {
         const dispatcher = startScheduler(queue)
         server.app.dispatcher = dispatcher
@@ -179,8 +188,6 @@ const plugins = [
   // Set message queue
   messageQueuePlugin,
   // bullMessageQueuePlugin,
-  // Set sentry hapi plugin
-  ...sentryPlugins,
 ]
 
 const start = async () => {
@@ -192,6 +199,10 @@ const start = async () => {
       mobileApiPath: '/mobile/api/',
     },
   })
+  if (config.sentry?.dsn && !config.isDevelopment) {
+    logger.info('Sentry is enabled')
+    Sentry.hapiIntegration({ server })
+  }
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     // ==========================================================================
     // ==========================================================================
@@ -204,18 +215,11 @@ const start = async () => {
         logger.error(`-------------------\n${error || event}\n-------------------`)
       }
     })
+
     server.ext('onPreResponse', function (request, h) {
       const { response } = request
-      // https://stackoverflow.com/questions/27463322/hapi-does-not-return-data-attribute-from-boom-error
-      // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
       if (response && response.isBoom) {
         response.output.payload = { ...response.output.payload, ...response.data }
-      }
-
-      // if error, pass it through server.log
-      // FYI - response.isServer indicates status code >= 500
-      if (response && response.isBoom && response.isServer) {
-        server.log(['error'], response)
       }
       return h.continue
     })
@@ -429,6 +433,14 @@ const start = async () => {
   try {
     await server.start()
     logger.info(`Server running on ${address}`)
+
+    // Verify MySQL SSL connection
+    const sslCipher = await getCurrentSslCipher(knex)
+    if (sslCipher) {
+      logger.info(`✅ MySQL connection secured with SSL cipher: ${sslCipher}`)
+    } else {
+      logger.warning('❌ MySQL connection is not using SSL')
+    }
   } catch (err) {
     logger.error(err)
     Sentry.captureException(err)

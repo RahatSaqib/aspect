@@ -21,17 +21,17 @@ export default defineMessages({
     id: 'pages.Consumable.New.inventoryDetail',
     defaultMessage: 'Inventory Detail',
   },
-  reconciliationConfiguration: {
-    id: 'pages.Consumable.New.reconciliationConfiguration',
-    defaultMessage: 'Reconciliation Configuration',
+  inventoryManagementConfiguration: {
+    id: 'pages.Inventory.Management.Configuration',
+    defaultMessage: 'Inventory Management Configuration',
   },
   reconciliationTitle: {
     id: 'pages.Consumable.New.reconciliationTitle',
     defaultMessage: 'Set the below configurations to manage Inventory across the sites',
   },
-  cartridgesManagedThrough: {
-    id: 'pages.Consumable.New.cartridgesManagedThrough',
-    defaultMessage: 'Cartridges are managed through',
+  cartridgeBatchManagement: {
+    id: 'pages.Consumable.New.cartridgeBatchManagement',
+    defaultMessage: 'Cartridge batch is managed by their',
   },
   expiryDate: {
     id: 'pages.Consumable.New.expiryDate',
@@ -66,9 +66,9 @@ export default defineMessages({
     id: 'pages.Consumable.New.partNumber',
     defaultMessage: 'Part Number',
   },
-  trackByExpirationDate: {
-    id: 'pages.Consumable.New.trackByExpirationDate',
-    defaultMessage: 'Track by expiration date',
+  trackByBatch: {
+    id: 'pages.Consumable.New.trackByBatch',
+    defaultMessage: 'Track by batch',
   },
   includeLocation: {
     id: 'pages.Consumable.New.includeLocation',
@@ -93,5 +93,13 @@ export default defineMessages({
   no: {
     id: 'pages.NotificationDetail.New.no',
     defaultMessage: 'No',
+  },
+  updateInventoryConfigurationSuccessMessage: {
+    id: 'pages.InventoryReconciliationForm.SucessMessage',
+    defaultMessage: 'Inventory settings updated successfully.',
+  },
+  updateInventoryConfigurationFailedMessage: {
+    id: 'pages.InventoryReconciliationForm.ErrorMessage',
+    defaultMessage: 'Failed to update inventory settings. Please try again later.',
   },
 })

@@ -1,22 +1,15 @@
 const _ = require('lodash')
-const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = require('date-fns')
-const locales = require('date-fns/locale')
+const { format, parseISO, subMonths } = require('date-fns')
 const Boom = require('@hapi/boom')
 const { getDeviceBaseExtendedQuery } = require('../service')
 const { exportData } = require('../../shared/excel')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../../db')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
-const {
-  getMonthYearUserTimeZoneField,
-  getOffsetFromIsoDateString,
-  getDateTimeProjectionInUserTimeZone,
-  getWorkingDays,
-} = require('../../shared/date')
-const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getDoNotUseModulesReportData } = require('./doNotUseModulesReport')
-const getDevicesWithCountsForTB = require('./genXpertTbWorkloadReport')
+const { getDevicesWithCountsForTB } = require('./genXpertTbWorkloadReport')
 const { getAllDeviceReportData } = require('./deviceAndSiteSummaryReport')
 const { getResultCategoryGroupColumns, getUnusedModulesReportData } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
@@ -27,28 +20,11 @@ const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 const { getDevicesByTBReach } = require('./deviceReport')
 const { assayToId } = require('../../shared/dictionary')
+const { getWorkingDays } = require('../../shared/date')
+const { getMonthsDatefields } = require('./logic')
+const { getPartnerWorkingDaysConfig } = require('../../partner/common/db')
 
-function getMonthsDatefields(minDate, maxDate, culture) {
-  const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
-  const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
-
-  const dateFields = []
-  const locale = culture.split('-')[0].toLowerCase()
-
-  let curMonth = minDateFormatted
-  while (curMonth <= maxDateFormatted) {
-    dateFields.push({
-      key: format(curMonth, 'yyyy-MM'),
-      header: `${format(curMonth, 'yyyy-LLL', {
-        locale: locales[locale],
-      })}`,
-    })
-    curMonth = addMonths(curMonth, 1)
-  }
-  return dateFields
-}
-
-async function getDeviceActivityReport(auth, query) {
+async function getDeviceActivityReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true }).whereNotIn(
@@ -58,7 +34,6 @@ async function getDeviceActivityReport(auth, query) {
   const extraField = query.select ? query.select.split(' as ')[1].trim() : null
 
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
-  const offset = getOffsetFromIsoDateString(maxDate)
   const addingGroupingAndSelect = (builder, { select, groupBy }) => {
     if (extraField) {
       if (select) builder.select(select)
@@ -99,7 +74,7 @@ async function getDeviceActivityReport(auth, query) {
       result: 'r',
     })
     .groupBy('r.deviceId')
-    .select('r.deviceId', getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn'))
+    .select('r.deviceId', getDateTimeProjectionInTimeZoneIANA(knex, 'MAX(r.updatedOn)', timezoneIANA, 'lastUploadOn'))
 
   const devicesData = await deviceQuery
     .clone()
@@ -172,9 +147,8 @@ async function getModuleSwapsReport(auth, query) {
   return dataset
 }
 
-async function getGeneXpertIssuesReport(auth, query) {
+async function getGeneXpertIssuesReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const offset = getOffsetFromIsoDateString(query.maxDate)
   // get rows
   const issues = await knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -208,7 +182,7 @@ async function getGeneXpertIssuesReport(auth, query) {
       site: 's',
     })
     .modify(sortPageParams, query, 'i.createdOn')
-    .select(getDateTimeProjectionInUserTimeZone(knex, 'i.createdOn', offset, 'triggeredOn'))
+    .select(getDateTimeProjectionInTimeZoneIANA(knex, 'i.createdOn', timezoneIANA, 'triggeredOn'))
     .select(
       's.name as siteName',
       'st.name as stateName',
@@ -252,78 +226,6 @@ async function exportDeviceOperationLogReport(request, reply) {
   return exportData(request, reply, sheetData, 'device_operation_logs', {
     replacements,
   })
-}
-
-async function getDeviceCapacityReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const { culture } = await getPersonByPersonId(auth.credentials.personId)
-  let { minDate } = query
-  const { maxDate } = query
-
-  const offset = getOffsetFromIsoDateString(maxDate)
-
-  minDate = minDate || addMonths(new Date(), -12).toISOString()
-
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
-  const monthlyCapacity = deviceQuery
-    .clone()
-    .leftJoin('Result as r', builder =>
-      builder
-        .on('d.id', 'r.deviceId')
-        .andOn(knex.raw('DATE(r.endedOn) between date(?) and date(?)', [minDate, maxDate]))
-        .andOn(knex.raw('DAYOFWEEK(r.endedOn) not in (1,7)'))
-    )
-    .where({ 'dt.externalId': 'CepheidGeneXpert' })
-    .groupBy('d.id', 'monthYear')
-    .distinct(
-      'd.name',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
-      'd.id AS deviceId',
-      knex.raw('COUNT(DISTINCT r.id) as resultCount'),
-      lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
-      'd.dailyTestCapacity as dailyCapacity'
-    )
-    .orderBy('d.name')
-
-  const devices = deviceQuery
-    .clone()
-    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
-    .groupBy('d.id')
-    .select('d.name', 'd.id')
-    .orderBy('d.name')
-  // return result when both queries are finished
-
-  const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
-
-  // loop though all devices and count rate
-  const data = _.map(deviceDetails, deviceRow => {
-    _.each(
-      _.filter(capacityData, deviceFiltered => deviceFiltered.deviceId === deviceRow.id),
-      filteredMonthlyCapacity => {
-        const workingDays = differenceInBusinessDays(
-          filteredMonthlyCapacity.lastDayOfMonth,
-          format(new Date(`${filteredMonthlyCapacity.monthYear}-01`), 'yyyy-MM') ===
-            format(new Date(minDate), 'yyyy-MM')
-            ? parseISO(minDate)
-            : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
-        )
-        deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
-          filteredMonthlyCapacity.resultCount / Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
-          2
-        )
-      }
-    )
-
-    return deviceRow
-  })
-  const dataset = {
-    ok: true,
-    total: data.length,
-    length: data.length,
-    data,
-    dynamicColumns: getMonthsDatefields(minDate, maxDate, culture),
-  }
-  return dataset
 }
 
 async function getGeneXpertOperationLogsReport(auth, query) {
@@ -502,9 +404,9 @@ async function getModuleStatusReport(auth, query) {
   }
 }
 
-async function getDevicesWithCountsForTBReport(auth, query, timezone) {
+async function getDevicesWithCountsForTBReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getDevicesWithCountsForTB(dataConstraints, query, timezone)
+  const rows = await getDevicesWithCountsForTB(dataConstraints, query, timezoneIANA)
 
   return {
     ok: true,
@@ -592,8 +494,9 @@ async function getDevicesForTBReachReport(auth, query) {
     getDevicesByTBReach(dataConstraints, query),
     getErrorsByDevices(dataConstraints, query),
   ])
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
   const devicesByTBReachData = new Map(devicesByTBReach.map(device => [device.deviceId, device]))
-  const workingDays = getWorkingDays(new Date(minDate), new Date(maxDate))
+  const workingDays = getWorkingDays(new Date(minDate), new Date(maxDate), customWorkingDaysConfig)
   // Merge data from both queries
   let mergedData = errorsResult.map(error => {
     const TBReachDevice = devicesByTBReachData.get(error.deviceId)
@@ -605,6 +508,7 @@ async function getDevicesForTBReachReport(auth, query) {
       xpertErrorInvalid: TBReachDevice?.xpertErrorInvalid ?? 0,
       xpertRIFPositive: TBReachDevice?.xpertRIFPositive ?? 0,
       xpertRIFIndeterminate: TBReachDevice?.xpertRIFIndeterminate ?? 0,
+      xpertPlusTreated: 'n/d',
       xpertPerDay: TBReachDevice ? TBReachDevice.totalXpertTests / workingDays : 0,
     }
   })
@@ -743,7 +647,7 @@ async function getDeviceCoverageReport(request) {
             /**
              * We used bellow commented code to get number of 6c/10c modules from Device.configurationData props
              * See - https://systemone.youtrack.cloud/issue/HD-15418/Bangladesh-Dashboard-GeneXpert-Device-Coverage-data-need-to-rechecknot-showing-correct-data#focus=Comments-4-66139.0-0
-             * 
+             *
              // const configurationData = dev.configurationData ? JSON.parse(dev.configurationData) : {}
              // const { moduleSerials = [], tenColorModules = [] } = configurationData
              // const tenColors = moduleSerials.filter(
@@ -751,11 +655,11 @@ async function getDeviceCoverageReport(request) {
              // )
              // const cnt6cModules = moduleSerials.length - tenColors.length
              // const cnt10cModules = tenColors.length
-             * 
-             * And to show correct values in `GeneXpert Device Coverage` nesting tables - we changed that and started using 
+             *
+             * And to show correct values in `GeneXpert Device Coverage` nesting tables - we changed that and started using
              * of Device.gx6cModulesCount and Device.gx10cModulesCount fields directly
              * See - https://systemone.youtrack.cloud/issue/HD-15418/Bangladesh-Dashboard-GeneXpert-Device-Coverage-data-need-to-rechecknot-showing-correct-data#focus=Comments-4-66141.0-0
-             * 
+             *
              */
             let { cnt6cModules, cnt10cModules } = dev
             cnt6cModules = cnt6cModules ?? 0
@@ -891,7 +795,6 @@ module.exports = {
   getGeneXpertIssuesReport,
   getGeneXpertOperationLogsReport,
   exportDeviceOperationLogReport,
-  getDeviceCapacityReport,
   getModuleActivityReport,
   getDoNotUseModulesReport,
   getModuleStatusReport,

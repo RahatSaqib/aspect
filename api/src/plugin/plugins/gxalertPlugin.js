@@ -3,7 +3,6 @@ const getDevicePingOn = require('../deviceType/GxAlert/getDevicePingOn')
 const preProcessAddDeviceData = require('../deviceType/GxAlert/preProcessAddDeviceData')
 const preProcessUpdateDeviceConfiguration = require('../deviceType/GxAlert/preProcessUpdateDeviceConfiguration')
 const postProcessUpdateDeviceConfiguration = require('../deviceType/GxAlert/postProcessUpdateDeviceConfiguration')
-const postProcessAddDeviceOperation = require('../deviceType/GxAlert/postProcessAddDeviceOperation')
 const transformMergeResultPayload = require('../deviceType/GxAlert/transformMergeResultPayload')
 const preProcessMergeResult = require('../deviceType/GxAlert/preProcessMergeResult')
 const postProcessMergeResult = require('../deviceType/GxAlert/postProcessMergeResult')
@@ -16,7 +15,6 @@ const gxalertPlugin = {
   preProcessAddDeviceData,
   preProcessUpdateDeviceConfiguration,
   postProcessUpdateDeviceConfiguration,
-  postProcessAddDeviceOperation,
   transformMergeResultPayload,
   preProcessMergeResult,
   postProcessMergeResult,

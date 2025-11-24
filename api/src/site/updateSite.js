@@ -1,15 +1,29 @@
 const Boom = require('@hapi/boom')
+const { knex } = require('../db')
 const { getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
-const { getExistingSiteExcludingCurrent, updateSite, updateSiteConsumable, checkSiteAccess } = require('./common/db')
+const {
+  getExistingSiteExcludingCurrent,
+  updateSite,
+  updateSiteConsumable,
+  updateSiteConsumablesBatch,
+  checkSiteAccess,
+} = require('./common/db')
 const { throwExistingSiteError } = require('./common/validations')
 const { updateTagsById } = require('../tag/service')
 
 async function updateConsumable(request) {
   const { auth, params, payload } = request
   await validateConstraints(params.siteId, auth.credentials)
-  await updateSiteConsumable(params.siteId, payload)
+  await updateSiteConsumable(knex, params.siteId, payload)
+  return { ok: true }
+}
+
+async function updateConsumablesBatch(request) {
+  const { auth, params, payload } = request
+  await validateConstraints(params.siteId, auth.credentials)
+  await updateSiteConsumablesBatch(knex, params.siteId, payload)
   return { ok: true }
 }
 
@@ -65,4 +79,5 @@ async function validateNonRepeatedSite(siteId, { name, shortName, externalId }) 
 module.exports = {
   update,
   updateConsumable,
+  updateConsumablesBatch,
 }

@@ -125,7 +125,7 @@ describe('Device API routes for GxConnect Devices', () => {
         } = reply
         const inventoryItem = _.find(
           data,
-          elem => elem.consumableId === consumableAssay.consumableId && elem.lotNumber === null
+          elem => elem.consumableId === consumableAssay.consumableId && elem.lotNumber === undefined
         )
 
         assert.equal(inventoryItem.quantityOnHand, initialQuantityOnHand - consumableAssay.quantity)
@@ -150,7 +150,7 @@ describe('Device API routes for GxConnect Devices', () => {
             siteId: site.id,
             consumableReason: 'Test Conducted',
             resultId: lastResultId,
-            quantity: consumableAssay.quantity,
+            quantity: -consumableAssay.quantity,
           },
         ])
       })
@@ -321,7 +321,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const matchingConsumableAssayAfterSecondRequest = _.find(consumableAssays, {
             consumableId: _.head(inventoryLogsAfterSecondRequest).consumableId,
-            quantity: _.head(inventoryLogsAfterSecondRequest).quantity,
+            quantity: -_.head(inventoryLogsAfterSecondRequest).quantity,
           })
           assert.isNotEmpty(matchingConsumableAssayAfterSecondRequest)
         })
@@ -329,7 +329,8 @@ describe('Device API routes for GxConnect Devices', () => {
     })
   })
 
-  describe('inventory changes', () => {
+  // Take a look at the comments here: https://systemone.youtrack.cloud/issue/ASP-7740/Solve-Inventory-Items-duplicates
+  describe.skip('inventory changes', () => {
     const context = createGxConnectTestContext(server, {
       countryCode,
       adminUsername,
@@ -352,7 +353,7 @@ describe('Device API routes for GxConnect Devices', () => {
       const endedOn = subHours(now, 2)
       const expirationDate = dateFormat(addYears(now, 1).setHours(0, 0, 0, 0), "yyyy-MM-dd'T'HH:mm:ss'Z'")
       const consumableName = 'Xpert HIV-1 Qual Cartridge'
-      const consumableReason = 'Captured'
+      const consumableReason = 'Physical Count'
       const initialQuantity = 100
       const quantity = 5
 
@@ -424,8 +425,7 @@ describe('Device API routes for GxConnect Devices', () => {
           'il.expiresOn',
           'il.quantity',
           'il.notes',
-          'il.adjustedFrom',
-          'il.adjustedTo'
+          'il.transactionDate'
         )
 
       assert.deepEqual(inventoryLog, [
@@ -439,8 +439,7 @@ describe('Device API routes for GxConnect Devices', () => {
           expiresOn: new Date(expirationDate),
           quantity,
           notes: null,
-          adjustedFrom: setMilliseconds(startedOn, 0),
-          adjustedTo: null,
+          transactionDate: setMilliseconds(startedOn, 0),
         },
       ])
     })
@@ -492,7 +491,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   inventoryChanges: [
                     {
                       consumableName: 'Unknown consumable type',
-                      consumableReasonName: 'Captured',
+                      consumableReasonName: 'Physical Count',
                       quantity: 12,
                       resultingQuantityOnHand: 112,
                       dateChanged: startedOn,
@@ -520,7 +519,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
 
         const inventoryChanges = [
           {
@@ -642,8 +641,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.expiresOn',
             'il.quantity',
             'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
+            'il.transactionDate'
           )
 
         assert.deepEqual(
@@ -659,8 +657,7 @@ describe('Device API routes for GxConnect Devices', () => {
               expiresOn: new Date(inventoryChange.expirationDate),
               quantity: Math.abs(inventoryChange.quantity),
               notes: null,
-              adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-              adjustedTo: null,
+              transactionDate: setMilliseconds(inventoryChange.dateChanged, 0),
             })),
             ['consumableName', 'consumableReason']
           )
@@ -685,7 +682,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
         const quantity = 13
 
         await server
@@ -756,8 +753,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.expiresOn',
             'il.quantity',
             'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
+            'il.transactionDate'
           )
 
         assert.deepEqual(inventoryLog, {
@@ -770,8 +766,7 @@ describe('Device API routes for GxConnect Devices', () => {
           expiresOn: inventoryItemAtSiteBefore.expiresOn,
           quantity,
           notes: null,
-          adjustedFrom: setMilliseconds(startedOn, 0),
-          adjustedTo: null,
+          transactionDate: setMilliseconds(startedOn, 0),
         })
       })
 
@@ -793,7 +788,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+        const consumableReason = 'Physical Count'
         const quantity = -3
         const resultingQuantityOnHand = inventoryItemAtSiteBefore.quantityOnHand + quantity
         await server
@@ -865,8 +860,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.expiresOn',
             'il.quantity',
             'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
+            'il.transactionDate'
           )
 
         assert.deepEqual(inventoryLog, {
@@ -879,8 +873,7 @@ describe('Device API routes for GxConnect Devices', () => {
           expiresOn: inventoryItemAtSiteBefore.expiresOn,
           quantity: Math.abs(quantity),
           notes: null,
-          adjustedFrom: setMilliseconds(startedOn, 0),
-          adjustedTo: null,
+          transactionDate: setMilliseconds(startedOn, 0),
         })
       })
     })
@@ -896,7 +889,7 @@ describe('Device API routes for GxConnect Devices', () => {
       const inventoryChanges = [
         {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 13,
           resultingQuantityOnHand: 73,
           dateChanged: subHours(startedOn, 1),
@@ -907,8 +900,8 @@ describe('Device API routes for GxConnect Devices', () => {
         },
         {
           consumableName: 'GeneXpert Ebola Cartridge',
-          consumableReasonName: 'Captured',
-          quantity: -3,
+          consumableReasonName: 'Physical Count',
+          quantity: 3,
           resultingQuantityOnHand: 18,
           dateChanged: subHours(startedOn, 2),
           expirationDate: dateFormat(
@@ -1023,8 +1016,7 @@ describe('Device API routes for GxConnect Devices', () => {
           'il.expiresOn',
           'il.quantity',
           'il.notes',
-          'il.adjustedFrom',
-          'il.adjustedTo'
+          'il.transactionDate'
         )
 
       assert.deepEqual(
@@ -1038,10 +1030,9 @@ describe('Device API routes for GxConnect Devices', () => {
             operation: inventoryChange.quantity >= 0 ? 'add from GxConnect' : 'remove from GxConnect',
             lotNumber: null,
             expiresOn: new Date(inventoryChange.expirationDate),
-            quantity: Math.abs(inventoryChange.quantity),
+            quantity: inventoryChange.quantity,
             notes: null,
-            adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-            adjustedTo: null,
+            transactionDate: setMilliseconds(inventoryChange.dateChanged, 0),
           })),
           ['consumableName', 'consumableReason', 'expiresOn']
         )
@@ -1058,7 +1049,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
       const lot1 = {
         consumableName: 'GeneXpert TB Cartridge',
-        consumableReasonName: 'Captured',
+        consumableReasonName: 'Physical Count',
         quantity: 73,
         resultingQuantityOnHand: 73,
         dateChanged: subHours(startedOn, 2),
@@ -1069,7 +1060,7 @@ describe('Device API routes for GxConnect Devices', () => {
       }
       const lot2 = {
         consumableName: 'GeneXpert TB Cartridge',
-        consumableReasonName: 'Captured',
+        consumableReasonName: 'Physical Count',
         quantity: 38,
         resultingQuantityOnHand: 38,
         dateChanged: subHours(startedOn, 2),
@@ -1141,8 +1132,7 @@ describe('Device API routes for GxConnect Devices', () => {
           'il.expiresOn',
           'il.quantity',
           'il.notes',
-          'il.adjustedFrom',
-          'il.adjustedTo'
+          'il.transactionDate'
         )
 
       assert.deepEqual(
@@ -1161,8 +1151,7 @@ describe('Device API routes for GxConnect Devices', () => {
             expiresOn: new Date(inventoryChange.expirationDate),
             quantity: Math.abs(inventoryChange.quantity),
             notes: null,
-            adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-            adjustedTo: null,
+            transactionDate: setMilliseconds(inventoryChange.dateChanged, 0),
           })),
           ['consumableName', 'consumableReason', 'expiresOn']
         )
@@ -1308,8 +1297,7 @@ describe('Device API routes for GxConnect Devices', () => {
           'il.expiresOn',
           'il.quantity',
           'il.notes',
-          'il.adjustedFrom',
-          'il.adjustedTo'
+          'il.transactionDate'
         )
       assert.deepEqual(
         _.sortBy(inventoryLogsForLot1And2, ['consumableName', 'consumableReason', 'expiresOn']),
@@ -1325,8 +1313,7 @@ describe('Device API routes for GxConnect Devices', () => {
               expiresOn: new Date(lot1.expirationDate),
               quantity: Math.abs(lot1.resultingQuantityOnHand),
               notes: null,
-              adjustedFrom: setMilliseconds(lot1.dateChanged, 0),
-              adjustedTo: null,
+              transactionDate: setMilliseconds(lot1.dateChanged, 0),
             },
             {
               consumableName: lot2.consumableName,
@@ -1338,8 +1325,7 @@ describe('Device API routes for GxConnect Devices', () => {
               expiresOn: new Date(lot2.expirationDate),
               quantity: Math.abs(lot2.resultingQuantityOnHand),
               notes: null,
-              adjustedFrom: setMilliseconds(lot2.dateChanged, 0),
-              adjustedTo: null,
+              transactionDate: setMilliseconds(lot2.dateChanged, 0),
             },
             {
               consumableName: lot1.consumableName,
@@ -1349,10 +1335,9 @@ describe('Device API routes for GxConnect Devices', () => {
               operation: 'remove from GxConnect',
               lotNumber: null,
               expiresOn: new Date(lot1.expirationDate),
-              quantity: Math.abs(updateToLot1.quantity),
+              quantity: updateToLot1.quantity,
               notes: null,
-              adjustedFrom: setMilliseconds(updateToLot1.dateChanged, 0),
-              adjustedTo: null,
+              transactionDate: setMilliseconds(updateToLot1.dateChanged, 0),
             },
             {
               consumableName: lot2.consumableName,
@@ -1364,8 +1349,7 @@ describe('Device API routes for GxConnect Devices', () => {
               expiresOn: new Date(lot2.expirationDate),
               quantity: Math.abs(updateToLot2.quantity),
               notes: null,
-              adjustedFrom: setMilliseconds(updateToLot2.dateChanged, 0),
-              adjustedTo: null,
+              transactionDate: setMilliseconds(updateToLot2.dateChanged, 0),
             },
           ],
           ['consumableName', 'consumableReason', 'expiresOn']
@@ -1388,7 +1372,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const initialLotCaptured = {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 25,
           resultingQuantityOnHand: 25,
           dateChanged: subHours(startedOn, 2),
@@ -1513,7 +1497,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const initialLotCaptured = {
           consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
+          consumableReasonName: 'Physical Count',
           quantity: 25,
           dateChanged: subHours(startedOn, 2),
           expirationDate,

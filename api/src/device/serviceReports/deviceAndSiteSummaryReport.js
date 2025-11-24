@@ -1,10 +1,10 @@
 const _ = require('lodash')
 const { knex, sortPageParams, filterDateRangeParams, filterParams } = require('../../db')
-const { getGeneXpertInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
+const { getInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { getBasicsForDevicesReport } = require('../common/db')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 // --------------------------------------------------------------------------
 const {
@@ -13,7 +13,7 @@ const {
 } = require('../../result/query/querySelectors')
 
 // --------------------------------------------------------------------------
-async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezone) {
+async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezoneIANA) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
 
   const resultCategoryGroupsColumns = Object.fromEntries(
@@ -73,12 +73,12 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
         'lg.name AS districtName',
         'd.serial AS serial',
         'd.lastInstrumentSerial AS instrumentSerial',
-        getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', timezone, 'lastPingOn'),
+        getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastPingOn', timezoneIANA, 'lastPingOn'),
         'd.lastPingFromIp AS lastPingFrom',
-        getDateTimeProjectionInUserTimeZone(
+        getDateTimeProjectionInTimeZoneIANA(
           knex,
           'COALESCE(configurationData->>"$.systemTime.localTime", configurationData->>"$.systemTime")',
-          timezone,
+          timezoneIANA,
           'informationDate'
         ),
         knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS operativeSystem'),
@@ -88,13 +88,13 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
         knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
         knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
         // The deviceApi doesn't populate d.putInService well, so we are going to get it from configurationData until we fix that
-        getDateTimeProjectionInUserTimeZone(
+        getDateTimeProjectionInTimeZoneIANA(
           knex,
           'COALESCE(d.putInService, d.configurationData->>"$.putInService")',
-          timezone,
+          timezoneIANA,
           'instalationDate'
         ),
-        getDateTimeProjectionInUserTimeZone(knex, 'resultsCount.lastUploadOn', timezone, 'lastUploadOn'),
+        getDateTimeProjectionInTimeZoneIANA(knex, 'resultsCount.lastUploadOn', timezoneIANA, 'lastUploadOn'),
         knex.raw('dms.name AS status'),
         knex.raw('dmsl.data ->> "$.notes" AS statusNote'),
         ...resultCategoryGroups.map(a => knex.raw(`IFNULL(resultsCount.${a.columnKey}, 0) AS ${a.columnKey}`)),
@@ -108,7 +108,7 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
 async function getInventoryData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const dataQuery = getGeneXpertInventoryBySitesAndConsumableQuery(
+  const dataQuery = getInventoryBySitesAndConsumableQuery(
     { query: _.omit(query, ['minDate', 'maxDate']), auth },
     dataConstraints,
     null,
@@ -123,14 +123,16 @@ async function getInventoryData(auth, query) {
       knex.raw('COALESCE(t2.qtyExpired, 0) as quantityExpired'),
     ]
   )
-    .select(knex.raw('COUNT(CONCAT(mi.siteId, "-", ca.consumableId)) AS unreconciledResults'))
-    .leftJoin('MissingInventoryLots AS mi', 'mi.siteId', 't2.siteId')
     .leftJoin(
       function () {
-        this.select('*').from('Result').whereBetween('endedOn', [query.minDate, query.maxDate]).as('r')
+        this.select('*')
+          .from('Result')
+          .whereNull('reconciliationDate')
+          .whereBetween('endedOn', [query.minDate, query.maxDate])
+          .as('r')
       },
-      'r.id',
-      'mi.resultId'
+      'r.siteId',
+      't2.siteId'
     )
     .leftJoin('ConsumableAssay AS ca', join => {
       join.on('ca.assayId', '=', 'r.assayId')
@@ -140,6 +142,7 @@ async function getInventoryData(auth, query) {
     .orHaving('unreconciledResults', '>', 0)
     .groupBy('t2.siteName', 't2.consumableName')
     .orderBy(['t2.siteName', 't2.consumableName'])
+    .select({ unreconciledResults: knex.raw('COUNT(CONCAT(r.siteId, "-", ca.consumableId))') })
 
   const data = await dataQuery
 

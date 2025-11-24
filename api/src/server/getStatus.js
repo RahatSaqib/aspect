@@ -3,7 +3,7 @@ const { knex } = require('../db')
 
 const cache = AspectCacheSingleton.getInstance()
 
-async function getStatus() {
+async function getStatus({ query }) {
   const cachedVersion = await cache.getVersion()
   const lastResult = await knex('Result as r').orderBy('id', 'DESC').first(['startedOn', 'endedOn', 'createdOn'])
   const enabledNotificationCount = await knex('NotificationType as nt')
@@ -34,9 +34,15 @@ async function getStatus() {
 
   const lastEmail = await knex('EmailMessage as sm').orderBy('id', 'DESC').first(['createdOn', 'sendResponse'])
 
-  return {
+  const { count: unprocessedPayloadsCount } = await knex('DeviceLog')
+    .where({ processed: false })
+    .count('id as count')
+    .first()
+
+  const response = {
     aspect: { version: cachedVersion },
     lastResult,
+    unprocessedPayloadsCount,
     notification: {
       enabledNotificationCount,
       lastSmsSuccess,
@@ -44,6 +50,33 @@ async function getStatus() {
       lastEmail,
     },
   }
+
+  if (query.addMisinterpretedResultsCount) {
+    const { totalUnknownAssays } = await knex('Result as r')
+      .join('Device as d', 'd.id', 'r.deviceId')
+      .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+      .join('Assay as a', 'a.id', 'r.assayId')
+      .andWhere('dt.externalId', 'CepheidGeneXpert')
+      .andWhere('a.externalId', 'GxUnknown')
+      .count('r.id as totalUnknownAssays')
+      .first()
+
+    const { totalSuccessResults } = await knex('Result as r')
+      .join('Device as d', 'd.id', 'r.deviceId')
+      .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+      .join('ResultCategory as rc', 'rc.id', 'r.resultCategory1')
+      .andWhere('dt.externalId', 'CepheidGeneXpert')
+      .andWhere('rc.externalId', 'Success')
+      .count('r.id as totalSuccessResults')
+      .first()
+
+    response.result = {
+      totalUnknownAssays,
+      totalSuccessResults,
+    }
+  }
+
+  return response
 }
 
 module.exports = { getStatus }

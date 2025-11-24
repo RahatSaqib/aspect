@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { map: promiseMap } = require('bluebird')
 const { format, subMonths, endOfMonth, startOfMonth } = require('date-fns')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -284,7 +283,6 @@ async function getListDevices(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getDevices])
 
-  const toSyncDmslAndDevice = {}
   data.forEach(it => {
     it.availability = {
       count: it.activeDays ? it.activeDays : 0,
@@ -303,32 +301,13 @@ async function getListDevices(query, auth) {
 
     it.issueCategories = it.issueCategories ? it.issueCategories.split(',').map(key => ({ key })) : []
 
-    /**
-     * for Active devices - get devices when Device.lastSeenOn < DeviceMaintenanceStatusLog.day
-     */
-    if (+it.isDeviceActive && it.deviceLastSeenOn && it.dmslDay && it.deviceLastSeenOn < it.dmslDay) {
-      toSyncDmslAndDevice[it.id] = { lastSeenOn: it.dmslDay }
-    }
     it.timezoneIANA = timezoneIANA
     delete it.dmslDay
     delete it.deviceLastSeenOn
     delete it.isDeviceActive
   })
 
-  if (!_.isEmpty(toSyncDmslAndDevice)) {
-    await promiseMap(
-      _.keys(toSyncDmslAndDevice),
-      async deviceId => {
-        const { lastSeenOn } = toSyncDmslAndDevice[deviceId]
-        return knex('Device').where({ id: deviceId }).update({ lastSeenOn, updatedOn: new Date() })
-      },
-      { concurrency: 20 }
-    )
-  }
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
+  return { ok: true, total, length: data.length, data }
 }
 
 // ---------------------------------

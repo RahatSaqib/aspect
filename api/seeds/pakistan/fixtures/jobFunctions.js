@@ -6,6 +6,7 @@ let {
   technician,
   regionalAdmin,
 } = require('../../fixtures/jobFunctionBase')
+const { inventoryManager } = require('../../fixtures/jobFunctionBase')
 const { aspectBeta, mergeJobFunctions } = require('../../fixtures/jobFunctionBase')
 
 const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
@@ -467,4 +468,5 @@ module.exports = [
     reports: [],
   }),
   aspectBetaEnhanced,
+  inventoryManager,
 ]

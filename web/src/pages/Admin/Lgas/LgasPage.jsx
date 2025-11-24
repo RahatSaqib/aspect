@@ -77,7 +77,11 @@ export default function LgasPage() {
                 />
                 <TableBody>
                   {data.data.map((l, i) => (
-                    <TableRow sx={{ bgcolor: i % 2 ? '#fff' : '#eef1f8' }} onClick={() => {}} key={l.name}>
+                    <TableRow
+                      sx={{ bgcolor: i % 2 ? '#fff' : '#eef1f8' }}
+                      onClick={() => {}}
+                      key={`${l.id}-${l.stateId}`}
+                    >
                       <DataTableCell style={{ pointerEvents: 'none' }}>{l.name}</DataTableCell>
                       <DataTableCell>{l.stateName}</DataTableCell>
                       <DataTableCell>{l.deviceApiKeyCount}</DataTableCell>

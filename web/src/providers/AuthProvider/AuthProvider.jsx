@@ -14,7 +14,7 @@ const AuthProvider = ({ children }) => {
 
   const isCountry = useCallback(
     countryAbbreviation => {
-      return localStorage.getItem('<showPkDashboard>') || user?.countryAbbreviation === countryAbbreviation
+      return user?.countryAbbreviation === countryAbbreviation
     },
     [user.countryAbbreviation]
   )

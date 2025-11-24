@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const { transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
-const { getLga, getLgasByValue, upsertGeography } = require('./common/db')
+const { getLga, updateGeography, getGeographyByLgaNameAndStateId } = require('./common/db')
 
 async function updateLga({ auth, params, payload }) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -9,8 +9,8 @@ async function updateLga({ auth, params, payload }) {
   await validate(lgaId, payload, dataConstraints)
 
   await transact(async trknex => {
-    await upsertGeography(trknex, payload, lgaId, dataConstraints)
     await updateLgaData(trknex, lgaId, payload, auth.credentials)
+    await updateGeography(trknex, lgaId, payload, dataConstraints)
   })
 
   const data = { id: lgaId, name: payload.name }
@@ -18,9 +18,11 @@ async function updateLga({ auth, params, payload }) {
 }
 
 async function validate(lgaId, values, dataConstraints) {
-  const { name } = values
+  if (!values.stateId) {
+    throw Boom.badRequest('State Id is required')
+  }
   await validateExistingLga(lgaId, dataConstraints)
-  await validateDuplicateValues(name, dataConstraints, lgaId)
+  await validateDuplicateValues(values, dataConstraints, lgaId)
 }
 
 async function validateExistingLga(lgaId, dataConstraints) {
@@ -30,9 +32,13 @@ async function validateExistingLga(lgaId, dataConstraints) {
   }
 }
 
-async function validateDuplicateValues(name, dataConstraints, lgaId) {
-  const candidates = await getLgasByValue(name, dataConstraints)
-  if (candidates.filter(s => s.id !== lgaId).length > 0) {
+async function validateDuplicateValues(values, dataConstraints, lgaId) {
+  const { name, stateId } = values
+  const geoGraphies = await getGeographyByLgaNameAndStateId(name, stateId, dataConstraints)
+  if (geoGraphies.length === 0) {
+    return
+  }
+  if (geoGraphies.some(g => g.lgaId !== lgaId)) {
     throw Boom.conflict('There are lgas with the same name')
   }
 }

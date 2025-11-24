@@ -1,7 +1,6 @@
 const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
-const listInventoryGroupedBySite = require('./listInventoryGroupedBySite')
 const getDaysByLocation = require('./getDaysByLocation')
 const modifyInventoryOnHand = require('./modifyInventoryOnHand')
 const addInventory = require('./addInventory')
@@ -9,12 +8,14 @@ const removeInventory = require('./removeInventory')
 const transferInventory = require('./transferInventory')
 const receiveInventory = require('./receiveInventory')
 const listInventory = require('./listInventory')
-const { listReconciliation, autoReconcile } = require('./service')
+const { listReconciliation } = require('./listReconciliation')
+const { autoReconcile } = require('./autoReconcile')
 const getInventoryOverview = require('./getInventoryOverview')
 const listInventoryLog = require('./listInventoryLog')
 const listInventoryTransfer = require('./listInventoryTransfer')
 const exportInventoryTransfer = require('./exportInventoryTransfer')
 const { exportSupplies, exportReconciliation } = require('./serviceReports')
+const updateConsumableSitesBatch = require('./updateConsumableSitesBatch')
 const {
   listSuppliesBaseConfig,
   adjustInventoryCommonPayloadFields,
@@ -156,16 +157,6 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/inventory/group-by-site',
-    handler: asyncHandler(listInventoryGroupedBySite),
-    config: {
-      description: 'List of Consumables on Hand Grouped by Site',
-      notes: 'Pageable and sortable list of inventory items grouped by site',
-      ...listSuppliesBaseConfig(),
-    },
-  },
-  {
-    method: 'GET',
     path: '/inventory/export',
     handler: exportSupplies,
     config: {
@@ -187,6 +178,7 @@ const routes = [
           ...adjustInventoryCommonPayloadFields,
           toSiteId: Joi.number().integer().positive().required(),
           dateAdjusted: Joi.date().iso().required(),
+          reasonId: Joi.number().integer().positive().required(),
         },
       },
     },
@@ -245,6 +237,7 @@ const routes = [
           ...adjustInventoryCommonPayloadFields,
           toSiteId: Joi.number().integer().positive().required(),
           dateAdjusted: Joi.date().iso().required(),
+          reasonId: Joi.number().integer().positive().required(),
         },
       },
     },
@@ -258,17 +251,10 @@ const routes = [
       notes: 'Removes quantity from inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        payload: Joi.alternatives().try(
-          Joi.object().keys({
-            ...removeInventoryCommonPayloadFields,
-            dateAdjusted: Joi.date().iso().required(),
-          }),
-          {
-            ...removeInventoryCommonPayloadFields,
-            dateAdjustedFrom: Joi.date().iso().required(),
-            dateAdjustedTo: Joi.date().iso().required(),
-          }
-        ),
+        payload: Joi.object().keys({
+          ...removeInventoryCommonPayloadFields,
+          dateAdjusted: Joi.date().iso().required(),
+        }),
       },
     },
   },
@@ -391,6 +377,24 @@ const routes = [
             'expiresOn',
             'lotNumber'
           ),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/inventory/consumable-sites/{consumableId}',
+    handler: asyncHandler(updateConsumableSitesBatch),
+    config: {
+      description: 'Update Consumable Sites Batch',
+      notes: 'Update multiple sites for a single consumable in a single atomic operation',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        params: {
+          consumableId: Joi.number().integer().positive().description('Consumable id').required(),
+        },
+        payload: {
+          siteIds: Joi.array().items(Joi.number().integer().positive()).required(),
         },
       },
     },

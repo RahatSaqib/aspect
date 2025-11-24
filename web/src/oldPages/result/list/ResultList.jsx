@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 import isNil from 'lodash/isNil'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
@@ -12,7 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { DetailHeader, ResultFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import { RESULT_LIST } from '../../../components/QueryFetch/Result'
+import { RESULT_LIST, RESULT_LIST_TOTAL } from '../../../components/QueryFetch/Result'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -38,20 +39,70 @@ export default function ResultList() {
     pageSize: size,
   } = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })({ location })
 
+  // Track previous filters to detect changes
+  const prevFiltersRef = useRef(filters)
+  const isInitialMount = useRef(true)
+
+  // Reset page to 0 when filters change (but not when just paginating or sorting)
+  useEffect(() => {
+    // Skip on initial mount
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      prevFiltersRef.current = filters
+      return
+    }
+
+    // Only reset page if filters actually changed (not just page/sort)
+    const filtersChanged = !isEqual(prevFiltersRef.current, filters)
+
+    if (filtersChanged && page !== 0) {
+      const searchParams = new URLSearchParams(location.search)
+      searchParams.set('pageAt', '0')
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
+    }
+
+    prevFiltersRef.current = filters
+  }, [filters, page, location, navigate])
+
   const { timezoneId } = useSelector(({ user }) => user)
   const validTimeZone = getTimezoneById(timezoneId)
 
   const params = omitBy(omit({ sortCol, sortDir, page, size, ...filters }, ['assayOverride']), isNil)
+
   const { isLoading, isError, data, error } = useQuery(
     [RESULT_LIST.KEY, { ...params }],
     () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params }),
     {
-      select: ({ data, total, extraColumns }) => ({
-        items: data,
-        total,
-        extraColumns,
-        columns: getBaseColumns(extraColumns, intl.formatMessage),
-      }),
+      select: ({ data, extraColumns, hasNextPage }) => {
+        return {
+          items: data,
+          hasNextPage,
+          extraColumns,
+          columns: getBaseColumns(extraColumns, intl.formatMessage),
+        }
+      },
+    }
+  )
+
+  // Params for total count - only include filters, exclude page/size/sort
+  // Total only changes when filters change, not when paginating or sorting
+  const totalParams = omitBy(omit({ ...filters }, ['assayOverride']), isNil)
+
+  // Deferred query for total count - cached until filters change
+  const { data: totalData, isLoading: isLoadingTotal } = useQuery(
+    [RESULT_LIST_TOTAL.KEY, { ...totalParams }],
+    () => fetchWrapperForQueries({ endpoint: RESULT_LIST_TOTAL.ENDPOINT, params: totalParams }),
+    {
+      enabled: true,
+      select: ({ total }) => total,
+      staleTime: Infinity, // Never consider this data stale
+      cacheTime: 2 * 60 * 1000, // Keep in cache for 2 minutes
     }
   )
 
@@ -120,7 +171,10 @@ export default function ResultList() {
                 intl={intl}
                 timedMessageUsed={sortCol === 'endedOn'}
                 paginatorStatus={messages.paginatorStatus}
-                total={data?.total}
+                paginatorStatusLoading={messages.paginatorStatusLoading}
+                total={totalData}
+                totalLoading={isLoadingTotal}
+                hasNextPageFromItems={data?.hasNextPage}
                 pageAt={page}
                 pageSize={size}
                 pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}

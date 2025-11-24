@@ -7,6 +7,7 @@ const {
   technician,
   mergeJobFunctions,
   aspectBeta,
+  inventoryManager,
 } = require('../../fixtures/jobFunctionBase')
 
 const adminEnhanced = mergeJobFunctions(superAdmin, {
@@ -15,14 +16,6 @@ const adminEnhanced = mergeJobFunctions(superAdmin, {
     {
       module: 'dashboard',
       activity: 'inventory',
-    },
-    {
-      module: 'inventory',
-      activity: 'view',
-    },
-    {
-      module: 'inventory',
-      activity: 'edit',
     },
   ],
   reports: [...superAdmin.reports, 'genexpert_issues'],
@@ -34,14 +27,6 @@ const regionalAdminEnhanced = mergeJobFunctions(regionalAdmin, {
     {
       module: 'dashboard',
       activity: 'inventory',
-    },
-    {
-      module: 'inventory',
-      activity: 'view',
-    },
-    {
-      module: 'inventory',
-      activity: 'edit',
     },
   ],
   reports: [...regionalAdmin.reports, 'genexpert_issues'],
@@ -73,10 +58,6 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
         module: 'reporter',
         activity: 'edit',
       },
@@ -100,4 +81,5 @@ module.exports = [
   },
   technician,
   aspectBeta,
+  inventoryManager,
 ]

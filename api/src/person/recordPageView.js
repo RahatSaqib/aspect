@@ -7,18 +7,16 @@ async function recordPageView(request) {
   const { person } = await getConstraints(auth.credentials)
   const today = new Date().toISOString().split('T')[0]
   try {
-    await knex.transaction(async trx => {
-      const updatedRows = await trx('UserPageViews')
-        .where({ personId: person.id, timeframe: today })
-        .increment('count', 1)
-      if (updatedRows === 0) {
-        await trx('UserPageViews').insert({
-          personId: person.id,
-          timeframe: today,
-          count: 1,
-        })
-      }
-    })
+    await knex('UserPageViews')
+      .insert({
+        personId: person.id,
+        timeframe: today,
+        count: 1,
+      })
+      .onConflict(['personId', 'timeframe'])
+      .merge({
+        count: knex.raw('?? + 1', ['count']),
+      })
   } catch (error) {
     return Boom.badRequest('Error incrementing page view')
   }

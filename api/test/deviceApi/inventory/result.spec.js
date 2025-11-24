@@ -242,11 +242,7 @@ describe('admin result updates', () => {
           inventoryItem.expiresOn.toISOString() === randomExpiryDate.toISOString()
       )
 
-      assert.equal(
-        cartridgeAtSiteAfter.quantityOnHand,
-
-        cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest
-      )
+      assert.equal(cartridgeAtSiteAfter.quantityOnHand, cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest)
 
       resultDetails = {
         lotNumber: 'ABC123',
@@ -1593,7 +1589,9 @@ describe('admin result updates', () => {
         .expect(200)
 
       const resultId = res.body.aspectResultId
-      const unreconciledResult = await knex('MissingInventoryLots').where('resultId', res.body.aspectResultId)
+      const unreconciledResult = await knex('Result')
+        .whereNull('reconciliationDate')
+        .where('id', res.body.aspectResultId)
       assert.equal(unreconciledResult.length, 1, 'Unreconciled Result must exist')
 
       const inventoryItemsAfter = await (

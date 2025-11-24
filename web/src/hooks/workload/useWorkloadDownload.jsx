@@ -3,7 +3,6 @@ import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
-import { useDispatch } from 'react-redux'
 import { getISOFromString } from '../../oldComponents/shared/DateTimeInput/utils/date'
 import {
   errorForbidden,
@@ -57,7 +56,6 @@ const getDownload = async (filtersParams, fileFormat) => {
 const useWorkloadDownload = requestParams => {
   const { fileFormat, enabled, sortDir, sortCol, size, page, minDate, maxDate, ...filtersParams } = requestParams
   const queryClient = useQueryClient()
-  const dispatch = useDispatch()
 
   return useQuery(
     [WORKLOAD_KEY, 'download'],
@@ -75,7 +73,6 @@ const useWorkloadDownload = requestParams => {
       ),
     {
       onSuccess: () => {
-        dispatch({ type: 'EXPORT_RESPONSE_FILE_RECEIVED' })
         queryClient.invalidateQueries([WORKLOAD_KEY, 'download'])
       },
       enabled,

@@ -1,16 +1,22 @@
 const min = require('lodash/min')
 const omit = require('lodash/omit')
-const isWeekend = require('date-fns/isWeekend')
 const format = require('date-fns/format')
 const addDays = require('date-fns/addDays')
 const addMinutes = require('date-fns/addMinutes')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getArrayOfDaysInRange, getOffsetFromIsoDateStringInMinutes, formatDateOrDefault } = require('../shared/date')
+const {
+  getArrayOfDaysInRange,
+  getOffsetFromIsoDateStringInMinutes,
+  formatDateOrDefault,
+  isWeekend,
+} = require('../shared/date')
+const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
 async function activityOverTimeDashboard(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
 
   const offset = getOffsetFromIsoDateStringInMinutes(query.minDate)
   const minDate = addMinutes(new Date(query.minDate), offset)
@@ -175,9 +181,8 @@ async function activityOverTimeDashboard(request) {
         devicesTotal,
       }
     }
-    day.isWeekendOrHoliday = isWeekend(
-      new Date(day.date.getUTCFullYear(), day.date.getUTCMonth(), day.date.getUTCDate())
-    )
+    const dayDate = new Date(day.date.getUTCFullYear(), day.date.getUTCMonth(), day.date.getUTCDate())
+    day.isWeekendOrHoliday = isWeekend(dayDate, customWorkingDaysConfig)
     return day
   })
 

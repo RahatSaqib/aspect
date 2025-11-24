@@ -16,8 +16,8 @@ describe('Excel reports', () => {
 
     '/api/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format=xlsx',
     '/api/deviceApiKey/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=',
-    '/api/result/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=xlsx',
-    '/api/result/export?sortCol=name&sortDir=asc&page=0&size=10&format=&diseaseId=3',
+    '/api/result/export?sortCol=endedOn&sortDir=asc&page=0&size=10&format=xlsx',
+    '/api/result/export?sortCol=assayName&sortDir=asc&page=0&size=10&format=&diseaseId=3',
   ]
   before(async () => {
     await shared.checkToken(server, queriesExcel[0])
@@ -41,8 +41,8 @@ describe('Excel reports', () => {
     '/api/site/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
     '/api/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
     '/api/deviceApiKey/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=csv',
-    '/api/result/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=csv',
-    '/api/result/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv&diseaseId=3',
+    '/api/result/export?sortCol=endedOn&sortDir=asc&page=0&size=10&format=csv',
+    '/api/result/export?sortCol=assayName&sortDir=asc&page=0&size=10&format=csv&diseaseId=3',
   ]
   before(() => {
     shared.checkToken(server, queriesCSV[0])

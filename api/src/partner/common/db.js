@@ -27,7 +27,7 @@ const getPartnerWorkingDaysConfig = async auth => {
   const { partnerId } = await getUser(auth.credentials.name)
   const partnerConfig = (await knex('Partner').select('customWorkingDays').where('id', partnerId).first()) || {}
 
-  return partnerConfig.customWorkingDays ? JSON.parse(partnerConfig.customWorkingDays) : null
+  return partnerConfig.customWorkingDays ? JSON.parse(partnerConfig.customWorkingDays) : {}
 }
 
 module.exports = { getPartnerByConstraints, getPartnerWorkingDaysConfig }

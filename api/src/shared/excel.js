@@ -938,6 +938,7 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
   if (rowValues) {
     row.values = rowValues
   }
+
   /**
    * set style
    * Notice that we are getting all cells from template, including
@@ -954,11 +955,22 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
     )
     cell.style = cellStyle
   })
+
   /**
    * must commit all row changes to move it to the stream.
    * Notice that no changes possible in row and it's cells after commit.
    */
   row.commit()
+}
+
+function extendRowStyles(worksheet, styles, from, to) {
+  for (let i = from; i < to; i++) {
+    const row = worksheet.getRow(i)
+    row.eachCell({ includeEmpty: true }, cell => {
+      const cellStyle = _.merge({}, cell.master?.style, cell.style, styles[cell.col - 1] ?? {})
+      cell.style = cellStyle
+    })
+  }
 }
 
 // ----------------------------------------------------------------------------------------------

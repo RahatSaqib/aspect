@@ -25,7 +25,7 @@ const status = Joi.object({
 
 const baseSampleSchemaResponseValidation = Joi.object().keys({
   id: Joi.number().required().description('The ID of the sample.'),
-  externalId: Joi.string().required().description('The external ID of the sample.'),
+  externalId: Joi.string().required().allow(null, '').description('The external ID of the sample.'),
   originSite: originSite.allow(null, '').required().description('The origin site of the sample.'),
   clinicianName: Joi.string()
     .required()

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import { Table, TableBody, TableRow } from '@mui/material'
-import { formatInTimeZone } from 'date-fns-tz'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
@@ -10,40 +9,44 @@ import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { DataTableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import { getTimezoneById } from '../../../utils/utils/timezone'
+import { formatDate } from '../../../utils/utils/dateFormat'
+import messages from './messages'
 import { getColumns } from './tools'
 
 export function InventoryReconciliationList(props) {
-  const { items, sortDir, sortCol, breakOutByLot } = props
+  const { items, sortDir, sortCol, breakOutByLot, requireLotNumber, requireExpirationDate } = props
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
   const user = useAuthState()
-  const validTimeZone = getTimezoneById(user.timezoneId)
   const { formatMessage } = useIntl()
   const columns = useMemo(
-    () => getColumns(formatMessage, [true, 'true'].includes(breakOutByLot), user),
-    [formatMessage, breakOutByLot, user]
+    () => getColumns(formatMessage, { breakOutByLot, requireLotNumber, requireExpirationDate, user }),
+    [formatMessage, breakOutByLot, requireLotNumber, requireExpirationDate, user]
   )
   const location = useLocation()
+
   return (
     <Table>
       <DataTableHead location={location} sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
       <TableBody>
         {items.map((item, index) => (
-          <TableRow
-            sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }}
-            key={`${item.siteName}-${item.consumableName}${item.lotNumber ? `-${item.lotNumber}` : ''}`}
-          >
+          <TableRow key={index} sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }}>
             <DataTableCell>{item.stateName}</DataTableCell>
             <DataTableCell>{item.lgaName}</DataTableCell>
             <DataTableCell>{item.siteName}</DataTableCell>
             <DataTableCell>{item.consumableName}</DataTableCell>
             {breakOutByLot ? (
               <>
-                <DataTableCell>
-                  {item.expiresOn ? formatInTimeZone(new Date(item.expiresOn), validTimeZone, 'yyyy-MM-dd') : ''}
-                </DataTableCell>
-                <DataTableCell>{item.lotNumber}</DataTableCell>
+                {requireExpirationDate ? (
+                  <DataTableCell>
+                    {item.expiresOn ? formatDate(item.expiresOn) : formatMessage(messages.notAvailable)}
+                  </DataTableCell>
+                ) : null}
+                {requireLotNumber ? (
+                  <DataTableCell>
+                    {item.lotNumber ? item.lotNumber : formatMessage(messages.notAvailable)}
+                  </DataTableCell>
+                ) : null}
               </>
             ) : null}
             <DataTableCell

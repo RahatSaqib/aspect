@@ -97,10 +97,6 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
   }
 }
 
-/*
- * ---------------- Result Workflow Status Logs -----------------
- */
-
 // TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
 export function exportResults(filtersParams, format, sortCol, sortDir, page, pageSize, fileFormat, reportName) {
   return () => {
@@ -144,16 +140,6 @@ export function exportResults(filtersParams, format, sortCol, sortDir, page, pag
 /*
  * ---------------- Reducers -----------------
  */
-const WorkflowLogModel = Immutable.Record({
-  items: new Items(),
-  table: new Table({
-    sortCol: 'changedOn',
-    sortDir: 'desc',
-    page: 0,
-    pageSize: 10,
-  }),
-})
-
 const Result = Immutable.Record({
   items: new Items(),
   table: new Table({
@@ -163,7 +149,6 @@ const Result = Immutable.Record({
     filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
     extraColumns: Immutable.List(),
   }),
-  workflowLog: new WorkflowLogModel(),
   deviceLogs: Immutable.List(),
   screenSchema: Immutable.fromJS(screenSchema),
   loading: true,

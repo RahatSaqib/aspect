@@ -149,7 +149,6 @@ class DeviceApiContext {
         .orderBy('dl.id', 'desc')
         .first('dl.id', 'dl.resultId', 'dl.createdOn', 'dl.source')
       if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
-        lastDeviceLogQuery.modify(addDeviceLogResultConstraints)
         if (resultId) {
           lastDeviceLogQuery.where({ 'r.externalId': resultId })
         }
@@ -385,15 +384,6 @@ async function notifyPerson({ name, email, cell }, deviceName, routerNumber, noI
   }
 
   if (cell) {
-    await sendSms(cell, generatedTemplate.text).catch(err => logger.error(err))
+    await sendSms(cell, generatedTemplate.text).catch(err => logger.warning(err))
   }
-}
-
-function addDeviceLogResultConstraints(queryBuilder) {
-  queryBuilder
-    .join('Result as r', 'dl.resultId', 'r.id')
-    .join('ResultWorkflowLog as resultworkflowsl', 'r.resultWorkflowStatusLogId', 'resultworkflowsl.id')
-    .join('ResultWorkflowStatus as rws', 'resultworkflowsl.resultWorkflowStatusId', 'rws.id')
-    .where('rws.externalId', 'Deliverable')
-    .where('rws.externalId', '<>', 'Purged')
 }

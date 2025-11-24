@@ -68,7 +68,7 @@ export function InventoryDetailsForm(props) {
                     name="canExpire"
                   />
                 }
-                label={formatMessage(messages.trackByExpirationDate)}
+                label={formatMessage(messages.trackByBatch)}
               />
             </Grid>
 

@@ -1,4 +1,6 @@
-let sheets = [
+const { columnGroups, rowLabels } = require('../../src/result/serviceReportBangladesh/10a10b/xdrCartridgesReport')
+
+let sheetMappings = [
   /**
    * ********************************************************
    * 1st sheet 'DR-TB 10A (Sputum & EP Sample)'
@@ -184,14 +186,14 @@ let sheets = [
     H44: 'cnt_Xdr_Total_Tests',
   },
 ]
-sheets = [
-  ...sheets,
+sheetMappings = [
+  ...sheetMappings,
   /**
    * ********************************************************
    * 2nd sheet 'DR-TB 10A (Stool)'
    * ********************************************************
    */
-  sheets[0],
+  sheetMappings[0],
   /**
    * ********************************************************
    * 3rd sheet 'DT-TB 10B'
@@ -226,6 +228,69 @@ sheets = [
     H23: 'cnt_treated_female_positive',
     H26: 'cnt_treated_female_negative',
   },
+  /**
+   * ********************************************************
+   * 5th sheet 'For NTP use' (No mappings)
+   * ********************************************************
+   */
+  {},
+  /**
+   * ********************************************************
+   * 6th sheet 'XDR Cartridges'
+   * ********************************************************
+   * This code generates the mapping for the XDR Cartridges sheet from B19 to Y30, plus
+   * the summarized table from R13 to W13.
+   * Example:
+  {
+      "R13": "NEW_INVALID",
+      "S13": "NEW_NORESULT",
+      "T13": "NEW_ERROR",
+      "U13": "PREV_INVALID",
+      "V13": "PREV_NORESULT",
+      "W13": "PREV_ERROR",
+      "B19": "DET-OWN-NEW-SP-TOT",
+      "C19": "DET-OWN-NEW-EP-TOT",
+      "D19": "DET-OWN-NEW-ST-TOT",
+      "E19": "DET-OWN-NEW-CU-TOT",
+      "F19": "DET-OWN-PREV-SP-TOT",
+      ...
+      "T30": "NDET-OWN-PREV-CU-INHFLQETH",
+      "X30": "NDET-OTH-PREV-SP-INHFLQETH",
+      "Y30": "NDET-OTH-PREV-ST-INHFLQETH"
+  }
+   */
+  (() => {
+    const columns = []
+    for (let code = 'B'.charCodeAt(0); code <= 'Y'.charCodeAt(0); code += 1) {
+      columns.push(String.fromCharCode(code))
+    }
+    const colDescs = []
+    for (const g of columnGroups) {
+      for (const sp of g.samples) {
+        colDescs.push({ det: g.det, site: g.site, hist: g.hist, sample: sp })
+      }
+    }
+    const mapping = {}
+    for (let r = 0; r < rowLabels.length; r += 1) {
+      const DATA_START_ROW = 19
+      const rowNum = DATA_START_ROW + r
+      const rowLabel = rowLabels[r]
+      for (let c = 0; c < columns.length; c += 1) {
+        const col = columns[c]
+        const { det, site, hist, sample } = colDescs[c]
+        mapping[`${col}${rowNum}`] = `${det}-${site}-${hist}-${sample}-${rowLabel}`
+      }
+    }
+    return {
+      R13: 'NEW_INVALID',
+      S13: 'NEW_NORESULT',
+      T13: 'NEW_ERROR',
+      U13: 'PREV_INVALID',
+      V13: 'PREV_NORESULT',
+      W13: 'PREV_ERROR',
+      ...mapping,
+    }
+  })(),
 ]
 
-module.exports = sheets
+module.exports = sheetMappings

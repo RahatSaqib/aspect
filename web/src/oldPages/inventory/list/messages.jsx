@@ -86,6 +86,10 @@ const messages = {
       id: 'pages.InventoryItemsList.addInventory',
       defaultMessage: 'Add Inventory',
     },
+    physicalCount: {
+      id: 'pages.InventoryItemsList.physicalCount',
+      defaultMessage: 'Physical Count',
+    },
     transferInventory: {
       id: 'pages.InventoryItemsList.transferInventory',
       defaultMessage: 'Transfer Inventory',
@@ -107,11 +111,11 @@ const messages = {
     },
     inTransitFromSiteName: {
       id: 'pages.inTransit.InventoryItemsList.inTransitFromSiteName',
-      defaultMessage: '* in transit from {inTransitFromSiteName}',
+      defaultMessage: '*In transit from {inTransitFromSiteName}',
     },
     excludedLotInTransit: {
       id: 'pages.excluded.InventoryItemsList.inTransitFromSiteName',
-      defaultMessage: '* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
+      defaultMessage: '*Excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
     },
     never: {
       id: 'pages.InventoryItemsList.never',

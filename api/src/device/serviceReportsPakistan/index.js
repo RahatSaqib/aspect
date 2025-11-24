@@ -2,8 +2,9 @@ const _ = require('lodash')
 const { getConstraints } = require('../../auth/constraints')
 const { getXpertSiteDetailedReport } = require('./xpertSiteDetailedReport')
 const { getAllDeviceReportData } = require('../serviceReports/deviceAndSiteSummaryReport')
-const { getResultCategoryGroupColumns, getLastUploadDateBySites } = require('../common/db')
-const { getOffsetFromIsoDateString } = require('../../shared/date')
+const { getResultCategoryGroupColumns } = require('../common/db')
+const { knex } = require('../../db')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 async function xpertSiteDetailedReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -15,12 +16,10 @@ async function xpertSiteDetailedReport(auth, query) {
   }
 }
 
-async function xpertSiteSummarySiteWiseReport(auth, query, timezone) {
+async function xpertSiteSummarySiteWiseReport(auth, query, timezoneIANA) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
-  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezone)
-  const { maxDate = new Date() } = query
-  const offset = getOffsetFromIsoDateString(maxDate)
+  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezoneIANA)
   const rows = await builder
     .leftJoin('Partner as pImpl', 'pImpl.id', 'd.implementingPartnerId')
     .select(['pImpl.name as implementingPartner'])
@@ -57,7 +56,7 @@ async function xpertSiteSummarySiteWiseReport(auth, query, timezone) {
   /**
    * Get global (not within date range) `lastUploadOn` for all sites
    */
-  const lastUploadBySites = await getLastUploadDateBySites(allSiteIds, offset)
+  const lastUploadBySites = await getLastUploadDateBySites(allSiteIds, timezoneIANA)
   /**
    * construct final list of sites and aggregate totals and  custom fields counts
    */
@@ -108,6 +107,18 @@ async function xpertSiteSummarySiteWiseReport(auth, query, timezone) {
     total: sites.length,
     dynamicColumns,
   }
+}
+
+async function getLastUploadDateBySites(siteIds, timezoneIANA) {
+  return knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .whereIn('s.id', siteIds)
+    .groupBy('s.id')
+    .select({
+      siteId: 's.id',
+      lastUploadOn: getDateTimeProjectionInTimeZoneIANA(knex, 'MAX(r.endedOn)', timezoneIANA),
+    })
 }
 
 module.exports = {

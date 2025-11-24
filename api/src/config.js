@@ -32,7 +32,7 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
     timezone: 'UTC',
-    ssl: true,
+    ssl: process.env['db.ssl'] === 'true',
   },
   redis: {
     url: process.env['redis.url'] || 'redis://localhost:6379', // until we add redis for all the environments, we will add default value for now.
@@ -138,6 +138,8 @@ module.exports = {
   },
   serviceStatusFile: process.env.serviceStatusFile,
   maxDaysDeviceNoResults: 14,
+  acceptFakeResults: process.env.acceptFakeResults === 'true',
+  enableAsyncPayloadProcessing: process.env.enableAsyncPayloadProcessing === 'true',
 }
 
 configureOptional(module.exports)
@@ -215,15 +217,6 @@ function configureOptional(config) {
     config.webhook.itis = {
       url: philippinesITISWebApiUrl,
       systemKey: philippinesITISSystemKey,
-    }
-  }
-
-  const uptimeRobotApiKey = process.env['uptimerobot.api.key']
-  if (uptimeRobotApiKey) {
-    config.uptimerobot = {
-      api: {
-        key: uptimeRobotApiKey,
-      },
     }
   }
 }

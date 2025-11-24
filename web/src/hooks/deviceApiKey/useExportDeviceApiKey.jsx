@@ -1,7 +1,6 @@
 import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
-import { useDispatch } from 'react-redux'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
@@ -45,14 +44,12 @@ const getDownload = async ({ filters, sortCol, sortDir, page, pageSize, fileForm
 
 const useExportDeviceApiKey = ({ filters, sortCol, sortDir, page, pageSize, fileFormat, enabled }) => {
   const queryClient = useQueryClient()
-  const dispatch = useDispatch()
 
   return useQuery(
     [DEVICE_API_KEY_KEY, 'download'],
     () => getDownload({ filters, sortCol, sortDir, page, pageSize, fileFormat }),
     {
       onSuccess: () => {
-        dispatch({ type: 'EXPORT_RESPONSE_FILE_RECEIVED' })
         queryClient.invalidateQueries([DEVICE_API_KEY_KEY, 'download'])
       },
       enabled,

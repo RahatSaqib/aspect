@@ -89,7 +89,10 @@ describe('Extracting data from Result Text HIV VL', () => {
       },
     ]
     textsToTest.forEach(elem => {
-      const [{ id: categoryExternalId }] = getResultCategories(_.assign({}, elem.payload))
+      const payload = _.assign({}, elem.payload)
+      const assayExternalId = _.get(payload, 'assay.id')
+      const resultText = _.get(payload, 'data.resultText')
+      const [{ id: categoryExternalId }] = getResultCategories(assayExternalId, resultText)
       assert.equal(categoryExternalId, elem.expectedCategory)
     })
   })

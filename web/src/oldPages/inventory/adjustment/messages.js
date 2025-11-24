@@ -13,6 +13,11 @@ const messages = defineMessages({
     id: 'pages.NewInventoryDialogForm.nextQuantityStatus',
     defaultMessage: '(New quantity on hand: {nextQuantity} {unitShortName})',
   },
+  resetWarning: {
+    id: 'pages.InventoryAdjustmentDialogForm.resetWarning',
+    defaultMessage:
+      'This will reset the Inventory on Hand to {quantity}. Any movement before {resetDate} will be discarded from now on. Are you sure?',
+  },
   cancel: {
     id: 'pages.InventoryAdjustmentDialogForm.cancel',
     defaultMessage: 'Cancel',
@@ -56,6 +61,10 @@ const messages = defineMessages({
   notes: {
     id: 'pages.InventoryAdjustmentDialogForm.notes',
     defaultMessage: 'Notes',
+  },
+  inventoryItem: {
+    id: 'pages.InventoryAdjustmentDialogForm.inventoryItem',
+    defaultMessage: 'Inventory Item',
   },
 })
 
@@ -124,16 +133,24 @@ export const validationMessages = defineMessages({
     id: 'pages.InventoryAdjustmentDialogForm.dateAdjustedGreaterThanToday',
     defaultMessage: 'Please enter date until today',
   },
+  inventoryItemRequired: {
+    id: 'pages.InventoryAdjustmentDialogForm.inventoryItemRequired',
+    defaultMessage: 'Please choose an inventory item',
+  },
+  notesRequired: {
+    id: 'pages.InventoryAdjustmentDialogForm.notesRequired',
+    defaultMessage: 'Please enter a note to explain the reason',
+  },
 })
 
 export const newInventoryMessages = defineMessages({
   dialogTitle: {
     id: 'pages.NewInventoryDialogForm.dialogTitle',
-    defaultMessage: 'Add {consumableName}',
+    defaultMessage: '{consumableName}',
   },
   quantity: {
     id: 'pages.NewInventoryDialogForm.quantity',
-    defaultMessage: 'Quantity to Add',
+    defaultMessage: 'Quantity',
   },
   dateAdjusted: {
     id: 'pages.NewInventoryDialogForm.dateAdjusted',

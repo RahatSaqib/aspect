@@ -40,6 +40,7 @@ const PersonList = lazy(() => import('./pages/Person/List/PersonList'))
 const PkDashboard = lazy(() => import('./pages/PkDashboard'))
 const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
 const ReportIndex = lazy(() => import('./pages/Reports/ReportIndex'))
+const SampleList = lazy(() => import('./pages/Sample/SampleList'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
 const ResultList = lazy(() => import('./oldPages/result/list/ResultList'))
 const SiteDetail = lazy(() => import('./pages/Site/Detail'))
@@ -230,6 +231,8 @@ const LogInApp = () => {
 
                 {a(['browse', 'reporter']) ? <Route path="/browse/reporter" element={<ReporterList />} /> : null}
 
+                {a(['browse', 'reporter']) ? <Route path="/browse/samples" element={<SampleList />} /> : null}
+
                 {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
                 {a(['browse', 'result:edit']) ? (
                   <Route path={routePaths.RESULT_DETAILS} element={<ResultDetail />} />
@@ -250,12 +253,13 @@ const LogInApp = () => {
 
                 {a(['browse', 'inventory']) ? (
                   <>
-                    <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
-                    <Route path="/browse/inventory/log" element={<InventoryLog />} />
-                    <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
-                    <Route path="/browse/inventory/overview" element={<InventoryOverview />} />
-                    <Route path="/browse/inventory/reconciliation/form" element={<InventoryReconciliationForm />} />
-                    <Route path="/browse/inventory/reconciliation" element={<InventoryReconciliation />} />
+                    <Route path={routePaths.INVENTORY_SUPPLIES} element={<InventoryItemsList />} />
+                    <Route path={routePaths.INVENTORY_LOG} element={<InventoryLog />} />
+                    <Route path={routePaths.INVENTORY_TRANSFERS} element={<InventoryTransfers />} />
+                    <Route path={routePaths.INVENTORY_OVERVIEW} element={<InventoryOverview />} />
+                    {/** The below path is deprecated, but keeping it here for now to avoid breaking changes. It will be removed in the upcoming releases. */}
+                    <Route path={routePaths.INVENTORY_RECONCILIATION_FORM} element={<InventoryReconciliationForm />} />
+                    <Route path={routePaths.INVENTORY_RECONCILIATION} element={<InventoryReconciliation />} />
                   </>
                 ) : null}
                 {a(['browse', 'notification']) ? (
@@ -271,6 +275,10 @@ const LogInApp = () => {
                     <Route path="/browse/admin/lgas" element={<AdminLgas />} />
                     <Route path="/browse/admin/inventory-list" element={<InventoryList />} />
                     <Route path="/browse/admin/inventory-list/:cartridgeId/*" element={<InventoryDetails />} />
+                    <Route
+                      path={routePaths.ADMIN_INVENTORY_RECONCILIATION_FORM}
+                      element={<InventoryReconciliationForm />}
+                    />
                   </>
                 ) : null}
 

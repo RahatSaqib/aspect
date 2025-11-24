@@ -3,16 +3,15 @@ const uniq = require('lodash/uniq')
 const logger = require('./shared/logger')
 const { REGEX_ISODATESTRING } = require('./shared/date')
 const { splitCsvWithTrim } = require('./shared/string')
+const { Sentry } = require('./shared/sentry')
 // Adds all API routes to the server
 function addClientRoutes(server) {
   server.route(require('./accountDetails/endpoints').routes.map(decorateClientAPI()))
   server.route(require('./auth/endpoints').routes.map(decorateClientAPI()))
   server.route(require('./assay/endpoints').routes.map(decorateClientAPI('assay')))
-  server.route(require('./demo/endpoints').routes.map(decorateClientAPI('demo')))
   server.route(require('./device/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./deviceMaintenanceStatus/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./deviceApiKey/endpoints').routes.map(decorateClientAPI('deviceApiKey')))
-  server.route(require('./deviceOperation/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./deviceType/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./geography/endpoints').routes.map(decorateClientAPI()))
   server.route(require('./person/endpoints').routes.map(decorateClientAPI('person')))
@@ -34,12 +33,14 @@ function addClientRoutes(server) {
   server.route(require('./forms/endpoints').routes.map(decorateClientAPI('case')))
   server.route(require('./case/endpoints').routes.map(decorateClientAPI('case')))
   server.route(require('./resultCategoryGroup/endpoints').routes.map(decorateClientAPI()))
+  server.route(require('./sample/endpoints').routes.map(decorateClientAPI('sample')))
 }
 
 function addMobileRoutes(server) {
   server.route(require('./mobileApi/result/endpoints').routes.map(decorateMobileAPI('result')))
   server.route(require('./mobileApi/person/endpoints').routes.map(decorateMobileAPI('person')))
   server.route(require('./mobileApi/entries/endpoints').routes.map(decorateMobileAPI('entry')))
+  server.route(require('./mobileApi/customFields/endpoints').routes.map(decorateMobileAPI('entry')))
   server.route(require('./mobileApi/entries/sample/endpoints').routes.map(decorateMobileAPI('sample')))
   server.route(require('./mobileApi/followUp/endpoints').routes.map(decorateMobileAPI('result')))
   server.route(require('./mobileApi/config/endpoints').routes.map(decorateMobileAPI('entry')))
@@ -155,18 +156,19 @@ function asyncHandler(handler) {
     handler(request, reply)
       .then(reply)
       .catch(err => {
+        Sentry.captureException(err.stack || err)
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
-        logger.error(err)
+        logger.error(err.stack || err)
         throw err
       })
 }
 
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
-function getSortPageParams(params, sortColumnMapping, defaultSort) {
+function getSortPageParams(params, sortColumnMapping, defaultSort, getExtraItemToCheckNextPage = false) {
   return {
     ...getSortParams(params, sortColumnMapping, defaultSort),
-    ...getPageParams(params),
+    ...getPageParams(params, getExtraItemToCheckNextPage),
   }
 }
 
@@ -190,7 +192,7 @@ function getSortParams(params, sortColumnMapping, defaultSort) {
 
 // extracts and sanitizes the parameters related to paging from the
 // candidate params and returns them as an object
-function getPageParams(params) {
+function getPageParams(params, getExtraItemToCheckNextPage = false) {
   const result = {}
 
   if (params.size === 'all') {
@@ -200,10 +202,10 @@ function getPageParams(params) {
       // don't define `size` prop here - meaning to get all available items
     }
   }
-
+  const sizeParam = parseInt(params.size, 10) || 50
   result.page = parseInt(params.page, 10) || parseInt(params.offset, 10) || 0
-  result.size = parseInt(params.size, 10) || 50
-  result.skip = result.page * result.size
+  result.size = sizeParam + (getExtraItemToCheckNextPage ? 1 : 0)
+  result.skip = result.page * sizeParam
 
   return result
 }

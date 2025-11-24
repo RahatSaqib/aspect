@@ -19,9 +19,6 @@ const {
   max,
   addMonths,
   eachDayOfInterval,
-  isWeekend,
-  endOfDay,
-  subDays,
   addMilliseconds,
 } = require('date-fns')
 
@@ -31,14 +28,6 @@ const { formatInTimeZone, zonedTimeToUtc } = require('date-fns-tz')
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
   return parseDateOrDefault(date, defaultValue)
-}
-
-function getTimezoneOffsetFromNumber(timezoneOffset) {
-  let offset = -Math.round(timezoneOffset / 60)
-  const plusOrMinus = offset >= 0 ? '+' : '-'
-  offset = Math.abs(offset)
-  offset = `${plusOrMinus}${_.padStart(offset, 2, '0')}:00`
-  return offset
 }
 
 /** Slides an UTC date the amount of hours between UTC and the specified IANA timezone
@@ -90,6 +79,10 @@ const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset 
     ) ${alias ? ` as ${alias}` : ''}`)
 }
 
+const getMonthYearExpressionFromFieldInTimeZone = (knex, field, alias = 'monthYear', timeZoneIANA) => {
+  return knex.raw(`DATE_FORMAT(CONVERT_TZ(${field}, 'UTC', '${timeZoneIANA}'), '%Y-%m')${alias ? ` as ${alias}` : ''}`)
+}
+
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
   knex.raw(`CONCAT_WS(
     '-',
@@ -98,29 +91,12 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
     ) ${alias ? ` as ${alias}` : ''}`)
 
 /**
- * - NOTE: This function is obsolete and should be replaced by {@link getDateTimeProjectionInTimeZoneIANA}
- * - Generates knex code to project a datetime field in the specified timezone.
- * @deprecated use {@link getDateTimeProjectionInTimeZoneIANA} instead
- * @param {*} knex - Knex ref.
- * @param {string} field - Name of the field to select.
- * @param {string} offset - Time offset in ISO format (e.g. +05:00)
- * @param {string=} alias - Optional. name to be returned if you don't want the field name.
- * @returns Expression to be added to a Knex query, returning plain datetime value converted a specified TZ
- * @example
- * e.g.:
- * getDateTimeProjectionInUserTimeZone(knex, 'd.lastSeenOn', '+05:00', 'lastSeen')
- * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
- */
-const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
-  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`)
-
-/**
  * Generates knex code to project a datetime field in the specified timezone.
  * @param {*} knex - Knex ref.
  * @param {string} field - Name of the field to select.
  * @param {string} timeZoneIANA - Timezone name in IANA format (e.g. 'Asia/Karachi')
  * @param {string=} alias - Optional. name to be returned if you don't want the field name. If it's not provided,
- * it will be infered from the field expression. (e.g. 'd.lastSeenOn' will use 'lastSeen' as alias)
+ * no alias will be added.
  * @returns Expression to be added to a Knex query, returning plain datetime value converted a specified TZ
  * @example
  * e.g.:
@@ -288,12 +264,6 @@ function startOfDayUtc(date) {
   return addMinutes(startOfDay(date), -date.getTimezoneOffset())
 }
 
-function endOfDayUtc(date) {
-  const timePart = date.toISOString().split('T')[1]
-  if (timePart && timePart === '00:00:00.000Z') return date
-  return subDays(addMinutes(endOfDay(date), -date.getTimezoneOffset()), 1)
-}
-
 function startOfTodayUtc() {
   const date = startOfToday()
   return addMinutes(date, -date.getTimezoneOffset())
@@ -306,14 +276,6 @@ function startOfTodayUtc() {
  */
 function getDateSubstring(isoDateTime) {
   return isoDateTime.substring(0, 10)
-}
-
-function dayOfYear(date) {
-  return parseInt(format(date, 'D', { useAdditionalDayOfYearTokens: true }), 10)
-}
-
-function getWellFormattedDateStringWithTimezone(dateTime) {
-  return format(dateTime, 'yyyy-MM-dd HH:mm:ss.SSSxxx').replace(' ', 'T')
 }
 
 // Return Wed Aug 24 2022 02:25:32 GMT-4
@@ -335,39 +297,12 @@ function daysBetweenDates(date1, date2) {
   return differenceInDays(max([date1, date2]), min([date1, date2]))
 }
 
-/**
- * Retrieves the user timezone from the Person table in the database.
- * @param {knex} knex - Knex instance
- * @param {string} userName - User name
- * @returns {string} - User timezone name or 'UTC' if not found
- */
-async function getTimeZoneFromUser(knex, userName) {
-  const tz = await knex('User as u')
-    .join('Person as p', 'u.id', 'p.userId')
-    .join('TimeZone as tz', 'p.timezone', 'tz.id')
-    .where('u.name', userName)
-    .pluck('tz.timeZone')
-  return tz || 'UTC'
-}
-
-/**
- *  Retrieves the user timezone from the DB and returns its timezone offset.
- * @param {*} knex - Knex instance
- * @param {*} userName - User name (can be taken from `auth.credentials.name`)
- * @returns string - Timezone offset in '[+/-]hh:mm' format (i.e. '+05:00')
- * @note It should be used as fallback for {@link getOffsetFromIsoDateString} when the request doesn't count with a date parameter.
- */
-async function getOffsetFromUser(knex, userName) {
-  const tz = await getTimeZoneFromUser(knex, userName)
-  return getOffsetFromTimeZone(tz)
-}
-
 function getDatesFromQuery(query) {
   const now = new Date()
   const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
   return {
-    dateFrom: _.isString(minDate) ? startOfDayUtc(new Date(minDate)) : minDate,
-    dateTo: _.isString(maxDate) ? endOfDayUtc(new Date(maxDate)) : maxDate,
+    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
+    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
   }
 }
 
@@ -375,7 +310,7 @@ function getDatesFromQuery(query) {
  * @param {string} timeZone - ISO 8601 timezone String (i.e. Australia/Canberra)
  * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
  * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
- * @description - Useful when you need to use {@link getDateTimeProjectionInUserTimeZone} or directly mysql CONVERT_TZ function,
+ * @description - Useful when you need to use mysql CONVERT_TZ function,
  * which takes as argument the time offset in the format this function returns.
  */
 function getOffsetFromTimeZone(timeZone, date = new Date()) {
@@ -493,23 +428,134 @@ function getDateInMilliSeconds(date) {
 }
 
 /**
- *  Retrieves the No of working days excluding weekends
- * @param {*} startDate
- * @param {*} endDate
- * @returns number - Return the count of working days
+ * Calculates the number of working days between two dates, considering client-specific configurations.
+ *
+ * @param {string} minDate - The start date in ISO format (e.g., "2023-01-01T00:00:00.000Z")
+ * @param {string} maxDate - The end date in ISO format (e.g., "2023-12-31T23:59:59.999Z")
+ * @param {Object} [clientConfig] - Value of Partner.customWorkingDays, if it's an empty object,
+ * it will skip fixed working days values and will default to Saturday and Sunday as weekend.
+ * @param {number} [clientConfig.daysPerYear] - Predefined working days for a full year period
+ * @param {number} [clientConfig.daysPerQuarter] - Predefined working days for a full quarter period
+ * @param {number} [clientConfig.daysPerMonth] - Predefined working days for a full month period
+ * @param {string} [clientConfig.excludedDays] - Comma-separated string of days to exclude (MySQL DAYOFWEEK format: 1=Sunday, 7=Saturday)
+ *
+ * @returns {number} The number of working days in the specified date range
+ *
+ * @description
+ * This function calculates working days by first checking if the date range represents a standard period
+ * (full year, quarter, or month) and if the client has predefined values for such periods. If so, it returns
+ * the predefined value. Otherwise, it calculates the actual working days by generating all dates in the range
+ * and filtering out excluded days (defaults to weekends: Saturday and Sunday).
+ *
+ * @example
+ * // Calculate working days for a month with default weekend exclusion
+ * getWorkingDays("2023-01-01T00:00:00.000Z", "2023-01-31T23:59:59.999Z")
+ * // Returns: 22 (assuming January 2023 has 22 weekdays)
+ *
+ * @example
+ * // Calculate working days with custom excluded days (excluding Monday and Tuesday)
+ * getWorkingDays("2023-01-01T00:00:00.000Z", "2023-01-31T23:59:59.999Z", { excludedDays: "2,3" })
+ * // Returns: 13 (excluding Mondays and Tuesdays)
  */
-function getWorkingDays(startDate, endDate) {
-  // Generate an array of all dates between the start and end dates
+const getWorkingDays = (minDate, maxDate, clientConfig) => {
+  if (!clientConfig) {
+    throw new Error('Client config is required')
+  }
+  // Parse the input dates and extract just the date part
+  const minDateStr = typeof minDate === 'string' ? minDate : minDate.toISOString()
+  const maxDateStr = typeof maxDate === 'string' ? maxDate : maxDate.toISOString()
+
+  // Extract date parts and create dates in UTC
+  const startDateParts = minDateStr.split('T')[0].split('-')
+  const endDateParts = maxDateStr.split('T')[0].split('-')
+
+  const startDate = new Date(
+    Date.UTC(parseInt(startDateParts[0], 10), parseInt(startDateParts[1], 10) - 1, parseInt(startDateParts[2], 10))
+  )
+  const endDate = new Date(
+    Date.UTC(parseInt(endDateParts[0], 10), parseInt(endDateParts[1], 10) - 1, parseInt(endDateParts[2], 10))
+  )
+
+  const isMonthPeriod = () => {
+    return (
+      startDate.getUTCDate() === 1 &&
+      endDate.getUTCMonth() === startDate.getUTCMonth() &&
+      endDate.getUTCDate() === new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth() + 1, 0)).getUTCDate()
+    )
+  }
+
+  const isQuarterPeriod = () => {
+    // Get the start of the quarter
+    const quarter = Math.floor(startDate.getUTCMonth() / 3)
+    const quarterStartMonth = quarter * 3
+
+    // Check if startDate is first day of quarter
+    const isStartOfQuarter = startDate.getUTCMonth() === quarterStartMonth && startDate.getUTCDate() === 1
+
+    // Check if endDate matches last day of quarter (comparing month and day directly)
+    const isEndOfQuarter =
+      endDate.getUTCMonth() === quarterStartMonth + 2 && // Last month of quarter
+      endDate.getUTCDate() === new Date(Date.UTC(endDate.getUTCFullYear(), quarterStartMonth + 3, 0)).getUTCDate() // Last day of that month
+
+    return isStartOfQuarter && isEndOfQuarter
+  }
+
+  const isYearPeriod = () => {
+    return (
+      startDate.getUTCMonth() === 0 &&
+      startDate.getUTCDate() === 1 &&
+      endDate.getUTCMonth() === 11 &&
+      endDate.getUTCDate() === 31 &&
+      endDate.getUTCFullYear() === startDate.getUTCFullYear()
+    )
+  }
+
+  // If it's a standard period and client has config, use the config values
+  if (clientConfig) {
+    if (isYearPeriod() && clientConfig.daysPerYear) {
+      return clientConfig.daysPerYear
+    }
+    if (isQuarterPeriod() && clientConfig.daysPerQuarter) {
+      return clientConfig.daysPerQuarter
+    }
+    if (isMonthPeriod() && clientConfig.daysPerMonth) {
+      return clientConfig.daysPerMonth
+    }
+  }
+
+  // Otherwise calculate actual working days using functional approach
+  const excludedDays = clientConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [5, 6] // Default to exclude weekends
+
+  // Generate array of all dates in the interval
   const allDates = eachDayOfInterval({ start: startDate, end: endDate })
 
-  // Filter out weekends (Saturdays and Sundays)
-  const workingDays = allDates.filter(date => !isWeekend(date))
+  // Filter out excluded days and count working days
+  const totalWorkingDays = allDates.filter(date => !excludedDays.includes(date.getDay())).length
 
-  // Return the count of working days
-  return workingDays.length
+  return totalWorkingDays
 }
 
-const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
+/**
+ * Converts MySQL DAYOFWEEK() format to date-fns getDay() format
+ * @param {number} day - MySQL day of week (1-7), Sunday is 1
+ * @returns {number} date-fns day of week (0-6), Sunday is 0
+ * @description
+ * MySQL DAYOFWEEK(): 1 = Sunday, 2 = Monday, 3 = Tuesday, 4 = Wednesday, 5 = Thursday, 6 = Friday, 7 = Saturday
+ * date-fns getDay(): 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
+ */
+const convertMysqlDayOfWeekToDateFns = day => day - 1
+
+/**
+ * Checks if a given date is a weekend based on partner configuration
+ * @param {Date} date - The date to check
+ * @param {Object} customWorkingDaysConfig - Partner working days configuration
+ * @param {string} customWorkingDaysConfig.excludedDays - Comma-separated string of excluded days in MySQL format
+ * @returns {boolean} True if the date is a weekend/excluded day
+ */
+const isWeekend = (date, customWorkingDaysConfig) => {
+  const excludedDays = customWorkingDaysConfig?.excludedDays?.split(',').map(convertMysqlDayOfWeekToDateFns) || [5, 6]
+  return excludedDays.includes(date.getDay())
+}
 
 module.exports = {
   getDateOrDefault,
@@ -523,7 +569,6 @@ module.exports = {
   getLocalDateInUtc,
   getTimeZoneById,
   startOfDayUtc,
-  endOfDayUtc,
   startOfTodayUtc,
   startOfMonthUTC,
   endOfMonthUTC,
@@ -531,10 +576,7 @@ module.exports = {
   getDateSubstring,
   getMonthYearField,
   getMonthYearUserTimeZoneField,
-  getDateTimeProjectionInUserTimeZone,
   getDateTimeExpressionInTimeZone,
-  dayOfYear,
-  getWellFormattedDateStringWithTimezone,
   getFormattedDateTimeWithTimezone,
   getFormattedDate,
   getDatesFromQuery,
@@ -544,9 +586,6 @@ module.exports = {
   replaceOffset,
   getOffsetFromIsoDateString,
   getOffsetFromIsoDateStringInMinutes,
-  getTimeZoneFromUser,
-  getOffsetFromUser,
-  getTimezoneOffsetFromNumber,
   convertTimezonetoIANA,
   convertTimezonetoWindowsIANA,
   daysBetweenDates,
@@ -558,5 +597,7 @@ module.exports = {
   getDateInMilliSeconds,
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
-  adjustDate,
+  getMonthYearExpressionFromFieldInTimeZone,
+  convertMysqlDayOfWeekToDateFns,
+  isWeekend,
 }

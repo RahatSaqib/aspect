@@ -1,5 +1,5 @@
 const { knex } = require('../../db')
-const { getDateTimeProjectionInUserTimeZone, getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 const COMMON_LIST_FIELDS_UTC = {
   id: 'r.id',
@@ -14,9 +14,6 @@ const COMMON_LIST_FIELDS_UTC = {
   lgaName: 'lg.name',
   resultCategory1Name: 'rc1.name',
   resultCategory2Name: 'rc2.name',
-  resultWorkflowStatusId: 'rs.id',
-  resultWorkflowStatus: 'rs.name',
-  resultWorkflowStatusExternalId: 'rs.externalId',
   resultTreatmentStatus: 'rts.externalId',
   resultData: 'r.resultData',
   formData: 'r.formData',
@@ -47,8 +44,6 @@ const COMMON_LIST_FIELDS_UTC = {
     "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end"
   ),
   patientData: 'r.patientData',
-  resultWorkflowLogReason: 'rsl.reason',
-  resultWorkflowLogOperator: 'rsl.operator',
   resultTreatmentMethod: 'rtsl.method',
   resultTreatmentData: 'rtsl.data',
   resultTreatmentStatusId: 'rtsl.resultTreatmentStatusId',
@@ -65,13 +60,10 @@ const COMMON_LIST_FIELDS_UTC = {
   // datetime fields UTC:
   startedOn: 'r.startedOn',
   endedOn: 'r.endedOn',
-  resultWorkflowChangedOn: 'rsl.changedOn',
   consumableExpirationDate: 'r.consumableExpirationDate',
   createdOn: 'r.createdOn',
   updatedOn: 'r.updatedOn',
   sampleCollectedOn: 'sp.collectedOn',
-  resultWorkflowLogCreatedOn: 'rsl.createdOn',
-  resultWorkflowLogChangedOn: 'rsl.changedOn',
   resultTreatmentStatusChangedOn: 'rtsl.changedOn',
   transferredOn: 'rslog.createdOn',
   firstViewedOn: 'r.firstViewedOn',
@@ -82,7 +74,7 @@ const COMMON_LIST_FIELDS_UTC = {
  * @param {string} userTimeOffset
  * @returns Knex projection
  */
-const getReportCommonFieldsTZ = userTimeOffset => ({
+const getReportCommonFieldsTZ = timezoneIANA => ({
   patientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))'),
   sampleId: 'sp.externalId',
   patientAge: knex.raw(
@@ -102,29 +94,7 @@ const getReportCommonFieldsTZ = userTimeOffset => ({
   errorCode: 'r.errorCode',
   copies: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies"))'),
   caseExternalId: 'ca.externalId',
-  endedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', userTimeOffset),
-})
-
-/**
- * Knex projection for use in @see {service.getResultsForExport}, which is used to export results to a CSV file
- * @param {string} userTimeOffset
- * @returns Projection to be used in query with datetime fields on specified time zone
- */
-const getSelectCommonListFieldsTZ = userTimeOffset => ({
-  ...COMMON_LIST_FIELDS_UTC,
-  // override datetime fields with user time offset:
-  startedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.startedOn', userTimeOffset),
-  endedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', userTimeOffset),
-  resultWorkflowChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.changedOn', userTimeOffset),
-  consumableExpirationDate: getDateTimeProjectionInUserTimeZone(knex, 'r.consumableExpirationDate', userTimeOffset),
-  createdOn: getDateTimeProjectionInUserTimeZone(knex, 'r.createdOn', userTimeOffset),
-  updatedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.updatedOn', userTimeOffset),
-  sampleCollectedOn: getDateTimeProjectionInUserTimeZone(knex, 'sp.collectedOn', userTimeOffset),
-  resultWorkflowLogCreatedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.createdOn', userTimeOffset),
-  resultWorkflowLogChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.changedOn', userTimeOffset),
-  resultTreatmentStatusChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rtsl.changedOn', userTimeOffset),
-  transferredOn: getDateTimeProjectionInUserTimeZone(knex, 'rslog.createdOn', userTimeOffset),
-  firstViewedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.firstViewedOn', userTimeOffset),
+  endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
 })
 
 /**
@@ -141,8 +111,6 @@ const LIST_FIELDS_UTC = {
     `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, '')))`
   ),
   errorCode: 'r.errorCode',
-  resultWorkflowStatus: 'rs.name',
-  resultWorkflowStatusI18nkey: 'rs.i18nkey',
   resultTreatmentStatus: 'rts.externalId',
   resultTreatmentStatusI18nKey: knex.raw(
     "CASE WHEN GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 THEN NULL ELSE CASE WHEN rts.i18nKey IS NOT NULL THEN rts.i18nKey ELSE 'ResultTreatmentStatusNotAvailable' END END"
@@ -234,11 +202,11 @@ const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
   mtbErrorByCode: errorCode =>
     knex.raw(`IFNULL(SUM(CASE WHEN rc1.externalId = 'Error' and r.errorCode = '${errorCode}' THEN 1 ELSE 0 END), 0)`),
   mtbOtherErrorsNotIn: errorCodesCsv =>
-    knex.raw(`IFNULL(SUM(CASE 
+    knex.raw(`IFNULL(SUM(CASE
     WHEN rc1.externalId = 'Error' AND
       (
         r.errorCode IS NULL OR r.errorCode NOT IN (${errorCodesCsv})
-      ) 
+      )
     THEN 1 ELSE 0 END), 0)`),
 }
 
@@ -251,7 +219,6 @@ const SORT_FIELDS = [
   'sampleId',
   'errorCode',
   'resultText',
-  'resultWorkflowStatus',
   'treatmentStatusInfo',
   'resultTreatmentStatusChangedOn',
   'requiresTreatment',
@@ -477,8 +444,8 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
   return {
     id: 'r.id',
     patientId: knex.raw(`r.patientData ->> '$.id'`),
-    // sampleId: 'r.sampleId',
-    sampleId: knex.raw(`r.patientData ->> '$.SampleType'`),
+    sampleId: 'sp.externalId',
+    sampleType: knex.raw(`COALESCE(r.patientData ->> '$.SampleType', stp.name)`),
     testDate: getDateTimeProjectionInTimeZoneIANA(knex, 'COALESCE(r.endedOn, r.startedOn)', timezoneIANA),
     startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
     endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
@@ -626,8 +593,8 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
 }
 
 module.exports = {
-  getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
+  COMMON_LIST_FIELDS_UTC,
   SELECT_FIELDS_UTC,
   LIST_FIELDS_UTC,
   SORT_FIELDS,

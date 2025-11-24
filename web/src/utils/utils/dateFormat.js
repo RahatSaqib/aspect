@@ -9,7 +9,6 @@ import isString from 'lodash/isString'
 import { withProps } from 'recompose'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import getLocale from './locale'
-import { getTimezoneById } from './timezone'
 
 export function getDateObject(date, defaultValue) {
   let formatedDate = defaultValue || null
@@ -26,17 +25,6 @@ export function getDateObject(date, defaultValue) {
   return formatedDate
 }
 
-function formatBase(date, displayPreferenceKey) {
-  const prefs = getAspectDisplayPreferences()
-  const userSetTimeZone = localStorage.getItem('asTimezoneId')
-  const { code: localeCode } = getLocale()
-  const timeZone = getTimezoneById(userSetTimeZone)
-  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  const timeToFormat = isString(date) ? new Date(date).toLocaleString(localeCode, { timeZone }) : date
-
-  return timeToFormat === null ? '' : format(new Date(timeToFormat), dateFormatPreference)
-}
-
 const SECOND_IN_MILLISECONDS = 1000
 const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS
 const HOUR_IN_MILLISECONDS = 60 * MINUTE_IN_MILLISECONDS
@@ -46,16 +34,20 @@ const MONTH_IN_MILLISECONDS = 30 * DAY_IN_MILLISECONDS
 const QUARTER_IN_MILLISECONDS = 3 * MONTH_IN_MILLISECONDS
 const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
 
-export function formatDate(date) {
-  return formatBase(date, 'dateFormat')
+// Format the date without changing the time. Handling the timezone is the API's (backend) responsibility, not the frontend's
+function formatBase(date, displayPreferenceKey, defaultFormat) {
+  if (!date) return ''
+  const prefs = getAspectDisplayPreferences()
+  const dateFormatPreference = prefs.get(displayPreferenceKey, defaultFormat)
+  return format(new Date(date.replace('Z', '')), dateFormatPreference)
 }
 
-export function formatTime(date) {
-  return formatBase(date, 'timeFormat')
+export function formatDate(date) {
+  return formatBase(date, 'dateFormat', 'yyyy-MM-dd')
 }
 
 export function formatDateTime(date) {
-  return formatBase(date, 'dateTimeFormat')
+  return formatBase(date, 'dateTimeFormat', 'yyyy-MM-dd HH:mm')
 }
 
 export const formatWithLocale = locale => (date, formatStr) => format(date, formatStr, { locale: getLocale(locale) })

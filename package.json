@@ -9,7 +9,7 @@
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^8.0.3",
+    "husky": "8.0.3",
     "lint-staged": "13.1.2",
     "lodash": "^4.17.21",
     "make-runnable": "^1.4.1",
@@ -36,5 +36,6 @@
     "web:test": "yarn --cwd ./web test:ci",
     "web:lint": "yarn --cwd ./web lint",
     "act": "act pull_request -P ubuntu-latest=node:14"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

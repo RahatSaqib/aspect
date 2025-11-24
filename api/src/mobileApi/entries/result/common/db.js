@@ -1,140 +1,79 @@
 const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex } = require('../../../../db')
-const {
-  ACKNOWLEDGED,
-  FLAGGED,
-  MONTHS_HISTORY_TO_LOOK_UP,
-  MOBILE_APP_ALLOWED_ASSAYS,
-  deliverableResultWorkflowStatuses,
-} = require('../../common/consts')
+const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
+const { allResultCategoryToId } = require('../../../../shared/dictionary')
+const { buildQueryForResultsListAndExport } = require('../../../../result/service')
 
-const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
-  const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
+const fetchResultsBySubmittedSinceQuery = async (query, dataConstraints) => {
+  const modifiedSince = query?.minUpdatedOn ?? query?.modifiedSince
+  const submittedSince = query?.submittedSince ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
-  const knexQuery = knex('Result as result')
-    .join('Device as device', 'result.deviceId', 'device.id')
-    .join('Site as laboratory', 'result.siteId', 'laboratory.id')
-    .join('Assay as assay', 'result.assayId', 'assay.id')
-    .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
-    .join('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
-    .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
-    .leftJoin('ResultCategory as resultCategory1', 'result.resultCategory1', 'resultCategory1.id')
-    .leftJoin('ResultCategory as resultCategory2', 'result.resultCategory2', 'resultCategory2.id')
-    .leftJoin('Sample as sample', 'result.sampleId', 'sample.id')
-    .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
-    .leftJoin('Person as sampleCollectedBy', 'sample.collectedBy', 'sampleCollectedBy.userId')
-    .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
-    .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
-    .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
-    .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'result.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
-    .leftJoin(
-      'ResultWorkflowStatus as resultWorkflowStatus',
-      'resultWorkflowLog.resultWorkflowStatusId',
-      'resultWorkflowStatus.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatusLog as resultTreatmentStatusLog',
-      'result.treatmentStatusLogId',
-      'resultTreatmentStatusLog.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatus as resultTreatmentStatus',
-      'resultTreatmentStatusLog.resultTreatmentStatusId',
-      'resultTreatmentStatus.id'
-    )
-    .leftJoin('ResultStatusLog as resultStatusLog', 'result.id', 'resultStatusLog.resultId')
-    .leftJoin('ResultCategoryAssay as resultCategoryAssay1', queryBuilder =>
-      queryBuilder
-        .on('result.assayId', 'resultCategoryAssay1.assayId')
-        .andOn('result.resultCategory1', 'resultCategoryAssay1.resultCategoryId')
-    )
-    .leftJoin('ResultCategoryAssay as resultCategoryAssay2', queryBuilder =>
-      queryBuilder
-        .on('result.assayId', 'resultCategoryAssay2.assayId')
-        .andOn('result.resultCategory2', 'resultCategoryAssay2.resultCategoryId')
-    )
-    .leftJoin('ResultTransferLog as transferLog', 'result.id', 'transferLog.resultId')
-    .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
-    .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
-    .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
-    .whereIn('result.reportableSiteId', clinicIds)
-    .modify(addConstraints, dataConstraints, {
-      assay: 'assay',
-      assayType: 'assayType',
-    })
-    .andWhere('result.updatedOn', '>', minUpdatedOn)
-    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
-    .andWhere(qb =>
-      qb
-        .where('sample.registeredInAspect', true)
-        .orWhere('resultCategoryAssay1.requiresTreatment', true)
-        .orWhere('resultCategoryAssay2.requiresTreatment', true)
-    )
-    .modify(qb => {
-      if (!_.isEmpty(MOBILE_APP_ALLOWED_ASSAYS)) {
-        qb.whereIn('assay.externalId', MOBILE_APP_ALLOWED_ASSAYS)
-      }
-    })
-    .orWhereIn('result.id', userViewOnlyTransferredResultIds)
+  const resultCategoryToId = await allResultCategoryToId()
+
+  const queryBuilder = fetchResultsQuery(
+    {
+      ...query,
+      modifiedSince,
+      submittedSince,
+      ignoredResultCategories: [resultCategoryToId.Invalid, resultCategoryToId.Error, resultCategoryToId.NoResult],
+    },
+    dataConstraints
+  )
     .select(
-      'assay.externalId as assayExternalId',
-      'assay.patientDataSchema as patientDataSchema',
-      'assay.resultCategory1Label as resultCategory1Label',
-      'assay.resultCategory1i18nKey as resultCategory1i18nKey',
-      'assay.resultCategory2Label as resultCategory2Label',
-      'assay.resultCategory2i18nKey as resultCategory2i18nKey',
-      'assayType.abbreviation as assayTypeAbbreviation',
-      'assayType.i18nKey as assayTypeI18nKey',
+      'a.externalId as assayExternalId',
+      'a.patientDataSchema as patientDataSchema',
+      'a.resultCategory1Label as resultCategory1Label',
+      'a.resultCategory1i18nKey as resultCategory1i18nKey',
+      'a.resultCategory2Label as resultCategory2Label',
+      'a.resultCategory2i18nKey as resultCategory2i18nKey',
+      'at.abbreviation as assayTypeAbbreviation',
+      'at.i18nKey as assayTypeI18nKey',
       'personTransferred.name as transferredBy',
-      'result.id as id',
-      'result.patientData as patientData',
-      'result.resultData as resultData',
-      'result.sampleId as resultSampleId',
-      'result.updatedOn as updatedOn',
-      'result.errorCode as errorCode',
-      'result.endedOn as testEndDate',
-      'result.notes as resultNotes',
-      knex.raw('COALESCE(result.endedOn, result.startedOn) as testDate'),
-      'resultCategory1.i18nKey as resultCategory1ValueI18nKey',
-      'resultCategory1.name as resultCategory1Name',
-      'resultCategory2.i18nKey as resultCategory2ValueI18nKey',
-      'resultCategory2.name as resultCategory2Name',
-      'resultCategoryAssay1.emphasize as resultCategory1Emphasize',
-      'resultCategoryAssay1.requiresTreatment as resultCategoryAssay1RequiresTreatment',
-      'resultCategoryAssay2.emphasize as resultCategory2Emphasize',
-      'resultCategoryAssay2.requiresTreatment as resultCategoryAssay2RequiresTreatment',
+      'r.id as id',
+      'r.patientData as patientData',
+      'r.resultData as resultData',
+      'r.sampleId as resultSampleId',
+      'r.updatedOn as updatedOn',
+      'r.errorCode as errorCode',
+      'r.endedOn as testEndDate',
+      'r.notes as resultNotes',
+      'r.recordedInRegister',
+      knex.raw('COALESCE(r.endedOn, r.startedOn) as testDate'),
+      'rc1.i18nKey as resultCategory1ValueI18nKey',
+      'rc1.name as resultCategory1Name',
+      'rc2.i18nKey as resultCategory2ValueI18nKey',
+      'rc2.name as resultCategory2Name',
+      'rca.emphasize as resultCategory1Emphasize',
+      'rca.requiresTreatment as resultCategoryAssay1RequiresTreatment',
+      'rca2.emphasize as resultCategory2Emphasize',
+      'rca2.requiresTreatment as resultCategoryAssay2RequiresTreatment',
       'resultStatusLog.data as transferStatusLogData',
       'resultTreatmentStatus.externalId as resultTreatmentStatusExternalId',
       'resultTreatmentStatus.i18nKey as resultTreatmentStatusI18nKey',
       'resultTreatmentStatus.name as resultTreatmentStatusName',
       'resultTreatmentStatusLog.changedOn as resultTreatmentStatusChangedOn',
-      'resultWorkflowLog.changedOn as resultWorkflowStatusChangedOn',
-      'resultWorkflowLog.resultWorkflowStatusId as resultWorkflowStatusId',
-      'resultWorkflowLog.reason as resultWorkflowStatusReason',
-      'sample.externalId as sampleExternalId',
-      'sample.id as sampleId',
-      'sample.sampleData',
-      'sample.sampleStatus as sampleStatus',
-      'sample.updatedOn as sampleUpdatedOn',
-      'sample.collectedOn as sampleCollectedOn',
-      'sample.externalId as sampleExternalId',
+      'sp.id as sampleId',
+      'sp.sampleData',
+      'sp.sampleStatus as sampleStatus',
+      'sp.updatedOn as sampleUpdatedOn',
+      'sp.collectedOn as sampleCollectedOn',
+      'sp.externalId as sampleExternalId',
       'sampleOriginSite.externalId as sampleSiteExternalId',
       'sampleOriginSite.id as sampleSiteId',
       'sampleOriginSite.name as sampleSiteName',
       'sampleOriginState.name as sampleSiteStateName',
-      'sampleType.externalId as sampleTypeExternalId',
-      'sampleType.i18nKey as sampleTypeI18nKey',
-      'sampleType.name as sampleTypeName',
+      'stp.externalId as sampleTypeExternalId',
+      'stp.i18nKey as sampleTypeI18nKey',
+      'stp.name as sampleTypeName',
       'reportableSite.id as reportableSiteId',
       'reportableSite.externalId as reportableSiteExternalId',
       'reportableSite.name as reportableSiteName',
-      'laboratory.id as laboratorySiteId',
-      'laboratory.externalId as laboratorySiteExternalId',
-      'laboratory.name as laboratorySiteName',
-      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
+      'si.id as laboratorySiteId',
+      'si.externalId as laboratorySiteExternalId',
+      'si.name as laboratorySiteName',
       'sampleCollectedBy.name as sampleClinicianName',
       'transferReportableSite.name as transferSiteName',
       'transferOriginSite.name as transferOriginSiteName',
@@ -143,30 +82,51 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'transferLog.reportableSiteId as transferReportableSiteId',
       'transferLog.previousReportableSiteId as transferPreviousReportableSiteId'
     )
-  return knexQuery
+    .orderBy('sampleCollectedOn', 'desc')
+    .orderBy('testEndDate', 'desc')
+  return queryBuilder
 }
 
-const getWorkflowLogsByResultIds = (results, resultWorkflowStatusExternalId) => {
-  return knex('ResultWorkflowLog as rwl')
-    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
-    .whereIn(
-      'rwl.resultId',
-      _.map(results, r => r.id)
+const fetchResultsQuery = (query, dataConstraints) => {
+  const { modifiedSince, submittedSince, resultId, ignoredResultCategories } = query
+
+  return buildQueryForResultsListAndExport(query, dataConstraints)
+    .leftJoin('Person as sampleCollectedBy', 'sp.collectedBy', 'sampleCollectedBy.userId')
+    .leftJoin('Site as sampleOriginSite', 'sp.originSiteId', 'sampleOriginSite.id')
+    .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
+    .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
+    .leftJoin(
+      'ResultTreatmentStatusLog as resultTreatmentStatusLog',
+      'r.treatmentStatusLogId',
+      'resultTreatmentStatusLog.id'
     )
-    .andWhere('rws.externalId', resultWorkflowStatusExternalId)
-}
-
-const getAcknowledgementsByResultIds = results => {
-  return getWorkflowLogsByResultIds(results, ACKNOWLEDGED)
-    .select('rwl.resultId', knex.raw('MAX(rwl.changedOn) as acknowledgedOn'))
-    .groupBy('rwl.resultId')
-}
-
-const getFlagsByResultIds = results => {
-  return getWorkflowLogsByResultIds(results, FLAGGED)
-    .whereNotNull('rwl.reason')
-    .andWhere('rwl.reason', '<>', '')
-    .distinct('rwl.resultId', 'rwl.changedOn as flaggedOn', 'rwl.reason')
+    .leftJoin(
+      'ResultTreatmentStatus as resultTreatmentStatus',
+      'resultTreatmentStatusLog.resultTreatmentStatusId',
+      'resultTreatmentStatus.id'
+    )
+    .leftJoin('ResultStatusLog as resultStatusLog', 'r.id', 'resultStatusLog.resultId')
+    .leftJoin('ResultTransferLog as transferLog', 'r.id', 'transferLog.resultId')
+    .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
+    .leftJoin('Site as reportableSite', 'r.reportableSiteId', 'reportableSite.id')
+    .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
+    .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
+    .andWhere(qb => {
+      if (modifiedSince) {
+        qb.where('r.updatedOn', '>=', modifiedSince).orWhereNull('r.updatedOn')
+      }
+    })
+    .andWhere(qb => {
+      if (submittedSince) {
+        qb.where('r.endedOn', '>=', submittedSince).orWhere('sp.collectedOn', '>=', submittedSince)
+      }
+    })
+    .whereNotIn('r.resultCategory1', ignoredResultCategories)
+    .andWhere(qb => {
+      if (resultId) {
+        qb.where('r.id', resultId)
+      }
+    })
 }
 
 const getFollowUpsByResultIds = results => {
@@ -183,6 +143,7 @@ const getFollowUpsByResultIds = results => {
       'rfu.resultId',
       'rfu.id',
       'rfu.externalId',
+      'rfu.reason',
       'rfu.date',
       'rfu.createdOn',
       'rfu.updatedOn',
@@ -193,31 +154,6 @@ const getFollowUpsByResultIds = results => {
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypeI18nKey',
       'p.name as clinicianName'
-    )
-  return knexQuery
-}
-
-const getCommentsOfResultById = comments => {
-  const knexQuery = knex('ResultNote as rn')
-    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
-    .leftOuterJoin('User as createdByUser', 'rn.createdBy', 'createdByUser.id')
-    .leftOuterJoin('Person as createdByPerson', 'createdByUser.id', 'createdByPerson.userId')
-    .leftOuterJoin('User as updatedByUser', 'rn.updatedBy', 'updatedByUser.id')
-    .leftOuterJoin('Person as updatedByPerson', 'updatedByUser.id', 'updatedByPerson.userId')
-    .whereIn(
-      'rn.resultId',
-      _.map(comments, r => r.id)
-    )
-    .groupBy('rn.id')
-    .select(
-      'rn.resultId',
-      'rn.id',
-      'rn.text',
-      'rn.createdOn',
-      'createdByPerson.name as createdBy',
-      'rn.changedOn',
-      'updatedByPerson.name as changedBy',
-      'rnt.name as noteType'
     )
   return knexQuery
 }
@@ -235,10 +171,8 @@ const getUserSiteIds = async dataConstraints => {
 }
 
 module.exports = {
-  fetchResultsByUpdatedOnQuery,
-  getCommentsOfResultById,
+  fetchResultsBySubmittedSinceQuery,
+  fetchResultsQuery,
   getFollowUpsByResultIds,
-  getAcknowledgementsByResultIds,
-  getFlagsByResultIds,
   getUserSiteIds,
 }

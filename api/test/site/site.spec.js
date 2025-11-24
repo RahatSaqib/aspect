@@ -4,7 +4,6 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { knex } = require('../../src/db')
 const { insertSite } = require('../../src/site/common/db')
-
 const shared = require('../utils/sharedToken')
 
 const { assert } = chai
@@ -105,7 +104,7 @@ describe('Site routes', () => {
         assert.property(res.body.data, 'latitude')
         assert.property(res.body.data, 'longitude')
         assert.property(res.body.data, 'geographyId')
-        siteData = _.omit(res.body.data, 'geographyId')
+        siteData = _.omit(res.body.data, 'geographyId', 'siteTypeExternalId')
       })
     })
 
@@ -139,6 +138,7 @@ describe('Site routes', () => {
           hoursStart: null,
           hoursEnd: null,
           siteTypeId: siteTypeLabId,
+          sampleRegistrationAllowed: true,
           parentWarehouseId: null,
         }
       })
@@ -179,6 +179,7 @@ describe('Site routes', () => {
           longitude: 59.912731,
           latitude: 60.912731,
           siteTypeId: siteTypeLabId,
+          sampleRegistrationAllowed: 1,
           parentWarehouseId: null,
         })
         assert.equal(insertedSite.timezoneid, 'Argentina Standard Time')
@@ -190,6 +191,7 @@ describe('Site routes', () => {
           shortName: dummyShortName,
           externalId: dummyExternalId,
           siteTypeId: siteTypeLabId,
+          sampleRegistrationAllowed: true,
         })
 
         insertedSites.push(exisingSiteId)
@@ -266,8 +268,9 @@ describe('Site routes', () => {
           'devices',
           'contacts',
           'siteType',
+          'parentWarehouseName',
         ])
-        const params = { ...newSiteData, street2: newStreet2, tags: 'Tag' }
+        const params = { ...newSiteData, street2: newStreet2, tags: 'Tag', sampleRegistrationAllowed: true }
         const updateSiteResponse = await server
           .put(`${path}/${siteId}`)
           .send(params)

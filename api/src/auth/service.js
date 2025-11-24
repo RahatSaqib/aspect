@@ -549,7 +549,7 @@ async function hasPermissions(auth, modules) {
 }
 
 // generate a new jwt for the given user data
-async function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
+async function getAccessToken({ id, name, partnerId, personId, userName }, clientType = 'web') {
   const { permissions, jobFunctionNames } = await getUserPermissions(id, partnerId)
   const applicableLicense = await getApplicableLicense(personId, partnerId)
 
@@ -558,6 +558,7 @@ async function getAccessToken({ id, name, partnerId, personId }, clientType = 'w
     {
       personId,
       name,
+      fullName: userName,
       jobFunctionNames,
       permissions,
       hasToAcceptLicenseId:

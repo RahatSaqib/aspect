@@ -1,6 +1,7 @@
 const { getConstraints } = require('../../auth/constraints')
 const getInventoryOverviewList = require('./db')
-const { getAllGeographiesWithNames } = require('../../geography/service')
+const { getAllGeographiesWithNames } = require('../../geography/common/db')
+const { SITE_TYPE_EXTERNAL_IDS } = require('../../shared/constants')
 
 module.exports = async function (request) {
   const { auth, query } = request
@@ -8,10 +9,9 @@ module.exports = async function (request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const inventoryListQuery = getInventoryOverviewList(query, dataConstraints)
+  const geographyListQuery = getAllGeographiesWithNames(dataConstraints)
 
-  const geographiesPromise = getAllGeographiesWithNames(request, dataConstraints)
-
-  const [sites, geographies] = await Promise.all([inventoryListQuery, geographiesPromise])
+  const [sites, geographies] = await Promise.all([inventoryListQuery, geographyListQuery])
 
   const country = buildHierarchy(geographies, sites)
 
@@ -22,74 +22,43 @@ module.exports = async function (request) {
 
 /**
  * Fills children sites and geographies on each geography, arrange geographies in a hierarchy.
- * @param {Array} geo - List of geographies.
+ * @param {Array} geographies - List of geographies.
  * @param {Array} sites - List of sites.
  * @returns Hierachical list of geographies, with country ➜ state ➜ lga, where each node's children property contains warehouses and labs.
  */
-function buildHierarchy(geo, sites) {
-  const [{ countryId }] = geo
+function buildHierarchy(geographies, sites) {
+  const { country, states, lgas } = processGeographies(geographies)
+  const sitesWithDefaults = processSites(sites)
 
-  const states = geo.filter(g => g.stateId && !g.lgaId)
-  const lgas = geo.filter(g => g.lgaId)
+  const hierarchy = {
+    ...reduceItemAuxiliarProperties(country),
+    type: 'country',
+    children: [...getCountryWarehouses(sitesWithDefaults), ...buildStateHierarchy(states, lgas, sitesWithDefaults)].map(
+      reduceItemAuxiliarProperties
+    ),
+  }
 
-  // Add extra unique states and lgas to match sites with no state or lga associated
-  lgas.push({ lgaId: 'NO_LGA', stateId: 'NO_STATE', countryId })
-  lgas.push(...states.map(s => ({ lgaId: `STATE_${s.stateId}_NO_LGA`, stateId: s.stateId })))
-  states.push({ stateId: 'NO_STATE', countryId })
+  return hierarchy
+}
 
-  // Assign unique matching lga id and state id to sites with no state or lga associated
-  sites.forEach(s => {
-    if (!s.stateId && !s.lgaId) {
-      s.lgaId = `NO_LGA`
-      s.stateId = `NO_STATE`
-    } else if (!s.lgaId) {
-      s.lgaId = `STATE_${s.stateId}_NO_LGA`
-    }
-  })
+function buildStateHierarchy(states, lgas, sites) {
+  return states.map(state => ({
+    ...state,
+    type: 'state',
+    children: [...getStateWarehouses(state.stateId, sites), ...buildLgaHierarchy(state.stateId, lgas, sites)].map(
+      reduceItemAuxiliarProperties
+    ),
+  }))
+}
 
-  // Sort by showing first the warehouses and then the labs
-  sites = sites.sort((a, b) => {
-    if (a.type === b.type) return 0
-
-    if (a.type === 'warehouse' && b.type === 'lab' && b.type === 'clinic') return -1
-
-    return 1
-  })
-
-  // Build lgas childrens
-  lgas.forEach(g => {
-    g.type = 'lga'
-    const lgaSites = sites.filter(
-      s =>
-        s.lgaId === g.lgaId &&
-        s.stateId === g.stateId &&
-        (['lab', 'clinic'].includes(s.type) ||
-          // Only lga-level warehouses are going to be included in the site-level
-          (s.type === 'warehouse' && s.lgaId !== 'NO_LGA' && s.lgaId !== `STATE_${s.stateId}_NO_LGA`))
-    )
-
-    g.children = reduceAuxiliarProperties(lgaSites)
-  })
-
-  // Build states childrens
-  states.forEach(g => {
-    g.type = 'state'
-    const stateWarehouses = sites.filter(
-      s => s.type === 'warehouse' && g.stateId === s.stateId && s.lgaId === `STATE_${s.stateId}_NO_LGA`
-    )
-    const stateLgas = lgas.filter(l => l.stateId === g.stateId)
-    g.children = reduceAuxiliarProperties([...stateWarehouses, ...stateLgas])
-  })
-
-  // Build country childrens
-  const country = geo.find(g => g.countryId && !g.stateId && !g.lgaId)
-  country.type = 'country'
-  const countryWarehouses = sites.filter(
-    s => s.type === 'warehouse' && s.stateId === 'NO_STATE' && s.lgaId === 'NO_LGA'
-  )
-  country.children = reduceAuxiliarProperties([...countryWarehouses, ...states])
-
-  return reduceItemAuxiliarProperties(country)
+function buildLgaHierarchy(stateId, lgas, sites) {
+  return lgas
+    .filter(lga => lga.stateId === stateId)
+    .map(lga => ({
+      ...lga,
+      type: 'lga',
+      children: getLgaSites(lga, sites).map(reduceItemAuxiliarProperties),
+    }))
 }
 
 function fillHierarchicalAggregations(item) {
@@ -104,7 +73,7 @@ function fillHierarchicalAggregations(item) {
       item.unreconciledQuantity = 0
 
       item.children
-        .filter(site => site.type !== 'warehouse')
+        .filter(site => site.type !== SITE_TYPE_EXTERNAL_IDS.WAREHOUSE)
         .forEach(child => {
           fillHierarchicalAggregations(child)
           item.quantity += child.quantity
@@ -129,15 +98,72 @@ function fillHierarchicalAggregations(item) {
         item.daysOfInventoryLeft = 0
       }
       break
-    case 'warehouse':
+    case SITE_TYPE_EXTERNAL_IDS.WAREHOUSE:
       break
     default:
       break
   }
 }
 
-function reduceAuxiliarProperties(array) {
-  return array.map(item => reduceItemAuxiliarProperties(item))
+function processGeographies(geographies) {
+  const [country] = geographies
+  const states = []
+  geographies.forEach(g => {
+    if (!states.some(item => item.stateId === g.stateId)) {
+      states.push({ countryId: g.countryId, state: g.state, stateId: g.stateId })
+    }
+  })
+  const lgas = geographies.filter(g => g.lgaId)
+
+  // Add extra unique states and lgas to match sites with no state or lga associated
+  return {
+    country: { countryId: country.countryId, country: country.country },
+    states: [...states, { stateId: 'NO_STATE', countryId: country.countryId }],
+    lgas: [
+      ...lgas,
+      { lgaId: 'NO_LGA', stateId: 'NO_STATE', countryId: country.countryId },
+      ...states.map(s => ({ lgaId: `STATE_${s.stateId}_NO_LGA`, stateId: s.stateId, countryId: s.countryId })),
+    ],
+  }
+}
+
+function processSites(sites) {
+  const sitesWithDefaults = sites.map(site => ({
+    ...site,
+    stateId: site.stateId || `NO_STATE`,
+    lgaId: site.lgaId || (site.stateId ? `STATE_${site.stateId}_NO_LGA` : `NO_LGA`),
+  }))
+
+  return sitesWithDefaults.sort((a, b) => {
+    if (a.type === b.type) return 0
+    if (a.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE) return -1
+    return 1
+  })
+}
+
+function getCountryWarehouses(sites) {
+  return sites.filter(
+    s => s.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE && s.stateId === 'NO_STATE' && s.lgaId === 'NO_LGA'
+  )
+}
+
+function getStateWarehouses(stateId, sites) {
+  return sites.filter(
+    s => s.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE && stateId === s.stateId && s.lgaId === `STATE_${s.stateId}_NO_LGA`
+  )
+}
+
+function getLgaSites(lga, sites) {
+  return sites.filter(
+    s =>
+      s.lgaId === lga.lgaId &&
+      s.stateId === lga.stateId &&
+      ([SITE_TYPE_EXTERNAL_IDS.LAB, SITE_TYPE_EXTERNAL_IDS.CLINIC].includes(s.type) ||
+        // Only lga-level warehouses are going to be included in the site-level
+        (s.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE &&
+          s.lgaId !== 'NO_LGA' &&
+          s.lgaId !== `STATE_${s.stateId}_NO_LGA`))
+  )
 }
 
 function reduceItemAuxiliarProperties(item) {
@@ -145,7 +171,7 @@ function reduceItemAuxiliarProperties(item) {
   delete reduced.consumableId
   delete reduced.geographyId
   delete reduced.firstResultDateInLastSixMonths
-  if (reduced.type === 'warehouse') {
+  if (reduced.type === SITE_TYPE_EXTERNAL_IDS.WAREHOUSE) {
     delete reduced.usedLastSixMonths
     delete reduced.usedInDateRange
   }

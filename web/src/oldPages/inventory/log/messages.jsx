@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { consumableMessages } from '../../../messages'
+import { consumableMessages, consumableReasonMessages } from '../../../messages'
 import allMessage from '../../../messages/allMessages'
 import { commonDefinitions } from '../../../messages/customMessages'
 
@@ -7,10 +7,11 @@ const messages = {
   ...commonDefinitions,
   ...allMessage,
   ...consumableMessages,
+  ...consumableReasonMessages,
   ...defineMessages({
-    date: {
-      id: 'pages.InventoryLog.date',
-      defaultMessage: 'Date',
+    registrationDate: {
+      id: 'pages.InventoryLog.registrationDate',
+      defaultMessage: 'Registration Date',
     },
     inventoryLogTitle: {
       id: 'pages.InventoryLog.inventoryLogTitle',
@@ -42,11 +43,11 @@ const messages = {
     },
     reconcilationAdjustment: {
       id: 'pages.InventoryLog.reconcilationAdjustment',
-      defaultMessage: 'Applied Consumable Strategy',
+      defaultMessage: 'Applied Consumption strategy',
     },
     reconcilationStrategy: {
       id: 'pages.InventoryLog.reconcilationStrategy',
-      defaultMessage: 'Applied Reconciliation Strategy',
+      defaultMessage: 'Applied Cartridge Batch strategy',
     },
     currentSiteAdjustment: {
       id: 'pages.InventoryLog.currentSiteAdjustment',
@@ -96,6 +97,10 @@ const messages = {
       id: 'pages.InventoryLog.adjust',
       defaultMessage: 'Adjust',
     },
+    adjustFromTo: {
+      id: 'pages.InventoryLog.adjustFromTo',
+      defaultMessage: '*Adjusted from {from} to {to}',
+    },
     paginatorStatus: {
       id: 'pages.InventoryLog.paginatorStatus',
       defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
@@ -105,11 +110,11 @@ const messages = {
     },
     inTransitFromSiteName: {
       id: 'pages.InventoryLog.inTransitFromSiteName',
-      defaultMessage: '* in transit from {inTransitFromSiteName}',
+      defaultMessage: '*In transit from {inTransitFromSiteName}',
     },
     excludedLotInTransit: {
       id: 'pages.InventoryLog.excluded.inTransitFromSiteName',
-      defaultMessage: '* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
+      defaultMessage: '*Excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
     },
     never: {
       id: 'pages.InventoryLog.never',
@@ -126,54 +131,6 @@ const messages = {
     projectedWaste: {
       id: 'pages.InventoryLog.projectedWaste',
       defaultMessage: 'Projected stock waste',
-    },
-    ConsumableReason_TransferSent: {
-      id: 'pages.InventoryLog.ConsumableReason_TransferSent',
-      defaultMessage: 'Tranfer sent to {refSiteName}',
-    },
-    ConsumableReason_TransferReceived: {
-      id: 'pages.InventoryLog.ConsumableReason_TransferReceived',
-      defaultMessage: 'Tranfer received from {refSiteName}',
-    },
-    ConsumableReason_AssertedZeroInventory: {
-      id: 'pages.InventoryLog.ConsumableReason_AssertedZeroInventory',
-      defaultMessage: 'Asserted zero inventory',
-    },
-    ConsumableReason_TestConducted: {
-      id: 'pages.InventoryLog.ConsumableReason_TestConducted',
-      defaultMessage: 'Test conducted',
-    },
-    ConsumableReason_Expired: {
-      id: 'pages.InventoryLog.ConsumableReason_Expired',
-      defaultMessage: 'Expired',
-    },
-    ConsumableReason_Imported: {
-      id: 'pages.InventoryLog.ConsumableReason_Imported',
-      defaultMessage: 'Imported',
-    },
-    ConsumableReason_Stolen: {
-      id: 'pages.InventoryLog.ConsumableReason_Stolen',
-      defaultMessage: 'Stolen',
-    },
-    ConsumableReason_Lost: {
-      id: 'pages.InventoryLog.ConsumableReason_Lost',
-      defaultMessage: 'Lost',
-    },
-    ConsumableReason_Captured: {
-      id: 'pages.InventoryLog.ConsumableReason_Captured',
-      defaultMessage: 'Captured',
-    },
-    ConsumableReason_Damage: {
-      id: 'pages.InventoryLog.ConsumableReason_Damage',
-      defaultMessage: 'Damage',
-    },
-    ConsumableReason_AssertedInventoryOnHandAdd: {
-      id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd',
-      defaultMessage: 'Asserted inventory on hand decrease',
-    },
-    ConsumableReason_AssertedInventoryOnHandRemove: {
-      id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove',
-      defaultMessage: 'Asserted inventory on hand increase',
     },
   }),
 }

@@ -10,7 +10,6 @@ const {
   resultCategoryToId,
   resultSourceToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const { insertSite } = require('../../src/site/common/db')
@@ -26,11 +25,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereNotNull('dak.deviceId')
     .pluck('dak.deviceId')
 
-  const deviceResultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
-  const generatedResultIds = await knex('ResultGeneratedResult')
-    .whereIn('sourceResultId', deviceResultIds)
-    .pluck('generatedResultId')
-  const resultIds = deviceResultIds.concat(generatedResultIds)
+  const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
   const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
 
@@ -47,17 +42,12 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
   await knex('InventoryLog').whereIn('resultId', resultIds).delete()
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-  await knex('ResultGeneratedResult')
-    .whereIn('sourceResultId', resultIds)
-    .orWhereIn('generatedResultId', resultIds)
-    .delete()
-
-  await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
+  await knex('ResultTransferLog').whereIn('resultId', resultIds).delete()
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
   await knex('ResultFileReference').whereIn('resultId', resultIds).delete()
-  await knex('ResultNote').whereIn('resultId', resultIds).delete()
+  const sampleIds = await knex('Result').whereIn('id', resultIds).pluck('sampleId')
   await knex('Result').whereIn('id', resultIds).delete()
+  await knex('Sample').whereIn('id', sampleIds).delete()
   await knex('DeviceOperation').whereIn('id', opIds).delete()
   await knex('DeviceApiKey').whereIn('deviceId', deviceIds).update({ deviceId: null })
   await knex('Device').whereIn('id', deviceIds).delete()
@@ -248,7 +238,6 @@ async function createResult(
     resultData,
     startedOn,
     endedOn,
-    resultWorkflowStatusId,
   }
 ) {
   const now = new Date()
@@ -258,7 +247,6 @@ async function createResult(
   if (!resultData) resultData = JSON.stringify({})
   if (!startedOn) startedOn = subHours(now, 2)
   if (!endedOn) endedOn = now
-  if (!resultWorkflowStatusId) resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
 
   const { siteId, partnerId } = await knex('Device as d').where({ id: deviceId }).first()
 
@@ -290,16 +278,6 @@ async function createResult(
     endedOn,
     reportableSiteId: siteId,
     instrumentSerial,
-  })
-  const [lastLogId] = await knex('ResultWorkflowLog').insert({
-    resultWorkflowStatusId,
-    resultId,
-    changedOn: startedOn,
-    createdOn: startedOn,
-    createdBy: 1,
-  })
-  await knex('Result').where('id', resultId).update({
-    resultWorkflowStatusLogId: lastLogId,
   })
   await knex('DeviceLog').insert({
     deviceId,
@@ -355,16 +333,7 @@ class DeviceApiTestContext {
 
   async getResultProps(props) {
     const now = new Date()
-    let {
-      externalId,
-      resultSourceId,
-      resultTypeId,
-      resultCategory1,
-      resultData,
-      resultWorkflowStatusId,
-      startedOn,
-      endedOn,
-    } = props
+    let { externalId, resultSourceId, resultTypeId, resultCategory1, resultData, startedOn, endedOn } = props
     if (!externalId) externalId = `NEW RESULT ${new Date().getTime()}`
     if (!resultSourceId) resultSourceId = await resultSourceToId('Generated')
     if (!resultTypeId) resultTypeId = await resultTypeToId('Patient')
@@ -372,7 +341,6 @@ class DeviceApiTestContext {
     if (!resultData) resultData = JSON.stringify({})
     if (!startedOn) startedOn = subHours(now, 2)
     if (!endedOn) endedOn = now
-    if (!resultWorkflowStatusId) resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
     return {
       sampleType: this.sampleType,
       assayName: this.assayName,
@@ -381,7 +349,6 @@ class DeviceApiTestContext {
       resultTypeId,
       resultCategory1,
       resultData,
-      resultWorkflowStatusId,
       startedOn,
       endedOn,
     }

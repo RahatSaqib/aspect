@@ -1,8 +1,8 @@
 const _ = require('lodash')
+const knexLib = require('knex')
 const { getSortPageParams, getSortParams, getPageParams } = require('./routes')
 const logger = require('./shared/logger')
-
-let knex = null // see load
+const knexConfig = require('../knexfile')
 
 function query() {
   return load()
@@ -10,8 +10,8 @@ function query() {
 
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort & paging modifications
-function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
-  const sortingAndPagingValues = getSortPageParams(params, sortColumnMapping, defaultSort)
+function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping, getExtraItemToCheckNextPage = false) {
+  const sortingAndPagingValues = getSortPageParams(params, sortColumnMapping, defaultSort, getExtraItemToCheckNextPage)
   queryBuilder.orderBy(sortingAndPagingValues.orderBy)
   if (sortingAndPagingValues.size) {
     queryBuilder.limit(sortingAndPagingValues.size).offset(sortingAndPagingValues.skip)
@@ -147,22 +147,28 @@ function migration(up, down) {
   }
 }
 
-// initialize on demand to allow custom knex object
-// in testing/migrations
+// Lazy initialization of the Knex instance
+let knex = null
+
 function load() {
   if (!knex) {
-    const config = require('./config')
-    knex = require('knex')({
-      client: 'mysql',
-      connection: config.db,
-      pool: {
-        min: 0,
-        max: config.db.connectionLimit,
-      },
-    })
+    knex = knexLib(knexConfig)
   }
 
   return knex
+}
+
+function knexConnectionWithoutSchema() {
+  // Create a new knex instance without the database name
+  const config = { ...knexConfig }
+  delete config.connection.database
+  return knexLib(config)
+}
+
+async function getCurrentSslCipher(knex) {
+  const result = await knex.raw(`SHOW STATUS LIKE 'ssl_cipher';`)
+  const cipher = result[0]?.[0]?.Value
+  return cipher
 }
 
 module.exports = {
@@ -175,6 +181,8 @@ module.exports = {
   migration,
   run,
   transact,
+  getCurrentSslCipher,
 }
 
 Object.defineProperty(module.exports, 'knex', { get: load })
+Object.defineProperty(module.exports, 'knexConnectionWithoutSchema', { get: knexConnectionWithoutSchema })

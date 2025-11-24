@@ -1,6 +1,6 @@
 /* eslint-disable import/no-dynamic-require */
 const fs = require('fs')
-const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_functions')
+const updateReportsAndJobFunctions = require('../common/upsert_reports_and_job_functions')
 
 const { partner, fixtures } = require(`../${process.env['seeds.directory'].replace(
   './seeds/',

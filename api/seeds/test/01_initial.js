@@ -20,7 +20,6 @@ const {
   deviceApprovalToId,
   sampleTypeToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
 } = require('../../src/shared/dictionary')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
@@ -29,7 +28,6 @@ const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const upsertConsumables = require('../common/upsert_consumables')
 const { insertSite } = require('../../src/site/common/db')
-const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -814,9 +812,6 @@ async function seed(knex) {
   await upsertConsumables(knex, true, ['DaktariCD4', 'DaktariHivVL'])
   const consumableGxTbCartridgeId = await consumableToId('GxMtbRifCartridge')
 
-  // Result Workflow Status
-  const deliverable = await resultWorkflowStatusToId('Deliverable')
-
   // Create geographic hierarchy
   const countries = {}
   const siteDatas = []
@@ -1068,6 +1063,8 @@ async function seed(knex) {
       collectedOn: calculateDateForResult(i, resultHcvNumber, millisInMinute),
       sampleTypeId: await sampleTypeToId('DBS'),
       originSiteId: siteDate.id,
+      createdOn: now,
+      updatedOn: now,
     }
     ;[sample.id] = await knex('Sample').insert(sample)
     samples.push(sample)
@@ -1167,14 +1164,6 @@ async function seed(knex) {
   const createdOn = subMinutes(now, 90)
   await Promise.each(resultDatas, async (resultData, i) => {
     const [resultId] = await knex('Result').insert(resultData)
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: deliverable,
-      operator: 'Aaron',
-      changedOn: createdOn,
-      createdOn,
-      createdBy: adminId,
-    })
 
     // Insert one result status log (ensure we log one of each status)
     let rdm = (i + 1) % resultStatusesIds.length
@@ -1192,8 +1181,6 @@ async function seed(knex) {
       createdOn,
       createdBy: adminId,
     })
-
-    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   await upsertPermissionFixture(knex)
@@ -1283,6 +1270,4 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
   ])
-
-  await addDefaultCustomFieldDefinitions(knex)
 }

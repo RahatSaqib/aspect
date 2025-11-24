@@ -45,5 +45,5 @@ async function seed(knex) {
 
   // GeneXpert
   await upsertGeneXpertDeviceTypeAndAssays(knex, assays)
-  await addDefaultCustomFieldDefinitions(knex)
+  await addDefaultCustomFieldDefinitions(knex, partnerId)
 }

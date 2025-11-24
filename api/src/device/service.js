@@ -1,19 +1,9 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
-const {
-  addDays,
-  addYears,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-  format,
-  isWeekend,
-  parseJSON,
-  differenceInBusinessDays,
-} = require('date-fns')
+const { addDays, startOfMonth, endOfMonth, format, parseJSON } = require('date-fns')
 const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
-const { knex, filterParams, filterDateRangeParams, sortPageParams, sortParams, transact } = require('../db')
+const { knex, filterParams, filterDateRangeParams, sortParams, transact } = require('../db')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const { allResultCategoryToId, allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
@@ -23,12 +13,12 @@ const {
   startOfTodayUtc,
   formatDateOrDefault,
   getArrayOfDaysInRange,
-  getMonthYearUserTimeZoneField,
-  getTimezoneOffsetFromNumber,
+
   getOffsetFromIsoDateString,
   getDateTimeProjectionInTimeZoneIANA,
+  isWeekend,
 } = require('../shared/date')
-const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../shared/query')
+
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const {
@@ -41,6 +31,7 @@ const { getSelectListFields } = require('./common/querySelectors')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
 const { getDeviceStatusOverTime } = require('../deviceMaintenanceStatus/service')
 const { getDateTimeExpressionInTimeZone } = require('../shared/date')
+const { getPartnerWorkingDaysConfig } = require('../partner/common/db')
 
 async function getDeviceByRequest(request) {
   const {
@@ -227,107 +218,6 @@ async function updateDeviceMaintenance(request) {
   return { ok: true, data: device, deviceMaintenanceId }
 }
 
-async function getDevicePerformance(request) {
-  const { auth, params, query } = request
-
-  const { deviceId } = params
-
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const endedOn = new Date()
-
-  const startedOn = startOfMonth(subMonths(endedOn, 12)) // 12 months period
-
-  const offset = getTimezoneOffsetFromNumber(query.timezoneOffset)
-
-  const devicePerformance = await knex('Result as r')
-    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .modify(
-      addConstraints,
-      dataConstraints,
-      { result: 'r', device: 'd' },
-      { showUnapprovedDevices: true, showDecommissionedDevices: true }
-    )
-    .where('r.deviceId', deviceId)
-    .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
-    .select([
-      knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
-      knex.raw(`sum(rc1.externalId = 'Error') as errorCount`),
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthTested', offset),
-      lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
-      'd.dailyTestCapacity',
-    ])
-    .groupBy('monthTested')
-
-  const { errorCategoryId } = await knex('ResultCategory as r')
-    .where('r.externalId', 'Error')
-    .first('r.id as errorCategoryId')
-
-  const resultsByCategory = await knex('FactResultsDeviceByCategory1 as f')
-    .innerJoin('Device as d', 'f.deviceId', 'd.id')
-    .innerJoin('Assay as a', 'f.assayId', 'a.id')
-    .modify(
-      addConstraints,
-      dataConstraints,
-      { device: 'd', assay: 'a' },
-      { showUnapprovedDevices: true, showDecommissionedDevices: true }
-    )
-    .where('f.days', 365)
-    .groupBy('f.resultCategory1')
-    .select([knex.raw('f.resultCategory1 as resultCategoryId'), knex.raw(`sum(f.resultCount) as resultCount`)])
-
-  const countryTotalErrorCount = resultsByCategory.find(x => x.resultCategoryId === errorCategoryId)?.resultCount ?? 0
-  const countryTotalResult = _.sumBy(resultsByCategory, x => x.resultCount)
-
-  let dt = endedOn
-
-  while (dt >= startedOn) {
-    const monthTested = format(dt, 'yyyy-MM')
-
-    if (!devicePerformance.find(x => x.monthTested === monthTested)) {
-      devicePerformance.push({
-        errorCount: 0,
-        totalResult: 0,
-        monthTested,
-      })
-    }
-
-    dt = endOfMonth(subMonths(dt, 1))
-  }
-
-  let utilizationRateAvg = null
-  const newData = _.map(devicePerformance, x => {
-    if (devicePerformance.dailyTestCapacity) {
-      utilizationRateAvg = 80
-
-      const minDate = new Date(`${x.monthTested}-01`)
-      const workingDays = differenceInBusinessDays(x.lastDayOfMonth, minDate)
-      x.utilizationRate = _.round(
-        (x.totalResult * 100) / Math.max(workingDays * devicePerformance.dailyTestCapacity, 1),
-        2
-      )
-    } else {
-      x.utilizationRate = null
-    }
-
-    if (x.totalResult) {
-      x.errorRate = Math.round((x.errorCount * 100) / x.totalResult)
-      return x
-    }
-    x.errorRate = 0
-    return x
-  })
-
-  return {
-    ok: true,
-    length: newData.length,
-    utilizationRateAvg,
-    errorRateAvg: Math.round((countryTotalErrorCount * 100) / countryTotalResult),
-    data: _.sortBy(newData, [x => x.monthTested]),
-  }
-}
-
 // ---------------------------------
 // get devices with different aggregations for reports
 // ---------------------------------
@@ -379,36 +269,36 @@ async function getDevicesForReport(auth, query) {
     .sum({
       totalResults: 'r.resultCount',
       totalErrors: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Error} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Error}
+        then r.resultCount
+        else 0
         end`),
       noResults: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult}
+        then r.resultCount
+        else 0
         end`),
       totalInvalid: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
-        then r.resultCount 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid}
+        then r.resultCount
+        else 0
         end`),
 
       totalResults_sameOriginSite: knex.raw(`r.xdrResistanceCounts ->> "$.cntSameOriginSite"`),
       totalErrors_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Error} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Error}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
       noResults_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
       totalInvalid_sameOriginSite: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
-        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
-        else 0 
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid}
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite"
+        else 0
         end`),
     })
   const resultsLastUploaded = await knex('Result as r')
@@ -724,19 +614,22 @@ async function onDeviceMaintenanceStatusLogged({ deviceMaintenanceStatusLogId },
   return messageContext.run(async knex => {
     if (!deviceMaintenanceStatusLogId) return
 
-    const { deviceId } =
-      (await knex('DeviceMaintenanceStatusLog').where('id', deviceMaintenanceStatusLogId).first('deviceId')) || {}
-    if (!deviceId) return
+    const deviceMaintenanceData = await knex('DeviceMaintenanceStatusLog as dmsl')
+      .join('Device as d', 'dmsl.deviceId', 'd.id')
+      .where('dmsl.deviceId', qb => {
+        qb.select('deviceId').from('DeviceMaintenanceStatusLog').where('id', deviceMaintenanceStatusLogId)
+      })
+      .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
+      .first(
+        'dmsl.deviceId',
+        'dmsl.id as latestDeviceMaintenanceStatusLogId',
+        'd.deviceMaintenanceStatusLogId as currentDeviceMaintenanceStatusLogId'
+      )
 
-    const { latestDeviceMaintenanceStatusLogId, currentDeviceMaintenanceStatusLogId } =
-      (await knex('DeviceMaintenanceStatusLog as dmsl')
-        .join('Device as d', 'dmsl.deviceId', 'd.id')
-        .where('dmsl.deviceId', deviceId)
-        .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
-        .first(
-          'dmsl.id as latestDeviceMaintenanceStatusLogId',
-          'd.deviceMaintenanceStatusLogId as currentDeviceMaintenanceStatusLogId'
-        )) || {}
+    if (!deviceMaintenanceData) return
+
+    const { deviceId, latestDeviceMaintenanceStatusLogId, currentDeviceMaintenanceStatusLogId } = deviceMaintenanceData
+
     if (currentDeviceMaintenanceStatusLogId !== latestDeviceMaintenanceStatusLogId) {
       await knex('Device').where('id', deviceId).update({
         deviceMaintenanceStatusLogId: latestDeviceMaintenanceStatusLogId,
@@ -848,6 +741,7 @@ async function deviceMaintenanceStatusHistory(request) {
   const { query, auth } = request
   const { minDate, maxDate = new Date() } = query
   const dataConstraints = await getConstraints(auth.credentials)
+  const customWorkingDaysConfig = await getPartnerWorkingDaysConfig(auth)
 
   const days = []
   let day = minDate || startOfMonth(new Date())
@@ -1017,7 +911,7 @@ async function deviceMaintenanceStatusHistory(request) {
         const dayStatus = {
           date: day,
           externalId: deviceMaintenanceStatusLog.externalId || 'inactiveUnknown',
-          isWeekend: isWeekend(day),
+          isWeekend: isWeekend(day, customWorkingDaysConfig),
           data: {},
         }
         if (deviceMaintenanceStatusLog.data) {
@@ -1078,7 +972,7 @@ async function getDevicesMaintenanceLogForTheDay(knex, today, timezone) {
   /**
    * total results today for all devices.
    * Notice that we shift endedOn and startedOn dates to the country timezone with CONVERT_TZ directly,
-   * without using helper getDateTimeProjectionInUserTimeZone because here we wrap it with DATE() func
+   * without using helper getDateTimeProjectionInTimeZoneIANA because here we wrap it with DATE() func
    */
   const allResults = await devicesBase
     .clone()
@@ -1324,50 +1218,6 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
   })
 }
 
-async function getDeviceCalibrationsForReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-  // get total count for paging
-  const getCount = deviceQuery.clone().count('d.id as count').first()
-
-  // get rows
-  const getItems = deviceQuery
-    .clone()
-    .leftOuterJoin('DeviceMaintenance as dm', queryBuilder => {
-      queryBuilder.on('d.id', 'dm.deviceId').andOn('dm.current', 1)
-    })
-    .modify(sortPageParams, query, 'name')
-    .select([
-      ..._.filter(
-        getSelectListFields(userTimeOffset),
-        /**
-         * make sure to exclude columns starting with `dms.` because
-         * we do not have JOIN with DeviceMaintenanceStatus table
-         */
-        elem =>
-          _.isString(elem) &&
-          // is either -1 or > 0
-          elem.indexOf('dms.') !== 0
-      ),
-      'd.serial',
-      'dm.contextDate as calibratedOn',
-    ])
-    .groupBy(['d.id', 'd.serial'])
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  // add more fields which depend on aggregations
-  data.forEach(async it => {
-    it.nextCalibrationOn = it.calibratedOn ? addYears(it.calibratedOn, 1) : null
-  })
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
-}
-
 // Reusable method to create a device log and update lastSeenOn for a device
 // This method will sometimes be called in a context of a database transaction.
 //  In this case the transaction's knex instance can be passed as the optionalKnex
@@ -1436,7 +1286,6 @@ module.exports = {
   listDevicesForSelectList,
   getDevice,
   updateDeviceMaintenance,
-  getDevicePerformance,
   getDevicesForReport,
   getDevicesForRifResistanceReport,
   getDeviceByDeviceId,
@@ -1449,7 +1298,6 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
-  getDeviceCalibrationsForReport,
   getDeviceBaseExtendedQuery,
   setStatusForDateRange,
   postPayloadFromDevice,

@@ -31,10 +31,9 @@ const I18nProvider = ({ timezoneId, children }) => {
   }, [])
 
   useEffect(() => {
-    const finalLocale = locale === 'tg-TJ' ? 'uz-Cyrl' : locale
     const dateFNSLocale = dateFNSLocales[locale]
     const finalMessages = translation[locale]
-    const intlObj = createIntl({ locale: finalLocale, messages: finalMessages, onError: () => {} }, cache)
+    const intlObj = createIntl({ locale, messages: finalMessages, onError: () => {} }, cache)
     setIntl({
       ...intlObj,
       format: (dateIn, formatIn) => formatInTimeZone(zonedTimeToUtc(dateIn, validTimeZone), validTimeZone, formatIn),
@@ -42,7 +41,7 @@ const I18nProvider = ({ timezoneId, children }) => {
         format(utcToZonedTime(dateIn, validTimeZone), "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone: validTimeZone }),
       formatDistance: (firstDateIn, secondDateIn, showSuffix = false) =>
         formatDistance(firstDateIn, secondDateIn, { locale: dateFNSLocale, addSuffix: showSuffix }),
-      formatTimezone: dateIn => dateIn.toLocaleString(finalLocale, { timeZone: validTimeZone }),
+      formatTimezone: dateIn => dateIn.toLocaleString(locale, { timeZone: validTimeZone }),
       formatMessage: (stringIn, values = {}, fallback = `!! I18N ID not set !!`) =>
         !stringIn ? fallback : intlObj.formatMessage(stringIn, values),
       timezone: validTimeZone,

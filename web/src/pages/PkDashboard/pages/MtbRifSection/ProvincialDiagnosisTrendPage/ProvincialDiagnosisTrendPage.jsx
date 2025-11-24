@@ -59,9 +59,11 @@ const ProvincialDiagnosisTrendPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
+  const stateName = getCustomMessage(formatMessage, messages, 'state', user, { entity: 'state' })
+
   return (
     <PkPage
-      title={formatMessage(messages.ProvincialTBDiagnosisTrendsComparison)}
+      title={`${stateName} ${formatMessage(messages.TBDiagnosisTrendsComparison)}`}
       filters={
         <>
           <StateAutocomplete
@@ -89,7 +91,9 @@ const ProvincialDiagnosisTrendPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} container>
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-              {formatMessage(messages[user.isCountry('PK') ? 'provincialDiagnosisTrends' : 'provincialMTBDiagnosis'])}
+              {user.isCountry('PK')
+                ? `${stateName} ${formatMessage(messages.diagnosisTrends)}`
+                : `${stateName} ${formatMessage(messages.MTBDiagnosis)}`}
             </Typography>
             <div style={{ width: '100%' }}>
               <LineGraph
@@ -110,8 +114,8 @@ const ProvincialDiagnosisTrendPage = () => {
               resultType={!user.isPakistan ? 'MTB+' : undefined}
               title={
                 user.isCountry('PK')
-                  ? `${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`
-                  : formatMessage(messages.provincialMTBDiagnosisCurrentYear)
+                  ? `${stateName} ${formatMessage(messages.diagnosisTrends)} ${formatMessage(messages.currentYear)}`
+                  : `${stateName} ${formatMessage(messages.MTBDiagnosisCurrentYear)}`
               }
             />
           </Grid>

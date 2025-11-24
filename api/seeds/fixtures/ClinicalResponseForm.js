@@ -1,0 +1,10 @@
+module.exports = {
+  fileName: 'ClinicalResponse.json',
+  formDefinition: {
+    order: 1,
+    title: 'Clinical Response',
+    i18nKeyTitle: 'ClinicalResponsei18nkey',
+    externalId: 'ClinicalResponse',
+    formTypeExternalId: 'clinicalResponseForm',
+  },
+}
