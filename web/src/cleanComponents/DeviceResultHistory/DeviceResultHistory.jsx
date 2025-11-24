@@ -103,7 +103,7 @@ const DeviceResultHistory = ({ deviceId, sortDir, sortCol, pageAt, pageSize }) =
         <div>
           {isLoading || isExporting ? (
             <LinearProgress />
-          ) : isEmpty(data) ? (
+          ) : isEmpty(data?.items) ? (
             <BrowseEmptyList />
           ) : (
             <>
