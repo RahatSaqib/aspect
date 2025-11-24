@@ -64,7 +64,7 @@ const resultsForNTPUse = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/serviceReportBangladesh',
+      moduleName: 'result/serviceReportBangladesh/ntpUse',
       functionName: 'getResultsForNtpUse',
       query: {
         avoidStreaming: true,
