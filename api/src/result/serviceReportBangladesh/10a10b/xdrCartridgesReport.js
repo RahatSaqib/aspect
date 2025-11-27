@@ -135,7 +135,7 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       'r.resultCategory1 as resultCategory1',
       'rc.externalId as resultCategoryExternalId',
       // Rif Resistance previously Detected vs Not Detected flag
-      knex.raw(`IF(r.resultData ->> '$.rifResistancePreviouslyDetected' = 'Yes', 'RRDET', 'RRNDET') as RRDET`),
+      knex.raw(`IF(r.resultData ->> '$.rifResistancePreviouslyDetected' = 'No', 'RRNDET', 'RRDET') as RRDET`),
       knex.raw(`IF(rc.id in (${positiveResultCategoriesIds}), 1, 0) as MTBDET`),
       // Own Site vs Other Site
       knex.raw(`IF(r.resultData ->> '$.originTestLocation' = 'This site', 'OWN', 'OTH') as MtbRifUltraAt`),
