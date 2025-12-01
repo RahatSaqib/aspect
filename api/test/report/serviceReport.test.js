@@ -121,34 +121,57 @@ describe('Excel Report Generation', () => {
       ],
     })
 
+    // Create a minimal valid Excel buffer for the stub
+    async function createMinimalExcelBuffer() {
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet('Sheet1')
+      worksheet.getCell('A1').value = 'Disabled Modules'
+      const buffer = await workbook.xlsx.writeBuffer()
+      return Buffer.from(buffer)
+    }
+
+    // Stub the module that getSheetData will dynamically require
+    const getDoNotUseModulesReportStub = sinon.stub().resolves({
+      ok: true,
+      data: sheetDataStub[0].data,
+      total: sheetDataStub[0].total,
+      dynamicColumns: sheetDataStub[0].dynamicColumns,
+      fixedColumns: sheetDataStub[0].fixedColumns,
+      dataSelector: sheetDataStub[0].dataSelector,
+      sections: sheetDataStub[0].sections,
+      populator: sheetDataStub[0].populator,
+      replacements: sheetDataStub[0].replacements,
+    })
+
+    const excelBuffer = await createMinimalExcelBuffer()
+
     const { generateReport } = proxyquire('../../src/report/serviceReports', {
       '../../src/report/service': {
         getReportDetails: getReportDetailsStub,
       },
-      './serviceReports': {
-        getSheetData: sinon.stub().resolves({ sheetDataStub }),
+      '../device/serviceReports': {
+        getDoNotUseModulesReport: getDoNotUseModulesReportStub,
+      },
+      '../shared/excel': {
+        getMaxLimitPlaceHolders: sinon.stub().returns([]),
+        getAdministrativeDivisionLabelPlaceHolders: sinon.stub().resolves([]),
+        renderExcelTemplate: sinon.stub().resolves(excelBuffer),
+      },
+      '../db': {
+        knex: sinon.stub().returns({
+          leftOuterJoin: sinon.stub().returnsThis(),
+          where: sinon.stub().returnsThis(),
+          whereNotNull: sinon.stub().returnsThis(),
+          orderBy: sinon.stub().returnsThis(),
+          select: sinon.stub().resolves([]),
+          first: sinon.stub().resolves({ name: 'all' }),
+          modify: sinon.stub().returnsThis(),
+        }),
+        filterParams: sinon.stub(),
       },
     })
-    // async function streamToBuffer(reportStream) {
-    //   assert.isTrue(reportStream instanceof Stream, 'stream should be a valid Stream')
-    //   return new Promise((resolve, reject) => {
-    //     const chunks = []
-    //     reportStream.on('data', chunk => chunks.push(chunk))
-    //     reportStream.on('end', () => resolve(Buffer.concat(chunks)))
-    //     reportStream.on('error', reject)
-    //   })
-    // }
 
-    async function loadWorkbookFromBuffer(buffer) {
-      // Convert the PassThrough stream to a buffer (only if report is not avoiding streaming)
-      // const buffer = await streamToBuffer(reportStream)
-      assert.instanceOf(buffer, Buffer, 'dataBuffer should be an instance of Buffer')
-      const workbook = new ExcelJS.Workbook()
-      await workbook.xlsx.load(buffer)
-      return workbook
-    }
-
-    const { dataBuffer: reportStream } = await generateReport(
+    const { dataBuffer } = await generateReport(
       'do_not_use_modules_report',
       queryStub,
       auth,
@@ -157,8 +180,12 @@ describe('Excel Report Generation', () => {
       extension
     )
 
+    // Since avoidStreaming is true, dataBuffer should be a Buffer
+    assert.instanceOf(dataBuffer, Buffer, 'dataBuffer should be an instance of Buffer')
+
     // Load the workbook from the buffer
-    const workbook = await loadWorkbookFromBuffer(reportStream)
+    const workbook = new ExcelJS.Workbook()
+    await workbook.xlsx.load(dataBuffer)
 
     assert.isTrue(workbook instanceof excel.Workbook, 'Generated object is a workbook')
 
@@ -166,7 +193,7 @@ describe('Excel Report Generation', () => {
     assert.isNotNull(worksheet, 'Worksheet should exist')
 
     const titleCell = worksheet.getCell('A1')
-    assert.equal(titleCell, 'Disabled Modules', 'Header should match expected value')
+    assert.equal(titleCell.value, 'Disabled Modules', 'Header should match expected value')
 
     // const dataRow = worksheet.getRow
     // assert.equal(dataRow.getCell(1).value, 'Expected Data', 'Data should match expected value')
