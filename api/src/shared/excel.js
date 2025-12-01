@@ -557,7 +557,7 @@ async function renderExcelTemplate({
     if (fieldName === '#') {
       return dataRow.id
     }
-    let value = dataRow[fieldName] || ''
+    let value = _.isNil(dataRow[fieldName]) ? '' : dataRow[fieldName]
 
     if (fieldName === 'patientAge' || value === 'null') {
       value = ''
