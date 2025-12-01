@@ -32,7 +32,7 @@
       "id": 2010,
       "name": "rifResistancePreviouslyDetected",
       "i18nKey": "rifResistancePreviouslyDetectedI18nKey",
-      "fieldType": "text",
+      "fieldType": "number",
       "completionWeight": 10,
       "order": 201,
       "title": "RR previously detected",
