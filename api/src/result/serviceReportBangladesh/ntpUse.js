@@ -1,5 +1,6 @@
 const { reportDrTb10ABaseQuery } = require('.')
 const { getDataForReportCovid19 } = require('.')
+const { convertCsvToArrayOfNumbers } = require('../../shared/string')
 
 // ---------------------------------------------------------------------------
 async function getResultsForNtpUse(auth, query) {
@@ -9,7 +10,8 @@ async function getResultsForNtpUse(auth, query) {
   const resultData = await drTb10AData
   const data = transformData(resultData)
 
-  const finalData = mergeDataBySiteId(data, dataForConvid19)
+  const devicesBySite = buildDevicesBySiteMap(resultData)
+  const finalData = mergeDataBySiteId(data, dataForConvid19, devicesBySite)
 
   return {
     ok: true,
@@ -17,25 +19,58 @@ async function getResultsForNtpUse(auth, query) {
   }
 }
 
-function mergeDataBySiteId(arr1, arr2) {
+function buildDevicesBySiteMap(resultData) {
+  const devicesBySite = new Map()
+  resultData.forEach(({ deviceId, siteIds }) => {
+    if (deviceId && siteIds) {
+      const siteIdsArray = convertCsvToArrayOfNumbers(siteIds)
+      siteIdsArray.forEach(siteId => {
+        if (!devicesBySite.has(siteId)) {
+          devicesBySite.set(siteId, new Set())
+        }
+        devicesBySite.get(siteId).add(deviceId)
+      })
+    }
+  })
+  return devicesBySite
+}
+
+function calculateCntDevicesForSiteIds(siteIds, devicesBySite) {
+  if (!siteIds) {
+    return 0
+  }
+  const siteIdsArray = convertCsvToArrayOfNumbers(siteIds)
+  const uniqueDevices = new Set()
+  siteIdsArray.forEach(siteId => {
+    const devices = devicesBySite.get(siteId)
+    if (devices) {
+      devices.forEach(deviceId => uniqueDevices.add(deviceId))
+    }
+  })
+  return uniqueDevices.size
+}
+
+function mergeDataBySiteId(arr1, arr2, devicesBySite) {
   const mergedData = new Map()
 
-  // Helper function to merge data into the map
   const mergeIntoMap = data => {
     data.forEach(({ siteIds, ...rest }) => {
       if (!mergedData.has(siteIds)) {
         mergedData.set(siteIds, { siteIds })
       }
-      // Merge new data into the existing object without mutating the original
       mergedData.set(siteIds, { ...mergedData.get(siteIds), ...rest })
     })
   }
 
-  // Merge both arrays into the map
   mergeIntoMap(arr1)
   mergeIntoMap(arr2)
 
-  return Array.from(mergedData.values())
+  const finalData = Array.from(mergedData.values())
+  finalData.forEach(item => {
+    item.cntDevices = calculateCntDevicesForSiteIds(item.siteIds, devicesBySite)
+  })
+
+  return finalData
 }
 
 function transformData(data) {
