@@ -204,7 +204,6 @@ const reportDrTb10ABaseQuery = async (auth, query, groupBySite = false) => {
       .select(
         'r.deviceId',
         knex.raw(`r.patientData->>'$.SampleType' as sampleType`),
-       // knex.raw(`'Pulmonary' as sampleType`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         knex.raw(`d.moduleBayCapacity as cntModules`),
         knex.raw('modulesActive.cntModulesActive'), // Use precomputed `cntModulesActive` from CTE

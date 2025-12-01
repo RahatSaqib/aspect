@@ -963,16 +963,6 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
   row.commit()
 }
 
-function extendRowStyles(worksheet, styles, from, to) {
-  for (let i = from; i < to; i++) {
-    const row = worksheet.getRow(i)
-    row.eachCell({ includeEmpty: true }, cell => {
-      const cellStyle = _.merge({}, cell.master?.style, cell.style, styles[cell.col - 1] ?? {})
-      cell.style = cellStyle
-    })
-  }
-}
-
 // ----------------------------------------------------------------------------------------------
 function replaceBasePlaceholders(replacements, worksheetTemplate, worksheetData) {
   _.each(replacements, ({ placeholder, value, condition = () => false, action = () => true }) => {

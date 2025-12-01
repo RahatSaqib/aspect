@@ -3,12 +3,9 @@ const excel = require('exceljs')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noCallThru()
 const ExcelJS = require('exceljs')
-const { Stream } = require('stream')
 
 describe('Excel Report Generation', () => {
   it('should generate a valid Excel workbook', async () => {
-    // const auth = { credentials: { name: 'admin', partnerId: 1, credentials: { token: 'some device API key' } } }
-
     const extension = 'xlsx'
 
     const userPlaceHolders = {
