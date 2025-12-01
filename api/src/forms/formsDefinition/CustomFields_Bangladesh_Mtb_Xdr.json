@@ -27,6 +27,35 @@
         }
       ],
       "mandatory": true
+    },
+    {
+      "id": 2010,
+      "name": "rifResistancePreviouslyDetected",
+      "i18nKey": "rifResistancePreviouslyDetectedI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 201,
+      "title": "RR previously detected",
+      "caption": "Indicates whether a previous test has detected Rif Resistance",
+      "gxAlertDbColumn": "rifResistancePreviouslyDetected",
+      "i18nKeyCaption": "rifResistancePreviouslyDetectedI18nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.2010.value",
+      "source": "resultData.rifResistancePreviouslyDetected",
+      "items": [
+        {
+          "key": 1,
+          "value": "Yes",
+          "order": 10
+        },
+        {
+          "key": 0,
+          "value": "No",
+          "order": 20,
+          "isDefault": true
+        }
+      ],
+      "mandatory": true
     }
   ],
   "refForms": []

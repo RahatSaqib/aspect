@@ -156,6 +156,10 @@ const messagesResult = defineMessages({
     id: 'pages.resultEdit.originTestLocationi18nKey',
     defaultMessage: 'Original test location',
   },
+  rifResistancePreviouslyDetectedI18nKey: {
+    id: 'pages.resultEdit.rifResistancePreviouslyDetectedI18nKey',
+    defaultMessage: 'RR previously detected',
+  },
   originTestLocationi18nCaptionKey: {
     id: 'pages.resultEdit.originTestLocationi18nCaptionKey',
     defaultMessage: 'Indicates whether the original test was performed at this site or a different one',
