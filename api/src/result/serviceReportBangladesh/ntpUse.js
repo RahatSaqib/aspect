@@ -5,13 +5,18 @@ const { convertCsvToArrayOfNumbers } = require('../../shared/string')
 // ---------------------------------------------------------------------------
 async function getResultsForNtpUse(auth, query) {
   const { drTb10AData } = await reportDrTb10ABaseQuery(auth, query, true)
-  const { data: dataForConvid19 } = await getDataForReportCovid19(auth, query, true)
+  const { data: dataForCovid19 } = await getDataForReportCovid19(auth, query, true)
 
   const resultData = await drTb10AData
   const data = transformData(resultData)
 
+  const transformedCovid19Data = dataForCovid19.map(({ siteId, ...rest }) => ({
+    siteIds: siteId != null ? String(siteId) : null,
+    ...rest,
+  }))
+
   const devicesBySite = buildDevicesBySiteMap(resultData)
-  const finalData = mergeDataBySiteId(data, dataForConvid19, devicesBySite)
+  const finalData = mergeDataBySiteId(data, transformedCovid19Data, devicesBySite)
 
   return {
     ok: true,
@@ -53,6 +58,24 @@ function calculateCntDevicesForSiteIds(siteIds, devicesBySite) {
 function mergeDataBySiteId(arr1, arr2, devicesBySite) {
   const mergedData = new Map()
 
+  const covid19Fields = [
+    'cnt_Invalid',
+    'cnt_NoResult',
+    'cnt_Error',
+    'cnt_new_male_all',
+    'cnt_new_male_positive',
+    'cnt_new_male_negative',
+    'cnt_new_female_all',
+    'cnt_new_female_positive',
+    'cnt_new_female_negative',
+    'cnt_treated_male_all',
+    'cnt_treated_male_positive',
+    'cnt_treated_male_negative',
+    'cnt_treated_female_all',
+    'cnt_treated_female_positive',
+    'cnt_treated_female_negative',
+  ]
+
   const mergeIntoMap = data => {
     data.forEach(({ siteIds, ...rest }) => {
       if (!mergedData.has(siteIds)) {
@@ -68,6 +91,11 @@ function mergeDataBySiteId(arr1, arr2, devicesBySite) {
   const finalData = Array.from(mergedData.values())
   finalData.forEach(item => {
     item.cntDevices = calculateCntDevicesForSiteIds(item.siteIds, devicesBySite)
+    covid19Fields.forEach(field => {
+      if (!(field in item) || item[field] == null) {
+        item[field] = 0
+      }
+    })
   })
 
   return finalData
