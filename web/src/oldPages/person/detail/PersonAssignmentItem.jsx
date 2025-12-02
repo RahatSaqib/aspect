@@ -97,6 +97,12 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
           {textForAssignmentItem(assignment.assayi18nKey, assignment.assayName) || formatMessage(messages.allAssays)}
         </span>
       </div>
+      <div>
+        {assignment.assayName && <strong>{formatMessage(messages.tag)}&nbsp;</strong>}
+        <span>
+          {textForAssignmentItem(assignment.tagTitle, assignment.tagTitle) || formatMessage(messages.allTags)}
+        </span>
+      </div>
     </div>
   )
 }

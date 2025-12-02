@@ -1,6 +1,6 @@
+import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { IconButton, LinearProgress, MenuItem, TextField } from '@mui/material'
-import React from 'react'
 import useTagByType from '../../hooks/tag/useTagByType'
 
 const TagSingleSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
