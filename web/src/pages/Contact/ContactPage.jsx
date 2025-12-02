@@ -7,7 +7,7 @@ import { DirtyStepsProvider, FormStatusProvider } from './context'
 import messages from './messages'
 
 const ContactDetails = lazy(() => import('./ContactDetails'))
-const JobAssigment = lazy(() => import('./JobAssigment'))
+const JobAssignment = lazy(() => import('./JobAssignment'))
 const Login = lazy(() => import('./Login'))
 
 const Step = ({ step, value, children }) => <div hidden={step !== value}>{children}</div>
@@ -29,7 +29,7 @@ const ContactPage = () => {
                   </Step>
                   <PermissionChecker permissions={['person:edit', 'admin', 'person:admin']}>
                     <Step step={step} value={1}>
-                      <JobAssigment setStep={setStep} />
+                      <JobAssignment setStep={setStep} />
                     </Step>
                   </PermissionChecker>
                   <Step step={step} value={2}>
