@@ -111,6 +111,7 @@ async function getContext({ userId, partnerId, jobFunctionId }) {
       'jc.assayId',
       'jc.deviceTypeId',
       'jc.jobFunctionId',
+      'jc.tagId',
       knex.raw('0 AS isAdmin')
     )
 }
@@ -231,6 +232,9 @@ function getJobContextConstraint(context) {
     }
   }
 
+  if (context.tagId) {
+    constraint.tag = { id: context.tagId }
+  }
   return constraint
 }
 
