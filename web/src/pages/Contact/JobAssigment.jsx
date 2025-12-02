@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useNavigate, useParams, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { object, string } from 'yup'
 import {
   AssaySelect,
@@ -12,9 +12,10 @@ import {
   DiseaseSelect,
   JobSelect,
   LgaSelect,
+  Loading,
   SiteSelect,
   StateSelect,
-  Loading,
+  TagSingleSelect,
 } from '../../cleanComponents'
 import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
 import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
@@ -49,6 +50,7 @@ const JobAssigment = ({ setStep }) => {
     deviceTypeId: '',
     assayTypeId: '',
     assayId: '',
+    tagId: '',
   }
 
   const { mutate: deleteAssignment } = useDeletePersonAsignment(personId)
@@ -86,7 +88,7 @@ const JobAssigment = ({ setStep }) => {
             Object.keys(data).map(k => {
               if (data[k] === '') {
                 data[k] = undefined
-              } else if (k === 'assayId') {
+              } else if (k === 'assayId' || k === 'tagId') {
                 data[k] = +data[k]
               }
               return k
@@ -233,6 +235,18 @@ const JobAssigment = ({ setStep }) => {
                         assayTypeId={values.assayTypeId || ''}
                         deviceTypeId={values.deviceTypeId}
                         disabled={values.assayTypeId === '' || disableConstraints}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TagSingleSelect
+                        id="tagId"
+                        name="tagId"
+                        label={formatMessage(messages.tag)}
+                        error={!!errors.tagId}
+                        value={values.tagId || ''}
+                        helperText={errors.tagId}
+                        onChange={handleChange}
+                        disabled={values.jobFunctionId === ''}
                       />
                     </Grid>
                   </Grid>

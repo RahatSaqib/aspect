@@ -346,6 +346,10 @@ export default {
       id: 'pages.JobAssignments.assay',
       defaultMessage: 'Assay',
     },
+    tag: {
+      id: 'pages.JobAssignments.tag',
+      defaultMessage: 'Tag',
+    },
     allAssays: {
       id: 'pages.JobAssignments.allAssays',
       defaultMessage: 'All assays',
