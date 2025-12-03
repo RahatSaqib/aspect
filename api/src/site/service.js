@@ -93,10 +93,10 @@ async function showSite(request) {
 
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
 
-  site.consumableIds = await knex('SiteConsumable').where('siteId', site.id).pluck('consumableId')
+  site.consumableIds = await knex('SiteConsumable as sc').where('sc.siteId', site.id).pluck('consumableId')
 
   site.devices = await getNotDecommissionedDevices(dataConstraints)
-    .where('siteId', params.siteId)
+    .where('d.siteId', params.siteId)
     .select('d.id', 'd.name', 'd.shortName', 'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'dtc.id as category')
 
   const result = { ok: true, data: { ...site, tags } }
