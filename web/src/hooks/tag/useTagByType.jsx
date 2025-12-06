@@ -9,6 +9,7 @@ const getTagsByType = async type =>
     endpoint: replaceRouteParams(TAG_KEY_BY_TYPE_ENDPOINT, { type }),
   }).then(response => response.data)
 
-const useTagByType = type => useQuery([TAG_KEY, type], () => getTagsByType(type), { ...SELECTS_QUERY_OPTIONS })
+const useTagByType = (type, options = {}) =>
+  useQuery([TAG_KEY, type], () => getTagsByType(type), { ...SELECTS_QUERY_OPTIONS, ...options })
 
 export default useTagByType
