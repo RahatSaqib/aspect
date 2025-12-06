@@ -241,7 +241,7 @@ const JobAssigment = ({ setStep }) => {
                       <TagSingleSelect
                         id="tagId"
                         name="tagId"
-                        label={formatMessage(messages.tag)}
+                        label={formatMessage(messages.restrictToSitesWithTag)}
                         error={!!errors.tagId}
                         value={values.tagId || ''}
                         helperText={errors.tagId}
