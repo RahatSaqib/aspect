@@ -4,7 +4,7 @@ import { IconButton, LinearProgress, MenuItem, TextField } from '@mui/material'
 import useTagByType from '../../hooks/tag/useTagByType'
 
 const TagSingleSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
-  const { isLoading, data } = useTagByType('person')
+  const { isLoading, data } = useTagByType('site')
 
   return isLoading ? (
     <LinearProgress />
