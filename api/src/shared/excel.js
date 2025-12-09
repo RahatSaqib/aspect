@@ -1,3 +1,4 @@
+// NEW EXCEL.JS
 /* eslint-disable no-underscore-dangle */
 const _ = require('lodash')
 const { format } = require('date-fns')
@@ -187,11 +188,7 @@ function getCellStyle(cell) {
 
 // ----------------------------------------------------------------------------------------------
 function setCellStyle(cell, style) {
-  if (!_.isEmpty(style)) {
-    _.forEach(style, (styleValue, styleName) => {
-      cell[styleName] = styleValue
-    })
-  }
+  cell.style = cell._mergeStyle(style, {}, {})
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -365,7 +362,6 @@ async function renderExcelTemplate({
       const { tableToken, dataSource: sectionDataSource } = section
       // position cell where data table begins
       const tableTokenCells = getCellsByValue(worksheet, tableToken)
-
       if (tableTokenCells.length > 0) {
         // empty cells
         tableTokenCells.forEach(cell => {
@@ -378,26 +374,39 @@ async function renderExcelTemplate({
         const cellTableToken = tableTokenCells[0]
 
         const allHeaderRows = getHeaderRows(worksheet, cellTableToken)
-        const headerRow = allHeaderRows[0]
-        const patternRowNumber = cellTableToken.row + 1 + allHeaderRows.length
-        const patternRow = worksheet.getRow(patternRowNumber)
+        const patternRowStart = cellTableToken.row + 1 + allHeaderRows.length
+        const patternRows = []
 
-        // field names for data table - order of array elements should match columns order in template file
+        const firstPatternCell = worksheet.getCell(patternRowStart, 1)
+
+        const { rowStart: firstPatternCellStartRowIndex, rowEnd: firstPatternCellEndRowIndex } =
+          getCellDimensions(firstPatternCell)
+        for (let i = firstPatternCellStartRowIndex; i <= firstPatternCellEndRowIndex; i++) {
+          patternRows.push(worksheet.getRow(i))
+        }
+
+        // Extract field names from pattern row to determine fixed column count
+        // This is more reliable than using header row cell count
         const fieldNames = []
-        patternRow.eachCell(cell => {
+        patternRows[0].eachCell(cell => {
           let v = _.trim(cell.value)
-          if (v[0] === '<' && v[v.length - 1] === '>') {
+          if (v && v[0] === '<' && v[v.length - 1] === '>') {
             v = _.trim(v, '< >')
             fieldNames.push(v)
           } else {
             fieldNames.push('')
           }
         })
+        const fixedColumnsCount = fieldNames.length
 
-        // append dynamic columns if specified
         if (dynamicColumns.length > 0) {
-          const dynamicMerges = appendColumnsToHeader(worksheet, dynamicColumns, headerRow, allHeaderRows.length)
-          // if needed - merge dynamically appended cells
+          const dynamicMerges = appendColumnsToHeader(
+            worksheet,
+            dynamicColumns,
+            allHeaderRows[0],
+            allHeaderRows.length,
+            fixedColumnsCount
+          )
           _.forEach(dynamicMerges, range => {
             worksheet.mergeCells(range)
           })
@@ -405,145 +414,208 @@ async function renderExcelTemplate({
 
         const dataRows = wayToFillInData === 'mapping' ? data.rows : sectionDataSource ? data[sectionDataSource] : data
 
-        // fill in array 'rows'
-        let rows = []
         if (dataRows && dataRows.length > 0) {
-          rows = dataRows.map((dataRow, rowIndex) => {
-            const valuesInPredefinedColumns = fieldNames.map(fieldName => {
-              if (fieldName === '#') {
-                return rowIndex + 1
+          // Step 1: Capture formulas, tokens, and styles from pattern rows
+          const patternRowsMetadata = []
+          const patternRowsStyles = []
+          patternRows.forEach(templateRow => {
+            const rowMetadata = []
+            const rowStyles = []
+            templateRow.eachCell({ includeEmpty: true }, cell => {
+              if (cell.type === excel.ValueType.Formula) {
+                rowMetadata.push({ formula: cell.value.formula })
+              } else if (typeof cell.value === 'string' && /^\s*<.+>\s*$/.test(cell.value)) {
+                rowMetadata.push({ field: cell.value.match(/^<(.+)>$/)[1], isToken: true })
+              } else {
+                rowMetadata.push({ value: cell.value })
               }
-              let value = fieldName && dataRow[fieldName]
-              value = _.isNil(value) ? '' : value
-              // TODO: think on a better generic way to handle such replacements in dataset
-              if (fieldName === 'patientAge' && value === 'null') {
-                value = ''
-              }
-              return value
+              rowStyles.push(cell.style)
             })
-            let valuesInDynamicColumns = []
-            if (dynamicColumns.length > 0) {
-              let normalizedValues
-              const normalizer = dataSelector || dataSelectorSheet
-              if (normalizer) normalizedValues = normalizer(dataRow)
-              else normalizedValues = dataRow
-              /**
-               * helper func
-               */
-              const addValuesAndStyles = (acc, cellValue) => {
-                if (_.isArray(cellValue)) {
-                  cellValue.forEach(cellVal => {
-                    addRowValuesAndCellStyle(acc, cellVal)
-                  })
-                } else {
-                  addRowValuesAndCellStyle(acc, cellValue)
-                }
-              }
+            patternRowsMetadata.push(rowMetadata)
+            patternRowsStyles.push(rowStyles)
+          })
 
-              const rowData = _.reduce(
-                dynamicColumns,
-                (acc, column) => {
-                  const { subHeaders } = column
-                  const hasSubHeaders = subHeaders?.length > 0
-                  if (hasSubHeaders && !column.key) {
-                    subHeaders.forEach(subHeader => {
-                      if (subHeader.key) {
-                        const cellValue = normalizedValues[subHeader.key]
+          // Calculate total rows needed
+          const totalRowsNeeded = dataRows.length * patternRows.length
+          const extraRowsNeeded = totalRowsNeeded - patternRows.length
+
+          // Step 1.5: Insert extra rows to shift totals row (and everything below) down
+          // This is critical - without this, data rows would overwrite the totals row
+          if (extraRowsNeeded > 0) {
+            const insertPosition = patternRowStart + patternRows.length
+            const blankRows = Array(extraRowsNeeded).fill([])
+            worksheet.spliceRows(insertPosition, 0, ...blankRows)
+          }
+
+          // Step 2: Insert rows and apply data properly
+          dataRows.forEach((dataRow, rowIndex) => {
+            const mergesToAdd = []
+            patternRows.forEach((templateRow, templateRowIndex) => {
+              const currentRowIndex = patternRowStart + rowIndex * patternRows.length + templateRowIndex
+              const newRow = worksheet.getRow(currentRowIndex)
+              newRow.height = templateRow.height
+
+              templateRow.eachCell({ includeEmpty: true }, (templateCell, colIndex) => {
+                const newCell = newRow.getCell(colIndex)
+                setCellStyle(newCell, getCellStyle(templateCell))
+
+                // Collect cells to merge, only in the first row of each data block
+                if (templateCell.isMerged && patternRowStart !== currentRowIndex && templateRowIndex === 0) {
+                  const { rowStart, rowEnd, colStart, colEnd } = getCellDimensions(templateCell)
+                  const rowSpan = rowEnd - rowStart + 1
+                  const rowOffset = currentRowIndex - templateCell.row
+
+                  const newMergeRange = {
+                    top: rowStart + rowOffset,
+                    left: colStart,
+                    bottom: rowStart + rowOffset + rowSpan - 1,
+                    right: colEnd,
+                  }
+
+                  mergesToAdd.push(newMergeRange)
+                }
+                const templateCellMetadata = patternRowsMetadata[templateRowIndex][colIndex - 1]
+                // Process formula cells
+                if (templateCellMetadata.formula) {
+                  newCell.value = {
+                    formula: templateCellMetadata.formula.replace(/(\$?[A-Za-z]+)(\$?\d+)/g, (_, colRef, rowRef) => {
+                      if (rowRef.startsWith('$')) return `${colRef}${rowRef}`
+                      const targetRow = parseInt(rowRef, 10)
+                      const offset = currentRowIndex - templateCell.row
+                      return `${colRef}${targetRow + offset}`
+                    }),
+                  }
+                }
+                // Process non-formula cells
+                else if (templateCellMetadata.isToken) {
+                  const newValue = getNewCellValue(dataRow, templateCellMetadata.field)
+                  newCell.value = newValue
+                } else {
+                  // mapping mode
+                  newCell.value = templateCellMetadata.value
+                }
+              })
+
+              // Process Dynamic columns, if they exist. Only in the first excel row of each data block.
+              if (templateRowIndex === 0) {
+                if (dynamicColumns.length > 0) {
+                  let normalizedValues
+                  const normalizer = dataSelector || dataSelectorSheet
+                  if (normalizer) normalizedValues = normalizer(dataRow)
+                  else normalizedValues = dataRow
+
+                  const addValuesAndStyles = (acc, cellValue) => {
+                    if (_.isArray(cellValue)) {
+                      cellValue.forEach(cellVal => {
+                        addRowValuesAndCellStyle(acc, cellVal)
+                      })
+                    } else {
+                      addRowValuesAndCellStyle(acc, cellValue)
+                    }
+                  }
+
+                  const dymamicColumnsValues = _.reduce(
+                    dynamicColumns,
+                    (acc, column) => {
+                      const { subHeaders } = column
+                      const hasSubHeaders = subHeaders?.length > 0
+                      if (hasSubHeaders && !column.key) {
+                        subHeaders.forEach(subHeader => {
+                          if (subHeader.key) {
+                            const cellValue = normalizedValues[subHeader.key]
+                            addValuesAndStyles(acc, cellValue)
+                          }
+                        })
+                      } else {
+                        const cellValue = normalizedValues[column.key]
                         addValuesAndStyles(acc, cellValue)
                       }
-                    })
-                  } else {
-                    const cellValue = normalizedValues[column.key]
-                    addValuesAndStyles(acc, cellValue)
+                      return acc
+                    },
+                    {
+                      rowValues: [],
+                      cellsStyle: [],
+                    }
+                  )
+                  let colIndex = fixedColumnsCount + 1
+                  // Apply values to dynamic columns for the row
+                  for (let i = 0; i < dymamicColumnsValues.rowValues.length; i++) {
+                    // if records spans across multiple rows
+                    if (firstPatternCellStartRowIndex !== firstPatternCellEndRowIndex) {
+                      const rowSpan = firstPatternCellEndRowIndex - firstPatternCellStartRowIndex + 1
+                      const rowOffset = rowIndex * patternRows.length
+                      const newMergeRange = {
+                        top: firstPatternCellStartRowIndex + rowOffset,
+                        left: colIndex,
+                        bottom: firstPatternCellStartRowIndex + rowOffset + rowSpan - 1,
+                        right: colIndex,
+                      }
+                      mergesToAdd.push(newMergeRange)
+                    }
+
+                    const newCell = newRow.getCell(colIndex)
+                    const cellValue = dymamicColumnsValues.rowValues[colIndex - fixedColumnsCount - 1]
+                    newCell.value = cellValue
+                    colIndex += 1
                   }
-                  return acc
-                },
-                {
-                  rowValues: [],
-                  cellsStyle: [],
                 }
-              )
-              valuesInDynamicColumns = [...rowData.rowValues]
-            }
-            return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
-          })
-        } else {
-          rows = [
-            fieldNames.map((fieldName, fieldIndex) => {
-              const value = fieldIndex === 0 ? defaultNoDataMessage : ''
-              return value
-            }),
-          ]
-        }
+              }
+            })
 
-        // remove pattern row and insert rows from patternRowNumber
-        const fillRows = data => {
-          const formulae = []
-          const styles = []
-          // `worksheet.duplicateRows` can't be used since the formulae references remains static
-          // that way. We have to capture the formulae and fill the correct columns with `fillFormula`
-          // method, after data is filled with the destructive `worksheet.spliceRows`.
-          worksheet.getRow(patternRowNumber).eachCell((cell, index) => {
-            if (cell.type === excel.ValueType.Formula) {
-              formulae.push({ formula: cell.value.formula, index })
-            }
-            styles.push(cell.style)
-            cell.value = null
-          })
-          worksheet.spliceRows(patternRowNumber, 1, ...data)
-
-          const patternRow = worksheet.getRow(patternRowNumber)
-
-          extendRowStyles(worksheet, styles, patternRowNumber, patternRowNumber + data.length)
-
-          _.each(formulae, f => {
-            const masterCell = patternRow.getCell(f.index)
-
-            const rangeToFillFormula = `${masterCell.address}:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
-              data.length + masterCell.row - 1
-            }`
-
-            worksheet.fillFormula(rangeToFillFormula, f.formula)
+            // Apply merges after all cells are created
+            mergesToAdd.forEach(range => {
+              worksheet.mergeCells(range.top, range.left, range.bottom, range.right)
+            })
           })
 
-          /**
-           * style dynamic columns, if styling is defined
-           */
-          if (dynamicColumns.length > 0 && (styles.length > 0 || dynamicColumns.find(column => !!column.style))) {
-            const lastTemplateRowCellStyle = styles[styles.length - 1]
-            const dynamicColumnsStartCol = fieldNames.length + 1
-            dynamicColumns.forEach((column, dynamicColumnIndex) => {
-              const colNumber = dynamicColumnsStartCol + dynamicColumnIndex
-              data.forEach((rowData, rowIndex) => {
-                const rowNumber = patternRowNumber + rowIndex
-                const row = worksheet.getRow(rowNumber)
-                const cell = row.getCell(colNumber)
-                setCellStyle(cell, { ...lastTemplateRowCellStyle, ...column.style })
-              })
+          // Step 4: Apply styles to dynamic columns
+          if (dynamicColumns.length > 0) {
+            const lastTemplateRowCellStyle = patternRowsStyles[0][patternRowsStyles[0].length - 1]
+            const dynamicColumnsStartCol = fixedColumnsCount + 1
+            let colNumber = dynamicColumnsStartCol
+            dynamicColumns.forEach(column => {
+              const hasSubHeaders = column.subHeaders?.length > 0
+              const numCols = hasSubHeaders ? column.subHeaders.length : 1
+              for (let subColIdx = 0; subColIdx < numCols; subColIdx++) {
+                const currentCol = colNumber + subColIdx
+                dataRows.forEach((dataRow, rowIndex) => {
+                  const rowNumber = patternRowStart + rowIndex * patternRows.length
+                  const row = worksheet.getRow(rowNumber)
+                  const cell = row.getCell(currentCol)
+                  setCellStyle(cell, { ...lastTemplateRowCellStyle, ...column.style })
+                })
+              }
+              colNumber += numCols
             })
           }
+        } else {
+          // No data case: Fill pattern row with default message
+          patternRows.forEach(row => {
+            row.eachCell({ includeEmpty: true }, (cell, colIndex) => {
+              cell.value = colIndex === 1 ? defaultNoDataMessage : ''
+              setCellStyle(cell, getCellStyle(row.getCell(colIndex)))
+            })
+          })
         }
 
-        fillRows(rows)
-        if (extension === 'csv') {
-          // get all header values from last item of array allHeaderRows
-          const headerRow = allHeaderRows[allHeaderRows.length - 1]
-          const headerValues = []
-          headerRow.eachCell(cell => {
-            headerValues.push(cell.value)
+        // Adjust totals row formulas and generate dynamic column totals (xlsx only)
+        // The totals row has been shifted down by spliceRows, now at patternRowStart + totalDataRows
+        if (extension !== 'csv' && dataRows && dataRows.length > 0) {
+          const totalDataRows = dataRows.length * patternRows.length
+
+          // Calculate actual number of dynamic column cells (accounting for subHeaders)
+          let dynamicColumnCellCount = 0
+          dynamicColumns.forEach(column => {
+            const hasSubHeaders = column.subHeaders?.length > 0
+            dynamicColumnCellCount += hasSubHeaders ? column.subHeaders.length : 1
           })
 
-          // put headers in 1st row
-          worksheet.getRow(1).values = headerValues
-
-          // remove all rows between 1st row and table body (remove table headers too)
-          worksheet.spliceRows(1, patternRowNumber - 1 - 1)
-        } else {
+          // Call the totals row adjustment function (same logic as OLD code)
           adjustTotalsRowFormulaeRefs(
             worksheet,
-            patternRowNumber,
-            rows.length,
-            fieldNames.length + dynamicColumns.length - 1
+            patternRowStart,
+            totalDataRows,
+            fixedColumnsCount + dynamicColumnCellCount - 1
           )
         }
       }
@@ -552,6 +624,19 @@ async function renderExcelTemplate({
 
   // return binary buffer
   return extension === 'csv' ? workbook.csv.writeBuffer() : workbook.xlsx.writeBuffer()
+
+  function getNewCellValue(dataRow, fieldName) {
+    if (fieldName === '#') {
+      return dataRow.id
+    }
+    let value = _.isNil(dataRow[fieldName]) ? '' : dataRow[fieldName]
+
+    if (fieldName === 'patientAge' || value === 'null') {
+      value = ''
+    }
+
+    return value
+  }
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -950,17 +1035,6 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsS
   row.commit()
 }
 
-function extendRowStyles(worksheet, styles, from, to) {
-  for (let i = from; i < to; i++) {
-    const row = worksheet.getRow(i)
-    row.eachCell({ includeEmpty: true }, cell => {
-      const cellStyle = _.merge({}, cell.master?.style, cell.style, styles[cell.col - 1] ?? {})
-      cell.style = cellStyle
-    })
-  }
-}
-
-// ----------------------------------------------------------------------------------------------
 function replaceBasePlaceholders(replacements, worksheetTemplate, worksheetData) {
   _.each(replacements, ({ placeholder, value, condition = () => false, action = () => true }) => {
     if (worksheetData) {
@@ -1046,7 +1120,7 @@ function getNormalizedData({ data, fieldNames, normalizer, dynamicColumns, defau
         let value = fieldName && normalizedValues[fieldName]
         value = _.isNil(value) ? '' : value
         // TODO: think on a better generic way to handle such replacements in dataset
-        if (fieldName === 'patientAge' && value === 'null') {
+        if (fieldName === 'patientAge' || value === 'null') {
           value = ''
         }
         return value
@@ -1108,7 +1182,7 @@ async function exportData(request, reply, sheetData, scope, options) {
 }
 
 // ----------------------------------------------------------------------------------------------
-function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
+function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows, startColumn = null) {
   const getRowInfo = row => {
     const lastCellNumber = row.cellCount
     const lastCellStyle = getCellStyle(row.getCell(lastCellNumber))
@@ -1122,7 +1196,8 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   const patternInfo = getRowInfo(patternRow)
   const merges = []
   // start from column next after the last defined (real) column
-  let columnNumber = headerInfo.lastCellNumber + 1
+  // Use startColumn if provided, otherwise fall back to header row cell count
+  let columnNumber = startColumn !== null ? startColumn + 1 : headerInfo.lastCellNumber + 1
   columns.forEach(column => {
     if (column.width) {
       worksheet.getColumn(columnNumber).width = column.width
@@ -1184,6 +1259,42 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   return merges
 }
 
+/**
+ * Get the area dimensions of a cell range, handling merged cells
+ * @param {Object} range - The cell range to get dimensions for
+ * @typedef {Object} RangeArea
+ * @property {number} colStart - The starting column number of the range
+ * @property {number} colEnd - The ending column number of the range
+ * @property {number} rowStart - The starting row number of the range
+ * @property {number} rowEnd - The ending row number of the range
+ * @property {number} cols - The total number of columns in the range (colEnd - colStart + 1)
+ * @property {number} rows - The total number of rows in the range (rowEnd - rowStart + 1)
+ * @returns {RangeArea} Object containing the dimensions and boundaries of the cell range
+ */
+function getCellDimensions(range) {
+  const startCell = range
+  let endCell = range
+  if (range.isMerged) {
+    const [, { $b$r }] = Object.entries(range.worksheet._merges).find(([, r]) => r.$t$l === range.$col$row)
+    endCell = range.worksheet.getCell($b$r)
+  }
+
+  const colStart = startCell.col
+  const rowStart = startCell.row
+  const colEnd = endCell.col
+  const rowEnd = endCell.row
+
+  return {
+    colStart,
+    colEnd,
+    rowStart,
+    rowEnd,
+    cols: colEnd - colStart + 1,
+    rows: rowEnd - rowEnd + 1,
+  }
+}
+
+// ----------------------------------------------------------------------------------------------
 function adjustTotalsRowFormulaeRefs(worksheet, patternRowNumber, dataLength, totalColumns) {
   const totalsRowNumber = patternRowNumber + dataLength
   const totalsRow = worksheet.findRow(totalsRowNumber)
