@@ -246,7 +246,7 @@ const JobAssigment = ({ setStep }) => {
                         value={values.tagId || ''}
                         helperText={errors.tagId}
                         onChange={handleChange}
-                        disabled={values.jobFunctionId === ''}
+                        disabled={values.jobFunctionId === '' || disableConstraints}
                       />
                     </Grid>
                   </Grid>
