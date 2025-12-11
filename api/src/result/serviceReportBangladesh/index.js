@@ -98,7 +98,7 @@ const andByRetreatment = (typeOfPatientValue, patientRetreatmentValue, resultCat
   return counter('r.id', condition)
 }
 // ---------------------------------------------------------------------------
-const reportDrTb10ABaseQuery = async (auth, query) => {
+const reportDrTb10ABaseQuery = async (auth, query, groupBySite = false) => {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const dates = getDatesFromQuery(query)
@@ -157,7 +157,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       )
       .select(
         'r.deviceId',
-        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        knex.raw(`r.patientData->>'$.SampleType' as sampleType`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         knex.raw(`d.moduleBayCapacity as cntModules`),
         knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive` from CTE
@@ -168,6 +168,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .innerJoin('Assay as a', 'r.assayId', 'a.id')
       .leftOuterJoin('Site as s', 's.id', 'r.siteId')
       .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+      .leftJoin('State as st', 'st.id', 'g.stateId')
+      .leftJoin('Lga as lga', 'lga.id', 'g.lgaId')
       .leftJoin('ResultCategoryAssay as rca1', function () {
         this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
       })
@@ -180,7 +182,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
        * better and faster to use joins with Sample/SampleType tables to get sample types for
        * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
        * and because of that read sample type directly from
-       * r.resultData ->> '$.customFieldData."1211".value'
+       * r.patientData->>'$.SampleType'
        */
       // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
       // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
@@ -201,19 +203,26 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       })
       .select(
         'r.deviceId',
-        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        knex.raw(`r.patientData->>'$.SampleType' as sampleType`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
+        knex.raw(`d.moduleBayCapacity as cntModules`),
+        knex.raw('modulesActive.cntModulesActive'), // Use precomputed `cntModulesActive` from CTE
+        's.name as siteName',
+        'st.name as stateName',
+        'lga.name as lgaName',
         /**
          * Notice that we below group by `deviceId`
          * only because we need to count number of modules
          * for each device
          */
-        knex.raw(`
-          d.moduleBayCapacity as cntModules
-          `),
-        knex.raw('modulesActive.cntModulesActive') // Use precomputed `cntModulesActive`
+        'd.moduleBayCapacity as cntModules',
+        'modulesActive.cntModulesActive' // Use precomputed `cntModulesActive`
       )
-      .groupBy('r.deviceId', 'sampleType')
+      .modify(qb => {
+        if (groupBySite) qb.groupBy('r.siteId', 'sampleType')
+        else qb.groupBy('r.deviceId', 'sampleType')
+      })
+
       /**
        * get total results per each device per period
        *
@@ -229,87 +238,87 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_Presumptive_TB_Cases_Invalid_Mtb: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_TB_Cases_Invalid_Xdr: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
         cnt_Presumptive_TB_Cases_NoResult_Mtb: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.NoResult}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_TB_Cases_NoResult_Xdr: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.NoResult}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
         cnt_Presumptive_TB_Cases_Error_Mtb: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_TB_Cases_Error_Xdr: inTypeOfPatient(
           presumptiveTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
 
         cnt_Presumptive_DR_TB_Cases_Invalid_Mtb: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_Invalid_Xdr: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_NoResult_Mtb: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.NoResult}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_NoResult_Xdr: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.NoResult}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_Error_Mtb: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
-           and
-           ${assayMtb}
-          `
+       and
+       ${assayMtb}
+      `
         ),
         cnt_Presumptive_DR_TB_Cases_Error_Xdr: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
-           and
-           ${assayXdr}
-          `
+       and
+       ${assayXdr}
+      `
         ),
 
         cnt_Presumptive_DR_TB_Cases_Invalid: inTypeOfPatient(
@@ -327,80 +336,74 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_Total_Cases_Invalid: counter(
           'r.id',
           `
-          r.resultCategory1 = ${resultCategoryIds.Invalid}`
+      r.resultCategory1 = ${resultCategoryIds.Invalid}`
         ),
         cnt_Total_Cases_NoResult: counter(
           'r.id',
           `
-          r.resultCategory1 = ${resultCategoryIds.NoResult}`
+      r.resultCategory1 = ${resultCategoryIds.NoResult}`
         ),
         cnt_Total_Cases_Error: counter(
           'r.id',
           `
-          r.resultCategory1 = ${resultCategoryIds.Error}`
+      r.resultCategory1 = ${resultCategoryIds.Error}`
         ),
 
         cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
           presumptiveTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds.Detected}
-          and
-          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-        `
+      r.resultCategory1 = ${resultCategoryIds.Detected}
+      and
+      r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+    `
         ),
         cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
           presumptiveDrTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds.Detected}
-          and
-          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-        `
+      r.resultCategory1 = ${resultCategoryIds.Detected}
+      and
+      r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+    `
         ),
         cnt_Presumptive_TB_Cases_MtbDetectedRifTraces: inTypeOfPatient(
           presumptiveTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
-          or
-          r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
-        `
+          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}`
         ),
         cnt_Presumptive_DR_TB_Cases_MtbDetectedRifTraces: inTypeOfPatient(
           presumptiveDrTbCases,
           `
-          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
-          or
-          r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
-        `
+          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}`
         ),
         cnt_Total_MtbDetectedRifNotDetected: counter(
           'r.id',
           `
-          r.resultCategory1 IN (${positiveResultCategories})
-          and
-          r.resultCategory2 = ${resultCategoryIds.NotDetected}
-        `
+      r.resultCategory1 IN (${positiveResultCategories})
+      and
+      r.resultCategory2 = ${resultCategoryIds.NotDetected}
+    `
         ),
         cnt_Total_MtbDetectedRifDetected: counter(
           'r.id',
           `
-          r.resultCategory1 IN (${positiveResultCategories})
-          and
-          r.resultCategory2 IN (${positiveResultCategories})
-        `
+      r.resultCategory1 IN (${positiveResultCategories})
+      and
+      r.resultCategory2 IN (${positiveResultCategories})
+    `
         ),
         cnt_Total_MtbDetectedRifIndeterminate: counter(
           'r.id',
           `
-          r.resultCategory1 IN (${positiveResultCategories})
-          and
-          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-        `
+      r.resultCategory1 IN (${positiveResultCategories})
+      and
+      r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+    `
         ),
         cnt_Total_MtbNotDetected: counter(
           'r.id',
           `
-          r.resultCategory1 = ${resultCategoryIds.NotDetected}
-        `
+      r.resultCategory1 = ${resultCategoryIds.NotDetected}
+    `
         ),
         /**
          * ****************************************
@@ -985,7 +988,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * better and faster to use joins with Sample/SampleType tables to get sample types for
          * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
          * and because of that - below we read sample type directly from
-         * r.resultData ->> '$.customFieldData."1211".value'
+         * r.patientData->>'$.SampleType'
          */
         // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
         // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
@@ -1004,7 +1007,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          */
         .whereIn('r.referringSiteId', siteIds)
         .whereNotIn('r.siteId', siteIds)
-        .where(knex.raw(`r.resultData ->> '$.customFieldData."1211".value' = '${sampleType}'`))
+        .where(knex.raw(`r.patientData->>'$.SampleType' = '${sampleType}'`))
         .count({
           cnt_Xdr_Total_Tests: knex.raw(`DISTINCT r.id`),
         })
@@ -1348,9 +1351,9 @@ async function getDataForReportDrTb10B(auth, query) {
       //   END as sampleType`),
       knex.raw(`
         CASE
-          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Pulmonary' THEN 'Sputum'
-          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Extra-pulmonary' THEN 'Others'
-          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Stool' THEN 'Stool'
+          WHEN r.patientData->>'$.SampleType' = 'Pulmonary' THEN 'Sputum'
+          WHEN r.patientData->>'$.SampleType' = 'Extra-pulmonary' THEN 'Others'
+          WHEN r.patientData->>'$.SampleType' = 'Stool' THEN 'Stool'
           ELSE ''
         END as sampleType`),
 
@@ -1475,7 +1478,7 @@ async function getDataForReportDrTb10B(auth, query) {
 /**
  * getDataForReportCovid19
  */
-async function getDataForReportCovid19(auth, query) {
+async function getDataForReportCovid19(auth, query, groupBySite = false) {
   const dataConstraints = await getConstraints(auth.credentials)
   const now = new Date()
   const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
@@ -1587,6 +1590,7 @@ async function getDataForReportCovid19(auth, query) {
       assay: 'a',
       result: 'r',
     })
+    .select('r.siteId')
     // apply date range filter
     .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     // apply remaining filters
@@ -1595,6 +1599,9 @@ async function getDataForReportCovid19(auth, query) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
+    })
+    .modify(qb => {
+      if (groupBySite) qb.groupBy('r.siteId')
     })
     .count(fields)
 
@@ -2330,4 +2337,5 @@ module.exports = {
   getReportDrTb10a10bCovidNtpUse,
   getReportCustomFieldsCompletion,
   getDataForReportForNtpUse,
+  reportDrTb10ABaseQuery,
 }

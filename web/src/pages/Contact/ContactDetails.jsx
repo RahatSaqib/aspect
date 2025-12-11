@@ -4,17 +4,17 @@ import { Formik } from 'formik'
 import isString from 'lodash/isString'
 import MuiPhoneNumber from 'material-ui-phone-number'
 import { useIntl } from 'react-intl'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { array, object, string } from 'yup'
 import {
   CountrySelect,
   LanguageSelect,
   LgaSelect,
+  Loading,
   PartnerSelect,
   StateSelect,
   TagSelect,
   TimezoneSelect,
-  Loading,
 } from '../../cleanComponents'
 import useAddPerson from '../../hooks/person/useAddPerson'
 import usePerson from '../../hooks/person/usePerson'
@@ -339,7 +339,7 @@ const ContactDetails = ({ setStep }) => {
                   <TagSelect
                     id="tags"
                     name="tags"
-                    label={formatMessage(messages.chooseTags)}
+                    label={formatMessage(messages.notificationTags)}
                     value={isString(values.tags) ? values.tags.split(',') : values.tags || []}
                     onChange={handleChange}
                     error={!!errors.tags}

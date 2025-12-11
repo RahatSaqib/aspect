@@ -563,7 +563,9 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
       }
     }
   } else {
-    throw Boom.notFound('Cannot determine which site this request came from')
+    throw Boom.notFound(
+      `Cannot determine which site this request came from - deviceName: ${deviceName}, countryCode: ${countryCode}`
+    )
   }
   return _.head(sites)
 }

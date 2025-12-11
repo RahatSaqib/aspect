@@ -111,6 +111,7 @@ async function getContext({ userId, partnerId, jobFunctionId }) {
       'jc.assayId',
       'jc.deviceTypeId',
       'jc.jobFunctionId',
+      'jc.tagId',
       knex.raw('0 AS isAdmin')
     )
 }
@@ -231,6 +232,9 @@ function getJobContextConstraint(context) {
     }
   }
 
+  if (context.tagId) {
+    constraint.tag = { tagId: context.tagId }
+  }
   return constraint
 }
 
@@ -373,9 +377,11 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
     filterAlias = '__Site_filterDisabled'
     queryBuilder.leftOuterJoin(`Site as ${filterAlias}`, `${result}.siteId`, `${filterAlias}.id`)
   }
+
   if (aliases.site || filterAlias) {
     excludeDisabledSites(queryBuilder, aliases.site || filterAlias)
   }
+
   if (device) {
     const hideUnapprovedDevices = !showUnapprovedDevices
     const hideDecommissionedDevices = !showDecommissionedDevices
@@ -420,6 +426,13 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
       }
     }
   }
+
+  if (aliases.site && constraints?.$or?.some(jobContextConstraint => jobContextConstraint.tag)) {
+    if (!aliases.siteTag) {
+      aliases.siteTag = alias('SiteTag')
+      queryBuilder.leftOuterJoin(`SiteTag as ${aliases.siteTag}`, `${aliases.site}.id`, `${aliases.siteTag}.siteId`)
+    }
+  }
 }
 
 function excludeDisabledSites(queryBuilder, alias) {
@@ -451,6 +464,7 @@ function addOrConstraints(
     sample,
     deviceType,
     issue,
+    siteTag,
     result_read: resultReadAlias,
   }
 ) {
@@ -497,6 +511,11 @@ function addOrConstraints(
           ...getBaseProps(orQb, constraint),
           alias: site,
           constraint: constraint.site,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(orQb, constraint),
+          alias: siteTag,
+          constraint: constraint.tag,
         })
         addConstraintWithJobFunction({
           ...getBaseProps(orQb, constraint),

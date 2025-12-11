@@ -335,6 +335,11 @@ describe('Permissions', () => {
       assert.property(item, 'lgaName')
       assert.property(item, 'siteId')
       assert.property(item, 'siteName')
+      // Optional properties
+      if (item.tagId !== null && item.tagId !== undefined) {
+        assert.property(item, 'tagId')
+        assert.property(item, 'tagTitle')
+      }
     }
 
     it('should return list of person assignments', done => {
@@ -436,6 +441,140 @@ describe('Permissions', () => {
 
           done()
         })
+    })
+
+    describe('with tag filtering', () => {
+      let tagId
+      let jobContextIdToClean
+
+      before(() =>
+        runTestWithKnex(async knex => {
+          // Create a tag
+          const tag = { title: 'TestSiteTag', partnerId: partner1 }
+          ;[tagId] = await knex('Tag').insert(tag)
+
+          // Assign tag to site (create SiteTag entry)
+          await knex('SiteTag').insert({ siteId, tagId })
+        })
+      )
+
+      after(() =>
+        runTestWithKnex(async knex => {
+          // Clean up in correct order to avoid foreign key constraints
+          if (jobContextIdToClean) {
+            await knex('JobContext').where({ id: jobContextIdToClean }).del()
+          }
+          if (siteId && tagId) {
+            await knex('SiteTag').where({ siteId, tagId }).del()
+          }
+          if (tagId) {
+            await knex('Tag').where({ id: tagId }).del()
+          }
+        })
+      )
+
+      it('should assign person to site as Clinician with tag filtering', done => {
+        server
+          .post(`${path}/assign-person-to-job-and-context`)
+          .send({ personId, jobFunctionId: jobFunctionClinicianId, siteId, tagId })
+          .set('Authorization', `Bearer ${shared.token}`)
+          .end((err, res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'ok')
+            assert.property(res.body, 'data')
+            const items = res.body.data
+            assert.typeOf(items, 'array')
+            assert.isAtLeast(items.length, 1)
+
+            const item = items.find(
+              x =>
+                x.personId === personId &&
+                x.jobFunctionId === jobFunctionClinicianId &&
+                x.siteId === siteId &&
+                x.tagId === tagId
+            )
+            assertItemProperties(item)
+            assert.equal(item.siteName, siteName)
+            assert.equal(item.tagId, tagId)
+            assert.equal(item.tagTitle, 'TestSiteTag')
+
+            jobContextIdToClean = item.jobContextId
+
+            done()
+          })
+      })
+
+      it('should return only sites with tags when filtering by tag in site list', done => {
+        let untaggedSiteId
+        runTestWithKnex(async knex => {
+          // Get another site without the tag to verify it's filtered out
+          const untaggedSite = await knex('Site as s')
+            .join('Geography as g', 's.geographyId', 'g.id')
+            .where('g.countryId', countryId)
+            .where('s.partnerId', partner1)
+            .where('s.id', '!=', siteId)
+            .whereNotExists(knex('SiteTag as st').whereColumn('st.siteId', 's.id').where('st.tagId', tagId))
+            .first('s.id')
+
+          if (untaggedSite) {
+            untaggedSiteId = untaggedSite.id
+          }
+        })
+          .then(() => {
+            // Get all sites without tag filter
+            server
+              .get('/api/site/select-list')
+              .set('Authorization', `Bearer ${shared.token}`)
+              .end((err, resWithoutFilter) => {
+                assert.equal(resWithoutFilter.status, 200)
+                const allSites = resWithoutFilter.body.data
+                assert.typeOf(allSites, 'array')
+                const taggedSiteInAll = allSites.find(s => s.id === siteId)
+                assert.isDefined(taggedSiteInAll, 'Tagged site should be in unfiltered list')
+
+                // Get sites with tag filter
+                // Hapi array query params must be passed as repeated parameters: tags=value1&tags=value2
+                // For a single value in an array, we pass it twice to generate the format Hapi expects
+                const tagTitle = 'TestSiteTag'
+                // Pass as repeated parameter so Hapi parses it as an array
+                server
+                  .get(
+                    `/api/site/select-list?tags=${encodeURIComponent(tagTitle)}&tags=${encodeURIComponent(tagTitle)}`
+                  )
+                  .set('Authorization', `Bearer ${shared.token}`)
+                  .end((err, resWithFilter) => {
+                    assert.equal(resWithFilter.status, 200)
+                    assert.typeOf(resWithFilter.body, 'Object')
+                    assert.property(resWithFilter.body, 'ok')
+                    assert.property(resWithFilter.body, 'data')
+                    const filteredSites = resWithFilter.body.data
+                    assert.typeOf(filteredSites, 'array')
+
+                    // Verify tagged site is included
+                    const taggedSite = filteredSites.find(s => s.id === siteId)
+                    assert.isDefined(taggedSite, 'Tagged site should be in filtered list')
+                    assert.equal(taggedSite.id, siteId)
+
+                    // Verify untagged site is excluded (if it exists)
+                    if (untaggedSiteId) {
+                      const untaggedSite = filteredSites.find(s => s.id === untaggedSiteId)
+                      assert.isUndefined(untaggedSite, 'Untagged site should be excluded from filtered list')
+                    }
+
+                    // Verify filtered list has fewer or equal sites than unfiltered
+                    assert.isAtMost(
+                      filteredSites.length,
+                      allSites.length,
+                      'Filtered list should have fewer or equal sites than unfiltered list'
+                    )
+
+                    done()
+                  })
+              })
+          })
+          .catch(done)
+      })
     })
   })
 })

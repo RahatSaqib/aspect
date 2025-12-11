@@ -200,9 +200,13 @@ export default {
       id: 'pages.UserPreferences.language',
       defaultMessage: 'Language',
     },
-    tags: {
-      id: 'pages.UserPreferences.tags',
-      defaultMessage: 'Tags',
+    tag: {
+      id: 'pages.UserPreferences.tag',
+      defaultMessage: 'Tag',
+    },
+    allTags: {
+      id: 'pages.UserPreferences.allTags',
+      defaultMessage: 'All tags',
     },
     chooseTags: {
       id: 'pages.UserPreferences.chooseTags',

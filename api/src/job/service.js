@@ -403,6 +403,7 @@ async function assignPersonTo(request) {
     assayTypeId = null,
     assayId = null,
     deviceTypeId: deviceTypeExternalId = null,
+    tagId = null,
   } = payload
   let geographyId
   if (!siteId && (countryId || stateId || lgaId)) {
@@ -453,6 +454,11 @@ async function assignPersonTo(request) {
           if (diseaseId) {
             this.where({ diseaseId })
           }
+          if (tagId) {
+            this.where({ tagId })
+          } else {
+            this.whereNull('tagId')
+          }
         })
         .first('id')) || {}
     if (!jobContextId) {
@@ -465,6 +471,7 @@ async function assignPersonTo(request) {
         deviceTypeId,
         assayTypeId,
         assayId,
+        tagId,
       })
     }
   }
@@ -516,6 +523,8 @@ async function getAssignments({ auth, personId }) {
     .leftOuterJoin('AssayType as at2', 'a.assayTypeId', 'at2.id')
     .leftOuterJoin('DeviceType as dt2', 'a.deviceTypeId', 'dt2.id')
     .leftOuterJoin('Disease as d3', 'at2.diseaseId', 'd3.id')
+    // JobContext with tagId
+    .leftOuterJoin('Tag as t', 'jc.tagId', 't.id')
     //
     .where('jc.personId', personId)
     .orderBy(['jf.name', 's.name', 'c.name', 'st.name', 'l.name'])
@@ -561,6 +570,8 @@ async function getAssignments({ auth, personId }) {
       'a.id as assayId',
       'a.i18nKey as assayi18nKey',
       'a.name as assayName',
+      't.id as tagId',
+      't.title as tagTitle',
       'at2.id as assayTypeId2',
       'at2.i18nKey as assayTypei18nKey2',
       'at2.name as assayTypeName2',
@@ -636,6 +647,8 @@ async function getAssignments({ auth, personId }) {
             'assayId',
             'assayi18nKey',
             'assayName',
+            'tagId',
+            'tagTitle',
           ]),
           countryId,
           countryName,

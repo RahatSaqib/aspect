@@ -91,6 +91,8 @@ const personAssignmentsResponse = {
           assayId: Joi.number().allow(null).description('Assay.id'),
           assayi18nKey: Joi.string().allow(null, '').description('Assay.i18nKey'),
           assayName: Joi.string().allow(null, '').description('Assay.name'),
+          tagId: Joi.number().allow(null).description('Tag.id'),
+          tagTitle: Joi.string().allow(null, '').description('Tag.title'),
         })
       ),
   }),
@@ -338,6 +340,7 @@ const routes = [
           deviceTypeId: Joi.string().allow(null).description('The device type external id'),
           assayTypeId: Joi.number().allow(null),
           assayId: Joi.number().allow(null),
+          tagId: Joi.number().allow(null),
         },
       },
       response: personAssignmentsResponse,
