@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-11-17T11:14:59.356Z\n"
+"POT-Creation-Date: 2025-12-11T12:46:50.844Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -709,6 +709,13 @@ msgstr "Усі сайти"
 msgid "All states"
 msgstr "Всі штати"
 
+#. [pages.UserPreferences.allTags]
+#. defaultMessage is:
+#. All tags
+#: extracted_strings.json
+msgid "All tags"
+msgstr "Всі теги"
+
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
 #. All test results in the system. One row per result with all the fields needed.
@@ -1178,7 +1185,8 @@ msgstr "Середня кількість днів між обмінами мо�
 #. Average email recipients per positive result
 #: extracted_strings.json
 msgid "Average email recipients per positive result"
-msgstr "Середнє значення одержувачів електронної пошти про позитивний результат"
+msgstr ""
+"Середнє значення одержувачів електронної пошти про позитивний результат"
 
 #. [component.Widget.averageLengthOfSms]
 #. defaultMessage is:
@@ -1192,15 +1200,15 @@ msgstr "Середня довжина SMS"
 #. Average number of days each device has been active, excluding weekends.
 #: extracted_strings.json
 msgid "Average number of days each device has been active, excluding weekends."
-msgstr ""
-"Середня кількість робочих днів, коли кожен пристрій працював."
+msgstr "Середня кількість робочих днів, коли кожен пристрій працював."
 
 #. [component.Widget.dashboardWidgetTestsPerDayDescription]
 #. defaultMessage is:
 #. Average number of tests per weekday conducted this month.
 #: extracted_strings.json
 msgid "Average number of tests per weekday conducted this month."
-msgstr "Середня кількість тестів на робочий день, повідомлених за поточний місяць."
+msgstr ""
+"Середня кількість тестів на робочий день, повідомлених за поточний місяць."
 
 #. [p.PkDashboard.testPerMonth]
 #. defaultMessage is:
@@ -1312,7 +1320,8 @@ msgid ""
 "Based on the last 30 days, represents the percentage of results with errors "
 "compared to the total number of performed results"
 msgstr ""
-"Відсоток результатів із помилками від загальної кількісті виконаних за останні 30 днів "
+"Відсоток результатів із помилками від загальної кількісті виконаних за "
+"останні 30 днів "
 
 #. [pages.Notifications.daysBeforeCalibrationDueDate]
 #. defaultMessage is:
@@ -2388,8 +2397,8 @@ msgid ""
 "last 7 days."
 msgstr ""
 "Підраховує відсоток модулів, використаних за останні 7 днів, на основі "
-"кількості всіх доступних модулів у всіх пристроях GeneXpert, які були активні "
-"в останні 7 днів."
+"кількості всіх доступних модулів у всіх пристроях GeneXpert, які були "
+"активні в останні 7 днів."
 
 #. [pages.common.lga_US]
 #. defaultMessage is:
@@ -4457,16 +4466,6 @@ msgstr "Не вдалося експортувати DeviceApiKeys"
 msgid "Exporting DeviceLog Failed"
 msgstr "Не вдалося експортувати DeviceLog"
 
-#. [errorResponseMessages.result.exportResults.GET.400.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#. [errorResponseMessages.result.exportResults.GET.default.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#: extracted_strings.json
-msgid "Exporting Results Failed"
-msgstr "Помилка експорту результатів"
-
 #. [errorResponseMessages.exportSites.GET.400.title]
 #. defaultMessage is:
 #. Exporting Sites Failed
@@ -6037,9 +6036,6 @@ msgstr "Інструменти"
 msgid "Instruments Connected"
 msgstr "Підключені інструменти"
 
-#. [errorResponseMessages.fetchPersons.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -6908,13 +6904,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Loading Devices Failed"
 msgstr "Помилка завантаження пристроїв"
-
-#. [errorResponseMessages.fetchResults.GET.default.title]
-#. defaultMessage is:
-#. Loading Results Failed
-#: extracted_strings.json
-msgid "Loading Results Failed"
-msgstr "Помилка завантаження результатів"
 
 #. [legends.Unknown.location]
 #. defaultMessage is:
@@ -8778,6 +8767,13 @@ msgstr "Журнали сповіщень"
 msgid "Notification States"
 msgstr "Держави, що нотифікують"
 
+#. [pages.UserPreferences.notificationTags]
+#. defaultMessage is:
+#. Notification Tags
+#: extracted_strings.json
+msgid "Notification Tags"
+msgstr "Теги сповіщень"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -10257,6 +10253,13 @@ msgstr "Випадки RR, діагностовані цього року"
 msgid "RR cases diagnosed today"
 msgstr "Випадки РР, діагностовані сьогодні"
 
+#. [pages.resultEdit.rifResistancePreviouslyDetectedI18nKey]
+#. defaultMessage is:
+#. RR previously detected
+#: extracted_strings.json
+msgid "RR previously detected"
+msgstr "Раніше виявлений RR"
+
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
 #. RR+
@@ -10831,6 +10834,13 @@ msgstr "Стійкість"
 #: extracted_strings.json
 msgid "Resistant"
 msgstr "Стійкий"
+
+#. [pages.JobAssignments.restrictToSitesWithTag]
+#. defaultMessage is:
+#. Restrict to Sites with Tag
+#: extracted_strings.json
+msgid "Restrict to Sites with Tag"
+msgstr "Обмежити сайтами з тегом"
 
 #. [filter.popover.result]
 #. defaultMessage is:
@@ -11524,13 +11534,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Screen is not yet complete"
 msgstr "Екран ще не завершено"
-
-#. [errorResponseMessages.fetchResults.GET.400.title]
-#. defaultMessage is:
-#. Searching Results Failed
-#: extracted_strings.json
-msgid "Searching Results Failed"
-msgstr "Помилка пошуку результатів"
 
 #. [forms.formItem.selectAllUnselectAll]
 #. defaultMessage is:
@@ -13050,6 +13053,16 @@ msgstr "Випадки туберкульозу, діагностовані сь
 #: extracted_strings.json
 msgid "TB lamp"
 msgstr "TB LAMP"
+
+#. [pages.JobAssignments.tag]
+#. defaultMessage is:
+#. Tag
+#. [pages.UserPreferences.tag]
+#. defaultMessage is:
+#. Tag
+#: extracted_strings.json
+msgid "Tag"
+msgstr "Тег"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -15696,7 +15709,7 @@ msgstr "ім'я lga містить \"{lgaName}\""
 #. lot number includes "{lotNumber}"
 #: extracted_strings.json
 msgid "lot number includes \"{lotNumber}\""
-msgstr "номер партії включає "{lotNumber}""
+msgstr "номер партії включає \"{lotNumber}\""
 
 #. [filter.btnGroup.withDeviceMaintenanceStatus]
 #. defaultMessage is:
@@ -16173,6 +16186,15 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "загальне калібрування"
+
+#~ msgid "Exporting Results Failed"
+#~ msgstr "Помилка експорту результатів"
+
+#~ msgid "Loading Results Failed"
+#~ msgstr "Помилка завантаження результатів"
+
+#~ msgid "Searching Results Failed"
+#~ msgstr "Помилка пошуку результатів"
 
 #~ msgid "Acknowledged"
 #~ msgstr "Визнано"

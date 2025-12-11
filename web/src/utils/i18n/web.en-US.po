@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-11-17T11:14:59.356Z\n"
+"POT-Creation-Date: 2025-12-11T12:46:50.844Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -705,6 +705,13 @@ msgstr "All sites"
 #: extracted_strings.json
 msgid "All states"
 msgstr "All states"
+
+#. [pages.UserPreferences.allTags]
+#. defaultMessage is:
+#. All tags
+#: extracted_strings.json
+msgid "All tags"
+msgstr "All tags"
 
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
@@ -4448,16 +4455,6 @@ msgstr "Exporting DeviceApiKeys Failed"
 msgid "Exporting DeviceLog Failed"
 msgstr "Exporting DeviceLog Failed"
 
-#. [errorResponseMessages.result.exportResults.GET.400.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#. [errorResponseMessages.result.exportResults.GET.default.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#: extracted_strings.json
-msgid "Exporting Results Failed"
-msgstr "Exporting Results Failed"
-
 #. [errorResponseMessages.exportSites.GET.400.title]
 #. defaultMessage is:
 #. Exporting Sites Failed
@@ -6029,9 +6026,6 @@ msgstr "Instruments"
 msgid "Instruments Connected"
 msgstr "Instruments Connected"
 
-#. [errorResponseMessages.fetchPersons.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -6895,13 +6889,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Loading Devices Failed"
 msgstr "Loading Devices Failed"
-
-#. [errorResponseMessages.fetchResults.GET.default.title]
-#. defaultMessage is:
-#. Loading Results Failed
-#: extracted_strings.json
-msgid "Loading Results Failed"
-msgstr "Loading Results Failed"
 
 #. [legends.Unknown.location]
 #. defaultMessage is:
@@ -8763,6 +8750,13 @@ msgstr "Notification Logs"
 msgid "Notification States"
 msgstr "Notification States"
 
+#. [pages.UserPreferences.notificationTags]
+#. defaultMessage is:
+#. Notification Tags
+#: extracted_strings.json
+msgid "Notification Tags"
+msgstr "Notification Tags"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -10237,6 +10231,13 @@ msgstr "RR cases diagnosed this year"
 msgid "RR cases diagnosed today"
 msgstr "RR cases diagnosed today"
 
+#. [pages.resultEdit.rifResistancePreviouslyDetectedI18nKey]
+#. defaultMessage is:
+#. RR previously detected
+#: extracted_strings.json
+msgid "RR previously detected"
+msgstr "RR previously detected"
+
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
 #. RR+
@@ -10812,6 +10813,13 @@ msgstr "Resistance"
 #: extracted_strings.json
 msgid "Resistant"
 msgstr "Resistant"
+
+#. [pages.JobAssignments.restrictToSitesWithTag]
+#. defaultMessage is:
+#. Restrict to Sites with Tag
+#: extracted_strings.json
+msgid "Restrict to Sites with Tag"
+msgstr "Restrict to Sites with Tag"
 
 #. [filter.popover.result]
 #. defaultMessage is:
@@ -11505,13 +11513,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Screen is not yet complete"
 msgstr "Screen is not yet complete"
-
-#. [errorResponseMessages.fetchResults.GET.400.title]
-#. defaultMessage is:
-#. Searching Results Failed
-#: extracted_strings.json
-msgid "Searching Results Failed"
-msgstr "Searching Results Failed"
 
 #. [forms.formItem.selectAllUnselectAll]
 #. defaultMessage is:
@@ -13026,6 +13027,16 @@ msgstr "TB cases diagnosed today"
 #: extracted_strings.json
 msgid "TB lamp"
 msgstr "TB lamp"
+
+#. [pages.JobAssignments.tag]
+#. defaultMessage is:
+#. Tag
+#. [pages.UserPreferences.tag]
+#. defaultMessage is:
+#. Tag
+#: extracted_strings.json
+msgid "Tag"
+msgstr "Tag"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -16135,6 +16146,15 @@ msgstr "{unit} since last week"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total calibrations"
+
+#~ msgid "Exporting Results Failed"
+#~ msgstr "Exporting Results Failed"
+
+#~ msgid "Loading Results Failed"
+#~ msgstr "Loading Results Failed"
+
+#~ msgid "Searching Results Failed"
+#~ msgstr "Searching Results Failed"
 
 #~ msgid "Acknowledged"
 #~ msgstr "Acknowledged"
