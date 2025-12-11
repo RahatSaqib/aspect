@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-11-17T11:14:59.356Z\n"
+"POT-Creation-Date: 2025-12-11T12:46:50.844Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -707,6 +707,13 @@ msgstr "Все сайты"
 #: extracted_strings.json
 msgid "All states"
 msgstr "Все государства"
+
+#. [pages.UserPreferences.allTags]
+#. defaultMessage is:
+#. All tags
+#: extracted_strings.json
+msgid "All tags"
+msgstr "Все теги"
 
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
@@ -4459,16 +4466,6 @@ msgstr "Экспорт УстройствоАпиКейс Ошибка"
 msgid "Exporting DeviceLog Failed"
 msgstr "Экспорт журнала устройств не удался"
 
-#. [errorResponseMessages.result.exportResults.GET.400.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#. [errorResponseMessages.result.exportResults.GET.default.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#: extracted_strings.json
-msgid "Exporting Results Failed"
-msgstr "Результаты экспорта провалились"
-
 #. [errorResponseMessages.exportSites.GET.400.title]
 #. defaultMessage is:
 #. Exporting Sites Failed
@@ -6042,9 +6039,6 @@ msgstr "АЗС приборной панели"
 msgid "Instruments Connected"
 msgstr "Подключенные приборы"
 
-#. [errorResponseMessages.fetchPersons.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -6914,13 +6908,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Loading Devices Failed"
 msgstr "Загрузка устройств Ошибка"
-
-#. [errorResponseMessages.fetchResults.GET.default.title]
-#. defaultMessage is:
-#. Loading Results Failed
-#: extracted_strings.json
-msgid "Loading Results Failed"
-msgstr "Загрузка результатов не удалось"
 
 #. [legends.Unknown.location]
 #. defaultMessage is:
@@ -8783,6 +8770,13 @@ msgstr "Журналы уведомлений"
 msgid "Notification States"
 msgstr "Штаты уведомления"
 
+#. [pages.UserPreferences.notificationTags]
+#. defaultMessage is:
+#. Notification Tags
+#: extracted_strings.json
+msgid "Notification Tags"
+msgstr "Теги уведомлений"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -10265,6 +10259,13 @@ msgstr "Случаев РР диагностировано в этом году"
 msgid "RR cases diagnosed today"
 msgstr "Случаи заболевания, диагностированные сегодня"
 
+#. [pages.resultEdit.rifResistancePreviouslyDetectedI18nKey]
+#. defaultMessage is:
+#. RR previously detected
+#: extracted_strings.json
+msgid "RR previously detected"
+msgstr "RR обнаружен ранее"
+
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
 #. RR+
@@ -10845,6 +10846,13 @@ msgstr "Сопротивление"
 #: extracted_strings.json
 msgid "Resistant"
 msgstr "Устойчивый"
+
+#. [pages.JobAssignments.restrictToSitesWithTag]
+#. defaultMessage is:
+#. Restrict to Sites with Tag
+#: extracted_strings.json
+msgid "Restrict to Sites with Tag"
+msgstr "Ограничить доступ к сайтам, имеющим тег"
 
 #. [filter.popover.result]
 #. defaultMessage is:
@@ -11539,13 +11547,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Screen is not yet complete"
 msgstr "Экран еще не завершен"
-
-#. [errorResponseMessages.fetchResults.GET.400.title]
-#. defaultMessage is:
-#. Searching Results Failed
-#: extracted_strings.json
-msgid "Searching Results Failed"
-msgstr "Результаты поиска не дали результатов"
 
 #. [forms.formItem.selectAllUnselectAll]
 #. defaultMessage is:
@@ -13063,6 +13064,16 @@ msgstr "Диагностированные сегодня случаи тубе�
 #: extracted_strings.json
 msgid "TB lamp"
 msgstr "TB LAMP"
+
+#. [pages.JobAssignments.tag]
+#. defaultMessage is:
+#. Tag
+#. [pages.UserPreferences.tag]
+#. defaultMessage is:
+#. Tag
+#: extracted_strings.json
+msgid "Tag"
+msgstr "Ярлык"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -16195,6 +16206,15 @@ msgstr "{unit} с прошлой недели"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} суммарные калибровки"
+
+#~ msgid "Exporting Results Failed"
+#~ msgstr "Результаты экспорта провалились"
+
+#~ msgid "Loading Results Failed"
+#~ msgstr "Загрузка результатов не удалось"
+
+#~ msgid "Searching Results Failed"
+#~ msgstr "Результаты поиска не дали результатов"
 
 #~ msgid "Acknowledged"
 #~ msgstr "Подтвержденный"

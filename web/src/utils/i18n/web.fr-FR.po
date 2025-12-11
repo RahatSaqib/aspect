@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-17T11:14:59.356Z\n"
+"POT-Creation-Date: 2025-12-11T12:46:50.844Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -709,6 +709,13 @@ msgstr "Tous les sites"
 #: extracted_strings.json
 msgid "All states"
 msgstr "Tous les États"
+
+#. [pages.UserPreferences.allTags]
+#. defaultMessage is:
+#. All tags
+#: extracted_strings.json
+msgid "All tags"
+msgstr "Toutes les balises"
 
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
@@ -4469,16 +4476,6 @@ msgstr "L'exportation de DeviceApiKeys a échoué"
 msgid "Exporting DeviceLog Failed"
 msgstr "Échec de l'exportation de DeviceLog"
 
-#. [errorResponseMessages.result.exportResults.GET.400.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#. [errorResponseMessages.result.exportResults.GET.default.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#: extracted_strings.json
-msgid "Exporting Results Failed"
-msgstr "L'exportation des résultats a échoué"
-
 #. [errorResponseMessages.exportSites.GET.400.title]
 #. defaultMessage is:
 #. Exporting Sites Failed
@@ -6054,9 +6051,6 @@ msgstr "Instruments"
 msgid "Instruments Connected"
 msgstr "Instruments connectés"
 
-#. [errorResponseMessages.fetchPersons.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -6929,13 +6923,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Loading Devices Failed"
 msgstr "Échec du chargement des périphériques"
-
-#. [errorResponseMessages.fetchResults.GET.default.title]
-#. defaultMessage is:
-#. Loading Results Failed
-#: extracted_strings.json
-msgid "Loading Results Failed"
-msgstr "Echec du chargement des résultats"
 
 #. [legends.Unknown.location]
 #. defaultMessage is:
@@ -8799,6 +8786,13 @@ msgstr "Journaux de notification"
 msgid "Notification States"
 msgstr "États de notification"
 
+#. [pages.UserPreferences.notificationTags]
+#. defaultMessage is:
+#. Notification Tags
+#: extracted_strings.json
+msgid "Notification Tags"
+msgstr "Balises de notification"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -10284,6 +10278,13 @@ msgstr "Cas de RR diagnostiqués cette année"
 msgid "RR cases diagnosed today"
 msgstr "RR cas diagnostiqués aujourd'hui"
 
+#. [pages.resultEdit.rifResistancePreviouslyDetectedI18nKey]
+#. defaultMessage is:
+#. RR previously detected
+#: extracted_strings.json
+msgid "RR previously detected"
+msgstr "RR précédemment détecté"
+
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
 #. RR+
@@ -10862,6 +10863,13 @@ msgstr "La résistance"
 #: extracted_strings.json
 msgid "Resistant"
 msgstr "Résistant"
+
+#. [pages.JobAssignments.restrictToSitesWithTag]
+#. defaultMessage is:
+#. Restrict to Sites with Tag
+#: extracted_strings.json
+msgid "Restrict to Sites with Tag"
+msgstr "Limiter aux sites avec balise"
 
 #. [filter.popover.result]
 #. defaultMessage is:
@@ -11556,13 +11564,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Screen is not yet complete"
 msgstr "L'écran n'est pas encore complet"
-
-#. [errorResponseMessages.fetchResults.GET.400.title]
-#. defaultMessage is:
-#. Searching Results Failed
-#: extracted_strings.json
-msgid "Searching Results Failed"
-msgstr "Echec de la recherche dans les résultats"
 
 #. [forms.formItem.selectAllUnselectAll]
 #. defaultMessage is:
@@ -13085,6 +13086,16 @@ msgstr "Cas de tuberculose diagnostiqués aujourd'hui"
 #: extracted_strings.json
 msgid "TB lamp"
 msgstr "TB LAMP"
+
+#. [pages.JobAssignments.tag]
+#. defaultMessage is:
+#. Tag
+#. [pages.UserPreferences.tag]
+#. defaultMessage is:
+#. Tag
+#: extracted_strings.json
+msgid "Tag"
+msgstr "Étiqueter"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -16241,6 +16252,15 @@ msgstr "{unit} semaine dernière"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total des étalonnages"
+
+#~ msgid "Exporting Results Failed"
+#~ msgstr "L'exportation des résultats a échoué"
+
+#~ msgid "Loading Results Failed"
+#~ msgstr "Echec du chargement des résultats"
+
+#~ msgid "Searching Results Failed"
+#~ msgstr "Echec de la recherche dans les résultats"
 
 #~ msgid "Acknowledged"
 #~ msgstr "Reconnu"
