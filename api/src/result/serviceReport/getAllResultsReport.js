@@ -2,7 +2,6 @@ const Boom = require('@hapi/boom')
 const { subDays } = require('date-fns')
 const _ = require('lodash')
 const flat = require('flat')
-const startCase = require('lodash/startCase')
 const { assayToId } = require('../../shared/dictionary')
 const { knex, sortPageParams } = require('../../db')
 const { getPersonByPersonId, getUser } = require('../../auth/service')
@@ -29,13 +28,20 @@ module.exports = async (auth, query) => {
   // For performance issues this enforce to use the result_partner_endedOn_index Index, because it helps to reduce query time down to  60%
   if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 360)
 
-  const { data, extraColumns = [] } = await getResultsForExport(auth, query)
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
-  const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
-  const columnsFromCustomFields = await getColumnsFromCustomFields({ partnerId, assayId: query.assayId })
   const xdrAssayId = await assayToId('GxMtbXdr')
   const dataIncludesResistances = queryIncludesXdr(query, xdrAssayId)
+  const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
+  const columnsFromCustomFields = await getColumnsFromCustomFields({ partnerId, assayId: query.assayId })
+
+  const { data, extraColumns = [] } = await getResultsForExport(
+    auth,
+    query,
+    dataIncludesResistances,
+    columnsFromCustomFields
+  )
+
   const columns = [
     ...extraColumns.map(column => ({
       key: column.db,
@@ -45,11 +51,9 @@ module.exports = async (auth, query) => {
     { key: 'deviceStateName', header: 'State' },
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'resultCategoryGroup', header: 'Result' },
-    { key: 'resultData.resultText', header: 'Raw Result' },
-    { key: `mtbResistance`, header: 'MTB' }, // mtbResistance is defined in func dataSelector()
-    ...(dataIncludesResistances
-      ? XDR_RESISTANCES.map(name => ({ key: `resultData.allResistances.${name}`, header: name }))
-      : []),
+    { key: 'resultText', header: 'Raw Result' },
+    { key: `mtbResult`, header: 'MTB' },
+    ...(dataIncludesResistances ? XDR_RESISTANCES.map(name => ({ key: `xdrResistance${name}`, header: name })) : []),
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
     { key: 'resultTreatmentStatus', header: 'Follow Up Status' },
@@ -71,9 +75,10 @@ module.exports = async (auth, query) => {
     { key: 'assayName', header: 'Assay' },
 
     // dynamic columns from different schema json fields
-    ...columnsFromAssaySchema,
+    ...columnsFromAssaySchema, // Legacy code, apparently doesn't work
     ...columnsFromCustomFields,
   ]
+  console.log('\x1b[1;36m', '🚀 ~ columnsFromAssaySchema:', columnsFromAssaySchema)
 
   const dataset = {
     ok: true,
@@ -91,32 +96,58 @@ module.exports = async (auth, query) => {
       { key: 'errorCode', header: 'Error Code' },
       { key: 'patientId', header: 'Patient Id' },
     ],
-    dataSelector: (
+    /* dataSelector: (
       dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
     ) => {
-      const { resultData, mtbResistance } = humanizeResistances(dataRow, dataRow.assayId === xdrAssayId)
       return require('flat')({
         ...dataRow,
-        mtbResistance,
-        patientData: JSON.parse(dataRow.patientData),
-        resultData,
-        formData: JSON.parse(dataRow.formData),
+        // patientData: JSON.parse(dataRow.patientData),
         errorCode: _.replace(dataRow.errorCode || '', /(\r\n|\n|\r)/gm, ''),
         errorNotes: _.replace(dataRow.errorNotes || '', /(\r\n|\n|\r)/gm, ''),
         notes: _.replace(dataRow.notes || '', /(\r\n|\n|\r)/gm, ''),
       })
-    },
+    }, */
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
   return dataset
 }
 
-async function getResultsForExport(auth, query) {
+async function getResultsForExport(auth, query, dataIncludesResistances, columnsFromCustomFields) {
   const { timezoneIANA } = await getUser(auth.credentials.name)
 
   const selectFields = {
     ...COMMON_LIST_FIELDS_UTC,
+    resultText: knex.raw('r.resultData->>"$.resultText"'),
+    mtbResult: knex.raw(`
+      CASE 
+        WHEN rc1.externalId = "Detected" AND a.externalId IN ("GxMtbRif", "GxMtbRifUltra") THEN CONCAT("Detected, ", r.resultData->>"$.bacterialLoad")
+        WHEN rc1.externalId = "Detected" AND a.externalId IN ("GxMtbXdr") THEN "Detected"
+      ELSE NULL END`),
+    ...(dataIncludesResistances
+      ? XDR_RESISTANCES.reduce((acc, name) => {
+          acc[`xdrResistance${name}`] = knex.raw(`
+            CASE 
+              WHEN a.externalId = "GxMtbXdr" AND rc1.externalId = "Detected" THEN
+                (CASE WHEN r.resultData->>"$.allResistances.${name}" = "NotDetected"
+                  THEN "Not Detected"
+                  ELSE r.resultData->>"$.allResistances.${name}"
+                END)
+              ELSE NULL
+            END`)
+          return acc
+        }, {})
+      : {}),
+    ...columnsFromCustomFields.reduce((acc, column) => {
+      const [columnName, ...attributes] = column.key.split('.')
+      if (attributes.length > 0) {
+        const attributePath = attributes.join('.')
+        acc[column.key] = knex.raw(`${columnName}->>"$.${attributePath}"`)
+      } else {
+        acc[column.key] = knex.raw(columnName)
+      }
+      return acc
+    }, {}),
     // override datetime fields with user time offset:
     startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
     endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
@@ -177,11 +208,19 @@ async function getResultsForExport(auth, query) {
 
   const baseQuery = getQueryForResultsListAndExport(query, dataConstraints).select(selectFields)
 
-  const data = await knex
+  // Override baseQuery from to use index result_partner_endedOn_index for performance issues
+  const asd = knex
+    // .from(baseQuery.from(knex.raw('Result r FORCE INDEX (result_deviceId_endedOn_index)')).as('baseQ'))
     .from(baseQuery.as('baseQ'))
     .leftJoin(getLatestFollowUps().as('lastestFollowUps'), 'baseQ.id', 'lastestFollowUps.resultId')
-    .modify(sortPageParams, query, 'endedOn')
+    // .modify(sortPageParams, query, 'endedOn')
     .select('baseQ.*', 'lastestFollowUps.followUpName', 'lastestFollowUps.followUpDate')
+  // const asd = baseQuery
+  console.log('🚀 ~ getResultsForExport ~ asd:', asd.toString())
+
+  console.time('getResultsForExport')
+  const data = await asd
+  console.timeEnd('getResultsForExport')
 
   return {
     data,
@@ -243,129 +282,6 @@ const queryIncludesXdr = (query, xdrAssayId) => {
       query.assayId === xdrAssayId ||
       (Array.isArray(query.assayId) && query.assayId.includes(xdrAssayId)))
   )
-}
-
-const getResistanceValue = (resistance, resultText, defaultValue) => {
-  if (!resultText) return defaultValue
-  /**
-   * patterns:
-   *   PREFIX XXX Resistance @label_result_detected
-   *   PREFIX XXX @label_result_detected
-   *   PREFIX XXX detected
-   *   PREFIX XXX Resistance @label_result_detected SUFFIX
-   *   PREFIX XXX @label_result_detected SUFFIX
-   *   PREFIX XXX detected SUFFIX
-   *
-   * examples:
-   *   INH Resistance @label_result_detected
-   *   ENH @label_result_detected
-   *   High INH Resistance @label_result_detected
-   *   Very Low ETH @label_result-detected
-   *   High MTB @label_result-detected
-   *   Low MTB detected
-   *   MTB detected
-   *   MTB detected MEDIUM
-   *   MTB DETECTED VERY LOW
-   *   MTB @label_result_concatenate_two @label_result_detected @label_semi_quant_level_text_very_low
-   *   MTB @label_result_concatenate_two @label_result_detected @label_semi_quant_level_text_high
-   *   VeryLow MTB Detected
-   *   Very-Low MTB Detected
-   *   Very_Low MTB Detected
-   *   Very Low MTB Detected
-   */
-  const re = new RegExp(
-    `
-\\b
-    (?:
-      (
-        high  |  low  |  very[\\s-_]?low
-      )?
-      \\s+
-    )?
-    ${resistance}
-\\s+
-    (?:resistance\\s+)?
-    (?:
-      @label_result_concatenate_two
-      [\\s,]+
-    )?
-    (?:@label[_-]result[_-])?
-    (Detected)
-    (?:
-      [\\s,]+
-      (?:
-        @label[a-z_]+_text_
-      )?
-      (
-        high  |  low  |  very[\\s-_]?low  |  [a-z]+
-      )
-    )?
-\\b
-  `.replace(/\s/g, ''), // remove all white spaces, tabs and line breaks
-    'im' // <-- do not include `g` to let STRING.match(re) catch groups
-  )
-  /**
-   * process found match and return constructed value, or ...
-   */
-  const match = resultText.match(re)
-  if (match) {
-    let [
-      ,
-      prefix,
-      status, // only `Detected` now, but may be extended to Indeterminate or other statuses
-      suffix, // i.e. empty or Medium, etc
-    ] = match
-    const getStartCase = txt => {
-      if (!txt) return txt || ''
-      txt = txt.toLowerCase()
-      if (txt === 'verylow') txt = 'very low'
-      return _.startCase(txt)
-    }
-    prefix = getStartCase(prefix)
-    status = _.startCase(status.toLowerCase())
-    suffix = getStartCase(suffix)
-    const details = prefix || suffix
-    return `${status}${details ? `, ${details}` : ''}`
-  }
-  /**
-   * ... otherwise return default value
-   */
-  return defaultValue
-}
-
-const humanizeResistances = (dataRow, isMtbXdr) => {
-  let { resultData, resultCategoryGroup: mtbResistance } = dataRow
-  if (resultData) {
-    /**
-     * Hack to present a little bit clearer texts due to the lack of i18n handling in backend:
-     */
-    resultData = JSON.parse(resultData)
-    const { resultText } = resultData
-    if (isMtbXdr) {
-      if (resultData.allResistances) {
-        /**
-         * if XDR was Detected (i.e. is in `detectedResistance` array), then add it's high/low/veryLow
-         * details to the value.
-         * --> Check helper func `checkResistance` in api/src/result/serviceReportBangladesh/index.js
-         * to see how we handle this addition in the query.
-         */
-        const { detectedResistance } = resultData
-        XDR_RESISTANCES.forEach(resistance => {
-          let resistanceValue = startCase(resultData.allResistances[resistance])
-          if (detectedResistance?.includes(resistance)) {
-            resistanceValue = getResistanceValue(resistance, resultText, resistanceValue)
-          }
-
-          resultData.allResistances[resistance] = resistanceValue
-        })
-      }
-    }
-    /**
-     * show empty cell if MTB is not detected in resultText
-     */
-    mtbResistance = getResistanceValue('MTB', resultText, '')
-  }
-  return { resultData, mtbResistance }
 }
 
 async function getColumnsFromCustomFields({ partnerId, assayId }) {
