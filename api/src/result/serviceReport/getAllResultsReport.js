@@ -78,7 +78,6 @@ module.exports = async (auth, query) => {
     ...columnsFromAssaySchema, // Legacy code, apparently doesn't work
     ...columnsFromCustomFields,
   ]
-  console.log('\x1b[1;36m', '🚀 ~ columnsFromAssaySchema:', columnsFromAssaySchema)
 
   const dataset = {
     ok: true,
@@ -96,17 +95,6 @@ module.exports = async (auth, query) => {
       { key: 'errorCode', header: 'Error Code' },
       { key: 'patientId', header: 'Patient Id' },
     ],
-    /* dataSelector: (
-      dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
-    ) => {
-      return require('flat')({
-        ...dataRow,
-        // patientData: JSON.parse(dataRow.patientData),
-        errorCode: _.replace(dataRow.errorCode || '', /(\r\n|\n|\r)/gm, ''),
-        errorNotes: _.replace(dataRow.errorNotes || '', /(\r\n|\n|\r)/gm, ''),
-        notes: _.replace(dataRow.notes || '', /(\r\n|\n|\r)/gm, ''),
-      })
-    }, */
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
@@ -120,14 +108,14 @@ async function getResultsForExport(auth, query, dataIncludesResistances, columns
     ...COMMON_LIST_FIELDS_UTC,
     resultText: knex.raw('r.resultData->>"$.resultText"'),
     mtbResult: knex.raw(`
-      CASE 
+      CASE
         WHEN rc1.externalId = "Detected" AND a.externalId IN ("GxMtbRif", "GxMtbRifUltra") THEN CONCAT("Detected, ", r.resultData->>"$.bacterialLoad")
         WHEN rc1.externalId = "Detected" AND a.externalId IN ("GxMtbXdr") THEN "Detected"
       ELSE NULL END`),
     ...(dataIncludesResistances
       ? XDR_RESISTANCES.reduce((acc, name) => {
           acc[`xdrResistance${name}`] = knex.raw(`
-            CASE 
+            CASE
               WHEN a.externalId = "GxMtbXdr" AND rc1.externalId = "Detected" THEN
                 (CASE WHEN r.resultData->>"$.allResistances.${name}" = "NotDetected"
                   THEN "Not Detected"
@@ -215,7 +203,7 @@ async function getResultsForExport(auth, query, dataIncludesResistances, columns
     .leftJoin(getLatestFollowUps().as('lastestFollowUps'), 'baseQ.id', 'lastestFollowUps.resultId')
     // .modify(sortPageParams, query, 'endedOn')
     .select('baseQ.*', 'lastestFollowUps.followUpName', 'lastestFollowUps.followUpDate')
-  // const asd = baseQuery
+
   console.log('🚀 ~ getResultsForExport ~ asd:', asd.toString())
 
   console.time('getResultsForExport')
