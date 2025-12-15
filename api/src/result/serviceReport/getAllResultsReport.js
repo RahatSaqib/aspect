@@ -197,18 +197,16 @@ async function getResultsForExport(auth, query, dataIncludesResistances, columns
   const baseQuery = getQueryForResultsListAndExport(query, dataConstraints).select(selectFields)
 
   // Override baseQuery from to use index result_partner_endedOn_index for performance issues
-  const asd = knex
-    // .from(baseQuery.from(knex.raw('Result r FORCE INDEX (result_deviceId_endedOn_index)')).as('baseQ'))
-    .from(baseQuery.as('baseQ'))
+  const reportQuery = knex
+    .from(baseQuery.from(knex.raw('Result r FORCE INDEX (result_deviceId_endedOn_index)')).as('baseQ'))
     .leftJoin(getLatestFollowUps().as('lastestFollowUps'), 'baseQ.id', 'lastestFollowUps.resultId')
-    // .modify(sortPageParams, query, 'endedOn')
     .select('baseQ.*', 'lastestFollowUps.followUpName', 'lastestFollowUps.followUpDate')
 
-  console.log('🚀 ~ getResultsForExport ~ asd:', asd.toString())
+  if (!query.sortCol || query.sortCol !== 'endedOn' || !query.sortDir || query.sortDir !== 'desc') {
+    reportQuery.modify(sortPageParams, query, 'endedOn')
+  }
 
-  console.time('getResultsForExport')
-  const data = await asd
-  console.timeEnd('getResultsForExport')
+  const data = await reportQuery
 
   return {
     data,
