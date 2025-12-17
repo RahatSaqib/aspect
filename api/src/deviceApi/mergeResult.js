@@ -86,7 +86,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     sampleGroup: _.get(payload, 'sample.group', _.get(existingResult, 'sampleGroup', null)),
     resultCategory1,
     resultCategory2,
-    resultData,
+    resultData: _.omit(resultData, ['errorNotes']),
     resultDataHash,
     startedOn: testStartedOn,
     endedOn: _.get(payload, 'endedOn', _.get(existingResult, 'endedOn', null)),

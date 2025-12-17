@@ -15,8 +15,6 @@ const COMMON_LIST_FIELDS_UTC = {
   resultCategory1Name: 'rc1.name',
   resultCategory2Name: 'rc2.name',
   resultTreatmentStatus: 'rts.externalId',
-  resultData: 'r.resultData',
-  formData: 'r.formData',
   siteId: 'r.siteId',
   siteName: 'si.name',
   assayVersion: 'r.assayVersion',
@@ -43,7 +41,6 @@ const COMMON_LIST_FIELDS_UTC = {
   treatmentStatusInfo: knex.raw(
     "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end"
   ),
-  patientData: 'r.patientData',
   resultTreatmentMethod: 'rtsl.method',
   resultTreatmentData: 'rtsl.data',
   resultTreatmentStatusId: 'rtsl.resultTreatmentStatusId',
@@ -143,16 +140,17 @@ const LIST_FIELDS_UTC = {
  */
 const SELECT_FIELDS_UTC = {
   ...COMMON_LIST_FIELDS_UTC,
-  ...{
-    canEdit: knex.raw('IFNULL(pa.canEdit, 0)'),
-    canDelete: knex.raw('IFNULL(pa.canDelete, 0)'),
-    resultText: knex.raw(
-      `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, '')))`
-    ),
-    resultNotes: 'r.notes',
-    resultCategory1Label: 'a.resultCategory1Label',
-    resultCategory2Label: 'a.resultCategory2Label',
-  },
+  patientData: 'r.patientData',
+  resultData: 'r.resultData',
+  formData: 'r.formData',
+  canEdit: knex.raw('IFNULL(pa.canEdit, 0)'),
+  canDelete: knex.raw('IFNULL(pa.canDelete, 0)'),
+  resultText: knex.raw(
+    `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, '')))`
+  ),
+  resultNotes: 'r.notes',
+  resultCategory1Label: 'a.resultCategory1Label',
+  resultCategory2Label: 'a.resultCategory2Label',
 }
 
 const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
