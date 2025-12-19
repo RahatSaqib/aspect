@@ -168,6 +168,11 @@ function getSiteListQuery(query, dataConstraints) {
 
       this.whereIn('s.id', deviceQuery)
     })
+    .modify(function () {
+      if (query.tagId) {
+        this.innerJoin('SiteTag as stg', 's.id', 'stg.siteId').where('stg.tagId', query.tagId)
+      }
+    })
     .modify(filterDateRangeParams, query, 's.createdOn')
     .modify(
       filterParams,

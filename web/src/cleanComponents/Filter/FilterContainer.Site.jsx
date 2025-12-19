@@ -7,7 +7,7 @@ import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import SiteTypeSelect from '../../pages/Site/Detail/Edit/SiteTypeSelect'
-import { LgaSelect, SiteListSelect, StateSelect } from '../index'
+import { LgaSelect, SiteListSelect, StateSelect, TagSingleSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const SiteFilter = props => {
@@ -70,6 +70,15 @@ const SiteFilter = props => {
             label={formatMessage(messages.externalId)}
             value={state.externalId || ''}
             onChange={e => setState({ ...state, externalId: e.target.value ? e.target.value : null })}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TagSingleSelect
+            id="tagId"
+            name="tagId"
+            label={formatMessage(messages.tag)}
+            value={state.tagId || ''}
+            onChange={e => setState({ ...state, tagId: e.target.value || null })}
           />
         </Grid>
       </Grid>
