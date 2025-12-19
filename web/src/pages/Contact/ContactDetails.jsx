@@ -13,7 +13,7 @@ import {
   Loading,
   PartnerSelect,
   StateSelect,
-  TagSelect,
+  ContactTagSelect,
   TimezoneSelect,
 } from '../../cleanComponents'
 import useAddPerson from '../../hooks/person/useAddPerson'
@@ -336,7 +336,7 @@ const ContactDetails = ({ setStep }) => {
                 </Grid>
                 {/* row7 */}
                 <Grid item xs={12}>
-                  <TagSelect
+                  <ContactTagSelect
                     id="tags"
                     name="tags"
                     label={formatMessage(messages.notificationTags)}

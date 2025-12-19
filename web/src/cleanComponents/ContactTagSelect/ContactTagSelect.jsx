@@ -3,7 +3,7 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 
 const filter = createFilterOptions()
-const TagSelect = ({ id, name, label, value, onChange, error, helperText }) => {
+const ContactTagSelect = ({ id, name, label, value, onChange, error, helperText }) => {
   return (
     <Autocomplete
       value={value}
@@ -38,4 +38,4 @@ const TagSelect = ({ id, name, label, value, onChange, error, helperText }) => {
     />
   )
 }
-export default TagSelect
+export default ContactTagSelect
