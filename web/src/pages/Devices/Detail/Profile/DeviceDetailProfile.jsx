@@ -170,6 +170,7 @@ const DeviceDetailProfile = ({
   onCalibrationSubmit,
   onWarrantySubmit,
   onExportDeviceLogsClick,
+  deviceTags,
 }) => {
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
@@ -447,6 +448,11 @@ const DeviceDetailProfile = ({
             />
 
             <Summary title={formatMessage(messages.notes)} description={device.get('notes')} cols="1" />
+            <Summary
+              title={formatMessage(messages.tags)}
+              description={deviceTags.map(tag => tag.title).join(', ')}
+              cols="1"
+            />
           </div>
         </Card>
         <CalibrationDialog
@@ -511,6 +517,15 @@ DeviceDetailProfile.propTypes = {
   onCalibrationSubmit: PropTypes.func.isRequired,
   onWarrantySubmit: PropTypes.func.isRequired,
   onExportDeviceLogsClick: PropTypes.func.isRequired,
+  deviceTags: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+    })
+  ),
+}
+
+DeviceDetailProfile.defaultProps = {
+  deviceTags: [],
 }
 
 export default enhance(DeviceDetailProfile)
