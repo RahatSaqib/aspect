@@ -99,11 +99,11 @@ import { SimpleTableHeader, SimpleTablePagination } from './SimpleTable'
 import SiteListSelect from './SiteListSelect'
 import SiteSelect from './SiteSelect'
 import SitesToTransferSelect from './SitesToTransferSelect'
-import SiteTagInput from './SiteTagInput'
 import StateAutocomplete from './StateAutocomplete'
 import StateSelect from './StateSelect'
 import StateSelector from './StateSelector'
 import { TableContainer } from './Table/TableContainer'
+import TagInput from './TagInput'
 import TagSingleSelect from './TagSingleSelect'
 import TimezoneSelect from './TimezoneSelect'
 import UnitSelect from './UnitSelect'
@@ -183,7 +183,7 @@ export {
   SiteFilter,
   SiteListSelect,
   SiteSelect,
-  SiteTagInput,
+  TagInput,
   SitesToTransferSelect,
   StateAutocomplete,
   StateSelect,
