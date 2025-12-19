@@ -92,14 +92,14 @@ msgstr ""
 #. *In transit from {inTransitFromSiteName}
 #: extracted_strings.json
 msgid "*In transit from {inTransitFromSiteName}"
-msgstr "передача з"
+msgstr "передача з  {inTransitFromSiteName}"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{контакти, множина, один {# більше {name}} інші {# більше {name}} }"
+msgstr "...{контакти, plural, one {# більше {name}} other {# більше {name}} }"
 
 #. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
@@ -12130,8 +12130,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "Consumable} other {# Consumables} }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# "
-"Витратні матеріали} інші {# Витратні матеріали} }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
+"Витратні матеріали} other {# Витратні матеріали} }"
 
 #. [pages.InventoryTransfer.paginatorStatus]
 #. defaultMessage is:
@@ -12141,8 +12141,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "Transfer} other {# Transfers} }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# "
-"Передача} інші {# Передачі} } }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
+"Передача} other {# Передачі} }"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
@@ -12189,7 +12189,7 @@ msgid ""
 "notification} other {# notifications} }"
 msgstr ""
 "Показати {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
-"сповіщення} other {# сповіщення} } }"
+"сповіщення} other {# сповіщення} } "
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -12269,8 +12269,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } "
 "other {# } }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# } "
-"інші {# } }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# } "
+"other {# } }"
 
 #. [pages.ReportIndex.unusedModulesReport_Description]
 #. defaultMessage is:
@@ -16083,7 +16083,7 @@ msgstr "{itemCount, plural, one {# Contact} other {# Contacts} }"
 #. {itemCount, plural, one {# Job Function} other {# Job Functions} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
-msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} } }"
+msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
@@ -16097,7 +16097,7 @@ msgstr "{itemCount, plural, one {# Name} other {# Names} }"
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, plural, one {# Person} other {# Persons} } }"
+msgstr "{itemCount, plural, one {# Person} other {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -16133,7 +16133,7 @@ msgstr ""
 #. {numberOfModules, plural, one {# module} other {# modules} }
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
-msgstr "{numberOfModules, plural, один {# модуль} інші {# модулі} } }"
+msgstr "{numberOfModules, plural, one {# модуль} other {# модулі} }"
 
 #. [p.PkDashboard.customPerYear]
 #. defaultMessage is:
@@ -16766,7 +16766,7 @@ msgstr "загальне калібрування"
 #~ msgstr "Помилка завантаження журналів результатів"
 
 #~ msgid "Error Loading States for {countryName}"
-#~ msgstr "Помилка завантаження станів для {countryName}"
+#~ msgstr "Помилка завантаження штатів для {countryName}"
 
 #~ msgid "Exporting Contacts Failed"
 #~ msgstr "Помилка експорту контактів"
@@ -16835,7 +16835,7 @@ msgstr "загальне калібрування"
 #~ "Result Workflow Status Log {itemCount, plural, =0 {} other "
 #~ "{({itemCount})} }"
 #~ msgstr ""
-#~ "Результат Журнал стану робочого циклу {itemCount, множина, = 0 {} інший "
+#~ "Результат Журнал стану робочого циклу {itemCount, plural, =0 {} інший "
 #~ "{({itemCount})}}"
 
 #~ msgid "Result ended on:"
