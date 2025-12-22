@@ -16,8 +16,6 @@ describe('Excel reports', () => {
 
     '/api/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format=xlsx',
     '/api/deviceApiKey/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=',
-    '/api/result/export?sortCol=endedOn&sortDir=asc&page=0&size=10&format=xlsx',
-    '/api/result/export?sortCol=assayName&sortDir=asc&page=0&size=10&format=&diseaseId=3',
   ]
   before(async () => {
     await shared.checkToken(server, queriesExcel[0])
@@ -49,6 +47,26 @@ describe('Excel reports', () => {
   })
   it('should return CSV files when using valid token', async () => {
     await Promise.each(queriesCSV, async query => {
+      const res = await server.get(query).set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(res.status, 200)
+      // Content-Type for CSV
+      assert.equal(res.type, 'application/octet-stream')
+      const base64 = Buffer.from(res.body, 'binary').toString('base64')
+      assert.isString(base64)
+    })
+  })
+
+  const resultListQueriesCSV = [
+    '/api/result/export?sortCol=endedOn&sortDir=asc&page=0&size=10&format=xlsx',
+    '/api/result/export?sortCol=assayName&sortDir=asc&page=0&size=10&format=&diseaseId=3',
+  ]
+
+  before(() => {
+    shared.checkToken(server, resultListQueriesCSV[0])
+  })
+  it('should return CSV files when download a result list report', async () => {
+    await Promise.each(resultListQueriesCSV, async query => {
       const res = await server.get(query).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
