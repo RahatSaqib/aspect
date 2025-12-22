@@ -6,7 +6,6 @@ const { endOfMonth, endOfYear, startOfMonth, subMonths, addMonths } = require('d
 const { knex } = require('../../db')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
-const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../../shared/excel')
 const { processGroupedQuery } = require('../common/db')
 
 const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
