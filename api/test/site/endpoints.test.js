@@ -6,7 +6,7 @@ const endpointUtils = require('../utils/endpointUtils')
 describe('site endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/site/endpoints', {
-      './service': serviceStub,
+      './listSites': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }
@@ -26,6 +26,12 @@ describe('site endpoints', () => {
       it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
+          .with({
+            query: {},
+            auth: {
+              credentials: {},
+            },
+          })
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
