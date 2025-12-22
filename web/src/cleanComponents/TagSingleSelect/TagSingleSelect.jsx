@@ -3,8 +3,8 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { IconButton, LinearProgress, MenuItem, TextField } from '@mui/material'
 import useTagByType from '../../hooks/tag/useTagByType'
 
-const TagSingleSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
-  const { isLoading, data } = useTagByType('site', {
+const TagSingleSelect = ({ id, name, label, value, onChange, error, helperText, disabled, type }) => {
+  const { isLoading, data } = useTagByType(type, {
     refetchOnMount: true,
     staleTime: 0,
   })

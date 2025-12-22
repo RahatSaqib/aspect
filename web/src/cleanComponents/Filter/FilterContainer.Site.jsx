@@ -74,6 +74,7 @@ const SiteFilter = props => {
         </Grid>
         <Grid item xs={3}>
           <TagSingleSelect
+            type="site"
             id="tagId"
             name="tagId"
             label={formatMessage(messages.tag)}
