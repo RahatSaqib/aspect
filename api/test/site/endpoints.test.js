@@ -4,10 +4,15 @@ const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
 
 describe('site endpoints', () => {
-  function setupRoute(method, path, serviceStub) {
-    const endpoints = proxyquire('../../src/site/endpoints', {
-      './service': serviceStub,
-    })
+  function setupRoute(method, path, serviceStub, listSitesStub) {
+    const stubs = {}
+    if (serviceStub) {
+      stubs['./service'] = serviceStub
+    }
+    if (listSitesStub) {
+      stubs['./listSites'] = listSitesStub
+    }
+    const endpoints = proxyquire('../../src/site/endpoints', stubs)
     return _.find(endpoints.routes, { method, path })
   }
 
@@ -17,7 +22,7 @@ describe('site endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/site', {
+        endpoint = setupRoute('GET', '/site', null, {
           async listSites() {
             return expectedResponse
           },
@@ -26,6 +31,12 @@ describe('site endpoints', () => {
       it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
+          .with({
+            query: {},
+            auth: {
+              credentials: {},
+            },
+          })
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
@@ -48,6 +59,14 @@ describe('site endpoints', () => {
       it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
+          .with({
+            params: {
+              siteId: 1,
+            },
+            auth: {
+              credentials: {},
+            },
+          })
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
@@ -70,6 +89,13 @@ describe('site endpoints', () => {
       it('Should respond with the data returned from the service', async () => {
         endpointUtils
           .callHandlerOn(endpoint)
+          .with({
+            query: {},
+            params: {},
+            auth: {
+              credentials: {},
+            },
+          })
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })

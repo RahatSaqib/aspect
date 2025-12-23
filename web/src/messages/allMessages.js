@@ -75,6 +75,10 @@ const messages = {
       id: 'filter.btnGroup.whereStockProviderIs',
       defaultMessage: 'stock provider is "{stockProvider}"',
     },
+    whereTagIs: {
+      id: 'filter.btnGroup.whereTagIs',
+      defaultMessage: 'tagged as "{tag}"',
+    },
     whereLgaNameIncludes: {
       id: 'filter.btnGroup.whereLgaNameIncludes',
       defaultMessage: 'lga name includes "{lgaName}"',

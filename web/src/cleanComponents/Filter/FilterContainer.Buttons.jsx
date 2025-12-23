@@ -17,6 +17,7 @@ import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
 import useSiteList from '../../hooks/site/useSiteList'
 import useSiteType from '../../hooks/site/useSiteType'
+import useTagByType from '../../hooks/tag/useTagByType'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import { cepheidModulesOptions } from '../CepheidModulesSelect/CepheidModulesSelect'
@@ -68,6 +69,7 @@ const filtersOrdering = {
   showDecommissionedDevices: 380,
   siteTypeId: 390,
   parentWarehouseId: 400,
+  tagId: 410,
 }
 
 const buttonMapping = {
@@ -85,6 +87,7 @@ const buttonMapping = {
   siteTypeId: ({ siteTypeId, remove, blocked }) => (
     <SiteTypeId siteTypeId={siteTypeId} remove={remove} blocked={blocked} />
   ),
+  tagId: ({ tagId, remove, blocked }) => <TagId tagId={tagId} remove={remove} blocked={blocked} />,
   lgaName: ({ lgaName, remove, blocked }) => <LgaName lgaName={lgaName} remove={remove} blocked={blocked} />,
   stateName: ({ stateName, remove, blocked }) => <StateName stateName={stateName} remove={remove} blocked={blocked} />,
   originSiteName: ({ originSiteName, remove, blocked }) => (
@@ -315,6 +318,18 @@ const SiteTypeId = ({ siteTypeId, remove, blocked }) => {
       del={blocked.includes('siteTypeId') ? undefined : () => remove(['siteTypeId'])}
     />
   )
+}
+const TagId = ({ tagId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const { data } = useTagByType('site')
+  const tag = data?.find(i => i.id === tagId)
+
+  return tag && tagId ? (
+    <Btn
+      lbl={formatMessage(messages.whereTagIs, { tag: tag.title })}
+      del={blocked.includes('tagId') ? undefined : () => remove(['tagId'])}
+    />
+  ) : null
 }
 const LgaName = ({ lgaName, remove, blocked }) => {
   const { formatMessage } = useIntl()
