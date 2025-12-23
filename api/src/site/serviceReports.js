@@ -1,5 +1,5 @@
 const { format } = require('date-fns')
-const { listSites } = require('./service')
+const { listSites } = require('./listSites')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { listSitesWithReporters } = require('./service')
 
