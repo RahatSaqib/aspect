@@ -131,6 +131,7 @@ export const DeviceDetail = props => {
                   onMaintenanceSubmit={onMaintenanceSubmit}
                   onCalibrationSubmit={onCalibrationSubmit}
                   onWarrantySubmit={onWarrantySubmit}
+                  deviceTags={deviceTags}
                 />
               }
             />
