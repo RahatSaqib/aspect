@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -92,14 +92,14 @@ msgstr ""
 #. *In transit from {inTransitFromSiteName}
 #: extracted_strings.json
 msgid "*In transit from {inTransitFromSiteName}"
-msgstr "передача з"
+msgstr "передача з  {inTransitFromSiteName}"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{контакти, множина, один {# більше {name}} інші {# більше {name}} }"
+msgstr "...{контакти, plural, one {# більше {name}} other {# більше {name}} }"
 
 #. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
@@ -1309,7 +1309,7 @@ msgid ""
 "Based on the last 30 days, represents the percentage of days when the device "
 "was reported as 'active' compared to the total number of working days"
 msgstr ""
-" Відсоток днів від загальної кількісті робочих днів, коли пристрій було "
+"Відсоток днів від загальної кількісті робочих днів, коли пристрій було "
 "показано як «активний» за останніх 30 днів"
 
 #. [pages.DeviceList.errorRateDescription]
@@ -1321,7 +1321,7 @@ msgid ""
 "compared to the total number of performed results"
 msgstr ""
 "Відсоток результатів із помилками від загальної кількісті виконаних за "
-"останні 30 днів "
+"останні 30 днів"
 
 #. [pages.Notifications.daysBeforeCalibrationDueDate]
 #. defaultMessage is:
@@ -2270,7 +2270,7 @@ msgstr "Забруднені"
 #. Copies/ML
 #: extracted_strings.json
 msgid "Copies/ML"
-msgstr "копій/мл"
+msgstr "копій/ML"
 
 #. [contextualMenu.notifications.copy.title]
 #. defaultMessage is:
@@ -2385,7 +2385,7 @@ msgid ""
 "most recent 20 results. This can indicate a faulty module"
 msgstr ""
 "Підраховує пристрої, які не використовували всі доступні модулі для останніх "
-"20 тестів.Це може свідчити про несправний модуль."
+"20 тестів.Це може свідчити про несправний модуль"
 
 #. [component.Widget.percentageOfModulesFunctioningDescription]
 #. defaultMessage is:
@@ -3143,7 +3143,7 @@ msgstr "Грудень"
 #. Decommissioned
 #: extracted_strings.json
 msgid "Decommissioned"
-msgstr "виведений з експлуатації"
+msgstr "Виведений з експлуатації"
 
 #. [pages.Notifications.dataDateRangeTitle]
 #. defaultMessage is:
@@ -3291,7 +3291,7 @@ msgstr "Активність пристрою (у відсотках)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Рівень розміщення пристрою "
+msgstr "Рівень розміщення пристрою"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -3547,7 +3547,7 @@ msgstr "Пристрої від Lab"
 #. Devices with Unused Modules
 #: extracted_strings.json
 msgid "Devices with Unused Modules"
-msgstr "пристрої, у яких не використовуються модулі"
+msgstr "Пристрої, у яких не використовуються модулі"
 
 #. [p.PkDashboard.diagnosisTrends]
 #. defaultMessage is:
@@ -3735,7 +3735,7 @@ msgstr ""
 #. Drug Resistance
 #: extracted_strings.json
 msgid "Drug Resistance"
-msgstr "стійкість до препаратів"
+msgstr "Стійкість до препаратів"
 
 #. [filter.AssayTypeSelectField.assayTypeEid]
 #. defaultMessage is:
@@ -3923,7 +3923,7 @@ msgstr "Тема електронного листа обов’язкова"
 #. Enable
 #: extracted_strings.json
 msgid "Enable"
-msgstr "підключити"
+msgstr "Підключити"
 
 #. [pages.NotificationDetail.notificationTypeEnable]
 #. defaultMessage is:
@@ -4052,7 +4052,7 @@ msgstr "Введіть назву сайту, про який можна зві�
 #. Enter reportable site...
 #: extracted_strings.json
 msgid "Enter reportable site..."
-msgstr "введіть сайт, на який можна повідомити"
+msgstr "Введіть сайт, на який можна повідомити"
 
 #. [filter.popover.enterSampleId]
 #. defaultMessage is:
@@ -5009,7 +5009,7 @@ msgstr "GeneXpert Ebola"
 #. GeneXpert Ebola Cartridge
 #: extracted_strings.json
 msgid "GeneXpert Ebola Cartridge"
-msgstr "Картридж Xpert Ebola "
+msgstr "Картридж Xpert Ebola"
 
 #. [legends.Unknown.assayGeneXpertHcv]
 #. defaultMessage is:
@@ -12130,8 +12130,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "Consumable} other {# Consumables} }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# "
-"Витратні матеріали} інші {# Витратні матеріали} }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
+"Витратні матеріали} other {# Витратні матеріали} }"
 
 #. [pages.InventoryTransfer.paginatorStatus]
 #. defaultMessage is:
@@ -12141,8 +12141,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "Transfer} other {# Transfers} }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# "
-"Передача} інші {# Передачі} } }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
+"Передача} other {# Передачі} }"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
@@ -12189,7 +12189,7 @@ msgid ""
 "notification} other {# notifications} }"
 msgstr ""
 "Показати {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
-"сповіщення} other {# сповіщення} } }"
+"сповіщення} other {# сповіщення} }"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -12269,8 +12269,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } "
 "other {# } }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# } "
-"інші {# } }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# } "
+"other {# } }"
 
 #. [pages.ReportIndex.unusedModulesReport_Description]
 #. defaultMessage is:
@@ -13017,7 +13017,7 @@ msgstr "Тенденція тестування на туберкульоз"
 #. TB XDR Drug Resistances
 #: extracted_strings.json
 msgid "TB XDR Drug Resistances"
-msgstr "TB XDR Стійкість до препаратів "
+msgstr "TB XDR Стійкість до препаратів"
 
 #. [p.PkDashboard.TBXDRTest]
 #. defaultMessage is:
@@ -15863,7 +15863,7 @@ msgstr "відсоток функціонування модулів"
 #. percentage of positive results notified
 #: extracted_strings.json
 msgid "percentage of positive results notified"
-msgstr "відсоток повідомлених позитивних результатів "
+msgstr "відсоток повідомлених позитивних результатів"
 
 #. [widgetAlerts.percentageOfServerUptime]
 #. defaultMessage is:
@@ -16083,7 +16083,7 @@ msgstr "{itemCount, plural, one {# Contact} other {# Contacts} }"
 #. {itemCount, plural, one {# Job Function} other {# Job Functions} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
-msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} } }"
+msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
@@ -16097,7 +16097,7 @@ msgstr "{itemCount, plural, one {# Name} other {# Names} }"
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, plural, one {# Person} other {# Persons} } }"
+msgstr "{itemCount, plural, one {# Person} other {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -16133,7 +16133,7 @@ msgstr ""
 #. {numberOfModules, plural, one {# module} other {# modules} }
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
-msgstr "{numberOfModules, plural, один {# модуль} інші {# модулі} } }"
+msgstr "{numberOfModules, plural, one {# модуль} other {# модулі} }"
 
 #. [p.PkDashboard.customPerYear]
 #. defaultMessage is:
@@ -16185,7 +16185,7 @@ msgstr "{unit} з минулого тижня"
 #. {unit} total calibrations
 #: extracted_strings.json
 msgid "{unit} total calibrations"
-msgstr "загальне калібрування"
+msgstr "{unit} загальне калібрування"
 
 #~ msgid "Exporting Results Failed"
 #~ msgstr "Помилка експорту результатів"
@@ -16766,7 +16766,7 @@ msgstr "загальне калібрування"
 #~ msgstr "Помилка завантаження журналів результатів"
 
 #~ msgid "Error Loading States for {countryName}"
-#~ msgstr "Помилка завантаження станів для {countryName}"
+#~ msgstr "Помилка завантаження штатів для {countryName}"
 
 #~ msgid "Exporting Contacts Failed"
 #~ msgstr "Помилка експорту контактів"
@@ -16835,7 +16835,7 @@ msgstr "загальне калібрування"
 #~ "Result Workflow Status Log {itemCount, plural, =0 {} other "
 #~ "{({itemCount})} }"
 #~ msgstr ""
-#~ "Результат Журнал стану робочого циклу {itemCount, множина, = 0 {} інший "
+#~ "Результат Журнал стану робочого циклу {itemCount, plural, =0 {} інший "
 #~ "{({itemCount})}}"
 
 #~ msgid "Result ended on:"
