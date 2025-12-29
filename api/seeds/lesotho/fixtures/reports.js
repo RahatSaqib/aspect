@@ -4,7 +4,7 @@ const DeviceShortSummaryReport = {
   i18nKey: 'deviceShortSummaryReport',
   externalId: 'device_short_summary_report', // folder name in /templates
   i18nKeyDescription: 'deviceShortSummaryReportDescription',
-  fileName: 'DeviceAndSiteSummaryReport',
+  fileName: 'DeviceShortSummaryReport',
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 5,
@@ -12,7 +12,7 @@ const DeviceShortSummaryReport = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/serviceReportLesotho/DeviceShortSummaryReport',
+      moduleName: 'device/serviceReportsLesotho/deviceShortSummaryReport',
       functionName: 'getAllDeviceReportData',
       query: {
         avoidStreaming: true,

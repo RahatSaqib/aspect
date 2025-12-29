@@ -3,7 +3,7 @@ const { knex, sortPageParams, filterDateRangeParams, filterParams } = require('.
 const { getInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
-const { getBasicsForDevicesReport } = require('../common/db')
+const { getBasicsForDevicesReport, getResultCategoryGroupColumns } = require('../common/db')
 const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 // --------------------------------------------------------------------------
@@ -13,7 +13,7 @@ const {
 } = require('../../result/query/querySelectors')
 
 // --------------------------------------------------------------------------
-async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezoneIANA) {
+async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstraints, query, timezoneIANA) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
 
   const resultCategoryGroupsColumns = Object.fromEntries(
@@ -104,6 +104,24 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
   }
 }
 
+// --------------------------------------------------------------------------
+async function getAllDeviceReportDataWrapper(auth, query, timezone) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
+  const { builder } = await getAllDeviceReportDataInternal(resultCategoryGroups, dataConstraints, query, timezone)
+  const rows = await builder
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+    dynamicColumns: resultCategoryGroups.map(a => ({
+      key: a.columnKey,
+      header: a.columnName,
+    })),
+  }
+}
+
 module.exports = {
-  getAllDeviceReportData,
+  getAllDeviceReportData: getAllDeviceReportDataWrapper,
 }
