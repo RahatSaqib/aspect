@@ -11,8 +11,13 @@ const {
   inventoryManager,
 } = require('../../fixtures/jobFunctionBase')
 
+const reports = require('./reports')
+
+const countryReports = Object.values(reports).map(report => report.externalId)
+
 module.exports = [
   mergeJobFunctions(superAdmin, {
+    reports: [...superAdmin.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -93,6 +98,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(regionalAdmin, {
+    reports: [...superAdmin.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -241,6 +247,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(labUser, {
+    reports: [...superAdmin.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
