@@ -98,7 +98,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(regionalAdmin, {
-    reports: [...superAdmin.reports, ...countryReports],
+    reports: [...regionalAdmin.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -247,7 +247,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(labUser, {
-    reports: [...superAdmin.reports, ...countryReports],
+    reports: [...labUser.reports, ...countryReports],
     permissions: [
       {
         module: 'account',

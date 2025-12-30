@@ -6,10 +6,7 @@ const { getBasicsForDevicesReport, getResultCategoryGroupColumns } = require('..
 const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 // --------------------------------------------------------------------------
-const {
-  getResultCategoryGroupSumSelector,
-  getResultXdrResistanceSumSelector,
-} = require('../../result/query/querySelectors')
+const { getResultCategoryGroupSumSelector } = require('../../result/query/querySelectors')
 
 // --------------------------------------------------------------------------
 async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstraints, query, timezoneIANA) {
@@ -22,7 +19,7 @@ async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstrai
         return [ac.columnKey, getResultCategoryGroupSumSelector(ac.assayId, ac.resultCategory1Id, ac.resultCategory2Id)]
 
       // Counts an xdr resistance result
-      return [ac.columnKey, getResultXdrResistanceSumSelector(ac.xdrResistance)]
+      return [ac.columnKey] // , getResultXdrResistanceSumSelector(ac.xdrResistance)]
     })
   )
 
@@ -74,9 +71,9 @@ async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstrai
 }
 
 // --------------------------------------------------------------------------
-async function getAllDeviceReportDataWrapper(auth, query, timezone) {
+async function getAllDeviceReportData(auth, query, timezone) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
+  const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query, false)
   const { builder } = await getAllDeviceReportDataInternal(resultCategoryGroups, dataConstraints, query, timezone)
   const rows = await builder
 
@@ -92,5 +89,5 @@ async function getAllDeviceReportDataWrapper(auth, query, timezone) {
 }
 
 module.exports = {
-  getAllDeviceReportData: getAllDeviceReportDataWrapper,
+  getAllDeviceReportData,
 }
