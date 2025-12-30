@@ -795,6 +795,7 @@ async function getResultCategoryGroupColumns(dataConstraints, query, includeXdrR
       knex.raw(
         'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
       ),
+      'rcg.abbreviation AS columnAbbreviation',
     ])
     .groupBy(
       knex.raw(
