@@ -1439,15 +1439,6 @@ const GxMtbRifUltraMTBTraceDetectedRifIndeterminate = {
   assayExternalId: 'GxMtbRifUltra',
 }
 
-const GxMtbRifMTBErrorRifError = {
-  externalId: 'GxMtbRifMTBErrorRifError',
-  i18nKey: 'GxMtbRifMTBErrorRifError',
-  name: 'MTB Error Rif Error',
-  resultCategory1ExternalId: 'Error',
-  resultCategory2ExternalId: 'Error',
-  assayExternalId: 'GxMtbRif',
-}
-
 const GxMtbRifUltraMTBTraceDetectedRifNoResult = {
   externalId: 'GxMtbRifUltraMTBTraceDetectedRifNoResult',
   i18nKey: 'GxMtbRifUltraMTBTraceDetectedRifNoResult',
