@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const { knex, sortPageParams, filterDateRangeParams, filterParams } = require('../../db')
-const { getInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { getBasicsForDevicesReport, getResultCategoryGroupColumns } = require('../common/db')
@@ -38,9 +37,7 @@ async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstrai
     })
     .select({
       deviceId: 'deviceId',
-      otherTests: knex.raw('IFNULL(SUM(CASE WHEN rcg.id IS NULL THEN 1 ELSE 0 END), 0)'),
       totalXpertTests: knex.raw('count(*)'),
-      lastUploadOn: knex.raw('MAX(r.updatedOn)'),
       ...resultCategoryGroupsColumns,
     })
     .groupBy('r.deviceId')
@@ -70,36 +67,8 @@ async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstrai
         's.name AS siteName',
         's.id AS siteId',
         'st.name AS stateName',
-        'lg.name AS districtName',
-        'd.serial AS serial',
-        'd.lastInstrumentSerial AS instrumentSerial',
-        getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastPingOn', timezoneIANA, 'lastPingOn'),
-        'd.lastPingFromIp AS lastPingFrom',
-        getDateTimeProjectionInTimeZoneIANA(
-          knex,
-          'COALESCE(configurationData->>"$.systemTime.localTime", configurationData->>"$.systemTime")',
-          timezoneIANA,
-          'informationDate'
-        ),
-        knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS operativeSystem'),
-        'd.timezone AS timeZone',
-        'd.culture AS language',
-        knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS gxConnectVersion'),
-        knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
-        knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
-        // The deviceApi doesn't populate d.putInService well, so we are going to get it from configurationData until we fix that
-        getDateTimeProjectionInTimeZoneIANA(
-          knex,
-          'COALESCE(d.putInService, d.configurationData->>"$.putInService")',
-          timezoneIANA,
-          'instalationDate'
-        ),
-        getDateTimeProjectionInTimeZoneIANA(knex, 'resultsCount.lastUploadOn', timezoneIANA, 'lastUploadOn'),
-        knex.raw('dms.name AS status'),
-        knex.raw('dmsl.data ->> "$.notes" AS statusNote'),
         ...resultCategoryGroups.map(a => knex.raw(`IFNULL(resultsCount.${a.columnKey}, 0) AS ${a.columnKey}`)),
         knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertTests'),
-        knex.raw('IFNULL(resultsCount.otherTests, 0) AS totalOtherTests'),
       ]),
   }
 }
