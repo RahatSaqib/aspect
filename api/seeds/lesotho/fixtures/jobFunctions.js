@@ -247,7 +247,6 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(labUser, {
-    reports: [...labUser.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -315,7 +314,9 @@ module.exports = [
       },
     ],
   }),
-  regionalOfficer,
+  mergeJobFunctions(regionalOfficer, {
+    reports: [...regionalOfficer.reports, ...countryReports],
+  }),
   dataViewer,
   technician,
   aspectBeta,
