@@ -199,7 +199,6 @@ const messages = {
     displayAllResults: { id: 'filter.btnGroup.displayAllResults', defaultMessage: 'All Results' },
     displayActualResults: { id: 'filter.btnGroup.displayActualResults', defaultMessage: 'Actual Results' },
     displayExcludedResults: { id: 'filter.btnGroup.displayExcludedResults', defaultMessage: 'Excluded Results' },
-    GxMtbRifMTBErrorRifError: { id: 'pages.filters.GxMtbRifMTBErrorRifError', defaultMessage: 'MTB Error Rif Error' },
     gxMtbRifUltraMtbDetectedRifIndeterminate: {
       id: 'pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate',
       defaultMessage: 'MTB Detected - Rif Indeterminate',

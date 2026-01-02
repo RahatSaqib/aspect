@@ -71,10 +71,6 @@ const result = defineMessages({
     id: 'pages.filters.gxMtbRifMtbNoResult',
     defaultMessage: 'MTB No Result',
   },
-  GxMtbRifMTBErrorRifError: {
-    id: 'pages.filters.GxMtbRifMTBErrorRifError',
-    defaultMessage: 'MTB Error Rif Error',
-  },
   gxMtbRifUltraMtbNotDetected: {
     id: 'pages.filters.gxMtbRifUltraMtbNotDetected',
     defaultMessage: 'MTB Not Detected',

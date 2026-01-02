@@ -119,7 +119,6 @@ async function getInventoryData(auth, query) {
       knex.raw('COALESCE(t2.dailyConsumptionRate, 0) * 365 as projectedAnnualConsumption'),
       knex.raw('COALESCE(t2.quantityOnHand, 0) as quantityOnHand'),
       knex.raw('COALESCE(t2.daysStockLeft, 0) as daysStockLeft'),
-      knex.raw('COALESCE(t2.projectedWaste, 0) as projectedWaste'),
       knex.raw('COALESCE(t2.qtyExpired, 0) as quantityExpired'),
     ]
   )

@@ -60,5 +60,23 @@ module.exports = async function upsertResultCategoryGroups(knex, fixture, assayW
   )
 
   const rows = groups.map(group => omit(group, ['assayExternalId']))
+  const fixtureExternalIds = new Set(rows.map(row => row.externalId))
+
+  if (assayWhitelist.length === 0) {
+    // Find and delete obsolete ResultCategoryGroup records
+    const existingGroups = await knex('ResultCategoryGroup').select('id', 'externalId')
+    const toDelete = existingGroups.filter(row => !fixtureExternalIds.has(row.externalId))
+
+    if (toDelete.length > 0) {
+      const deleteIds = toDelete.map(r => r.id)
+      await knex('ResultCategoryGroup').whereIn('id', deleteIds).del()
+
+      // eslint-disable-next-line no-console
+      console.log(
+        `\x1b[1;35m‼️ ➜ Deleted obsolete ResultCategoryGroup records: `,
+        toDelete.map(r => r.externalId)
+      )
+    }
+  }
   await knex('ResultCategoryGroup').insert(rows).onConflict('externalId').merge()
 }
