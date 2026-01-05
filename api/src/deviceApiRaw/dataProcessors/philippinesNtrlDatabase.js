@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { getRemoteAddress } = require('../../shared/request')
-const { resultUpdated, resultLogged } = require('../../result/actions')
+const { resultUpdated } = require('../../result/actions')
 const { SynchronousDataProcessor } = require('./_base')
 
 class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
@@ -44,7 +44,6 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     patientData,
     utcNow,
     resultCategories,
-    resultWorkflowStatuses,
     resultOverwritePriority
   ) {
     const mergeDeep = (baseValue, sourceValue) => {
@@ -126,115 +125,8 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       await knex('Result').where('id', result.id).update(result)
     }
     const deviceLogId = await this.appendDeviceLog(knex, result.deviceId, result.id, rawMessage, utcNow)
-    const resultWorkflowStatusLogId = await this.appendResultWorkflowLogs(
-      knex,
-      result,
-      site,
-      operator,
-      utcNow,
-      resultCategories,
-      resultSignOff,
-      resultWorkflowStatuses,
-      deviceLogId
-    )
-    if (resultWorkflowStatusLogId) {
-      await knex('Result').where('id', result.id).update({ resultWorkflowStatusLogId })
-    }
     this.messageContext.dispatch(resultUpdated(result.id, deviceLogId))
     this.response.resultIds = [...this.response.resultIds, result.id]
-  }
-
-  async appendResultWorkflowLogs(
-    knex,
-    result,
-    site,
-    operator,
-    utcNow,
-    resultCategories,
-    resultSignOff,
-    resultWorkflowStatuses,
-    deviceLogId
-  ) {
-    const resultWorkflowStatusId =
-      result.resultCategory1 === resultCategories.Missing && result.resultCategory2 === resultCategories.Missing
-        ? resultWorkflowStatuses.Ordered
-        : resultWorkflowStatuses.Processed
-    const resultWorkflowLog = {
-      resultId: result.id,
-      resultWorkflowStatusId,
-      operator,
-      reason: `Data from ${site.deviceName}`,
-      changedOn: utcNow,
-      createdOn: utcNow,
-    }
-    let resultWorkflowStatusLogId = null
-    const resultWorkflowStatusPriority = [
-      resultWorkflowStatuses.Purged,
-      resultWorkflowStatuses.Flagged,
-      resultWorkflowStatuses.Acknowledged,
-      resultWorkflowStatuses.Delivered,
-      resultWorkflowStatuses.Deliverable,
-      resultWorkflowStatuses.Validated,
-      resultWorkflowStatuses.Error,
-      resultWorkflowStatuses.Processed,
-      resultWorkflowStatuses.InProgress,
-      resultWorkflowStatuses.Ordered,
-      resultWorkflowStatuses.OK,
-    ]
-    if (!result.resultWorkflowStatusLogId) {
-      ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
-      this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
-    } else {
-      const existingResultWorkflowLog = await knex('ResultWorkflowLog')
-        .where('id', result.resultWorkflowStatusLogId)
-        .first()
-      if (
-        !existingResultWorkflowLog ||
-        resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
-          resultWorkflowStatusPriority.indexOf(existingResultWorkflowLog.resultWorkflowStatusId)
-      ) {
-        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
-        this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
-      }
-    }
-    if (
-      resultSignOff &&
-      resultSignOff.laboratoryTechnician &&
-      resultSignOff.laboratorySupervisor &&
-      resultSignOff.laboratoryManager
-    ) {
-      const mostRecentResultWorkflowStatusLogId = resultWorkflowStatusLogId || result.resultWorkflowStatusLogId
-      let mostRecentResultWorkflowLog = null
-      if (mostRecentResultWorkflowStatusLogId) {
-        mostRecentResultWorkflowLog = await knex('ResultWorkflowLog')
-          .where('id', mostRecentResultWorkflowStatusLogId)
-          .first()
-      }
-      if (
-        !mostRecentResultWorkflowLog ||
-        resultWorkflowStatusPriority.indexOf(resultWorkflowStatuses.Validated) <
-          resultWorkflowStatusPriority.indexOf(mostRecentResultWorkflowLog.resultWorkflowStatusId)
-      ) {
-        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
-          resultId: result.id,
-          resultWorkflowStatusId: resultWorkflowStatuses.Validated,
-          operator: resultSignOff.laboratoryManager,
-          reason: `Data from ${site.deviceName}`,
-          changedOn: utcNow,
-          createdOn: utcNow,
-        })
-        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
-          resultId: result.id,
-          resultWorkflowStatusId: resultWorkflowStatuses.Deliverable,
-          operator: resultSignOff.laboratoryManager,
-          reason: `Data from ${site.deviceName}`,
-          changedOn: utcNow,
-          createdOn: utcNow,
-        })
-        this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
-      }
-    }
-    return Promise.resolve(resultWorkflowStatusLogId)
   }
 
   async appendDeviceLog(knex, deviceId, resultId, rawMessage, utcNow) {

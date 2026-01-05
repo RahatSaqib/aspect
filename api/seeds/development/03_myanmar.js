@@ -19,7 +19,6 @@ const {
   partnerTypeToId,
   resultSourceToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const { insertSite } = require('../../src/site/common/db')
@@ -189,7 +188,6 @@ async function seed(knex) {
     Error: resultCategoryErrorId,
   } = await allResultCategoryToId()
 
-  const resultWorkflowStatusId = await resultWorkflowStatusToId('Ordered')
   const resultSourceId = await resultSourceToId('DiagnosticDevice')
   const resultTypeId = await resultTypeToId('Patient')
 
@@ -311,6 +309,8 @@ async function seed(knex) {
             collectedOn: calculateDateForResult(i, 500, millisInMinute),
             sampleTypeId: sampleTypeDBSId,
             originSiteId: siteData.id,
+            createdOn: now,
+            updatedOn: now,
           }
 
           ;[sample.id] = await knex('Sample').insert(sample)
@@ -357,7 +357,7 @@ async function seed(knex) {
               const result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
 
               resultData.resultText = result.resultText
-              const [rid] = await knex('Result').insert({
+              await knex('Result').insert({
                 ...auditFields,
                 externalId: `UQTB-${i}`,
                 assayId: assays.GxMtbRif.id,
@@ -394,14 +394,6 @@ async function seed(knex) {
                 errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
                 errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
               })
-              const [lastLogId] = await knex('ResultWorkflowLog').insert({
-                resultId: rid,
-                resultWorkflowStatusId,
-                changedOn: now,
-                createdOn: now,
-                createdBy: adminId,
-              })
-              await knex('Result').where('id', rid).update({ resultWorkflowStatusLogId: lastLogId })
             })
           )
         })

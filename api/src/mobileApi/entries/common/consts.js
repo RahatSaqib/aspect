@@ -70,10 +70,6 @@ const sampleStatusState = [
   { id: 'SAMPLE_STATUS_UNKNOWN', backgroundColor: 'mute', label: 'Unknown', i18nKey: 'sample_status_unknown' },
 ]
 
-const deliverableResultWorkflowStatuses = ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged']
-
-const setDeliveredResultWorkflowStatuses = ['Deliverable']
-
 const MOBILE_APP_ALLOWED_ASSAYS = ['GxMtbXdr', 'GxMtbRifUltra', 'GxMtbRif']
 
 module.exports = {
@@ -87,6 +83,4 @@ module.exports = {
   MOBILE_APP_ALLOWED_ASSAYS,
   assayAvatarColorsIcon,
   sampleStatusState,
-  deliverableResultWorkflowStatuses,
-  setDeliveredResultWorkflowStatuses,
 }

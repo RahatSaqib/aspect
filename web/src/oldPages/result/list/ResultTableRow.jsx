@@ -64,11 +64,6 @@ const ResultTableRow = ({ extraColumns, result, messages, timeZone, ...restProps
       <TableCell hiddenOn="lg">{result.errorCode ?? formatMessage(messages.notProvided)}</TableCell>
       <PermissionChecker permissions={['+reporter']}>
         <TableCell hiddenOn="md">
-          {formatMessage(messages[result.resultWorkflowStatusI18nkey], null, result.resultWorkflowStatus)}
-        </TableCell>
-      </PermissionChecker>
-      <PermissionChecker permissions={['+reporter']}>
-        <TableCell hiddenOn="md">
           {result.treatmentStatusInfo && (
             <Tooltip
               title={formatMessage(messages[result.resultTreatmentStatusI18nKey], null, result.resultTreatmentStatus)}

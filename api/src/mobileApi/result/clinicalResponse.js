@@ -5,19 +5,10 @@ const { getUser } = require('../../auth/service')
 const {
   getResultItemTransformedDataV2,
   fieldNameToFollowUpTypeIdMappings,
-  ACKNOWLEDGED,
   NOT_POSSIBLE_FOLLOW_UP_TYPE,
 } = require('./common/logic')
-const {
-  updateResultWorkflowStatusByResultId,
-  updateNotPossibleWorkflowStatusByResultId,
-} = require('./updateWorkflowStatus')
 const { getConstraints } = require('../../auth/constraints')
-const {
-  resultTreatmentStatusToId,
-  resultWorkflowStatusToId,
-  allResultCategoryToId,
-} = require('../../shared/dictionary')
+const { resultTreatmentStatusToId, allResultCategoryToId } = require('../../shared/dictionary')
 const {
   getFollowUpByExternalId,
   getLastTreatmentStatusByResult,
@@ -25,22 +16,15 @@ const {
   updateResult,
   addResultFollowUp,
   deleteResultFollowUpNotPossible,
-  insertResultWorkflowLog,
-  deleteResultWorkflowLogs,
   deleteResultFollowUps,
   getFollowUpsOfResultById,
-  getCommentsOfResultById,
   getItemsV2,
-  getLatestResultWorkflowLog,
-  getLatestResultWorkflowLogBefore,
-  getCurrentResultWorkflowStatus,
-  updateResultWithResultWorkflowLog,
   updateMostRecentResultFollowUp,
   getFollowUpsNotPossibleByResultById,
   updateResultFollowUp,
   deleteResultFollowUpTreatment,
 } = require('./common/db')
-const { getAcknowledgementsByResultIds, fetchResultsQuery } = require('../entries/result/common/db')
+const { fetchResultsQuery } = require('../entries/result/common/db')
 const { knex } = require('../../db')
 const { getFormsByFormDefinitionExternalIds } = require('../../forms/service')
 const { getBaseQueryForResults } = require('../../result/common/db')
@@ -76,20 +60,20 @@ async function clinicalResponse(request) {
     ).reverse()[0]
     if (confirmedValueCaptured && resultEntry.clinicalResponse.recorded !== confirmedValueCaptured.value) {
       if (confirmedValueCaptured.value) {
-        resultEntry = await acknowledgeResult(
-          resultId,
-          currentUserId,
-          confirmedValueCaptured.clientTime,
-          dataConstraints
-        )
+        // Only replace recordedInRegister when it is not already set
+        await knex('Result').where('id', resultId).whereNull('recordedInRegister').update({
+          recordedInRegister: new Date(),
+          updatedOn: new Date(),
+          updatedBy: currentUserId,
+        })
       } else {
-        resultEntry = await unAcknowledgeResult(
-          resultId,
-          currentUserId,
-          confirmedValueCaptured.clientTime,
-          dataConstraints
-        )
+        await knex('Result').where('id', resultId).update({
+          recordedInRegister: null,
+          updatedOn: new Date(),
+          updatedBy: currentUserId,
+        })
       }
+      resultEntry = await showResult(resultId, dataConstraints)
     }
 
     // Find the standard treatment & outcome follow-up values & dates that have been sent in the payload
@@ -159,6 +143,7 @@ async function clinicalResponse(request) {
             mostRecentTreatmentInPayload.resultId,
             mostRecentTreatmentInPayload.externalId,
             followUp.id,
+            null,
             mostRecentTreatmentInPayload.date,
             mostRecentTreatmentInPayload.createdBy,
             mostRecentTreatmentInPayload.createdOn,
@@ -223,6 +208,7 @@ async function clinicalResponse(request) {
             mostRecentOutcomeInPayload.resultId,
             mostRecentOutcomeInPayload.externalId,
             followUp.id,
+            null,
             mostRecentOutcomeInPayload.date,
             mostRecentOutcomeInPayload.createdBy,
             mostRecentOutcomeInPayload.createdOn,
@@ -270,10 +256,7 @@ async function clinicalResponse(request) {
           !mostRecentTreatmentValueCaptured ||
           mostRecentTreatmentValueCaptured.clientTime <= mostRecentNotPossibleValueCaptured.clientTime
         ) {
-          const notPossibleReasonValue = notPossibleReasonValueCaptured || {
-            value: null,
-            clientTime: mostRecentNotPossibleValueCaptured.clientTime,
-          }
+          const notPossibleReasonValue = notPossibleReasonValueCaptured ? notPossibleReasonValueCaptured.value : ''
 
           if (_.isEmpty(followUpNotPossibleExist)) {
             const followUp = await getFollowUpByExternalId(NOT_POSSIBLE_FOLLOW_UP_TYPE)
@@ -281,17 +264,11 @@ async function clinicalResponse(request) {
               resultId,
               NOT_POSSIBLE_FOLLOW_UP_TYPE,
               followUp.id,
+              notPossibleReasonValue,
               mostRecentNotPossibleValueCaptured.clientTime,
               currentUserId,
               mostRecentNotPossibleValueCaptured.clientTime,
               currentUserId,
-              mostRecentNotPossibleValueCaptured.clientTime
-            )
-
-            await flagResult(
-              resultId,
-              currentUserId,
-              notPossibleReasonValue.value,
               mostRecentNotPossibleValueCaptured.clientTime
             )
 
@@ -302,19 +279,12 @@ async function clinicalResponse(request) {
         }
       } else {
         await deleteResultFollowUpNotPossible(resultId, mostRecentNotPossibleValueCaptured.clientTime)
-        await unflagResult(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
         resultEntry = await showResult(resultId, dataConstraints)
       }
     }
 
     if (followUpNotPossibleExist && notPossibleReasonValueCaptured) {
       await updateResultFollowUp(followUpNotPossibleExist.resultFollowUpId, notPossibleReasonValueCaptured.clientTime)
-      await flagResult(
-        resultId,
-        currentUserId,
-        notPossibleReasonValueCaptured.value,
-        notPossibleReasonValueCaptured.clientTime
-      )
     }
     const resultFollowUps = await getFollowUpsOfResultById(resultId)
     const latestTreatment =
@@ -385,56 +355,6 @@ async function clinicalResponse(request) {
   }
 }
 
-const FLAGGED_EXTERNALID = 'Flagged'
-const PURGED_EXTERNALID = 'Purged'
-const DELIVERED_EXTERNALID = 'Delivered'
-
-async function flagResult(resultId, currentUserId, reason, date) {
-  const flaggedId = await resultWorkflowStatusToId(FLAGGED_EXTERNALID)
-  const resultWorkflowLogEntry = {
-    resultId,
-    resultWorkflowStatusId: flaggedId,
-    createdBy: currentUserId,
-    reason,
-    changedOn: date,
-  }
-  const errorMessage = await updateNotPossibleWorkflowStatusByResultId(resultWorkflowLogEntry)
-  if (errorMessage) {
-    return Boom.badRequest(errorMessage)
-  }
-  return {
-    ok: true,
-    data: `Clinical response has been flagged as not possible`,
-  }
-}
-
-async function unflagResult(resultId, currentUserId, date) {
-  const previousResultWorkflowStatus = (await getLatestResultWorkflowLogBefore(resultId, FLAGGED_EXTERNALID)) || {}
-  if (!previousResultWorkflowStatus.resultWorkflowStatusId) {
-    const deliveredId = await resultWorkflowStatusToId(DELIVERED_EXTERNALID)
-    previousResultWorkflowStatus.resultWorkflowStatusId = deliveredId
-    previousResultWorkflowStatus.resultWorkflowChangedOn = date
-  }
-  const resultWorkflowLogEntry = {
-    resultId,
-    resultWorkflowStatusId: previousResultWorkflowStatus.resultWorkflowStatusId,
-    createdBy: currentUserId,
-    changedOn: date,
-  }
-  const errorMessage = await updateResultWorkflowStatusByResultId(
-    resultWorkflowLogEntry,
-    date,
-    previousResultWorkflowStatus?.resultWorkflowChangedOn
-  )
-  if (errorMessage) {
-    return Boom.badRequest(errorMessage)
-  }
-  return {
-    ok: true,
-    data: `Clinical response has been flagged as possible`,
-  }
-}
-
 // supporting method for updateTreatmentStatus
 async function updateTreatmentStatusByResultId(
   userId,
@@ -458,47 +378,6 @@ async function updateTreatmentStatusByResultId(
   )
   await updateResult(resultId, treatmentStatusLogId, userId, now)
   return getLastTreatmentStatusByResult(resultId)
-}
-
-// update result workflow
-async function acknowledgeResult(resultId, currentUserId, changedOn, dataConstraints) {
-  const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
-  const resultWorkflowLogEntry = {
-    resultId,
-    resultWorkflowStatusId: acknowledgedId,
-    createdBy: currentUserId,
-    reason: null,
-    changedOn,
-  }
-  const [resultWorkflowLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
-  const currentResultWorkflowStatus = await getCurrentResultWorkflowStatus(resultId)
-  if (
-    currentResultWorkflowStatus &&
-    ![PURGED_EXTERNALID, FLAGGED_EXTERNALID].includes(currentResultWorkflowStatus.externalId)
-  ) {
-    await updateResultWithResultWorkflowLog(resultWorkflowLogEntry, resultWorkflowLogId, changedOn)
-  }
-  return showResult(resultId, dataConstraints)
-}
-
-async function unAcknowledgeResult(resultId, currentUserId, changedOn, dataConstraints) {
-  const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
-  const currentResultWorkflowStatus = await getCurrentResultWorkflowStatus(resultId)
-  if (currentResultWorkflowStatus.externalId === ACKNOWLEDGED) {
-    await updateResultWithResultWorkflowLog({ resultId, createdBy: currentUserId }, null, changedOn)
-  }
-  await deleteResultWorkflowLogs(resultId, acknowledgedId)
-  if (currentResultWorkflowStatus) {
-    const latestResultWorkflowLog = await getLatestResultWorkflowLog(resultId)
-    if (latestResultWorkflowLog) {
-      await updateResultWithResultWorkflowLog(
-        { resultId, createdBy: currentUserId },
-        latestResultWorkflowLog.id,
-        changedOn
-      )
-    }
-  }
-  return showResult(resultId, dataConstraints)
 }
 
 async function getPossibleReasonsForNoResult(resultId) {
@@ -556,12 +435,9 @@ async function showResult(resultId, dataConstraints) {
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
   if (!data) return getPossibleReasonsForNoResult(resultId)
-  const [acknowledgement] = await getAcknowledgementsByResultIds([data].filter(_.identity))
   // get follow-ups for all result in the response for performance (filter later)
   const followUps = await getFollowUpsOfResultById(resultId)
-  // get comments for all result in the response for performance (filter later)
-  const comments = await getCommentsOfResultById(data)
-  const result = await getResultItemTransformedDataV2(data, true, followUps, comments, acknowledgement)
+  const result = await getResultItemTransformedDataV2(data, true, followUps)
   return result || Boom.notFound()
 }
 

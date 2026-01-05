@@ -207,7 +207,6 @@ describe.skip('Device API routes for GxAlert Device', () => {
         geographyId: currentGeneXpertDevice.geographyId,
         assay: basicResultPayload.result.assay.id,
         assayVersion: basicResultPayload.result.assay.version,
-        resultWorkflowStatus: 'Deliverable',
         resultSource: 'DiagnosticDevice',
         resultType: 'Patient',
         resultCategory1: 'Success',
@@ -417,7 +416,6 @@ describe.skip('Device API routes for GxAlert Device', () => {
             },
             type: { id: 'Study' },
             source: { id: 'EnteredByHand' },
-            workflow: { status: { id: 'Acknowledged' } },
             assay: {
               id: 'GxMtbRif',
               version: '1a.c1',
@@ -563,12 +561,6 @@ describe.skip('Device API routes for GxAlert Device', () => {
 
       const result2Source = await knex('ResultSource as rs').where({ id: result2.resultSourceId }).first('externalId')
       assert.equal(result2Source.externalId, 'EnteredByHand')
-
-      const result2Status = await knex('ResultWorkflowStatus as rs')
-        .innerJoin('ResultWorkflowLog as rsl', 'rs.id', 'rsl.ResultWorkflowStatusId')
-        .where('rsl.id', result2.resultWorkflowStatusLogId)
-        .first('externalId')
-      assert.equal(result2Status.externalId, 'Acknowledged')
 
       const result2Assay = await knex('Assay as assay').where({ id: result2.assayId }).first('externalId', 'name')
       assert.equal(result2Assay.externalId, 'GxMtbRif')
@@ -1309,7 +1301,7 @@ describe.skip('Device API routes for GxAlert Device', () => {
     })
 
     describe('when an error code has been specified in the result payload', () => {
-      it('should set the workflow status of the result to error', async () => {
+      it('should set the resultCategory1 of the result to error', async () => {
         const now = new Date()
         const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
         const errorCode = '12345'
@@ -1334,7 +1326,6 @@ describe.skip('Device API routes for GxAlert Device', () => {
         expect(lastResult).to.containSubset({
           errorCode,
           resultCategory1: 'Error',
-          resultWorkflowStatus: 'Error',
           resultData: {
             geneXpertTestId: errorTestResultId,
           },
@@ -1343,7 +1334,7 @@ describe.skip('Device API routes for GxAlert Device', () => {
     })
 
     describe('when the result text contains "ERROR"', () => {
-      it('should set the workflow status of the result to error', async () => {
+      it('should set the resultCategory1 of the result to error', async () => {
         const now = new Date()
         const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
 
@@ -1364,61 +1355,9 @@ describe.skip('Device API routes for GxAlert Device', () => {
         const lastResult = await getLastResult()
         expect(lastResult).to.containSubset({
           resultCategory1: 'Error',
-          resultWorkflowStatus: 'Error',
           resultData: {
             geneXpertTestId: errorTestResultId,
           },
-        })
-      })
-    })
-
-    describe('when no workflow status has been specified in the result payload', () => {
-      it('should default the workflow status to "Deliverable"', async () => {
-        const now = new Date()
-        const testResultId = 'UNIQUE-ID-WITH-DELIVERABLE-RESULT'
-
-        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
-        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
-            result: {
-              id: testResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-            },
-          }),
-        })
-
-        const lastResult = await getLastResult()
-        expect(lastResult).to.containSubset({
-          resultWorkflowStatus: 'Deliverable',
-        })
-      })
-    })
-
-    describe('when a workflow status has been specified in the result payload', () => {
-      it('should set the workflow status of the result accordingly', async () => {
-        const now = new Date()
-        const testResultId = 'UNIQUE-ID-WITH-WORKFLOW-RESULT'
-
-        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
-        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
-            result: {
-              id: testResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              workflow: { status: { id: 'Acknowledged' } },
-            },
-          }),
-        })
-
-        const lastResult = await getLastResult()
-        expect(lastResult).to.containSubset({
-          resultWorkflowStatus: 'Acknowledged',
         })
       })
     })
@@ -1942,7 +1881,6 @@ describe.skip('Device API routes for GxAlert Device', () => {
         geographyId: currentGeneXpertDevice.geographyId,
         assay: basicResultPayload.result.assay.id,
         assayVersion: basicResultPayload.result.assay.version,
-        resultWorkflowStatus: 'Deliverable',
         resultSource: 'DiagnosticDevice',
         resultType: 'Patient',
         resultCategory1: 'Success',

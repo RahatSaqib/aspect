@@ -10,8 +10,8 @@ function query() {
 
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort & paging modifications
-function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
-  const sortingAndPagingValues = getSortPageParams(params, sortColumnMapping, defaultSort)
+function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping, getExtraItemToCheckNextPage = false) {
+  const sortingAndPagingValues = getSortPageParams(params, sortColumnMapping, defaultSort, getExtraItemToCheckNextPage)
   queryBuilder.orderBy(sortingAndPagingValues.orderBy)
   if (sortingAndPagingValues.size) {
     queryBuilder.limit(sortingAndPagingValues.size).offset(sortingAndPagingValues.skip)

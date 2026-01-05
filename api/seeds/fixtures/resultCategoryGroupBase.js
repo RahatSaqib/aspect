@@ -78,6 +78,7 @@ const GxMtbRifMtbNotDetected = {
   externalId: 'GxMtbRifMtbNotDetected',
   i18nKey: 'gxMtbRifMtbNotDetected',
   name: 'MTB Not Detected',
+  abbreviation: 'MTB–',
   resultCategory1ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbRif',
 }
@@ -86,6 +87,7 @@ const GxMtbRifMtbDetected = {
   externalId: 'GxMtbRifMtbDetected',
   i18nKey: 'gxMtbRifMtbDetected',
   name: 'MTB Detected',
+  abbreviation: 'MTB+',
   resultCategory1ExternalId: 'Detected',
   assayExternalId: 'GxMtbRif',
 }
@@ -94,6 +96,7 @@ const GxMtbRifMtbDetectedRifNotDetected = {
   externalId: 'GxMtbRifMtbDetectedRifNotDetected',
   i18nKey: 'gxMtbRifMtbDetectedRifNotDetected',
   name: 'MTB Detected Rif Not Detected',
+  abbreviation: 'MTB+ Rif–',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbRif',
@@ -103,6 +106,7 @@ const GxMtbRifMtbDetectedRifDetected = {
   externalId: 'GxMtbRifMtbDetectedRifDetected',
   i18nKey: 'gxMtbRifMtbDetectedRifDetected',
   name: 'MTB Detected Rif Detected',
+  abbreviation: 'MTB+ Rif+',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Detected',
   assayExternalId: 'GxMtbRif',
@@ -112,6 +116,7 @@ const GxMtbRifMtbDetectedRifIndeterminate = {
   externalId: 'GxMtbRifMtbDetectedRifIndeterminate',
   i18nKey: 'gxMtbRifMtbDetectedRifIndeterminate',
   name: 'MTB Detected Rif Indeterminate',
+  abbreviation: 'MTB+ Rif?',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Indeterminate',
   assayExternalId: 'GxMtbRif',
@@ -121,6 +126,7 @@ const GxMtbRifMtbInvalid = {
   externalId: 'GxMtbRifMtbInvalid',
   i18nKey: 'gxMtbRifMtbInvalid',
   name: 'MTB Invalid',
+  abbreviation: 'MTB INV',
   resultCategory1ExternalId: 'Invalid',
   assayExternalId: 'GxMtbRif',
 }
@@ -129,6 +135,7 @@ const GxMtbRifMtbError = {
   externalId: 'GxMtbRifMtbError',
   i18nKey: 'gxMtbRifMtbError',
   name: 'MTB Error',
+  abbreviation: 'MTB ERR',
   resultCategory1ExternalId: 'Error',
   assayExternalId: 'GxMtbRif',
 }
@@ -137,6 +144,7 @@ const GxMtbRifMtbNoResult = {
   externalId: 'GxMtbRifMtbNoResult',
   i18nKey: 'gxMtbRifMtbNoResult',
   name: 'MTB No Result',
+  abbreviation: 'MTB NR',
   resultCategory1ExternalId: 'NoResult',
   assayExternalId: 'GxMtbRif',
 }
@@ -145,6 +153,7 @@ const GxMtbRifUltraMtbNotDetected = {
   externalId: 'GxMtbRifUltraMtbNotDetected',
   i18nKey: 'gxMtbRifUltraMtbNotDetected',
   name: 'MTB Not Detected',
+  abbreviation: 'MTB–',
   resultCategory1ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbRifUltra',
 }
@@ -153,6 +162,7 @@ const GxMtbRifUltraMtbTraceDetected = {
   externalId: 'GxMtbRifUltraMtbTraceDetected',
   i18nKey: 'gxMtbRifUltraMtbTraceDetected',
   name: 'MTB Trace Detected',
+  abbreviation: 'MTB Trace+',
   resultCategory1ExternalId: 'Trace Detected',
   assayExternalId: 'GxMtbRifUltra',
 }
@@ -161,6 +171,7 @@ const GxMtbRifUltraMtbDetected = {
   externalId: 'GxMtbRifUltraMtbDetected',
   i18nKey: 'gxMtbRifUltraMtbDetected',
   name: 'MTB Detected',
+  abbreviation: 'MTB+',
   resultCategory1ExternalId: 'Detected',
   assayExternalId: 'GxMtbRifUltra',
 }
@@ -169,6 +180,7 @@ const GxMtbRifUltraMtbDetectedRifNotDetected = {
   externalId: 'GxMtbRifUltraMtbDetectedRifNotDetected',
   i18nKey: 'gxMtbRifUltraMtbDetectedRifNotDetected',
   name: 'MTB Detected Rif Not Detected',
+  abbreviation: 'MTB+ Rif–',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbRifUltra',
@@ -178,6 +190,7 @@ const GxMtbRifUltraMtbDetectedRifDetected = {
   externalId: 'GxMtbRifUltraMtbDetectedRifDetected',
   i18nKey: 'gxMtbRifUltraMtbDetectedRifDetected',
   name: 'MTB Detected Rif Detected',
+  abbreviation: 'MTB+ Rif+',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Detected',
   assayExternalId: 'GxMtbRifUltra',
@@ -187,6 +200,7 @@ const GxMtbRifUltraMtbDetectedRifIndeterminate = {
   externalId: 'GxMtbRifUltraMtbDetectedRifIndeterminate',
   i18nKey: 'gxMtbRifUltraMtbDetectedRifIndeterminate',
   name: 'MTB Detected Rif Indeterminate',
+  abbreviation: 'MTB+ Rif?',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Indeterminate',
   assayExternalId: 'GxMtbRifUltra',
@@ -196,6 +210,7 @@ const GxMtbRifUltraMtbInvalid = {
   externalId: 'GxMtbRifUltraMtbInvalid',
   i18nKey: 'gxMtbRifUltraMtbInvalid',
   name: 'MTB Invalid',
+  abbreviation: 'MTB INV',
   resultCategory1ExternalId: 'Invalid',
   assayExternalId: 'GxMtbRifUltra',
 }
@@ -204,6 +219,7 @@ const GxMtbRifUltraMtbError = {
   externalId: 'GxMtbRifUltraMtbError',
   i18nKey: 'gxMtbRifUltraMtbError',
   name: 'MTB Error',
+  abbreviation: 'MTB ERR',
   resultCategory1ExternalId: 'Error',
   assayExternalId: 'GxMtbRifUltra',
 }
@@ -212,6 +228,7 @@ const GxMtbRifUltraMtbNoResult = {
   externalId: 'GxMtbRifUltraMtbNoResult',
   i18nKey: 'gxMtbRifUltraMtbNoResult',
   name: 'MTB No Result',
+  abbreviation: 'MTB NR',
   resultCategory1ExternalId: 'NoResult',
   assayExternalId: 'GxMtbRifUltra',
 }
@@ -220,6 +237,7 @@ const GxMtbXdrMtbNotDetected = {
   externalId: 'GxMtbXdrMtbNotDetected',
   i18nKey: 'gxMtbXdrMtbNotDetected',
   name: 'MTB Not Detected',
+  abbreviation: 'MTB–',
   resultCategory1ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbXdr',
 }
@@ -228,6 +246,7 @@ const GxMtbXdrMtbDetected = {
   externalId: 'GxMtbXdrMtbDetected',
   i18nKey: 'gxMtbXdrMtbDetected',
   name: 'MTB Detected',
+  abbreviation: 'MTB+',
   resultCategory1ExternalId: 'Detected',
   assayExternalId: 'GxMtbXdr',
 }
@@ -236,6 +255,7 @@ const GxMtbXdrMtbDetectedXdrNotDetected = {
   externalId: 'GxMtbXdrMtbDetectedXdrNotDetected',
   i18nKey: 'gxMtbXdrMtbDetectedXdrNotDetected',
   name: 'MTB Detected Drug Resistance Not Detected',
+  abbreviation: 'MTB+ DR–',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbXdr',
@@ -245,6 +265,7 @@ const GxMtbXdrMtbDetectedXdrDetected = {
   externalId: 'GxMtbXdrMtbDetectedXdrDetected',
   i18nKey: 'gxMtbXdrMtbDetectedXdrDetected',
   name: 'MTB Detected Drug Resistance Detected',
+  abbreviation: 'MTB+ DR+',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Detected',
   assayExternalId: 'GxMtbXdr',
@@ -254,6 +275,7 @@ const GxMtbXdrMtbDetectedXdrIndeterminate = {
   externalId: 'GxMtbXdrMtbDetectedXdrIndeterminate',
   i18nKey: 'gxMtbXdrMtbDetectedXdrIndeterminate',
   name: 'MTB Detected Drug Resistance Indeterminate',
+  abbreviation: 'MTB+ DR?',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Indeterminate',
   assayExternalId: 'GxMtbXdr',
@@ -263,6 +285,7 @@ const GxMtbXdrMtbInvalid = {
   externalId: 'GxMtbXdrMtbInvalid',
   i18nKey: 'gxMtbXdrMtbInvalid',
   name: 'MTB Invalid',
+  abbreviation: 'MTB INV',
   resultCategory1ExternalId: 'Invalid',
   assayExternalId: 'GxMtbXdr',
 }
@@ -271,6 +294,7 @@ const GxMtbXdrMtbError = {
   externalId: 'GxMtbXdrMtbError',
   i18nKey: 'gxMtbXdrMtbError',
   name: 'MTB Error',
+  abbreviation: 'MTB ERR',
   resultCategory1ExternalId: 'Error',
   assayExternalId: 'GxMtbXdr',
 }
@@ -279,6 +303,7 @@ const GxMtbXdrMtbNoResult = {
   externalId: 'GxMtbXdrMtbNoResult',
   i18nKey: 'gxMtbXdrMtbNoResult',
   name: 'MTB No Result',
+  abbreviation: 'MTB NR',
   resultCategory1ExternalId: 'NoResult',
   assayExternalId: 'GxMtbXdr',
 }
@@ -322,6 +347,7 @@ const GxHiv1VlNotDetected = {
   externalId: 'GxHiv1VlNotDetected',
   i18nKey: 'assayGeneXpertHiv1VlresultCategoryNotDetected',
   name: 'HIV Not Detected',
+  abbreviation: 'HIV ND',
   resultCategory1ExternalId: 'NotDetected',
   assayExternalId: 'GxHiv1Vl',
 }
@@ -329,6 +355,7 @@ const GxHiv1VlInvalid = {
   externalId: 'GxHiv1VlInvalid',
   i18nKey: 'assayGeneXpertHiv1VlresultCategoryInvalid',
   name: 'HIV Invalid',
+  abbreviation: 'HIV INV',
   resultCategory1ExternalId: 'Invalid',
   assayExternalId: 'GxHiv1Vl',
 }
@@ -336,6 +363,7 @@ const GxHiv1VlNoResult = {
   externalId: 'GxHiv1VlNoResult',
   i18nKey: 'assayGeneXpertHiv1VlresultCategoryNoResult',
   name: 'HIV No Result',
+  abbreviation: 'HIV NR',
   resultCategory1ExternalId: 'NoResult',
   assayExternalId: 'GxHiv1Vl',
 }
@@ -343,6 +371,7 @@ const GxHiv1VlError = {
   externalId: 'GxHiv1VlError',
   i18nKey: 'assayGeneXpertHiv1VlresultCategoryError',
   name: 'HIV Error',
+  abbreviation: 'HIV ERR',
   resultCategory1ExternalId: 'Error',
   assayExternalId: 'GxHiv1Vl',
 }
@@ -350,6 +379,7 @@ const GxHiv1VlLessThan40 = {
   externalId: 'GxHiv1VlLessThan40',
   i18nKey: 'assayGeneXpertHiv1VlresultCategoryLessThan40',
   name: 'HIV < 40 cp/mL',
+  abbreviation: 'HIV VL <40',
   resultCategory1ExternalId: 'LessThan40',
   assayExternalId: 'GxHiv1Vl',
 }
@@ -357,6 +387,7 @@ const GxHiv1VlLessThan1000 = {
   externalId: 'GxHiv1VlLessThan1000',
   i18nKey: 'assayGeneXpertHiv1VlresultCategoryLessThan1000',
   name: 'HIV < 1000 cp/mL',
+  abbreviation: 'HIV VL <1000',
   resultCategory1ExternalId: 'LessThan1000',
   assayExternalId: 'GxHiv1Vl',
 }
@@ -364,6 +395,7 @@ const GxHiv1VlMoreThan1000 = {
   externalId: 'GxHiv1VlMoreThan1000',
   i18nKey: 'assayGeneXpertHiv1VlresultCategoryMoreThan1000',
   name: 'HIV >= 1000 cp/mL',
+  abbreviation: 'HIV VL ≥1000',
   resultCategory1ExternalId: 'MoreThan1000',
   assayExternalId: 'GxHiv1Vl',
 }
@@ -371,6 +403,7 @@ const GxHiv1QualDetected = {
   externalId: 'GxHiv1QualDetected',
   i18nKey: 'assayGeneXpertHiv1QualResultCategoryDetected',
   name: 'HIV Detected',
+  abbreviation: 'HIV+',
   resultCategory1ExternalId: 'Detected',
   assayExternalId: 'GxHiv1Qual',
 }
@@ -406,6 +439,7 @@ const assayGXCovid19Invalid = {
   externalId: 'assayGXCovid19Invalid',
   i18nKey: 'assayGXCovid19resultCategoryInvalid',
   name: 'COVID-19 Invalid',
+  abbreviation: 'COVID INV',
   resultCategory1ExternalId: 'Invalid',
   assayExternalId: 'assayGXCovid19',
 }
@@ -413,6 +447,7 @@ const assayGXCovid19NoResult = {
   externalId: 'assayGXCovid19NoResult',
   i18nKey: 'assayGXCovid19resultCategoryNoResult',
   name: 'COVID-19 No Result',
+  abbreviation: 'COVID NR',
   resultCategory1ExternalId: 'NoResult',
   assayExternalId: 'assayGXCovid19',
 }
@@ -420,6 +455,7 @@ const assayGXCovid19Error = {
   externalId: 'assayGXCovid19Error',
   i18nKey: 'assayGXCovid19resultCategoryError',
   name: 'COVID-19 Error',
+  abbreviation: 'COVID ERR',
   resultCategory1ExternalId: 'Error',
   assayExternalId: 'assayGXCovid19',
 }
@@ -427,6 +463,7 @@ const assayGXCovid19Unknown = {
   externalId: 'assayGXCovid19Unknown',
   i18nKey: 'assayGXCovid19resultCategoryUnknown',
   name: 'COVID-19 Unknown',
+  abbreviation: 'COVID UNK',
   resultCategory1ExternalId: 'Unknown',
   assayExternalId: 'assayGXCovid19',
 }
@@ -434,6 +471,7 @@ const assayGXCovid19Negative = {
   externalId: 'assayGXCovid19Negative',
   i18nKey: 'assayGXCovid19resultCategoryNegative',
   name: 'COVID-19 Negative',
+  abbreviation: 'COVID–',
   resultCategory1ExternalId: 'Negative',
   assayExternalId: 'assayGXCovid19',
 }
@@ -441,6 +479,7 @@ const assayGXCovid19Inconclusive = {
   externalId: 'assayGXCovid19Inconclusive',
   i18nKey: 'assayGXCovid19resultCategoryInconclusive',
   name: 'COVID-19 Inconclusive',
+  abbreviation: 'COVID INC',
   resultCategory1ExternalId: 'Inconclusive',
   assayExternalId: 'assayGXCovid19',
 }
@@ -448,6 +487,7 @@ const assayGXCovid19Positive = {
   externalId: 'assayGXCovid19Positive',
   i18nKey: 'assayGXCovid19resultCategoryPositive',
   name: 'COVID-19 Positive',
+  abbreviation: 'COVID+',
   resultCategory1ExternalId: 'Positive',
   assayExternalId: 'assayGXCovid19',
 }
@@ -455,6 +495,7 @@ const assayGXCovid19PresumptivePositive = {
   externalId: 'assayGXCovid19PresumptivePositive',
   i18nKey: 'assayGXCovid19resultCategoryPresumptivePositive',
   name: 'COVID-19 Presumptive Positive',
+  abbreviation: 'COVID Pres+',
   resultCategory1ExternalId: 'PresumptivePositive',
   assayExternalId: 'assayGXCovid19',
 }
@@ -1434,24 +1475,17 @@ const GxMtbRifUltraMTBTraceDetectedRifIndeterminate = {
   externalId: 'GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
   i18nKey: 'GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
   name: 'MTB Trace Detected Rif Indeterminate',
+  abbreviation: 'MTB Trace+ Rif?',
   resultCategory1ExternalId: 'Trace Detected',
   resultCategory2ExternalId: 'Indeterminate',
   assayExternalId: 'GxMtbRifUltra',
-}
-
-const GxMtbRifMTBErrorRifError = {
-  externalId: 'GxMtbRifMTBErrorRifError',
-  i18nKey: 'GxMtbRifMTBErrorRifError',
-  name: 'MTB Error Rif Error',
-  resultCategory1ExternalId: 'Error',
-  resultCategory2ExternalId: 'Error',
-  assayExternalId: 'GxMtbRif',
 }
 
 const GxMtbRifUltraMTBTraceDetectedRifNoResult = {
   externalId: 'GxMtbRifUltraMTBTraceDetectedRifNoResult',
   i18nKey: 'GxMtbRifUltraMTBTraceDetectedRifNoResult',
   name: 'MTB Trace Detected Rif No Result',
+  abbreviation: 'MTB Trace+ Rif NR',
   resultCategory1ExternalId: 'Trace Detected',
   resultCategory2ExternalId: 'NoResult',
   assayExternalId: 'GxMtbRifUltra',
@@ -1461,6 +1495,7 @@ const GxMtbXdrMTBNotDetectedDrugResistanceNotDetected = {
   externalId: 'GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
   i18nKey: 'GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
   name: 'MTB Not Detected Drug Resistance Not Detected',
+  abbreviation: 'MTB– DR–',
   resultCategory1ExternalId: 'NotDetected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbXdr',
@@ -1664,7 +1699,6 @@ module.exports = [
   assaySmearPositive2,
   assaySmearPositive3,
   GxMtbRifUltraMTBTraceDetectedRifIndeterminate,
-  GxMtbRifMTBErrorRifError,
   GxMtbRifUltraMTBTraceDetectedRifNoResult,
   GxMtbXdrMTBNotDetectedDrugResistanceNotDetected,
 ]

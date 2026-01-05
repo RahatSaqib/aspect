@@ -1,12 +1,5 @@
 const _ = require('lodash')
-const {
-  fetchResultsBySubmittedSinceQuery,
-  getCommentsOfResultById,
-  getFollowUpsByResultIds,
-  getAcknowledgementsByResultIds,
-  getFlagsByResultIds,
-  getUserSiteIds,
-} = require('./db')
+const { fetchResultsBySubmittedSinceQuery, getFollowUpsByResultIds, getUserSiteIds } = require('./db')
 const { getAllSamplesRegistered } = require('../../sample/common/db')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transformResultResponse } = require('./helpers/transformResultResponse')
@@ -40,16 +33,13 @@ async function fetchEntriesServiceHandler(request) {
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
-    const acknowledgements = await getAcknowledgementsByResultIds(results)
-    const flags = await getFlagsByResultIds(results)
     const userSiteIds = await getUserSiteIds(dataConstraints)
     const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
     const user = await getUser(auth.credentials.name)
     await addResultDownloadLog(resultIdsToBeRegistered, user.id)
 
     const followUps = await getFollowUpsByResultIds(results)
-    const comments = await getCommentsOfResultById(results)
-    transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
+    transformedResults = transformResultResponse(results, followUps, userSiteIds)
   }
 
   const mergedResultData = transformedResults.reduce((mergedResults, result) => {

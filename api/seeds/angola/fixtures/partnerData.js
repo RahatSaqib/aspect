@@ -34,7 +34,7 @@ module.exports = {
     GxEbolaCartridge: 'withLotAndExpirationDateStrategy',
     assayGXCovid19Cartridge: 'withLotAndExpirationDateStrategy',
   },
-  plugin: '',
+  plugin: 'angola',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,

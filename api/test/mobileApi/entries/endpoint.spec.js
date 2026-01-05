@@ -7,7 +7,7 @@ const { generateResults, setTreatmentStatusToResults } = require('../../../seeds
 const patients = require('../../../seeds/test/fixtures/patients.json')
 
 const { knex } = require('../../../src/db')
-const { resultCategoryToId, resultWorkflowStatusToId } = require('../../../src/shared/dictionary')
+const { resultCategoryToId } = require('../../../src/shared/dictionary')
 
 const server = require('../../utils/testUtils')
 
@@ -45,12 +45,6 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
       assayId,
     })
 
-    // Set workflow status to Deliverable
-    const resultWorkflowStatusId = await resultWorkflowStatusToId('Deliverable')
-    await knex('ResultWorkflowLog')
-      .whereIn('resultId', _.map(results, 'id'))
-      .update('resultWorkflowStatusId', resultWorkflowStatusId)
-
     // Set treatment status to AwaitingTreatment
     await setTreatmentStatusToResults(knex, results, ['AwaitingTreatment'])
   })
@@ -58,7 +52,6 @@ describe('Mobile API Entries and Clinical Response Integration', () => {
   afterEach(async () => {
     await knex('ResultFollowUp').whereIn('resultId', _.map(results, 'id')).delete()
     await knex('ResultDownloadLog').whereIn('resultId', _.map(results, 'id')).delete()
-    await knex('ResultWorkflowLog').whereIn('resultId', _.map(results, 'id')).delete()
     await knex('Result').whereIn('id', _.map(results, 'id')).delete()
   })
 

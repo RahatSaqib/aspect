@@ -58,9 +58,11 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
+  const stateName = getCustomMessage(formatMessage, messages, 'state', user, { entity: 'state' })
+
   return (
     <PkPage
-      title={formatMessage(messages.ProvincialRRTBDiagnosisTrends)}
+      title={`${stateName} ${formatMessage(messages.RRTBDiagnosisTrends2)}`}
       filters={
         <>
           <StateAutocomplete
@@ -88,9 +90,9 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} container>
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-              {formatMessage(
-                messages[user.isCountry('PK') ? 'provincialRRDiagnosisTrends' : 'provincialRRTBDiagnosisTrends']
-              )}
+              {user.isCountry('PK')
+                ? `${stateName} ${formatMessage(messages.RRDiagnosisTrends)}`
+                : `${stateName} ${formatMessage(messages.RRTBDiagnosisTrends2)}`}
             </Typography>
             {graphData ? (
               <div style={{ width: '100%' }}>
@@ -112,8 +114,8 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
               <ProvinceTrendTable
                 title={
                   user.isCountry('PK')
-                    ? `${formatMessage(messages.provincialRRDiagnosisTrends)} ${new Date().getFullYear()}`
-                    : formatMessage(messages.provincialRRTBDiagnosisTrendsCurrentYear)
+                    ? `${stateName} ${formatMessage(messages.RRDiagnosisTrends)} ${new Date().getFullYear()}`
+                    : `${stateName} ${formatMessage(messages.RRTBDiagnosisTrendsCurrentYear)}`
                 }
                 rows={tableData}
                 resultType={!user.isPakistan ? 'RR-TB' : undefined}

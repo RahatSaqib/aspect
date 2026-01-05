@@ -12,7 +12,6 @@ const {
   resultSourceToId,
   resultTypeToId,
   allResultCategoryToId,
-  allResultWorkflowStatusToId,
 } = require('../../../shared/dictionary')
 const facilityMappings = require('./facilityMappings')
 const expectedKeys = require('./expectedKeys')
@@ -114,7 +113,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Number']}`
         const sampleOriginSiteId = originSite ? originSite.id : null
         const reportableSiteId = sampleOriginSiteId || site.deviceDefaultReportableSiteId || site.id
-
+        const now = new Date()
         const numberOfSamples =
           !!payload['Date Collected 3'] ||
           !!payload['Type of Collection 3'] ||
@@ -139,6 +138,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             collectedOn: payload[`Date Collected ${sampleNumber}`],
             sampleTypeId,
             originSiteId: sampleOriginSiteId,
+            updatedOn: now,
           }
           return sample
         })
@@ -158,7 +158,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               await knex('Sample').where('id', existingSample.id).update(sample)
             }
           } else {
-            const [sampleId] = await knex('Sample').insert(sample)
+            const [sampleId] = await knex('Sample').insert({ ...sample, createdOn: now })
             sample.id = sampleId
           }
         })
@@ -168,7 +168,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         const resultSourceId = await resultSourceToId('LIMS')
         const resultTypeId = await resultTypeToId('Patient')
         const resultCategories = await allResultCategoryToId()
-        const resultWorkflowStatuses = await allResultWorkflowStatusToId()
 
         const baseNewResult = {
           partnerId: site.partnerId,
@@ -327,7 +326,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }
@@ -429,7 +427,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               patientData,
               utcNow,
               resultCategories,
-              resultWorkflowStatuses,
               resultOverwritePriority
             )
           })
@@ -528,7 +525,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }
@@ -640,7 +636,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               patientData,
               utcNow,
               resultCategories,
-              resultWorkflowStatuses,
               resultOverwritePriority
             )
           })
@@ -718,7 +713,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }
@@ -781,7 +775,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             patientData,
             utcNow,
             resultCategories,
-            resultWorkflowStatuses,
             resultOverwritePriority
           )
         }

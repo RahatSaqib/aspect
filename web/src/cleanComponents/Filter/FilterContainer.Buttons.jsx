@@ -15,9 +15,9 @@ import { useConsumable } from '../../hooks/inventory/useConsumable'
 import useNotificationType from '../../hooks/notification/useNotificationType'
 import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
-import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
 import useSiteList from '../../hooks/site/useSiteList'
 import useSiteType from '../../hooks/site/useSiteType'
+import useTagByType from '../../hooks/tag/useTagByType'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import { cepheidModulesOptions } from '../CepheidModulesSelect/CepheidModulesSelect'
@@ -30,45 +30,46 @@ const emptyFilter = filter => {
 }
 
 const filtersOrdering = {
-  breakOutByLot: 1,
-  stateId: 2,
-  lgaId: 3,
-  assayId: 4,
-  resultCategoryId: 5,
-  errorCode: 6,
-  consumableId: 7,
-  sampleId: 8,
-  patientOrResearchId: 9,
-  deviceName: 10,
-  siteName: 11,
-  sampleOriginSite: 12,
-  originSiteName: 13,
-  contactNameOrEmail: 13,
-  destinationSiteName: 14,
-  externalId: 14,
-  contactStatus: 15,
-  workflowStatusId: 16,
-  deviceApprovalId: 17,
-  minDate: 18,
-  maxDate: 19,
-  notificationName: 20,
-  treatmentStatus: 21,
-  revoked: 21,
-  onlyReportableResults: 22,
-  reportName: 23,
-  onlyTreatmentRequired: 24,
-  reportableSiteId: 25,
-  reportableSiteName: 26,
-  lotNumber: 27,
-  hasStock: 28,
-  onlyDownloadedByReporter: 29,
-  onlyTransfers: 30,
-  daysStockLeft: 31,
-  minExpirationDate: 31,
-  maxExpirationDate: 32,
-  showDecommissionedDevices: 33,
-  siteTypeId: 34,
-  parentWarehouseId: 35,
+  breakOutByLot: 10,
+  stateId: 20,
+  lgaId: 30,
+  assayId: 40,
+  resultCategoryId: 50,
+  errorCode: 60,
+  consumableId: 70,
+  sampleId: 80,
+  patientOrResearchId: 90,
+  deviceName: 100,
+  siteName: 110,
+  siteId: 120,
+  sampleOriginSite: 130,
+  originSiteName: 140,
+  contactNameOrEmail: 150,
+  destinationSiteName: 160,
+  externalId: 170,
+  contactStatus: 180,
+  deviceApprovalId: 200,
+  minDate: 210,
+  maxDate: 220,
+  notificationName: 230,
+  treatmentStatus: 240,
+  revoked: 250,
+  onlyReportableResults: 260,
+  reportName: 270,
+  onlyTreatmentRequired: 280,
+  reportableSiteId: 290,
+  reportableSiteName: 300,
+  lotNumber: 310,
+  hasStock: 320,
+  onlyDownloadedByReporter: 330,
+  onlyTransfers: 340,
+  daysStockLeft: 350,
+  minExpirationDate: 360,
+  maxExpirationDate: 370,
+  showDecommissionedDevices: 380,
+  siteTypeId: 390,
+  parentWarehouseId: 400,
+  tagId: 410,
 }
 
 const buttonMapping = {
@@ -86,6 +87,7 @@ const buttonMapping = {
   siteTypeId: ({ siteTypeId, remove, blocked }) => (
     <SiteTypeId siteTypeId={siteTypeId} remove={remove} blocked={blocked} />
   ),
+  tagId: ({ tagId, remove, blocked }) => <TagId tagId={tagId} remove={remove} blocked={blocked} />,
   lgaName: ({ lgaName, remove, blocked }) => <LgaName lgaName={lgaName} remove={remove} blocked={blocked} />,
   stateName: ({ stateName, remove, blocked }) => <StateName stateName={stateName} remove={remove} blocked={blocked} />,
   originSiteName: ({ originSiteName, remove, blocked }) => (
@@ -202,9 +204,6 @@ const buttonMapping = {
   sampleOriginSite: ({ sampleOriginSite, remove, blocked }) => (
     <SampleOriginSiteId sampleOriginSite={sampleOriginSite} remove={remove} blocked={blocked} />
   ),
-  workflowStatusId: ({ workflowStatusId, remove, blocked }) => (
-    <WorkflowStatusId workflowStatusId={workflowStatusId} remove={remove} blocked={blocked} />
-  ),
   treatmentStatus: ({ treatmentStatus, remove, blocked }) => (
     <TreatmentStatus treatmentStatus={treatmentStatus} remove={remove} blocked={blocked} />
   ),
@@ -295,6 +294,7 @@ const SiteName = ({ siteName, remove, blocked }) => {
     />
   )
 }
+
 const ParentWarehouseId = ({ parentWarehouseId, remove, blocked }) => {
   const { formatMessage } = useIntl()
   const { data } = useSiteList()
@@ -318,6 +318,18 @@ const SiteTypeId = ({ siteTypeId, remove, blocked }) => {
       del={blocked.includes('siteTypeId') ? undefined : () => remove(['siteTypeId'])}
     />
   )
+}
+const TagId = ({ tagId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const { data } = useTagByType('site')
+  const tag = data?.find(i => i.id === tagId)
+
+  return tag && tagId ? (
+    <Btn
+      lbl={formatMessage(messages.whereTagIs, { tag: tag.title })}
+      del={blocked.includes('tagId') ? undefined : () => remove(['tagId'])}
+    />
+  ) : null
 }
 const LgaName = ({ lgaName, remove, blocked }) => {
   const { formatMessage } = useIntl()
@@ -789,23 +801,6 @@ const SampleOriginSiteId = ({ sampleOriginSite, remove, blocked }) => {
       del={blocked.includes('sampleOriginSite') ? undefined : () => remove(['sampleOriginSite'])}
     />
   )
-}
-
-const WorkflowStatusId = ({ workflowStatusId, remove, blocked }) => {
-  const { formatMessage } = useIntl()
-  const { data } = useWorkflowStatus()
-
-  if (data) {
-    const wfName = data.find(it => it.id === workflowStatusId).i18nKey
-
-    return (
-      <Btn
-        lbl={formatMessage(messages.withWorkflowStatus, { workflowStatusName: formatMessage(messages[wfName]) })}
-        del={blocked.includes('workflowStatusId') ? undefined : () => remove(['workflowStatusId'])}
-      />
-    )
-  }
-  return null
 }
 
 const TreatmentStatus = ({ treatmentStatus, remove, blocked }) => {

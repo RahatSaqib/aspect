@@ -17,11 +17,16 @@ describe('result endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/result', {
-          async listResults() {
-            return expectedResponse
+        endpoint = setupRoute(
+          'GET',
+          '/result',
+          {
+            async listResults() {
+              return expectedResponse
+            },
           },
-        })
+          './listResults/listResults'
+        )
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils
@@ -107,49 +112,6 @@ describe('result endpoints', () => {
       beforeEach(() => {
         endpoint = setupRoute('GET', '/result/treatment-status-types', {
           async listTreatmentStatusTypes() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-    describe('/result/workflow-status-types', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('GET', '/result/workflow-status-types', {
-          async listWorkflowStatusTypes() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-
-    describe('/result/workflow-status-logs/{resultId}', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('GET', '/result/workflow-status-logs/{resultId}', {
-          async listWorkflowStatusLog() {
             return expectedResponse
           },
         })
@@ -274,28 +236,6 @@ describe('result endpoints', () => {
   })
 
   describe('PUT', () => {
-    describe('/result/workflow-status/{resultId}', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('PUT', '/result/workflow-status/{resultId}', {
-          async updateWorkflowStatus() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-
     describe('/result/treatment-status/{resultId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
@@ -373,27 +313,6 @@ describe('result endpoints', () => {
       beforeEach(() => {
         endpoint = setupRoute('POST', '/result/follow-up/{resultId}', {
           async setResultFollowUp() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-    describe('/result/result-note/{resultId}', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('POST', '/result/result-note/{resultId}', {
-          async addResultNote() {
             return expectedResponse
           },
         })

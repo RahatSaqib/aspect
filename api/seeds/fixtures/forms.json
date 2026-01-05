@@ -163,15 +163,5 @@
       "formTypeExternalId": "CaseCreation",
       "diseaseExternalId": "covid19"
     }
-  },
-  "ClinicalResponse": {
-    "fileName": "ClinicalResponse.json",
-    "formDefinition": {
-      "order": 1,
-      "title": "Clinical Response",
-      "i18nKeyTitle": "ClinicalResponsei18nkey",
-      "externalId": "ClinicalResponse",
-      "formTypeExternalId": "clinicalResponseForm"
-    }
   }
 }

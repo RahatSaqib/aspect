@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears, subMonths } = require('date-fns')
+const { addMilliseconds, addMinutes, addHours, subDays, addDays, subYears, subMonths } = require('date-fns')
 const uuid = require('node-uuid')
 
 const config = require('../../src/config')
@@ -19,7 +19,6 @@ const {
   allResultCategoryToId,
   allResultSourceToId,
   allResultStatusToId,
-  allResultWorkflowStatusToId,
   allSampleTypeToId,
   allSiteTypeToId,
   assayTypeToId,
@@ -44,7 +43,6 @@ const {
   getXdrDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { insertSite } = require('../../src/site/common/db')
-const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -3196,15 +3194,6 @@ async function seed(knex) {
     GxHiv1VlCartridge: consumableGxHiv1VlCartridgeId,
   } = await allConsumableToId()
 
-  // Result Workflow Status
-  const {
-    Ordered: ordered,
-    Processed: processed,
-    Validated: validated,
-    Deliverable: deliverable,
-    Acknowledged: acknowledged,
-  } = await allResultWorkflowStatusToId()
-
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
@@ -3685,6 +3674,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -3817,28 +3808,10 @@ async function seed(knex) {
         })
         const savedResult = await knex('Result').where('id', resultId).first()
 
-        await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: ordered,
-          operator: 'Marsha',
-          changedOn: subHours(randomDate, 25),
-          createdOn: subHours(randomDate, 26),
-          createdBy: adminId,
-        })
-
-        const [lastLogId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: _.random(0, 100) < 90 ? deliverable : acknowledged,
-          operator: 'John',
-          changedOn: addHours(randomDate, 2),
-          createdOn: addHours(randomDate, 1),
-          createdBy: adminId,
-        })
-
         const resultStatuses = await allResultStatusToId()
         const resultStatusesIds = Object.values(resultStatuses)
 
-        const resultWithLogInfo = { resultWorkflowStatusLogId: lastLogId }
+        const resultWithLogInfo = {}
 
         // Insert another random result status log
         const rdm = _.random(0, resultStatusesIds.length - 1)
@@ -3858,9 +3831,9 @@ async function seed(knex) {
           )
           const anotherReportableSite = otherSites[_.random(0, otherSites.length - 1)]
           const transferData = {
-            reportableSiteId: anotherReportableSite.id,
+            reportableSiteId: anotherReportableSite?.id,
             previousReportableSiteId: savedResult.reportableSiteId,
-            sampleOriginSiteId: savedResult.sampleOriginSiteId,
+            sampleOriginSiteId: savedResult?.sampleOriginSiteId,
           }
           data = JSON.stringify({
             siteId: savedResult.siteId,
@@ -3964,6 +3937,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbUltraNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4101,26 +4076,6 @@ async function seed(knex) {
           errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
         })
 
-        await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: ordered,
-          operator: 'Marsha',
-          changedOn: subHours(randomDate, 25),
-          createdOn: subHours(randomDate, 26),
-          createdBy: adminId,
-        })
-
-        const [lastLogId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: _.random(0, 100) < 90 ? deliverable : acknowledged,
-          operator: 'John',
-          changedOn: addHours(randomDate, 2),
-          createdOn: addHours(randomDate, 1),
-          createdBy: adminId,
-        })
-
-        await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
-
         await knex('DeviceLog').insert({
           deviceId: device.id,
           createdOn: addHours(randomDate, 1),
@@ -4185,6 +4140,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultMtbXdrNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4335,26 +4292,6 @@ async function seed(knex) {
           errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
         })
 
-        await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: ordered,
-          operator: 'Marsha',
-          changedOn: subHours(randomDate, 25),
-          createdOn: subHours(randomDate, 26),
-          createdBy: adminId,
-        })
-
-        const [lastLogId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: _.random(0, 100) < 90 ? deliverable : acknowledged,
-          operator: 'John',
-          changedOn: addHours(randomDate, 2),
-          createdOn: addHours(randomDate, 1),
-          createdBy: adminId,
-        })
-
-        await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
-
         await knex('DeviceLog').insert({
           deviceId: device.id,
           createdOn: addHours(randomDate, 1),
@@ -4420,6 +4357,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultEbolaNumber, millisInMinute),
           sampleTypeId: sampleTypePlasmaId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4504,7 +4443,7 @@ async function seed(knex) {
 
           if (_.random(5) === 0) {
             resultData.resultText = result.resultText
-            const [resultId] = await knex('Result').insert({
+            await knex('Result').insert({
               ...auditFields,
               externalId: `UQEB-${i}-${j}`,
               assayId: assayGeneXpertEbolaId,
@@ -4541,35 +4480,6 @@ async function seed(knex) {
               errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
               errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
             })
-
-            await knex('ResultWorkflowLog').insert({
-              resultId,
-              resultWorkflowStatusId: ordered,
-              operator: 'Bill',
-              changedOn: subHours(randomDate, 34),
-              createdOn: subHours(randomDate, 35),
-              createdBy: adminId,
-            })
-
-            const [lastLogId] = await knex('ResultWorkflowLog').insert({
-              resultId,
-              resultWorkflowStatusId: processed,
-              operator: 'Marsha',
-              changedOn: subHours(randomDate, 13),
-              createdOn: subHours(randomDate, 12),
-              createdBy: adminId,
-            })
-
-            await knex('ResultWorkflowLog').insert({
-              resultId,
-              resultWorkflowStatusId: acknowledged,
-              operator: 'John',
-              changedOn: addHours(randomDate, 41),
-              createdOn: addHours(randomDate, 42),
-              createdBy: adminId,
-            })
-
-            await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
           }
         })
       })
@@ -4583,6 +4493,8 @@ async function seed(knex) {
           collectedOn: calculateDateForResult(i, resultHivVlNumber, millisInMinute),
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteData.id,
+          createdOn: now,
+          updatedOn: now,
         }
 
         ;[sample.id] = await knex('Sample').insert(sample)
@@ -4653,8 +4565,6 @@ async function seed(knex) {
         },
       }
 
-      // make sure we have at least one result with these status
-      const ensureResultIds = [acknowledged, validated, deliverable]
       await Promise.each(_.range(resultHivVlNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
         const siteData = siteDatas.find(site => site.id === device.siteId)
@@ -4684,10 +4594,7 @@ async function seed(knex) {
         resultData.log = log
         resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
-        const resultStatus =
-          ensureResultIds.shift() || _.random(1) < 0.3 ? deliverable : _.random(1) < 0.5 ? validated : acknowledged
-
-        const [resultId] = await knex('Result').insert({
+        await knex('Result').insert({
           ...auditFields,
           externalId: `UQHIV-${i}`,
           assayId: assayGeneXpertHiv1VlId,
@@ -4722,17 +4629,6 @@ async function seed(knex) {
           errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
           errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
         })
-
-        const [lastLogId] = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId: resultStatus,
-          operator: 'Marsha',
-          changedOn: subHours(randomDate, 2),
-          createdOn: subHours(randomDate, 3),
-          createdBy: adminId,
-        })
-
-        await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
       })
 
       // some HCV samples for GeneXpert
@@ -4743,6 +4639,8 @@ async function seed(knex) {
             externalId: `SMP-HCV-GX-${i}`,
             collectedOn: calculateDateForResult(i, resultHcvNumber, millisInMinute),
             sampleTypeId: sampleTypeDBSId,
+            createdOn: now,
+            updatedOn: now,
           }
 
           ;[sample.id] = await knex('Sample').insert(sample)
@@ -4835,7 +4733,7 @@ async function seed(knex) {
           _.map(possibleResults, async result => {
             j += 1
             if (_.random(5) === 0) {
-              const [resultId] = await knex('Result').insert({
+              await knex('Result').insert({
                 ...auditFields,
                 externalId: `UQHCV-${i}-${j}`,
                 assayId: assayGeneXpertHcvId,
@@ -4872,35 +4770,6 @@ async function seed(knex) {
                 errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
                 errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
               })
-
-              await knex('ResultWorkflowLog').insert({
-                resultId,
-                resultWorkflowStatusId: ordered,
-                operator: 'Bill',
-                changedOn: subHours(randomDate, 34),
-                createdOn: subHours(randomDate, 35),
-                createdBy: adminId,
-              })
-
-              const [lastLogId] = await knex('ResultWorkflowLog').insert({
-                resultId,
-                resultWorkflowStatusId: processed,
-                operator: 'Marsha',
-                changedOn: subHours(randomDate, 13),
-                createdOn: subHours(randomDate, 12),
-                createdBy: adminId,
-              })
-
-              await knex('ResultWorkflowLog').insert({
-                resultId,
-                resultWorkflowStatusId: acknowledged,
-                operator: 'John',
-                changedOn: addHours(randomDate, 41),
-                createdOn: addHours(randomDate, 42),
-                createdBy: adminId,
-              })
-
-              await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
             }
           })
         )
@@ -5013,6 +4882,4 @@ async function seed(knex) {
 
   // Create DashboardWidget
   await upsertDashboardWidgets(knex, partnerOneId, dashboardWidget)
-
-  await addDefaultCustomFieldDefinitions(knex, partnerOneId)
 }

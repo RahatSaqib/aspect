@@ -83,15 +83,8 @@ describe('Device API Raw routes for BD MGIT', () => {
       .leftJoin('Device as d', 'dak.deviceId', 'd.id')
       .where('dak.token', validApiKeyToken)
       .first('dak.id', 'dak.deviceId', 'd.siteId')
-    const resultIds = await knex('Result')
-      .where('deviceId', deviceId)
-      .pluck('id')
-      .union(function () {
-        this.from('ResultGeneratedResult as rgr')
-          .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
-          .where('r.deviceId', deviceId)
-          .pluck('generatedResultId as id')
-      })
+    const resultIds = await knex('Result').where('deviceId', deviceId).pluck('id')
+
     const opIds = await knex('DeviceOperation').where('deviceId', deviceId).pluck('id')
     const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
     await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
@@ -104,11 +97,6 @@ describe('Device API Raw routes for BD MGIT', () => {
     await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-    await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
-    await knex('ResultGeneratedResult')
-      .whereIn('sourceResultId', resultIds)
-      .orWhereIn('generatedResultId', resultIds)
-      .delete()
     await knex('ResultTag').whereIn('resultId', resultIds).delete()
     await knex('Result').whereIn('id', resultIds).delete()
     const sampleIds = await knex('Result').whereIn('id', resultIds).pluck('sampleId')
@@ -238,12 +226,6 @@ describe('Device API Raw routes for BD MGIT', () => {
       const sample = await knex('Sample').where('id', result.sampleId).first()
       expect(sample.externalId).to.equal('0970038020')
       expect(sample.originSiteId).to.equal(bdMgitSiteId)
-
-      // inspect workflow log record
-      const resultWorkflowLog = await knex('ResultWorkflowLog').where('id', result.resultWorkflowStatusLogId).first()
-
-      expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
-      expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
     }))
 
   it('should parse the AST-ASTM message and save the result in the database', async () => {
@@ -333,11 +315,5 @@ describe('Device API Raw routes for BD MGIT', () => {
     const sample = await knex('Sample').where('id', result.sampleId).first()
     expect(sample.externalId).to.equal('0970038018')
     expect(sample.originSiteId).to.equal(bdMgitSiteId)
-
-    // inspect workflow log record
-    const resultWorkflowLog = await knex('ResultWorkflowLog').where('id', result.resultWorkflowStatusLogId).first()
-
-    expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
-    expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
   })
 })

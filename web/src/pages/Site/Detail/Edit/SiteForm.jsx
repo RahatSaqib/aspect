@@ -11,7 +11,7 @@ import {
   ConsumableSelect,
   LocationSelector,
   SiteListSelect,
-  SiteTagInput,
+  TagInput,
   TimezoneSelect,
 } from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
@@ -172,6 +172,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
       isEmpty(editSite.shortName) ||
       isEmpty(editSite.countryId?.toString()) ||
       isEmpty(editSite.externalId) ||
+      !editSite.siteTypeId ||
       (!isWarehouse && isEmpty(editSite.stateId?.toString())))
 
   return (
@@ -229,6 +230,8 @@ const SiteForm = ({ site, onLatLongChange }) => {
               label={formatMessage(messages.fieldSiteType)}
               value={editSite.siteTypeId}
               onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
+              error={!isPristine && !editSite.siteTypeId}
+              helperText={!isPristine && !editSite.siteTypeId && `${formatMessage(messages.fieldSiteType)} is required`}
             />
             <TextField
               className={styles.container__field}
@@ -441,7 +444,8 @@ const SiteForm = ({ site, onLatLongChange }) => {
             />
           </div>
 
-          <SiteTagInput
+          <TagInput
+            type="site"
             label={formatMessage(messages.fieldTags)}
             onChange={tags => setEditSite(prv => ({ ...prv, tags }))}
             value={editSite?.tags ?? []}

@@ -30,6 +30,7 @@ module.exports = {
     {
       deviceType: 'GeneXpert',
       data: {
+        ConnectSettingsAndCustomFieldsSource: 'ASPECT',
         AspectApiEndpoint: 'https://ukraine.aspect.id/api',
         AspectAssayNameIdMappings: {
           4: 'GxMtbRif',

@@ -188,14 +188,6 @@ const messages = {
       id: 'pages.ListExport.exportCsv',
       defaultMessage: 'CSV',
     },
-    workflowStatus: {
-      id: 'filter.popover.workflowStatus',
-      defaultMessage: 'Workflow Status',
-    },
-    selectWorkflowStatus: {
-      id: 'filter.popover.selectWorkflowStatus',
-      defaultMessage: 'Select status...',
-    },
     treatmentStatus: {
       id: 'filter.popover.treatmentStatus',
       defaultMessage: 'Treatment Status',
@@ -369,6 +361,10 @@ const messages = {
     siteType: {
       id: 'filter.popover.siteType',
       defaultMessage: 'Site Type',
+    },
+    tag: {
+      id: 'filter.popover.tag',
+      defaultMessage: 'Tag',
     },
     stockProvider: {
       id: 'filter.popover.stockProvider',

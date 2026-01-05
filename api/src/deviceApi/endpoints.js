@@ -8,13 +8,11 @@ const {
   getDeviceDataHandler,
   getDeviceOperationHandler,
   getResultHandler,
-  addDeviceDataHandler,
   addDeviceDataFastHandler,
   addPluginDeviceDataHandler,
   addDeviceOperationHandler,
   updateDeviceConfigurationHandler,
   mergeResultHandler,
-  addDeviceLog,
   getHealthStatsHandler,
   getResultPakistanHandler,
 } = require('./service')
@@ -29,8 +27,11 @@ const {
   errorPayload,
   testAggResponseValidation,
   testAggRequestQueryValidation,
+  devicePayloadValidation,
 } = require('./validation')
 const { getTestAggregate } = require('./mozambique/zenysisApiClient')
+const { addDeviceLog } = require('./deviceApiHandler')
+const { devicePayloadHandler } = require('./devicePayloadHandler')
 
 const routes = [
   {
@@ -63,7 +64,7 @@ const routes = [
     // POST /device {  configuration, operation, result, log }
     method: 'POST',
     path: '/',
-    handler: addDeviceDataHandler,
+    handler: devicePayloadHandler,
     config: {
       description: 'Update Device Data',
       notes: 'Updates latest device configuration, operational and result data in a single request.',
@@ -71,23 +72,7 @@ const routes = [
         options: {
           allowUnknown: true,
         },
-        payload: Joi.object().keys({
-          ...devicePayload,
-          includeDeviceConfiguration: Joi.bool()
-            .allow(null)
-            .optional()
-            .description(
-              'This flag will determine (When true) if the service is going to respond as part of the response the general configuration of the device'
-            ),
-          log: Joi.object().allow(null).keys(logPayload).description('Device Log Data'),
-          configuration: Joi.object().allow(null).keys(configurationPayload).description('Device Configuration Data'),
-          operation: Joi.object().allow(null).keys(operationPayload).description('Device Operation Data'),
-          result: Joi.object().allow(null).keys(resultPayload).description('Device Result Data.'),
-          getFormsDefinition: Joi.bool()
-            .optional()
-            .allow(null)
-            .description('This is a flag to tell the API if the request source is a daily details POST'),
-        }),
+        payload: devicePayloadValidation,
         failAction: async (request, h, error) => addDeviceLog(error)(request, h),
       },
       response: {

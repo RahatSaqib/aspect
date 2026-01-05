@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
+import useAuthState from '../../../hooks/useAuthState'
+import { getCustomMessage } from '../../../messages'
 import messages from '../PkDashboard.Messages'
 
 const ProvinceTrendTable = props => {
@@ -19,6 +21,9 @@ const ProvinceTrendTable = props => {
     ? formatMessage(messages.customToday, { resultType })
     : formatMessage(messages.testToday)
 
+  const user = useAuthState()
+  const stateName = getCustomMessage(formatMessage, messages, 'state', user, { entity: 'state' })
+
   return (
     <Box>
       {title ? (
@@ -29,7 +34,7 @@ const ProvinceTrendTable = props => {
       <Table aria-label="simple-table">
         <TableHead>
           <TableRow>
-            <TableCell>{formatMessage(messages.state_PK)}</TableCell>
+            <TableCell>{stateName}</TableCell>
             <TableCell align="right">{yearTableCell}</TableCell>
             <TableCell align="right">{monthTableCell}</TableCell>
             <TableCell align="right">{todayTableCell}</TableCell>

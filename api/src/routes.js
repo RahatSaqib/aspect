@@ -33,6 +33,7 @@ function addClientRoutes(server) {
   server.route(require('./forms/endpoints').routes.map(decorateClientAPI('case')))
   server.route(require('./case/endpoints').routes.map(decorateClientAPI('case')))
   server.route(require('./resultCategoryGroup/endpoints').routes.map(decorateClientAPI()))
+  server.route(require('./sample/endpoints').routes.map(decorateClientAPI('sample')))
 }
 
 function addMobileRoutes(server) {
@@ -164,10 +165,10 @@ function asyncHandler(handler) {
 
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
-function getSortPageParams(params, sortColumnMapping, defaultSort) {
+function getSortPageParams(params, sortColumnMapping, defaultSort, getExtraItemToCheckNextPage = false) {
   return {
     ...getSortParams(params, sortColumnMapping, defaultSort),
-    ...getPageParams(params),
+    ...getPageParams(params, getExtraItemToCheckNextPage),
   }
 }
 
@@ -191,7 +192,7 @@ function getSortParams(params, sortColumnMapping, defaultSort) {
 
 // extracts and sanitizes the parameters related to paging from the
 // candidate params and returns them as an object
-function getPageParams(params) {
+function getPageParams(params, getExtraItemToCheckNextPage = false) {
   const result = {}
 
   if (params.size === 'all') {
@@ -201,10 +202,10 @@ function getPageParams(params) {
       // don't define `size` prop here - meaning to get all available items
     }
   }
-
+  const sizeParam = parseInt(params.size, 10) || 50
   result.page = parseInt(params.page, 10) || parseInt(params.offset, 10) || 0
-  result.size = parseInt(params.size, 10) || 50
-  result.skip = result.page * result.size
+  result.size = sizeParam + (getExtraItemToCheckNextPage ? 1 : 0)
+  result.skip = result.page * sizeParam
 
   return result
 }

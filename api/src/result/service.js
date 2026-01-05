@@ -17,12 +17,10 @@ const { getUser, getUserByUserId, getPersonByPersonId } = require('../auth/servi
 const {
   allAssayToId,
   allResultCategoryToId,
-  resultWorkflowStatusToId,
   resultTreatmentStatusToId,
   resultStatusToId,
   resultSourceToId,
   resultTypeToId,
-  resultCategoryToId,
 } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { getPathFromFileReferenceId } = require('../file/service')
@@ -40,7 +38,6 @@ const {
   getResultByResultId,
   getQueryForResultsListAndExport,
   showFileReferencesById,
-  getResultNotesByResultId,
   getFactResultCountBase,
   FACT_FIELD_SCOPE,
 } = require('./common/db')
@@ -143,7 +140,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
           const alias = key.replace('.', '_')
           if (!sortableFields.includes(alias)) {
             selectFields[alias] = knex.raw('JSON_EXTRACT(resultData, ?)', [`$.${key}`])
-
             sortableFields.push(alias)
           }
           assayColumns.push({
@@ -215,7 +211,7 @@ async function listResults(request) {
   return result
 }
 
-async function getDownloadResultsList(query, auth, setDelivered = false) {
+async function getDownloadResultsList(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -232,8 +228,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -247,7 +241,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     })
     // only results which are reportable for either ResultCategory
     .where(builder => builder.where('rca.reportable', 1).orWhere('rca2.reportable', 1))
-    .whereIn('rs.externalId', ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged'])
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
@@ -292,9 +285,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
             .whereIn('rc1.externalId', params.resultCategories.split(','))
             .orWhereIn('rc2.externalId', params.resultCategories.split(','))
         )
-      }
-      if (params.workflowStatus) {
-        queryBuilder.where('rs.externalId', params.workflowStatus)
       }
       if (params.isTransferred) {
         // return only results transferred "to me" (to r.reportableSiteId)
@@ -341,11 +331,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
-      'rs.name as resultWorkflowStatusName',
-      'rs.externalId as resultWorkflowStatusExternalId',
-      'rs.i18nKey as resultWorkflowStatusi18nKey',
-      'rsl.reason as resultWorkflowStatusReason',
-      'rsl.changedOn as resultWorkflowStatusChangedOn',
       'rtsl.changedOn as resultTreatmentStatusChangedOn',
       'rts.name as resultTreatmentStatusName',
       'rts.externalId as resultTreatmentStatusExternalId',
@@ -381,25 +366,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
     )
-  // get comments for all results in the response for performance (filter later)
-  const comments = await knex('ResultNote as rn')
-    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
-    .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
-    .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
-    .whereIn(
-      'rn.resultId',
-      data.map(r => r.id)
-    )
-    .select(
-      'rn.resultId',
-      'rn.id',
-      'rn.text',
-      'rn.createdOn',
-      'uC.name as createdBy',
-      'rn.changedOn',
-      'uU.name as changedBy',
-      'rnt.name as noteType'
-    )
 
   const transformedData = _.map(data, d => ({
     id: d.id,
@@ -426,24 +392,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
           }
         : null,
     },
-    workflowStatus: {
-      name: setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered' ? 'Delivered' : d.resultWorkflowStatusName,
-      externalId:
-        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'Delivered'
-          : d.resultWorkflowStatusExternalId,
-      i18nKey:
-        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'ResultWorkflowStatusDelivered'
-          : d.resultWorkflowStatusi18nKey,
-      reason:
-        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
-          ? 'Download Results Api'
-          : d.resultWorkflowStatusReason,
-      changedOn:
-        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered' ? new Date() : d.resultWorkflowStatusChangedOn,
-      setDelivered: setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered',
-    },
     treatmentStatus: {
       changedOn: d.resultTreatmentStatusChangedOn,
       name: d.resultTreatmentStatusName,
@@ -454,11 +402,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
       ['date', 'updatedOn']
     ),
-    comments: _.orderBy(
-      _.filter(comments, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
-      ['createdOn'],
-      ['desc']
-    ),
+    comments: [],
     // result transferred
     reportableSiteName: d.reportableSiteName,
     transferredOn: d.transferredOn,
@@ -482,14 +426,7 @@ async function downloadResultsList(request) {
   const user = await getUser(auth.credentials.name)
   const results = await getDownloadResultsList(query, auth, true)
   const myProm = async () => {
-    const idsToUpdate = _.uniq(
-      _.map(
-        _.pickBy(results.data, elem => elem.workflowStatus.setDelivered),
-        elem => elem.id
-      )
-    )
     const idsToBeRegistered = _.uniq(_.map(results.data, elem => elem.id))
-    if (idsToUpdate && idsToUpdate.length > 0) await updateResultWorkflowStatus(idsToUpdate, user.id, 'Delivered')
     if (idsToBeRegistered && idsToBeRegistered.length > 0) await addResultDownloadLog(idsToBeRegistered, user.id)
   }
   myProm().catch(err => {
@@ -508,29 +445,6 @@ async function addResultDownloadLog(idsToBeRegistered, userId) {
       createdBy: userId,
     })
   )
-}
-
-async function updateResultWorkflowStatus(idsToUpdate, userId, resultWorkflowStatusExternalId) {
-  const { id: resultWorkflowStatusId } = await knex('ResultWorkflowStatus')
-    .where('externalId', resultWorkflowStatusExternalId)
-    .first('id')
-  const now = new Date()
-  return Promise.each(idsToUpdate, async resultId => {
-    const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      changedOn: now,
-      createdOn: now,
-      createdBy: userId,
-      reason: 'Download Results Api',
-      operator: 'Reporter App',
-    })
-    await knex('Result')
-      .where({
-        id: resultId,
-      })
-      .update({ resultWorkflowStatusLogId })
-  })
 }
 
 async function showResult(request) {
@@ -683,77 +597,6 @@ async function listResultTypes(request) {
   return result
 }
 
-async function updateWorkflowStatus(request) {
-  const { auth, params, payload } = request
-  const { resultId } = params
-  const { id: currentUserId } = await getUser(auth.credentials.name)
-
-  // get the result so we can check access and if status changed
-  const result = await getResultByResultId(auth, resultId)
-  if (!result.ok) {
-    return Boom.notFound()
-  }
-  const { resultWorkflowStatusId } = payload
-  const { changedOn, operator, reason, updatedOn } = payload
-
-  const resultWorkflowLogEntry = {
-    resultId,
-    resultWorkflowStatusId,
-    createdBy: currentUserId,
-    operator,
-    reason,
-    changedOn: changedOn || new Date(),
-  }
-
-  const errorMessage = await updateResultWorkflowStatusByResultId(
-    knex,
-    resultWorkflowLogEntry,
-    payload.externalId,
-    updatedOn,
-    result.data.resultWorkflowStatusId,
-    result.data.resultWorkflowChangedOn
-  )
-
-  if (errorMessage) {
-    return Boom.badRequest(errorMessage)
-  }
-
-  const response = await showResult(request)
-  return response
-}
-
-async function updateResultWorkflowStatusByResultId(
-  knex,
-  resultWorkflowLogEntry,
-  resultWorkflowStatusExternalId,
-  updatedOn,
-  currentResultWorkflowStatusId,
-  resultWorkflowChangedOn
-) {
-  const now = new Date()
-
-  // check if a externalId is provided
-  if (resultWorkflowStatusExternalId) {
-    resultWorkflowLogEntry.resultWorkflowStatusId = await resultWorkflowStatusToId(resultWorkflowStatusExternalId)
-    if (!resultWorkflowLogEntry.resultWorkflowStatusId) {
-      return 'Invalid ResultWorkflowStatus ID'
-    }
-  }
-
-  // update the resultWorkflowStatusId.
-  if (resultWorkflowLogEntry.resultWorkflowStatusId !== currentResultWorkflowStatusId) {
-    const [lastLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLogEntry)
-
-    if (!updatedOn || resultWorkflowChangedOn < updatedOn) {
-      await knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
-        resultWorkflowStatusLogId: lastLogId,
-        updatedBy: resultWorkflowLogEntry.createdBy,
-        updatedOn: now,
-      })
-    }
-  }
-}
-
 async function listTreatmentStatusTypes() {
   const resultQuery = knex('ResultTreatmentStatus as rsl')
 
@@ -892,118 +735,6 @@ async function updateTreatmentStatusByResultId(
   return lastTreatment
 }
 
-// helper func
-async function isAuthorOrAdminOfResultComment(credentials, resultId, commentId) {
-  const user = await getUser(credentials.name)
-  const { createdBy } = await knex('ResultNote').where('id', commentId).where('resultId', resultId).first()
-  return createdBy === user.id
-}
-
-async function addResultNote(request) {
-  const { auth, params, payload } = request
-  const now = new Date()
-  const { resultId } = params
-  const { id: currentUserId } = await getUser(auth.credentials.name)
-
-  // get the result so we can check access and if status changed
-  const result = await getResultByResultId(auth, resultId)
-  if (!result.ok) {
-    return Boom.notFound()
-  }
-
-  const { note, resultNoteType, commentId, changedOn = now } = payload
-
-  const { id: resultNoteTypeId } = await knex('ResultNoteType')
-    .where('externalId', resultNoteType || 'General')
-    .first('id')
-
-  if (!resultNoteTypeId) {
-    return Boom.notFound()
-  }
-
-  if (note.length > 255) {
-    return Boom.badRequest('The length of the comment must be less than 256')
-  }
-
-  if (commentId) {
-    const canEdit = await isAuthorOrAdminOfResultComment(auth.credentials, resultId, commentId)
-    if (!canEdit) {
-      return Boom.forbidden('This user can not edit comment')
-    }
-
-    await knex('ResultNote').where({ id: commentId, resultId }).update({
-      text: note,
-      changedOn,
-      updatedBy: currentUserId,
-    })
-  } else {
-    await knex('ResultNote').insert({
-      resultNoteTypeId,
-      resultId,
-      text: note,
-      changedOn,
-      createdOn: now,
-      updatedBy: currentUserId,
-      createdBy: currentUserId,
-    })
-  }
-
-  const resultNotes = await getResultNotesByResultId(resultId)
-
-  return {
-    ok: true,
-    length: resultNotes.length,
-    data: resultNotes,
-  }
-}
-
-async function deleteResultNote(request) {
-  const { auth, params } = request
-  const { resultId, commentId } = params
-
-  // get the result so we can check access
-  const result = await getResultByResultId(auth, resultId)
-  if (!result.ok) {
-    return Boom.notFound()
-  }
-
-  const canDelete = await isAuthorOrAdminOfResultComment(auth.credentials, resultId, commentId)
-  if (!canDelete) {
-    return Boom.forbidden('This user can not delete comment')
-  }
-
-  await knex('ResultNote').where('id', commentId).where('resultId', resultId).del()
-
-  const resultNotes = await getResultNotesByResultId(resultId)
-
-  return {
-    ok: true,
-    length: resultNotes.length,
-    data: resultNotes,
-  }
-}
-
-async function allResultNotes(request) {
-  const {
-    params: { resultId },
-    auth,
-  } = request
-
-  // get the result so we can check access and if status changed
-  const result = await getResultByResultId(auth, resultId)
-  if (!result.ok) {
-    return Boom.notFound()
-  }
-
-  const resultNotes = await getResultNotesByResultId(resultId)
-
-  return {
-    ok: true,
-    length: resultNotes.length,
-    data: resultNotes,
-  }
-}
-
 async function getLastTreatmentStatusByResult(resultId) {
   return knex('Result as r')
     .innerJoin('ResultTreatmentStatusLog as rtl', 'r.treatmentStatusLogId', 'rtl.id')
@@ -1027,66 +758,6 @@ async function getTreatmentStatusByResultId(resultId) {
       'ts.externalId',
       'ts.i18nKey'
     )
-}
-
-async function listWorkflowStatusTypes() {
-  const resultQuery = knex('ResultWorkflowStatus as rs')
-
-  // get total count for paging
-  const getCount = resultQuery.clone().count('rs.id as count').first()
-
-  // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name', 'i18nKey')
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
-}
-
-async function listWorkflowStatusLog(request) {
-  const result = await getWorkflowStatusLogByResultId(request)
-  return result.ok ? result : Boom.notFound()
-}
-
-async function getWorkflowStatusLogByResultId(request) {
-  const { query, params } = request
-
-  const selectFields = [
-    'log.id',
-    'log.operator',
-    'log.changedOn',
-    'log.createdOn',
-    'log.createdBy',
-    'rs.name as statusName',
-    'rs.i18nKey',
-    'rs.externalId',
-  ]
-  const sortableFields = ['operator', 'changedOn', 'statusName']
-
-  // now we know if the sort that was passed is valid:
-  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
-    return Boom.badRequest()
-  }
-
-  const resultQuery = knex('ResultWorkflowLog as log')
-    .innerJoin('ResultWorkflowStatus as rs', 'log.resultWorkflowStatusId', 'rs.id')
-    .where('log.resultId', params.resultId)
-
-  // get total count for paging
-  const getCount = resultQuery.clone().count('log.id as count').first()
-
-  // get rows
-  const getItems = resultQuery.clone().modify(sortPageParams, query, 'changedOn').select(selectFields)
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
 }
 
 /*
@@ -2071,27 +1742,6 @@ async function updateOrCreateResult(request, result = {}) {
   // update or insert tags
   await updateTagsById(result.id, 'result', payload.tags, auth)
 
-  // update/insert workflow status
-  const resultWorkflowStatusExternalId =
-    result.resultCategory1 === (await resultCategoryToId('Error')) ? 'Error' : 'Deliverable'
-
-  const resultWorkflowLogEntry = {
-    resultId: result.id,
-    createdBy: userId,
-    operator: null,
-    reason: 'Manual Result Entry',
-    changedOn: now,
-    createdOn: now,
-  }
-  await updateResultWorkflowStatusByResultId(
-    knex,
-    resultWorkflowLogEntry,
-    resultWorkflowStatusExternalId,
-    null,
-    result.resultWorkflowStatusId,
-    result.resultWorkflowChangedOn
-  )
-
   // insert treatment status (can't be changed manually, so only do on insert)
   if (isCreating) {
     const resultTreatmentStatusId = await resultTreatmentStatusToId('AwaitingTreatment')
@@ -2121,27 +1771,32 @@ async function validatePayloadHadDeviceId(payload) {
 }
 
 async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collectedOn, originSiteId) {
+  const now = new Date()
   let sampleData = {
     externalId,
     collectedOn,
     sampleTypeId,
-    registeredInAspect: true,
+    registeredInMobile: false,
+    updatedOn: now,
   }
 
   if (sampleId) {
     // remove undefined (= not part of the POST fields) for updating
     sampleData = _.omitBy(sampleData, _.isUndefined)
     if (!_.isEmpty(sampleData)) {
-      const existingSample = await knex('Sample').where({ id: sampleId }).first('originSiteId')
-      if (existingSample && existingSample.originSiteId === null && originSiteId) {
-        sampleData.originSiteId = originSiteId
+      const existingSample = await knex('Sample').where({ id: sampleId }).first('originSiteId', 'registeredInMobile')
+      if (existingSample) {
+        sampleData.registeredInMobile = existingSample.registeredInMobile
+        if (existingSample.originSiteId === null && originSiteId) {
+          sampleData.originSiteId = originSiteId
+        }
       }
-      await knex('Sample').update(sampleData).where({ id: sampleId })
     }
+    await knex('Sample').update(sampleData).where({ id: sampleId })
     return sampleId
   }
   sampleData.originSiteId = originSiteId
-  const [id] = await knex('Sample').insert(sampleData)
+  const [id] = await knex('Sample').insert({ ...sampleData, createdOn: now })
   return id
 }
 
@@ -2431,11 +2086,8 @@ module.exports = {
   showResult,
   getResultForStringTemplateProcessing,
   listResultTypes,
-  updateWorkflowStatus,
   updateTreatmentStatusPost,
   listTreatmentStatusTypes,
-  listWorkflowStatusTypes,
-  listWorkflowStatusLog,
   showDeviceLogs,
   showFileReferences,
   downloadFile,
@@ -2446,9 +2098,6 @@ module.exports = {
   setResultFollowUp,
   updateResultFollowUp,
   deleteResultFollowUp,
-  addResultNote,
-  deleteResultNote,
-  allResultNotes,
   transferResult,
   currentResultAggregations,
   followUpAggregations,

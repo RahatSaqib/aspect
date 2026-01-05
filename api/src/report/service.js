@@ -52,6 +52,7 @@ async function getReports(request) {
       'r.exportCsv',
       'r.validations'
     )
+
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, data: data.map(r => ({ ...r, validations: JSON.parse(r.validations) })) }

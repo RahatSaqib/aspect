@@ -233,6 +233,10 @@ export default {
       id: 'pages.UserPreferences.chooseTags',
       defaultMessage: 'Choose tags',
     },
+    notificationTags: {
+      id: 'pages.UserPreferences.notificationTags',
+      defaultMessage: 'Notification Tags',
+    },
     fieldNoMatchTags: {
       id: 'pages.UserPreferences.fieldNoMatchTags',
       defaultMessage: 'Press enter to add tag',
@@ -345,6 +349,14 @@ export default {
     assay: {
       id: 'pages.JobAssignments.assay',
       defaultMessage: 'Assay',
+    },
+    tag: {
+      id: 'pages.JobAssignments.tag',
+      defaultMessage: 'Tag',
+    },
+    restrictToSitesWithTag: {
+      id: 'pages.JobAssignments.restrictToSitesWithTag',
+      defaultMessage: 'Restrict to Sites with Tag',
     },
     allAssays: {
       id: 'pages.JobAssignments.allAssays',

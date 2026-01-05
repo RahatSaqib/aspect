@@ -1,13 +1,7 @@
 import { defineMessages } from 'react-intl'
-import {
-  resultCategory,
-  resultCategoryType,
-  resultTreatmentStatusMessages,
-  resultWorkflowStatusMessages,
-} from '../../../messages'
+import { resultCategory, resultCategoryType, resultTreatmentStatusMessages } from '../../../messages'
 
 const messages = {
-  ...resultWorkflowStatusMessages,
   ...resultTreatmentStatusMessages,
   ...defineMessages({
     resultsTitle: {
@@ -49,10 +43,6 @@ const messages = {
     collectionOfResults: {
       id: 'pages.ResultList.collectionOfResults',
       defaultMessage: 'Collection of Results',
-    },
-    resultWorkflowStatus: {
-      id: 'pages.ResultList.resultWorkflowStatus',
-      defaultMessage: 'Workflow Status',
     },
     resultTreatmentStatus: {
       id: 'pages.ResultList.resultTreatmentStatus',
@@ -149,9 +139,9 @@ const messages = {
         other {# results}
       }`,
     },
-    Validated: {
-      id: 'pages.ResultList.ResultWorkflowStatusValidated',
-      defaultMessage: 'OK',
+    paginatorStatusLoading: {
+      id: 'pages.ResultList.paginatorStatusLoading',
+      defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of (loading total...)`,
     },
     assayBdMgitAst: {
       id: 'pages.ResultList.assayBdMgitAst',

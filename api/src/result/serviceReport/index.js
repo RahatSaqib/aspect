@@ -6,7 +6,6 @@ const { endOfMonth, endOfYear, startOfMonth, subMonths, addMonths } = require('d
 const { knex } = require('../../db')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
-const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../../shared/excel')
 const { processGroupedQuery } = require('../common/db')
 
 const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
@@ -15,6 +14,7 @@ const getDataExtractReport = require('./dataExtractForTableau')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { getClinicalIndicatorQueryForResultsTable } = require('../service')
 const { getGroupBy } = require('../common/logic')
+const downloadReport = require('../../report/downloadReport')
 
 /**
  * 'header' is for 1st row in CSV file,
@@ -41,21 +41,7 @@ const columnsDeviceErrorHistoryForAttachment = [
 
 // ----------------------------------------------------------------------------------------------
 async function exportResults(request, reply) {
-  const { query, auth } = request
-  const { data, dynamicColumns, dataSelector, fixedColumns = [], total } = await getAllResultsReport(auth, query)
-  const sheetData = {
-    data,
-    dynamicColumns,
-    fixedColumns,
-    total,
-    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
-    defaultNoDataMessage: 'No data',
-  }
-
-  return exportData(request, reply, sheetData, 'results', {
-    replacements: [...getBaseReplacements(), ...getMaxLimitPlaceHolders()],
-    dataSelector,
-  })
+  return downloadReport({ ...request, params: { externalId: 'all_results' } }, reply)
 }
 
 async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {

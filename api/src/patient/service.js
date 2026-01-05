@@ -244,7 +244,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             otherPatientId
           ) {
             if (sampleId) {
-              await knex('Sample').where('id', sampleId).update({ patientId: otherPatientId })
+              await knex('Sample').where('id', sampleId).update({ patientId: otherPatientId, updatedOn: new Date() })
             }
             if (existingCaseId) {
               await knex('PatientCase').where('id', existingCaseId).update({ patientId: otherPatientId })

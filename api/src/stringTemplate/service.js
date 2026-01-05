@@ -512,7 +512,7 @@ async function getBaseDataSource(data, auth) {
       },
       detected: {
         resistances: ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'].includes(d.assayExternalId)
-          ? getMtbDetectedResistances(d.resultCategory2ExternalId, resultData)
+          ? getMtbDetectedResistances(d.assayExternalId, d.resultCategory2ExternalId, resultData)
           : '',
       },
       reportableSiteName: d.reportableSiteName,
@@ -895,15 +895,19 @@ function coalesce(...rest) {
   return _.dropRight(rest).find(arg => !!arg)
 }
 
-function getMtbDetectedResistances(resultCategory2ExternalId, resultData) {
-  const xdrResistances = resultData.allResistances || {}
-  const allResistances = {
-    RIF: resultCategory2ExternalId,
-    ...xdrResistances,
+function getMtbDetectedResistances(assayExternalId, resultCategory2ExternalId, resultData) {
+  if (['GxMtbRif', 'GxMtbRifUltra'].includes(assayExternalId)) {
+    return resultCategory2ExternalId === 'Detected' ? 'RIF' : ''
   }
-  return Object.keys(allResistances)
-    .filter(key => allResistances[key] === 'Detected')
-    .join(', ')
+
+  if (assayExternalId === 'GxMtbXdr') {
+    const xdrResistances = resultData.allResistances || {}
+    return Object.keys(xdrResistances)
+      .filter(key => xdrResistances[key] === 'Detected')
+      .join(', ')
+  }
+
+  return ''
 }
 
 module.exports = {

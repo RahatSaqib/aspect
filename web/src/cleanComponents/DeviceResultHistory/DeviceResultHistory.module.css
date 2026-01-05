@@ -1,0 +1,41 @@
+@import '../../theme/variables.css';
+
+.Section {
+  padding: 10px var(--aspect-detail-horizontal-padding);
+}
+
+.Section__first {
+  padding-top: 20px;
+}
+
+.Section__Content {
+  padding: 20px;
+}
+
+.Header {
+  padding-bottom: 20px;
+  display: flex;
+}
+
+.Header__Title {
+  flex-grow: 1;
+  color: var(--aspect-color-grey-2);
+  font-size: 24px;
+}
+
+.Header__Actions {
+  margin-left: 20px;
+}
+
+.ResultDataTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.DelayShowingProgressCircular {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  padding-left: -50%;
+}

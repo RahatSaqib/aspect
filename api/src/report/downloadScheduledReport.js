@@ -13,14 +13,29 @@ module.exports = async function downloadScheduledReport(request, reply) {
   const { query } = request
   const { token } = query
 
-  const { report_filename: fileName } = jwt.verify(token, config.secret)
+  let fileName = null
 
-  const dataBuffer = await readDataFromFile(`/tmp/${fileName}`)
+  try {
+    ;({ report_filename: fileName } = jwt.verify(token, config.secret))
 
-  return respondFile({
-    reply,
-    fileName,
-    dataBuffer,
-    streamResponse: true,
-  })
+    const dataBuffer = await readDataFromFile(`/tmp/${fileName}`)
+
+    return respondFile({
+      reply,
+      fileName,
+      dataBuffer,
+      streamResponse: true,
+    })
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      return reply.response({ error: 'Invalid token' }).code(401)
+    }
+    if (error.code === 'ENOENT') {
+      return reply.response({ error: 'File not found' }).code(404)
+    }
+    if (error.code === 'EISDIR') {
+      return reply.response({ error: 'File is a directory' }).code(400)
+    }
+    return reply.response({ error: 'Internal server error' }).code(500)
+  }
 }

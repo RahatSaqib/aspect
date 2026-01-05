@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-07-16T10:42:20.495Z\n"
+"POT-Creation-Date: 2025-12-11T12:46:50.844Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -61,7 +61,7 @@ msgstr "# Кількість протестованих сайтів MTB/XDR А�
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
 msgid "(New quantity on hand: {nextQuantity} {unitShortName})"
-msgstr "(Нова кількість на руках: {nextQuantity} {unitShortName})"
+msgstr "(Нова кількість в наявності:{nextQuantity} {unitShortName})"
 
 #. [pages.InventoryLog.adjustFromTo]
 #. defaultMessage is:
@@ -92,14 +92,14 @@ msgstr ""
 #. *In transit from {inTransitFromSiteName}
 #: extracted_strings.json
 msgid "*In transit from {inTransitFromSiteName}"
-msgstr "* в дорозі від {inTransitFromSiteName}"
+msgstr "передача з  {inTransitFromSiteName}"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{контакти, множина, один {# більше {name}} інші {# більше {name}} }"
+msgstr "...{контакти, plural, one {# більше {name}} other {# більше {name}} }"
 
 #. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
@@ -113,7 +113,7 @@ msgstr "1-14 днів"
 #. 1-3 Months
 #: extracted_strings.json
 msgid "1-3 Months"
-msgstr "1-3 Місяць"
+msgstr "1-3 Місяці"
 
 #. [filter.btnGroup.daysStockLeft.upTo30]
 #. defaultMessage is:
@@ -127,7 +127,7 @@ msgstr "15-30 днів"
 #. 4-6 Months
 #: extracted_strings.json
 msgid "4-6 Months"
-msgstr "4-6 Місяць"
+msgstr "4-6 Місяців"
 
 #. [component.InputPassword.eightCharsLong]
 #. defaultMessage is:
@@ -228,7 +228,7 @@ msgstr "AMK R %"
 #. AMK Resistance
 #: extracted_strings.json
 msgid "AMK Resistance"
-msgstr "Опір АМК"
+msgstr "Стійкість АМК"
 
 #. [legends.Unknown.AMKPercent]
 #. defaultMessage is:
@@ -331,6 +331,20 @@ msgstr "Абревіатура"
 msgid "Above Average"
 msgstr "Вище середнього"
 
+#. [pages.DeviceDetailProfile.aboveAverageErrorRate]
+#. defaultMessage is:
+#. Above Average Error Rate
+#: extracted_strings.json
+msgid "Above Average Error Rate"
+msgstr "Рівень помилок вище середнього"
+
+#. [pages.DeviceDetailProfile.aboveAverageUtilizationRate]
+#. defaultMessage is:
+#. Above Average Utilization Rate
+#: extracted_strings.json
+msgid "Above Average Utilization Rate"
+msgstr "Вище середнього рівня використання"
+
 #. [pages.deviceDetail.aboveTarget]
 #. defaultMessage is:
 #. Above Target
@@ -383,13 +397,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Account Details"
 msgstr "Деталі облікового запису"
-
-#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
-#: extracted_strings.json
-msgid "Acknowledged"
-msgstr "Визнано"
 
 #. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
@@ -475,7 +482,7 @@ msgstr "Додати рядок"
 #. Adding Inventory Failed
 #: extracted_strings.json
 msgid "Adding Inventory Failed"
-msgstr "Помилка додавання рекламних ресурсів"
+msgstr "Помилка додавання запасів"
 
 #. [pages.NotificationDetail.fieldAddress]
 #. defaultMessage is:
@@ -524,6 +531,13 @@ msgstr "Налаштувати кількість"
 msgid "Admin"
 msgstr "Адміністратор"
 
+#. [jobFunction.adminItTeam]
+#. defaultMessage is:
+#. Admin - (IT team)
+#: extracted_strings.json
+msgid "Admin - (IT team)"
+msgstr "Адміністратор - (ІТ-команда)"
+
 #. [pages.transferResult.successMessageButton]
 #. defaultMessage is:
 #. After clicking the OK button below, you will be redirected to the list of results.
@@ -560,21 +574,21 @@ msgstr "Вік і стать"
 #. Alere Q HIV-1/2 Detect
 #: extracted_strings.json
 msgid "Alere Q HIV-1/2 Detect"
-msgstr "Alere Q Виявлення ВІЛ-1/2"
+msgstr "Alere Q HIV-1/2 Виявлення"
 
 #. [consumable.alereHivDetectCartridge]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 Detect Cartridge
 #: extracted_strings.json
 msgid "Alere Q HIV-1/2 Detect Cartridge"
-msgstr "Касета для виявлення ВІЛ-1/2 Alere Q"
+msgstr "Alere Q HIV-1/2 картридж для виявлення"
 
 #. [consumable.alereHivVLPlasmaCartridge]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 VL Plasma Cartridge
 #: extracted_strings.json
 msgid "Alere Q HIV-1/2 VL Plasma Cartridge"
-msgstr "Плазмовий картридж Alere Q HIV-1/2 VL"
+msgstr "Alere Q HIV-1/2 VL  картридж для плазми"
 
 #. [legends.Unknown.assayAlereQHiv12VLPlasma]
 #. defaultMessage is:
@@ -584,7 +598,7 @@ msgstr "Плазмовий картридж Alere Q HIV-1/2 VL"
 #. Alere Q HIV-1/2 VL plasma
 #: extracted_strings.json
 msgid "Alere Q HIV-1/2 VL plasma"
-msgstr "Alere Q ВІЛ-1/2 VL плазма"
+msgstr "Alere Q HIV-1/2 VL плазма"
 
 #. [pages.DeviceDetail.alerts]
 #. defaultMessage is:
@@ -623,7 +637,7 @@ msgstr "Усі"
 #. All HIV results where the virus is not suppressed
 #: extracted_strings.json
 msgid "All HIV results where the virus is not suppressed"
-msgstr "Усі результати ВІЛ виникають там, де вірус не пригнічується"
+msgstr "Усі результати ВІЛ, в яких вірус не пригнічено"
 
 #. [filter.btnGroup.displayAllResults]
 #. defaultMessage is:
@@ -647,14 +661,14 @@ msgstr "Всі області"
 #. All assay types
 #: extracted_strings.json
 msgid "All assay types"
-msgstr "Усі типи аналізу"
+msgstr "Усі типи дослідження"
 
 #. [pages.JobAssignments.allAssays]
 #. defaultMessage is:
 #. All assays
 #: extracted_strings.json
 msgid "All assays"
-msgstr "Всі аналізи"
+msgstr "Всі дослідження"
 
 #. [pages.JobAssignments.allDeviceTypes]
 #. defaultMessage is:
@@ -671,7 +685,7 @@ msgid ""
 "All devices along with the last calibration date and when next calibration "
 "is due"
 msgstr ""
-"Усі пристрої разом із датою останнього калібрування та часом наступного "
+"Усі пристрої, що мають дату останнього калібрування та час наступного "
 "калібрування"
 
 #. [pages.JobAssignments.allDiseases]
@@ -679,7 +693,7 @@ msgstr ""
 #. All diseases
 #: extracted_strings.json
 msgid "All diseases"
-msgstr "Всі хвороби"
+msgstr "Всі захворювання"
 
 #. [pages.JobAssignments.allSites]
 #. defaultMessage is:
@@ -694,6 +708,13 @@ msgstr "Усі сайти"
 #: extracted_strings.json
 msgid "All states"
 msgstr "Всі штати"
+
+#. [pages.UserPreferences.allTags]
+#. defaultMessage is:
+#. All tags
+#: extracted_strings.json
+msgid "All tags"
+msgstr "Всі теги"
 
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
@@ -870,7 +891,7 @@ msgstr "Квітень"
 #. Are you sure to delete notification {notificationName}?
 #: extracted_strings.json
 msgid "Are you sure to delete notification {notificationName}?"
-msgstr "Ви впевнені, що видалити сповіщення {notificationName}?"
+msgstr "Ви впевнені, що хочете видалити сповіщення {notificationName}?"
 
 #. [admin.page.removeConfirmation]
 #. defaultMessage is:
@@ -897,19 +918,6 @@ msgstr ""
 "Ви впевнені, що хочете видалити цей сайт? Ця дія призначена лише для "
 "тестових сайтів, усі дані сайту будуть втрачені."
 
-#. [errorResponseMessages.updateConsumable.message]
-#. defaultMessage is:
-#. As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action
-#: extracted_strings.json
-msgid ""
-"As there is unreconciled consumption for the specified cartridge, "
-"{consumableName}, system cant allow delisting of the same at the site. "
-"Please reconcile your inventory to complete this action"
-msgstr ""
-"Оскільки для вказаного картриджа {consumableName} існує неузгоджене "
-"споживання, система не може дозволити видалення його з переліку на сайті. "
-"Будь ласка, звірте свої запаси, щоб виконати цю дію"
-
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
 #. Aspect Beta
@@ -929,7 +937,7 @@ msgstr "Аспектна інформаційна панель"
 #. Aspect has Encountered a Problem.
 #: extracted_strings.json
 msgid "Aspect has Encountered a Problem."
-msgstr "Аспект зіткнувся з проблемою."
+msgstr "Aspect зіткнувся з проблемою."
 
 #. [filter.popover.assay]
 #. defaultMessage is:
@@ -960,14 +968,14 @@ msgstr "Аспект зіткнувся з проблемою."
 #. Assay
 #: extracted_strings.json
 msgid "Assay"
-msgstr "Проба"
+msgstr "Дослідження"
 
 #. [pages.JobAssignments.assayType]
 #. defaultMessage is:
 #. Assay Type
 #: extracted_strings.json
 msgid "Assay Type"
-msgstr "Тип аналізу"
+msgstr "Тип дослідження"
 
 #. [pages.InventoryTabs.New.headerText]
 #. defaultMessage is:
@@ -995,7 +1003,7 @@ msgstr "Призначити {count} ключі"
 #. Assigned
 #: extracted_strings.json
 msgid "Assigned"
-msgstr "Прикріплений"
+msgstr "Призначено"
 
 #. [pages.UserPreferences.assignmentDetails]
 #. defaultMessage is:
@@ -1060,26 +1068,33 @@ msgstr "Автоматичний вихід"
 msgid "Automatic include location with reported consumption"
 msgstr "Автоматичне включення місцезнаходження зі звітом про споживання"
 
+#. [pages.deviceDetail.average]
+#. defaultMessage is:
+#. Average
+#: extracted_strings.json
+msgid "Average"
+msgstr "Середній"
+
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
 #. Average Confirmed Response
 #: extracted_strings.json
 msgid "Average Confirmed Response"
-msgstr "Середня підтверджена відповідь"
+msgstr "Середня кількість підтверджених відповідей"
 
 #. [component.Widget.instrumentsReplaced]
 #. defaultMessage is:
 #. Average Days for Instrument Replacement.
 #: extracted_strings.json
 msgid "Average Days for Instrument Replacement."
-msgstr "Середні дні для заміни інструменту."
+msgstr "Середня кількість днів для заміни інструменту."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
 #. Average Delay to Upload
 #: extracted_strings.json
 msgid "Average Delay to Upload"
-msgstr "Середня затримка завантаження"
+msgstr "Середня тривалість затримки завантаження"
 
 #. [component.Widget.averageDurationServiceInterruptionTitle]
 #. defaultMessage is:
@@ -1100,28 +1115,28 @@ msgstr "Середній показник діагностованих випа�
 #. Average Monthly Positivity Rate
 #: extracted_strings.json
 msgid "Average Monthly Positivity Rate"
-msgstr "Середній щомісячний коефіцієнт позитивності"
+msgstr "Середній місячний рівень  позитивності"
 
 #. [pages.Status.clinicalIndicatorsXdr.pie]
 #. defaultMessage is:
 #. Average Monthly Resistance Rate
 #: extracted_strings.json
 msgid "Average Monthly Resistance Rate"
-msgstr "Середньомісячний коефіцієнт опору"
+msgstr "Середній місячний рівень резистентності"
 
 #. [pages.Status.clinicalIndicatorsTB.pie]
 #. defaultMessage is:
 #. Average Monthly Rif Resistance Rate
 #: extracted_strings.json
 msgid "Average Monthly Rif Resistance Rate"
-msgstr "Середній щомісячний коефіцієнт опору Rif"
+msgstr "Середній місячний рівень резистентності до Rif"
 
 #. [pages.Status.clinicalIndicatorsPieLegend]
 #. defaultMessage is:
 #. Average Monthly Suppression Rate
 #: extracted_strings.json
 msgid "Average Monthly Suppression Rate"
-msgstr "Середній щомісячний рівень придушення"
+msgstr "Середній місячний рівень пригнічення"
 
 #. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
 #. defaultMessage is:
@@ -1135,7 +1150,7 @@ msgstr "Середньомісячний рівень виявленого ту�
 #. Average Monthly Tests Performed
 #: extracted_strings.json
 msgid "Average Monthly Tests Performed"
-msgstr "Середні щомісячні проведені тести"
+msgstr "Середня кількість проведених тестів за місяць"
 
 #. [p.PkDashboard.RRPerMonth]
 #. defaultMessage is:
@@ -1149,7 +1164,7 @@ msgstr "Середня кількість діагностованих випа�
 #. Average SMS recipients per positive result
 #: extracted_strings.json
 msgid "Average SMS recipients per positive result"
-msgstr "Середнє значення одержувачів SMS на позитивний результат"
+msgstr "Середнє значення одержувачів SMS про позитивний результат"
 
 #. [p.PkDashboard.xdrAverageMoth]
 #. defaultMessage is:
@@ -1170,29 +1185,30 @@ msgstr "Середня кількість днів між обмінами мо�
 #. Average email recipients per positive result
 #: extracted_strings.json
 msgid "Average email recipients per positive result"
-msgstr "Середнє значення одержувачів електронної пошти на позитивний результат"
+msgstr ""
+"Середнє значення одержувачів електронної пошти про позитивний результат"
 
 #. [component.Widget.averageLengthOfSms]
 #. defaultMessage is:
 #. Average length of SMS
 #: extracted_strings.json
 msgid "Average length of SMS"
-msgstr "Середня тривалість SMS"
+msgstr "Середня довжина SMS"
 
 #. [component.Widget.deviceDaysActiveDescription]
 #. defaultMessage is:
 #. Average number of days each device has been active, excluding weekends.
 #: extracted_strings.json
 msgid "Average number of days each device has been active, excluding weekends."
-msgstr ""
-"Середня кількість днів, коли кожен пристрій працював, за винятком вихідних."
+msgstr "Середня кількість робочих днів, коли кожен пристрій працював."
 
 #. [component.Widget.dashboardWidgetTestsPerDayDescription]
 #. defaultMessage is:
 #. Average number of tests per weekday conducted this month.
 #: extracted_strings.json
 msgid "Average number of tests per weekday conducted this month."
-msgstr "Середня кількість тестів на день, повідомлених за поточний місяць."
+msgstr ""
+"Середня кількість тестів на робочий день, повідомлених за поточний місяць."
 
 #. [p.PkDashboard.testPerMonth]
 #. defaultMessage is:
@@ -1220,7 +1236,7 @@ msgstr "Середній показник {resultType}, виявлений за 
 #. Awaiting Treatment
 #: extracted_strings.json
 msgid "Awaiting Treatment"
-msgstr "Чекає лікування"
+msgstr "Очікує лікування"
 
 #. [pages.SiteDetail.buttonBack]
 #. defaultMessage is:
@@ -1293,8 +1309,8 @@ msgid ""
 "Based on the last 30 days, represents the percentage of days when the device "
 "was reported as 'active' compared to the total number of working days"
 msgstr ""
-"На основі останніх 30 днів відображає відсоток днів, коли пристрій було "
-"повідомлено як «активний», порівняно із загальною кількістю робочих днів"
+"Відсоток днів від загальної кількісті робочих днів, коли пристрій було "
+"показано як «активний» за останніх 30 днів"
 
 #. [pages.DeviceList.errorRateDescription]
 #. defaultMessage is:
@@ -1304,8 +1320,8 @@ msgid ""
 "Based on the last 30 days, represents the percentage of results with errors "
 "compared to the total number of performed results"
 msgstr ""
-"На основі останніх 30 днів відображає відсоток результатів із помилками "
-"порівняно із загальною кількістю виконаних результатів"
+"Відсоток результатів із помилками від загальної кількісті виконаних за "
+"останні 30 днів"
 
 #. [pages.Notifications.daysBeforeCalibrationDueDate]
 #. defaultMessage is:
@@ -1350,7 +1366,7 @@ msgstr "Вирватися за жеребом"
 #. Break out by lot
 #: extracted_strings.json
 msgid "Break out by lot"
-msgstr "Вирватися за жеребом"
+msgstr "Показати по лотам"
 
 #. [header.link.browse.title]
 #. defaultMessage is:
@@ -1371,7 +1387,7 @@ msgstr "Сповіщення про збірку"
 #. CAP Resistance
 #: extracted_strings.json
 msgid "CAP Resistance"
-msgstr "CAP опір"
+msgstr "Стійкість до CAP"
 
 #. [legends.Unknown.CAPPercent]
 #. defaultMessage is:
@@ -1399,14 +1415,14 @@ msgstr "Кількість CD4"
 #. CHAI EID
 #: extracted_strings.json
 msgid "CHAI EID"
-msgstr "ІД ІД"
+msgstr "CHAI EID"
 
 #. [filter.AssaySelectField.AssayChaiHivVl]
 #. defaultMessage is:
 #. CHAI HIV VL
 #: extracted_strings.json
 msgid "CHAI HIV VL"
-msgstr "CHAI ВІЛ VL"
+msgstr "CHAI HIV VL"
 
 #. [legends.Unknown.assayCobasHivVl]
 #. defaultMessage is:
@@ -1621,7 +1637,7 @@ msgstr "Дата калібрування"
 #. Calibration Date is required
 #: extracted_strings.json
 msgid "Calibration Date is required"
-msgstr "Потрібна дата калібрування"
+msgstr "Дата необхідного калібрування"
 
 #. [notificationCategoryTypeSelect.notificationTypeCalibrationDueDate]
 #. defaultMessage is:
@@ -1741,14 +1757,14 @@ msgstr "Партією картриджів керує їх"
 #. Case ID
 #: extracted_strings.json
 msgid "Case ID"
-msgstr "Ідентифікатор справи"
+msgstr "Ідентифікатор випадку"
 
 #. [browsePage.browseDropdown.cases]
 #. defaultMessage is:
 #. Cases
 #: extracted_strings.json
 msgid "Cases"
-msgstr "Справ"
+msgstr "Випадки"
 
 #. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
@@ -1823,7 +1839,7 @@ msgstr "Змінити"
 #. Check Inbox
 #: extracted_strings.json
 msgid "Check Inbox"
-msgstr "Позначте Вхідні"
+msgstr "Перевірте Вхідні"
 
 #. [pages.NotificationDetail.SelectNationalPlaceholder]
 #. defaultMessage is:
@@ -1968,7 +1984,7 @@ msgstr "Зібрано на"
 #. Collection of Results
 #: extracted_strings.json
 msgid "Collection of Results"
-msgstr "Збір результатів"
+msgstr "Перелік результатів"
 
 #. [p.PkDashboard.combinedGX6CGX10CDevices]
 #. defaultMessage is:
@@ -2116,21 +2132,21 @@ msgstr "Версія конектора"
 #. Consumable
 #: extracted_strings.json
 msgid "Consumable"
-msgstr "Витратні"
+msgstr "Витратний матеріал"
 
 #. [pages.InventoryItemsList.inventoryOnHand.consumableReason]
 #. defaultMessage is:
 #. Consumable Reason
 #: extracted_strings.json
 msgid "Consumable Reason"
-msgstr "Витратна причина"
+msgstr "Призначення витратного матеріалу"
 
 #. [forms.formItem.consumableSerial]
 #. defaultMessage is:
 #. Consumable Serial
 #: extracted_strings.json
 msgid "Consumable Serial"
-msgstr "Серійний витратний матеріал"
+msgstr "Серійний номер витратних матеріалів"
 
 #. [pages.SiteList.consumables]
 #. defaultMessage is:
@@ -2152,6 +2168,13 @@ msgstr "Витратні матеріали, що застосовуються �
 #: extracted_strings.json
 msgid "Consumables applicable for this site"
 msgstr "Витратні матеріали, що застосовуються для цього сайту"
+
+#. [pages.consumables.consumablesUpdatedSuccessfully]
+#. defaultMessage is:
+#. Consumables updated successfully
+#: extracted_strings.json
+msgid "Consumables updated successfully"
+msgstr "Витратні матеріали успішно оновлено"
 
 #. [p.PkDashboard.consumptionRate]
 #. defaultMessage is:
@@ -2247,7 +2270,7 @@ msgstr "Забруднені"
 #. Copies/ML
 #: extracted_strings.json
 msgid "Copies/ML"
-msgstr "Копії/ML"
+msgstr "копій/ML"
 
 #. [contextualMenu.notifications.copy.title]
 #. defaultMessage is:
@@ -2275,7 +2298,7 @@ msgstr "Не вдалось оновити ваші облікові дані"
 #. Couldn't login with your credentials
 #: extracted_strings.json
 msgid "Couldn't login with your credentials"
-msgstr "Не вдалося ввійти за допомогою своїх облікових даних"
+msgstr "Не вдалося ввійти за допомогою Ваших облікових даних"
 
 #. [pages.DeviceApiKeyList.count]
 #. defaultMessage is:
@@ -2361,8 +2384,8 @@ msgid ""
 "Counts devices that didn't use all available module bays for running the "
 "most recent 20 results. This can indicate a faulty module"
 msgstr ""
-"Підраховує пристрої, які не використовували всі доступні відсіки модулів для "
-"запуску останніх 20 результатів. Це може свідчити про несправний модуль"
+"Підраховує пристрої, які не використовували всі доступні модулі для останніх "
+"20 тестів.Це може свідчити про несправний модуль"
 
 #. [component.Widget.percentageOfModulesFunctioningDescription]
 #. defaultMessage is:
@@ -2373,9 +2396,9 @@ msgid ""
 "count of all available bays in all GeneXpert devices that were active in the "
 "last 7 days."
 msgstr ""
-"Підраховує відсоток відсіків модулів, використаних за останні 7 днів, на "
-"основі підрахунку всіх доступних відсіків у всіх пристроях GeneXpert, які "
-"працювали за останні 7 днів."
+"Підраховує відсоток модулів, використаних за останні 7 днів, на основі "
+"кількості всіх доступних модулів у всіх пристроях GeneXpert, які були "
+"активні в останні 7 днів."
 
 #. [pages.common.lga_US]
 #. defaultMessage is:
@@ -2806,7 +2829,7 @@ msgstr ""
 #. Daily Confirmed Cases
 #: extracted_strings.json
 msgid "Daily Confirmed Cases"
-msgstr "Щоденно підтверджені справи"
+msgstr "Підтверджено випадків на день"
 
 #. [pages.InventoryItemsList.dailyConsumptionRate]
 #. defaultMessage is:
@@ -2883,6 +2906,13 @@ msgstr "Дані"
 #: extracted_strings.json
 msgid "Data Extract for Tableau"
 msgstr "Витяг даних для Tableau"
+
+#. [jobFunction.dataViewer]
+#. defaultMessage is:
+#. Data Viewer
+#: extracted_strings.json
+msgid "Data Viewer"
+msgstr "Переглядач даних"
 
 #. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
@@ -2965,6 +2995,13 @@ msgstr "Дата отримання зразка"
 #: extracted_strings.json
 msgid "Date Transferred"
 msgstr "Дата перенесення"
+
+#. [samples.dateUploadedToAspect]
+#. defaultMessage is:
+#. Date Uploaded to Aspect
+#: extracted_strings.json
+msgid "Date Uploaded to Aspect"
+msgstr "Дата завантаження в Aspect"
 
 #. [pages.dateRangeSelector.day]
 #. defaultMessage is:
@@ -3106,7 +3143,7 @@ msgstr "Грудень"
 #. Decommissioned
 #: extracted_strings.json
 msgid "Decommissioned"
-msgstr "Знятий з експлуатації"
+msgstr "Виведений з експлуатації"
 
 #. [pages.Notifications.dataDateRangeTitle]
 #. defaultMessage is:
@@ -3135,13 +3172,6 @@ msgstr "Видалити"
 #: extracted_strings.json
 msgid "Delete (Only 0 triggers)"
 msgstr "Видалити (лише 0 тригерів)"
-
-#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
-#. defaultMessage is:
-#. Delivered
-#: extracted_strings.json
-msgid "Delivered"
-msgstr "Доставлено"
 
 #. [filter.AssayTypeSelectField.assayTypeDengue]
 #. defaultMessage is:
@@ -3227,14 +3257,14 @@ msgstr "Пристрій"
 #. Device API Keys
 #: extracted_strings.json
 msgid "Device API Keys"
-msgstr "Ключі API пристрою"
+msgstr "API Ключі  пристрою"
 
 #. [pages.DeviceApiKeyList.generatorDialogTitle]
 #. defaultMessage is:
 #. Device API Keys Generator
 #: extracted_strings.json
 msgid "Device API Keys Generator"
-msgstr "Генератор ключів API пристрою"
+msgstr "Генератор API ключів  пристрою"
 
 #. [pages.ReportIndex.deviceActivityReport]
 #. defaultMessage is:
@@ -3254,14 +3284,14 @@ msgstr "Загальний показник активності"
 #. Device Activity (Percent)
 #: extracted_strings.json
 msgid "Device Activity (Percent)"
-msgstr "Активність на пристрої (у відсотках)"
+msgstr "Активність пристрою (у відсотках)"
 
 #. [pages.NotificationDetail.SelectAreaTitle]
 #. defaultMessage is:
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Рівень області пристрою"
+msgstr "Рівень розміщення пристрою"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -3316,7 +3346,7 @@ msgstr "Пристрій неактивний"
 #. Device Issue: {issueTypeId}
 #: extracted_strings.json
 msgid "Device Issue: {issueTypeId}"
-msgstr "Випуск пристрою: {issueTypeId}"
+msgstr "Проблема пристрою: {issueTypeId}"
 
 #. [pages.MaintenanceStatusDialog.dialogTitle]
 #. defaultMessage is:
@@ -3354,7 +3384,7 @@ msgstr "Продуктивність пристрою"
 #. Device Serial
 #: extracted_strings.json
 msgid "Device Serial"
-msgstr "Серійний пристрій"
+msgstr "Серійний номер пристрою"
 
 #. [filter.popover.deviceStatus]
 #. defaultMessage is:
@@ -3439,7 +3469,7 @@ msgstr "Пристрій від держави"
 #. Device logs
 #: extracted_strings.json
 msgid "Device logs"
-msgstr "Журнали пристроїв"
+msgstr "Журнал роботи пристрою"
 
 #. [pages.DeviceDetailProfile.deviceType]
 #. defaultMessage is:
@@ -3496,7 +3526,7 @@ msgstr "Список завдань"
 #. Devices With Service Interruption
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
-msgstr "Пристрої, що переживають переривання служби"
+msgstr "Пристрої з перебоями в обслуговуванні"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
@@ -3517,7 +3547,28 @@ msgstr "Пристрої від Lab"
 #. Devices with Unused Modules
 #: extracted_strings.json
 msgid "Devices with Unused Modules"
-msgstr "Пристрої з невикористовуваними модулями"
+msgstr "Пристрої, у яких не використовуються модулі"
+
+#. [p.PkDashboard.diagnosisTrends]
+#. defaultMessage is:
+#. Diagnosis Trends
+#: extracted_strings.json
+msgid "Diagnosis Trends"
+msgstr "Тенденції діагностики"
+
+#. [p.PkDashboard.diagnosisTrendsComparisonNew]
+#. defaultMessage is:
+#. Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "Diagnosis Trends Comparison"
+msgstr "Порівняння тенденцій діагностики"
+
+#. [p.PkDashboard.tbCasesDiagnosed.currentYearNew]
+#. defaultMessage is:
+#. Diagnosis Trends for the current year
+#: extracted_strings.json
+msgid "Diagnosis Trends for the current year"
+msgstr "Тенденції діагностики за поточний рік"
 
 #. [contextualMenu.notifications.disable.status.title]
 #. defaultMessage is:
@@ -3656,7 +3707,7 @@ msgstr "Вниз"
 #. Down for Repair
 #: extracted_strings.json
 msgid "Down for Repair"
-msgstr "Пух для ремонту"
+msgstr "Відключено для ремонту"
 
 #. [placeholder.report.downloadlink]
 #. defaultMessage is:
@@ -3684,7 +3735,7 @@ msgstr ""
 #. Drug Resistance
 #: extracted_strings.json
 msgid "Drug Resistance"
-msgstr "Стійкість до наркотиків"
+msgstr "Стійкість до препаратів"
 
 #. [filter.AssayTypeSelectField.assayTypeEid]
 #. defaultMessage is:
@@ -3694,7 +3745,7 @@ msgstr "Стійкість до наркотиків"
 #. EID
 #: extracted_strings.json
 msgid "EID"
-msgstr "ІД"
+msgstr "EID"
 
 #. [pages.resultEdit.EQA]
 #. defaultMessage is:
@@ -3722,7 +3773,7 @@ msgstr "ETH R %"
 #. ETH Resistance
 #: extracted_strings.json
 msgid "ETH Resistance"
-msgstr "Опір ETH"
+msgstr "стікість до ЕТН"
 
 #. [legends.Unknown.ETHPercent]
 #. defaultMessage is:
@@ -3765,7 +3816,7 @@ msgstr "Ебола"
 #. Edit
 #: extracted_strings.json
 msgid "Edit"
-msgstr "Змінити"
+msgstr "Редагувати"
 
 #. [pages.NotificationDetail.New.editNotification]
 #. defaultMessage is:
@@ -3872,7 +3923,7 @@ msgstr "Тема електронного листа обов’язкова"
 #. Enable
 #: extracted_strings.json
 msgid "Enable"
-msgstr "Увімкнути"
+msgstr "Підключити"
 
 #. [pages.NotificationDetail.notificationTypeEnable]
 #. defaultMessage is:
@@ -3886,7 +3937,7 @@ msgstr "Увімкніть це сповіщення"
 #. Enable/Disable User
 #: extracted_strings.json
 msgid "Enable/Disable User"
-msgstr "Увімкнути/вимкнути користувача"
+msgstr "Підключити/відключити користувача"
 
 #. [filter.btnGroup.contactStatus.contactEnabled]
 #. defaultMessage is:
@@ -3994,14 +4045,14 @@ msgstr "Введіть ідентифікатор пацієнта / випад�
 #. Enter reportable site name...
 #: extracted_strings.json
 msgid "Enter reportable site name..."
-msgstr "Введіть назву сайту, що підлягає звітуванню ..."
+msgstr "Введіть назву сайту, про який можна звітувати ..."
 
 #. [filter.popover.enterReportableSiteId]
 #. defaultMessage is:
 #. Enter reportable site...
 #: extracted_strings.json
 msgid "Enter reportable site..."
-msgstr "Введіть звітний сайт ..."
+msgstr "Введіть сайт, на який можна повідомити"
 
 #. [filter.popover.enterSampleId]
 #. defaultMessage is:
@@ -4015,7 +4066,7 @@ msgstr "Введіть ідентифікатор зразка ..."
 #. Enter sample origin site name...
 #: extracted_strings.json
 msgid "Enter sample origin site name..."
-msgstr "Введіть зразок назви місця походження ..."
+msgstr "Введіть назву сайту походження зразка..."
 
 #. [filter.popover.enterSiteId]
 #. defaultMessage is:
@@ -4038,9 +4089,6 @@ msgstr "Введіть назву сайту ..."
 #. defaultMessage is:
 #. Error
 #. [resultCategoryGroup.gxEbolaGPError]
-#. defaultMessage is:
-#. Error
-#. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
 #. [pages.filters.gxEbolaGPError]
@@ -4081,7 +4129,7 @@ msgstr "Код помилки"
 #. Error Fetching Endpoint
 #: extracted_strings.json
 msgid "Error Fetching Endpoint"
-msgstr "Помилка отримання кінцевої точки"
+msgstr "Помилка при отриманні кінцевої точки"
 
 #. [reports.genericReportErrorTitle]
 #. defaultMessage is:
@@ -4109,7 +4157,7 @@ msgstr "Помилка завантаження партнерів та функ
 #. Error Loading Result Details
 #: extracted_strings.json
 msgid "Error Loading Result Details"
-msgstr "Помилка завантаження деталей результату"
+msgstr "Помилка завантаження інформації про результат"
 
 #. [pages.ReportIndex.error_rate]
 #. defaultMessage is:
@@ -4141,12 +4189,26 @@ msgstr "Помилка збереження нового пароля"
 msgid "Error Sending Reset Password Email"
 msgstr "Помилка надсилання електронної пошти для скидання пароля"
 
+#. [pages.consumables.errorUpdatingConsumables]
+#. defaultMessage is:
+#. Error updating consumables
+#: extracted_strings.json
+msgid "Error updating consumables"
+msgstr "Помилка оновлення витратних матеріалів"
+
 #. [pages.DeviceDetailEdit.deviceUpdateError]
 #. defaultMessage is:
 #. Error updating device
 #: extracted_strings.json
 msgid "Error updating device"
 msgstr "Помилка оновлення пристрою"
+
+#. [pages.InventoryTabs.New.errorUpdatingSites]
+#. defaultMessage is:
+#. Error updating sites
+#: extracted_strings.json
+msgid "Error updating sites"
+msgstr "Помилка оновлення сайтів"
 
 #. [report.missingDateRangeFilterTitle]
 #. defaultMessage is:
@@ -4291,7 +4353,7 @@ msgstr "Очікувана дата повернення до роботи"
 #. Expiration Date
 #: extracted_strings.json
 msgid "Expiration Date"
-msgstr "Придатний до"
+msgstr "Термін придатності"
 
 #. [filter.popover.expirationDate]
 #. defaultMessage is:
@@ -4308,7 +4370,7 @@ msgstr "Придатний до"
 #. Expired
 #: extracted_strings.json
 msgid "Expired"
-msgstr "Закінчився"
+msgstr "Закінчився термін придатності"
 
 #. [pages.InventoryItemsList.expiresIn]
 #. defaultMessage is:
@@ -4318,7 +4380,7 @@ msgstr "Закінчився"
 #. Expires
 #: extracted_strings.json
 msgid "Expires"
-msgstr "Завершується"
+msgstr "Закінчується термін придатності"
 
 #. [pages.InventoryLog.expiresOn]
 #. defaultMessage is:
@@ -4404,16 +4466,6 @@ msgstr "Не вдалося експортувати DeviceApiKeys"
 msgid "Exporting DeviceLog Failed"
 msgstr "Не вдалося експортувати DeviceLog"
 
-#. [errorResponseMessages.result.exportResults.GET.400.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#. [errorResponseMessages.result.exportResults.GET.default.title]
-#. defaultMessage is:
-#. Exporting Results Failed
-#: extracted_strings.json
-msgid "Exporting Results Failed"
-msgstr "Помилка експорту результатів"
-
 #. [errorResponseMessages.exportSites.GET.400.title]
 #. defaultMessage is:
 #. Exporting Sites Failed
@@ -4452,7 +4504,7 @@ msgstr "лютий"
 #. FLQ Resistance
 #: extracted_strings.json
 msgid "FLQ Resistance"
-msgstr "Опір FLQ"
+msgstr "стійкість до FLQ"
 
 #. [p.PkDashboard.fqinhTestingDiagnosis]
 #. defaultMessage is:
@@ -4463,6 +4515,20 @@ msgstr "Опір FLQ"
 #: extracted_strings.json
 msgid "FQ & INH Testing & Diagnosis"
 msgstr "Тестування та діагностика FQ та INH"
+
+#. [p.PkDashboard.FQDiagnosisTrends]
+#. defaultMessage is:
+#. FQ Diagnosis Trends
+#: extracted_strings.json
+msgid "FQ Diagnosis Trends"
+msgstr "Тенденції діагностики FQ"
+
+#. [p.PkDashboard.FqrDiagnosisTrends]
+#. defaultMessage is:
+#. FQ Diagnosis Trends in current year
+#: extracted_strings.json
+msgid "FQ Diagnosis Trends in current year"
+msgstr "Тенденції діагностики FQ у поточному році"
 
 #. [pages.XDR.cnt_flq]
 #. defaultMessage is:
@@ -4645,13 +4711,6 @@ msgstr "Перший результат"
 msgid "First or second"
 msgstr "Перший або другий"
 
-#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
-#. defaultMessage is:
-#. Flagged
-#: extracted_strings.json
-msgid "Flagged"
-msgstr "Позначений"
-
 #. [pages.resultEdit.followUp]
 #. defaultMessage is:
 #. Follow-up
@@ -4767,7 +4826,7 @@ msgstr "GP виявлено"
 #. GP Detected - NP Detected
 #: extracted_strings.json
 msgid "GP Detected - NP Detected"
-msgstr "GP Detected - виявлено NP"
+msgstr "GP - виявлено NP - виявлено"
 
 #. [resultCategoryGroup.gxEbolaGPDetectedNPNotDetected]
 #. defaultMessage is:
@@ -4892,7 +4951,7 @@ msgstr "GeneXpert COVID-19"
 #. GeneXpert COVID-19 Cartridge
 #: extracted_strings.json
 msgid "GeneXpert COVID-19 Cartridge"
-msgstr "Касета GeneXpert COVID-19"
+msgstr "Картридж Xpert COVID-19"
 
 #. [component.Widget.deviceCalibratedWhenDueTitle]
 #. defaultMessage is:
@@ -4927,7 +4986,7 @@ msgstr "Використання приладу GeneXpert"
 #. GeneXpert Devices
 #: extracted_strings.json
 msgid "GeneXpert Devices"
-msgstr "Пристрої GeneXpert"
+msgstr "Прилади GeneXpert"
 
 #. [legends.Unknown.assayGeneXpertEbola]
 #. defaultMessage is:
@@ -4950,7 +5009,7 @@ msgstr "GeneXpert Ebola"
 #. GeneXpert Ebola Cartridge
 #: extracted_strings.json
 msgid "GeneXpert Ebola Cartridge"
-msgstr "Касета GeneXpert Ebola"
+msgstr "Картридж Xpert Ebola"
 
 #. [legends.Unknown.assayGeneXpertHcv]
 #. defaultMessage is:
@@ -5005,7 +5064,7 @@ msgstr "GeneXpert HIV-1 VL"
 #. GeneXpert Issues
 #: extracted_strings.json
 msgid "GeneXpert Issues"
-msgstr "Пристрої GeneXpert"
+msgstr "Прилади GeneXpert"
 
 #. [p.PkDashboard.errorRateTitle]
 #. defaultMessage is:
@@ -5031,7 +5090,7 @@ msgstr "Помилки GeneXpert MTB-RIF/Ultra Device"
 #. GeneXpert MTB/Rif
 #: extracted_strings.json
 msgid "GeneXpert MTB/Rif"
-msgstr "GeneXpert MTB / Rif"
+msgstr "Xpert MTB / Rif"
 
 #. [legends.Unknown.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
@@ -5047,7 +5106,7 @@ msgstr "GeneXpert MTB / Rif"
 #. GeneXpert MTB/Rif Ultra
 #: extracted_strings.json
 msgid "GeneXpert MTB/Rif Ultra"
-msgstr "GeneXpert MTB / Rif Ultra"
+msgstr "Xpert MTB / Rif Ultra"
 
 #. [legends.Unknown.assayGeneXpertMtbXdr]
 #. defaultMessage is:
@@ -5063,28 +5122,28 @@ msgstr "GeneXpert MTB / Rif Ultra"
 #. GeneXpert MTB/XDR
 #: extracted_strings.json
 msgid "GeneXpert MTB/XDR"
-msgstr "GeneXpert MTB / XDR"
+msgstr "Xpert MTB / XDR"
 
 #. [consumable.gxMtbXdrCartridge]
 #. defaultMessage is:
 #. GeneXpert MTB/XDR Cartridge
 #: extracted_strings.json
 msgid "GeneXpert MTB/XDR Cartridge"
-msgstr "Картридж GeneXpert MTB/XDR"
+msgstr "Картридж Xpert MTB/XDR"
 
 #. [consumable.gxMtbRifCartridge]
 #. defaultMessage is:
 #. GeneXpert TB Cartridge
 #: extracted_strings.json
 msgid "GeneXpert TB Cartridge"
-msgstr "Картридж GeneXpert TB"
+msgstr "Картридж Xpert TB"
 
 #. [consumable.gxMtbRifUltraCartridge]
 #. defaultMessage is:
 #. GeneXpert TB Ultra Cartridge
 #: extracted_strings.json
 msgid "GeneXpert TB Ultra Cartridge"
-msgstr "Касета GeneXpert TB Ultra"
+msgstr "Картридж Xpert TB Ultra"
 
 #. [pages.ReportIndex.geneXpertTbWorkloadReport]
 #. defaultMessage is:
@@ -5329,7 +5388,7 @@ msgstr "ВГВ не виявлено"
 #. HBV VL
 #: extracted_strings.json
 msgid "HBV VL"
-msgstr "ВГВ VL"
+msgstr "HBV VL (вірусне навантаження)"
 
 #. [filter.AssayTypeSelectField.assayTypeHcv]
 #. defaultMessage is:
@@ -5339,7 +5398,7 @@ msgstr "ВГВ VL"
 #. HCV
 #: extracted_strings.json
 msgid "HCV"
-msgstr "ВГС"
+msgstr "HCV"
 
 #. [resultCategoryGroup.assayGeneXpertHcvResultCategoryDetected]
 #. defaultMessage is:
@@ -5387,7 +5446,7 @@ msgstr "ВГС не виявлено"
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
-msgstr "ВІЛ"
+msgstr "HIV"
 
 #. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
 #. defaultMessage is:
@@ -5585,7 +5644,7 @@ msgstr "ВІЛ не виявлено"
 #. HIV Qual
 #: extracted_strings.json
 msgid "HIV Qual"
-msgstr "ВІЛ якісний"
+msgstr "HIV Qual"
 
 #. [pages.resultEdit.HIVStatusI18nKey]
 #. defaultMessage is:
@@ -5599,7 +5658,7 @@ msgstr "ВІЛ-статус"
 #. HIV VL
 #: extracted_strings.json
 msgid "HIV VL"
-msgstr "ВІЛ ВЛ"
+msgstr "HIV VL (вірусне навантаження)"
 
 #. [pages.resultEdit.HIV_infected_person_with_TB_SS]
 #. defaultMessage is:
@@ -5620,7 +5679,7 @@ msgstr "ВІЛ не виявлено"
 #. HIV/AIDS
 #: extracted_strings.json
 msgid "HIV/AIDS"
-msgstr "ВІЛ / СНІД"
+msgstr "HIV/AIDS"
 
 #. [pages.NotificationDetail.New.hasRecurrency]
 #. defaultMessage is:
@@ -5709,6 +5768,13 @@ msgstr "Година"
 msgid "Hours"
 msgstr "Години"
 
+#. [pages.SiteDetail.fieldHoursOfOperation]
+#. defaultMessage is:
+#. Hours of Operation
+#: extracted_strings.json
+msgid "Hours of Operation"
+msgstr "Години роботи"
+
 #. [pages.SiteDetail.fieldEndingHours]
 #. defaultMessage is:
 #. Hours of Operation End
@@ -5784,7 +5850,7 @@ msgstr "INH R %"
 #. INH Resistance
 #: extracted_strings.json
 msgid "INH Resistance"
-msgstr "Опір INH"
+msgstr "стійкість до INH"
 
 #. [legends.Unknown.INHPercent]
 #. defaultMessage is:
@@ -5822,13 +5888,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Implementing Partner"
 msgstr "Виконавчий партнер"
-
-#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
-#. defaultMessage is:
-#. In Progress
-#: extracted_strings.json
-msgid "In Progress"
-msgstr "В процесі"
 
 #. [errorResponseMessages.common.filterError.resolution]
 #. defaultMessage is:
@@ -5902,6 +5961,16 @@ msgstr "Збільшення/Зменшення"
 msgid "Indeterminate"
 msgstr "Невизначена"
 
+#. [pages.resultEdit.originTestLocationi18nCaptionKey]
+#. defaultMessage is:
+#. Indicates whether the original test was performed at this site or a different one
+#: extracted_strings.json
+msgid ""
+"Indicates whether the original test was performed at this site or a "
+"different one"
+msgstr ""
+"Вказує, чи було проведено первинне тестування на цьому сайті, чи на іншому"
+
 #. [pages.Notifications.table.notificationsTableHeaderJobFunctionsPersons]
 #. defaultMessage is:
 #. Individual Persons
@@ -5967,9 +6036,6 @@ msgstr "Інструменти"
 msgid "Instruments Connected"
 msgstr "Підключені інструменти"
 
-#. [errorResponseMessages.fetchPersons.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -6085,7 +6151,7 @@ msgstr "Закінчується термін зберігання запасі�
 #. Inventory Item
 #: extracted_strings.json
 msgid "Inventory Item"
-msgstr "Тип картриджу"
+msgstr "Тип тест-системи"
 
 #. [pages.Consumable.New.name]
 #. defaultMessage is:
@@ -6194,7 +6260,7 @@ msgstr ""
 #. Inventory levels have been adjusted successfully
 #: extracted_strings.json
 msgid "Inventory levels have been adjusted successfully"
-msgstr "Рівні запасів успішно відрегульовані"
+msgstr "Рівень запасів було успішно скориговано"
 
 #. [browsePage.browseDropdown.inventoryOnHand]
 #. defaultMessage is:
@@ -6207,14 +6273,14 @@ msgstr "Рівні запасів успішно відрегульовані"
 #. Inventory on Hand
 #: extracted_strings.json
 msgid "Inventory on Hand"
-msgstr "Інвентар на руках"
+msgstr "В наявності"
 
 #. [pages.InventoryReconciliationForm.SucessMessage]
 #. defaultMessage is:
 #. Inventory settings updated successfully.
 #: extracted_strings.json
 msgid "Inventory settings updated successfully."
-msgstr "Рівні запасів успішно відрегульовані"
+msgstr "Налаштування інвентарю успішно оновлено."
 
 #. [pages.DeviceDetailEdit.isDaisyChained]
 #. defaultMessage is:
@@ -6251,7 +6317,7 @@ msgstr "Ізолювати"
 #. Issue Based
 #: extracted_strings.json
 msgid "Issue Based"
-msgstr "На основі проблеми"
+msgstr "Причина помилки"
 
 #. [pages.admin.issues]
 #. defaultMessage is:
@@ -6264,7 +6330,7 @@ msgstr "На основі проблеми"
 #. Issues
 #: extracted_strings.json
 msgid "Issues"
-msgstr "Випуски"
+msgstr "Помилки"
 
 #. [pages.NotificationDetail.New.issues]
 #. defaultMessage is:
@@ -6427,7 +6493,7 @@ msgstr "Червень"
 #. KAN Resistance
 #: extracted_strings.json
 msgid "KAN Resistance"
-msgstr "Опір KAN"
+msgstr "стійкість до KAN"
 
 #. [legends.Unknown.KANPercent]
 #. defaultMessage is:
@@ -6471,7 +6537,7 @@ msgstr "Район"
 #. LGA Contacts
 #: extracted_strings.json
 msgid "LGA Contacts"
-msgstr "Контакти LGA"
+msgstr "Районні контакти"
 
 #. [filter.popover.lgaName]
 #. defaultMessage is:
@@ -6507,12 +6573,33 @@ msgstr "LPA"
 msgid "Lab Admin"
 msgstr "Адміністратор лабораторії"
 
+#. [jobFunction.labHead]
+#. defaultMessage is:
+#. Lab Head
+#: extracted_strings.json
+msgid "Lab Head"
+msgstr "Начальник лабораторії"
+
 #. [jobFunction.labManager]
 #. defaultMessage is:
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
 msgstr "Завідувач лабораторії"
+
+#. [jobFunction.labSupervisor]
+#. defaultMessage is:
+#. Lab Supervisor
+#: extracted_strings.json
+msgid "Lab Supervisor"
+msgstr "Начальник лабораторії"
+
+#. [jobFunction.labTechnician]
+#. defaultMessage is:
+#. Lab Technician
+#: extracted_strings.json
+msgid "Lab Technician"
+msgstr "Технік-лаборант"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -6657,7 +6744,7 @@ msgstr "Останній тиждень"
 #. Last Year
 #: extracted_strings.json
 msgid "Last Year"
-msgstr "В минулому році"
+msgstr "Минулий рік"
 
 #. [components.shared.lastDayofQuarter]
 #. defaultMessage is:
@@ -6818,13 +6905,6 @@ msgstr ""
 msgid "Loading Devices Failed"
 msgstr "Помилка завантаження пристроїв"
 
-#. [errorResponseMessages.fetchResults.GET.default.title]
-#. defaultMessage is:
-#. Loading Results Failed
-#: extracted_strings.json
-msgid "Loading Results Failed"
-msgstr "Помилка завантаження результатів"
-
 #. [legends.Unknown.location]
 #. defaultMessage is:
 #. Location
@@ -6925,7 +7005,7 @@ msgstr "Втрачений"
 #. Lot
 #: extracted_strings.json
 msgid "Lot"
-msgstr "Лот"
+msgstr "Партія"
 
 #. [filter.popover.lotNumber]
 #. defaultMessage is:
@@ -7164,6 +7244,13 @@ msgstr "Виявлено MTB - Rif невизначений"
 #: extracted_strings.json
 msgid "MTB Detection"
 msgstr "Виявлення MTB"
+
+#. [p.PkDashboard.MtbDetectionTrendsComparison]
+#. defaultMessage is:
+#. MTB Detection Trends Comparison
+#: extracted_strings.json
+msgid "MTB Detection Trends Comparison"
+msgstr "Порівняння тенденцій виявлення MTB"
 
 #. [resultCategoryGroup.gxMtbRifMtbError]
 #. defaultMessage is:
@@ -7498,6 +7585,34 @@ msgstr "Тенденції MTB+ за рік"
 msgid "MTB+ and Trace"
 msgstr "MTB+ та Trace"
 
+#. [p.PkDashboard.MTBPositivesTrends.currentYear]
+#. defaultMessage is:
+#. MTB+ detected in current year
+#: extracted_strings.json
+msgid "MTB+ detected in current year"
+msgstr "МТБ+ виявлено у поточному році"
+
+#. [p.PkDashboard.MTBPositivesTrends]
+#. defaultMessage is:
+#. MTB+ detection trends
+#: extracted_strings.json
+msgid "MTB+ detection trends"
+msgstr "Тенденції виявлення MTB+"
+
+#. [p.PkDashboard.MTBDiagnosisCurrentYear]
+#. defaultMessage is:
+#. MTB+ diagnosed in current year
+#: extracted_strings.json
+msgid "MTB+ diagnosed in current year"
+msgstr "МТБ+ діагностовано у поточному році"
+
+#. [p.PkDashboard.MTBDiagnosis]
+#. defaultMessage is:
+#. MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "MTB+ diagnosis trends"
+msgstr "Тенденції діагностики MTB+"
+
 #. [p.PkDashboard.titlemtbRif]
 #. defaultMessage is:
 #. MTB/RIF
@@ -7521,6 +7636,13 @@ msgstr "MTB / Rif"
 #: extracted_strings.json
 msgid "MTB/XDR"
 msgstr "MTB/XDR"
+
+#. [p.PkDashboard.MtbXdrTestingTrends]
+#. defaultMessage is:
+#. MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "MTB/XDR Testing Trends"
+msgstr "Тенденції тестування MTB/XDR"
 
 #. [pages.Status.mtbXDRDrugResistance]
 #. defaultMessage is:
@@ -7630,6 +7752,13 @@ msgstr "Березень"
 #: extracted_strings.json
 msgid "May"
 msgstr "Травень"
+
+#. [jobFunction.medTech]
+#. defaultMessage is:
+#. Med Tech
+#: extracted_strings.json
+msgid "Med Tech"
+msgstr "Мед Тех"
 
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
@@ -7981,6 +8110,20 @@ msgstr "Виявлено НП"
 #: extracted_strings.json
 msgid "NTP"
 msgstr "NTP"
+
+#. [jobFunction.ntpNoResults]
+#. defaultMessage is:
+#. NTP - No Results
+#: extracted_strings.json
+msgid "NTP - No Results"
+msgstr "НТП – Немає результатів"
+
+#. [jobFunction.ntpLevel]
+#. defaultMessage is:
+#. NTP Level
+#: extracted_strings.json
+msgid "NTP Level"
+msgstr "Рівень NTP"
 
 #. [placeholder.name]
 #. defaultMessage is:
@@ -8624,6 +8767,13 @@ msgstr "Журнали сповіщень"
 msgid "Notification States"
 msgstr "Держави, що нотифікують"
 
+#. [pages.UserPreferences.notificationTags]
+#. defaultMessage is:
+#. Notification Tags
+#: extracted_strings.json
+msgid "Notification Tags"
+msgstr "Теги сповіщень"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -8834,12 +8984,6 @@ msgstr "Кількість включених номерів"
 msgid "OCT"
 msgstr "жовтень"
 
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
-#. [pages.ResultList.ResultWorkflowStatusValidated]
-#. defaultMessage is:
-#. OK
 #. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
@@ -9004,19 +9148,19 @@ msgstr "Операція"
 msgid "Operational Data"
 msgstr "Оперативні дані"
 
-#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
-#. defaultMessage is:
-#. Ordered
-#: extracted_strings.json
-msgid "Ordered"
-msgstr "Впорядковано"
-
 #. [filter.popover.originSiteName]
 #. defaultMessage is:
 #. Origin Site
 #: extracted_strings.json
 msgid "Origin Site"
 msgstr "Сайт походження"
+
+#. [pages.resultEdit.originTestLocationi18nKey]
+#. defaultMessage is:
+#. Original test location
+#: extracted_strings.json
+msgid "Original test location"
+msgstr "Початкове місце тестування"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Other]
 #. defaultMessage is:
@@ -9124,6 +9268,13 @@ msgstr "Номер за каталогом"
 msgid "Partner"
 msgstr "Партнер"
 
+#. [jobFunction.partners]
+#. defaultMessage is:
+#. Partners
+#: extracted_strings.json
+msgid "Partners"
+msgstr "Партнери"
+
 #. [pages.Login.password]
 #. defaultMessage is:
 #. Password
@@ -9169,6 +9320,9 @@ msgstr "Пацієнт"
 #. defaultMessage is:
 #. Patient ID
 #. [forms.formItem.patientId]
+#. defaultMessage is:
+#. Patient ID
+#. [samples.patientId]
 #. defaultMessage is:
 #. Patient ID
 #. [pages.ResultList.patientId]
@@ -9853,13 +10007,6 @@ msgstr "Ціна в доларах США"
 msgid "Proceed"
 msgstr "Продовжити"
 
-#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
-#. defaultMessage is:
-#. Processed
-#: extracted_strings.json
-msgid "Processed"
-msgstr "Оброблено"
-
 #. [pages.transferResult.processing]
 #. defaultMessage is:
 #. Processing ...
@@ -9928,163 +10075,6 @@ msgstr "Провінція/Регіон"
 msgid "Provinces annual utilization rates"
 msgstr "Щорічні показники використання провінцій"
 
-#. [p.PkDashboard.provincialDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial Diagnosis Trends"
-msgstr "Provincial Diagnosis Trends"
-
-#. [p.PkDashboard.provincialDiagnosisTrendsComparison]
-#. defaultMessage is:
-#. Provincial Diagnosis Trends Comparison
-#: extracted_strings.json
-msgid "Provincial Diagnosis Trends Comparison"
-msgstr "Порівняння тенденцій діагностики в провінціях"
-
-#. [p.PkDashboard.tbCasesDiagnosed.currentYear]
-#. defaultMessage is:
-#. Provincial Diagnosis Trends for the current year
-#: extracted_strings.json
-msgid "Provincial Diagnosis Trends for the current year"
-msgstr "Провінційні тенденції діагностики в поточному році"
-
-#. [p.PkDashboard.provincialFqrDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial FQ Diagnosis Trends
-#. [p.PkDashboard.ProvincialFQDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial FQ Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial FQ Diagnosis Trends"
-msgstr "Провінційні тенденції діагностики ФКУ"
-
-#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
-#. defaultMessage is:
-#. Provincial MTB Detection Trends Comparison
-#: extracted_strings.json
-msgid "Provincial MTB Detection Trends Comparison"
-msgstr "Порівняння тенденцій виявлення туберкульозу в областях"
-
-#. [p.PkDashboard.provincialMTBPositivesTrends.currentYear]
-#. defaultMessage is:
-#. Provincial MTB+ detected in current year
-#: extracted_strings.json
-msgid "Provincial MTB+ detected in current year"
-msgstr "У поточному році в провінції виявлено випадки МРТБ+"
-
-#. [p.PkDashboard.provincialMTBPositivesTrends]
-#. defaultMessage is:
-#. Provincial MTB+ detection trends
-#: extracted_strings.json
-msgid "Provincial MTB+ detection trends"
-msgstr "Тенденції виявлення МРТБ+ у провінціях"
-
-#. [p.PkDashboard.provincialMTBDiagnosisCurrentYear]
-#. defaultMessage is:
-#. Provincial MTB+ diagnosed in current year
-#: extracted_strings.json
-msgid "Provincial MTB+ diagnosed in current year"
-msgstr "Провінційні діагнози МРТБ+ у поточному році"
-
-#. [p.PkDashboard.provincialMTBDiagnosis]
-#. defaultMessage is:
-#. Provincial MTB+ diagnosis trends
-#: extracted_strings.json
-msgid "Provincial MTB+ diagnosis trends"
-msgstr "Тенденції діагностики МРТБ+ у провінціях"
-
-#. [p.PkDashboard.provincialMtbXdrTestingTrends]
-#. defaultMessage is:
-#. Provincial MTB/XDR Testing Trends
-#: extracted_strings.json
-msgid "Provincial MTB/XDR Testing Trends"
-msgstr "Тенденції тестування MTB/XDR у провінціях"
-
-#. [p.PkDashboard.provincialRRDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial RR Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial RR Diagnosis Trends"
-msgstr "Тенденції діагностики РР у провінціях"
-
-#. [p.PkDashboard.provincialRRTBDiagnosisTrendsCurrentYear]
-#. defaultMessage is:
-#. Provincial RR-TB diagnosed in current year
-#: extracted_strings.json
-msgid "Provincial RR-TB diagnosed in current year"
-msgstr "Провінційний РР ТБ, діагностований у поточному році"
-
-#. [p.PkDashboard.provincialRRTBDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial RR-TB diagnosis trends
-#: extracted_strings.json
-msgid "Provincial RR-TB diagnosis trends"
-msgstr "Провінційні тенденції діагностики РР-ТБ"
-
-#. [p.PkDashboard.ProvincialRRTBDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial RRTB Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial RRTB Diagnosis Trends"
-msgstr "Провінційні тенденції діагностики РРТБ"
-
-#. [p.PkDashboard.ProvincialTBDiagnosisTrendsComparison]
-#. defaultMessage is:
-#. Provincial TB Diagnosis Trends Comparison
-#: extracted_strings.json
-msgid "Provincial TB Diagnosis Trends Comparison"
-msgstr "Порівняння тенденцій діагностики ТВ у провінціях"
-
-#. [p.PkDashboard.ProvincialTBTestingTrend]
-#. defaultMessage is:
-#. Provincial TB Testing Trend
-#: extracted_strings.json
-msgid "Provincial TB Testing Trend"
-msgstr "Тенденція тестування на туберкульоз у провінції"
-
-#. [p.PkDashboard.ProvincialTestingTrend]
-#. defaultMessage is:
-#. Provincial Testing Trend
-#: extracted_strings.json
-msgid "Provincial Testing Trend"
-msgstr "Тенденція тестування в провінціях"
-
-#. [p.PkDashboard.provincialTestingTrendsYear]
-#. defaultMessage is:
-#. Provincial Testing in current year
-#: extracted_strings.json
-msgid "Provincial Testing in current year"
-msgstr "Провінційне тестування в поточному році"
-
-#. [p.PkDashboard.provincialXDRTestingTrendsCurrentYear]
-#. defaultMessage is:
-#. Provincial XDR testing in current year
-#: extracted_strings.json
-msgid "Provincial XDR testing in current year"
-msgstr "Тестування XDR у провінціях у поточному році"
-
-#. [p.PkDashboard.provincialXDRTestingTrends]
-#. defaultMessage is:
-#. Provincial XDR testing trends
-#: extracted_strings.json
-msgid "Provincial XDR testing trends"
-msgstr "Тенденції тестування XDR у провінціях"
-
-#. [p.PkDashboard.provincial.district.FqrDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial/District FQ Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial/District FQ Diagnosis Trends"
-msgstr "Тенденції діагностики ФКУ в провінції/районі"
-
-#. [p.PkDashboard.provincialTestingTrends]
-#. defaultMessage is:
-#. Provincial/District Testing Trends
-#: extracted_strings.json
-msgid "Provincial/District Testing Trends"
-msgstr "Provincial/District Testing Trends"
-
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
 #. Provisioned
@@ -10098,13 +10088,6 @@ msgstr "Надано"
 #: extracted_strings.json
 msgid "Pulmonary"
 msgstr "Легеневі"
-
-#. [pages.deviceDetail.ResultWorkflowStatusPurged]
-#. defaultMessage is:
-#. Purged
-#: extracted_strings.json
-msgid "Purged"
-msgstr "Очищений"
 
 #. [filter.sampleType.sampleTypePus]
 #. defaultMessage is:
@@ -10188,7 +10171,7 @@ msgstr "Кількість від'ємна для поточного запас�
 #. Quantity on Hand
 #: extracted_strings.json
 msgid "Quantity on Hand"
-msgstr "Кількість на руках"
+msgstr "Кількість в наявності"
 
 #. [pages.RemoveInventoryDialogForm.quantity]
 #. defaultMessage is:
@@ -10202,7 +10185,7 @@ msgstr "Кількість для видалення"
 #. Quantity to Transfer
 #: extracted_strings.json
 msgid "Quantity to Transfer"
-msgstr "Кількість для переказу"
+msgstr "Кількість для передачі"
 
 #. [inventoryItemSelect.quantity]
 #. defaultMessage is:
@@ -10230,7 +10213,7 @@ msgstr "Поквартально"
 #. RIF Resistance
 #: extracted_strings.json
 msgid "RIF Resistance"
-msgstr "Опір RIF"
+msgstr "Стійкість до RIF"
 
 #. [pages.ReportIndex.RIF_Resistance_Rate]
 #. defaultMessage is:
@@ -10241,6 +10224,13 @@ msgstr "Опір RIF"
 #: extracted_strings.json
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Кількість позитивних результатів"
+
+#. [p.PkDashboard.RRDiagnosisTrends]
+#. defaultMessage is:
+#. RR Diagnosis Trends
+#: extracted_strings.json
+msgid "RR Diagnosis Trends"
+msgstr "Тенденції діагностики РР"
 
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
@@ -10263,6 +10253,13 @@ msgstr "Випадки RR, діагностовані цього року"
 msgid "RR cases diagnosed today"
 msgstr "Випадки РР, діагностовані сьогодні"
 
+#. [pages.resultEdit.rifResistancePreviouslyDetectedI18nKey]
+#. defaultMessage is:
+#. RR previously detected
+#: extracted_strings.json
+msgid "RR previously detected"
+msgstr "Раніше виявлений RR"
+
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
 #. RR+
@@ -10280,9 +10277,19 @@ msgstr "РР до ТБ Загальний відсоток"
 #. [p.PkDashboard.rrtbDiagnosedCurrentYear]
 #. defaultMessage is:
 #. RR-TB diagnosed in current year
+#. [p.PkDashboard.RRTBDiagnosisTrendsCurrentYear]
+#. defaultMessage is:
+#. RR-TB diagnosed in current year
 #: extracted_strings.json
 msgid "RR-TB diagnosed in current year"
 msgstr "РР ТБ, діагностований у поточному році"
+
+#. [p.PkDashboard.RRTBDiagnosisTrends2]
+#. defaultMessage is:
+#. RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "RR-TB diagnosis trends"
+msgstr "Тенденції діагностики РР-ТБ"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -10326,12 +10333,12 @@ msgstr "Випадки RRTB, діагностовані в поточному р
 msgid "RRTB Diagnosis"
 msgstr "Діагностика RRTB"
 
-#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
+#. [p.PkDashboard.RRTBDiagnosisTrends]
 #. defaultMessage is:
-#. Ready for delivery
+#. RRTB Diagnosis Trends
 #: extracted_strings.json
-msgid "Ready for delivery"
-msgstr "Готовий до доставки"
+msgid "RRTB Diagnosis Trends"
+msgstr "Тенденції діагностики рецидивуючого туберкульозу (РРТБ)"
 
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
@@ -10487,6 +10494,13 @@ msgstr "Відхилено"
 #: extracted_strings.json
 msgid "Relapses"
 msgstr "Рецидиви"
+
+#. [jobFunction.remoteHealthWorker]
+#. defaultMessage is:
+#. Remote Health Worker
+#: extracted_strings.json
+msgid "Remote Health Worker"
+msgstr "Віддалений медичний працівник"
 
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
@@ -10812,7 +10826,7 @@ msgstr "Скидання пароля"
 #. Resistance
 #: extracted_strings.json
 msgid "Resistance"
-msgstr "Опір"
+msgstr "Стійкість"
 
 #. [legends.Unknown.resultCategoryResistant]
 #. defaultMessage is:
@@ -10821,6 +10835,13 @@ msgstr "Опір"
 msgid "Resistant"
 msgstr "Стійкий"
 
+#. [pages.JobAssignments.restrictToSitesWithTag]
+#. defaultMessage is:
+#. Restrict to Sites with Tag
+#: extracted_strings.json
+msgid "Restrict to Sites with Tag"
+msgstr "Обмежити сайтами з тегом"
+
 #. [filter.popover.result]
 #. defaultMessage is:
 #. Result
@@ -10828,6 +10849,9 @@ msgstr "Стійкий"
 #. defaultMessage is:
 #. Result
 #. [placeholder.result]
+#. defaultMessage is:
+#. Result
+#. [samples.result]
 #. defaultMessage is:
 #. Result
 #. [pages.ResultList.resultText]
@@ -10886,6 +10910,13 @@ msgstr "Результат Забруднено"
 #: extracted_strings.json
 msgid "Result Counts by HIV status"
 msgstr "Результат Розраховується за ВІЛ-статусом"
+
+#. [samples.resultDate]
+#. defaultMessage is:
+#. Result Date
+#: extracted_strings.json
+msgid "Result Date"
+msgstr "Дата результату"
 
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
@@ -11096,13 +11127,6 @@ msgstr "Переглядач результатів - Ні"
 #: extracted_strings.json
 msgid "Result Viewer - Yes"
 msgstr "Перегляд результатів - Так"
-
-#. [pages.DeviceDetailProfile.resultWorkflowStatus]
-#. defaultMessage is:
-#. Result Workflow Status
-#: extracted_strings.json
-msgid "Result Workflow Status"
-msgstr "Результат Статус робочого процесу"
 
 #. [pages.transferResult.successMessagePatient]
 #. defaultMessage is:
@@ -11325,6 +11349,13 @@ msgstr "Слина"
 msgid "Sample"
 msgstr "ID зразка"
 
+#. [samples.sampleCollectedBy]
+#. defaultMessage is:
+#. Sample Collected By
+#: extracted_strings.json
+msgid "Sample Collected By"
+msgstr "Зразок зібрано"
+
 #. [placeholder.result.sample.collected.date]
 #. defaultMessage is:
 #. Sample Collected Date
@@ -11332,7 +11363,17 @@ msgstr "ID зразка"
 msgid "Sample Collected Date"
 msgstr "Зразок зібраної дати"
 
+#. [samples.sampleCollectedOn]
+#. defaultMessage is:
+#. Sample Collection Date
+#: extracted_strings.json
+msgid "Sample Collection Date"
+msgstr "Дата збору зразка"
+
 #. [forms.formItem.sampleCollectionSite]
+#. defaultMessage is:
+#. Sample Collection Site
+#. [samples.sampleCollectionSite]
 #. defaultMessage is:
 #. Sample Collection Site
 #. [pages.ResultList.sampleOriginSiteName]
@@ -11349,6 +11390,9 @@ msgstr "Сайт збору зразків"
 #. defaultMessage is:
 #. Sample ID
 #. [forms.formItem.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [samples.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.ResultList.sampleId]
@@ -11388,12 +11432,26 @@ msgstr "Зразок сайту походження"
 msgid "Sample Type"
 msgstr "Тип зразка"
 
+#. [pages.SiteDetail.sampleRegistrationAllowed]
+#. defaultMessage is:
+#. Sample collection allowed
+#: extracted_strings.json
+msgid "Sample collection allowed"
+msgstr "Збір проб дозволений"
+
 #. [filter.popover.sampleOriginSite]
 #. defaultMessage is:
 #. Sample collection site
 #: extracted_strings.json
 msgid "Sample collection site"
 msgstr "Сайт збору зразків"
+
+#. [pages.SampleList.samplesTitle]
+#. defaultMessage is:
+#. Samples
+#: extracted_strings.json
+msgid "Samples"
+msgstr "Зразки"
 
 #. [reporters.samplesRegistered]
 #. defaultMessage is:
@@ -11476,13 +11534,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Screen is not yet complete"
 msgstr "Екран ще не завершено"
-
-#. [errorResponseMessages.fetchResults.GET.400.title]
-#. defaultMessage is:
-#. Searching Results Failed
-#: extracted_strings.json
-msgid "Searching Results Failed"
-msgstr "Помилка пошуку результатів"
 
 #. [forms.formItem.selectAllUnselectAll]
 #. defaultMessage is:
@@ -11673,9 +11724,6 @@ msgstr "Виберіть результат ..."
 msgid "Select revoked status..."
 msgstr "Виберіть статус скасованого ..."
 
-#. [filter.popover.selectWorkflowStatus]
-#. defaultMessage is:
-#. Select status...
 #. [filter.popover.selectTreatmentStatus]
 #. defaultMessage is:
 #. Select status...
@@ -12065,6 +12113,15 @@ msgstr ""
 "Показує всі сайти/пристрої та кількість днів, коли на них не було товару в "
 "наявності за останній місяць."
 
+#. [pages.ResultList.paginatorStatusLoading]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of (loading total...)
+#: extracted_strings.json
+msgid "Showing {firstItemIndex}-{lastItemIndex} of (loading total...)"
+msgstr ""
+"Показано {firstItemIndex}-{lastItemIndex} з (завантаження загальної "
+"кількості...)"
+
 #. [pages.inventoryList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# Consumable} other {# Consumables} }
@@ -12073,8 +12130,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "Consumable} other {# Consumables} }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# "
-"Витратні матеріали} інші {# Витратні матеріали} }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
+"Витратні матеріали} other {# Витратні матеріали} }"
 
 #. [pages.InventoryTransfer.paginatorStatus]
 #. defaultMessage is:
@@ -12084,8 +12141,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "Transfer} other {# Transfers} }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# "
-"Передача} інші {# Передачі} } }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
+"Передача} other {# Передачі} }"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
@@ -12132,7 +12189,7 @@ msgid ""
 "notification} other {# notifications} }"
 msgstr ""
 "Показати {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
-"сповіщення} other {# сповіщення} } }"
+"сповіщення} other {# сповіщення} }"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -12161,6 +12218,17 @@ msgid ""
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, plural, one {# "
 "результат} other {# результати}}"
+
+#. [pages.SampleList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# sample} other {# samples} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"sample} other {# samples} }"
+msgstr ""
+"Показано {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# "
+"sample} other {# samples} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
@@ -12201,8 +12269,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } "
 "other {# } }"
 msgstr ""
-"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, множина, один {# } "
-"інші {# } }"
+"Показує {firstItemIndex}-{lastItemIndex} з {itemCount, plural, one {# } "
+"other {# } }"
 
 #. [pages.ReportIndex.unusedModulesReport_Description]
 #. defaultMessage is:
@@ -12392,6 +12460,20 @@ msgstr "Назва сайту вже використовується"
 msgid "Sites"
 msgstr "Сайти"
 
+#. [pages.InventoryTabs.New.sitesByConsumable]
+#. defaultMessage is:
+#. Sites by Consumable
+#: extracted_strings.json
+msgid "Sites by Consumable"
+msgstr "Сайти за витратними матеріалами"
+
+#. [pages.InventoryTabs.New.sitesUpdatedSuccessfully]
+#. defaultMessage is:
+#. Sites updated successfully
+#: extracted_strings.json
+msgid "Sites updated successfully"
+msgstr "Сайти успішно оновлені"
+
 #. [legends.Unknown.assaySmear]
 #. defaultMessage is:
 #. Smear
@@ -12492,6 +12574,17 @@ msgstr "SMS-повідомлення не повинно бути довшим �
 msgid "Software Type"
 msgstr "Тип програмного забезпечення"
 
+#. [errorResponseMessages.updateConsumablesBatch.message]
+#. defaultMessage is:
+#. Some consumables could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"Some consumables could not be updated due to unreconciled consumption. "
+"Please reconcile your inventory to complete this action"
+msgstr ""
+"Деякі витратні матеріали не вдалося оновити через неузгоджене споживання. "
+"Будь ласка, звірте свої запаси, щоб завершити цю дію"
+
 #. [pages.consumables.consumablesApplicableForThisSiteTooltip]
 #. defaultMessage is:
 #. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
@@ -12503,7 +12596,18 @@ msgstr ""
 "Деякі витратні матеріали можуть виявитися недоступними для зміни вибору, "
 "оскільки на сайті є запаси або неузгоджені транзакції"
 
-#. [pages.InventoryTabs.New.trackByLocationTooltip]
+#. [errorResponseMessages.updateConsumableSitesBatch.message]
+#. defaultMessage is:
+#. Some sites could not be updated due to unreconciled consumption. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"Some sites could not be updated due to unreconciled consumption. Please "
+"reconcile your inventory to complete this action"
+msgstr ""
+"Деякі сайти не вдалося оновити через неузгоджене споживання. Будь ласка, "
+"звірте свої запаси, щоб завершити цю дію"
+
+#. [pages.InventoryTabs.New.sitesByConsumableTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
 #: extracted_strings.json
@@ -12574,7 +12678,7 @@ msgstr "Стан"
 #. State Contacts
 #: extracted_strings.json
 msgid "State Contacts"
-msgstr "Державні контакти"
+msgstr "Обласні контакти"
 
 #. [filter.popover.stateName]
 #. defaultMessage is:
@@ -12588,7 +12692,7 @@ msgstr "Назва штату"
 #. State/Region
 #: extracted_strings.json
 msgid "State/Region"
-msgstr "Штат / регіон"
+msgstr "Область/регіон"
 
 #. [browsePage.browseDropdown.states]
 #. defaultMessage is:
@@ -12659,7 +12763,7 @@ msgstr "Провайдер акцій"
 #. Stockouts
 #: extracted_strings.json
 msgid "Stockouts"
-msgstr "Запаси"
+msgstr "Дефіцит"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Stolen]
 #. defaultMessage is:
@@ -12673,7 +12777,7 @@ msgstr "Вкрадене"
 #. Strong
 #: extracted_strings.json
 msgid "Strong"
-msgstr "Крутихвіст"
+msgstr "Сильний"
 
 #. [pages.resultEdit.Study]
 #. defaultMessage is:
@@ -12702,7 +12806,7 @@ msgstr "Навчання/дослідження"
 #. Submit
 #: extracted_strings.json
 msgid "Submit"
-msgstr "Відправити"
+msgstr "Подати"
 
 #. [legends.Unknown.resultCategorySuccess]
 #. defaultMessage is:
@@ -12781,7 +12885,14 @@ msgstr "Прізвище"
 #. Susceptible
 #: extracted_strings.json
 msgid "Susceptible"
-msgstr "Сприйнятливий"
+msgstr "Чутливий"
+
+#. [jobFunction.systemOne]
+#. defaultMessage is:
+#. SystemOne
+#: extracted_strings.json
+msgid "SystemOne"
+msgstr "SystemOne"
 
 #. [p.PkDashboard.RRTestingDiagnosis]
 #. defaultMessage is:
@@ -12828,6 +12939,13 @@ msgstr "TB DST"
 msgid "TB Diagnosis"
 msgstr "Діагноз TB"
 
+#. [p.PkDashboard.TBDiagnosisTrendsComparison]
+#. defaultMessage is:
+#. TB Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "TB Diagnosis Trends Comparison"
+msgstr "Порівняння тенденцій діагностики туберкульозу"
+
 #. [filter.AssayTypeSelectField.assayTypeTbGnd]
 #. defaultMessage is:
 #. TB G&D
@@ -12871,7 +12989,7 @@ msgstr "Результати ТБ"
 #. TB Rif Resistance
 #: extracted_strings.json
 msgid "TB Rif Resistance"
-msgstr "Опір туберкульозу Ріф"
+msgstr "TB Rif стійкість"
 
 #. [p.PkDashboard.mtbRifTbTesting]
 #. defaultMessage is:
@@ -12887,12 +13005,19 @@ msgstr "Тестування T1B"
 msgid "TB Testing & Diagnosis Trends"
 msgstr "TB Testing & Diagnostics Trends"
 
+#. [p.PkDashboard.TBTestingTrend]
+#. defaultMessage is:
+#. TB Testing Trend
+#: extracted_strings.json
+msgid "TB Testing Trend"
+msgstr "Тенденція тестування на туберкульоз"
+
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
 #. TB XDR Drug Resistances
 #: extracted_strings.json
 msgid "TB XDR Drug Resistances"
-msgstr "Стійкість до ліків TB XDR"
+msgstr "TB XDR Стійкість до препаратів"
 
 #. [p.PkDashboard.TBXDRTest]
 #. defaultMessage is:
@@ -12929,6 +13054,16 @@ msgstr "Випадки туберкульозу, діагностовані сь
 msgid "TB lamp"
 msgstr "TB LAMP"
 
+#. [pages.JobAssignments.tag]
+#. defaultMessage is:
+#. Tag
+#. [pages.UserPreferences.tag]
+#. defaultMessage is:
+#. Tag
+#: extracted_strings.json
+msgid "Tag"
+msgstr "Тег"
+
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
 #. Tags
@@ -12953,7 +13088,7 @@ msgstr "Мітки"
 #. Target
 #: extracted_strings.json
 msgid "Target"
-msgstr "Цільова"
+msgstr "Ціль"
 
 #. [pages.DeviceList.targetDevice]
 #. defaultMessage is:
@@ -13055,12 +13190,33 @@ msgstr "Історія випробувань"
 msgid "Testing"
 msgstr "Тестування"
 
+#. [p.PkDashboard.testingTrend]
+#. defaultMessage is:
+#. Testing Trend
+#: extracted_strings.json
+msgid "Testing Trend"
+msgstr "Тестування Trend"
+
+#. [p.PkDashboard.testingTrends]
+#. defaultMessage is:
+#. Testing Trends
+#: extracted_strings.json
+msgid "Testing Trends"
+msgstr "Тестування трендів"
+
 #. [pages.Status.TB.testingTrendsInYear.title]
 #. defaultMessage is:
 #. Testing Trends In Year
 #: extracted_strings.json
 msgid "Testing Trends In Year"
 msgstr "Тестування тенденцій року"
+
+#. [p.PkDashboard.testingTrendsYear]
+#. defaultMessage is:
+#. Testing in current year
+#: extracted_strings.json
+msgid "Testing in current year"
+msgstr "Тестування в поточному році"
 
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
 #. defaultMessage is:
@@ -14229,13 +14385,6 @@ msgstr ""
 msgid "Trace Detected"
 msgstr "Виявлено слід"
 
-#. [pages.InventoryTabs.New.trackByLocation]
-#. defaultMessage is:
-#. Track By Location
-#: extracted_strings.json
-msgid "Track By Location"
-msgstr "Відстежувати за місцем розташування"
-
 #. [pages.Consumable.New.trackByBatch]
 #. defaultMessage is:
 #. Track by batch
@@ -14519,12 +14668,19 @@ msgstr "Неможливо видалити, оскільки з ним пов'�
 msgid "Unable to delete since there are associated entities with it."
 msgstr "Неможливо видалити, оскільки з ним пов'язані сутності."
 
-#. [errorResponseMessages.updateConsumable.title]
+#. [errorResponseMessages.updateConsumablesBatch.title]
 #. defaultMessage is:
-#. Unable to delist the cartridge !
+#. Unable to update some consumables
 #: extracted_strings.json
-msgid "Unable to delist the cartridge !"
-msgstr "Неможливо видалити картридж зі списку!"
+msgid "Unable to update some consumables"
+msgstr "Не вдається оновити деякі витратні матеріали"
+
+#. [errorResponseMessages.updateConsumableSitesBatch.title]
+#. defaultMessage is:
+#. Unable to update some sites
+#: extracted_strings.json
+msgid "Unable to update some sites"
+msgstr "Не вдається оновити деякі сайти"
 
 #. [pages.Consumable.New.unit]
 #. defaultMessage is:
@@ -14707,7 +14863,7 @@ msgstr "Утилізація, % використання"
 #. VL Results
 #: extracted_strings.json
 msgid "VL Results"
-msgstr "Результати VL"
+msgstr "Результати вірусного навантаження"
 
 #. [component.Widget.dashboardWidgetValidResultsPc]
 #. defaultMessage is:
@@ -14722,13 +14878,6 @@ msgstr "Дійсні результати"
 #: extracted_strings.json
 msgid "Valid Tests"
 msgstr "Дійсні тести"
-
-#. [pages.deviceDetail.ResultWorkflowStatusValidated]
-#. defaultMessage is:
-#. Validated
-#: extracted_strings.json
-msgid "Validated"
-msgstr "Перевірено"
 
 #. [errorResponseMessages.stateMutation.title]
 #. defaultMessage is:
@@ -14915,7 +15064,7 @@ msgstr "Тиждень"
 #. Week or holiday
 #: extracted_strings.json
 msgid "Week or holiday"
-msgstr "Тиждень або свято"
+msgstr "Тиждень чи вихідний"
 
 #. [components.shared.weekly]
 #. defaultMessage is:
@@ -14987,16 +15136,6 @@ msgstr "Коли результат є"
 msgid "Within 2 hours of testing"
 msgstr "Протягом 2 годин після тестування"
 
-#. [filter.popover.workflowStatus]
-#. defaultMessage is:
-#. Workflow Status
-#. [pages.ResultList.resultWorkflowStatus]
-#. defaultMessage is:
-#. Workflow Status
-#: extracted_strings.json
-msgid "Workflow Status"
-msgstr "Статус робочого процесу"
-
 #. [pages.workload.workloadTitle]
 #. defaultMessage is:
 #. Workload
@@ -15019,7 +15158,7 @@ msgstr "XDR Assay Summary Result by device"
 #. XDR FLQ Resistance
 #: extracted_strings.json
 msgid "XDR FLQ Resistance"
-msgstr "Опір XDR FLQ"
+msgstr "XDR FLQ стійкість"
 
 #. [p.PkDashboard.xdrFLQAndINHTrends]
 #. defaultMessage is:
@@ -15048,6 +15187,20 @@ msgstr "Тенденції тестування XDR та виявлення МТ
 #: extracted_strings.json
 msgid "XDR drug resistance trends"
 msgstr "Тенденції резистентності до лікарських засобів XDR"
+
+#. [p.PkDashboard.XDRTestingTrendsCurrentYear]
+#. defaultMessage is:
+#. XDR testing in current year
+#: extracted_strings.json
+msgid "XDR testing in current year"
+msgstr "Тестування XDR у поточному році"
+
+#. [p.PkDashboard.XDRTestingTrends]
+#. defaultMessage is:
+#. XDR testing trends
+#: extracted_strings.json
+msgid "XDR testing trends"
+msgstr "Тенденції тестування XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -15388,7 +15541,7 @@ msgstr "Індекс"
 #. Zip Code
 #: extracted_strings.json
 msgid "Zip Code"
-msgstr "ЗІП код"
+msgstr "Індексний код"
 
 #. [pages.common.state_MW]
 #. defaultMessage is:
@@ -15409,28 +15562,28 @@ msgstr "та"
 #. approval status is {deviceApprovalName}
 #: extracted_strings.json
 msgid "approval status is {deviceApprovalName}"
-msgstr "статус затвердження: {deviceApprovalName}"
+msgstr "статус підтвердження - {deviceApprovalName}"
 
 #. [widgetAlerts.averageDaysBetweenModuleSwaps]
 #. defaultMessage is:
 #. average days between module swaps
 #: extracted_strings.json
 msgid "average days between module swaps"
-msgstr "середня кількість днів між обмінами модулів"
+msgstr "середня кількість днів між заміною модулів"
 
 #. [widgetAlerts.averageDaysForInstrumentReplacement]
 #. defaultMessage is:
 #. average days for instrument replacement
 #: extracted_strings.json
 msgid "average days for instrument replacement"
-msgstr "середні дні для заміни інструменту"
+msgstr "середня кількість днів для заміни інструменту"
 
 #. [widgetAlerts.averageDurationOfServiceInterrumption]
 #. defaultMessage is:
 #. average days of service interrumption
 #: extracted_strings.json
 msgid "average days of service interrumption"
-msgstr "середні дні переривання служби"
+msgstr "середній термін міжсервісного обслуговування"
 
 #. [widgetAlerts.averageHoursToUpload]
 #. defaultMessage is:
@@ -15444,7 +15597,7 @@ msgstr "середня кількість годин для завантажен
 #. average length of SMS
 #: extracted_strings.json
 msgid "average length of SMS"
-msgstr "середня тривалість SMS"
+msgstr "середня довжина SMS"
 
 #. [widgetAlerts.averageTimeToReplaceDisabledModules]
 #. defaultMessage is:
@@ -15556,7 +15709,7 @@ msgstr "ім'я lga містить \"{lgaName}\""
 #. lot number includes "{lotNumber}"
 #: extracted_strings.json
 msgid "lot number includes \"{lotNumber}\""
-msgstr "номер лоту включає “{lotNumber}”"
+msgstr "номер партії включає \"{lotNumber}\""
 
 #. [filter.btnGroup.withDeviceMaintenanceStatus]
 #. defaultMessage is:
@@ -15682,7 +15835,7 @@ msgstr "відсоток активних пристроїв"
 #. percentage of active sites experiencing stockouts
 #: extracted_strings.json
 msgid "percentage of active sites experiencing stockouts"
-msgstr "відсоток активних сайтів, у яких спостерігаються запаси"
+msgstr "відсоток активних сайтів, які відчувають дефіцит"
 
 #. [widgetAlerts.averageDaysOfServiceInterruption]
 #. defaultMessage is:
@@ -15696,7 +15849,7 @@ msgstr "відсоток переривання обслуговування п�
 #. percentage of devices with unused modules
 #: extracted_strings.json
 msgid "percentage of devices with unused modules"
-msgstr "відсоток пристроїв з невикористаними модулями"
+msgstr "відсоток пристроїв з модулями, що не використовуються"
 
 #. [widgetAlerts.percentageOfModulesFunctioning]
 #. defaultMessage is:
@@ -15710,7 +15863,7 @@ msgstr "відсоток функціонування модулів"
 #. percentage of positive results notified
 #: extracted_strings.json
 msgid "percentage of positive results notified"
-msgstr "відсоток позитивних результатів повідомлених"
+msgstr "відсоток повідомлених позитивних результатів"
 
 #. [widgetAlerts.percentageOfServerUptime]
 #. defaultMessage is:
@@ -15724,7 +15877,7 @@ msgstr "відсоток часу безвідмовної роботи серв
 #. percentage of sites that never entered stock of GeneXpert assays
 #: extracted_strings.json
 msgid "percentage of sites that never entered stock of GeneXpert assays"
-msgstr "відсоток сайтів, які ніколи не потрапляли в аналізи GeneXpert"
+msgstr "відсоток сайтів, які ніколи не вводили запас аналізів GeneXpert"
 
 #. [widgetAlerts.percentageOfValidResults]
 #. defaultMessage is:
@@ -15873,13 +16026,6 @@ msgstr "з результатом {resultCategoryGroupName}"
 msgid "with result {resultCategoryName}"
 msgstr "з результатом {resultCategoryName}"
 
-#. [filter.btnGroup.withWorkflowStatus]
-#. defaultMessage is:
-#. workflow status is {workflowStatusName}
-#: extracted_strings.json
-msgid "workflow status is {workflowStatusName}"
-msgstr "статус робочого циклу - {workflowStatusName}"
-
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. {consumableName}
@@ -15937,7 +16083,7 @@ msgstr "{itemCount, plural, one {# Contact} other {# Contacts} }"
 #. {itemCount, plural, one {# Job Function} other {# Job Functions} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
-msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} } }"
+msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
@@ -15951,7 +16097,7 @@ msgstr "{itemCount, plural, one {# Name} other {# Names} }"
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, plural, one {# Person} other {# Persons} } }"
+msgstr "{itemCount, plural, one {# Person} other {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -15987,7 +16133,7 @@ msgstr ""
 #. {numberOfModules, plural, one {# module} other {# modules} }
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
-msgstr "{numberOfModules, plural, один {# модуль} інші {# модулі} } }"
+msgstr "{numberOfModules, plural, one {# модуль} other {# модулі} }"
 
 #. [p.PkDashboard.customPerYear]
 #. defaultMessage is:
@@ -16039,7 +16185,112 @@ msgstr "{unit} з минулого тижня"
 #. {unit} total calibrations
 #: extracted_strings.json
 msgid "{unit} total calibrations"
-msgstr "{unit} всього калібрувань"
+msgstr "{unit} загальне калібрування"
+
+#~ msgid "Exporting Results Failed"
+#~ msgstr "Помилка експорту результатів"
+
+#~ msgid "Loading Results Failed"
+#~ msgstr "Помилка завантаження результатів"
+
+#~ msgid "Searching Results Failed"
+#~ msgstr "Помилка пошуку результатів"
+
+#~ msgid "Acknowledged"
+#~ msgstr "Визнано"
+
+#~ msgid "Delivered"
+#~ msgstr "Доставлено"
+
+#~ msgid "Flagged"
+#~ msgstr "Позначений"
+
+#~ msgid "In Progress"
+#~ msgstr "В процесі"
+
+#~ msgid "Ordered"
+#~ msgstr "Впорядковано"
+
+#~ msgid "Processed"
+#~ msgstr "Оброблено"
+
+#~ msgid "Purged"
+#~ msgstr "Очищений"
+
+#~ msgid "Ready for delivery"
+#~ msgstr "Готовий до доставки"
+
+#~ msgid "Result Workflow Status"
+#~ msgstr "Результат Статус робочого процесу"
+
+#~ msgid "Validated"
+#~ msgstr "Перевірено"
+
+#~ msgid "Workflow Status"
+#~ msgstr "Статус робочого процесу"
+
+#~ msgid "workflow status is {workflowStatusName}"
+#~ msgstr "статус робочого циклу - {workflowStatusName}"
+
+#~ msgid "Provincial Diagnosis Trends"
+#~ msgstr "Provincial Diagnosis Trends"
+
+#~ msgid "Provincial MTB+ detected in current year"
+#~ msgstr "У поточному році в провінції виявлено випадки МРТБ+"
+
+#~ msgid "Provincial MTB+ detection trends"
+#~ msgstr "Тенденції виявлення МРТБ+ у провінціях"
+
+#~ msgid "Provincial MTB+ diagnosed in current year"
+#~ msgstr "Провінційні діагнози МРТБ+ у поточному році"
+
+#~ msgid "Provincial MTB+ diagnosis trends"
+#~ msgstr "Тенденції діагностики МРТБ+ у провінціях"
+
+#~ msgid "Provincial MTB/XDR Testing Trends"
+#~ msgstr "Тенденції тестування MTB/XDR у провінціях"
+
+#~ msgid "Provincial RR Diagnosis Trends"
+#~ msgstr "Тенденції діагностики РР у провінціях"
+
+#~ msgid "Provincial RR-TB diagnosed in current year"
+#~ msgstr "Провінційний РР ТБ, діагностований у поточному році"
+
+#~ msgid "Provincial RR-TB diagnosis trends"
+#~ msgstr "Провінційні тенденції діагностики РР-ТБ"
+
+#~ msgid "Provincial RRTB Diagnosis Trends"
+#~ msgstr "Провінційні тенденції діагностики РРТБ"
+
+#~ msgid "Provincial TB Testing Trend"
+#~ msgstr "Тенденція тестування на туберкульоз у провінції"
+
+#~ msgid "Provincial Testing Trend"
+#~ msgstr "Тенденція тестування в провінціях"
+
+#~ msgid "Provincial XDR testing trends"
+#~ msgstr "Тенденції тестування XDR у провінціях"
+
+#~ msgid "Provincial/District FQ Diagnosis Trends"
+#~ msgstr "Тенденції діагностики ФКУ в провінції/районі"
+
+#~ msgid "Provincial/District Testing Trends"
+#~ msgstr "Provincial/District Testing Trends"
+
+#~ msgid ""
+#~ "As there is unreconciled consumption for the specified cartridge, "
+#~ "{consumableName}, system cant allow delisting of the same at the site. "
+#~ "Please reconcile your inventory to complete this action"
+#~ msgstr ""
+#~ "Оскільки для вказаного картриджа {consumableName} існує неузгоджене "
+#~ "споживання, система не може дозволити видалення його з переліку на сайті. "
+#~ "Будь ласка, звірте свої запаси, щоб виконати цю дію"
+
+#~ msgid "Track By Location"
+#~ msgstr "Відстежувати за місцем розташування"
+
+#~ msgid "Unable to delist the cartridge !"
+#~ msgstr "Неможливо видалити картридж зі списку!"
 
 #~ msgid "Firmware"
 #~ msgstr "Прошивки"
@@ -16207,9 +16458,6 @@ msgstr "{unit} всього калібрувань"
 #~ msgstr ""
 #~ "Тенденції тестування та діагностики туберкульозу за допомогою MTB/Rif-"
 #~ "аналізу"
-
-#~ msgid "TB and RRTB Diagnosis Trends"
-#~ msgstr "Тенденції діагностики туберкульозу та РРТБ"
 
 #~ msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
 #~ msgstr "Тенденції тестування та діагностики за допомогою MTB/XDR тесту"
@@ -16475,9 +16723,6 @@ msgstr "{unit} всього калібрувань"
 #~ msgid "Current FQ Trends"
 #~ msgstr "Поточні тенденції FQ"
 
-#~ msgid "Current TB Testing Trends"
-#~ msgstr "Сучасні тенденції тестування на туберкульоз"
-
 #~ msgid "Hiv"
 #~ msgstr "ВІЛ"
 
@@ -16521,7 +16766,7 @@ msgstr "{unit} всього калібрувань"
 #~ msgstr "Помилка завантаження журналів результатів"
 
 #~ msgid "Error Loading States for {countryName}"
-#~ msgstr "Помилка завантаження станів для {countryName}"
+#~ msgstr "Помилка завантаження штатів для {countryName}"
 
 #~ msgid "Exporting Contacts Failed"
 #~ msgstr "Помилка експорту контактів"
@@ -16590,7 +16835,7 @@ msgstr "{unit} всього калібрувань"
 #~ "Result Workflow Status Log {itemCount, plural, =0 {} other "
 #~ "{({itemCount})} }"
 #~ msgstr ""
-#~ "Результат Журнал стану робочого циклу {itemCount, множина, = 0 {} інший "
+#~ "Результат Журнал стану робочого циклу {itemCount, plural, =0 {} інший "
 #~ "{({itemCount})}}"
 
 #~ msgid "Result ended on:"

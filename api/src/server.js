@@ -32,6 +32,7 @@ const { port } = config
 
 const AspectCacheSingleton = require('../aspectCache')
 const { registerMessageQueue } = require('./messageQueue')
+const { asyncPayloadProcessorStartUp } = require('./deviceApi/asyncPayloadProcessor')
 
 // version is cached to indicate the new version only when Aspect api restarts,
 // instead of doing so directly when package.json is updated.
@@ -138,6 +139,11 @@ const messageQueuePlugin = {
 
       addLoggers(server, queue)
       await addSubscriptions(queue)
+
+      if (config.enableAsyncPayloadProcessing) {
+        await asyncPayloadProcessorStartUp(queue, queue.createMessageContext('aspect_request'))
+      }
+
       if (config.scheduler.enabled) {
         const dispatcher = startScheduler(queue)
         server.app.dispatcher = dispatcher

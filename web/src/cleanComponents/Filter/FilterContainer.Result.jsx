@@ -16,7 +16,6 @@ import {
   PeriodSelector,
   ResultCategoryGroupSelect,
   ResultTreatmentStatusSelect,
-  ResultWorkflowStatusSelect,
   StateSelect,
 } from '../index'
 import FilterContainer from './FilterContainer'
@@ -146,13 +145,6 @@ const ResultFilter = () => {
           />
         </Grid>
         <Grid item xs={3}>
-          <ResultWorkflowStatusSelect
-            label={formatMessage(messages.workflowStatus)}
-            value={state.workflowStatusId}
-            onChange={e => setState({ ...state, workflowStatusId: e.target.value })}
-          />
-        </Grid>
-        <Grid item xs={3}>
           <DeviceTypeSelect
             label={formatMessage(messages.deviceType)}
             value={state.deviceType}
@@ -182,6 +174,7 @@ const ResultFilter = () => {
             onChange={e => setState({ ...state, displayResult: e.target.value })}
           />
         </Grid>
+        <Grid item xs={3} />
 
         {allowed(['site:view']) ? (
           <Grid item xs={3}>

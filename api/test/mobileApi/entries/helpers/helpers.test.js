@@ -110,6 +110,7 @@ describe('Entries helpers', () => {
           type: 'sample follow up type',
           updatedOn: '2023-05-03T00:00:00Z',
           clinicianName: 'test clinician',
+          reason: undefined,
         },
         {
           id: 123,
@@ -162,20 +163,18 @@ describe('Entries helpers', () => {
     const data = {
       updatedOn: '2022-01-01',
       sampleCollectedOn: '2022-01-05',
-      resultWorkflowStatusChangedOn: '2022-01-10',
     }
-    const followUps = [{ updatedOn: '2022-01-03' }, { updatedOn: '2022-01-06' }]
-    const comments = [{ updatedOn: '2022-01-07' }, { updatedOn: '2022-01-09' }]
 
     it('returns correct date for the provided input data', () => {
-      const result = getResultUpdatedOnDate(data, followUps, comments)
-      expect(result).to.eq('2022-01-10')
+      const followUps = [{ updatedOn: '2022-01-03' }, { updatedOn: '2022-01-06' }]
+      const result = getResultUpdatedOnDate(data, followUps)
+      expect(result).to.eq('2022-01-06')
     })
 
     it('returns correct date if no followUps are provided', () => {
       const followUps = []
-      const result = getResultUpdatedOnDate(data, followUps, comments)
-      expect(result).to.eq('2022-01-10')
+      const result = getResultUpdatedOnDate(data, followUps)
+      expect(result).to.eq('2022-01-05')
     })
   })
 
@@ -320,10 +319,9 @@ describe('Entries helpers', () => {
   })
 
   describe('transformClinicalResponse', () => {
-    it('should transform clinical response correctly when result is recorded and treatment and outcome are present', () => {
+    it('should transform clinical response correctly when the treatment and outcome are present', () => {
       const data = {
         id: 123,
-        resultWorkflowStatusChangedOn: '2023-01-01T00:00:00Z',
       }
 
       const followUps = [
@@ -341,10 +339,9 @@ describe('Entries helpers', () => {
 
       const expectedOutput = {
         resultId: 123,
-        confirmedOn: '2023-01-01T00:00:00Z',
         outcomeOccurred: '2023-03-01T00:00:00Z',
-        recorded: true,
         treatmentStarted: '2023-02-01T00:00:00Z',
+        recorded: false,
       }
       const acknowledgement = {
         resultId: 123,
@@ -354,7 +351,7 @@ describe('Entries helpers', () => {
       expect(result).to.eql(expectedOutput)
     })
 
-    it('should return object when result is not recorded and treatment and outcome are not present', () => {
+    it('should return object when result treatment and outcome are not present', () => {
       const data = {
         id: 123,
       }
@@ -362,8 +359,8 @@ describe('Entries helpers', () => {
       const followUps = []
 
       const expectedOutput = {
-        recorded: false,
         resultId: 123,
+        recorded: false,
       }
 
       const result = transformClinicalResponse(data, followUps)
@@ -566,9 +563,9 @@ describe('Entries helpers', () => {
 
   describe('transformResultResponse', () => {
     it('correctly transform results', async () => {
-      const entry347 = transformResultResponse([data347], [], [])
-      const entry450 = transformResultResponse([data450], followUp450, [])
-      const xdrEntry = transformResultResponse([xdrTestData], [], [])
+      const entry347 = transformResultResponse([data347], [])
+      const entry450 = transformResultResponse([data450], followUp450)
+      const xdrEntry = transformResultResponse([xdrTestData], [])
 
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
@@ -579,7 +576,6 @@ describe('Entries helpers', () => {
     it('should return requiresFollowUp for followUpStatus', async () => {
       const requiresFollowUpEntry = transformResultResponse(
         [{ ...data347, resultCategoryAssay1RequiresTreatment: 1 }],
-        [],
         []
       )
 
@@ -603,7 +599,6 @@ describe('Entries helpers', () => {
     it('should return noFollowUpPossible for followUpStatus', async () => {
       const noFollowUpPossibleEntry = transformResultResponse(
         [{ ...data347, resultTreatmentStatusExternalId: 'NotPossible' }],
-        [],
         []
       )
 

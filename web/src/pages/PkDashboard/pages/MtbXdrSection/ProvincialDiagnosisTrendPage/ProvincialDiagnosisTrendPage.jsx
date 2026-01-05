@@ -54,13 +54,15 @@ const ProvincialDiagnosisTrendPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
+  const stateName = getCustomMessage(formatMessage, messages, 'state', user, { entity: 'state' })
+
   return (
     <PkPage
-      title={formatMessage(
+      title={
         user.isPakistan
-          ? messages.ProvincialTBDiagnosisTrendsComparison
-          : messages.provincialMtbDetectionTrendsComparison
-      )}
+          ? `${stateName} ${formatMessage(messages.TBDiagnosisTrendsComparison)}`
+          : `${stateName} ${formatMessage(messages.MtbDetectionTrendsComparison)}`
+      }
       filters={
         <>
           <StateAutocomplete
@@ -88,9 +90,9 @@ const ProvincialDiagnosisTrendPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-              {formatMessage(
-                messages[user.isCountry('PK') ? 'provincialDiagnosisTrendsComparison' : 'provincialMTBPositivesTrends']
-              )}
+              {user.isCountry('PK')
+                ? `${stateName} ${formatMessage(messages.diagnosisTrendsComparison)}`
+                : `${stateName} ${formatMessage(messages.MTBPositivesTrends)}`}
             </Typography>
             {graphData ? (
               <div style={{ width: '100%' }}>
@@ -109,13 +111,11 @@ const ProvincialDiagnosisTrendPage = () => {
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
             <ProvinceTrendTable
-              title={formatMessage(
-                messages[
-                  user.isCountry('PK')
-                    ? 'provincialDiagnosisTrendsCurrentYear'
-                    : 'provincialMTBPositivesTrendsCurrentYear'
-                ]
-              )}
+              title={
+                user.isCountry('PK')
+                  ? `${stateName} ${formatMessage(messages.diagnosisTrendsCurrentYear)}`
+                  : `${stateName} ${formatMessage(messages.MTBPositivesTrendsCurrentYear)}`
+              }
               resultType={!user.isPakistan ? 'MTB+' : undefined}
               rows={tableData}
             />

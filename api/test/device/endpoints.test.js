@@ -9,6 +9,7 @@ describe('device endpoints', () => {
       './service': serviceStub,
       './updateDevice': serviceStub,
       './listDevices': serviceStub,
+      './getDevicePerformance': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }

@@ -49,6 +49,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.reportDrTb10a10bCovidNtpUse_description',
     defaultMessage: 'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results- NTP Use.',
   },
+  deviceShortSummaryReport: {
+    id: 'pages.ReportIndex.deviceShortSummaryReport',
+    defaultMessage: 'Device Short Summary Report',
+  },
+  deviceShortSummaryReportDescription: {
+    id: 'pages.ReportIndex.deviceShortSummaryReportDescription',
+    defaultMessage: 'Compact version of Device and Site Summary Report',
+  },
   doNotUseModulesReport: {
     id: 'pages.ReportIndex.doNotUseModulesReport',
     defaultMessage: '"Do Not Use" Modules',

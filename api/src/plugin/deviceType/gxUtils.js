@@ -5,7 +5,7 @@ const { insertSite } = require('../../site/common/db')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
 const { updateDeviceDetails } = require('../../deviceApi/device')
-const { shouldTriggerModuleDisabled } = require('../utils')
+const { shouldTriggerModuleDisabled, getPartnerPluginName } = require('../utils')
 const {
   result1CategoryMapping,
   mapResultCategory2,
@@ -100,7 +100,11 @@ async function preProcessMergeResult(context) {
   const instrumentSerial = _.get(payload, 'instrument.serial', null)
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
 
-  const sampleId = extractSampleId(payload)
+  const partnerPluginName = await getPartnerPluginName({ partnerId: device.partnerId })
+  // Lazy load the loadPlugin function to avoid circular dependency, as we are in a plugin function already
+  const { loadPlugin } = require('../loadPlugin')
+  const extractSampleIdPlugin = await loadPlugin(partnerPluginName, null, 'extractSampleId')
+  const sampleId = extractSampleIdPlugin(payload)
   _.set(payload, 'sample.id', sampleId)
 
   if (payload.id) {
@@ -141,15 +145,6 @@ async function preProcessMergeResult(context) {
   if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
-
-    // Only set workflow status to "Deliverable" by default if result is new and not an error
-    if (
-      !_.get(payload, 'workflow.status.id') &&
-      !payload.error &&
-      (!_.get(payload, 'data.resultText') || _.get(payload, 'data.resultText').toUpperCase().indexOf('ERROR') === -1)
-    ) {
-      _.set(payload, 'workflow.status.id', 'Deliverable')
-    }
   } else {
     context.existingResultId = existingResult.id // adding the existing result id to the context to make it available for the rest of the process
     // Are we setting this result to NO RESULT?
@@ -192,41 +187,6 @@ async function preProcessMergeResult(context) {
     if (moduleName) _.set(payload, moduleNamePath, moduleName)
     else _.unset(payload, moduleNamePath)
   }
-}
-
-/**
- * Extracts a sample ID from payload rsult section.
- * The sample ID must match the pattern of 3 digits, followed by 6 digits, followed by 3 digits
- * (e.g. "123-456789-012").
- * The paths where the sampleId is searched are:
- * - result.sample.id (exact match)
- * - result.data.sampleId (exact match)
- * - result.patient.id (exact match)
- * - result.data.patientId (exact match)
- * - result.notes (contains)
- * - result.data.notes (contains)
- * @param {Object} result - The result part of a GeneXpert payload
- * @returns {string|null} The extracted sample ID or null if no valid sample Id is found
- */
-function extractSampleId(result) {
-  const sampleIdPattern = '\\d{3}-\\d{6}-\\d{3}'
-
-  let sampleId = result.sample?.id ?? result?.data?.sampleId ?? null
-  const exactRegex = new RegExp(`^${sampleIdPattern}$`)
-
-  if (!sampleId || !exactRegex.test(sampleId)) {
-    const patientId = result.patient?.id ?? result.data?.patientId ?? ''
-    const matches = patientId.match(exactRegex)
-    ;[sampleId] = matches || [sampleId]
-  }
-
-  if (!sampleId || !exactRegex.test(sampleId)) {
-    const notes = result?.notes ?? result.data?.notes ?? ''
-    const searchRegex = new RegExp(`\\b${sampleIdPattern}\\b`, 'g')
-    const matches = notes.match(searchRegex)
-    ;[sampleId] = matches || [sampleId]
-  }
-  return sampleId
 }
 
 function getAdditionalDataFromPayload(payload, assays) {
@@ -603,7 +563,9 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
       }
     }
   } else {
-    throw Boom.notFound('Cannot determine which site this request came from')
+    throw Boom.notFound(
+      `Cannot determine which site this request came from - deviceName: ${deviceName}, countryCode: ${countryCode}`
+    )
   }
   return _.head(sites)
 }
@@ -678,5 +640,4 @@ module.exports = {
   postProcessUpdateDeviceConfiguration,
   getAdditionalDataFromPayload,
   getResultCategories,
-  extractSampleId,
 }

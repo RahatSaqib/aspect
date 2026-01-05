@@ -6,11 +6,11 @@ const {
   listMaintenanceStatuses,
   listDevicesForSelectList,
   updateDeviceMaintenance,
-  getDevicePerformance,
   setStatusForDateRange,
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
 } = require('./service')
+const { getDevicePerformance } = require('./getDevicePerformance')
 const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
@@ -77,9 +77,31 @@ const routes = [
         params: {
           deviceId: Joi.string().description('Device id').required(),
         },
-        query: {
-          timezoneOffset: Joi.number().description(`Current user's timezone offset`),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
         },
+        schema: Joi.object({
+          ok: Joi.bool().required(),
+          length: Joi.number().required(),
+          utilizationRateAvg: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+          errorRateAvg: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+          data: Joi.array()
+            .items(
+              Joi.object({
+                totalResult: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+                errorCount: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+                monthTested: Joi.string().required(),
+                workingDays: Joi.number().required(),
+                utilizationRate: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+                errorRate: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+                dailyTestCapacity: Joi.alternatives().try(Joi.number(), Joi.string()).allow(null).optional(),
+                lastDayOfMonth: Joi.alternatives().try(Joi.date(), Joi.string()).optional(),
+              })
+            )
+            .required(),
+        }),
       },
     },
   },

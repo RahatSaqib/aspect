@@ -3,19 +3,19 @@ import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Button, Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
+import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import DeviceResultHistory from '../../../../cleanComponents/DeviceResultHistory/DeviceResultHistory'
+import PermissionChecker from '../../../../components/PermissionChecker'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../../hooks/useFilterValues'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
-import requirePermissions from '../../../../oldComponents/shared/requirePermissions'
 import Summary from '../../../../oldComponents/Summary'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
-import Results from '../../../../oldPages/result/historyResults/HistoryResults'
-import resultMessages from '../../../../oldPages/result/list/messages.js'
 import {
   showDialog,
   hideDialog,
@@ -23,7 +23,6 @@ import {
   updateDeviceMaintenanceStatus,
   exportDeviceLogs,
 } from '../../../../store/DeviceRedux'
-import { fetchResults, exportResults } from '../../../../store/ResultRedux'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import {
   makeSortPageSelector,
@@ -56,7 +55,6 @@ const FILTERS_CONFIG = {
   errorCode: true,
   siteName: true,
   sampleOriginSite: true,
-  workflowStatus: true,
 }
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -72,14 +70,11 @@ const enhance = compose(
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
-      const { items, table } = state.result
       const { culture } = state.user
       return {
         activeDialog,
         performanceReport,
         culture,
-        items,
-        table,
       }
     },
     {
@@ -87,8 +82,6 @@ const enhance = compose(
       hideDialog,
       updateDeviceMaintenanceStatus,
       updateDeviceMaintenance,
-      fetchResults,
-      exportResults,
       exportDeviceLogs,
     }
   ),
@@ -99,29 +92,6 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad:
-      ({ device, location, fetchResults, sortCol, sortDir, pageAt, pageSize }) =>
-      () => {
-        const { sanitized, value: filtersParams } = filtersFromLocation(location)
-
-        if (!sanitized) {
-          filtersParams.set('showUnapprovedDevices', true)
-          filtersParams.set('showDecommissionedDevices', true)
-          filtersParams.set('deviceId', device.get('id'))
-          fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
-        }
-      },
-    onExportClick:
-      ({ device, location, exportResults, sortCol, sortDir, pageAt, pageSize }) =>
-      () => {
-        const { sanitized, value: filtersParams } = filtersFromLocation(location)
-        if (!sanitized) {
-          filtersParams.set('showUnapprovedDevices', true)
-          filtersParams.set('showDecommissionedDevices', true)
-          filtersParams.set('deviceId', device.get('id'))
-          exportResults(filtersParams, 'xlsx', sortCol, sortDir, pageAt, pageSize, 'xlsx', 'deviceResults')
-        }
-      },
     onExportDeviceLogsClick:
       ({ device, location, exportDeviceLogs }) =>
       () => {
@@ -131,15 +101,6 @@ const enhance = compose(
           exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
         }
       },
-    onRowClick:
-      ({ navigate }) =>
-      ({
-        currentTarget: {
-          dataset: { resultId },
-        },
-        // TODO: correct path?
-      }) =>
-        navigate(`/browse/result/${resultId}`),
     onToggleDeviceApproval:
       ({ device, updateSingleDevice }) =>
       () =>
@@ -185,16 +146,6 @@ const enhance = compose(
         )
       }
     },
-
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
   })
 )
 
@@ -219,11 +170,8 @@ const DeviceDetailProfile = ({
   onMaintenanceSubmit,
   onCalibrationSubmit,
   onWarrantySubmit,
-  table,
-  items,
-  onRowClick,
-  onExportClick,
   onExportDeviceLogsClick,
+  deviceTags,
 }) => {
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
@@ -245,24 +193,6 @@ const DeviceDetailProfile = ({
     !device.get('maintenanceStatusNotes') || device.get('maintenanceStatusNotes') === ''
       ? null
       : device.get('maintenanceStatusNotes')
-  const resultColumns = [
-    { key: 'endedOn', label: formatMessage(messages.endedOn), formatter: value => formatDate(value), sortable: true },
-    { key: 'sampleOriginSiteName', label: formatMessage(messages.sampleOriginSiteName), sortable: true },
-    { key: 'sampleId', label: formatMessage(messages.sampleId), sortable: true },
-    { key: 'errorCode', label: formatMessage(messages.errorCode), sortable: true },
-    {
-      key: 'resultWorkflowStatusI18nkey',
-      formatter: value => (value ? formatMessage(resultMessages[value]) : ''),
-      label: formatMessage(messages.resultWorkflowStatus),
-      sortable: true,
-    },
-    { key: 'patientId', label: formatMessage(messages.patientId), sortable: true },
-    { key: 'resultText', label: formatMessage(messages.resultText), sortable: false, formatter: () => true },
-  ]
-
-  const AuthenticatedResults = requirePermissions({
-    permissions: ['result:view'],
-  })(Results)
 
   const maintenanceStatusText = device.get('maintenanceStatusI18nKey')
     ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
@@ -519,6 +449,11 @@ const DeviceDetailProfile = ({
             />
 
             <Summary title={formatMessage(messages.notes)} description={device.get('notes')} cols="1" />
+            <Summary
+              title={formatMessage(messages.tags)}
+              description={deviceTags.map(tag => tag.title).join(', ')}
+              cols="1"
+            />
           </div>
         </Card>
         <CalibrationDialog
@@ -548,20 +483,17 @@ const DeviceDetailProfile = ({
         culture={culture}
       />
 
-      <AuthenticatedResults
-        navigate={navigate}
-        location={location}
-        sortDir={sortDir}
-        sortCol={sortCol}
-        pageAt={pageAt}
-        pageSize={pageSize}
-        columns={resultColumns}
-        table={table}
-        items={items}
-        onRowClick={onRowClick}
-        onExportClick={onExportClick}
-        title={formatMessage(messages.testHistory)}
-      />
+      <PermissionChecker permissions={['result:view']}>
+        <ErrorBoundary>
+          <DeviceResultHistory
+            deviceId={device.get('id')}
+            sortDir={sortDir}
+            sortCol={sortCol}
+            pageAt={pageAt}
+            pageSize={pageSize}
+          />{' '}
+        </ErrorBoundary>
+      </PermissionChecker>
     </div>
   )
 }
@@ -585,11 +517,16 @@ DeviceDetailProfile.propTypes = {
   onMaintenanceSubmit: PropTypes.func.isRequired,
   onCalibrationSubmit: PropTypes.func.isRequired,
   onWarrantySubmit: PropTypes.func.isRequired,
-  table: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  items: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  onRowClick: PropTypes.func.isRequired,
-  onExportClick: PropTypes.func.isRequired,
   onExportDeviceLogsClick: PropTypes.func.isRequired,
+  deviceTags: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+    })
+  ),
+}
+
+DeviceDetailProfile.defaultProps = {
+  deviceTags: [],
 }
 
 export default enhance(DeviceDetailProfile)

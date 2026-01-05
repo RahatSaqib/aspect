@@ -45,6 +45,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.performanceTitle',
       defaultMessage: 'Performance',
     },
+    aboveAverageUtilizationRate: {
+      id: 'pages.DeviceDetailProfile.aboveAverageUtilizationRate',
+      defaultMessage: 'Above Average Utilization Rate',
+    },
     deviceLogs: {
       id: 'pages.DeviceDetailProfile.deviceLogs',
       defaultMessage: 'Device logs',
@@ -103,6 +107,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.errorRate',
       defaultMessage: 'Error Rate',
     },
+    aboveAverageErrorRate: {
+      id: 'pages.DeviceDetailProfile.aboveAverageErrorRate',
+      defaultMessage: 'Above Average Error Rate',
+    },
     errorRateExplain: {
       id: 'pages.DeviceDetailProfile.errorRateExplain',
       defaultMessage: 'Number of errors divided by number of results in the last 30 days',
@@ -126,10 +134,6 @@ const messages = {
     resultText: {
       id: 'pages.DeviceDetailProfile.resultText',
       defaultMessage: 'Result',
-    },
-    resultWorkflowStatus: {
-      id: 'pages.DeviceDetailProfile.resultWorkflowStatus',
-      defaultMessage: 'Result Workflow Status',
     },
     patientId: {
       id: 'pages.DeviceDetailProfile.patientId',
@@ -186,6 +190,10 @@ const messages = {
       id: 'pages.deviceDetail.aboveTarget',
       defaultMessage: 'Above Target',
     },
+    average: {
+      id: 'pages.deviceDetail.average',
+      defaultMessage: 'Average',
+    },
     aboveAverage: {
       id: 'pages.deviceDetail.aboveAverage',
       defaultMessage: 'Above Average',
@@ -206,6 +214,10 @@ const messages = {
         one {# module}
         other {# modules}
       }`,
+    },
+    tags: {
+      id: 'pages.deviceDetail.tags',
+      defaultMessage: 'Tags',
     },
   }),
 }

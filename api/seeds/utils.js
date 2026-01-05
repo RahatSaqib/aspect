@@ -37,10 +37,8 @@ const tables = [
   'ResultStatus',
   'ResultType',
   'ResultTreatmentStatus',
-  'ResultWorkflowStatus',
   'SampleType',
   'FollowUpType',
-  'ResultNoteType',
   // TODO ASP-757 Standardize static data key on externalId
   'ConsumableReason',
   ['DeviceApproval', 'token'],

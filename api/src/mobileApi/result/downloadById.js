@@ -3,16 +3,7 @@ const Promise = require('bluebird')
 const { getConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
 const logger = require('../../shared/logger')
-const {
-  getCommentsOfResultById,
-  getFollowUpsOfResultById,
-  getItems,
-  generateResultQuery,
-  addResultDownloadLogQuery,
-  insertResultWorkflowLogQuery,
-  updateResultWorkflowLogQuery,
-  getResultWorkflowStatusQuery,
-} = require('./common/db')
+const { getFollowUpsOfResultById, getItems, generateResultQuery, addResultDownloadLogQuery } = require('./common/db')
 const { getResultItemTransformedData } = require('./common/logic')
 
 async function getDownloadResultById(resultId, auth, setDelivered = false) {
@@ -28,10 +19,8 @@ async function getDownloadResultById(resultId, auth, setDelivered = false) {
   if (data) {
     // get follow ups for all result in the response for performance (filter later)
     const followUps = await getFollowUpsOfResultById(resultId)
-    // get comments for all result in the response for performance (filter later)
-    const comments = await getCommentsOfResultById(data)
 
-    transformedData = getResultItemTransformedData(data, setDelivered, followUps, comments)
+    transformedData = getResultItemTransformedData(data, setDelivered, followUps)
   }
 
   const result = {
@@ -52,9 +41,6 @@ async function downloadResultById(request) {
   const myProm = async () => {
     if (result?.data?.id) {
       await addResultDownloadLog([result.data.id], user.id)
-      if (result.data.workflowStatus.setDelivered) {
-        await updateResultWorkflowStatus([result.data.id], user.id, 'Delivered')
-      }
     }
   }
   myProm().catch(err => {
@@ -66,20 +52,6 @@ async function downloadResultById(request) {
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
   return Promise.each(idsToBeRegistered, async resultId => addResultDownloadLogQuery(resultId, now, userId))
-}
-
-const updateResultWorkflowStatus = async (idsToUpdate, userId, resultWorkflowStatusExternalId) => {
-  const { id: resultWorkflowStatusId } = await getResultWorkflowStatusQuery(resultWorkflowStatusExternalId)
-  const now = new Date()
-  return Promise.each(idsToUpdate, async resultId => {
-    const [resultWorkflowStatusLogId] = await insertResultWorkflowLogQuery(
-      resultId,
-      resultWorkflowStatusId,
-      now,
-      userId
-    )
-    await updateResultWorkflowLogQuery(resultId, userId, now, resultWorkflowStatusLogId)
-  })
 }
 
 module.exports = {

@@ -47,9 +47,36 @@ const resultsDrTb10A10BCovid = {
         useNamedData: 'results_10a_for_nt_use',
       },
     },
+    {
+      sortOrder: 50,
+      moduleName: 'result/serviceReportBangladesh/10a10b/xdrCartridgesReport',
+      functionName: 'getDataForReportXdrCartridges',
+    },
   ],
 }
 
+const resultsForNTPUse = {
+  name: 'For NTP Use',
+  description: 'For NTP Use',
+  i18nKey: 'ReportNtpUse',
+  externalId: 'results_ntp_use', // folder name in /templates
+  i18nKeyDescription: 'reportDescriptionNtpUse',
+  fileName: 'ReportNtpUse',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 11,
+  validations: [],
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/serviceReportBangladesh/ntpUse',
+      functionName: 'getResultsForNtpUse',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
 const resultsDrTb10A10BCovidNtpUse = {
   name: 'Report on Xpert MTB/RIF and Covid - NTP Use',
   description: 'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results- NTP Use',
@@ -76,4 +103,5 @@ const resultsDrTb10A10BCovidNtpUse = {
 module.exports = {
   resultsDrTb10A10BCovid,
   resultsDrTb10A10BCovidNtpUse,
+  resultsForNTPUse,
 }
