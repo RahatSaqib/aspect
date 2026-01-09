@@ -1,12 +1,12 @@
-import React, { Fragment } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Button, Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
+import React, { Fragment } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import DeviceResultHistory from '../../../../cleanComponents/DeviceResultHistory/DeviceResultHistory'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useAuthState from '../../../../hooks/useAuthState'
@@ -17,24 +17,24 @@ import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
 import Summary from '../../../../oldComponents/Summary'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
 import {
-  showDialog,
+  exportDeviceLogs,
   hideDialog,
+  showDialog,
   updateDeviceMaintenance,
   updateDeviceMaintenanceStatus,
-  exportDeviceLogs,
 } from '../../../../store/DeviceRedux'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
   composeSanitizer,
+  makeSearchParamsSanitizer,
+  makeSortPageSelector,
 } from '../../../../utils/selectors/searchParams'
 import { formatRelative } from '../../../../utils/utils/dateFormat'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import styles from '../styles.module.css'
-import DeviceArrangement from './DeviceArrangement'
+import DeviceComposition from './DeviceComposition'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
 
@@ -475,7 +475,7 @@ const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
-      <DeviceArrangement deviceId={device.get('id')} />
+      <DeviceComposition deviceId={device.get('id')} />
       <PerformanceReport
         performanceReport={devicePerformance}
         dailyCapacity={dailyCapacity || 0}

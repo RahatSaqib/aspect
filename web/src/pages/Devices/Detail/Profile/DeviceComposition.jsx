@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
 import { Card, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import PropTypes from 'prop-types'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Summary from '../../../../oldComponents/Summary'
 import { aspectFetch } from '../../../../utils/utils/fetch'
 import styles from '../styles.module.css'
 
-const DeviceArrangement = ({ deviceId }) => {
+const DeviceComposition = ({ deviceId }) => {
   const { formatMessage, formatDate } = useIntl()
   const [instrumentData, setInstrumentData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -14,7 +14,7 @@ const DeviceArrangement = ({ deviceId }) => {
   useEffect(() => {
     const fetchDeviceSetup = async () => {
       try {
-        const result = await aspectFetch(`/device/${deviceId}/arrangement`)
+        const result = await aspectFetch(`/device/${deviceId}/composition`)
         if (result.ok) {
           setInstrumentData(result.data.instruments)
         }
@@ -31,7 +31,7 @@ const DeviceArrangement = ({ deviceId }) => {
   }, [deviceId])
 
   const messages = {
-    instrumentListTitle: { id: 'device.arrangement.title', defaultMessage: 'Device Arrangement' },
+    instrumentListTitle: { id: 'device.composition.title', defaultMessage: 'Device Composition' },
     instrumentSerial: { id: 'device.instrumentList.instrumentSerial', defaultMessage: 'Instrument Serial' },
     bayNames: { id: 'device.instrumentList.bayNames', defaultMessage: 'Bay Names' },
     startedOn: { id: 'device.instrumentList.startedOn', defaultMessage: 'Started On' },
@@ -102,8 +102,8 @@ const DeviceArrangement = ({ deviceId }) => {
   )
 }
 
-DeviceArrangement.propTypes = {
+DeviceComposition.propTypes = {
   deviceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 }
 
-export default DeviceArrangement
+export default DeviceComposition
