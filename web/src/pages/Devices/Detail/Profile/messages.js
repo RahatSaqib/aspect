@@ -219,6 +219,15 @@ const messages = {
       id: 'pages.deviceDetail.tags',
       defaultMessage: 'Tags',
     },
+    instrumentListTitle: { id: 'device.instrumentList.title', defaultMessage: 'Device Instruments' },
+    instrumentSerial: { id: 'device.instrumentList.instrumentSerial', defaultMessage: 'Instrument Serial' },
+    bayNames: { id: 'device.instrumentList.bayNames', defaultMessage: 'Bay Names' },
+    noInstruments: { id: 'device.instrumentList.noInstruments', defaultMessage: 'No instruments' },
+    noResult: { id: 'device.instrumentList.noResult', defaultMessage: 'No result' },
+    lastResultDateTooltip: {
+      id: 'device.instrumentList.lastResultDateTooltip',
+      defaultMessage: 'Last Result Date: {date}',
+    },
   }),
 }
 

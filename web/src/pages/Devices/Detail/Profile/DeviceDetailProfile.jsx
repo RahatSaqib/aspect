@@ -1,8 +1,8 @@
+import React, { Fragment } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Button, Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
-import React, { Fragment } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
@@ -34,7 +34,7 @@ import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import styles from '../styles.module.css'
-import DeviceComposition from './DeviceComposition'
+import DeviceInstrumentsTable from './DeviceInstrumentsTable'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
 
@@ -475,7 +475,9 @@ const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
-      <DeviceComposition deviceId={device.get('id')} />
+      {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
+        <DeviceInstrumentsTable deviceId={device.get('id')} />
+      )}
       <PerformanceReport
         performanceReport={devicePerformance}
         dailyCapacity={dailyCapacity || 0}

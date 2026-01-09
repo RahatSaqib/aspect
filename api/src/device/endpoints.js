@@ -30,7 +30,7 @@ const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial }
 const { deviceReport } = require('./serviceReports/deviceReport')
 const getMtbErrorGraph = require('./getErrorGraph')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
-const getDeviceComposition = require('./getDeviceComposition')
+const { getDeviceInstruments } = require('./getDeviceInstruments')
 
 const routes = [
   {
@@ -134,11 +134,11 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/device/{deviceId}/composition',
-    handler: asyncHandler(getDeviceComposition),
+    path: '/device/{deviceId}/instruments',
+    handler: asyncHandler(getDeviceInstruments),
     config: {
-      description: 'Device Composition',
-      notes: 'Get instruments and modules composition for a device',
+      description: 'Device Instruments',
+      notes: 'Get instruments and modules for a device',
       auth: { scope: ['device:view'] },
       validate: {
         params: {
@@ -166,11 +166,8 @@ const routes = [
                     modules: Joi.array()
                       .items(
                         Joi.object().keys({
-                          moduleSerial: Joi.number().required().description('Module serial number'),
                           moduleName: Joi.string().allow(null).description('Module bay name (e.g., A1, A2, etc.)'),
-                          startedOn: Joi.date().required().description('Date when module was installed'),
-                          lastSeenOn: Joi.date().required().description('Date when module was last seen/used'),
-                          removedOn: Joi.date().allow(null).description('Date when module was removed'),
+                          lastResultDate: Joi.date().allow(null).description('Date of last result for this module'),
                         })
                       )
                       .description('List of modules in this instrument'),

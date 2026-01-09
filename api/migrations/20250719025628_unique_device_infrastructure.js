@@ -1,4 +1,4 @@
-const { addAuditFields } = require('./utils')
+const { addAuditFieldsNullable } = require('./utils')
 
 exports.up = function (knex) {
   return knex.schema.dropTableIfExists('Instrument').then(() =>
@@ -7,7 +7,7 @@ exports.up = function (knex) {
       instrumentTable.integer('deviceId').unsigned().notNullable().references('id').inTable('Device')
       instrumentTable.string('serial', 30).nullable()
       instrumentTable.string('macAddress', 17).nullable()
-      addAuditFields(instrumentTable)
+      addAuditFieldsNullable(instrumentTable)
     })
   )
 }
