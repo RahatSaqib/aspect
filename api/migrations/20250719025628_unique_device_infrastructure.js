@@ -1,45 +1,17 @@
+const { addAuditFields } = require('./utils')
+
 exports.up = function (knex) {
-  return knex.schema
-    .dropTable('Instrument')
-    .then(() =>
-      knex.schema.createTable('Instrument', table => {
-        table.increments('id').primary()
-
-        table.integer('deviceId').unsigned().notNullable()
-        table.integer('currentDeviceId').unsigned().nullable()
-        table.foreign('deviceId').references('Device.id')
-
-        table.string('serial').nullable()
-        table.tinyint('active').notNullable()
-      })
-    )
-    .then(() => {
-      return knex.schema.createTable('Module', table => {
-        table.increments('id').primary()
-
-        table.integer('deviceId').unsigned().notNullable()
-        table.foreign('deviceId').references('Device.id')
-
-        table.integer('instrumentId').unsigned().notNullable()
-        table.foreign('instrumentId').references('Instrument.id')
-
-        table.string('serial', 255).nullable()
-        table.string('name', 255).nullable()
-        table.date('startedOn').notNullable()
-        table.date('lastSeenOn').notNullable()
-        table.date('removedOn').nullable()
-      })
+  return knex.schema.dropTableIfExists('Instrument').then(() =>
+    knex.schema.createTable('Instrument', instrumentTable => {
+      instrumentTable.increments('id').primary()
+      instrumentTable.integer('deviceId').unsigned().notNullable().references('id').inTable('Device')
+      instrumentTable.string('serial', 30).nullable()
+      instrumentTable.string('macAddress', 17).nullable()
+      addAuditFields(instrumentTable)
     })
+  )
 }
 
 exports.down = function (knex) {
-  return knex.schema.dropTable('Module').then(() => {
-    return knex.schema.table('Instrument', table => {
-      // Add back the dropped columns
-      table.integer('moduleSerial').nullable()
-      table.string('moduleName', 5).nullable()
-      // Rename 'serial' back to 'instrumentSerial'
-      table.renameColumn('serial', 'instrumentSerial')
-    })
-  })
+  return knex.schema.dropTable('Instrument')
 }
