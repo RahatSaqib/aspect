@@ -124,7 +124,7 @@ async function getDevicePerformance(request) {
     ok: true,
     length: newData.length,
     utilizationRateAvg,
-    errorRateAvg: Math.round((countryTotalErrorCount * 100) / countryTotalResult),
+    errorRateAvg: countryTotalResult > 0 ? Math.round((countryTotalErrorCount * 100) / countryTotalResult) : 0,
     data: _.sortBy(newData, [x => x.monthTested]),
   }
 }
