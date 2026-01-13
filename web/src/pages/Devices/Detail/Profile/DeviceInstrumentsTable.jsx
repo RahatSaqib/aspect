@@ -1,13 +1,13 @@
+import React from 'react'
 import { Card, CircularProgress, Table, TableBody, TableContainer } from '@mui/material'
 import PropTypes from 'prop-types'
-import React from 'react'
 import { useIntl } from 'react-intl'
 import useDeviceInstruments from '../../../../hooks/device/useDeviceInstruments'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../../oldComponents/shared/tableHead'
-import { formatDateTime } from '../../../../utils/utils/dateFormat'
 import styles from '../styles.module.css'
 import CandidateInstruments from './CandidateInstruments'
+import GeneXpertModulesNames from './GeneXpertModulesNames'
 import messages from './messages'
 
 const getColumns = formatMessage => [
@@ -47,23 +47,7 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                   <TableRow key={instrument.instrumentSerial}>
                     <TableCell>{instrument.instrumentSerial}</TableCell>
                     <TableCell>
-                      {instrument.modules.map((module, idx) => (
-                        <span key={module.moduleName}>
-                          <span
-                            title={
-                              module.lastResultDate
-                                ? formatMessage(messages.lastResultDateTooltip, {
-                                    date: formatDateTime(module.lastResultDate),
-                                  })
-                                : formatMessage(messages.noResult)
-                            }
-                            style={{ color: module.lastResultDate ? undefined : '#888' }}
-                          >
-                            {module.moduleName}
-                          </span>
-                          {idx < instrument.modules.length - 1 ? ', ' : ''}
-                        </span>
-                      ))}
+                      <GeneXpertModulesNames modules={instrument.modules} />
                     </TableCell>
                   </TableRow>
                 ))}

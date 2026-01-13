@@ -1,50 +1,19 @@
-import React, { useState } from 'react'
-import { Button, Checkbox, CircularProgress, Table, TableBody, TableContainer, TableHead } from '@mui/material'
+import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import { Button, Checkbox, CircularProgress, Collapse, IconButton } from '@mui/material'
 import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import useCandidateInstruments from '../../../../hooks/device/useCandidateInstruments'
-import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../../oldComponents/shared/tableBody'
-import { formatDateTime } from '../../../../utils/utils/dateFormat'
+import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import styles from '../styles.module.css'
+import GeneXpertModulesNames from './GeneXpertModulesNames'
 import messages from './messages'
 
-const getColumns = formatMessage => [
-  {
-    key: 'select',
-    label: '',
-    sortable: false,
-  },
-  {
-    key: 'deviceName',
-    label: formatMessage(messages.deviceName),
-    sortable: false,
-  },
-  {
-    key: 'instrumentSerial',
-    label: formatMessage(messages.instrumentSerial),
-    sortable: false,
-  },
-  {
-    key: 'modules',
-    label: formatMessage(messages.bayNames),
-    sortable: false,
-  },
-]
-
-const CandidateInstruments = ({ deviceId, disabled = false, onJoinDevices }) => {
+const CandidateInstruments = ({ deviceId, disabled = false }) => {
   const { formatMessage } = useIntl()
   const { data = [], isLoading } = useCandidateInstruments(deviceId)
   const [selectedInstruments, setSelectedInstruments] = useState(new Set())
-  const columns = getColumns(formatMessage)
-
-  const handleSelectAll = event => {
-    if (event.target.checked) {
-      const allIds = new Set(data.map(instrument => `${instrument.deviceId}-${instrument.instrumentSerial}`))
-      setSelectedInstruments(allIds)
-    } else {
-      setSelectedInstruments(new Set())
-    }
-  }
+  const [expanded, setExpanded] = useState(false)
 
   const handleSelectOne = (deviceId, instrumentSerial) => {
     const key = `${deviceId}-${instrumentSerial}`
@@ -61,16 +30,16 @@ const CandidateInstruments = ({ deviceId, disabled = false, onJoinDevices }) => 
     return selectedInstruments.has(`${deviceId}-${instrumentSerial}`)
   }
 
-  const isAllSelected = data.length > 0 && selectedInstruments.size === data.length
+  const handleAddToDeviceClick = () => {
+    const selectedInstrumentIds = Array.from(selectedInstruments).map(key => {
+      const [instrumentDeviceId] = key.split('-')
+      return parseInt(instrumentDeviceId, 10)
+    })
 
-  const handleJoinDevicesClick = () => {
-    if (onJoinDevices) {
-      const selected = Array.from(selectedInstruments).map(key => {
-        const [deviceId, instrumentSerial] = key.split('-')
-        return { deviceId: parseInt(deviceId), instrumentSerial }
-      })
-      onJoinDevices(selected)
-    }
+    // eslint-disable-next-line no-alert
+    alert(`Current deviceId: ${deviceId}\nSelected instrumentIds: [${selectedInstrumentIds.join(', ')}]`)
+
+    // TODO: Add action here
   }
 
   if (isLoading) {
@@ -86,98 +55,114 @@ const CandidateInstruments = ({ deviceId, disabled = false, onJoinDevices }) => 
   }
 
   return (
-    <>
+    <div
+      style={{
+        marginTop: '16px',
+        paddingTop: '16px',
+        padding: '16px 20px',
+      }}
+    >
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '16px 20px',
-          marginTop: '16px',
-          paddingTop: '16px',
+          cursor: 'pointer',
         }}
+        onClick={() => setExpanded(!expanded)}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setExpanded(!expanded)
+          }
+        }}
+        role="button"
+        tabIndex={0}
       >
-        <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--aspect-color-grey-4, #91949d)' }}>
-          {formatMessage(messages.joinDevicesMessage)}
-        </p>
-        <Button
-          variant="contained"
-          color="success"
-          size="small"
-          onClick={handleJoinDevicesClick}
-          disabled={disabled || selectedInstruments.size === 0}
-          sx={{ minWidth: 'auto', padding: '4px 16px' }}
+        <IconButton size="small" sx={{ padding: '4px', marginRight: '4px' }}>
+          {expanded ? <ExpandLess /> : <ExpandMore />}
+        </IconButton>
+        <AspectTooltip
+          title={formatMessage(messages.geneXpertInstrumentsTooltip)}
+          showHelpIcon
+          showPointerCursor={false}
+          toolTipContainerClass={styles.inline__tooltip}
+          iconClass={styles.deviceSummary__helpIcon}
         >
-          {formatMessage(messages.joinDevicesButton)}
-        </Button>
+          <span style={{ fontSize: '0.875rem', color: 'var(--aspect-color-grey-2)', fontWeight: 500 }}>
+            {formatMessage(messages.otherInstrumentsDetected, { count: data.length })}
+          </span>
+        </AspectTooltip>
       </div>
-      <div style={{ marginTop: '16px', paddingTop: '16px' }}>
-        <TableContainer>
-          <Table className={styles.ResultDataTable} size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell padding="checkbox">
+
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <div style={{ marginTop: '12px', paddingLeft: '32px' }}>
+          <div style={{ marginBottom: '16px' }}>
+            {data.map(instrument => {
+              const key = `${instrument.deviceId}-${instrument.instrumentSerial}`
+              const selected = isSelected(instrument.deviceId, instrument.instrumentSerial)
+
+              return (
+                <div
+                  key={key}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '8px',
+                    paddingLeft: '4px',
+                  }}
+                >
                   <Checkbox
-                    indeterminate={selectedInstruments.size > 0 && selectedInstruments.size < data.length}
-                    checked={isAllSelected}
-                    onChange={handleSelectAll}
+                    checked={selected}
+                    onChange={() => handleSelectOne(instrument.deviceId, instrument.instrumentSerial)}
+                    size="small"
+                    style={{ padding: '4px' }}
                   />
-                </TableCell>
-                {columns
-                  .filter(col => col.key !== 'select')
-                  .map(col => (
-                    <TableCell key={col.key}>{col.label}</TableCell>
-                  ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((instrument, index) => {
-                const key = `${instrument.deviceId}-${instrument.instrumentSerial}`
-                const selected = isSelected(instrument.deviceId, instrument.instrumentSerial)
-                return (
-                  <TableRow key={key} selected={selected}>
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={selected}
-                        onChange={() => handleSelectOne(instrument.deviceId, instrument.instrumentSerial)}
-                      />
-                    </TableCell>
-                    <TableCell>{instrument.deviceName}</TableCell>
-                    <TableCell>{instrument.instrumentSerial}</TableCell>
-                    <TableCell>
-                      {instrument.modules.map((module, idx) => (
-                        <span key={module.moduleName}>
-                          <span
-                            title={
-                              module.lastResultDate
-                                ? formatMessage(messages.lastResultDateTooltip, {
-                                    date: formatDateTime(module.lastResultDate),
-                                  })
-                                : formatMessage(messages.noResult)
-                            }
-                            style={{ color: module.lastResultDate ? undefined : '#888' }}
-                          >
-                            {module.moduleName}
-                          </span>
-                          {idx < instrument.modules.length - 1 ? ', ' : ''}
-                        </span>
-                      ))}
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    </>
+                  <div
+                    style={{
+                      flex: 1,
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                      display: 'flex',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '4px',
+                    }}
+                  >
+                    <span style={{ color: 'var(--aspect-color-grey-2)', fontWeight: 500 }}>
+                      {formatMessage(messages.bayNames)}:{' '}
+                    </span>
+                    <span style={{ color: 'var(--aspect-color-grey-2)', fontWeight: 500 }}>
+                      <GeneXpertModulesNames modules={instrument.modules} />
+                    </span>
+                    <span style={{ color: 'var(--aspect-color-grey-4, #91949d)' }}>
+                      · {formatMessage(messages.serial)}: {instrument.instrumentSerial}
+                      {instrument.deviceName && ` · ${instrument.deviceName}`}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '8px' }}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleAddToDeviceClick}
+              disabled={disabled || selectedInstruments.size === 0}
+            >
+              {formatMessage(messages.addToThisDevice)}
+            </Button>
+          </div>
+        </div>
+      </Collapse>
+    </div>
   )
 }
 
 CandidateInstruments.propTypes = {
   deviceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   disabled: PropTypes.bool,
-  onJoinDevices: PropTypes.func,
 }
 
 CandidateInstruments.defaultProps = {

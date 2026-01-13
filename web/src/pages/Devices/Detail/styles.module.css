@@ -134,3 +134,12 @@
   margin: 2px 0 2px 3px;
   color: var(--aspect-color-grey-4, #91949d);
 }
+
+.inlineTooltip {
+  display: inline-block;
+}
+
+.inline__tooltip {
+  display: flex;
+  align-items: center;
+}

@@ -220,10 +220,10 @@ const messages = {
       defaultMessage: 'Tags',
     },
     instrumentListTitle: { id: 'device.instrumentList.title', defaultMessage: 'Device Instruments' },
-    instrumentSerial: { id: 'device.instrumentList.instrumentSerial', defaultMessage: 'Instrument Serial' },
+    instrumentSerial: { id: 'device.instrumentList.instrumentSerial', defaultMessage: 'Serial Number' },
     bayNames: { id: 'device.instrumentList.bayNames', defaultMessage: 'Bay Names' },
     noInstruments: { id: 'device.instrumentList.noInstruments', defaultMessage: 'No instruments' },
-    noResult: { id: 'device.instrumentList.noResult', defaultMessage: 'No result' },
+    noResults: { id: 'device.instrumentList.noResult', defaultMessage: 'No results' },
     lastResultDateTooltip: {
       id: 'device.instrumentList.lastResultDateTooltip',
       defaultMessage: 'Last Result Date: {date}',
@@ -239,6 +239,23 @@ const messages = {
     deviceName: {
       id: 'pages.DeviceDetailProfile.deviceName',
       defaultMessage: 'Device Name',
+    },
+    otherInstrumentsDetected: {
+      id: 'pages.DeviceDetailProfile.otherInstrumentsDetected',
+      defaultMessage: 'Other instruments detected ({count})',
+    },
+    addToThisDevice: {
+      id: 'pages.DeviceDetailProfile.addToThisDevice',
+      defaultMessage: 'Add to this device',
+    },
+    bays: {
+      id: 'pages.DeviceDetailProfile.bays',
+      defaultMessage: 'Bays',
+    },
+    geneXpertInstrumentsTooltip: {
+      id: 'pages.DeviceDetailProfile.geneXpertInstrumentsTooltip',
+      defaultMessage:
+        'GeneXpert 16-module devices report themselves as four separate 4-module instruments. Aspect creates one device per instrument. You can configure the correct device composition here.',
     },
   }),
 }
