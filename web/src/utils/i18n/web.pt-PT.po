@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-12-11T12:46:50.844Z\n"
+"POT-Creation-Date: 2026-01-13T13:25:22.286Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2009,6 +2009,13 @@ msgstr "Portal CommCare RDT"
 msgid "CommCare HIV"
 msgstr "CommCare HIV"
 
+#. [pages.ReportIndex.deviceShortSummaryReportDescription]
+#. defaultMessage is:
+#. Compact version of Device and Site Summary Report
+#: extracted_strings.json
+msgid "Compact version of Device and Site Summary Report"
+msgstr "Versão compacta do Relatório de Resumo de Dispositivos e Locais"
+
 #. [placeholder.site.completionRatePercentage]
 #. defaultMessage is:
 #. Completion Rate Percentage
@@ -3387,6 +3394,13 @@ msgstr "Desempenho do dispositivo"
 #: extracted_strings.json
 msgid "Device Serial"
 msgstr "Dispositivo Serial"
+
+#. [pages.ReportIndex.deviceShortSummaryReport]
+#. defaultMessage is:
+#. Device Short Summary Report
+#: extracted_strings.json
+msgid "Device Short Summary Report"
+msgstr "Relatório resumido do dispositivo"
 
 #. [filter.popover.deviceStatus]
 #. defaultMessage is:
@@ -7288,16 +7302,6 @@ msgstr "Comparação de tendências de deteção de MTB"
 #: extracted_strings.json
 msgid "MTB Error"
 msgstr "Erro MTB"
-
-#. [pages.filters.GxMtbRifMTBErrorRifError]
-#. defaultMessage is:
-#. MTB Error Rif Error
-#. [resultCategoryGroup.GxMtbRifMTBErrorRifError]
-#. defaultMessage is:
-#. MTB Error Rif Error
-#: extracted_strings.json
-msgid "MTB Error Rif Error"
-msgstr "Erro MTB Erro Rif"
 
 #. [resultCategoryGroup.gxMtbRifMtbInvalid]
 #. defaultMessage is:
@@ -13060,6 +13064,9 @@ msgstr "Casos de tuberculose diagnosticados hoje"
 msgid "TB lamp"
 msgstr "TB LAMP"
 
+#. [filter.popover.tag]
+#. defaultMessage is:
+#. Tag
 #. [pages.JobAssignments.tag]
 #. defaultMessage is:
 #. Tag
@@ -13083,6 +13090,9 @@ msgstr "Etiqueta"
 #. defaultMessage is:
 #. Tags
 #. [pages.DeviceDetailEdit.tags]
+#. defaultMessage is:
+#. Tags
+#. [pages.deviceDetail.tags]
 #. defaultMessage is:
 #. Tags
 #: extracted_strings.json
@@ -15992,6 +16002,13 @@ msgstr "o nome do estado inclui \"{stateName}\""
 msgid "stock provider is \"{stockProvider}\""
 msgstr "o fornecedor de acções é \"{stockProvider}\""
 
+#. [filter.btnGroup.whereTagIs]
+#. defaultMessage is:
+#. tagged as "{tag}"
+#: extracted_strings.json
+msgid "tagged as \"{tag}\""
+msgstr "marcado como \"{tag}\""
+
 #. [filter.btnGroup.withTreatmentStatus]
 #. defaultMessage is:
 #. treatment status is {treatmentStatusName}
@@ -16196,6 +16213,9 @@ msgstr "{unit} desde a semana passada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
+
+#~ msgid "MTB Error Rif Error"
+#~ msgstr "Erro MTB Erro Rif"
 
 #~ msgid "Exporting Results Failed"
 #~ msgstr "Resultados de exportação falhados"

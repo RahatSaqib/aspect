@@ -5,10 +5,12 @@
   "main": "index.js",
   "repository": "git@github.com:SystemOneId/aspect.git",
   "devDependencies": {
+    "@formatjs/cli": "4.2.29",
     "concurrently": "^8.2.2",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "formatjs": "^0.1.1",
     "husky": "8.0.3",
     "lint-staged": "13.1.2",
     "lodash": "^4.17.21",

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-12-11T12:46:50.844Z\n"
+"POT-Creation-Date: 2026-01-13T13:25:22.286Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2003,6 +2003,13 @@ msgstr "CommCare Gates RDT"
 msgid "CommCare HIV"
 msgstr "CommCare HIV"
 
+#. [pages.ReportIndex.deviceShortSummaryReportDescription]
+#. defaultMessage is:
+#. Compact version of Device and Site Summary Report
+#: extracted_strings.json
+msgid "Compact version of Device and Site Summary Report"
+msgstr "Compact version of Device and Site Summary Report"
+
 #. [placeholder.site.completionRatePercentage]
 #. defaultMessage is:
 #. Completion Rate Percentage
@@ -3377,6 +3384,13 @@ msgstr "Device Performance"
 #: extracted_strings.json
 msgid "Device Serial"
 msgstr "Device Serial"
+
+#. [pages.ReportIndex.deviceShortSummaryReport]
+#. defaultMessage is:
+#. Device Short Summary Report
+#: extracted_strings.json
+msgid "Device Short Summary Report"
+msgstr "Device Short Summary Report"
 
 #. [filter.popover.deviceStatus]
 #. defaultMessage is:
@@ -7267,16 +7281,6 @@ msgstr "MTB Detection Trends Comparison"
 #: extracted_strings.json
 msgid "MTB Error"
 msgstr "MTB Error"
-
-#. [pages.filters.GxMtbRifMTBErrorRifError]
-#. defaultMessage is:
-#. MTB Error Rif Error
-#. [resultCategoryGroup.GxMtbRifMTBErrorRifError]
-#. defaultMessage is:
-#. MTB Error Rif Error
-#: extracted_strings.json
-msgid "MTB Error Rif Error"
-msgstr "MTB Error Rif Error"
 
 #. [resultCategoryGroup.gxMtbRifMtbInvalid]
 #. defaultMessage is:
@@ -13028,6 +13032,9 @@ msgstr "TB cases diagnosed today"
 msgid "TB lamp"
 msgstr "TB lamp"
 
+#. [filter.popover.tag]
+#. defaultMessage is:
+#. Tag
 #. [pages.JobAssignments.tag]
 #. defaultMessage is:
 #. Tag
@@ -13051,6 +13058,9 @@ msgstr "Tag"
 #. defaultMessage is:
 #. Tags
 #. [pages.DeviceDetailEdit.tags]
+#. defaultMessage is:
+#. Tags
+#. [pages.deviceDetail.tags]
 #. defaultMessage is:
 #. Tags
 #: extracted_strings.json
@@ -15945,6 +15955,13 @@ msgstr "state name includes \"{stateName}\""
 msgid "stock provider is \"{stockProvider}\""
 msgstr "stock provider is \"{stockProvider}\""
 
+#. [filter.btnGroup.whereTagIs]
+#. defaultMessage is:
+#. tagged as "{tag}"
+#: extracted_strings.json
+msgid "tagged as \"{tag}\""
+msgstr "tagged as \"{tag}\""
+
 #. [filter.btnGroup.withTreatmentStatus]
 #. defaultMessage is:
 #. treatment status is {treatmentStatusName}
@@ -16146,6 +16163,9 @@ msgstr "{unit} since last week"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total calibrations"
+
+#~ msgid "MTB Error Rif Error"
+#~ msgstr "MTB Error Rif Error"
 
 #~ msgid "Exporting Results Failed"
 #~ msgstr "Exporting Results Failed"
