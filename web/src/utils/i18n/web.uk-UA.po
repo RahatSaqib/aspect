@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-12-11T12:46:50.844Z\n"
+"POT-Creation-Date: 2026-01-13T13:25:22.286Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.6\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -2007,6 +2007,13 @@ msgstr "CommCare Gates RDT"
 msgid "CommCare HIV"
 msgstr "CommCare ВІЛ"
 
+#. [pages.ReportIndex.deviceShortSummaryReportDescription]
+#. defaultMessage is:
+#. Compact version of Device and Site Summary Report
+#: extracted_strings.json
+msgid "Compact version of Device and Site Summary Report"
+msgstr "Компактна версія звіту про зведення пристроїв та сайтів"
+
 #. [placeholder.site.completionRatePercentage]
 #. defaultMessage is:
 #. Completion Rate Percentage
@@ -3385,6 +3392,13 @@ msgstr "Продуктивність пристрою"
 #: extracted_strings.json
 msgid "Device Serial"
 msgstr "Серійний номер пристрою"
+
+#. [pages.ReportIndex.deviceShortSummaryReport]
+#. defaultMessage is:
+#. Device Short Summary Report
+#: extracted_strings.json
+msgid "Device Short Summary Report"
+msgstr "Короткий звіт про пристрій"
 
 #. [filter.popover.deviceStatus]
 #. defaultMessage is:
@@ -7282,16 +7296,6 @@ msgstr "Порівняння тенденцій виявлення MTB"
 #: extracted_strings.json
 msgid "MTB Error"
 msgstr "Помилка MTB"
-
-#. [pages.filters.GxMtbRifMTBErrorRifError]
-#. defaultMessage is:
-#. MTB Error Rif Error
-#. [resultCategoryGroup.GxMtbRifMTBErrorRifError]
-#. defaultMessage is:
-#. MTB Error Rif Error
-#: extracted_strings.json
-msgid "MTB Error Rif Error"
-msgstr "Помилка MTB Помилка Rif Помилка"
 
 #. [resultCategoryGroup.gxMtbRifMtbInvalid]
 #. defaultMessage is:
@@ -13054,6 +13058,9 @@ msgstr "Випадки туберкульозу, діагностовані сь
 msgid "TB lamp"
 msgstr "TB LAMP"
 
+#. [filter.popover.tag]
+#. defaultMessage is:
+#. Tag
 #. [pages.JobAssignments.tag]
 #. defaultMessage is:
 #. Tag
@@ -13077,6 +13084,9 @@ msgstr "Тег"
 #. defaultMessage is:
 #. Tags
 #. [pages.DeviceDetailEdit.tags]
+#. defaultMessage is:
+#. Tags
+#. [pages.deviceDetail.tags]
 #. defaultMessage is:
 #. Tags
 #: extracted_strings.json
@@ -15984,6 +15994,13 @@ msgstr "назва стану містить \"{stateName}\""
 msgid "stock provider is \"{stockProvider}\""
 msgstr "постачальник акцій - \"{stockProvider}\""
 
+#. [filter.btnGroup.whereTagIs]
+#. defaultMessage is:
+#. tagged as "{tag}"
+#: extracted_strings.json
+msgid "tagged as \"{tag}\""
+msgstr "позначено як \"{tag}\""
+
 #. [filter.btnGroup.withTreatmentStatus]
 #. defaultMessage is:
 #. treatment status is {treatmentStatusName}
@@ -16186,6 +16203,9 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} загальне калібрування"
+
+#~ msgid "MTB Error Rif Error"
+#~ msgstr "Помилка MTB Помилка Rif Помилка"
 
 #~ msgid "Exporting Results Failed"
 #~ msgstr "Помилка експорту результатів"
