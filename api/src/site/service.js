@@ -8,36 +8,8 @@ const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getNotDecommissionedDevices } = require('../device/common/db')
-const { getSitesQuery, getSiteListQuery, getSiteListModifiedQuery } = require('./common/db')
+const { getSitesQuery } = require('./common/db')
 const { SELECT_SHOW_FIELDS } = require('./common/constants')
-
-async function listSites(request) {
-  const { query, auth } = request
-
-  // To ensure correct database queries, the `stateId` and `lgaId` values should be converted from empty strings to `null`.
-  ;['stateId', 'lgaId'].forEach(property => {
-    if (query[property] === '') {
-      query[property] = null
-    }
-  })
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const siteQuery = getSiteListQuery(query, dataConstraints)
-
-  const getCount = knex
-    .count('siteId as count')
-    .from(siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery'))
-    .first()
-  // get rows
-  const getItems = getSiteListModifiedQuery(query, dataConstraints)
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-  const result = { ok: true, total, length: data.length, data }
-  return result
-}
 
 // TODO: should also be in the db file
 function getSite(siteId, dataConstraints) {
@@ -410,7 +382,6 @@ async function listSitesWithReporters(request) {
 
 module.exports = {
   getSitesQuery,
-  listSites,
   getSite,
   getSiteByPartnerCountry,
   showSite,

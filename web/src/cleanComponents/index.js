@@ -12,6 +12,7 @@ import ConsumableSelect from './ConsumableSelect'
 import ConsumableSelector from './ConsumableSelector'
 import ContactStatusSelect from './ContactStatusSelect'
 import ContactTagInput from './ContactTagInput'
+import ContactTagSelect from './ContactTagSelect'
 import CountrySelect from './CountrySelect'
 import { Cron, getCronHumanValue } from './Cron'
 import DaysStockLeftSelect from './DaysStockLeftSelect'
@@ -98,12 +99,11 @@ import { SimpleTableHeader, SimpleTablePagination } from './SimpleTable'
 import SiteListSelect from './SiteListSelect'
 import SiteSelect from './SiteSelect'
 import SitesToTransferSelect from './SitesToTransferSelect'
-import SiteTagInput from './SiteTagInput'
 import StateAutocomplete from './StateAutocomplete'
 import StateSelect from './StateSelect'
 import StateSelector from './StateSelector'
 import { TableContainer } from './Table/TableContainer'
-import TagSelect from './TagSelect'
+import TagInput from './TagInput'
 import TagSingleSelect from './TagSingleSelect'
 import TimezoneSelect from './TimezoneSelect'
 import UnitSelect from './UnitSelect'
@@ -183,14 +183,14 @@ export {
   SiteFilter,
   SiteListSelect,
   SiteSelect,
-  SiteTagInput,
+  TagInput,
   SitesToTransferSelect,
   StateAutocomplete,
   StateSelect,
   StateSelector,
   StatesFilter,
   TableContainer,
-  TagSelect,
+  ContactTagSelect,
   TagSingleSelect,
   TbDetectedGraph,
   TbRifDetectedGraph,

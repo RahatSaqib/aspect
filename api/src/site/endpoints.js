@@ -4,13 +4,13 @@ const { asyncHandler, validateDateRangeParams, validateSortPageParams } = requir
 const createSite = require('./createSite')
 const { update: updateSite, updateConsumablesBatch: updateSiteConsumablesBatch } = require('./updateSite')
 const {
-  listSites,
   showSite,
   listSitesForSelectList,
   listSitesForTransferSelectList,
   listSitesWithReporters,
   disableSite,
 } = require('./service')
+const { listSites } = require('./listSites')
 const { getReportingSites } = require('./getReportingSites')
 const { postSchema, updateSchema, updateConsumablesBatchSchema } = require('./common/validations')
 
@@ -28,6 +28,7 @@ function listSitesBaseConfig() {
         siteTypeId: Joi.string().allow('').description('Filter for site type'),
         parentWarehouseId: Joi.string().allow('').description('Filter for warehouse'),
         externalId: Joi.string().allow('').description('Filter for facility code'),
+        tagId: Joi.number().integer().positive().allow('', null).description('Filter for sites with tag'),
         format: Joi.string().allow('').description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),

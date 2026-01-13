@@ -11,7 +11,7 @@ import {
   ConsumableSelect,
   LocationSelector,
   SiteListSelect,
-  SiteTagInput,
+  TagInput,
   TimezoneSelect,
 } from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
@@ -444,7 +444,8 @@ const SiteForm = ({ site, onLatLongChange }) => {
             />
           </div>
 
-          <SiteTagInput
+          <TagInput
+            type="site"
             label={formatMessage(messages.fieldTags)}
             onChange={tags => setEditSite(prv => ({ ...prv, tags }))}
             value={editSite?.tags ?? []}

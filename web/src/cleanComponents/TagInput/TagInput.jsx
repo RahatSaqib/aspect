@@ -19,8 +19,8 @@ function getFilterOptions(options, params) {
   return filtered
 }
 
-const SiteTagInput = props => {
-  const { data: possibleTags } = useTagByType('site')
+const TagInput = props => {
+  const { data: possibleTags } = useTagByType(props.type)
   return (
     <AspectSelect
       options={possibleTags ?? []}
@@ -37,9 +37,10 @@ const SiteTagInput = props => {
   )
 }
 
-SiteTagInput.propTypes = {
+TagInput.propTypes = {
   value: PropTypes.oneOfType([PropTypes.array]).isRequired,
   onChange: PropTypes.func.isRequired,
+  type: PropTypes.string.isRequired,
 }
 
-export default SiteTagInput
+export default TagInput

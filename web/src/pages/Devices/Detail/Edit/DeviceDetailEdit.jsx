@@ -12,12 +12,11 @@ import {
   SiteSelect,
   CepheidInstrumentModelSelect,
   CepheidSoftwareTypeSelect,
+  TagInput,
 } from '../../../../cleanComponents'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
-import TagInput from '../../../../oldComponents/shared/TagInput'
-import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import styles from '../styles.module.css'
 import messages from './messages'
@@ -52,19 +51,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
     isDaisyChained: device.isDaisyChained || false, // Keep default for boolean
     notes: device.notes,
     tags: deviceTags || [], // Keep default for array operations
-  }
-
-  const onAddTag = (tagName, values, setFieldValue) => {
-    if (tagName.trim().length === 0) return
-    if (values.tags.some(deviceTag => deviceTag?.title?.toLowerCase() === tagName.toLowerCase())) return
-
-    const newTags = [...values.tags, { title: tagName }]
-    setFieldValue('tags', newTags)
-  }
-
-  const onDeleteTag = (tag, values, setFieldValue) => {
-    const newTags = values.tags.filter(deviceTag => deviceTag?.title?.toLowerCase() !== tag?.title?.toLowerCase())
-    setFieldValue('tags', newTags)
   }
 
   const onError = () => {
@@ -267,18 +253,12 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   minRows={3}
                 />
 
-                <FormGroup label={intl.formatMessage(messages.tags)}>
-                  <TagInput
-                    allowCreate
-                    keepFocusOnChange
-                    source={values.tags}
-                    value={values.tags}
-                    tagName="title"
-                    onAdd={tagName => onAddTag(tagName, values, setFieldValue)}
-                    onDelete={tag => onDeleteTag(tag, values, setFieldValue)}
-                    disabled={!editable}
-                  />
-                </FormGroup>
+                <TagInput
+                  type="device"
+                  label={intl.formatMessage(messages.tags)}
+                  onChange={tags => setFieldValue('tags', tags)}
+                  value={values.tags}
+                />
 
                 <Stack sx={{ gap: 2, flexDirection: 'row', justifyContent: 'flex-end' }}>
                   <AspectButton

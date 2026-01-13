@@ -362,6 +362,10 @@ const messages = {
       id: 'filter.popover.siteType',
       defaultMessage: 'Site Type',
     },
+    tag: {
+      id: 'filter.popover.tag',
+      defaultMessage: 'Tag',
+    },
     stockProvider: {
       id: 'filter.popover.stockProvider',
       defaultMessage: 'Stock Provider',

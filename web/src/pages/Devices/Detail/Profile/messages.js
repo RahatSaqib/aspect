@@ -215,6 +215,10 @@ const messages = {
         other {# modules}
       }`,
     },
+    tags: {
+      id: 'pages.deviceDetail.tags',
+      defaultMessage: 'Tags',
+    },
   }),
 }
 

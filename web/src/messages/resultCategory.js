@@ -213,10 +213,6 @@ export default defineMessages({
     id: 'resultCategoryGroup.gxMtbRifMtbError',
     defaultMessage: 'MTB Error',
   },
-  GxMtbRifMTBErrorRifError: {
-    id: 'resultCategoryGroup.GxMtbRifMTBErrorRifError',
-    defaultMessage: 'MTB Error Rif Error',
-  },
   gxMtbRifMtbNoResult: {
     id: 'resultCategoryGroup.gxMtbRifMtbNoResult',
     defaultMessage: 'MTB No Result',

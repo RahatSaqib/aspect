@@ -239,6 +239,7 @@ const JobAssigment = ({ setStep }) => {
                     </Grid>
                     <Grid item xs={12}>
                       <TagSingleSelect
+                        type="site"
                         id="tagId"
                         name="tagId"
                         label={formatMessage(messages.restrictToSitesWithTag)}
