@@ -105,6 +105,7 @@ describe('Merge Devices', () => {
     await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceOperation').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('Instrument').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
 
     // Delete fact tables sequentially to avoid deadlocks
     await knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
@@ -136,6 +137,23 @@ describe('Merge Devices', () => {
       repeatedSourceResultId
     )
     /**
+     * Add instruments to source and target device
+     */
+    await knex('Instrument').insert({
+      deviceId: sourceDeviceId,
+      serial: 'SRCINST1',
+      macAddress: 'SRCMAC1',
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+    await knex('Instrument').insert({
+      deviceId: targetDevice.id,
+      serial: 'TGTINST1',
+      macAddress: 'TGTMAC1',
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+    /**
      * do device merge
      */
     await server
@@ -165,6 +183,15 @@ describe('Merge Devices', () => {
       repeatedTargetResultId,
       'Issues on repeated source result should be in target repeated result'
     )
+
+    // Assert instruments are merged
+    const instrumentsOnTarget = await knex('Instrument').where('deviceId', targetDevice.id)
+    const instrumentSerials = instrumentsOnTarget.map(i => i.serial)
+    expect(instrumentSerials).to.include('SRCINST1')
+    expect(instrumentSerials).to.include('TGTINST1')
+    // Source device should have no instruments
+    const instrumentsOnSource = await knex('Instrument').where('deviceId', sourceDeviceId)
+    expect(instrumentsOnSource).to.have.lengthOf(0)
 
     await assertFactTables(sourceDeviceId)
     /**

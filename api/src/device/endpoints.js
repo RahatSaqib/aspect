@@ -11,7 +11,7 @@ const {
   deviceMaintenanceStatus,
 } = require('./service')
 const { getDevicePerformance } = require('./getDevicePerformance')
-const mergeDevices = require('./mergeDevices')
+const { mergeDevices } = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
 const { exportDeviceOperationLogReport, getDeviceCoverageReport } = require('./serviceReports')
