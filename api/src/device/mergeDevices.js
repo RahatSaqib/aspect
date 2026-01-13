@@ -53,7 +53,7 @@ async function getDevicesToMerge({ sourceDevicesIds, targetDeviceId }) {
 
 const validate = async (sourceDevices, targetDevice, credentials) => {
   validateDifferentDevices(sourceDevices, targetDevice)
-  // validateDeviceIsNotActive(sourceDevices)
+  validateDeviceIsNotActive(sourceDevices)
   validateSameSite(sourceDevices, targetDevice)
   validateDeviceType(sourceDevices, targetDevice)
   await validatePersmissions(sourceDevices, targetDevice, credentials)
