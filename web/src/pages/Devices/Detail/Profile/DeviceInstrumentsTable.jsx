@@ -8,6 +8,7 @@ import DataTableHead from '../../../../oldComponents/shared/tableHead'
 import styles from '../styles.module.css'
 import CandidateInstruments from './CandidateInstruments'
 import GeneXpertModulesNames from './GeneXpertModulesNames'
+import InstrumentContextualMenu from './InstrumentContextualMenu'
 import messages from './messages'
 
 const getColumns = formatMessage => [
@@ -20,6 +21,10 @@ const getColumns = formatMessage => [
     key: 'modules',
     label: formatMessage(messages.bayNames),
     sortable: false,
+  },
+  {
+    key: 'actions',
+    label: '',
   },
 ]
 
@@ -48,6 +53,21 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                     <TableCell>{instrument.instrumentSerial}</TableCell>
                     <TableCell>
                       <GeneXpertModulesNames modules={instrument.modules} />
+                    </TableCell>
+                    <TableCell align="right">
+                      <InstrumentContextualMenu
+                        instrument={instrument}
+                        onMoveToExisting={inst => {
+                          // TODO: Implement move to existing device logic
+                          // eslint-disable-next-line no-alert
+                          alert(`Move instrument ${inst.instrumentSerial} to an existing device`)
+                        }}
+                        onMoveToNew={inst => {
+                          // TODO: Implement move to new device logic
+                          // eslint-disable-next-line no-alert
+                          alert(`Move instrument ${inst.instrumentSerial} to a new device`)
+                        }}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
