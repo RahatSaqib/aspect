@@ -228,6 +228,18 @@ const messages = {
       id: 'device.instrumentList.lastResultDateTooltip',
       defaultMessage: 'Last Result Date: {date}',
     },
+    joinDevicesMessage: {
+      id: 'pages.DeviceDetailProfile.joinDevicesMessage',
+      defaultMessage: 'There are more instruments using the same connection, are they a single device?',
+    },
+    joinDevicesButton: {
+      id: 'pages.DeviceDetailProfile.joinDevicesButton',
+      defaultMessage: 'Join Devices',
+    },
+    deviceName: {
+      id: 'pages.DeviceDetailProfile.deviceName',
+      defaultMessage: 'Device Name',
+    },
   }),
 }
 

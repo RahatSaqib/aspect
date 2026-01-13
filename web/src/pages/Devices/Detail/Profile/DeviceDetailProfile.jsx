@@ -476,7 +476,7 @@ const DeviceDetailProfile = ({
         />
       </section>
       {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
-        <DeviceInstrumentsTable deviceId={device.get('id')} />
+        <DeviceInstrumentsTable deviceId={device.get('id')} disabled={disabled} />
       )}
       <PerformanceReport
         performanceReport={devicePerformance}

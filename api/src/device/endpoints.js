@@ -31,6 +31,7 @@ const { deviceReport } = require('./serviceReports/deviceReport')
 const getMtbErrorGraph = require('./getErrorGraph')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
 const { getDeviceInstruments } = require('./getDeviceInstruments')
+const { getCandidateInstruments } = require('./getCandidateInstruments')
 
 const routes = [
   {
@@ -173,9 +174,55 @@ const routes = [
                       .description('List of modules in this instrument'),
                   })
                 )
-                .description('List of instruments connected to the device'),
+                .description('List of instruments connected to the device')
+                .optional(),
             })
             .description('Device composition data'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/{deviceId}/candidate-instruments',
+    handler: asyncHandler(getCandidateInstruments),
+    config: {
+      description: 'Candidate Instruments',
+      notes: 'Get candidate instruments that can be joined with the device',
+      auth: { scope: ['device:view'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.object()
+            .keys({
+              deviceId: Joi.number().required().description('Device ID'),
+              instruments: Joi.array()
+                .items(
+                  Joi.object().keys({
+                    deviceId: Joi.number().required().description('Device ID'),
+                    deviceName: Joi.string().required().description('Device name'),
+                    instrumentSerial: Joi.string().allow(null).description('Instrument serial number'),
+                    modules: Joi.array()
+                      .items(
+                        Joi.object().keys({
+                          moduleName: Joi.string().allow(null).description('Module bay name (e.g., A1, A2, etc.)'),
+                          lastResultDate: Joi.date().allow(null).description('Date of last result for this module'),
+                        })
+                      )
+                      .description('List of modules in this instrument'),
+                  })
+                )
+                .description('List of candidate instruments'),
+            })
+            .required(),
         }),
       },
     },

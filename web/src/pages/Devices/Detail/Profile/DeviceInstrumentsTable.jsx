@@ -1,12 +1,13 @@
-import React from 'react'
 import { Card, CircularProgress, Table, TableBody, TableContainer } from '@mui/material'
 import PropTypes from 'prop-types'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import useDeviceInstruments from '../../../../hooks/device/useDeviceInstruments'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../../oldComponents/shared/tableBody'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../../oldComponents/shared/tableHead'
 import { formatDateTime } from '../../../../utils/utils/dateFormat'
 import styles from '../styles.module.css'
+import CandidateInstruments from './CandidateInstruments'
 import messages from './messages'
 
 const getColumns = formatMessage => [
@@ -22,7 +23,7 @@ const getColumns = formatMessage => [
   },
 ]
 
-const DeviceInstrumentsTable = ({ deviceId }) => {
+const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
   const { formatMessage } = useIntl()
   const { data = [], isLoading } = useDeviceInstruments(deviceId)
   const columns = getColumns(formatMessage)
@@ -70,6 +71,7 @@ const DeviceInstrumentsTable = ({ deviceId }) => {
             </Table>
           </TableContainer>
         )}
+        <CandidateInstruments deviceId={deviceId} disabled={disabled} />
       </Card>
     </section>
   )
@@ -77,6 +79,11 @@ const DeviceInstrumentsTable = ({ deviceId }) => {
 
 DeviceInstrumentsTable.propTypes = {
   deviceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  disabled: PropTypes.bool,
+}
+
+DeviceInstrumentsTable.defaultProps = {
+  disabled: false,
 }
 
 export default DeviceInstrumentsTable
