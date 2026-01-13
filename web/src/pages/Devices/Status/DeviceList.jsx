@@ -22,6 +22,7 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { DetailHeader, DeviceListFilter, TableContainer } from '../../../cleanComponents'
 import ExportListButton from '../../../components/AspectExportListButton'
 import PermissionChecker from '../../../components/PermissionChecker/index'
@@ -426,7 +427,7 @@ const DeviceList = () => {
                   {
                     <span
                       // eslint-disable-next-line react/no-danger
-                      dangerouslySetInnerHTML={{ __html: formatMessage(messages.mergeDevicesConfirmationTitle) }}
+                      dangerouslySetInnerHTML={{ __html: formatMessage(messages.mergeDevicesConfirmationDescription) }}
                     />
                   }
                 </Typography>
@@ -448,13 +449,12 @@ const DeviceList = () => {
                       {
                         onSuccess: () => {
                           refetch()
-                          /**
-                           * with setting state var `isProcessingMergeDevices` back to false
-                           * we explicitly re-render page to let `useQuery` to update `data`
-                           * which in turn updates other params on a page, including the list
-                           * of source/target devices when user clicks MergeDevices again
-                           */
                           setProcessingMergeDevices(false)
+                          toast.success(formatMessage(messages.devicesMergedSuccessfully))
+                        },
+                        onError: () => {
+                          setProcessingMergeDevices(false)
+                          toast.error(formatMessage(messages.devicesMergeFailed))
                         },
                       }
                     )

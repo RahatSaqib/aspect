@@ -4,35 +4,45 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const { deleteDevice } = require('./common/logic')
 const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('../fact/actions')
+const { getUser } = require('../auth/service')
 
 async function mergeDevices({ payload, plugins: { messageContext }, auth }) {
-  const devices = await getDevicesToMerge(payload)
+  const { id: userId } = await getUser(auth.credentials.name)
+  const { sourceDevices, targetDevice } = await getDevicesToMerge(payload)
 
-  await validate(devices, auth.credentials)
+  await validate(sourceDevices, targetDevice, auth.credentials)
 
   await transact(async trknex =>
-    Promise.all(
-      devices.sourceDevices.map(async sourceDevice =>
-        mergeDevice({ sourceDevice, targetDevice: devices.targetDevice }, trknex)
-      )
-    )
+    Promise.all(sourceDevices.map(sourceDevice => mergeDevice(trknex, sourceDevice, targetDevice, userId)))
   )
 
   const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts, factGenerateDeviceConnectivity })
 
-  await eventContext.factGenerateResultCounts(devices.targetDevice.id)
-  await eventContext.factGenerateDeviceConnectivity(devices.targetDevice.id)
+  await eventContext.factGenerateResultCounts(targetDevice.id)
+  await eventContext.factGenerateDeviceConnectivity(targetDevice.id)
 
   return { ok: true }
 }
 
-async function mergeDevice(devicesToMerge, trknex) {
-  await mergeIssuesFromDuplicatedResults(devicesToMerge, trknex)
-  await mergeDeviceLevelIssues(devicesToMerge, trknex)
-  await mergeNonRepeatedResults(devicesToMerge, trknex)
-  await mergeMessages(devicesToMerge, trknex)
-  await mergeInstruments(devicesToMerge, trknex)
-  await deleteDevice(devicesToMerge.sourceDevice.id, trknex)
+async function mergeDevice(trknex, sourceDevice, targetDevice, userId) {
+  await mergeIssuesFromDuplicatedResults(trknex, sourceDevice, targetDevice)
+  await mergeDeviceLevelIssues(trknex, sourceDevice, targetDevice)
+  await mergeNonRepeatedResults(trknex, sourceDevice, targetDevice)
+  await mergeMessages(trknex, sourceDevice, targetDevice)
+  await mergeInstruments(trknex, sourceDevice, targetDevice)
+
+  // Revoke DeviceApiKey if not used by target device
+  if (sourceDevice.deviceApiKeyId && sourceDevice.deviceApiKeyId !== targetDevice.deviceApiKeyId) {
+    await revokeDeviceApiKey(trknex, sourceDevice, userId)
+  }
+
+  await deleteDevice(sourceDevice.id, trknex)
+}
+
+async function revokeDeviceApiKey(trknex, sourceDevice, userId) {
+  await trknex('DeviceApiKey')
+    .where('id', sourceDevice.deviceApiKeyId)
+    .update({ revoked: true, updatedOn: new Date(), updatedBy: userId, deviceId: null })
 }
 
 async function getDevicesToMerge({ sourceDevicesIds, targetDeviceId }) {
@@ -41,18 +51,18 @@ async function getDevicesToMerge({ sourceDevicesIds, targetDeviceId }) {
   return { sourceDevices, targetDevice }
 }
 
-const validate = async (devicesToMerge, credentials) => {
-  validateDifferentDevices(devicesToMerge)
-  validateDeviceIsNotActive(devicesToMerge.sourceDevices)
-  validateSameSite(devicesToMerge)
-  validateDeviceType(devicesToMerge)
-  await validatePersmissions(devicesToMerge, credentials)
+const validate = async (sourceDevices, targetDevice, credentials) => {
+  validateDifferentDevices(sourceDevices, targetDevice)
+  // validateDeviceIsNotActive(sourceDevices)
+  validateSameSite(sourceDevices, targetDevice)
+  validateDeviceType(sourceDevices, targetDevice)
+  await validatePersmissions(sourceDevices, targetDevice, credentials)
 }
 
-async function validatePersmissions(devicesToMerge, credentials) {
+async function validatePersmissions(sourceDevices, targetDevice, credentials) {
   const dataConstraints = await getConstraints(credentials)
 
-  const allDevicesIds = [...devicesToMerge.sourceDevices.map(d => d.id), devicesToMerge.targetDevice.id]
+  const allDevicesIds = [...sourceDevices.map(d => d.id), targetDevice.id]
 
   const devices = await getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints)
 
@@ -73,30 +83,32 @@ function lessThan24HsFrom(lastPingOn) {
   return (new Date() - lastPingOn) / 1000 / 60 / 60 / 24 < 1
 }
 
-function validateDifferentDevices({ sourceDevices, targetDevice }) {
+function validateDifferentDevices(sourceDevices, targetDevice) {
   if (sourceDevices.some(sourceDevice => sourceDevice.id === targetDevice.id)) {
     throw Boom.badData('Cannot merge a device into itself.')
   }
 }
 
-function validateSameSite({ sourceDevices, targetDevice }) {
+function validateSameSite(sourceDevices, targetDevice) {
   if (sourceDevices.some(sourceDevice => sourceDevice.siteId !== targetDevice.siteId)) {
     throw Boom.badData('Cannot merge devices from different sites.')
   }
 }
 
-function validateDeviceType({ sourceDevices, targetDevice }) {
+function validateDeviceType(sourceDevices, targetDevice) {
   if (sourceDevices.some(sourceDevice => sourceDevice.deviceTypeId !== targetDevice.deviceTypeId)) {
     throw Boom.badData('Cannot merge different type of devices.')
   }
 }
 
 async function getSourceDevices(sourceDevicesIds) {
-  return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId', 'deviceTypeId')
+  return knex('Device')
+    .whereIn('id', sourceDevicesIds)
+    .select('id', 'lastPingOn', 'siteId', 'deviceTypeId', 'deviceApiKeyId')
 }
 
 async function getTargetDevice(targetDeviceId) {
-  return knex('Device').where('id', targetDeviceId).first('id', 'siteId', 'deviceTypeId')
+  return knex('Device').where('id', targetDeviceId).first('id', 'siteId', 'deviceTypeId', 'deviceApiKeyId')
 }
 
 async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) {
@@ -108,18 +120,14 @@ async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) 
 }
 
 // Merge instruments from source to target device
-async function mergeInstruments(devicesToMerge, trknex) {
+async function mergeInstruments(trknex, sourceDevice, targetDevice) {
   // Move all instruments from the source device to the target device
-  await trknex('Instrument')
-    .where('deviceId', devicesToMerge.sourceDevice.id)
-    .update({ deviceId: devicesToMerge.targetDevice.id })
+  await trknex('Instrument').where('deviceId', sourceDevice.id).update({ deviceId: targetDevice.id })
 }
 
-async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
-  const {
-    sourceDevice: { id: sourceDeviceId },
-    targetDevice: { id: targetDeviceId },
-  } = devicesToMerge
+async function mergeIssuesFromDuplicatedResults(trknex, sourceDevice, targetDevice) {
+  const sourceDeviceId = sourceDevice.id
+  const targetDeviceId = targetDevice.id
 
   await trknex('Issue as i')
     .update('i.deviceId', targetDeviceId)
@@ -137,20 +145,16 @@ async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
     .where('i.id', '>', 0)
 }
 
-async function mergeDeviceLevelIssues(devicesToMerge, trknex) {
-  const {
-    sourceDevice: { id: sourceDeviceId },
-    targetDevice: { id: targetDeviceId },
-  } = devicesToMerge
+async function mergeDeviceLevelIssues(trknex, sourceDevice, targetDevice) {
+  const sourceDeviceId = sourceDevice.id
+  const targetDeviceId = targetDevice.id
 
   await trknex('Issue').where('deviceId', sourceDeviceId).whereNull('resultId').update('deviceId', targetDeviceId)
 }
 
-async function mergeNonRepeatedResults(devicesToMerge, trknex) {
-  const {
-    sourceDevice: { id: sourceDeviceId },
-    targetDevice: { id: targetDeviceId },
-  } = devicesToMerge
+async function mergeNonRepeatedResults(trknex, sourceDevice, targetDevice) {
+  const sourceDeviceId = sourceDevice.id
+  const targetDeviceId = targetDevice.id
 
   const repeatedResultsQuery = trknex(
     trknex('Result')
@@ -168,11 +172,9 @@ async function mergeNonRepeatedResults(devicesToMerge, trknex) {
   await trknex('DeviceLog').where({ deviceId: sourceDeviceId }).update({ deviceId: targetDeviceId })
 }
 
-async function mergeMessages(devicesToMerge, trknex) {
-  const {
-    sourceDevice: { id: sourceDeviceId },
-    targetDevice: { id: targetDeviceId },
-  } = devicesToMerge
+async function mergeMessages(trknex, sourceDevice, targetDevice) {
+  const sourceDeviceId = sourceDevice.id
+  const targetDeviceId = targetDevice.id
 
   const messagesToMergeFilter = qb =>
     qb
@@ -184,13 +186,9 @@ async function mergeMessages(devicesToMerge, trknex) {
       )
 
   await trknex('AlertMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-
   await trknex('EmailMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-
   await trknex('PushNotificationMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-
   await trknex('SmsMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-
   await trknex('WebhookMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
 }
 

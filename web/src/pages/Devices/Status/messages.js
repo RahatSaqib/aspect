@@ -6,6 +6,14 @@ const messages = {
   ...deviceApprovalMessages,
   ...commonDefinitions,
   ...defineMessages({
+    devicesMergedSuccessfully: {
+      id: 'pages.DeviceList.devicesMergedSuccessfully',
+      defaultMessage: 'Devices merged successfully.',
+    },
+    devicesMergeFailed: {
+      id: 'pages.DeviceList.devicesMergeFailed',
+      defaultMessage: 'Failed to merge devices.',
+    },
     button_Merge: {
       id: 'pages.DeviceList.merge',
       defaultMessage: 'Merge',
@@ -15,15 +23,15 @@ const messages = {
       defaultMessage: `<p>Select as many devices as you want to merge, select the target device and click the Merge button.</p>
         <p><strong>The devices should be of the same Site and Device Type, and also source devices have to be offline for more than 24 Hs.<strong></p>`,
     },
-    mergeDevicesConfirmationTitle: {
-      id: 'pages.DeviceList.mergeDevicesConfirmationTitle',
+    mergeDevicesConfirmationDescription: {
+      id: 'pages.DeviceList.mergeDevicesConfirmationDescription',
       defaultMessage: `<p>This process will perform the following actions:</P>
       <p><br/>
         <ul>
-        <li>• Results not repeated between devices will moved to target device.</li>
-        <li>• Issues and Notifications from duplicated results will be moved to target results.</li>
-        <li>• Device issues not related to results, like Device Offline, will be moved to target device.</li>
-        <li>• Source devices will be deleted from Aspect.</li>
+        <li>Results not repeated between devices will moved to target device.</li>
+        <li>Issues and Notifications from duplicated results will be moved to target results.</li>
+        <li>Device issues not related to results, like Device Offline, will be moved to target device.</li>
+        <li>Source devices will be deleted from Aspect.</li>
         <ul>
       </p>
       <br/>

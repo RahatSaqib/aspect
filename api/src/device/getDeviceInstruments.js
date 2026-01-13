@@ -21,10 +21,10 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
         )
         .as('m'),
       function () {
-        this.on('m.deviceId', 'd.id')
+        this.on('m.deviceId', 'd.id').andOn('m.instrumentSerial', 'i.serial')
       }
     )
-    .groupBy('d.id')
+    .groupBy('d.id', 'i.serial')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',

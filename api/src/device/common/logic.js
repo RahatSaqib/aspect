@@ -10,7 +10,6 @@ const {
   deleteDeviceFromDeviceMaintenance,
   deleteDeviceFromDeviceApprovalLog,
   deleteDeviceFromDeviceApiRaw,
-  deleteDeviceFromDeviceApiKey,
   deleteDeviceFromDeviceTag,
   deleteDeviceFromFactTables,
   deleteDeviceSiteHistory,
@@ -18,7 +17,6 @@ const {
 } = require('./db')
 
 async function deleteDevice(deviceId, trknex) {
-  await deleteDeviceFromDeviceApiKey(deviceId, trknex)
   await deleteNotifications(deviceId, trknex)
   await deleteIssues(deviceId, trknex)
   await deleteDeviceLog(deviceId, trknex)

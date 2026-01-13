@@ -471,10 +471,6 @@ async function deleteDeviceFromDeviceApiRaw(deviceId, trknex) {
     .del()
 }
 
-async function deleteDeviceFromDeviceApiKey(deviceId, trknex) {
-  await trknex('DeviceApiKey').where('deviceId', deviceId).del()
-}
-
 async function deleteDeviceFromDeviceTag(deviceId, trknex) {
   await trknex('DeviceTag').where('deviceId', deviceId).del()
 }
@@ -832,7 +828,6 @@ module.exports = {
   deleteDeviceFromDeviceMaintenance,
   deleteDeviceFromDeviceApprovalLog,
   deleteDeviceFromDeviceApiRaw,
-  deleteDeviceFromDeviceApiKey,
   deleteDeviceFromDeviceTag,
   deleteDeviceFromFactTables,
   deleteDeviceSiteHistory,
