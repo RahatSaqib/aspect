@@ -3,6 +3,7 @@ import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Button, Checkbox, CircularProgress, Collapse, IconButton } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
+import IconProvider from '../../../../components/IconProvider'
 import useCandidateInstruments from '../../../../hooks/device/useCandidateInstruments'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import styles from '../styles.module.css'
@@ -83,13 +84,23 @@ const CandidateInstruments = ({ deviceId, disabled = false }) => {
         </IconButton>
         <AspectTooltip
           title={formatMessage(messages.geneXpertInstrumentsTooltip)}
-          showHelpIcon
+          showHelpIcon={false}
           showPointerCursor={false}
           toolTipContainerClass={styles.inline__tooltip}
           iconClass={styles.deviceSummary__helpIcon}
         >
-          <span style={{ fontSize: '0.875rem', color: 'var(--aspect-color-grey-2)', fontWeight: 500 }}>
+          <span
+            style={{
+              fontSize: '0.875rem',
+              color: 'var(--aspect-color-grey-2)',
+              fontWeight: 500,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
             {formatMessage(messages.otherInstrumentsDetected, { count: data.length })}
+            <IconProvider icon="FaExclamationCircle" style={{ marginLeft: '6px' }} />
           </span>
         </AspectTooltip>
       </div>
@@ -147,7 +158,7 @@ const CandidateInstruments = ({ deviceId, disabled = false }) => {
           <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '8px' }}>
             <Button
               variant="contained"
-              color="success"
+              color="primary"
               onClick={handleAddToDeviceClick}
               disabled={disabled || selectedInstruments.size === 0}
             >

@@ -5,6 +5,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 
 function getCandidateInstrumentsData(deviceId, dataConstraints) {
   const query = knex('Device as d')
+    .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
     .join('Site as s', 'd.siteId', 's.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin('Instrument as i', function () {
@@ -73,9 +74,12 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
       })
     })
     .where(function () {
-      // Same deviceApiKey as source device
-      this.whereIn('d.deviceApiKey', function () {
-        this.select('deviceApiKey').from('Device').where('id', deviceId).whereNotNull('deviceApiKey')
+      // Same token as deviceApiKey as source device
+      this.whereIn('dak.token', function () {
+        this.select('token')
+          .from('Device as d')
+          .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
+          .where('d.id', deviceId)
       })
     })
     .whereIn('da.token', ['approved', 'pendingDeployment'])
@@ -104,9 +108,10 @@ async function getCandidateInstruments({ params, auth }) {
 
   // Verify source device exists and get its info
   const sourceDevice = await knex('Device as d')
+    .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
     .join('Site as s', 'd.siteId', 's.id')
     .where('d.id', deviceId)
-    .select('d.id', 'd.siteId', 'd.deviceApiKey')
+    .select('d.id', 'd.siteId', 'dak.token as deviceApiKey')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
