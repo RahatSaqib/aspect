@@ -3406,19 +3406,6 @@ async function seed(knex) {
       routerIds.push(routerId)
     })
 
-    // ... and 1-3 sims for some routers
-    const sims = _.map(_.range(0, routerNumber, 2), i => {
-      const routerId = routerIds[i]
-      return {
-        ...auditFields,
-        deviceId: routerId,
-        provider: i % 3 === 0 ? 'Glo' : 'Vodafone',
-        serial: `SRL-${routerId}`,
-        number: `+1 413 123 45${routerId}`,
-      }
-    })
-    await knex('DeviceSim').insert(sims)
-
     // insert GeneXpert devices
     const devicesGeneXpert = []
     await Promise.each(_.range(deviceNumber), async i => {

@@ -11,7 +11,6 @@ const {
   deleteDeviceFromDeviceApprovalLog,
   deleteDeviceFromDeviceApiRaw,
   deleteDeviceFromDeviceApiKey,
-  deleteDeviceFromDeviceSim,
   deleteDeviceFromDeviceTag,
   deleteDeviceFromFactTables,
   deleteDeviceSiteHistory,
@@ -40,7 +39,6 @@ async function deleteDevice(deviceId, trknex) {
   await deleteDeviceFromDeviceMaintenance(deviceId, trknex)
   await deleteDeviceFromDeviceApprovalLog(deviceId, trknex)
   await deleteDeviceFromDeviceApiRaw(deviceId, trknex)
-  await deleteDeviceFromDeviceSim(deviceId, trknex)
   await deleteDeviceFromDeviceTag(deviceId, trknex)
   await deleteDeviceFromFactTables(deviceId, trknex)
   await deleteDeviceSiteHistory(deviceId, trknex)
