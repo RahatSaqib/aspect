@@ -209,7 +209,7 @@ const DeviceDetailProfile = ({
     <div>
       <section className={`${styles.Section} ${styles.Section__first}`}>
         <Card className={styles.Section__Content}>
-          <div>
+          <div className={styles.summaryGrid}>
             <Summary
               title={formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
