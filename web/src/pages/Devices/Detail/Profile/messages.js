@@ -257,6 +257,14 @@ const messages = {
       defaultMessage:
         'GeneXpert 16-module devices report themselves as four separate 4-module instruments. Aspect creates one device per instrument. You can configure the correct device composition here.',
     },
+    instrumentsTransferredSuccessfully: {
+      id: 'pages.DeviceDetailProfile.instrumentsTransferredSuccessfully',
+      defaultMessage: 'Instruments transferred successfully',
+    },
+    instrumentsTransferFailed: {
+      id: 'pages.DeviceDetailProfile.instrumentsTransferFailed',
+      defaultMessage: 'Failed to transfer instruments',
+    },
   }),
 }
 

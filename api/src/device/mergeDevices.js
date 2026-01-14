@@ -1,10 +1,11 @@
 const Boom = require('@hapi/boom')
 const { knex, transact } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints } = require('../auth/constraints')
 
 const { deleteDevice } = require('./common/logic')
 const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('../fact/actions')
 const { getUser } = require('../auth/service')
+const { getDevicesIdsCheckingConstraints } = require('./common/db')
 
 async function mergeDevices({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
@@ -109,14 +110,6 @@ async function getSourceDevices(sourceDevicesIds) {
 
 async function getTargetDevice(targetDeviceId) {
   return knex('Device').where('id', targetDeviceId).first('id', 'siteId', 'deviceTypeId', 'deviceApiKeyId')
-}
-
-async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) {
-  return knex('Device as d')
-    .whereIn('d.id', allDevicesIds)
-    .join('Site as s', 'd.siteId', 's.id')
-    .modify(addConstraints, dataConstraints, { site: 's' })
-    .select('d.id')
 }
 
 // Merge instruments from source to target device

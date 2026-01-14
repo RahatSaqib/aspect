@@ -30,8 +30,11 @@ const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial }
 const { deviceReport } = require('./serviceReports/deviceReport')
 const getMtbErrorGraph = require('./getErrorGraph')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
+
 const { getDeviceInstruments } = require('./getDeviceInstruments')
 const { getCandidateInstruments } = require('./getCandidateInstruments')
+
+const { transferInstruments } = require('./transferInstruments')
 
 const routes = [
   {
@@ -672,6 +675,25 @@ const routes = [
         payload: {
           sourceDevicesIds: Joi.array().items(Joi.number()).description('Source devices Ids').required(),
           targetDeviceId: Joi.number().description('Target device Id').required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/transfer-instruments',
+    handler: asyncHandler(transferInstruments),
+    config: {
+      auth: { scope: ['device:admin'] },
+      description: 'Transfer instruments to a target device',
+      notes: 'Moves instruments by serial number to the specified target device.',
+      validate: {
+        payload: {
+          sourceInstrumentSerials: Joi.array()
+            .items(Joi.string())
+            .description('Source instrument serial numbers')
+            .required(),
+          targetDeviceId: Joi.number().description('Target device ID').required(),
         },
       },
     },

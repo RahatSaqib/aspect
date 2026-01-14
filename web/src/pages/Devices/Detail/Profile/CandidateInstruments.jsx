@@ -3,8 +3,10 @@ import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Button, Checkbox, CircularProgress, Collapse, IconButton } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
+import { toast } from 'react-toastify'
 import IconProvider from '../../../../components/IconProvider'
 import useCandidateInstruments from '../../../../hooks/device/useCandidateInstruments'
+import useTransferInstruments from '../../../../hooks/device/useTransferInstruments'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import styles from '../styles.module.css'
 import GeneXpertModulesNames from './GeneXpertModulesNames'
@@ -12,7 +14,7 @@ import messages from './messages'
 
 const CandidateInstruments = ({ deviceId, disabled = false }) => {
   const { formatMessage } = useIntl()
-  const { data = [], isLoading } = useCandidateInstruments(deviceId)
+  const { data = [], isLoading, refetch } = useCandidateInstruments(deviceId)
   const [selectedInstruments, setSelectedInstruments] = useState(new Set())
   const [expanded, setExpanded] = useState(false)
 
@@ -31,16 +33,22 @@ const CandidateInstruments = ({ deviceId, disabled = false }) => {
     return selectedInstruments.has(`${deviceId}-${instrumentSerial}`)
   }
 
+  const { mutate: transferInstruments } = useTransferInstruments()
+
   const handleAddToDeviceClick = () => {
-    const selectedInstrumentIds = Array.from(selectedInstruments).map(key => {
-      const [instrumentDeviceId] = key.split('-')
-      return parseInt(instrumentDeviceId, 10)
-    })
-
-    // eslint-disable-next-line no-alert
-    alert(`Current deviceId: ${deviceId}\nSelected instrumentIds: [${selectedInstrumentIds.join(', ')}]`)
-
-    // TODO: Add action here
+    const selectedInstrumentSerials = Array.from(selectedInstruments).map(key => key.split('-')[1])
+    transferInstruments(
+      { sourceInstrumentSerials: selectedInstrumentSerials, targetDeviceId: deviceId },
+      {
+        onSuccess: () => {
+          refetch()
+          toast.success(formatMessage(messages.instrumentsTransferredSuccessfully))
+        },
+        onError: () => {
+          toast.error(formatMessage(messages.instrumentsTransferFailed))
+        },
+      }
+    )
   }
 
   if (isLoading) {

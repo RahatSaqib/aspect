@@ -810,6 +810,14 @@ async function getUnusedModulesReportData(dataConstraints, query) {
     })
 }
 
+async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) {
+  return knex('Device as d')
+    .whereIn('d.id', allDevicesIds)
+    .join('Site as s', 'd.siteId', 's.id')
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .select('d.id')
+}
+
 module.exports = {
   getDeviceByDeviceId,
   getDeviceWorkload,
@@ -841,4 +849,5 @@ module.exports = {
   getDeviceByIdBaseQuery,
   getUnusedModulesReportData,
   getDeviceInfo,
+  getDevicesIdsCheckingConstraints,
 }
