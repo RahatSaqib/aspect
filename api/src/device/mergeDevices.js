@@ -29,7 +29,7 @@ async function mergeDevice(trknex, sourceDevice, targetDevice, userId) {
   await mergeDeviceLevelIssues(trknex, sourceDevice, targetDevice)
   await mergeNonRepeatedResults(trknex, sourceDevice, targetDevice)
   await mergeMessages(trknex, sourceDevice, targetDevice)
-  await mergeInstruments(trknex, sourceDevice, targetDevice)
+  await mergeInstruments(trknex, sourceDevice, targetDevice, userId)
 
   // Revoke DeviceApiKey if not used by target device
   if (sourceDevice.deviceApiKeyId && sourceDevice.deviceApiKeyId !== targetDevice.deviceApiKeyId) {
@@ -120,9 +120,11 @@ async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) 
 }
 
 // Merge instruments from source to target device
-async function mergeInstruments(trknex, sourceDevice, targetDevice) {
+async function mergeInstruments(trknex, sourceDevice, targetDevice, userId) {
   // Move all instruments from the source device to the target device
-  await trknex('Instrument').where('deviceId', sourceDevice.id).update({ deviceId: targetDevice.id })
+  await trknex('Instrument')
+    .where('deviceId', sourceDevice.id)
+    .update({ deviceId: targetDevice.id, updatedOn: new Date(), updatedBy: userId })
 }
 
 async function mergeIssuesFromDuplicatedResults(trknex, sourceDevice, targetDevice) {
