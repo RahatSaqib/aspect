@@ -5,7 +5,7 @@ const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('..
 const { getUser } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
 const { getDevicesIdsCheckingConstraints } = require('../common/db')
-const { executeMergeDevices: mergeDevice } = require('./deviceCompositionService')
+const { executeMergeDevices: mergeDevice } = require('./logic')
 
 async function transferInstruments({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
