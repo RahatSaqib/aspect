@@ -129,12 +129,12 @@ async function getCandidateInstruments({ params, auth }) {
   // filling in any missing modules with null for lastResultDate.
   const instruments = instrumentRows.map(instrument => {
     const modulesData = instrument.modules ? JSON.parse(instrument.modules) : []
-    const mostRecentModule = _.maxBy(modulesData, m => m.lastResultDate || '')
+    const mostRecentModule = _.maxBy(modulesData, m => m?.lastResultDate || '')
     const moduleNameLetter = mostRecentModule ? mostRecentModule.moduleName.charAt(0) : 'B'
 
     const modules = [1, 2, 3, 4].map(moduleNumber => {
       const moduleName = `${moduleNameLetter}${moduleNumber}`
-      const moduleInfo = modulesData.find(m => m.moduleName === moduleName)
+      const moduleInfo = modulesData.find(m => m?.moduleName === moduleName)
       return {
         moduleName,
         lastResultDate: moduleInfo ? moduleInfo.lastResultDate : null,

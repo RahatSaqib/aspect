@@ -11,7 +11,7 @@ const {
   deviceMaintenanceStatus,
 } = require('./service')
 const { getDevicePerformance } = require('./getDevicePerformance')
-const { mergeDevices } = require('./mergeDevices')
+const { mergeDevices } = require('./deviceComposition/mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
 const { exportDeviceOperationLogReport, getDeviceCoverageReport } = require('./serviceReports')
@@ -34,7 +34,7 @@ const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
 const { getDeviceInstruments } = require('./getDeviceInstruments')
 const { getCandidateInstruments } = require('./getCandidateInstruments')
 
-const { transferInstruments } = require('./transferInstruments')
+const { transferInstruments } = require('./deviceComposition/transferInstruments')
 
 const routes = [
   {
