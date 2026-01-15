@@ -35,6 +35,7 @@ const { getDeviceInstruments } = require('./getDeviceInstruments')
 const { getCandidateInstruments } = require('./getCandidateInstruments')
 
 const { transferInstruments } = require('./deviceComposition/transferInstruments')
+const { transferInstrumentToNewDevice } = require('./deviceComposition/transferInstrumentToNewDevice')
 
 const routes = [
   {
@@ -166,6 +167,7 @@ const routes = [
               instruments: Joi.array()
                 .items(
                   Joi.object().keys({
+                    instrumentId: Joi.number().required().description('Instrument ID'),
                     instrumentSerial: Joi.number().required().description('Instrument serial number'),
                     modules: Joi.array()
                       .items(
@@ -695,6 +697,30 @@ const routes = [
             .required(),
           targetDeviceId: Joi.number().description('Target device ID').required(),
         },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/transfer-instrument-to-new-device',
+    handler: asyncHandler(transferInstrumentToNewDevice),
+    config: {
+      auth: { scope: ['device:edit'] },
+      description: 'Transfer instrument to a new device',
+      notes: 'Creates a new device and transfers the instrument to it',
+      tags: ['api', 'device'],
+      validate: {
+        payload: Joi.object({
+          instrumentSerial: Joi.string().required(),
+          name: Joi.string().required(),
+          shortName: Joi.string().required(),
+          siteId: Joi.number().required(),
+        }),
+      },
+      response: {
+        schema: Joi.object({
+          ok: Joi.bool().required(),
+        }),
       },
     },
   },

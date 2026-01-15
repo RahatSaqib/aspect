@@ -265,6 +265,46 @@ const messages = {
       id: 'pages.DeviceDetailProfile.instrumentsTransferFailed',
       defaultMessage: 'Failed to transfer instruments',
     },
+    moveToExistingDevice: {
+      id: 'pages.DeviceDetailProfile.moveToExistingDevice',
+      defaultMessage: 'Move to an existing Device',
+    },
+    moveToNewDevice: {
+      id: 'pages.DeviceDetailProfile.moveToNewDevice',
+      defaultMessage: 'Move to a new Device',
+    },
+    transferSuccess: {
+      id: 'pages.DeviceDetailProfile.transferSuccess',
+      defaultMessage: 'Instrument transferred successfully!',
+    },
+    transferError: {
+      id: 'pages.DeviceDetailProfile.transferError',
+      defaultMessage: 'Error transferring instrument.',
+    },
+    transferLoading: {
+      id: 'pages.DeviceDetailProfile.transferLoading',
+      defaultMessage: 'Transferring...',
+    },
+    moveToNewDeviceTitle: {
+      id: 'pages.DeviceDetailProfile.moveToNewDeviceTitle',
+      defaultMessage: 'Move to New Device',
+    },
+    cancel: {
+      id: 'pages.DeviceDetailProfile.cancel',
+      defaultMessage: 'Cancel',
+    },
+    deviceNameAlreadyExists: {
+      id: 'pages.DeviceDetailProfile.deviceNameAlreadyExists',
+      defaultMessage: 'Device with this name already exists',
+    },
+    deviceShortNameAlreadyExists: {
+      id: 'pages.DeviceDetailProfile.deviceShortNameAlreadyExists',
+      defaultMessage: 'Device with this short name already exists',
+    },
+    sitePermissionDenied: {
+      id: 'pages.DeviceDetailProfile.sitePermissionDenied',
+      defaultMessage: 'You do not have permission to create a device in this site',
+    },
   }),
 }
 
