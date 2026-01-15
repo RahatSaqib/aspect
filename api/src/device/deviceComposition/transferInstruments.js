@@ -15,10 +15,10 @@ async function transferInstruments({ payload, plugins: { messageContext }, auth 
 
   const targetDevice = await getTargetDevice(targetDeviceId)
   const sourceInstruments = await getSourceInstruments(uniqueInstrumentSerials)
-
-  await validate(sourceInstruments, targetDevice, auth.credentials)
-
   const sourceDeviceIds = getUniqueDeviceIds(sourceInstruments)
+
+  await validate(sourceInstruments, sourceDeviceIds, targetDevice, auth.credentials)
+
   const sourceDeviceInstrumentCounts = await getDeviceInstrumentCounts(sourceDeviceIds)
   const instrumentsByDevice = groupInstrumentSerialsByDevice(sourceInstruments)
   const devicesToFullyMerge = selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts)
@@ -213,13 +213,13 @@ async function recalculateDeviceFactTables(messageContext, sourceDeviceIds, targ
   }
 }
 
-async function validate(sourceInstruments, targetDevice, credentials) {
+async function validate(sourceInstruments, sourceDeviceIds, targetDevice, credentials) {
   validateSourceInstruments(sourceInstruments)
   validateTargetDeviceExists(targetDevice)
   validateDifferentDevices(sourceInstruments, targetDevice)
   validateTargetDeviceIsGeneXpert(targetDevice)
   await validateSameSite(sourceInstruments, targetDevice)
-  await validatePersmissions(sourceInstruments, targetDevice, credentials)
+  await validatePersmissions(sourceDeviceIds, targetDevice, credentials)
 }
 
 function validateDifferentDevices(sourceInstruments, targetDevice) {
@@ -272,10 +272,10 @@ async function validateSameSite(sourceInstruments, targetDevice) {
   }
 }
 
-async function validatePersmissions(sourceInstruments, targetDevice, credentials) {
+async function validatePersmissions(sourceDeviceIds, targetDevice, credentials) {
   const dataConstraints = await getConstraints(credentials)
 
-  const allDevicesIds = [...sourceInstruments.map(sourceInstrument => sourceInstrument.deviceId), targetDevice.id]
+  const allDevicesIds = [...sourceDeviceIds, targetDevice.id]
 
   const devices = await getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints)
 
