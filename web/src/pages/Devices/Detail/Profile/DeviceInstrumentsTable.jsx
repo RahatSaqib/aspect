@@ -1,6 +1,6 @@
-import React from 'react'
 import { Card, CircularProgress, Table, TableBody, TableContainer } from '@mui/material'
 import PropTypes from 'prop-types'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import useDeviceInstruments from '../../../../hooks/device/useDeviceInstruments'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../../oldComponents/shared/tableBody'

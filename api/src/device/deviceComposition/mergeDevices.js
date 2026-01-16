@@ -5,7 +5,7 @@ const { getConstraints } = require('../../auth/constraints')
 const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('../../fact/actions')
 const { getUser } = require('../../auth/service')
 const { getDevicesIdsCheckingConstraints } = require('../common/db')
-const { executeMergeDevices } = require('./logic')
+const { executeMergeDevices } = require('./mergeDevicesLogic')
 
 async function mergeDevices({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)

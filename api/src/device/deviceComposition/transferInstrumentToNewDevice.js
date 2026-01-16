@@ -2,6 +2,7 @@ const Boom = require('@hapi/boom')
 const { knex, transact } = require('../../db')
 const { getUser } = require('../../auth/service')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
+const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
 
 async function transferInstrumentToNewDevice({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
@@ -11,9 +12,12 @@ async function transferInstrumentToNewDevice({ payload, plugins: { messageContex
   await transact(async trknex => {
     const newDeviceId = await createNewDevice(trknex, sourceDevice, { name, shortName, siteId }, userId)
 
-    // await transferInstrumentToNewDevice(trknex, instrumentSerial, newDeviceId, userId)
-
-    // TODO: Recalculate fact tables if needed
+    await transferDeviceInstruments(trknex, {
+      sourceDeviceId: sourceDevice.id,
+      targetDeviceId: newDeviceId,
+      instrumentSerials: [instrumentSerial],
+      userId,
+    })
   })
 
   return { ok: true }
@@ -64,7 +68,7 @@ async function getSourceDevice(instrumentSerial) {
   return knex('Device as d')
     .join('Instrument as i', 'i.deviceId', 'd.id')
     .where('i.serial', instrumentSerial)
-    .first('d.partnerId', 'd.deviceTypeId', 'd.deviceApprovalId', 'd.culture', 'd.timezone')
+    .first('d.id', 'd.partnerId', 'd.deviceTypeId', 'd.deviceApprovalId', 'd.culture', 'd.timezone')
 }
 
 async function createNewDevice(trknex, sourceDevice, { name, shortName, siteId }, userId) {

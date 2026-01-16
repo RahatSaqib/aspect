@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react'
-import { TextField, DialogActions } from '@mui/material'
-import { Formik, Form } from 'formik'
+import { DialogActions, TextField } from '@mui/material'
+import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
@@ -55,6 +55,8 @@ const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentSerial }) =>
                 onConfirm()
               },
               onError: error => {
+                console.log('\x1b[1;36m', '🚀 ➜ error:', JSON.stringify(error))
+                console.log(error)
                 setSubmitError(true)
                 if (error?.data?.errorKeyCode === 'deviceNameAlreadyExists') {
                   setFieldError('deviceName', formatMessage(messages.deviceNameAlreadyExists))
