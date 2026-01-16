@@ -14,11 +14,19 @@ exports.up = async function (knex) {
   await knex.schema.alterTable('Device', table => {
     table.integer('deviceApiKeyId').unsigned().nullable().references('id').inTable('DeviceApiKey')
   })
+
+  await knex.schema.alterTable('Result', table => {
+    table.integer('deviceApiKeyId').unsigned().nullable().references('id').inTable('DeviceApiKey')
+  })
 }
 
 exports.down = async function (knex) {
   await knex.schema.dropTable('Instrument')
   await knex.schema.alterTable('Device', table => {
+    table.dropForeign('deviceApiKeyId')
+    table.dropColumn('deviceApiKeyId')
+  })
+  await knex.schema.alterTable('Result', table => {
     table.dropForeign('deviceApiKeyId')
     table.dropColumn('deviceApiKeyId')
   })

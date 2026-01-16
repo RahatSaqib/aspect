@@ -10,7 +10,13 @@ async function transferInstrumentToNewDevice({ payload, plugins: { messageContex
   const sourceDevice = await getSourceDevice(instrumentSerial)
   await validate(instrumentSerial, name, shortName, siteId, auth.credentials)
   await transact(async trknex => {
-    const newDeviceId = await createNewDevice(trknex, sourceDevice, { name, shortName, siteId }, userId)
+    const newDeviceId = await createNewDevice(
+      trknex,
+      sourceDevice,
+      instrumentSerial,
+      { name, shortName, siteId },
+      userId
+    )
 
     await transferDeviceInstruments(trknex, {
       sourceDeviceId: sourceDevice.id,
@@ -71,8 +77,11 @@ async function getSourceDevice(instrumentSerial) {
     .first('d.id', 'd.partnerId', 'd.deviceTypeId', 'd.deviceApprovalId', 'd.culture', 'd.timezone')
 }
 
-async function createNewDevice(trknex, sourceDevice, { name, shortName, siteId }, userId) {
+async function createNewDevice(trknex, sourceDevice, instrumentSerial, { name, shortName, siteId }, userId) {
   const now = new Date()
+
+  // Get last used deviceApiKeyId for this instrumentSerial, or use sourceDevice's deviceApiKeyId in case there is none results yet.
+  const deviceApiKeyId = (await getLastDeviceApiKey(instrumentSerial)) || sourceDevice.deviceApiKeyId
 
   const [deviceId] = await trknex('Device').insert({
     partnerId: sourceDevice.partnerId,
@@ -84,6 +93,7 @@ async function createNewDevice(trknex, sourceDevice, { name, shortName, siteId }
     shortName,
     culture: sourceDevice.culture,
     timezone: sourceDevice.timezone,
+    deviceApiKeyId,
     createdOn: now,
     createdBy: userId,
     updatedOn: now,
@@ -99,6 +109,16 @@ async function createNewDevice(trknex, sourceDevice, { name, shortName, siteId }
   })
 
   return deviceId
+}
+
+const getLastDeviceApiKey = async instrumentSerial => {
+  const { deviceApiKeyId } =
+    (await knex('Result')
+      .where('instrumentSerial', instrumentSerial)
+      .orderBy('endedOn', 'desc')
+      .first('deviceApiKeyId')) || {}
+
+  return deviceApiKeyId
 }
 
 module.exports = { transferInstrumentToNewDevice }

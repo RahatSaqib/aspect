@@ -108,7 +108,7 @@ async function getCandidateInstruments({ params, auth }) {
 
   // Verify source device exists and get its info
   const sourceDevice = await knex('Device as d')
-    .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
+    .leftJoin('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
     .join('Site as s', 'd.siteId', 's.id')
     .where('d.id', deviceId)
     .select('d.id', 'd.siteId', 'dak.token as deviceApiKey')
@@ -122,6 +122,16 @@ async function getCandidateInstruments({ params, auth }) {
     return Boom.notFound('Device not found')
   }
 
+  if (!sourceDevice.deviceApiKey) {
+    return {
+      ok: true,
+      data: {
+        deviceId,
+        instruments: [],
+      },
+    }
+  }
+
   // Get candidate instruments data with constraints applied
   const instrumentRows = await getCandidateInstrumentsData(deviceId, dataConstraints)
 
@@ -130,7 +140,7 @@ async function getCandidateInstruments({ params, auth }) {
   const instruments = instrumentRows.map(instrument => {
     const modulesData = instrument.modules ? JSON.parse(instrument.modules) : []
     const mostRecentModule = _.maxBy(modulesData, m => m?.lastResultDate || '')
-    const moduleNameLetter = mostRecentModule ? mostRecentModule.moduleName.charAt(0) : 'B'
+    const moduleNameLetter = mostRecentModule ? mostRecentModule.moduleName.charAt(0) : ''
 
     const modules = [1, 2, 3, 4].map(moduleNumber => {
       const moduleName = `${moduleNameLetter}${moduleNumber}`
