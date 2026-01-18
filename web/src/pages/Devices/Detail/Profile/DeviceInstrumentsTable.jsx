@@ -1,7 +1,8 @@
+import React from 'react'
 import { Card, CircularProgress, Table, TableBody, TableContainer } from '@mui/material'
 import PropTypes from 'prop-types'
-import React from 'react'
 import { useIntl } from 'react-intl'
+import { useQueryClient } from 'react-query'
 import useDeviceInstruments from '../../../../hooks/device/useDeviceInstruments'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../../oldComponents/shared/tableHead'
@@ -30,7 +31,8 @@ const getColumns = formatMessage => [
 
 const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
   const { formatMessage } = useIntl()
-  const { data = [], isLoading } = useDeviceInstruments(deviceId)
+  const queryClient = useQueryClient()
+  const { data = [], isLoading, refetch } = useDeviceInstruments(deviceId)
   const columns = getColumns(formatMessage)
 
   return (
@@ -57,15 +59,17 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                     <TableCell align="right">
                       <InstrumentContextualMenu
                         instrument={instrument}
-                        onMoveToExisting={inst => {
+                        onMoveToExisting={async inst => {
                           // TODO: Implement move to existing device logic
                           // eslint-disable-next-line no-alert
                           alert(`Move instrument ${inst.instrumentSerial} to an existing device`)
+                          // After moving instrument, refresh the instrument list
+                          await refetch()
+                          queryClient.invalidateQueries(['device-instruments', deviceId])
                         }}
-                        onMoveToNew={inst => {
-                          // TODO: Implement move to new device logic
-                          // eslint-disable-next-line no-alert
-                          alert(`Move instrument ${inst.instrumentSerial} to a new device`)
+                        onMoveToNew={async () => {
+                          await refetch()
+                          queryClient.invalidateQueries(['device-instruments', deviceId])
                         }}
                       />
                     </TableCell>
