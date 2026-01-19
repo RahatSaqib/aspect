@@ -58,6 +58,7 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                     </TableCell>
                     <TableCell align="right">
                       <InstrumentContextualMenu
+                        deviceId={deviceId}
                         instrument={instrument}
                         onMoveToExisting={async inst => {
                           // TODO: Implement move to existing device logic

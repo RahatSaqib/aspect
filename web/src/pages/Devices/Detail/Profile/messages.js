@@ -305,6 +305,14 @@ const messages = {
       id: 'pages.DeviceDetailProfile.sitePermissionDenied',
       defaultMessage: 'You do not have permission to create a device in this site',
     },
+    moveToExistingDeviceTitle: {
+      id: 'pages.DeviceDetailProfile.moveToExistingDeviceTitle',
+      defaultMessage: 'Move to Existing Device',
+    },
+    device: {
+      id: 'pages.DeviceDetailProfile.device',
+      defaultMessage: 'Device',
+    },
   }),
 }
 
