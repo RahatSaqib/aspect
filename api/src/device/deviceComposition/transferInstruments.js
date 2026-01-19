@@ -82,7 +82,6 @@ function selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCo
   return devicesToFullyMerge
 }
 
-
 async function getTargetDevice(targetDeviceId) {
   return knex('Device as d').where('d.id', targetDeviceId).join('DeviceType as dt', 'd.deviceTypeId', 'dt.id').first({
     id: 'd.id',
@@ -201,29 +200,12 @@ async function validatePersmissions(sourceDeviceIds, targetDevice, credentials) 
 }
 
 async function getDeviceSiteIds(deviceIds) {
-  const [activeDeployments, lastEndedDeployments] = await Promise.all([
-    knex('Deployment').whereIn('deviceId', deviceIds).whereNull('end').select('deviceId', 'siteId'),
-    knex('Deployment as d')
-      .join(
-        knex('Deployment')
-          .whereIn('deviceId', deviceIds)
-          .whereNotNull('end')
-          .select('deviceId')
-          .max('end as end')
-          .groupBy('deviceId')
-          .as('lastDeployment'),
-        function () {
-          this.on('d.deviceId', 'lastDeployment.deviceId').andOn('d.end', 'lastDeployment.end')
-        }
-      )
-      .select('d.deviceId', 'd.siteId'),
-  ])
+  const activeDeployments = await knex('Deployment')
+    .whereIn('deviceId', deviceIds)
+    .whereNull('end')
+    .select('deviceId', 'siteId')
 
   const deviceSiteIds = new Map()
-
-  for (const deployment of lastEndedDeployments) {
-    deviceSiteIds.set(deployment.deviceId, deployment.siteId)
-  }
 
   for (const deployment of activeDeployments) {
     deviceSiteIds.set(deployment.deviceId, deployment.siteId)
