@@ -81,7 +81,7 @@ async function createNewDevice(trknex, sourceDevice, instrumentSerial, { name, s
   const now = new Date()
 
   // Get last used deviceApiKeyId for this instrumentSerial, or use sourceDevice's deviceApiKeyId in case there is none results yet.
-  const deviceApiKeyId = (await getLastDeviceApiKey(instrumentSerial)) || sourceDevice.deviceApiKeyId
+  const deviceApiKeyId = (await getLastDeviceApiKey(sourceDevice.id, instrumentSerial)) || sourceDevice.deviceApiKeyId
 
   const [deviceId] = await trknex('Device').insert({
     partnerId: sourceDevice.partnerId,
@@ -108,12 +108,23 @@ async function createNewDevice(trknex, sourceDevice, instrumentSerial, { name, s
     createdBy: userId,
   })
 
+  await trknex('Deployment').insert({
+    deviceId,
+    siteId,
+    start: now,
+    createdOn: now,
+    createdBy: userId,
+    updatedOn: now,
+    updatedBy: userId,
+  })
+
   return deviceId
 }
 
-const getLastDeviceApiKey = async instrumentSerial => {
+const getLastDeviceApiKey = async (sourceDeviceId, instrumentSerial) => {
   const { deviceApiKeyId } =
     (await knex('Result')
+      .where('deviceId', sourceDeviceId)
       .where('instrumentSerial', instrumentSerial)
       .orderBy('endedOn', 'desc')
       .first('deviceApiKeyId')) || {}
