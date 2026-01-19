@@ -691,9 +691,14 @@ const routes = [
       notes: 'Moves instruments by serial number to the specified target device.',
       validate: {
         payload: {
-          sourceInstrumentSerials: Joi.array()
-            .items(Joi.string())
-            .description('Source instrument serial numbers')
+          sourceInstrumentsData: Joi.array()
+            .items(
+              Joi.object({
+                deviceId: Joi.number().integer().positive().required(),
+                instrumentSerial: Joi.string().required(),
+              })
+            )
+            .description('Source instrument data with device ID and serial number')
             .required(),
           targetDeviceId: Joi.number().description('Target device ID').required(),
         },

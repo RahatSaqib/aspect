@@ -10,12 +10,10 @@ const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
 
 async function transferInstruments({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
-  const { sourceInstrumentSerials, targetDeviceId } = payload
-
-  const uniqueInstrumentSerials = [...new Set(sourceInstrumentSerials)]
+  const { sourceInstrumentsData, targetDeviceId } = payload
 
   const targetDevice = await getTargetDevice(targetDeviceId)
-  const sourceInstruments = await getSourceInstruments(uniqueInstrumentSerials)
+  const sourceInstruments = await getSourceInstruments(sourceInstrumentsData)
   const sourceDeviceIds = getUniqueDeviceIds(sourceInstruments)
 
   await validate(sourceInstruments, sourceDeviceIds, targetDevice, auth.credentials)
@@ -90,15 +88,27 @@ async function getTargetDevice(targetDeviceId) {
   })
 }
 
-async function getSourceInstruments(sourceInstrumentSerials) {
-  return knex('Instrument as i')
-    .whereIn('i.serial', sourceInstrumentSerials)
+async function getSourceInstruments(sourceInstrumentsData) {
+  if (sourceInstrumentsData.length === 0) {
+    return []
+  }
+
+  const query = knex('Instrument as i')
     .join('Device as d', 'i.deviceId', 'd.id')
+    .where(function () {
+      for (const instrument of sourceInstrumentsData) {
+        this.orWhere(function () {
+          this.where('i.deviceId', instrument.deviceId).andWhere('i.serial', instrument.instrumentSerial)
+        })
+      }
+    })
     .select({
       deviceId: 'd.id',
       serial: 'i.serial',
       deviceApiKeyId: 'd.deviceApiKeyId',
     })
+
+  return query
 }
 
 async function getSourceDevices(sourceDeviceIds) {

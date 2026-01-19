@@ -33,12 +33,20 @@ const CandidateInstruments = ({ deviceId, disabled = false }) => {
     return selectedInstruments.has(`${deviceId}-${instrumentSerial}`)
   }
 
-  const { mutate: transferInstruments } = useTransferInstruments()
+  const { mutate: transferInstrumentsMutation } = useTransferInstruments()
 
   const handleAddToDeviceClick = () => {
-    const selectedInstrumentSerials = Array.from(selectedInstruments).map(key => key.split('-')[1])
-    transferInstruments(
-      { sourceInstrumentSerials: selectedInstrumentSerials, targetDeviceId: deviceId },
+    const selectedInstrumentsData = data
+      .filter(instrument => {
+        const key = `${instrument.deviceId}-${instrument.instrumentSerial}`
+        return selectedInstruments.has(key)
+      })
+      .map(instrument => ({
+        deviceId: instrument.deviceId,
+        instrumentSerial: instrument.instrumentSerial,
+      }))
+    transferInstrumentsMutation(
+      { sourceInstrumentsData: selectedInstrumentsData, targetDeviceId: deviceId },
       {
         onSuccess: () => {
           refetch()

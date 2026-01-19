@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { CANDIDATE_INSTRUMENTS_KEY } from './deviceKeys.js'
 
-const CANDIDATE_INSTRUMENTS_KEY = 'candidate-instruments'
 const CANDIDATE_INSTRUMENTS_ENDPOINT = '/device/:deviceId/candidate-instruments'
 
 const getCandidateInstruments = async deviceId =>

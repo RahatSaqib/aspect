@@ -9,6 +9,8 @@ const DEVICE_RESULT_CATEGORY_GROUP_ENDPOINT = '/device/maintenance-statuses'
 const DEVICE_APPROVAL_TYPE_ENDPOINT = '/device/approval-types'
 const DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT = '/device/transfer-instruments'
 const DEVICE_KEY_TRANSFER_INSTRUMENT_TO_NEW_DEVICE_ENDPOINT = '/device/transfer-instrument-to-new-device'
+const DEVICE_INSTRUMENTS_KEY = 'device-instruments'
+const CANDIDATE_INSTRUMENTS_KEY = 'candidate-instruments'
 
 export {
   DEVICE_KEY,
@@ -21,4 +23,6 @@ export {
   DEVICE_APPROVAL_TYPE_ENDPOINT,
   DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT,
   DEVICE_KEY_TRANSFER_INSTRUMENT_TO_NEW_DEVICE_ENDPOINT,
+  DEVICE_INSTRUMENTS_KEY,
+  CANDIDATE_INSTRUMENTS_KEY,
 }
