@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import {
+  CANDIDATE_INSTRUMENTS_KEY,
+  DEVICE_INSTRUMENTS_KEY,
   DEVICE_KEY,
   DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT,
-  DEVICE_INSTRUMENTS_KEY,
-  CANDIDATE_INSTRUMENTS_KEY,
 } from './deviceKeys.js'
 
 const transferInstruments = async data => {

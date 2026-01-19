@@ -3,6 +3,7 @@ import { Card, CircularProgress, Table, TableBody, TableContainer } from '@mui/m
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
+import { CANDIDATE_INSTRUMENTS_KEY, DEVICE_INSTRUMENTS_KEY } from '../../../../hooks/device/deviceKeys.js'
 import useDeviceInstruments from '../../../../hooks/device/useDeviceInstruments'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../../oldComponents/shared/tableHead'
@@ -70,7 +71,10 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                         }}
                         onMoveToNew={async () => {
                           await refetch()
-                          queryClient.invalidateQueries(['device-instruments', deviceId])
+                          // Invalidate device instruments for current device
+                          queryClient.invalidateQueries([DEVICE_INSTRUMENTS_KEY, deviceId])
+                          // Invalidate candidate instruments for current device
+                          queryClient.invalidateQueries([CANDIDATE_INSTRUMENTS_KEY, deviceId])
                         }}
                       />
                     </TableCell>
