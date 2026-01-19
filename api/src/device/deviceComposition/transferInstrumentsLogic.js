@@ -1,34 +1,30 @@
 const { knex } = require('../../db')
 
-async function transferDeviceInstruments(trknex, { sourceDeviceId, targetDeviceId, instrumentSerials, userId }) {
-  await mergeIssuesFromDuplicatedResultsForInstruments(trknex, sourceDeviceId, targetDeviceId, instrumentSerials)
-  await mergeNonRepeatedResultsForInstruments(trknex, sourceDeviceId, targetDeviceId, instrumentSerials)
-  await mergeDeviceLogsForInstruments(trknex, sourceDeviceId, targetDeviceId, instrumentSerials)
-  await mergeMessagesForInstruments(trknex, sourceDeviceId, targetDeviceId, instrumentSerials)
-  await transferInstrumentSerials(trknex, sourceDeviceId, targetDeviceId, instrumentSerials, userId)
+async function transferDeviceInstruments(trknex, sourceInstrumentIds, targetDeviceId, userId) {
+  await mergeIssuesFromDuplicatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
+  await mergeNonRepeatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
+  await mergeDeviceLogsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
+  await mergeMessagesForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
+  await transferInstrumentIds(trknex, sourceInstrumentIds, targetDeviceId, userId)
 }
 
-async function transferInstrumentSerials(trknex, sourceDeviceId, targetDeviceId, instrumentSerials, userId) {
+async function transferInstrumentIds(trknex, sourceInstrumentIds, targetDeviceId, userId) {
   await trknex('Instrument')
-    .where('deviceId', sourceDeviceId)
-    .whereIn('serial', instrumentSerials)
+    .whereIn('id', sourceInstrumentIds)
     .update({ deviceId: targetDeviceId, updatedOn: new Date(), updatedBy: userId })
 }
 
-async function mergeIssuesFromDuplicatedResultsForInstruments(
-  trknex,
-  sourceDeviceId,
-  targetDeviceId,
-  instrumentSerials
-) {
+async function mergeIssuesFromDuplicatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId) {
   await trknex('Issue as i')
     .update('i.deviceId', targetDeviceId)
     .update('i.resultId', trknex.raw('pivot.targetResultId'))
     .join(
       knex('Result as sr')
+        .join('Instrument as si', qb => {
+          qb.on('si.serial', 'sr.instrumentSerial').andOn('si.deviceId', 'sr.deviceId')
+        })
         .join('Result as tr', 'sr.externalId', 'tr.externalId')
-        .where('sr.deviceId', sourceDeviceId)
-        .whereIn('sr.instrumentSerial', instrumentSerials)
+        .whereIn('si.id', sourceInstrumentIds)
         .where('tr.deviceId', targetDeviceId)
         .select({ sourceResultId: 'sr.id', targetResultId: 'tr.id', externalId: 'sr.externalId' })
         .as('pivot'),
@@ -38,7 +34,7 @@ async function mergeIssuesFromDuplicatedResultsForInstruments(
     .where('i.id', '>', 0)
 }
 
-async function mergeNonRepeatedResultsForInstruments(trknex, sourceDeviceId, targetDeviceId, instrumentSerials) {
+async function mergeNonRepeatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId) {
   const repeatedResultsQuery = trknex(
     trknex('Result')
       .where('deviceID', targetDeviceId)
@@ -48,36 +44,41 @@ async function mergeNonRepeatedResultsForInstruments(trknex, sourceDeviceId, tar
   ).select('t.externalId')
 
   await trknex('Result as sourceResults')
-    .where({ deviceId: sourceDeviceId })
-    .whereIn('sourceResults.instrumentSerial', instrumentSerials)
+    .join('Instrument as i', qb => {
+      qb.on('i.serial', 'sourceResults.instrumentSerial').andOn('i.deviceId', 'sourceResults.deviceId')
+    })
+    .whereIn('i.id', sourceInstrumentIds)
     .whereNotIn('sourceResults.externalId', repeatedResultsQuery)
-    .update('deviceId', targetDeviceId)
+    .update('sourceResults.deviceId', targetDeviceId)
 }
 
-async function mergeDeviceLogsForInstruments(trknex, sourceDeviceId, targetDeviceId, instrumentSerials) {
+async function mergeDeviceLogsForInstruments(trknex, sourceInstrumentIds, targetDeviceId) {
   await trknex('DeviceLog')
-    .where({ deviceId: sourceDeviceId })
     .whereIn(
       'resultId',
       trknex('Result as r')
+        .join('Instrument as i', qb => {
+          qb.on('i.serial', 'r.instrumentSerial').andOn('i.deviceId', 'r.deviceId')
+        })
         .where('r.deviceId', targetDeviceId)
-        .whereIn('r.instrumentSerial', instrumentSerials)
+        .whereIn('i.id', sourceInstrumentIds)
         .select('r.id')
     )
     .update({ deviceId: targetDeviceId })
 }
 
-async function mergeMessagesForInstruments(trknex, sourceDeviceId, targetDeviceId, instrumentSerials) {
+async function mergeMessagesForInstruments(trknex, sourceInstrumentIds, targetDeviceId) {
   const messagesToMergeFilter = qb =>
-    qb
-      .where({ deviceId: sourceDeviceId })
-      .whereIn(
-        'm.resultId',
-        knex('Result as r')
-          .where('r.deviceId', targetDeviceId)
-          .whereIn('r.instrumentSerial', instrumentSerials)
-          .select('id')
-      )
+    qb.whereIn(
+      'm.resultId',
+      knex('Result as r')
+        .join('Instrument as i', qb => {
+          qb.on('i.serial', 'r.instrumentSerial').andOn('i.deviceId', 'r.deviceId')
+        })
+        .where('r.deviceId', targetDeviceId)
+        .whereIn('i.id', sourceInstrumentIds)
+        .select('r.id')
+    )
 
   await trknex('AlertMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
   await trknex('EmailMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)

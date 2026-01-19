@@ -10,16 +10,16 @@ const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
 
 async function transferInstruments({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
-  const { sourceInstrumentsData, targetDeviceId } = payload
+  const { sourceInstrumentsIds, targetDeviceId } = payload
 
   const targetDevice = await getTargetDevice(targetDeviceId)
-  const sourceInstruments = await getSourceInstruments(sourceInstrumentsData)
+  const sourceInstruments = await getSourceInstruments(sourceInstrumentsIds)
   const sourceDeviceIds = getUniqueDeviceIds(sourceInstruments)
 
   await validate(sourceInstruments, sourceDeviceIds, targetDevice, auth.credentials)
 
   const sourceDeviceInstrumentCounts = await getDeviceInstrumentCounts(sourceDeviceIds)
-  const instrumentsByDevice = groupInstrumentSerialsByDevice(sourceInstruments)
+  const instrumentsByDevice = groupInstrumentIdsByDevice(sourceInstruments)
   const devicesToFullyMerge = selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts)
   const devicesToPartiallyTransfer = sourceDeviceIds.filter(deviceId => !devicesToFullyMerge.has(deviceId))
   const sourceDevices = await getSourceDevices(sourceDeviceIds)
@@ -32,12 +32,7 @@ async function transferInstruments({ payload, plugins: { messageContext }, auth 
 
     await Promise.all(
       devicesToPartiallyTransfer.map(deviceId =>
-        transferDeviceInstruments(trknex, {
-          sourceDeviceId: deviceId,
-          targetDeviceId: targetDevice.id,
-          instrumentSerials: instrumentsByDevice.get(deviceId),
-          userId,
-        })
+        transferDeviceInstruments(trknex, instrumentsByDevice.get(deviceId), targetDevice.id, userId)
       )
     )
 
@@ -46,20 +41,20 @@ async function transferInstruments({ payload, plugins: { messageContext }, auth 
 
   await recalculateDeviceFactTables(messageContext, sourceDeviceIds, targetDevice.id, deletedDeviceIds)
 
-  return { ok: true }
+  return { ok: true, deletedDeviceIds }
 }
 
 function getUniqueDeviceIds(sourceInstruments) {
   return [...new Set(sourceInstruments.map(sourceInstrument => sourceInstrument.deviceId))]
 }
 
-function groupInstrumentSerialsByDevice(sourceInstruments) {
+function groupInstrumentIdsByDevice(sourceInstruments) {
   const instrumentsByDevice = new Map()
 
   for (const sourceInstrument of sourceInstruments) {
-    const deviceSerials = instrumentsByDevice.get(sourceInstrument.deviceId) || []
-    deviceSerials.push(sourceInstrument.serial)
-    instrumentsByDevice.set(sourceInstrument.deviceId, deviceSerials)
+    const deviceIds = instrumentsByDevice.get(sourceInstrument.deviceId) || []
+    deviceIds.push(sourceInstrument.id)
+    instrumentsByDevice.set(sourceInstrument.deviceId, deviceIds)
   }
 
   return instrumentsByDevice
@@ -68,11 +63,11 @@ function groupInstrumentSerialsByDevice(sourceInstruments) {
 function selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts) {
   const devicesToFullyMerge = new Set()
 
-  for (const [deviceId, instrumentSerials] of instrumentsByDevice.entries()) {
+  for (const [deviceId, instrumentIds] of instrumentsByDevice.entries()) {
     const totalInstruments = sourceDeviceInstrumentCounts.get(deviceId) || 0
-    const uniqueSerialCount = new Set(instrumentSerials).size
+    const uniqueIdCount = new Set(instrumentIds).size
 
-    if (totalInstruments === uniqueSerialCount) {
+    if (totalInstruments === uniqueIdCount) {
       devicesToFullyMerge.add(deviceId)
     }
   }
@@ -88,22 +83,17 @@ async function getTargetDevice(targetDeviceId) {
   })
 }
 
-async function getSourceInstruments(sourceInstrumentsData) {
-  if (sourceInstrumentsData.length === 0) {
+async function getSourceInstruments(sourceInstrumentsIds) {
+  if (sourceInstrumentsIds.length === 0) {
     return []
   }
 
   const query = knex('Instrument as i')
     .join('Device as d', 'i.deviceId', 'd.id')
-    .where(function () {
-      for (const instrument of sourceInstrumentsData) {
-        this.orWhere(function () {
-          this.where('i.deviceId', instrument.deviceId).andWhere('i.serial', instrument.instrumentSerial)
-        })
-      }
-    })
+    .whereIn('i.id', sourceInstrumentsIds)
     .select({
       deviceId: 'd.id',
+      id: 'i.id',
       serial: 'i.serial',
       deviceApiKeyId: 'd.deviceApiKeyId',
     })
@@ -156,7 +146,7 @@ function validateDifferentDevices(sourceInstruments, targetDevice) {
 
 function validateSourceInstruments(sourceInstruments) {
   if (!Array.isArray(sourceInstruments) || sourceInstruments.length === 0) {
-    throw Boom.badData('No source instrument serials provided')
+    throw Boom.badData('No source instruments provided')
   }
 }
 

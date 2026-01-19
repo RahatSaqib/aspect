@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Button, Checkbox, CircularProgress, Collapse, IconButton } from '@mui/material'
 import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useQueryClient } from 'react-query'
 import { toast } from 'react-toastify'
 import IconProvider from '../../../../components/IconProvider'
+import { CANDIDATE_INSTRUMENTS_KEY, DEVICE_INSTRUMENTS_KEY } from '../../../../hooks/device/deviceKeys'
 import useCandidateInstruments from '../../../../hooks/device/useCandidateInstruments'
 import useTransferInstruments from '../../../../hooks/device/useTransferInstruments'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
@@ -15,42 +17,34 @@ import messages from './messages'
 const CandidateInstruments = ({ deviceId, disabled = false }) => {
   const { formatMessage } = useIntl()
   const { data = [], isLoading, refetch } = useCandidateInstruments(deviceId)
-  const [selectedInstruments, setSelectedInstruments] = useState(new Set())
+  const [selectedInstrumentsIds, setSelectedInstrumentsIds] = useState([])
   const [expanded, setExpanded] = useState(false)
 
-  const handleSelectOne = (deviceId, instrumentSerial) => {
-    const key = `${deviceId}-${instrumentSerial}`
-    const newSelected = new Set(selectedInstruments)
-    if (newSelected.has(key)) {
-      newSelected.delete(key)
+  const queryClient = useQueryClient()
+
+  const handleSelectOne = instrumentId => {
+    if (selectedInstrumentsIds.includes(instrumentId)) {
+      setSelectedInstrumentsIds(selectedInstrumentsIds.filter(id => id !== instrumentId))
     } else {
-      newSelected.add(key)
+      setSelectedInstrumentsIds([...selectedInstrumentsIds, instrumentId])
     }
-    setSelectedInstruments(newSelected)
   }
 
-  const isSelected = (deviceId, instrumentSerial) => {
-    return selectedInstruments.has(`${deviceId}-${instrumentSerial}`)
+  const isSelected = instrumentId => {
+    return selectedInstrumentsIds.includes(instrumentId)
   }
 
   const { mutate: transferInstrumentsMutation } = useTransferInstruments()
 
   const handleAddToDeviceClick = () => {
-    const selectedInstrumentsData = data
-      .filter(instrument => {
-        const key = `${instrument.deviceId}-${instrument.instrumentSerial}`
-        return selectedInstruments.has(key)
-      })
-      .map(instrument => ({
-        deviceId: instrument.deviceId,
-        instrumentSerial: instrument.instrumentSerial,
-      }))
     transferInstrumentsMutation(
-      { sourceInstrumentsData: selectedInstrumentsData, targetDeviceId: deviceId },
+      { sourceInstrumentsIds: selectedInstrumentsIds, targetDeviceId: deviceId },
       {
         onSuccess: () => {
           refetch()
           toast.success(formatMessage(messages.instrumentsTransferredSuccessfully))
+          queryClient.invalidateQueries([CANDIDATE_INSTRUMENTS_KEY])
+          queryClient.invalidateQueries([DEVICE_INSTRUMENTS_KEY])
         },
         onError: () => {
           toast.error(formatMessage(messages.instrumentsTransferFailed))
@@ -125,12 +119,11 @@ const CandidateInstruments = ({ deviceId, disabled = false }) => {
         <div style={{ marginTop: '12px', paddingLeft: '32px' }}>
           <div style={{ marginBottom: '16px' }}>
             {data.map(instrument => {
-              const key = `${instrument.deviceId}-${instrument.instrumentSerial}`
-              const selected = isSelected(instrument.deviceId, instrument.instrumentSerial)
+              const selected = isSelected(instrument.instrumentId)
 
               return (
                 <div
-                  key={key}
+                  key={instrument.instrumentId}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -140,7 +133,7 @@ const CandidateInstruments = ({ deviceId, disabled = false }) => {
                 >
                   <Checkbox
                     checked={selected}
-                    onChange={() => handleSelectOne(instrument.deviceId, instrument.instrumentSerial)}
+                    onChange={() => handleSelectOne(instrument.instrumentId)}
                     size="small"
                     style={{ padding: '4px' }}
                   />
@@ -176,7 +169,7 @@ const CandidateInstruments = ({ deviceId, disabled = false }) => {
               variant="contained"
               color="primary"
               onClick={handleAddToDeviceClick}
-              disabled={disabled || selectedInstruments.size === 0}
+              disabled={disabled || selectedInstrumentsIds.length === 0}
             >
               {formatMessage(messages.addToThisDevice)}
             </Button>

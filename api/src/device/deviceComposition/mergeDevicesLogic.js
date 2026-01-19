@@ -8,11 +8,8 @@ async function executeMergeDevices(trknex, sourceDevice, targetDevice, userId) {
   await mergeNonRepeatedResults(trknex, sourceDevice, targetDevice)
   await mergeMessages(trknex, sourceDevice, targetDevice)
   await mergeInstruments(trknex, sourceDevice, targetDevice, userId)
-
-  // Revoke DeviceApiKey if not used by target device
-  if (sourceDevice.deviceApiKeyId && sourceDevice.deviceApiKeyId !== targetDevice.deviceApiKeyId) {
-    await revokeDeviceApiKey(trknex, sourceDevice, userId)
-  }
+  // TODO: Remove this when DeviceApiKey.deviceId column is removed
+  await trknex('DeviceApiKey').where('deviceId', sourceDevice.id).update({ deviceId: null })
 
   await deleteDeployments(trknex, sourceDevice.id)
 
@@ -21,12 +18,6 @@ async function executeMergeDevices(trknex, sourceDevice, targetDevice, userId) {
 
 async function deleteDeployments(trknex, sourceDeviceId) {
   await trknex('Deployment').where('deviceId', sourceDeviceId).delete()
-}
-
-async function revokeDeviceApiKey(trknex, sourceDevice, userId) {
-  await trknex('DeviceApiKey')
-    .where('id', sourceDevice.deviceApiKeyId)
-    .update({ revoked: true, updatedOn: new Date(), updatedBy: userId, deviceId: null })
 }
 
 // Merge instruments from source to target device

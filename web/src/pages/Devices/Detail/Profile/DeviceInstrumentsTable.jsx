@@ -1,6 +1,6 @@
-import React from 'react'
 import { Card, CircularProgress, Table, TableBody, TableContainer } from '@mui/material'
 import PropTypes from 'prop-types'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { CANDIDATE_INSTRUMENTS_KEY, DEVICE_INSTRUMENTS_KEY } from '../../../../hooks/device/deviceKeys.js'
@@ -52,7 +52,7 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
               <DataTableHead columns={columns} />
               <TableBody>
                 {data.map(instrument => (
-                  <TableRow key={instrument.instrumentSerial}>
+                  <TableRow key={instrument.instrumentId}>
                     <TableCell>{instrument.instrumentSerial}</TableCell>
                     <TableCell>
                       <GeneXpertModulesNames modules={instrument.modules} />
@@ -62,9 +62,6 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                         deviceId={deviceId}
                         instrument={instrument}
                         onMoveToExisting={async inst => {
-                          // TODO: Implement move to existing device logic
-                          // eslint-disable-next-line no-alert
-                          alert(`Move instrument ${inst.instrumentSerial} to an existing device`)
                           // After moving instrument, refresh the instrument list
                           await refetch()
                           queryClient.invalidateQueries(['device-instruments', deviceId])

@@ -57,6 +57,7 @@ async function getCandidateInstruments({ params, auth }) {
     return {
       deviceId: instrument.deviceId,
       deviceName: instrument.deviceName,
+      instrumentId: instrument.instrumentId,
       instrumentSerial: instrument.instrumentSerial,
       modules,
     }
@@ -125,7 +126,7 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
     .whereIn('da.token', ['approved', 'pendingDeployment'])
     .whereNot('d.id', deviceId) // Exclude the base device itself
     .whereNotNull('i.serial') // Only include devices with instruments
-    .groupBy('d.id', 'd.name', 'i.serial')
+    .groupBy('d.id', 'd.name', 'i.id', 'i.serial')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
@@ -133,11 +134,11 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
     .select(
       'd.id as deviceId',
       'd.name as deviceName',
+      'i.id as instrumentId',
       'i.serial as instrumentSerial',
       knex.raw('json_arrayagg(m.modules) as modules')
     )
 
-  console.log('\x1b[1;36m', '🚀 ➜ query:', query.toString())
   return query
 }
 

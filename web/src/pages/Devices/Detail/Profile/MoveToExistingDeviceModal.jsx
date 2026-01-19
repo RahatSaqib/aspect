@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
 import { DialogActions } from '@mui/material'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 import useTransferInstruments from '../../../../hooks/device/useTransferInstruments'
@@ -12,8 +13,9 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 
-const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentSerial, deviceId }) => {
+const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId, deviceId }) => {
   const { formatMessage } = useIntl()
+  const navigate = useNavigate()
   const [submitError, setSubmitError] = useState(false)
   const { mutate, isLoading } = useTransferInstruments()
 
@@ -39,14 +41,21 @@ const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentSerial,
           mutate(
             {
               targetDeviceId: values.deviceId,
-              sourceInstrumentsData: [{ deviceId, instrumentSerial }],
+              sourceInstrumentsIds: [instrumentId],
             },
             {
-              onSuccess: () => {
+              onSuccess: data => {
+                console.log('\x1b[1;36m', '🚀 ➜ data:', data)
                 toast.success(formatMessage(messages.transferSuccess))
                 resetForm()
                 setSubmitError(false)
-                onConfirm()
+                if (data?.deletedDeviceIds?.length > 0) {
+                  // Navigate to target device detail page when source device was deleted
+                  navigate(`/browse/device/list/${values.deviceId}`)
+                  onClose()
+                } else {
+                  onConfirm()
+                }
               },
               onError: () => {
                 setSubmitError(true)
@@ -93,7 +102,7 @@ const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentSerial,
 }
 
 MoveToExistingDeviceModal.propTypes = {
-  instrumentSerial: PropTypes.string.isRequired,
+  instrumentId: PropTypes.number.isRequired,
   deviceId: PropTypes.number.isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

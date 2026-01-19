@@ -214,6 +214,7 @@ const routes = [
                   Joi.object().keys({
                     deviceId: Joi.number().required().description('Device ID'),
                     deviceName: Joi.string().required().description('Device name'),
+                    instrumentId: Joi.number().required().description('Instrument ID'),
                     instrumentSerial: Joi.string().allow(null).description('Instrument serial number'),
                     modules: Joi.array()
                       .items(
@@ -688,17 +689,12 @@ const routes = [
     config: {
       auth: { scope: ['device:admin'] },
       description: 'Transfer instruments to a target device',
-      notes: 'Moves instruments by serial number to the specified target device.',
+      notes: 'Moves instruments by instrumentId to the specified target device.',
       validate: {
         payload: {
-          sourceInstrumentsData: Joi.array()
-            .items(
-              Joi.object({
-                deviceId: Joi.number().integer().positive().required(),
-                instrumentSerial: Joi.string().required(),
-              })
-            )
-            .description('Source instrument data with device ID and serial number')
+          sourceInstrumentsIds: Joi.array()
+            .items(Joi.number().integer().positive())
+            .description('Array of instrument IDs to transfer')
             .required(),
           targetDeviceId: Joi.number().description('Target device ID').required(),
         },
@@ -716,7 +712,7 @@ const routes = [
       tags: ['api', 'device'],
       validate: {
         payload: Joi.object({
-          instrumentSerial: Joi.string().required(),
+          instrumentId: Joi.number().integer().positive().required(),
           name: Joi.string().required(),
           shortName: Joi.string().required(),
           siteId: Joi.number().required(),

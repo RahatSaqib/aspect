@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
 import { DialogActions, TextField } from '@mui/material'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
@@ -12,7 +12,7 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 
-const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentSerial }) => {
+const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
   const { formatMessage } = useIntl()
   const { mutate, isLoading } = useTransferInstrumentToNewDevice()
   const [submitError, setSubmitError] = useState(false)
@@ -45,7 +45,7 @@ const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentSerial }) =>
               name: values.deviceName,
               shortName: values.deviceShortname,
               siteId: values.siteId,
-              instrumentSerial,
+              instrumentId,
             },
             {
               onSuccess: () => {
@@ -138,7 +138,7 @@ MoveToNewDeviceModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  instrumentSerial: PropTypes.string.isRequired,
+  instrumentId: PropTypes.number.isRequired,
 }
 
 export default MoveToNewDeviceModal

@@ -1,5 +1,5 @@
-import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
+import React, { Fragment, useState } from 'react'
 import { useIntl } from 'react-intl'
 import AspectVertMenu from '../../../../components/AspectVertMenu'
 import messages from './messages'
@@ -48,13 +48,13 @@ const InstrumentContextualMenu = ({ instrument, deviceId, onMoveToExisting, onMo
         open={newDeviceModalOpen}
         onClose={() => setNewDeviceModalOpen(false)}
         onConfirm={handleNewDeviceModalConfirm}
-        instrumentSerial={instrument.instrumentSerial}
+        instrumentId={instrument.instrumentId}
       />
       <MoveToExistingDeviceModal
         open={existingDeviceModalOpen}
         onClose={() => setExistingDeviceModalOpen(false)}
         onConfirm={handleExistingDeviceModalConfirm}
-        instrumentSerial={instrument.instrumentSerial}
+        instrumentId={instrument.instrumentId}
         deviceId={deviceId}
       />
     </Fragment>
