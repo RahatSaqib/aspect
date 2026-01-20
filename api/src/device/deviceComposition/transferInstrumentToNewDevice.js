@@ -4,7 +4,7 @@ const { getUser } = require('../../auth/service')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
 
-async function transferInstrumentToNewDevice({ payload, plugins: { messageContext }, auth }) {
+async function transferInstrumentToNewDevice({ payload, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
   const { instrumentId, name, shortName, siteId } = payload
   const { sourceDevice } = await getSourceDevice(instrumentId)
