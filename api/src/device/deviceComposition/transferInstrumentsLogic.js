@@ -1,11 +1,33 @@
+const { executeMergeDevices: mergeDevice } = require('./mergeDevicesLogic')
 const { knex } = require('../../db')
 
-async function transferDeviceInstruments(trknex, sourceInstrumentIds, targetDeviceId, userId) {
-  await mergeIssuesFromDuplicatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
-  await mergeNonRepeatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
-  await mergeDeviceLogsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
-  await mergeMessagesForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
-  await transferInstrumentIds(trknex, sourceInstrumentIds, targetDeviceId, userId)
+// Handles merging and transferring instruments/devices in a transaction
+async function transferDeviceInstruments(trknex, { sourceDeviceIds, sourceInstruments, targetDeviceId }, userId) {
+  const sourceDeviceInstrumentCounts = await getDeviceInstrumentCounts(trknex, sourceDeviceIds)
+  const instrumentsByDevice = groupInstrumentIdsByDevice(sourceInstruments)
+  const devicesToFullyMerge = selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts)
+  const devicesToPartiallyTransfer = sourceDeviceIds.filter(deviceId => !devicesToFullyMerge.has(deviceId))
+  const sourceDevices = await getSourceDevices(trknex, sourceDeviceIds)
+  const sourceDeviceMap = new Map(sourceDevices.map(sourceDevice => [sourceDevice.id, sourceDevice]))
+
+  await Promise.all(
+    [...devicesToFullyMerge].map(deviceId =>
+      mergeDevice(trknex, sourceDeviceMap.get(deviceId).id, targetDeviceId, userId)
+    )
+  )
+
+  await Promise.all(
+    devicesToPartiallyTransfer.map(async deviceId => {
+      const sourceInstrumentIds = instrumentsByDevice.get(deviceId)
+      await mergeIssuesFromDuplicatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
+      await mergeNonRepeatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
+      await mergeDeviceLogsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
+      await mergeMessagesForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
+      await transferInstrumentIds(trknex, sourceInstrumentIds, targetDeviceId, userId)
+    })
+  )
+
+  return { deletedDeviceIds: [...devicesToFullyMerge] }
 }
 
 async function transferInstrumentIds(trknex, sourceInstrumentIds, targetDeviceId, userId) {
@@ -85,6 +107,48 @@ async function mergeMessagesForInstruments(trknex, sourceInstrumentIds, targetDe
   await trknex('PushNotificationMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
   await trknex('SmsMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
   await trknex('WebhookMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
+}
+
+// Returns a Map of deviceId to instrument count
+async function getDeviceInstrumentCounts(trknex, sourceDeviceIds) {
+  const rows = await trknex('Instrument as i')
+    .whereIn('i.deviceId', sourceDeviceIds)
+    .groupBy('i.deviceId')
+    .select('i.deviceId')
+    .count({ instrumentCount: '*' })
+
+  return new Map(rows.map(row => [row.deviceId, Number(row.instrumentCount)]))
+}
+
+function groupInstrumentIdsByDevice(sourceInstruments) {
+  const instrumentsByDevice = new Map()
+
+  for (const sourceInstrument of sourceInstruments) {
+    const deviceIds = instrumentsByDevice.get(sourceInstrument.deviceId) || []
+    deviceIds.push(sourceInstrument.id)
+    instrumentsByDevice.set(sourceInstrument.deviceId, deviceIds)
+  }
+
+  return instrumentsByDevice
+}
+
+function selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts) {
+  const devicesToFullyMerge = new Set()
+
+  for (const [deviceId, instrumentIds] of instrumentsByDevice.entries()) {
+    const totalInstruments = sourceDeviceInstrumentCounts.get(deviceId) || 0
+    const uniqueIdCount = new Set(instrumentIds).size
+
+    if (totalInstruments === uniqueIdCount) {
+      devicesToFullyMerge.add(deviceId)
+    }
+  }
+
+  return devicesToFullyMerge
+}
+
+async function getSourceDevices(trknex, sourceDeviceIds) {
+  return trknex('Device').whereIn('id', sourceDeviceIds).select('id', 'deviceApiKeyId')
 }
 
 module.exports = {

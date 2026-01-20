@@ -720,11 +720,6 @@ const routes = [
           siteId: Joi.number().required(),
         }),
       },
-      response: {
-        schema: Joi.object({
-          ok: Joi.bool().required(),
-        }),
-      },
     },
   },
   {

@@ -3,6 +3,7 @@ import { DialogActions, TextField } from '@mui/material'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 import SiteSelect from '../../../../cleanComponents/SiteSelect/SiteSelect'
@@ -14,6 +15,8 @@ import messages from './messages'
 
 const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
   const { formatMessage } = useIntl()
+  const navigate = useNavigate()
+
   const { mutate, isLoading } = useTransferInstrumentToNewDevice()
   const [submitError, setSubmitError] = useState(false)
 
@@ -48,11 +51,17 @@ const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
               instrumentId,
             },
             {
-              onSuccess: () => {
+              onSuccess: data => {
                 toast.success(formatMessage(messages.transferSuccess))
                 resetForm()
                 setSubmitError(false)
-                onConfirm()
+                if (data?.deletedDeviceIds?.length > 0) {
+                  // Navigate to target device detail page when source device was deleted
+                  navigate(`/browse/device/list/${data.newDeviceId}`)
+                  onClose()
+                } else {
+                  onConfirm()
+                }
               },
               onError: error => {
                 setSubmitError(true)

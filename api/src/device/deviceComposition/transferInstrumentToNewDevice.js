@@ -3,19 +3,34 @@ const { knex, transact } = require('../../db')
 const { getUser } = require('../../auth/service')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
+const { recalculateDeviceFactTables } = require('../common/logic')
 
 async function transferInstrumentToNewDevice({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
   const { instrumentId, name, shortName, siteId } = payload
   const { sourceDevice } = await getSourceDevice(instrumentId)
+
   await validate(instrumentId, name, shortName, siteId, auth.credentials)
-  await transact(async trknex => {
+
+  const { deletedDeviceIds, newDeviceId } = await transact(async trknex => {
     const newDeviceId = await createNewDevice(trknex, sourceDevice, instrumentId, { name, shortName, siteId }, userId)
 
-    await transferDeviceInstruments(trknex, [instrumentId], newDeviceId, userId)
+    const { deletedDeviceIds } = await transferDeviceInstruments(
+      trknex,
+      {
+        sourceDeviceIds: [sourceDevice.id],
+        sourceInstruments: [{ id: instrumentId, deviceId: sourceDevice.id }],
+        targetDeviceId: newDeviceId,
+      },
+      userId
+    )
+    return { deletedDeviceIds, newDeviceId }
   })
 
-  return { ok: true }
+  const deviceIdsToRecalculate = deletedDeviceIds.length === 0 ? [sourceDevice.id, newDeviceId] : [newDeviceId]
+  await recalculateDeviceFactTables(messageContext, deviceIdsToRecalculate)
+
+  return { ok: true, deletedDeviceIds, newDeviceId }
 }
 
 async function validate(instrumentId, name, shortName, siteId, credentials) {

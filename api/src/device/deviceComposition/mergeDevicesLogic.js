@@ -2,18 +2,18 @@ const { knex } = require('../../db')
 
 const { deleteDevice } = require('../common/logic')
 
-async function executeMergeDevices(trknex, sourceDevice, targetDevice, userId) {
-  await mergeIssuesFromDuplicatedResults(trknex, sourceDevice, targetDevice)
-  await mergeDeviceLevelIssues(trknex, sourceDevice, targetDevice)
-  await mergeNonRepeatedResults(trknex, sourceDevice, targetDevice)
-  await mergeMessages(trknex, sourceDevice, targetDevice)
-  await mergeInstruments(trknex, sourceDevice, targetDevice, userId)
+async function executeMergeDevices(trknex, sourceDeviceId, targetDeviceId, userId) {
+  await mergeIssuesFromDuplicatedResults(trknex, sourceDeviceId, targetDeviceId)
+  await mergeDeviceLevelIssues(trknex, sourceDeviceId, targetDeviceId)
+  await mergeNonRepeatedResults(trknex, sourceDeviceId, targetDeviceId)
+  await mergeMessages(trknex, sourceDeviceId, targetDeviceId)
+  await mergeInstruments(trknex, sourceDeviceId, targetDeviceId, userId)
   // TODO: Remove this when DeviceApiKey.deviceId column is removed
-  await trknex('DeviceApiKey').where('deviceId', sourceDevice.id).update({ deviceId: null })
+  await trknex('DeviceApiKey').where('deviceId', sourceDeviceId).update({ deviceId: null })
 
-  await deleteDeployments(trknex, sourceDevice.id)
+  await deleteDeployments(trknex, sourceDeviceId)
 
-  await deleteDevice(sourceDevice.id, trknex)
+  await deleteDevice(sourceDeviceId, trknex)
 }
 
 async function deleteDeployments(trknex, sourceDeviceId) {
@@ -21,17 +21,14 @@ async function deleteDeployments(trknex, sourceDeviceId) {
 }
 
 // Merge instruments from source to target device
-async function mergeInstruments(trknex, sourceDevice, targetDevice, userId) {
+async function mergeInstruments(trknex, sourceDeviceId, targetDeviceId, userId) {
   // Move all instruments from the source device to the target device
   await trknex('Instrument')
-    .where('deviceId', sourceDevice.id)
-    .update({ deviceId: targetDevice.id, updatedOn: new Date(), updatedBy: userId })
+    .where('deviceId', sourceDeviceId)
+    .update({ deviceId: targetDeviceId, updatedOn: new Date(), updatedBy: userId })
 }
 
-async function mergeIssuesFromDuplicatedResults(trknex, sourceDevice, targetDevice) {
-  const sourceDeviceId = sourceDevice.id
-  const targetDeviceId = targetDevice.id
-
+async function mergeIssuesFromDuplicatedResults(trknex, sourceDeviceId, targetDeviceId) {
   await trknex('Issue as i')
     .update('i.deviceId', targetDeviceId)
     .update('i.resultId', trknex.raw('pivot.targetResultId'))
@@ -48,17 +45,11 @@ async function mergeIssuesFromDuplicatedResults(trknex, sourceDevice, targetDevi
     .where('i.id', '>', 0)
 }
 
-async function mergeDeviceLevelIssues(trknex, sourceDevice, targetDevice) {
-  const sourceDeviceId = sourceDevice.id
-  const targetDeviceId = targetDevice.id
-
+async function mergeDeviceLevelIssues(trknex, sourceDeviceId, targetDeviceId) {
   await trknex('Issue').where('deviceId', sourceDeviceId).whereNull('resultId').update('deviceId', targetDeviceId)
 }
 
-async function mergeNonRepeatedResults(trknex, sourceDevice, targetDevice) {
-  const sourceDeviceId = sourceDevice.id
-  const targetDeviceId = targetDevice.id
-
+async function mergeNonRepeatedResults(trknex, sourceDeviceId, targetDeviceId) {
   const repeatedResultsQuery = trknex(
     trknex('Result')
       .where('deviceID', targetDeviceId)
@@ -75,10 +66,7 @@ async function mergeNonRepeatedResults(trknex, sourceDevice, targetDevice) {
   await trknex('DeviceLog').where({ deviceId: sourceDeviceId }).update({ deviceId: targetDeviceId })
 }
 
-async function mergeMessages(trknex, sourceDevice, targetDevice) {
-  const sourceDeviceId = sourceDevice.id
-  const targetDeviceId = targetDevice.id
-
+async function mergeMessages(trknex, sourceDeviceId, targetDeviceId) {
   const messagesToMergeFilter = qb =>
     qb
       .where({ deviceId: sourceDeviceId })

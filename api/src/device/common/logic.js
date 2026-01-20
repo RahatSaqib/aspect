@@ -1,3 +1,16 @@
+const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('../../fact/actions')
+
+async function recalculateDeviceFactTables(messageContext, deviceIdsToRecalculate) {
+  const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts, factGenerateDeviceConnectivity })
+
+  for (const deviceId of deviceIdsToRecalculate) {
+    // eslint-disable-next-line no-await-in-loop
+    await eventContext.factGenerateResultCounts(deviceId)
+    // eslint-disable-next-line no-await-in-loop
+    await eventContext.factGenerateDeviceConnectivity(deviceId)
+  }
+}
+
 const {
   deleteNotifications,
   deleteIssues,
@@ -43,4 +56,4 @@ async function deleteDevice(deviceId, trknex) {
   await deleteDeviceFromDb(deviceId, trknex)
 }
 
-module.exports = { deleteDevice }
+module.exports = { deleteDevice, recalculateDeviceFactTables }

@@ -17,6 +17,7 @@ import messages from './messages'
 const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
   const { formatMessage } = useIntl()
   const navigate = useNavigate()
+
   const [submitError, setSubmitError] = useState(false)
   const { mutate, isLoading } = useTransferInstruments()
 

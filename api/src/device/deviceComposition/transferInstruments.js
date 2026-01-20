@@ -1,11 +1,11 @@
+const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { knex, transact } = require('../../db')
 
-const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('../../fact/actions')
+const { recalculateDeviceFactTables } = require('../common/logic')
 const { getUser } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
 const { getDevicesIdsCheckingConstraints } = require('../common/db')
-const { executeMergeDevices: mergeDevice } = require('./mergeDevicesLogic')
 const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
 
 async function transferInstruments({ payload, plugins: { messageContext }, auth }) {
@@ -18,61 +18,18 @@ async function transferInstruments({ payload, plugins: { messageContext }, auth 
 
   await validate(sourceInstruments, sourceDeviceIds, targetDevice, auth.credentials)
 
-  const sourceDeviceInstrumentCounts = await getDeviceInstrumentCounts(sourceDeviceIds)
-  const instrumentsByDevice = groupInstrumentIdsByDevice(sourceInstruments)
-  const devicesToFullyMerge = selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts)
-  const devicesToPartiallyTransfer = sourceDeviceIds.filter(deviceId => !devicesToFullyMerge.has(deviceId))
-  const sourceDevices = await getSourceDevices(sourceDeviceIds)
-  const sourceDeviceMap = new Map(sourceDevices.map(sourceDevice => [sourceDevice.id, sourceDevice]))
+  const { deletedDeviceIds } = await transact(async trknex =>
+    transferDeviceInstruments(trknex, { sourceDeviceIds, sourceInstruments, targetDeviceId }, userId)
+  )
 
-  const { deletedDeviceIds } = await transact(async trknex => {
-    await Promise.all(
-      [...devicesToFullyMerge].map(deviceId => mergeDevice(trknex, sourceDeviceMap.get(deviceId), targetDevice, userId))
-    )
-
-    await Promise.all(
-      devicesToPartiallyTransfer.map(deviceId =>
-        transferDeviceInstruments(trknex, instrumentsByDevice.get(deviceId), targetDevice.id, userId)
-      )
-    )
-
-    return { deletedDeviceIds: [...devicesToFullyMerge] }
-  })
-
-  await recalculateDeviceFactTables(messageContext, sourceDeviceIds, targetDevice.id, deletedDeviceIds)
+  const sourceDeviceIdsToRecalculate = _.difference(sourceDeviceIds, deletedDeviceIds)
+  await recalculateDeviceFactTables(messageContext, [...sourceDeviceIdsToRecalculate, targetDeviceId])
 
   return { ok: true, deletedDeviceIds }
 }
 
 function getUniqueDeviceIds(sourceInstruments) {
   return [...new Set(sourceInstruments.map(sourceInstrument => sourceInstrument.deviceId))]
-}
-
-function groupInstrumentIdsByDevice(sourceInstruments) {
-  const instrumentsByDevice = new Map()
-
-  for (const sourceInstrument of sourceInstruments) {
-    const deviceIds = instrumentsByDevice.get(sourceInstrument.deviceId) || []
-    deviceIds.push(sourceInstrument.id)
-    instrumentsByDevice.set(sourceInstrument.deviceId, deviceIds)
-  }
-
-  return instrumentsByDevice
-}
-
-function selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts) {
-  const devicesToFullyMerge = new Set()
-
-  for (const [deviceId, instrumentIds] of instrumentsByDevice.entries()) {
-    const totalInstruments = sourceDeviceInstrumentCounts.get(deviceId) || 0
-    const uniqueIdCount = new Set(instrumentIds).size
-
-    if (totalInstruments === uniqueIdCount) {
-      devicesToFullyMerge.add(deviceId)
-    }
-  }
-
-  return devicesToFullyMerge
 }
 
 async function getTargetDevice(targetDeviceId) {
@@ -99,33 +56,6 @@ async function getSourceInstruments(sourceInstrumentsIds) {
     })
 
   return query
-}
-
-async function getSourceDevices(sourceDeviceIds) {
-  return knex('Device').whereIn('id', sourceDeviceIds).select('id', 'deviceApiKeyId')
-}
-
-async function getDeviceInstrumentCounts(sourceDeviceIds) {
-  const rows = await knex('Instrument as i')
-    .whereIn('i.deviceId', sourceDeviceIds)
-    .groupBy('i.deviceId')
-    .select('i.deviceId')
-    .count({ instrumentCount: '*' })
-
-  return new Map(rows.map(row => [row.deviceId, Number(row.instrumentCount)]))
-}
-
-async function recalculateDeviceFactTables(messageContext, sourceDeviceIds, targetDeviceId, deletedDeviceIds) {
-  const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts, factGenerateDeviceConnectivity })
-
-  const deviceIdsToRecalculate = selectDevicesToRecalculate(sourceDeviceIds, targetDeviceId, deletedDeviceIds)
-
-  for (const deviceId of deviceIdsToRecalculate) {
-    // eslint-disable-next-line no-await-in-loop
-    await eventContext.factGenerateResultCounts(deviceId)
-    // eslint-disable-next-line no-await-in-loop
-    await eventContext.factGenerateDeviceConnectivity(deviceId)
-  }
 }
 
 async function validate(sourceInstruments, sourceDeviceIds, targetDevice, credentials) {
@@ -173,12 +103,6 @@ async function validatePersmissions(sourceDeviceIds, targetDevice, credentials) 
   if (devices.length !== allDevicesIds.length) {
     throw Boom.forbidden(`You don't have permission to transfer these instruments.`)
   }
-}
-
-function selectDevicesToRecalculate(sourceDeviceIds, targetDeviceId, deletedDeviceIds) {
-  const deletedDeviceIdSet = new Set(deletedDeviceIds)
-  const deviceIds = new Set([...sourceDeviceIds, targetDeviceId])
-  return [...deviceIds].filter(deviceId => !deletedDeviceIdSet.has(deviceId))
 }
 
 module.exports = { transferInstruments }

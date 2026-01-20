@@ -2,7 +2,7 @@ const Boom = require('@hapi/boom')
 const { knex, transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 
-const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('../../fact/actions')
+const { recalculateDeviceFactTables } = require('../common/logic')
 const { getUser } = require('../../auth/service')
 const { getDevicesIdsCheckingConstraints } = require('../common/db')
 const { executeMergeDevices } = require('./mergeDevicesLogic')
@@ -16,13 +16,12 @@ async function mergeDevices({ payload, plugins: { messageContext }, auth }) {
   await validate(sourceDevices, targetDevice, auth.credentials)
 
   await transact(async trknex =>
-    Promise.all(sourceDevices.map(sourceDevice => executeMergeDevices(trknex, sourceDevice, targetDevice, userId)))
+    Promise.all(
+      sourceDevices.map(sourceDevice => executeMergeDevices(trknex, sourceDevice.id, targetDevice.id, userId))
+    )
   )
 
-  const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts, factGenerateDeviceConnectivity })
-
-  await eventContext.factGenerateResultCounts(targetDevice.id)
-  await eventContext.factGenerateDeviceConnectivity(targetDevice.id)
+  await recalculateDeviceFactTables(messageContext, [targetDevice.id])
 
   return { ok: true }
 }
