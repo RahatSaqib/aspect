@@ -106,7 +106,7 @@ async function listMaintenanceStatuses(request) {
 async function listDevicesForSelectList(request) {
   const {
     query,
-    query: { showUnapprovedDevices, showDecommissionedDevices, onlyResultDevices },
+    query: { showUnapprovedDevices, showDecommissionedDevices, onlyResultDevices, deviceTypeExternalId },
     auth,
   } = request
   // get data constraints
@@ -129,6 +129,11 @@ async function listDevicesForSelectList(request) {
       siteId: 'd.siteId',
     })
     .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
+    .modify(qb => {
+      if (deviceTypeExternalId) {
+        qb.where('dt.externalId', deviceTypeExternalId)
+      }
+    })
     .orderBy(['d.name'], 'asc')
     .select('d.id', 'd.name', 'd.serial as deviceSerial', 'd.siteId', 'd.deviceTypeId', 'dt.name as deviceType')
   if (onlyResultDevices) {
