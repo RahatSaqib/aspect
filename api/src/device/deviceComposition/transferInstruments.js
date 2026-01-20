@@ -139,25 +139,27 @@ async function validate(sourceInstruments, sourceDeviceIds, targetDevice, creden
 function validateDifferentDevices(sourceInstruments, targetDevice) {
   const sourceDevices = sourceInstruments.map(sourceInstrument => ({ id: sourceInstrument.deviceId }))
   if (sourceDevices.some(sourceDevice => sourceDevice.id === targetDevice.id)) {
-    throw Boom.badData("The target device is the same as the instrument's current device")
+    throw Boom.badRequest("The target device is the same as the instrument's current device", {
+      errorKeyCode: 'targetDeviceIsSourceDevice',
+    })
   }
 }
 
 function validateSourceInstruments(sourceInstruments) {
   if (!Array.isArray(sourceInstruments) || sourceInstruments.length === 0) {
-    throw Boom.badData('No source instruments provided')
+    throw Boom.badRequest('No source instruments provided')
   }
 }
 
 function validateTargetDeviceExists(targetDevice) {
   if (!targetDevice || !targetDevice.id) {
-    throw Boom.badData('Target device not found')
+    throw Boom.badRequest('Target device not found')
   }
 }
 
 function validateTargetDeviceIsGeneXpert(targetDevice) {
   if (targetDevice.deviceTypeExternalId !== 'CepheidGeneXpert') {
-    throw Boom.badData('Target device must be a GeneXpert device')
+    throw Boom.badRequest('Target device must be a GeneXpert device')
   }
 }
 

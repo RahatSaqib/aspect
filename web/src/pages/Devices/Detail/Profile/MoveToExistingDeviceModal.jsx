@@ -11,6 +11,7 @@ import validationErrorMessages from '../../../../messages/validationErrorMessage
 import DeviceSelectField from '../../../../oldComponents/resource/DeviceSelectField'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import messages from './messages'
 
 const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
@@ -37,7 +38,7 @@ const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId }) =
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values, { resetForm }) => {
+        onSubmit={(values, { resetForm, setFieldError }) => {
           mutate(
             {
               targetDeviceId: values.deviceId,
@@ -56,8 +57,11 @@ const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId }) =
                   onConfirm()
                 }
               },
-              onError: () => {
+              onError: error => {
                 setSubmitError(true)
+                if (error?.data?.errorKeyCode === 'targetDeviceIsSourceDevice') {
+                  setFieldError('deviceId', formatMessage(messages.targetDeviceIsSourceDevice))
+                }
                 // Optionally handle specific error codes here
                 toast.error(formatMessage(messages.transferError))
               },
@@ -70,6 +74,7 @@ const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId }) =
             <Form onSubmit={handleSubmit}>
               <DeviceSelectField
                 name="deviceId"
+                deviceTypeExternalId={CONSTS.GENEXPERT_EXTERNAL_ID}
                 label={formatMessage(messages.device)}
                 value={values.deviceId}
                 onDeviceChange={value => {

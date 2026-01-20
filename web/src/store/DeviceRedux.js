@@ -1,5 +1,4 @@
 import { stringify } from 'querystring'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import { DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../components/QueryFetch/Device'
@@ -21,9 +20,6 @@ const types = {
   REQUEST_UPDATING_SINGLE_DEVICE: 'REQUEST_UPDATING_SINGLE_DEVICE',
   RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE',
 
-  REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
-  RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
-
   REQUEST_DEVICES_FOR_PERFORMANCE_REPORT: 'REQUEST_DEVICES_FOR_PERFORMANCE_REPORT',
   RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT: 'RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT',
 
@@ -33,51 +29,6 @@ const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-function requestDevicesForSelectList() {
-  return {
-    type: types.REQUEST_DEVICES_FOR_SELECT_LIST,
-  }
-}
-
-function receiveDevicesForSelectList(devicesForSelectList) {
-  return {
-    type: types.RECEIVE_DEVICES_FOR_SELECT_LIST,
-    items: devicesForSelectList,
-    lastRefreshed: new Date(),
-  }
-}
-
-export function fetchDevicesForSelectList(forceRefresh, filters) {
-  return (dispatch, getState) => {
-    const { device } = getState()
-
-    if (device.selectList.loading) {
-      return
-    }
-    const shouldFetch =
-      forceRefresh ||
-      !device.selectList.lastRefreshed ||
-      differenceInMinutes(new Date(), device.selectList.lastRefreshed) > 5
-    if (!shouldFetch) {
-      return
-    }
-
-    dispatch(requestDevicesForSelectList())
-    return aspectFetch(`/device/select-list?${stringify(filters)}`, {
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
-              defaultMessage: 'Loading Devices Failed',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveDevicesForSelectList(json.data)))
-  }
-}
-
 function requestUpdatingSingleDevice(requestedAt, deviceId, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_DEVICE,
@@ -321,14 +272,6 @@ export default function deviceReducer(state = initialState, action) {
         }
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
-      })
-    case types.REQUEST_DEVICES_FOR_SELECT_LIST:
-      return state.setIn(['selectList', 'loading'], true)
-    case types.RECEIVE_DEVICES_FOR_SELECT_LIST:
-      return state.mergeIn(['selectList'], {
-        loading: false,
-        lastRefreshed: action.lastRefreshed,
-        items: Immutable.fromJS(action.items),
       })
     case types.DEVICE_MAINTENANCE_FORM_SHOW:
       return state.mergeIn(['activeDialog'], {

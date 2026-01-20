@@ -313,6 +313,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.device',
       defaultMessage: 'Device',
     },
+    targetDeviceIsSourceDevice: {
+      id: 'pages.DeviceDetailProfile.targetDeviceIsSourceDevice',
+      defaultMessage: 'Target device cannot be the same as the source device',
+    },
   }),
 }
 

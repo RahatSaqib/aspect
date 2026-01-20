@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from 'react-query'
-import fetchWrapperForQueries from '../../components/QueryFetch'
+import { aspectFetch } from '../../utils/utils/fetch'
 import { DEVICE_KEY, DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT } from './deviceKeys.js'
 
 const transferInstruments = async data => {
-  return fetchWrapperForQueries({
-    endpoint: DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT,
+  return aspectFetch(DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT, {
     method: 'POST',
-    params: { ...data },
+    body: JSON.stringify({ ...data }),
   })
 }
 
