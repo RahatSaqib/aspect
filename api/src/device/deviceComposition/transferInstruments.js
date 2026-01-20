@@ -133,7 +133,6 @@ async function validate(sourceInstruments, sourceDeviceIds, targetDevice, creden
   validateTargetDeviceExists(targetDevice)
   validateDifferentDevices(sourceInstruments, targetDevice)
   validateTargetDeviceIsGeneXpert(targetDevice)
-  await validateSameSite(sourceInstruments, targetDevice)
   await validatePersmissions(sourceDeviceIds, targetDevice, credentials)
 }
 
@@ -162,31 +161,6 @@ function validateTargetDeviceIsGeneXpert(targetDevice) {
   }
 }
 
-async function validateSameSite(sourceInstruments, targetDevice) {
-  const deviceIds = [
-    ...new Set([...sourceInstruments.map(sourceInstrument => sourceInstrument.deviceId), targetDevice.id]),
-  ]
-  const deviceSiteIds = await getDeviceSiteIds(deviceIds)
-  const targetSiteId = deviceSiteIds.get(targetDevice.id)
-
-  if (!targetSiteId) {
-    return
-  }
-
-  const hasDifferentSite = deviceIds.some(deviceId => {
-    if (deviceId === targetDevice.id) {
-      return false
-    }
-
-    const deviceSiteId = deviceSiteIds.get(deviceId)
-    return deviceSiteId ? deviceSiteId !== targetSiteId : false
-  })
-
-  if (hasDifferentSite) {
-    throw Boom.badData('Cannot transfer instruments from different sites.')
-  }
-}
-
 async function validatePersmissions(sourceDeviceIds, targetDevice, credentials) {
   const dataConstraints = await getConstraints(credentials)
 
@@ -197,21 +171,6 @@ async function validatePersmissions(sourceDeviceIds, targetDevice, credentials) 
   if (devices.length !== allDevicesIds.length) {
     throw Boom.forbidden(`You don't have permission to transfer these instruments.`)
   }
-}
-
-async function getDeviceSiteIds(deviceIds) {
-  const activeDeployments = await knex('Deployment')
-    .whereIn('deviceId', deviceIds)
-    .whereNull('end')
-    .select('deviceId', 'siteId')
-
-  const deviceSiteIds = new Map()
-
-  for (const deployment of activeDeployments) {
-    deviceSiteIds.set(deployment.deviceId, deployment.siteId)
-  }
-
-  return deviceSiteIds
 }
 
 function selectDevicesToRecalculate(sourceDeviceIds, targetDeviceId, deletedDeviceIds) {
