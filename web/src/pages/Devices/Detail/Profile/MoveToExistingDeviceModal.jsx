@@ -1,7 +1,7 @@
+import React, { useState } from 'react'
 import { DialogActions } from '@mui/material'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -13,7 +13,7 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 
-const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId, deviceId }) => {
+const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
   const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const [submitError, setSubmitError] = useState(false)
@@ -45,7 +45,6 @@ const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId, dev
             },
             {
               onSuccess: data => {
-                console.log('\x1b[1;36m', '🚀 ➜ data:', data)
                 toast.success(formatMessage(messages.transferSuccess))
                 resetForm()
                 setSubmitError(false)
@@ -103,7 +102,6 @@ const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId, dev
 
 MoveToExistingDeviceModal.propTypes = {
   instrumentId: PropTypes.number.isRequired,
-  deviceId: PropTypes.number.isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,

@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types'
 import React, { Fragment, useState } from 'react'
+import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import AspectVertMenu from '../../../../components/AspectVertMenu'
 import messages from './messages'

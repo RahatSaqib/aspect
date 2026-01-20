@@ -1,6 +1,6 @@
+import React from 'react'
 import { Card, CircularProgress, Table, TableBody, TableContainer } from '@mui/material'
 import PropTypes from 'prop-types'
-import React from 'react'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { CANDIDATE_INSTRUMENTS_KEY, DEVICE_INSTRUMENTS_KEY } from '../../../../hooks/device/deviceKeys.js'
@@ -61,7 +61,7 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                       <InstrumentContextualMenu
                         deviceId={deviceId}
                         instrument={instrument}
-                        onMoveToExisting={async inst => {
+                        onMoveToExisting={async () => {
                           // After moving instrument, refresh the instrument list
                           await refetch()
                           queryClient.invalidateQueries(['device-instruments', deviceId])

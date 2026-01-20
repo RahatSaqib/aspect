@@ -1,7 +1,7 @@
+import React, { useState } from 'react'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Button, Checkbox, CircularProgress, Collapse, IconButton } from '@mui/material'
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { toast } from 'react-toastify'

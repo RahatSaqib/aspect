@@ -1,9 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
-import {
-  DEVICE_KEY,
-  DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT
-} from './deviceKeys.js'
+import { DEVICE_KEY, DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT } from './deviceKeys.js'
 
 const transferInstruments = async data => {
   return fetchWrapperForQueries({
@@ -17,7 +14,7 @@ const useTransferInstruments = () => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation(data => transferInstruments(data), {
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       // Invalidate device list
       queryClient.invalidateQueries([DEVICE_KEY, 'list'])
     },

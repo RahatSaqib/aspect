@@ -3826,7 +3826,7 @@ async function seed(knex) {
             siteId: savedResult.siteId,
             ...transferData,
           })
-          resultWithLogInfo.reportableSiteId = anotherReportableSite.id
+          resultWithLogInfo.reportableSiteId = anotherReportableSite?.id || null
 
           transferLogData = transferData
 
