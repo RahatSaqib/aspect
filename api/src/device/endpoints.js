@@ -4,7 +4,6 @@ const {
   showDevice,
   listApprovalTypes,
   listMaintenanceStatuses,
-  listDevicesForSelectList,
   updateDeviceMaintenance,
   setStatusForDateRange,
   deviceMaintenanceStatusHistory,
@@ -36,6 +35,8 @@ const { getCandidateInstruments } = require('./getCandidateInstruments')
 
 const { transferInstruments } = require('./deviceComposition/transferInstruments')
 const { transferInstrumentToNewDevice } = require('./deviceComposition/transferInstrumentToNewDevice')
+
+const { listDevicesForSelectList } = require('./listDevicesForSelectList')
 
 const routes = [
   {
