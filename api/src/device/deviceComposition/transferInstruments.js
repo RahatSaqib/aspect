@@ -14,12 +14,13 @@ async function transferInstruments({ payload, plugins: { messageContext }, auth 
 
   const targetDevice = await getTargetDevice(targetDeviceId)
   const sourceInstruments = await getSourceInstruments(sourceInstrumentsIds)
-  const sourceDeviceIds = getUniqueDeviceIds(sourceInstruments)
+  const groupedInstruments = groupInstrumentsByDevice(sourceInstruments)
+  const sourceDeviceIds = groupedInstruments.map(d => d.deviceId)
 
   await validate(sourceInstruments, sourceDeviceIds, targetDevice, auth.credentials)
 
   const { deletedDeviceIds } = await transact(async trknex =>
-    transferDeviceInstruments(trknex, { sourceDeviceIds, sourceInstruments, targetDeviceId }, userId)
+    transferDeviceInstruments(trknex, { groupedInstruments, targetDeviceId }, userId)
   )
 
   const sourceDeviceIdsToRecalculate = _.difference(sourceDeviceIds, deletedDeviceIds)
@@ -28,8 +29,22 @@ async function transferInstruments({ payload, plugins: { messageContext }, auth 
   return { ok: true, deletedDeviceIds }
 }
 
-function getUniqueDeviceIds(sourceInstruments) {
-  return [...new Set(sourceInstruments.map(sourceInstrument => sourceInstrument.deviceId))]
+function groupInstrumentsByDevice(sourceInstruments) {
+  const grouped = new Map()
+
+  for (const sourceInstrument of sourceInstruments) {
+    const existing = grouped.get(sourceInstrument.deviceId)
+    if (existing) {
+      existing.instrumentIds.push(sourceInstrument.id)
+    } else {
+      grouped.set(sourceInstrument.deviceId, {
+        deviceId: sourceInstrument.deviceId,
+        instrumentIds: [sourceInstrument.id],
+      })
+    }
+  }
+
+  return Array.from(grouped.values())
 }
 
 async function getTargetDevice(targetDeviceId) {

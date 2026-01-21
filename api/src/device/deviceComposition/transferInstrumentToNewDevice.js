@@ -18,8 +18,7 @@ async function transferInstrumentToNewDevice({ payload, plugins: { messageContex
     const { deletedDeviceIds } = await transferDeviceInstruments(
       trknex,
       {
-        sourceDeviceIds: [sourceDevice.id],
-        sourceInstruments: [{ id: instrumentId, deviceId: sourceDevice.id }],
+        groupedInstruments: [{ deviceId: sourceDevice.id, instrumentIds: [instrumentId] }],
         targetDeviceId: newDeviceId,
       },
       userId

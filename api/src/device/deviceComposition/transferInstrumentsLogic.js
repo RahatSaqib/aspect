@@ -2,13 +2,14 @@ const { executeMergeDevices: mergeDevice } = require('./mergeDevicesLogic')
 const { knex } = require('../../db')
 
 // Handles merging and transferring instruments/devices in a transaction
-async function transferDeviceInstruments(trknex, { sourceDeviceIds, sourceInstruments, targetDeviceId }, userId) {
+async function transferDeviceInstruments(trknex, { groupedInstruments, targetDeviceId }, userId) {
+  const sourceDeviceIds = groupedInstruments.map(d => d.deviceId)
   const sourceDeviceInstrumentCounts = await getDeviceInstrumentCounts(trknex, sourceDeviceIds)
-  const instrumentsByDevice = groupInstrumentIdsByDevice(sourceInstruments)
+  const instrumentsByDevice = new Map(groupedInstruments.map(d => [d.deviceId, d.instrumentIds]))
   const devicesToFullyMerge = selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts)
   const devicesToPartiallyTransfer = sourceDeviceIds.filter(deviceId => !devicesToFullyMerge.has(deviceId))
-  const sourceDevices = await getSourceDevices(trknex, sourceDeviceIds)
-  const sourceDeviceMap = new Map(sourceDevices.map(sourceDevice => [sourceDevice.id, sourceDevice]))
+  const sourceDevicesData = await getSourceDevices(trknex, sourceDeviceIds)
+  const sourceDeviceMap = new Map(sourceDevicesData.map(sourceDevice => [sourceDevice.id, sourceDevice]))
 
   await Promise.all(
     [...devicesToFullyMerge].map(deviceId =>
@@ -118,18 +119,6 @@ async function getDeviceInstrumentCounts(trknex, sourceDeviceIds) {
     .count({ instrumentCount: '*' })
 
   return new Map(rows.map(row => [row.deviceId, Number(row.instrumentCount)]))
-}
-
-function groupInstrumentIdsByDevice(sourceInstruments) {
-  const instrumentsByDevice = new Map()
-
-  for (const sourceInstrument of sourceInstruments) {
-    const deviceIds = instrumentsByDevice.get(sourceInstrument.deviceId) || []
-    deviceIds.push(sourceInstrument.id)
-    instrumentsByDevice.set(sourceInstrument.deviceId, deviceIds)
-  }
-
-  return instrumentsByDevice
 }
 
 function selectDevicesToFullyMerge(instrumentsByDevice, sourceDeviceInstrumentCounts) {
