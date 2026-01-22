@@ -24,8 +24,8 @@ const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
 const { addLoggers } = require('./logger/service')
 const logger = require('./shared/logger')
-const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
-const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
+const { plugin: deviceApiKeyPlugin } = require('./deviceApi/deviceApiKeyPlugin')
+const { plugin: deviceApiRawAuthPlugin } = require('./deviceApiRaw/deviceApiRawAuthPlugin')
 const { initDictionaryTables } = require('./shared/dictionary')
 
 const { port } = config
@@ -179,8 +179,8 @@ const plugins = [
   // Basic authentication in Device API
   require('@hapi/basic'), // eslint-disable-line import/order
 
-  // Unauthenticated access to public Device API Raw Endpoints
-  deviceApiRawUnauthenticatedPlugin,
+  // API Key or Unauthenticated access to public Device API Raw Endpoints
+  deviceApiRawAuthPlugin,
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
@@ -246,11 +246,7 @@ const start = async () => {
   // use config: { auth: false } on route definition to disable authentication
   // Device API uses API Keys
   server.auth.strategy('deviceApiKey', 'deviceApiKey')
-  server.auth.strategy('deviceApiBasic', 'basic', {
-    allowEmptyUsername: true,
-    ...validateApiKeyAuthBasic,
-  })
-  server.auth.strategy('deviceApiRawUnauthenticated', 'deviceApiRawUnauthenticated')
+  server.auth.strategy('deviceApiRawAuth', 'deviceApiRawAuth')
 
   // Common function to validate scope based on the request
   const validateApi = scopeApi => {

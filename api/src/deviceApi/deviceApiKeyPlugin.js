@@ -2,8 +2,6 @@ const Boom = require('@hapi/boom')
 const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
-const { lookupUsingCredentials } = require('../deviceApiKey/service')
-const { authenticate: tryAnonymousAuthenticate } = require('./deviceApiRawUnauthenticatedPlugin')
 const logger = require('../shared/logger')
 
 function register(plugin) {
@@ -16,7 +14,7 @@ function register(plugin) {
   })
 }
 
-function authenticate(request, h) {
+async function authenticate(request, h) {
   const { query, headers } = request
   let token = ''
   if (query.token) {
@@ -26,59 +24,17 @@ function authenticate(request, h) {
     // Remove Bearer from Authorization header
     token = headers.authorization.replace(/Bearer/gi, '')
   }
-  if (!token) {
-    return tryAnonymousAuthenticate(request, h)
-  }
-  return authToken(token)
-    .then(credentials => {
-      return credentials
-        ? h.authenticated({ credentials })
-        : h.unauthenticated(Boom.unauthorized('Invalid Credentials'))
-    })
-    .catch(err => {
-      logger.warning(err)
-      throw err
-    })
-}
 
-const validateApiKeyAuthBasic = {
-  async validate(request, username, password) {
-    if (!username) {
-      return authToken(password)
-        .then(credentials => ({ isValid: !!credentials, credentials }))
-        .catch(() => ({ isValid: false }))
+  try {
+    const credentials = await authToken(token)
+    if (credentials) {
+      return h.authenticated({ credentials })
     }
-    return authUsernameAndPassword(username, password)
-      .then((credentials, error) => {
-        if (error) {
-          return authToken(password)
-        }
-        return credentials
-      })
-      .then(credentials => ({ isValid: !!credentials, credentials }))
-      .catch(() => ({ isValid: false }))
-  },
-}
-
-async function authUsernameAndPassword(username, password) {
-  if (!username || !password) {
-    logger.warning('Invalid Credentials')
-    return
+    return h.unauthenticated(Boom.unauthorized('Invalid Credentials'))
+  } catch (err) {
+    logger.warning(err)
+    throw err
   }
-  const deviceApiKeyAuthResult = await lookupUsingCredentials(username, password)
-  const { authenticated, data } = deviceApiKeyAuthResult || {}
-  if (!authenticated || !data) {
-    if (password) {
-      return authToken(password)
-    }
-    logger.warning('Cannot authorize API Key')
-    return
-  }
-  const { id, token } = data
-  const scope = ['deviceApi']
-  const name = `(${id}) ${username || ''}`.trim()
-  const credentials = { token, scope, name }
-  return credentials
 }
 
 async function authToken(token) {
@@ -115,5 +71,5 @@ module.exports = {
     version,
     register,
   },
-  validateApiKeyAuthBasic,
+  authenticate,
 }

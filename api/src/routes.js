@@ -76,13 +76,13 @@ function decorateMobileAPI(module) {
 function decorateDeviceAPI() {
   // must always be authenticated using Device JWT
   const scope = ['+deviceApi']
-  const strategies = ['deviceApiBasic', 'deviceApiKey']
+  const strategies = ['deviceApiKey']
   return decorateAPI({ scope, strategies })
 }
 
 function decorateDeviceRawAPI() {
   const scope = ['+deviceApi']
-  const strategies = ['deviceApiBasic', 'deviceApiKey', 'deviceApiRawUnauthenticated']
+  const strategies = ['deviceApiRawAuth']
   return decorateAPI({ scope, strategies })
 }
 
