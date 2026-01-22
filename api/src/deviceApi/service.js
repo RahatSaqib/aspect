@@ -39,8 +39,6 @@ const getResultHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_RESULT,
 })
 
-const addDeviceDataFastHandler = deviceApiHandler(addDeviceDataWithContext, {}, true)
-
 const addPluginDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
   transformInitialPayload: true,
 })
@@ -706,7 +704,6 @@ module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
   getResultHandler,
-  addDeviceDataFastHandler,
   addPluginDeviceDataHandler,
   updateDeviceConfigurationHandler,
   addDeviceOperationHandler,

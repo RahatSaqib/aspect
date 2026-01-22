@@ -8,7 +8,6 @@ const {
   getDeviceDataHandler,
   getDeviceOperationHandler,
   getResultHandler,
-  addDeviceDataFastHandler,
   addPluginDeviceDataHandler,
   addDeviceOperationHandler,
   updateDeviceConfigurationHandler,
@@ -84,47 +83,6 @@ const routes = [
         },
         status: {
           201: {},
-        },
-      },
-    },
-  },
-  {
-    // POST /device {  configuration, operation, result, log }
-    method: 'POST',
-    path: '/fast',
-    handler: addDeviceDataFastHandler,
-    config: {
-      description: 'Update Only Necessary Device Data',
-      notes: 'Updates latest device configuration, operational and result data in a single request.',
-      validate: {
-        options: {
-          allowUnknown: true,
-        },
-        payload: Joi.object().keys({
-          ...devicePayload,
-          includeDeviceConfiguration: Joi.bool()
-            .allow(null)
-            .optional()
-            .description(
-              'This flag will determine (When true) if the service is going to respond as part of the response the general configuration of the device'
-            ),
-          log: Joi.object().allow(null).keys(logPayload).description('Device Log Data'),
-          configuration: Joi.object().allow(null).keys(configurationPayload).description('Device Configuration Data'),
-          operation: Joi.object().allow(null).keys(operationPayload).description('Device Operation Data'),
-          result: Joi.object().allow(null).keys(resultPayload).description('Device Result Data.'),
-          getFormsDefinition: Joi.bool()
-            .optional()
-            .allow(null)
-            .description('This is a flag to tell the API if the request source is a daily details POST'),
-        }),
-        failAction: async (request, h, error) => addDeviceLog(error)(request, h),
-      },
-      response: {
-        options: {
-          allowUnknown: true,
-        },
-        schema: {
-          error: errorPayload,
         },
       },
     },
