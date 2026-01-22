@@ -148,18 +148,6 @@ async function getDeviceConfiguration(knex, deviceId) {
   return deviceConfiguration
 }
 
-async function getDeviceConfigurationFromDeviceLog(knex, deviceLogId) {
-  const deviceQuery = knex('Device as d')
-    .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
-    .where({
-      'dl.id': deviceLogId,
-      'dl.deviceConfigurationUpdated': true,
-    })
-    .first('d.configurationData')
-  const deviceConfiguration = await getDeviceConfigurationFromQuery(deviceQuery)
-  return deviceConfiguration
-}
-
 async function getDeviceConfigurationFromQuery(deviceQuery) {
   const device = await deviceQuery
   if (device == null || device.configurationData == null) {
@@ -181,41 +169,6 @@ async function addDeviceOperation(knex, deviceId, payload, now = new Date()) {
     guid: uuid.v4(),
   })
   return { id: deviceOperationId }
-}
-
-async function getDeviceOperation(knex, deviceLogId) {
-  const op = await knex('DeviceOperation as do')
-    .innerJoin('DeviceLog as dl', 'dl.deviceOperationId', 'do.id')
-    .where({
-      'dl.id': deviceLogId,
-    })
-    .first('externalId as id', 'data', 'startedOn', 'endedOn')
-  if (op == null) {
-    return null
-  }
-
-  const result = {}
-  if (op.id != null) {
-    result.id = op.id
-  }
-  if (op.data != null) {
-    result.data = JSON.parse(op.data)
-  }
-  if (op.startedOn != null) {
-    result.startedOn = op.startedOn.toISOString()
-  }
-  if (op.endedOn != null) {
-    result.endedOn = op.endedOn.toISOString()
-  }
-  return result
-}
-
-async function getSite(knex, deviceId) {
-  const site = await knex('Site as s')
-    .innerJoin('Device as d', 'd.siteId', 's.id')
-    .where('d.id', deviceId)
-    .first('s.externalId')
-  return site == null ? null : { id: site.externalId }
 }
 
 async function createNewDevice(
@@ -346,9 +299,6 @@ module.exports = {
   updateDeviceConfiguration,
   updateDeviceDetails,
   getDeviceConfiguration,
-  getDeviceConfigurationFromDeviceLog,
-  getDeviceOperation,
   addDeviceOperation,
-  getSite,
   createNewDevice,
 }

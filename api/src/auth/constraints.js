@@ -9,40 +9,6 @@ function alias(table) {
   return `${ALIAS_PREFIX}_${table}`
 }
 
-async function getConstraintsByDeviceAPIKey(apiKey) {
-  if (apiKey) {
-    const {
-      partnerId = null,
-      countryId = null,
-      siteId = null,
-      deviceId = null,
-    } = await knex('DeviceApiKey as dak')
-      .leftOuterJoin('Geography as g', 'dak.geographyId', 'g.id')
-      .where({ token: apiKey })
-      .first()
-
-    const constraints = _.pickBy(
-      {
-        partner: {
-          id: partnerId,
-        },
-        country: {
-          id: countryId,
-        },
-        device: {
-          id: deviceId,
-        },
-        site: {
-          id: siteId,
-        },
-      },
-      k => k.id // only keep the ones with values
-    )
-    return constraints
-  }
-  return Promise.resolve()
-}
-
 async function getConstraints(credentials) {
   const user = await getUserFromCredentials(credentials)
   if (!user) {
@@ -784,6 +750,5 @@ module.exports = {
   canEditInventories,
   addPartnerQueryConstraints,
   getContext,
-  getConstraintsByDeviceAPIKey,
   getUserFromCredentials,
 }

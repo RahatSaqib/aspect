@@ -41,7 +41,6 @@ For checking the configuration of the plugin you should check the file
 - issueEscalations: All the conditions to determine if a specific issue is not resolved, should be escalated to another person.
 - dataCategories: This is a function fully linked to an specific issue called "DataCategoryLowError". Refer [Issues section](#Issues) for more detailed information. Right now it is only used in Myanmar’s plugin.
 - filtersOpenIssues: There are some issues which need extra filtering conditions, here is the place for adding those.
-- transformInitialPayload: All the actions we need to do to transform the received payload from devices (with or without results on it)
 - getDeviceSeenOn: From the device payload or result pushed, it could be different ways to determine if a device is active since a specific date of the last action performed.
 - getDevicePingOn: Same as getDeviceSeenOn, but in more detail, trying to determine any heartbeat or ping from the device payload.
 - preProcessCreateDevice: Every time we need to create a device, we need to transform and/or obtain some specific information from the information received in the payload. This action will take place before the insertion into the database of the device and was meant for extracting and manipulating data.

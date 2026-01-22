@@ -7,6 +7,7 @@ describe('device endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/device/endpoints', {
       './service': serviceStub,
+      './listDevicesForSelectList': serviceStub,
       './updateDevice': serviceStub,
       './listDevices': serviceStub,
       './getDevicePerformance': serviceStub,

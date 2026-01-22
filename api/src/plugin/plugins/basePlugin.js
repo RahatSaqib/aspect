@@ -1,4 +1,3 @@
-const Boom = require('@hapi/boom')
 const { postProcessMergeResult } = require('../../deviceApi/result')
 const excludeResult = require('../result/excludeResult')
 const findResult = require('../result/geneXpert/resultIdentification/findResult_v1')
@@ -55,7 +54,6 @@ const basePlugin = {
   issueEscalations: {},
   dataCategories: {},
   filtersOpenIssues,
-  transformInitialPayload,
   getDeviceSeenOn,
   getDevicePingOn,
   preProcessCreateDevice,
@@ -82,25 +80,6 @@ const basePlugin = {
   findResult,
   extractCustomFieldsFromPayload,
   extractSampleId,
-}
-
-/**
- * Transforms a plugin specific payload to Aspect format
- * suitable to posting to standard add device data endpoint.
- *
- * Unlike most other plugins, this will only be executed for
- * data posted to the plugin endpoint with plugin identified
- * by name. This is a low level hook and it is preferable
- * to use other hooks if possible. The returned payload will
- * not be validated and should be transformed to format after
- * Hapi.js validation, e.g. dates should be parsed, numbers
- * should be numbers, etc.
- *
- * Default throws Boom.notFound() (404 error) to encourage
- * use of other endpoint unless plugin specifically implements
- */
-async function transformInitialPayload(/* original request */) {
-  throw Boom.notFound('Cannot find plugin.')
 }
 
 /**

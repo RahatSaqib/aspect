@@ -37,11 +37,11 @@ const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
   const key = await knex('DeviceApiKey as k')
     .leftJoin('Device as d', 'd.id', 'k.deviceId')
     .where({ 'k.token': token })
-    .first('k.id as keyId', 'd.name as deviceName')
+    .first('k.id as deviceApiKeyId', 'd.name as deviceName')
 
   const scope = ['deviceApi']
-  const name = `(${key.keyId}) ${key.deviceName || ''}`.trim()
-  const credentials = { token, scope, name, keyId: key.keyId }
+  const name = `(${key.deviceApiKeyId}) ${key.deviceName || ''}`.trim()
+  const credentials = { token, scope, name, deviceApiKeyId: key.deviceApiKeyId }
 
   // Use original sync flow by simulating a hapi request
   const request = {

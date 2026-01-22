@@ -7,47 +7,14 @@ const { deviceApprovalToId, deviceMaintenanceTypeToId } = require('../shared/dic
 const { resultLogged, resultLoggedProcessed, resultReadyForNotification } = require('../result/actions')
 const { cepheidc360InstrumentLogsReceived } = require('../device/actions')
 
-const {
-  updateDeviceConfiguration,
-  getDeviceConfigurationFromDeviceLog,
-  getDeviceOperation,
-  addDeviceOperation,
-  getSite,
-} = require('./device')
+const { updateDeviceConfiguration, addDeviceOperation } = require('./device')
 const { mergeResult } = require('./mergeResult')
 const { loadPlugin } = require('../plugin/loadPlugin')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
-const { getTbResultsStats } = require('./pakistan/pakistanTbService')
 
-const { DEVICE_LOG_TYPE_OPTIONAL, DEVICE_LOG_TYPE_RESULT, DEVICE_LOG_TYPE_OPERATION } = require('./constants')
 const { findOpenModuleDisabledIssues } = require('../issue/common/db')
 const { resolveIssues } = require('../issue/actions')
-const { deviceApiHandler } = require('./deviceApiHandler')
-
-const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
-
-const getDeviceDataHandler = deviceApiHandler(getDeviceDataWithContext, {
-  deviceLogType: DEVICE_LOG_TYPE_OPTIONAL,
-})
-
-const getDeviceOperationHandler = deviceApiHandler(getDeviceDataWithContext, {
-  deviceLogType: DEVICE_LOG_TYPE_OPERATION,
-})
-
-const getResultHandler = deviceApiHandler(getDeviceDataWithContext, {
-  deviceLogType: DEVICE_LOG_TYPE_RESULT,
-})
-
-const addPluginDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
-  transformInitialPayload: true,
-})
-
-const updateDeviceConfigurationHandler = deviceApiHandler(updateDeviceConfigurationWithContext)
-
-const addDeviceOperationHandler = deviceApiHandler(addDeviceOperationWithContext)
-
-const mergeResultHandler = deviceApiHandler(mergeResultWithContext)
 
 async function addDeviceDataWithContext(context) {
   let response = {}
@@ -292,55 +259,6 @@ async function getConnectionSettings(context) {
   return { deviceConfiguration: _.isEmpty(data) ? null : JSON.parse(data) }
 }
 
-async function getDeviceDataWithContext(context) {
-  const { knex, now, device, deviceLog, deviceLogType } = context
-
-  // include fields based on device log type configured in endpoints
-  const includeAll = deviceLogType === DEVICE_LOG_TYPE_OPTIONAL
-  const includeDevice = includeAll
-  const includeSite = includeAll
-
-  // only include device data if approved
-  const deviceApproved = device.approval === 'approved'
-  const includeConfig = deviceApproved && includeAll
-  const includeOp = deviceApproved && (includeAll || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
-
-  const response = { requestedOn: now.toISOString() }
-  if (includeDevice) {
-    response.name = device.name
-    response.approval = { id: device.approval }
-  }
-
-  if (includeSite) {
-    const site = await getSite(knex, context.device.id)
-    if (site != null) {
-      response.site = site
-    }
-  }
-
-  if (deviceLog != null) {
-    response.log = { createdOn: deviceLog.createdOn }
-    if (deviceLog.source != null) {
-      response.log.source = deviceLog.source
-    }
-
-    if (includeConfig) {
-      const config = await getDeviceConfigurationFromDeviceLog(knex, deviceLog.id)
-      if (config != null) {
-        response.configuration = config
-      }
-    }
-
-    if (includeOp) {
-      const op = await getDeviceOperationWithContext(context)
-      if (op != null) {
-        response.operation = op
-      }
-    }
-  }
-  return response
-}
-
 async function addDeviceOperationWithContext(context) {
   const {
     knex,
@@ -391,15 +309,6 @@ const getCustomFields = async context => {
   const customFields = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getCustomFields')
   if (customFields) CustomFields = _.get(await customFields(knex, partnerId, deviceId), 'CustomFields')
   return { CustomFields }
-}
-
-async function getDeviceOperationWithContext(context) {
-  const {
-    knex,
-    deviceLog: { id: deviceLogId },
-  } = context
-  const op = await getDeviceOperation(knex, deviceLogId)
-  return op
 }
 
 async function updateSiteWithContext(context) {
@@ -613,105 +522,9 @@ async function onResultLogged(action, context) {
   })
 }
 
-async function getDevicesByCountry(knex) {
-  return knex('Device as d')
-    .join('Site as s', 'd.siteId', 's.id')
-    .join('Geography as g', 's.geographyId', 'g.id')
-    .join('Country as c', 'g.countryId', 'c.id')
-    .select(
-      'c.abbreviation as A2',
-      'c.a3 as A3',
-      'c.name as Country',
-      knex.raw("date(date_format(d.createdOn,'%Y-%m-01')) as Date")
-    )
-    .count('d.id as Total')
-    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
-    .orderBy('Date', 'asc')
-}
-
-async function getTestByCountry(knex) {
-  return knex('Device as d')
-    .join('Site as s', 'd.siteId', 's.id')
-    .join('Geography as g', 's.geographyId', 'g.id')
-    .join('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('Result as r', 'd.id', 'r.deviceId')
-    .select(
-      'c.abbreviation as A2',
-      'c.a3 as A3',
-      'c.name as Country',
-      knex.raw("date(date_format(r.createdOn,'%Y-%m-01')) as Date")
-    )
-    .count('r.id as Total')
-    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
-    .orderBy('Date', 'asc')
-}
-
-async function getNotificationsByCountry(knex) {
-  return knex('Device as d')
-    .join('Site as s', 'd.siteId', 's.id')
-    .join('Geography as g', 's.geographyId', 'g.id')
-    .join('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('Issue as i', 'd.id', 'i.deviceId')
-    .leftJoin('Notification as n', 'i.id', 'n.issueId')
-    .select(
-      'c.abbreviation as a2',
-      'c.a3 as A3',
-      'c.name as Country',
-      knex.raw("date(date_format(n.createdOn,'%Y-%m-01')) as Date"),
-      knex.raw('sum(case when emailMessageId  is not null then 1 else 0 end) as Email '),
-      knex.raw('sum(case when smsMessageId is not null then 1 else 0 end) as Sms ')
-    )
-    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
-    .orderBy('Date', 'asc')
-}
-
-async function getCountriesHealthStats(knex) {
-  return knex('Device as d')
-    .join('Site as s', 'd.siteId', 's.id')
-    .join('Geography as g', 's.geographyId', 'g.id')
-    .join('Country as c', 'g.countryId', 'c.id')
-    .select('c.abbreviation as a2', 'c.a3 as A3', 'c.name as Country')
-    .min('d.createdOn as Date')
-    .count('d.id as Total')
-    .groupBy('c.abbreviation', 'c.a3', 'c.name')
-    .orderBy('Date', 'asc')
-}
-const getHealthStatsHandler = deviceApiHandler(getHealthState)
-
-async function getHealthState(context) {
-  const countries = await getCountriesHealthStats(context.knex)
-  const devices = await getDevicesByCountry(context.knex)
-  const tests = await getTestByCountry(context.knex)
-  const notifications = await getNotificationsByCountry(context.knex)
-  const result = {
-    Countries: countries,
-    Devices: devices,
-    Tests: tests,
-    Notifications: _.map(notifications, item => ({
-      Country: item.Country,
-      A2: item.A2,
-      A3: item.A3,
-      Date: item.Date,
-      Sms: item.Sms,
-      Email: item.Email,
-      Total: item.Sms + item.Email,
-    })),
-  }
-  return result
-}
-
 module.exports = {
-  getDeviceDataHandler,
-  getDeviceOperationHandler,
-  getResultHandler,
-  addPluginDeviceDataHandler,
-  updateDeviceConfigurationHandler,
-  addDeviceOperationHandler,
-  mergeResultHandler,
   onResultUpdated,
   onResultLogged,
-  getHealthStatsHandler,
   getCustomFields,
-  getResultPakistanHandler,
   addDeviceDataWithContext,
 }

@@ -73,19 +73,6 @@ class DeviceApiContext {
         'c.abbreviation as countryAbbreviation',
         'dak.token'
       )
-    if (handlerOptions.transformInitialPayload && request.params.pluginName) {
-      logger.debug('Set up transforminitialpayload plugin function', {
-        reLabel: 'deviceApi:createDeviceApiContext',
-      })
-      const transformInitialPayload = await loadPlugin(undefined, request.params.pluginName, 'transformInitialPayload')
-
-      if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation) {
-        logger.debug('Transforming the payload base on the function plugin', {
-          reLabel: 'deviceApi:createDeviceApiContext',
-        })
-        request.payload = await transformInitialPayload(originalRequest, existingDeviceAndData.countryAbbreviation)
-      } else request.payload = await transformInitialPayload(originalRequest)
-    }
 
     let device = null
     // In the case of GxAlert, the device and the device API key were already created on seeding so no need to create a new device
