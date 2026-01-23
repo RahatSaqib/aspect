@@ -4,7 +4,6 @@ const { malawiPlugin } = require('./plugins/malawiPlugin')
 const { gxconnectPlugin } = require('./plugins/gxconnectPlugin')
 const { myanmarPlugin } = require('./plugins/myanmarPlugin')
 const { nigeriaPlugin } = require('./plugins/nigeriaPlugin')
-const { alereftpconnectorPlugin } = require('./plugins/alereftpconnectorPlugin')
 const { cameroonPlugin } = require('./plugins/cameroonPlugin')
 const { pakistanPlugin } = require('./plugins/pakistanPlugin')
 const { lesothoPlugin } = require('./plugins/lesothoPlugin')
@@ -19,7 +18,6 @@ const plugins = {
   gxconnect: gxconnectPlugin,
   myanmar: myanmarPlugin,
   nigeria: nigeriaPlugin,
-  alereftpconnector: alereftpconnectorPlugin,
   cameroon: cameroonPlugin,
   pakistan: pakistanPlugin,
   lesotho: lesothoPlugin,
