@@ -21,7 +21,6 @@ const server = require('../utils/testUtils')
 const { assert, expect } = chai.use(chaiSubset)
 
 const devicePath = '/device'
-const devicePostResultPath = '/device/result'
 
 const baseConfig = {
   requirePrinter: 'yes',
@@ -166,67 +165,50 @@ describe('Device Result API routes', () => {
           .first()
 
         const postNewResultResponse2 = await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-            type: { id: 'Study' },
-            source: { id: 'EnteredByHand' },
-            category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-            assay: {
-              id: 'DaktariHivVL',
-              version: '1a.c1',
-            },
-            sample: {
-              id: `Sample${now}`,
-              group: 'Sample Group X-1',
-              runNumber: '10z',
-              collectedOn: '2013-11-25',
-              type: {
-                id: 'DBS',
+            result: {
+              data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+              type: { id: 'Study' },
+              source: { id: 'EnteredByHand' },
+              category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+              assay: {
+                id: 'DaktariHivVL',
+                version: '1a.c1',
               },
-              originSite: {
-                id: result2SampleSite.externalId,
+              sample: {
+                id: `Sample${now}`,
+                group: 'Sample Group X-1',
+                runNumber: '10z',
+                collectedOn: '2013-11-25',
+                type: {
+                  id: 'DBS',
+                },
+                originSite: {
+                  id: result2SampleSite.externalId,
+                },
               },
-            },
-            location: {
-              longitude: -87.581222,
-              latitude: 30.419348,
-            },
-            startedOn: '2013-12-01',
-            endedOn: '2013-12-01T01:30:00.000Z',
-            consumable: {
-              serial: '132-44-222',
-              expirationDate: '2014-03-01',
-              lot: '331',
-            },
-            instrument: {
-              serial: '444-3',
-              module: {
-                name: 'ModA',
-                serial: '555-8',
+              location: {
+                longitude: -87.581222,
+                latitude: 30.419348,
               },
-            },
-            research: { id: 'R123' },
-            patient: {
-              id: 'P-333',
-              name: 'Bob',
-              surname: 'Hope',
-              gender: 'M',
-              age: 72,
-              dateOfBirth: '1903-05-29',
-              address: '123 Main Street',
-              phone: '856-7909',
-            },
-            oemData: JSON.stringify({
-              maker: 'XYZ',
-              model: '876A',
-              serial: '123-456-789',
-            }),
-            rawData: JSON.stringify({
-              startedOn: '2013-05-13',
+              startedOn: '2013-12-01',
               endedOn: '2013-12-01T01:30:00.000Z',
-              patientData: {
+              consumable: {
+                serial: '132-44-222',
+                expirationDate: '2014-03-01',
+                lot: '331',
+              },
+              instrument: {
+                serial: '444-3',
+                module: {
+                  name: 'ModA',
+                  serial: '555-8',
+                },
+              },
+              research: { id: 'R123' },
+              patient: {
                 id: 'P-333',
                 name: 'Bob',
                 surname: 'Hope',
@@ -236,19 +218,38 @@ describe('Device Result API routes', () => {
                 address: '123 Main Street',
                 phone: '856-7909',
               },
-              location: {
-                longitude: -87.581222,
-                latitude: 30.419348,
+              oemData: JSON.stringify({
+                maker: 'XYZ',
+                model: '876A',
+                serial: '123-456-789',
+              }),
+              rawData: JSON.stringify({
+                startedOn: '2013-05-13',
+                endedOn: '2013-12-01T01:30:00.000Z',
+                patientData: {
+                  id: 'P-333',
+                  name: 'Bob',
+                  surname: 'Hope',
+                  gender: 'M',
+                  age: 72,
+                  dateOfBirth: '1903-05-29',
+                  address: '123 Main Street',
+                  phone: '856-7909',
+                },
+                location: {
+                  longitude: -87.581222,
+                  latitude: 30.419348,
+                },
+              }),
+              sender: {
+                version: '99-1',
+                operator: 'Bob O',
               },
-            }),
-            sender: {
-              version: '99-1',
-              operator: 'Bob O',
-            },
-            notes: 'My Awesome notes about this Awesome result!, 123-12',
-            error: {
-              code: '123',
-              notes: 'Oh NOZE!',
+              notes: 'My Awesome notes about this Awesome result!, 123-12',
+              error: {
+                code: '123',
+                notes: 'Oh NOZE!',
+              },
             },
           })
         assert.equal(postNewResultResponse2.status, 200)
@@ -363,64 +364,47 @@ describe('Device Result API routes', () => {
           .select('rawMessage', 'resultId')
 
         assert.deepEqual(JSON.parse(log2Raw), {
-          data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-          type: { id: 'Study' },
-          source: { id: 'EnteredByHand' },
-          category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-          assay: {
-            id: 'DaktariHivVL',
-            version: '1a.c1',
-          },
-          sample: {
-            id: `Sample${now}`,
-            group: 'Sample Group X-1',
-            runNumber: '10z',
-            collectedOn: '2013-11-25',
-            type: {
-              id: 'DBS',
+          result: {
+            data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+            type: { id: 'Study' },
+            source: { id: 'EnteredByHand' },
+            category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+            assay: {
+              id: 'DaktariHivVL',
+              version: '1a.c1',
             },
-            originSite: {
-              id: result2SampleSite.externalId,
+            sample: {
+              id: `Sample${now}`,
+              group: 'Sample Group X-1',
+              runNumber: '10z',
+              collectedOn: '2013-11-25',
+              type: {
+                id: 'DBS',
+              },
+              originSite: {
+                id: result2SampleSite.externalId,
+              },
             },
-          },
-          location: {
-            longitude: -87.581222,
-            latitude: 30.419348,
-          },
-          startedOn: '2013-12-01',
-          endedOn: '2013-12-01T01:30:00.000Z',
-          consumable: {
-            serial: '132-44-222',
-            expirationDate: '2014-03-01',
-            lot: '331',
-          },
-          instrument: {
-            serial: '444-3',
-            module: {
-              name: 'ModA',
-              serial: '555-8',
+            location: {
+              longitude: -87.581222,
+              latitude: 30.419348,
             },
-          },
-          research: { id: 'R123' },
-          patient: {
-            id: 'P-333',
-            name: 'Bob',
-            surname: 'Hope',
-            gender: 'M',
-            age: 72,
-            dateOfBirth: '1903-05-29',
-            address: '123 Main Street',
-            phone: '856-7909',
-          },
-          oemData: JSON.stringify({
-            maker: 'XYZ',
-            model: '876A',
-            serial: '123-456-789',
-          }),
-          rawData: JSON.stringify({
-            startedOn: '2013-05-13',
+            startedOn: '2013-12-01',
             endedOn: '2013-12-01T01:30:00.000Z',
-            patientData: {
+            consumable: {
+              serial: '132-44-222',
+              expirationDate: '2014-03-01',
+              lot: '331',
+            },
+            instrument: {
+              serial: '444-3',
+              module: {
+                name: 'ModA',
+                serial: '555-8',
+              },
+            },
+            research: { id: 'R123' },
+            patient: {
               id: 'P-333',
               name: 'Bob',
               surname: 'Hope',
@@ -430,19 +414,38 @@ describe('Device Result API routes', () => {
               address: '123 Main Street',
               phone: '856-7909',
             },
-            location: {
-              longitude: -87.581222,
-              latitude: 30.419348,
+            oemData: JSON.stringify({
+              maker: 'XYZ',
+              model: '876A',
+              serial: '123-456-789',
+            }),
+            rawData: JSON.stringify({
+              startedOn: '2013-05-13',
+              endedOn: '2013-12-01T01:30:00.000Z',
+              patientData: {
+                id: 'P-333',
+                name: 'Bob',
+                surname: 'Hope',
+                gender: 'M',
+                age: 72,
+                dateOfBirth: '1903-05-29',
+                address: '123 Main Street',
+                phone: '856-7909',
+              },
+              location: {
+                longitude: -87.581222,
+                latitude: 30.419348,
+              },
+            }),
+            sender: {
+              version: '99-1',
+              operator: 'Bob O',
             },
-          }),
-          sender: {
-            version: '99-1',
-            operator: 'Bob O',
-          },
-          notes: 'My Awesome notes about this Awesome result!, 123-12',
-          error: {
-            code: '123',
-            notes: 'Oh NOZE!',
+            notes: 'My Awesome notes about this Awesome result!, 123-12',
+            error: {
+              code: '123',
+              notes: 'Oh NOZE!',
+            },
           },
         })
         const getResultResponse4 = await server.get(clientSingleResultPath + resultId2).set('Authorization', clientAuth)
@@ -466,12 +469,13 @@ describe('Device Result API routes', () => {
         assert.equal(postNewResultResponse4.status, 200)
         assert.typeOf(postNewResultResponse4.body, 'Object')
 
-        const getResultResponse5 = await server.get(`${devicePath}`).set('Authorization', deviceAuth)
-
-        assert.equal(getResultResponse5.status, 200)
-        assert.typeOf(getResultResponse5.body, 'Object')
-        // The device shouldn't change its name
-        assert.notEqual(getResultResponse5.body.name, deviceChangedName)
+        // Note: GET /device endpoint was removed during route consolidation
+        // const getResultResponse5 = await server.get(`${devicePath}`).set('Authorization', deviceAuth)
+        //
+        // assert.equal(getResultResponse5.status, 200)
+        // assert.typeOf(getResultResponse5.body, 'Object')
+        // // The device shouldn't change its name
+        // assert.notEqual(getResultResponse5.body.name, deviceChangedName)
       }))
 
     it('should set the origin site details of the sample on insert', () =>
@@ -602,9 +606,9 @@ describe('Device Result API routes', () => {
           sample: { id: '76543789' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultPayload)
+          .send({ result: resultPayload })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -631,9 +635,9 @@ describe('Device Result API routes', () => {
           sample: { id: '76543788' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultErrorPayload)
+          .send({ result: resultErrorPayload })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -660,9 +664,9 @@ describe('Device Result API routes', () => {
           sample: { id: '76543787' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultInvalidErrorPayload)
+          .send({ result: resultInvalidErrorPayload })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -687,9 +691,9 @@ describe('Device Result API routes', () => {
           sample: { id: '76543786' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultDetectedNotDetectedPayload)
+          .send({ result: resultDetectedNotDetectedPayload })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -730,9 +734,9 @@ describe('Device Result API routes', () => {
           sample: { id: excludeSampleId },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultPayload)
+          .send({ result: resultPayload })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -769,9 +773,9 @@ describe('Device Result API routes', () => {
           sample: { id: '76543789' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultPayload)
+          .send({ result: resultPayload })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -799,13 +803,15 @@ describe('Device Result API routes', () => {
         const initialCount = await countResults()
 
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[0],
-            startedOn: now,
-            data: { a: 'b' },
-            assay: { id: 'DaktariHivVL' },
+            result: {
+              id: resultExternalIds[0],
+              startedOn: now,
+              data: { a: 'b' },
+              assay: { id: 'DaktariHivVL' },
+            },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -836,13 +842,15 @@ describe('Device Result API routes', () => {
           .send(samplePayload)
 
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[0],
-            startedOn: now.toISOString(),
-            data: { a: 'b', c: 'd' },
-            assay: { id: 'DaktariHivVL' },
+            result: {
+              id: resultExternalIds[0],
+              startedOn: now.toISOString(),
+              data: { a: 'b', c: 'd' },
+              assay: { id: 'DaktariHivVL' },
+            },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -858,15 +866,17 @@ describe('Device Result API routes', () => {
         assert.equal(initialCount + 1, await countResults(), 'Result count does not match')
 
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[1],
-            startedOn: now.toISOString(),
-            data: { a: 'b' },
-            assay: { id: 'DaktariHivVL' },
-            sample: {
-              id: mobileSampleExternalId,
+            result: {
+              id: resultExternalIds[1],
+              startedOn: now.toISOString(),
+              data: { a: 'b' },
+              assay: { id: 'DaktariHivVL' },
+              sample: {
+                id: mobileSampleExternalId,
+              },
             },
           })
           .then(res => {
@@ -898,65 +908,48 @@ describe('Device Result API routes', () => {
           createdBy: 1,
         })
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[1],
-            data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-            type: { id: 'Study' },
-            source: { id: 'EnteredByHand' },
-            category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-            assay: {
-              id: 'DaktariHivVL',
-              version: '1a.c1',
-            },
-            sample: {
-              id: `Sample${now}`,
-              type: {
-                id: 'Plasma',
+            result: {
+              id: resultExternalIds[1],
+              data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+              type: { id: 'Study' },
+              source: { id: 'EnteredByHand' },
+              category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+              assay: {
+                id: 'DaktariHivVL',
+                version: '1a.c1',
               },
-              originSite: {
-                id: result2SampleSite.externalId,
+              sample: {
+                id: `Sample${now}`,
+                type: {
+                  id: 'Plasma',
+                },
+                originSite: {
+                  id: result2SampleSite.externalId,
+                },
               },
-            },
-            location: {
-              longitude: -87.581222,
-              latitude: 30.419348,
-            },
-            startedOn: '2013-12-01',
-            endedOn: '2013-12-01T01:30:00.000Z',
-            consumable: {
-              serial: '132-44-222',
-              expirationDate: '2014-03-01',
-              lot: '331',
-            },
-            instrument: {
-              serial: '444-3',
-              module: {
-                name: 'ModA',
-                serial: '555-8',
+              location: {
+                longitude: -87.581222,
+                latitude: 30.419348,
               },
-            },
-            research: { id: 'R123' },
-            patient: {
-              id: 'P-333',
-              name: 'Bob',
-              surname: 'Hope',
-              gender: 'M',
-              age: 72,
-              dateOfBirth: '1903-05-29',
-              address: '123 Main Street',
-              phone: '856-7909',
-            },
-            oemData: JSON.stringify({
-              maker: 'ABC',
-              model: '123A',
-              serial: '123-456-789',
-            }),
-            rawData: JSON.stringify({
-              startedOn: '2013-05-13',
+              startedOn: '2013-12-01',
               endedOn: '2013-12-01T01:30:00.000Z',
-              patientData: {
+              consumable: {
+                serial: '132-44-222',
+                expirationDate: '2014-03-01',
+                lot: '331',
+              },
+              instrument: {
+                serial: '444-3',
+                module: {
+                  name: 'ModA',
+                  serial: '555-8',
+                },
+              },
+              research: { id: 'R123' },
+              patient: {
                 id: 'P-333',
                 name: 'Bob',
                 surname: 'Hope',
@@ -966,19 +959,38 @@ describe('Device Result API routes', () => {
                 address: '123 Main Street',
                 phone: '856-7909',
               },
-              location: {
-                longitude: -87.581222,
-                latitude: 30.419348,
+              oemData: JSON.stringify({
+                maker: 'ABC',
+                model: '123A',
+                serial: '123-456-789',
+              }),
+              rawData: JSON.stringify({
+                startedOn: '2013-05-13',
+                endedOn: '2013-12-01T01:30:00.000Z',
+                patientData: {
+                  id: 'P-333',
+                  name: 'Bob',
+                  surname: 'Hope',
+                  gender: 'M',
+                  age: 72,
+                  dateOfBirth: '1903-05-29',
+                  address: '123 Main Street',
+                  phone: '856-7909',
+                },
+                location: {
+                  longitude: -87.581222,
+                  latitude: 30.419348,
+                },
+              }),
+              sender: {
+                version: '99-1',
+                operator: 'Bob O',
               },
-            }),
-            sender: {
-              version: '99-1',
-              operator: 'Bob O',
-            },
-            notes: 'My Awesome notes about this Awesome result!',
-            error: {
-              code: '123',
-              notes: 'Oh NOZE!',
+              notes: 'My Awesome notes about this Awesome result!',
+              error: {
+                code: '123',
+                notes: 'Oh NOZE!',
+              },
             },
           })
           .then(res => {
@@ -1095,13 +1107,14 @@ describe('Device Result API routes', () => {
 
         const [{ count: initialLogLength }] = await knex('DeviceLog').count('id as count')
 
-        await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200) // there isn't any for this device
-            assert.typeOf(res.body.result, 'undefined')
-          })
+        // Note: GET /device endpoint was removed during route consolidation
+        // await server
+        //   .get(devicePath)
+        //   .set('Authorization', deviceAuth)
+        //   .then(res => {
+        //     assert.equal(res.status, 200) // there isn't any for this device
+        //     assert.typeOf(res.body.result, 'undefined')
+        //   })
 
         const res = await server
           .post(devicePath)
@@ -1502,17 +1515,19 @@ describe('Device Result API routes', () => {
             .first('id')
 
           await server
-            .post(devicePostResultPath)
+            .post(devicePath)
             .set('Authorization', context.deviceAuth)
             .send({
-              id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
-              data: { a: 'b' },
-              assay: { id: resultDetails.assayExternalId },
-              category: [
-                { id: resultDetails.resultCategory1ExternalId },
-                { id: resultDetails.resultCategory2ExternalId },
-              ],
-              endedOn: new Date(),
+              result: {
+                id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
+                data: { a: 'b' },
+                assay: { id: resultDetails.assayExternalId },
+                category: [
+                  { id: resultDetails.resultCategory1ExternalId },
+                  { id: resultDetails.resultCategory2ExternalId },
+                ],
+                endedOn: new Date(),
+              },
             })
             .then(res => {
               assert.equal(res.status, 200)
@@ -1533,18 +1548,20 @@ describe('Device Result API routes', () => {
           assert.equal(factResultsDeviceBefore.length, 7, 'There should be one entry per day in the device count table')
 
           await server
-            .post(devicePostResultPath)
+            .post(devicePath)
             .set('Authorization', context.deviceAuth)
             .send({
-              id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
-              data: { a: 'b' },
-              assay: { id: resultDetails.assayExternalId },
-              category: [
-                { id: resultDetails.resultCategory1ExternalId },
-                { id: resultDetails.resultCategory2ExternalId },
-              ],
-              startedOn: new Date(),
-              endedOn: addHours(new Date(), 2),
+              result: {
+                id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
+                data: { a: 'b' },
+                assay: { id: resultDetails.assayExternalId },
+                category: [
+                  { id: resultDetails.resultCategory1ExternalId },
+                  { id: resultDetails.resultCategory2ExternalId },
+                ],
+                startedOn: new Date(),
+                endedOn: addHours(new Date(), 2),
+              },
             })
             .then(res => {
               assert.equal(res.status, 200)
