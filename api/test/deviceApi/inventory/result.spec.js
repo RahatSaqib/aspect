@@ -17,7 +17,7 @@ const { selectAssayConsumables } = require('../../../src/consumable/assayConsuma
 
 const { assert } = chai.use(chaiSubset)
 
-const devicePostResultPath = '/device/result'
+const devicePath = '/device'
 describe('admin result updates', () => {
   const context = createTestContext(knex, server, {
     user: 'admin',
@@ -83,15 +83,17 @@ describe('admin result updates', () => {
               .select('ca.consumableId', 'ca.assayId', 'ca.quantity')
 
             await server
-              .post(devicePostResultPath)
+              .post(devicePath)
               .set('Authorization', deviceAuth)
               .send({
-                startedOn: now,
-                data: { a: 'b' },
-                assay: { id: resultDetails.assayExternalId },
-                consumable: {
-                  lot: firstCartridgeConsumable.lotNumber,
-                  expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                result: {
+                  startedOn: now,
+                  data: { a: 'b' },
+                  assay: { id: resultDetails.assayExternalId },
+                  consumable: {
+                    lot: firstCartridgeConsumable.lotNumber,
+                    expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                  },
                 },
               })
               .then(res => {
@@ -164,19 +166,21 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
-          },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -218,19 +222,21 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
-          },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: randomExpiryDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: randomExpiryDate,
+            },
           },
         })
         .expect(200)
@@ -268,19 +274,21 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
-          },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: randomLotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: randomLotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -364,15 +372,17 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -461,17 +471,19 @@ describe('admin result updates', () => {
       assert.equal(inventoryLogsBefore.length, 0)
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct From Null Item' },
-          instrument: { serial: '123456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct From Null Item' },
+            instrument: { serial: '123456789' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -554,17 +566,19 @@ describe('admin result updates', () => {
       assert.equal(inventoryLogsBefore.length, 0)
 
       let res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct Update Lot Number' },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct Update Lot Number' },
+            instrument: { serial: '1234567893' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
       assert.equal(res.status, 200)
@@ -593,17 +607,19 @@ describe('admin result updates', () => {
       )
 
       res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: new Date().toISOString(),
-          data: { b: 'd' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct Update Lot Number 2' },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: new Date().toISOString(),
+            data: { b: 'd' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct Update Lot Number 2' },
+            instrument: { serial: '1234567893' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
       assert.equal(res.status, 200)
@@ -689,18 +705,20 @@ describe('admin result updates', () => {
       const fakeSampleId = 'fake-sample-id'
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '1234567893' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -744,18 +762,20 @@ describe('admin result updates', () => {
         .update({ updatedOn: now, quantityOnHand: newQuantityOnHand })
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'd' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { b: 'd' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '1234567893' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -791,18 +811,20 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'e' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { b: 'e' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '1234567893' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -850,17 +872,19 @@ describe('admin result updates', () => {
       assert.isUndefined(_.find(inventoryItemsBefore, { lotNumber: resultDetails.lotNumber }))
 
       const res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct Unknown Item' },
-          instrument: { serial: '123456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct Unknown Item' },
+            instrument: { serial: '123456789' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -906,15 +930,17 @@ describe('admin result updates', () => {
               .select('ca.consumableId', 'ca.assayId', 'ca.quantity')
 
             await server
-              .post(devicePostResultPath)
+              .post(devicePath)
               .set('Authorization', deviceAuth)
               .send({
-                startedOn: now,
-                data: { a: 'b' },
-                assay: { id: resultDetails.assayExternalId },
-                consumable: {
-                  lot: firstCartridgeConsumable.lotNumber,
-                  expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                result: {
+                  startedOn: now,
+                  data: { a: 'b' },
+                  assay: { id: resultDetails.assayExternalId },
+                  consumable: {
+                    lot: firstCartridgeConsumable.lotNumber,
+                    expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                  },
                 },
               })
               .then(res => {
@@ -983,19 +1009,21 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
-          },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1033,19 +1061,21 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
-          },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: randomExpiryDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: randomExpiryDate,
+            },
           },
         })
         .expect(200)
@@ -1083,19 +1113,21 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
-          },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: randomLotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: randomLotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1180,15 +1212,17 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .then(res => {
@@ -1275,17 +1309,19 @@ describe('admin result updates', () => {
       assert.equal(inventoryLogsBefore.length, 0)
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct From Null Item' },
-          instrument: { serial: '123456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct From Null Item' },
+            instrument: { serial: '123456789' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .then(res => {
@@ -1371,18 +1407,20 @@ describe('admin result updates', () => {
       const fakeResultId = 'fake-result-id'
       const fakeSampleId = 'fake-sample-id'
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '1234567893' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1426,18 +1464,20 @@ describe('admin result updates', () => {
         .update({ updatedOn: now, quantityOnHand: newQuantityOnHand })
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'd' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { b: 'd' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '1234567893' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1475,18 +1515,20 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'e' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { b: 'e' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '1234567893' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1573,17 +1615,19 @@ describe('admin result updates', () => {
       }
 
       const res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '423456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '423456789' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1629,17 +1673,19 @@ describe('admin result updates', () => {
       }
 
       const res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct Unknown Item' },
-          instrument: { serial: '123456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct Unknown Item' },
+            instrument: { serial: '123456789' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
