@@ -11,7 +11,7 @@ const server = require('../../utils/testUtils')
 
 const { assert } = chai.use(chaiSubset)
 
-const devicePostResultPath = '/device/result'
+const devicePath = '/device'
 const removeInventoryPath = '/api/inventory/remove'
 const transferInventoryPath = '/api/inventory/transfer'
 describe('inventory strategy for Pakistan', () => {
@@ -123,9 +123,9 @@ describe('inventory strategy for Pakistan', () => {
       inventoryItem => inventoryItem.expiresOn.toISOString() === expiresOn.toISOString()
     )
     await server
-      .post(devicePostResultPath)
+      .post(devicePath)
       .set('Authorization', deviceAuth)
-      .send(getResultPayload({ startedOn: now, expirationDate: resultDetails.expirationDate }))
+      .send({ result: getResultPayload({ startedOn: now, expirationDate: resultDetails.expirationDate }) })
       .expect(200)
     const inventoryAfter = await getInventoryItemsAtSite(knex, siteId)
     const stockAfter = _.find(
@@ -154,9 +154,9 @@ describe('inventory strategy for Pakistan', () => {
     inventoryItemIdsToDelete.push(expirationDateMatch)
 
     const res = await server
-      .post(devicePostResultPath)
+      .post(devicePath)
       .set('Authorization', deviceAuth)
-      .send(getResultPayload({ startedOn: now, expirationDate: resultDetails.expirationDate }))
+      .send({ result: getResultPayload({ startedOn: now, expirationDate: resultDetails.expirationDate }) })
       .expect(200)
     const { aspectResultId: resultId } = res.body
 
