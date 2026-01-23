@@ -1,10 +1,9 @@
 const { knex } = require('../db')
-const { deviceApiHandler } = require('./deviceApiHandler')
-const { addDeviceDataWithContext } = require('./service')
 const { devicePayloadValidation } = require('./validation')
 const logger = require('../shared/logger')
 const { asyncPayloadReceived } = require('./actions')
 const config = require('../config')
+const { processSyncPayload } = require('./processSyncPayload')
 
 const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
   if (!config.enableAsyncPayloadProcessing) {
@@ -49,7 +48,7 @@ const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
     auth: { credentials },
     payload: formattedPayload,
   }
-  const response = await deviceApiHandler(addDeviceDataWithContext, {}, false, deviceLogId)(request)
+  const response = await processSyncPayload(request, deviceLogId)
   logger.info(
     `Completed processing async device payload for DeviceLogId: ${deviceLogId}. Response: ${JSON.stringify(response)}`
   )

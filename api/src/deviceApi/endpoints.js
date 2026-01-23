@@ -7,15 +7,16 @@ const {
   devicePayloadValidation,
 } = require('./validation')
 const { getTestAggregate } = require('./mozambique/zenysisApiClient')
-const { addDeviceLog } = require('./deviceApiHandler')
+const { addDeviceLog } = require('./addDeviceLog')
 const { devicePayloadHandler } = require('./devicePayloadHandler')
+const { asyncHandler } = require('../routes')
 
 const routes = [
   {
     // POST /device {  configuration, operation, result, log }
     method: 'POST',
     path: '/',
-    handler: devicePayloadHandler,
+    handler: asyncHandler(devicePayloadHandler),
     config: {
       description: 'Update Device Data',
       notes: 'Updates latest device configuration, operational and result data in a single request.',
@@ -24,7 +25,7 @@ const routes = [
           allowUnknown: true,
         },
         payload: devicePayloadValidation,
-        failAction: async (request, h, error) => addDeviceLog(error)(request, h),
+        failAction: addDeviceLog,
       },
       response: {
         options: {

@@ -2,19 +2,16 @@ const _ = require('lodash')
 const { knex } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { removeAdditionalData } = require('../result/common/logic')
-const { deviceApiHandler } = require('./deviceApiHandler')
-const { addDeviceDataWithContext } = require('./service')
 const { normalizeToken } = require('./apiKey')
 const { asyncPayloadReceived } = require('./actions')
 const config = require('../config')
+const { processSyncPayload } = require('./processSyncPayload')
 
 const devicePayloadHandler = async request => {
   const isResultPayload = !!request.payload?.result
   const shouldProcessAsync = config.enableAsyncPayloadProcessing && isResultPayload
 
-  const response = shouldProcessAsync
-    ? await processAsyncPayload(request)
-    : await deviceApiHandler(addDeviceDataWithContext)(request)
+  const response = shouldProcessAsync ? await processAsyncPayload(request) : await processSyncPayload(request)
 
   return response
 }
