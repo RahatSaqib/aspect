@@ -40,15 +40,13 @@ describe('Device API routes', () => {
   afterEach(context.afterEach)
 
   describe('configuration', () => {
-    const deviceConfigurationPath = '/device/configuration'
-
     it('should add and merge device configuration', async () => {
       const { deviceAuth, deviceId } = context
       let res
       res = await server
-        .post(deviceConfigurationPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ data: { a: 'b' } })
+        .send({ configuration: { data: { a: 'b' } } })
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
 
@@ -56,9 +54,9 @@ describe('Device API routes', () => {
       assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
 
       res = await server
-        .post(deviceConfigurationPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ data: { b: 3 } })
+        .send({ configuration: { data: { b: 3 } } })
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
 
@@ -108,15 +106,13 @@ describe('Device API routes', () => {
   })
 
   describe('operation', () => {
-    const deviceOperationPath = '/device/operation'
-
     it('should add and return device operation', async () => {
       const { deviceId, deviceAuth } = context
       let res
       res = await server
-        .post(deviceOperationPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ data: { a: 'b' } })
+        .send({ operation: { data: { a: 'b' } } })
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
 
@@ -170,19 +166,6 @@ describe('Device API routes', () => {
       const op1 = await getLastDeviceOperationData(knex, deviceId)
       assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
       assert.deepEqual(op1, { a: 'b' })
-
-      res = await server.get(devicePath).set('Authorization', deviceAuth)
-
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body, 'Object')
-      assert.typeOf(res.body.configuration, 'Object')
-      assert.deepEqual(res.body.configuration.data, config1)
-      assert.typeOf(res.body.operation, 'Object')
-      assert.deepEqual(res.body.operation.data, op1)
-
-      res = await server.get(devicePath).set('Authorization', deviceAuth)
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body, 'Object')
 
       res = await server
         .post(devicePath)
@@ -355,19 +338,6 @@ describe('Device API routes', () => {
       const [{ count: logLength2 }] = await knex('DeviceLog as dl').count('id as count')
 
       assert.equal(logLength1 + 1, logLength2)
-    })
-  })
-  describe('return health stats of remote server', () => {
-    it('should return json with the servers stats.', async () => {
-      const { apiKey, deviceAuth } = context
-      assert.isOk(apiKey)
-      const res = await server.get(`${devicePath}/health-stats`).set('Authorization', deviceAuth)
-
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body.Countries, 'Array')
-      assert.typeOf(res.body.Devices, 'Array')
-      assert.typeOf(res.body.Tests, 'Array')
-      assert.typeOf(res.body.Notifications, 'Array')
     })
   })
 })

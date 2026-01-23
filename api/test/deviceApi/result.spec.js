@@ -469,13 +469,9 @@ describe('Device Result API routes', () => {
         assert.equal(postNewResultResponse4.status, 200)
         assert.typeOf(postNewResultResponse4.body, 'Object')
 
-        // Note: GET /device endpoint was removed during route consolidation
-        // const getResultResponse5 = await server.get(`${devicePath}`).set('Authorization', deviceAuth)
-        //
-        // assert.equal(getResultResponse5.status, 200)
-        // assert.typeOf(getResultResponse5.body, 'Object')
-        // // The device shouldn't change its name
-        // assert.notEqual(getResultResponse5.body.name, deviceChangedName)
+        // Verify the device name hasn't changed (device name should not be updatable via device API)
+        const deviceAfterNameChange = await knex('Device').where({ id: deviceId }).first('name')
+        assert.notEqual(deviceAfterNameChange.name, deviceChangedName)
       }))
 
     it('should set the origin site details of the sample on insert', () =>
@@ -1106,15 +1102,6 @@ describe('Device Result API routes', () => {
         const opIds = []
 
         const [{ count: initialLogLength }] = await knex('DeviceLog').count('id as count')
-
-        // Note: GET /device endpoint was removed during route consolidation
-        // await server
-        //   .get(devicePath)
-        //   .set('Authorization', deviceAuth)
-        //   .then(res => {
-        //     assert.equal(res.status, 200) // there isn't any for this device
-        //     assert.typeOf(res.body.result, 'undefined')
-        //   })
 
         const res = await server
           .post(devicePath)
