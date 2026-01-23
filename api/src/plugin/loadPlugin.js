@@ -2,7 +2,6 @@ const { get } = require('lodash')
 const { basePlugin } = require('./plugins/basePlugin')
 const { malawiPlugin } = require('./plugins/malawiPlugin')
 const { gxconnectPlugin } = require('./plugins/gxconnectPlugin')
-const { gxalertPlugin } = require('./plugins/gxalertPlugin')
 const { myanmarPlugin } = require('./plugins/myanmarPlugin')
 const { nigeriaPlugin } = require('./plugins/nigeriaPlugin')
 const { alereftpconnectorPlugin } = require('./plugins/alereftpconnectorPlugin')
@@ -19,7 +18,6 @@ const { angolaPlugin } = require('./plugins/angolaPlugin')
 const plugins = {
   malawi: malawiPlugin,
   gxconnect: gxconnectPlugin,
-  gxalert: gxalertPlugin,
   myanmar: myanmarPlugin,
   nigeria: nigeriaPlugin,
   alereftpconnector: alereftpconnectorPlugin,

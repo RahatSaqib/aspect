@@ -5,7 +5,7 @@ const subDays = require('date-fns/subDays')
 const addHours = require('date-fns/addHours')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const { subYears } = require('date-fns')
-const { createGxAlertTestContext } = require('./gxalert_utils')
+const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { postToDeviceApi } = require('../utils')
 const { basicResultPayload } = require('./geneXpertConstants')
 const { knex } = require('../../../src/db')
@@ -18,21 +18,23 @@ const { resultModuleReplaced } = require('../../../src/result/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
 describe('Module Replaced Issue testing', () => {
-  function createContext() {
-    return createGxAlertTestContext(server)
-  }
-  const gxAlertDeviceId = 23847
+  const macAddress = 'MAC00000000FAKE'
+  const adminUsername = 'admin'
+  const adminPassword = 'test07'
+  const countryCode = 'US'
   const deviceName = 'This Lab Has Results!'
 
-  const context = createContext()
-  const { beforeCreateGxAlertApiKey, useGxAlertDeviceId, basicDevicePayload, afterCleanUp } = context
+  const context = createGxConnectTestContext(server, {
+    countryCode,
+    adminUsername,
+    adminPassword,
+    deviceName,
+    macAddress,
+  })
+  const { beforeRegisterAndSetDevice, basicDevicePayload, afterCleanUp } = context
   let { deviceAuth } = context
   beforeEach(async () => {
-    await beforeCreateGxAlertApiKey({
-      countryAbbreviation: 'US',
-      partnerName: 'Partner One',
-    })
-    useGxAlertDeviceId(gxAlertDeviceId)
+    await beforeRegisterAndSetDevice()
     ;({ deviceAuth } = context)
   })
 
@@ -85,7 +87,7 @@ describe('Module Replaced Issue testing', () => {
     instrumentSerial = `CEPH-PC-123`
     testStartedOn = setMilliseconds(subDays(now, 2), 0)
     testEndedOn = setMilliseconds(addHours(testStartedOn, 5), 0)
-    const oldResultId = response.body.result.id
+    const oldResultId = response.body.aspectResultId
     // Post the result with the new module serial
     result = {
       id: resultId,
@@ -111,7 +113,7 @@ describe('Module Replaced Issue testing', () => {
       payload,
     })
 
-    let waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.result.id))
+    let waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.aspectResultId))
     await waitForModuleReplacedIssue
     await waitForIdle()
 
@@ -136,7 +138,7 @@ describe('Module Replaced Issue testing', () => {
       payload,
     })
 
-    waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.result.id))
+    waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.aspectResultId))
     await waitForModuleReplacedIssue
     await waitForIdle()
 
