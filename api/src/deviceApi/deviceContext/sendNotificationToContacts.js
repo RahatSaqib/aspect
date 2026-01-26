@@ -84,5 +84,4 @@ async function notifyPerson({ name, email, cell }, deviceName, routerNumber, noI
 
 module.exports = {
   sendNotificationToContacts,
-  notifyPerson,
 }

@@ -2,7 +2,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 
 const { knex, transact } = require('../db')
-const { deviceTypeToPlugin } = require('../shared/dictionary')
+const { deviceTypeToPlugin, deviceApprovalToId } = require('../shared/dictionary')
 
 const { getRemoteAddress } = require('../shared/request')
 
@@ -16,10 +16,7 @@ const { removeAdditionalData } = require('../result/common/logic')
 const { addDeviceDataWithContext } = require('./service')
 const { DEVICE_LOG_TYPE_NONE } = require('./constants')
 
-// const { createNewDevice } = require('./deviceContext/deviceCreation')
-const { createNewDevice: createNewDevice2 } = require('./device')
-
-const { sendNotificationToContacts } = require('./deviceContext/deviceNotifications')
+const { sendNotificationToContacts } = require('./deviceContext/sendNotificationToContacts')
 
 const processSyncPayload = async (request, existingDeviceLogId = null) => {
   const isFastImport = false
@@ -120,7 +117,7 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
     logger.debug('Using createDevice', {
       reLabel: 'deviceApi:processSyncPayload',
     })
-    const deviceAndError = await createDevice2(request, now)
+    const deviceAndError = await createDevice(request, now)
     if (deviceAndError.error) {
       await updateLogs(request)
       return deviceAndError.error
@@ -314,7 +311,7 @@ async function updateLogs(request) {
  * @param {Date} now - Current timestamp
  * @returns {Promise<{device: Object, error: Object|null}>} Device object and optional error
  */
-async function createDevice2(request, now) {
+async function createDevice(request, now) {
   return transact(async trx => {
     const { auth } = request
     logger.debug('Create new CepheidGeneXpert device from request', {
@@ -375,7 +372,7 @@ async function createDevice2(request, now) {
     const serial = _.get(payload, 'configuration.data.deviceSerialNumber') || payload.serial
     const macAddress = _.get(payload, 'configuration.data.macAddress') || payload.macAddress
 
-    const { device, error } = await createNewDevice2(trx, now, {
+    const { device, error } = await createNewDevice(trx, now, {
       deviceTypeExternalId,
       name: payload.name,
       hostId: hostId || payload.name,
@@ -397,6 +394,130 @@ async function createDevice2(request, now) {
 
     return { device, error }
   })
+}
+
+async function createNewDevice(
+  knex,
+  now,
+  {
+    deviceTypeExternalId,
+    name,
+    serial,
+    partnerId,
+    siteId,
+    approval,
+    shortName,
+    macAddress,
+    hostId,
+    culture,
+    timezone,
+    configurationData = '{}',
+    putInService,
+    lastSeenOn,
+    lastPingOn,
+  }
+) {
+  const deviceType = await knex('DeviceType')
+    .where({ externalId: deviceTypeExternalId })
+    .first('id', 'name', 'plugin', 'externalId')
+  if (deviceType == null) {
+    return {
+      error: Boom.badRequest(`Cannot find DeviceType with id ${deviceTypeExternalId}`),
+    }
+  }
+
+  const { timeZone: defaultTimeZone } =
+    (await knex('Site as s')
+      .join('Geography as g', 's.geographyId', 'g.id')
+      .join('Country as c', 'c.id', 'g.countryId')
+      .where('s.id', siteId)
+      .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
+    (await knex('Country as c').first('c.timezone as timeZone'))
+  const { existingTimeZone } = await knex('TimeZone')
+    .where('id', timezone || defaultTimeZone)
+    .first('id as existingTimeZone')
+
+  // Use or generate device name
+  if (!name) {
+    if (shortName) {
+      name = shortName
+    } else if (serial) {
+      name = serial
+    } else {
+      const [deviceCount] = await knex('Device')
+        .where({
+          partnerId,
+          deviceTypeId: deviceType.id,
+        })
+        .count('id as cnt')
+      name = `${deviceType.name} #${deviceCount.cnt + 1}`
+    }
+  }
+  if (!shortName && name) {
+    shortName = name
+  }
+  const deviceApprovalId = await deviceApprovalToId(approval)
+  if (shortName && shortName.length > 45) {
+    shortName = shortName.substr(0, 45)
+  }
+
+  const partnerData = await knex('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
+
+  const [deviceId] = await knex('Device').insert({
+    partnerId,
+    siteId,
+    deviceTypeId: deviceType.id,
+    dailyTestCapacity: deviceType.externalId === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
+    moduleBayCapacity: deviceType.externalId === 'CepheidGeneXpert' ? 4 : 0,
+    deviceApprovalId,
+    name,
+    serial,
+    shortName,
+    macAddress,
+    hostId,
+    culture,
+    timezone: existingTimeZone,
+    configurationData,
+    putInService,
+    lastSeenOn,
+    lastPingOn,
+    createdOn: now,
+    updatedOn: now,
+  })
+  await knex('DeviceApprovalLog').insert({
+    deviceId,
+    deviceApprovalId,
+    changedOn: now,
+    createdOn: now,
+    createdBy: null,
+  })
+  const device = await knex('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
+    .where('d.id', deviceId)
+    .first(
+      'd.id',
+      'd.partnerId',
+      'd.siteId',
+      's.geographyId',
+      'd.name',
+      'd.shortName',
+      'd.serial',
+      'd.macAddress',
+      'd.configurationData',
+      'd.connectSettingsSentOn',
+      'd.lastSeenOn',
+      'd.putInService',
+      'da.token as approval',
+      'dt.externalId as deviceType',
+      'dt.plugin as deviceTypePluginName',
+      'p.plugin as partnerPluginName',
+      'dtc.name as deviceTypeCategory'
+    )
+  return { device }
 }
 
 module.exports = {
