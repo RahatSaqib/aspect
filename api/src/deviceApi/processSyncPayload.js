@@ -12,17 +12,13 @@ const logger = require('../shared/logger')
 
 const { resultUpdated } = require('../result/actions')
 
-const { removeAdditionalData } = require('../result/common/logic')
 const { addDeviceDataWithContext } = require('./service')
-const { DEVICE_LOG_TYPE_NONE } = require('./constants')
 
 const { sendNotificationToContacts } = require('./deviceContext/sendNotificationToContacts')
 
-const processSyncPayload = async (request, existingDeviceLogId = null) => {
+const processSyncPayload = async (request, deviceLogId) => {
   const isFastImport = false
-  const handlerOptions = { createDevice: true, updatePing: true, updateDeviceLog: true }
 
-  const { deviceLogType = DEVICE_LOG_TYPE_NONE } = handlerOptions
   const messageContext = request.plugins.messageContext.bindActionCreators({
     resultUpdated,
   })
@@ -164,7 +160,6 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
     payload: request.payload,
     query: request.query,
     messageContext,
-    deviceLogType,
     partnerId: partner.id,
     partnerPluginName: partner.partnerPluginName,
     deviceTypePluginName: device.deviceTypePluginName,
@@ -176,42 +171,10 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
   // TODO Does Hapi Remote address work through proxies? Check headers?
   const remoteAddress = getRemoteAddress(request)
 
-  // Insert Device Log and Update Ping prior to calling handler and
-  // in separate transaction so it is recorded even if handler fails
-  let deviceLogId = existingDeviceLogId
-  let deviceLogRawMessage = null
-  if (handlerOptions.updateDeviceLog) {
-    const formattedResult = removeAdditionalData(request.plugins.rawPayload)
-
-    // TODO DeviceLog handle non-JSON payloads
-    deviceLogRawMessage = JSON.stringify(formattedResult)
-
-    logger.debug('need to ensure DeviceLog is inserted even if failure below', {
-      reLabel: 'deviceApi:processSyncPayload',
-    })
-
-    if (deviceLogId) {
-      await knex('DeviceLog')
-        .where('id', deviceLogId)
-        .update({
-          deviceId,
-          source: _.get(context.payload, 'log.source', ''),
-          createdOn: now,
-          rawMessage: deviceLogRawMessage,
-          processed: true,
-        })
-    } else {
-      // need to ensure DeviceLog is inserted even if failure below
-      ;[deviceLogId] = await knex('DeviceLog').insert({
-        deviceId,
-        source: _.get(context.payload, 'log.source', ''),
-        createdOn: now,
-        senderIp: remoteAddress,
-        rawMessage: deviceLogRawMessage,
-        processed: true,
-      })
-    }
-  }
+  await knex('DeviceLog').where('id', deviceLogId).update({
+    deviceId,
+    processed: true,
+  })
 
   let response = {}
   await context.messageContext.transact(async knex => {
@@ -222,7 +185,7 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
     // update timestamps as necessary for original device
     const originalDeviceId = context.device.id
     if (!isFastImport) {
-      await updateDeviceData(context, handlerOptions, remoteAddress)
+      await updateDeviceData(context, remoteAddress)
     }
 
     // invoke delegate handler
@@ -232,7 +195,7 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
     // for new device as necessary
     if (context.device.id !== originalDeviceId) {
       if (!isFastImport) {
-        await updateDeviceData(context, handlerOptions, remoteAddress)
+        await updateDeviceData(context, remoteAddress)
       }
     }
 
@@ -247,9 +210,8 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
   return response
 }
 
-async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
+async function updateDeviceData(context, remoteAddress) {
   const { knex, partnerPluginName, deviceTypePluginName, device, payload } = context
-  const { updatePing = false } = handlerOptions
 
   const deviceUpdates = {}
 
@@ -265,17 +227,14 @@ async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
     context.messageContext.dispatch(deviceSeen(device.id))
   }
 
-  if (updatePing) {
-    logger.debug('update device ping on', {
-      reLabel: 'deviceApi:updateDeviceData',
-    })
-
-    const getDevicePingOn = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getDevicePingOn')
-    const devicePingOn = await getDevicePingOn(context)
-    if (devicePingOn != null) {
-      deviceUpdates.lastPingOn = devicePingOn
-      deviceUpdates.lastPingFromIp = remoteAddress
-    }
+  logger.debug('update device ping on', {
+    reLabel: 'deviceApi:updateDeviceData',
+  })
+  const getDevicePingOn = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getDevicePingOn')
+  const devicePingOn = await getDevicePingOn(context)
+  if (devicePingOn != null) {
+    deviceUpdates.lastPingOn = devicePingOn
+    deviceUpdates.lastPingFromIp = remoteAddress
   }
 
   const instrumentSerial = _.get(payload, 'result.instrument.serial', null)

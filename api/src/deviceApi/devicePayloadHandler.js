@@ -11,12 +11,16 @@ const devicePayloadHandler = async request => {
   const isResultPayload = !!request.payload?.result
   const shouldProcessAsync = config.enableAsyncPayloadProcessing && isResultPayload
 
-  const response = shouldProcessAsync ? await processAsyncPayload(request) : await processSyncPayload(request)
+  const deviceLogId = await createDeviceLog(request)
+
+  const response = shouldProcessAsync
+    ? await processAsyncPayload(request, deviceLogId)
+    : await processSyncPayload(request, deviceLogId)
 
   return response
 }
 
-async function processAsyncPayload(request) {
+async function createDeviceLog(request) {
   const formattedResult = removeAdditionalData(request.plugins.rawPayload)
   formattedResult.deviceApiKey = normalizeToken(request.auth.credentials.token)
   const deviceLogRawMessage = JSON.stringify(formattedResult)
@@ -32,12 +36,14 @@ async function processAsyncPayload(request) {
     processed: false,
   })
 
+  return deviceLogId
+}
+
+async function processAsyncPayload(request, deviceLogId) {
   // Add to queue for processing
   const { messageContext } = request.plugins
   messageContext.bindActionCreators({ asyncPayloadReceived })
   messageContext.asyncPayloadReceived(deviceLogId)
-
-  return { deviceLogId }
 }
 
 module.exports = {

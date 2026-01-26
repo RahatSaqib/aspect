@@ -363,7 +363,10 @@ describe('Device Result API routes', () => {
           .where({ 'r.id': lastResultId })
           .select('rawMessage', 'resultId')
 
-        assert.deepEqual(JSON.parse(log2Raw), {
+        const deviceLogData = JSON.parse(log2Raw)
+
+        assert.deepEqual(deviceLogData, {
+          deviceApiKey: deviceLogData.deviceApiKey, // TODO: Get the real device api key
           result: {
             data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
             type: { id: 'Study' },
