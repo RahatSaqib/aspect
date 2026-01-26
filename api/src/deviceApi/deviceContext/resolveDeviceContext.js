@@ -2,10 +2,7 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { knex } = require('../../db')
 const { getUser } = require('../../auth/service')
-const {
-  resultUpdated,
-  types: { RESULT_UPDATED },
-} = require('../../result/actions')
+const { resultUpdated } = require('../../result/actions')
 const { loadPlugin } = require('../../plugin/loadPlugin')
 const logger = require('../../shared/logger')
 const { DEVICE_LOG_TYPE_NONE, DEVICE_LOG_TYPE_RESULT, DEVICE_LOG_TYPE_OPERATION } = require('../constants')

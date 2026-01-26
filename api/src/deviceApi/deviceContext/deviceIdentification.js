@@ -1,4 +1,3 @@
-const { knex } = require('../../db')
 const { loadPlugin } = require('../../plugin/loadPlugin')
 const logger = require('../../shared/logger')
 
@@ -83,7 +82,7 @@ async function resolveDevice(request, knex, partnerPluginName, deviceTypePluginN
   logger.debug('Falling back to standard DeviceApiKey lookup', {
     reLabel: 'deviceApi:resolveDevice',
   })
-  return await lookupDeviceByApiKey(request, knex)
+  return lookupDeviceByApiKey(request, knex)
 }
 
 module.exports = {
