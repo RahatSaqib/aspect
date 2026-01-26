@@ -26,29 +26,8 @@ const DEFAULT_SETTINGS = {
   },
 }
 
-const DEFAULT_HANDLER_OPTIONS = {
-  addDeviceDataWithContext: {
-    createDevice: true,
-    updatePing: true,
-    updateDeviceLog: true,
-  },
-  updateDeviceConfigurationWithContext: {
-    updatePing: true,
-    updateDeviceLog: true,
-  },
-  addDeviceOperationWithContext: {
-    updatePing: true,
-    updateDeviceLog: true,
-  },
-  mergeResultWithContext: {
-    updatePing: true,
-    updateDeviceLog: true,
-  },
-}
-
 const basePlugin = {
   settings: DEFAULT_SETTINGS,
-  handlerOptions: DEFAULT_HANDLER_OPTIONS,
   issueTriggers,
   issueResolutions,
   issueEscalations: {},

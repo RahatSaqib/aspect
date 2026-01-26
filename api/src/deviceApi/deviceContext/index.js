@@ -1,4 +1,4 @@
-const { resolveDeviceContext, getHandlerOptionsFromRequest } = require('./resolveDeviceContext')
+const { resolveDeviceContext } = require('./resolveDeviceContext')
 const { resolveDevice, lookupDeviceByApiKey } = require('./deviceIdentification')
 const { createNewDevice } = require('./deviceCreation')
 const { sendNotificationToContacts, notifyPerson } = require('./deviceNotifications')
@@ -6,7 +6,6 @@ const { withPayload, addDeviceLogUpdate, notifyResultUpdated } = require('./cont
 
 module.exports = {
   resolveDeviceContext,
-  getHandlerOptionsFromRequest,
   resolveDevice,
   lookupDeviceByApiKey,
   createNewDevice,

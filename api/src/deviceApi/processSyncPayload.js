@@ -12,17 +12,15 @@ const { removeAdditionalData } = require('../result/common/logic')
 const { addDeviceDataWithContext } = require('./service')
 
 const processSyncPayload = async (request, existingDeviceLogId = null) => {
-  const defaultHandlerOptions = {}
   const isFastImport = false
+  const handlerOptions = { createDevice: true, updatePing: true, updateDeviceLog: true }
 
-  const { error, context } = await resolveDeviceContext(addDeviceDataWithContext, request, defaultHandlerOptions)
+  const { error, context } = await resolveDeviceContext(request, handlerOptions)
   if (error) {
     await updateLogs(request)
     return error
   }
 
-  let handlerOptions = await getHandlerOptionsFromContext(addDeviceDataWithContext, context, defaultHandlerOptions)
-  const { updateDeviceLog = false } = handlerOptions
   const { device, now } = context
   const deviceId = device.id
   // TODO Does Hapi Remote address work through proxies? Check headers?
@@ -32,7 +30,7 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
   // in separate transaction so it is recorded even if handler fails
   let deviceLogId = existingDeviceLogId
   let deviceLogRawMessage = null
-  if (updateDeviceLog) {
+  if (handlerOptions.updateDeviceLog) {
     const formattedResult = removeAdditionalData(request.plugins.rawPayload)
 
     // TODO DeviceLog handle non-JSON payloads
@@ -83,7 +81,6 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
     // If handler changes device (e.g. GxAlert plugin), update timestamps
     // for new device as necessary
     if (context.device.id !== originalDeviceId) {
-      handlerOptions = await getHandlerOptionsFromContext(addDeviceDataWithContext, context, defaultHandlerOptions)
       if (!isFastImport) {
         await updateDeviceData(context, handlerOptions, remoteAddress)
       }
@@ -98,15 +95,6 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
     }
   })
   return response
-}
-
-async function getHandlerOptionsFromContext(
-  handler,
-  { partnerPluginName, deviceTypePluginName },
-  defaultHandlerOptions = {}
-) {
-  const handlerOptionGroups = await loadPlugin(partnerPluginName, deviceTypePluginName, 'handlerOptions')
-  return _.merge({}, defaultHandlerOptions, handlerOptionGroups[handler.name] || {})
 }
 
 async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {

@@ -12,70 +12,17 @@ const { sendNotificationToContacts } = require('./deviceNotifications')
 const { notifyResultUpdated } = require('./contextHelpers')
 
 /**
- * Gets handler options from the request, loading plugin-specific options.
- *
- * @param {Function} handler - The handler function
- * @param {Object} request - Request object with auth and payload
- * @param {Object} defaultHandlerOptions - Default options to merge with
- * @returns {Promise<Object>} Merged handler options
- */
-async function getHandlerOptionsFromRequest(handler, request, defaultHandlerOptions = {}) {
-  let partnerPluginName
-  let deviceTypePluginName
-  const {
-    auth = { credentials: {} },
-    payload: { type = {} },
-  } = request
-  const {
-    credentials: { token: deviceApiKeyToken },
-  } = auth
-
-  if (deviceApiKeyToken) {
-    ;({ partnerPluginName, deviceTypePluginName } =
-      (await knex
-        .from('DeviceApiKey as dak')
-        .leftJoin('Partner as dak_p', 'dak_p.id', 'dak.partnerId')
-        .leftJoin('Device as dev', 'dev.id', 'dak.deviceId')
-        .leftJoin('DeviceType as dt', 'dt.id', 'dev.deviceTypeId')
-        .leftJoin('Partner as dev_p', 'dev_p.id', 'dev.partnerId')
-        .where('dak.token', deviceApiKeyToken)
-        .first(
-          knex.raw('COALESCE(dev_p.plugin, dak_p.plugin) as partnerPluginName'),
-          'dt.plugin as deviceTypePluginName'
-        )) || {})
-  }
-  const { id: deviceTypeId } = type
-  if (!deviceTypePluginName && deviceTypeId) {
-    ;({ deviceTypePluginName } =
-      (await knex
-        .from('DeviceType as dt')
-        .where('dt.externalId', deviceTypeId)
-        .first('dt.plugin as deviceTypePluginName')) || {})
-  }
-  const handlerOptionGroups = await loadPlugin(partnerPluginName, deviceTypePluginName, 'handlerOptions')
-  return _.merge({}, defaultHandlerOptions, handlerOptionGroups[handler.name] || {})
-}
-
-/**
  * Resolves a device and builds the device API context object.
  * This is the main entry point that replaces DeviceApiContext.createDeviceApiContext.
  *
- * @param {Function} handler - The handler function (for getting handler options)
- * @param {Object} originalRequest - The original Hapi request object
- * @param {Object} defaultHandlerOptions - Default handler options
+ * @param {Object} request - The Hapi request object
+ * @param {Object} handlerOptions - Handler options
  * @returns {Promise<{context: Object, error: Object|null}>} Context object and optional error
  */
-async function resolveDeviceContext(handler, originalRequest, defaultHandlerOptions) {
-  const handlerOptions = await getHandlerOptionsFromRequest(handler, originalRequest, defaultHandlerOptions)
-  const request = {
-    auth: originalRequest.auth,
-    params: originalRequest.params,
-    payload: originalRequest.payload,
-    query: originalRequest.query,
-  }
+async function resolveDeviceContext(request, handlerOptions) {
   const { createDevice = false, deviceLogType = DEVICE_LOG_TYPE_NONE } = handlerOptions
 
-  const messageContext = originalRequest.plugins.messageContext.bindActionCreators({
+  const messageContext = request.plugins.messageContext.bindActionCreators({
     resultUpdated,
   })
 
@@ -134,7 +81,7 @@ async function resolveDeviceContext(handler, originalRequest, defaultHandlerOpti
       }
       device = deviceAndError.device
 
-      await sendNotificationToContacts(originalRequest.payload, device)
+      await sendNotificationToContacts(request.payload, device)
     }
   }
 
@@ -213,5 +160,4 @@ async function resolveDeviceContext(handler, originalRequest, defaultHandlerOpti
 
 module.exports = {
   resolveDeviceContext,
-  getHandlerOptionsFromRequest,
 }
