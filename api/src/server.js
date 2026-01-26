@@ -1,3 +1,23 @@
+// Set up error handlers FIRST, before any other code runs
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise)
+  console.error('Reason:', reason)
+  if (reason && reason.stack) {
+    console.error('Stack:', reason.stack)
+  }
+  // Don't exit in development to allow debugging
+  if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'development') {
+    process.exit(1)
+  }
+})
+
+process.on('uncaughtException', err => {
+  console.error('Uncaught Exception:', err)
+  console.error('Stack:', err.stack)
+  // Always exit on uncaught exceptions as the process is in an undefined state
+  process.exit(1)
+})
+
 // eslint-disable-next-line import/order
 require('../newrelic')
 // eslint-disable-next-line import/order
@@ -149,7 +169,13 @@ const messageQueuePlugin = {
         server.app.dispatcher = dispatcher
       }
     } catch (err) {
-      logger.error(err)
+      logger.error('Failed to initialize message queue plugin:', {
+        message: err.message,
+        stack: err.stack,
+        error: err,
+      })
+      // Re-throw to prevent server from starting with broken message queue
+      throw err
     }
   },
 }
@@ -191,14 +217,33 @@ const plugins = [
 ]
 
 const start = async () => {
-  await server.register(plugins)
-  await server.register({
-    plugin: require('./plugin/apiVersioning'),
-    options: {
-      defaultVersion: 1,
-      mobileApiPath: '/mobile/api/',
-    },
-  })
+  try {
+    await server.register(plugins)
+  } catch (err) {
+    logger.error('Failed to register plugins:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
+    throw err
+  }
+
+  try {
+    await server.register({
+      plugin: require('./plugin/apiVersioning'),
+      options: {
+        defaultVersion: 1,
+        mobileApiPath: '/mobile/api/',
+      },
+    })
+  } catch (err) {
+    logger.error('Failed to register apiVersioning plugin:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
+    throw err
+  }
   if (config.sentry?.dsn && !config.isDevelopment) {
     logger.info('Sentry is enabled')
     Sentry.hapiIntegration({ server })
@@ -318,97 +363,151 @@ const start = async () => {
   // =======================
   // use plugin to mount all API routes at /api
   // =======================
-  await server.register(
-    {
-      name: 'clientApi',
-      version,
-      register: async server =>
-        new Promise(resolve => {
-          addClientRoutes(server)
-          resolve()
-        }).catch(err => {
-          logger.error(err)
-          throw err
-        }),
-    },
-    {
-      routes: {
-        prefix: '/api',
+  try {
+    await server.register(
+      {
+        name: 'clientApi',
+        version,
+        register: async server =>
+          new Promise(resolve => {
+            addClientRoutes(server)
+            resolve()
+          }).catch(err => {
+            logger.error('Failed to add client routes:', {
+              message: err.message,
+              stack: err.stack,
+              error: err,
+            })
+            throw err
+          }),
       },
-    }
-  )
+      {
+        routes: {
+          prefix: '/api',
+        },
+      }
+    )
+  } catch (err) {
+    logger.error('Failed to register clientApi plugin:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
+    throw err
+  }
+
   // =======================
   // All device API routes mounted under /device
   // =======================
-  await server.register(
-    {
-      name: 'deviceApi',
-      version,
-      register: async server =>
-        new Promise(resolve => {
-          addDeviceRoutes(server)
-          resolve()
-        }).catch(err => {
-          logger.error(err)
-          throw err
-        }),
-    },
-    {
-      routes: {
-        prefix: '/device',
+  try {
+    await server.register(
+      {
+        name: 'deviceApi',
+        version,
+        register: async server =>
+          new Promise(resolve => {
+            addDeviceRoutes(server)
+            resolve()
+          }).catch(err => {
+            logger.error('Failed to add device routes:', {
+              message: err.message,
+              stack: err.stack,
+              error: err,
+            })
+            throw err
+          }),
       },
-    }
-  )
+      {
+        routes: {
+          prefix: '/device',
+        },
+      }
+    )
+  } catch (err) {
+    logger.error('Failed to register deviceApi plugin:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
+    throw err
+  }
+
   // =======================
   // Device API raw data route mounted under /device/raw
   // =======================
-  await server.register(
-    {
-      name: 'deviceApiRaw',
-      version,
-      register: async server =>
-        new Promise(resolve => {
-          addDeviceRawRoutes(server)
-          // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
-          // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
+  try {
+    await server.register(
+      {
+        name: 'deviceApiRaw',
+        version,
+        register: async server =>
+          new Promise(resolve => {
+            addDeviceRawRoutes(server)
+            // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
+            // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
 
-          // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
-          // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
-          resolve()
-        }).catch(err => {
-          logger.error(err)
-          throw err
-        }),
-    },
-    {
-      routes: {
-        prefix: '/device/raw',
+            // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
+            // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
+            resolve()
+          }).catch(err => {
+            logger.error('Failed to add device raw routes:', {
+              message: err.message,
+              stack: err.stack,
+              error: err,
+            })
+            throw err
+          }),
       },
-    }
-  )
+      {
+        routes: {
+          prefix: '/device/raw',
+        },
+      }
+    )
+  } catch (err) {
+    logger.error('Failed to register deviceApiRaw plugin:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
+    throw err
+  }
 
   // =======================
   // Mobile API data route mounted under /mobile/api
   // =======================
-  await server.register(
-    {
-      name: 'mobileApi',
-      version,
-      register: async server =>
-        new Promise(resolve => {
-          addMobileRoutes(server)
-          resolve()
-        }).catch(err => {
-          logger.error(err)
-          throw err
-        }),
-    },
-    {
-      routes: {
-        prefix: '/mobile/api',
+  try {
+    await server.register(
+      {
+        name: 'mobileApi',
+        version,
+        register: async server =>
+          new Promise(resolve => {
+            addMobileRoutes(server)
+            resolve()
+          }).catch(err => {
+            logger.error('Failed to add mobile routes:', {
+              message: err.message,
+              stack: err.stack,
+              error: err,
+            })
+            throw err
+          }),
       },
-    }
-  )
+      {
+        routes: {
+          prefix: '/mobile/api',
+        },
+      }
+    )
+  } catch (err) {
+    logger.error('Failed to register mobileApi plugin:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
+    throw err
+  }
 
   const useUnixSocket = _.isString(port) && port.includes('/')
   const address = useUnixSocket ? port : `http://localhost:${port}`
@@ -438,9 +537,90 @@ const start = async () => {
       logger.warning('❌ MySQL connection is not using SSL')
     }
   } catch (err) {
-    logger.error(err)
+    logger.error('Failed to start server:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
     Sentry.captureException(err)
+    process.exit(1)
   }
 }
 
-start()
+// Additional error handlers with logger (logger may not be available at top level)
+// These supplement the console.error handlers above
+process.on('unhandledRejection', (reason, promise) => {
+  if (typeof logger !== 'undefined') {
+    logger.error('Unhandled Rejection at:', {
+      promise: promise.toString(),
+      reason:
+        reason instanceof Error
+          ? {
+              message: reason.message,
+              stack: reason.stack,
+              error: reason,
+            }
+          : reason,
+    })
+  }
+  // Don't exit in development to allow debugging
+  if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'development') {
+    if (typeof Sentry !== 'undefined') {
+      Sentry.captureException(reason instanceof Error ? reason : new Error(String(reason)))
+    }
+    process.exit(1)
+  }
+})
+
+process.on('uncaughtException', err => {
+  if (typeof logger !== 'undefined') {
+    logger.error('Uncaught Exception:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
+  }
+  if (typeof Sentry !== 'undefined') {
+    Sentry.captureException(err)
+  }
+  // Always exit on uncaught exceptions as the process is in an undefined state
+  process.exit(1)
+})
+
+// Wrap the entire startup in a try-catch to catch any synchronous errors
+try {
+  start().catch(err => {
+    console.error('=== FAILED TO START APPLICATION ===')
+    console.error('Error message:', err.message)
+    console.error('Error stack:', err.stack)
+    console.error('Full error:', err)
+    if (typeof logger !== 'undefined') {
+      logger.error('Failed to start application:', {
+        message: err.message,
+        stack: err.stack,
+        error: err,
+      })
+    }
+    if (typeof Sentry !== 'undefined') {
+      Sentry.captureException(err)
+    }
+    process.exit(1)
+  })
+} catch (err) {
+  // Catch any synchronous errors that happen during module loading
+  console.error('=== SYNCHRONOUS ERROR DURING STARTUP ===')
+  console.error('Error message:', err.message)
+  console.error('Error stack:', err.stack)
+  console.error('Full error:', err)
+  if (typeof logger !== 'undefined') {
+    logger.error('Synchronous error during startup:', {
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    })
+  }
+  if (typeof Sentry !== 'undefined') {
+    Sentry.captureException(err)
+  }
+  process.exit(1)
+}
