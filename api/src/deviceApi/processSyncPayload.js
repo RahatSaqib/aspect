@@ -6,22 +6,185 @@ const { getRemoteAddress } = require('../shared/request')
 const { deviceSeen } = require('../device/actions')
 const { loadPlugin } = require('../plugin/loadPlugin')
 const logger = require('../shared/logger')
-const { resolveDeviceContext } = require('./deviceContext')
+
+const { resultUpdated } = require('../result/actions')
 
 const { removeAdditionalData } = require('../result/common/logic')
 const { addDeviceDataWithContext } = require('./service')
+const { DEVICE_LOG_TYPE_NONE } = require('./constants')
+
+const { createNewDevice } = require('./deviceContext/deviceCreation')
+const { sendNotificationToContacts } = require('./deviceContext/deviceNotifications')
 
 const processSyncPayload = async (request, existingDeviceLogId = null) => {
   const isFastImport = false
   const handlerOptions = { createDevice: true, updatePing: true, updateDeviceLog: true }
 
-  const { error, context } = await resolveDeviceContext(request, handlerOptions)
-  if (error) {
-    await updateLogs(request)
-    return error
+  // --- Begin inlined resolveDeviceContext logic ---
+  const { createDevice = false, deviceLogType = DEVICE_LOG_TYPE_NONE } = handlerOptions // DEVICE_LOG_TYPE_NONE = 0
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    resultUpdated,
+  })
+  const { auth } = request
+  const now = new Date()
+
+  // Get plugin names for device resolution
+  let partnerPluginName
+  let deviceTypePluginName
+  if (auth.credentials.token) {
+    ;({ partnerPluginName, deviceTypePluginName } =
+      (await knex
+        .from('DeviceApiKey as dak')
+        .leftJoin('Partner as dak_p', 'dak_p.id', 'dak.partnerId')
+        .leftJoin('Device as dev', 'dev.id', 'dak.deviceId')
+        .leftJoin('DeviceType as dt', 'dt.id', 'dev.deviceTypeId')
+        .leftJoin('Partner as dev_p', 'dev_p.id', 'dev.partnerId')
+        .where('dak.token', auth.credentials.token)
+        .first(
+          knex.raw('COALESCE(dev_p.plugin, dak_p.plugin) as partnerPluginName'),
+          'dt.plugin as deviceTypePluginName'
+        )) || {})
+  }
+  const { id: deviceTypeId } = _.get(request, 'payload.type', {})
+  if (!deviceTypePluginName && deviceTypeId) {
+    ;({ deviceTypePluginName } =
+      (await knex
+        .from('DeviceType as dt')
+        .where('dt.externalId', deviceTypeId)
+        .first('dt.plugin as deviceTypePluginName')) || {})
   }
 
-  const { device, now } = context
+  // Try to resolve device (plugin first, then standard lookup)
+  // Inline resolveDevice from deviceIdentification.js
+  let device
+  const resolveDevicePlugin = await loadPlugin(partnerPluginName, deviceTypePluginName, 'resolveDevicePlugin')
+  if (resolveDevicePlugin && resolveDevicePlugin.identifyDevice) {
+    logger.debug('Trying resolveDevicePlugin.identifyDevice', {
+      reLabel: 'deviceApi:processSyncPayload',
+    })
+    device = await resolveDevicePlugin.identifyDevice(request)
+    if (device) {
+      logger.debug('Device found via resolveDevicePlugin.identifyDevice', {
+        reLabel: 'deviceApi:processSyncPayload',
+      })
+    }
+  }
+  if (!device) {
+    // fallback to standard DeviceApiKey lookup
+    logger.debug('Falling back to standard DeviceApiKey lookup', {
+      reLabel: 'deviceApi:processSyncPayload',
+    })
+    const existingDeviceAndData = await knex('DeviceApiKey as dak')
+      .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+      .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+      .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+      .leftJoin('Site as s', 'd.siteId', 's.id')
+      .leftJoin('Geography as g', 's.geographyId', 'g.id')
+      .leftJoin('Country as c', 'g.countryId', 'c.id')
+      .leftJoin('Partner as p', 'p.id', 'd.partnerId')
+      .where({
+        'dak.token': auth.credentials.token,
+        'dak.revoked': false,
+      })
+      .first(
+        'd.id',
+        'd.partnerId',
+        'd.siteId',
+        's.geographyId',
+        'd.name',
+        'd.shortName',
+        'd.serial',
+        'd.macAddress',
+        'd.configurationData',
+        'd.connectSettingsSentOn',
+        'd.lastSeenOn',
+        'd.putInService',
+        'da.token as approval',
+        'dt.externalId as deviceType',
+        'dt.plugin as deviceTypePluginName',
+        'p.plugin as partnerPluginName',
+        'dtc.name as deviceTypeCategory',
+        'c.abbreviation as countryAbbreviation',
+        'dak.token'
+      )
+    device = existingDeviceAndData || null
+  }
+
+  // If device not found and creation is enabled, try to create it
+  if (!device && createDevice) {
+    let createdDevice = null
+    if (resolveDevicePlugin && resolveDevicePlugin.createDevice) {
+      logger.debug('Using resolveDevicePlugin.createDevice', {
+        reLabel: 'deviceApi:processSyncPayload',
+      })
+      const deviceAndError = await resolveDevicePlugin.createDevice(request, now)
+      if (deviceAndError.error) {
+        await updateLogs(request)
+        return deviceAndError.error
+      }
+      createdDevice = deviceAndError.device
+    } else {
+      logger.debug('Using fallback createNewDevice', {
+        reLabel: 'deviceApi:processSyncPayload',
+      })
+      // Inline createNewDevice from deviceCreation.js (call, not logic)
+      const deviceAndError = await createNewDevice(request, now)
+      if (deviceAndError.error) {
+        await updateLogs(request)
+        return deviceAndError.error
+      }
+      createdDevice = deviceAndError.device
+    }
+    device = createdDevice
+    // Send notification
+    await sendNotificationToContacts(request.payload, device)
+  }
+
+  if (!device) {
+    await updateLogs(request)
+    return { error: 'No device found' }
+  }
+
+  // Get partner information
+  const partner = await knex('Partner as p')
+    .innerJoin('Device as d', 'd.partnerId', 'p.id')
+    .where({ 'd.id': device.id })
+    .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin as partnerPluginName')
+  if (!partner) {
+    await updateLogs(request)
+    return { error: 'Device not assigned to partner' }
+  }
+
+  // Get user ID
+  let userId = null
+  try {
+    const { getUser } = require('../auth/service')
+    ;({ id: userId } = (await getUser(auth.credentials.name)) || {})
+    if (!userId) {
+      ;({ createdBy: userId } = await knex('Device').where('id', device.id).first('createdBy'))
+    }
+  } catch (e) {
+    userId = null
+  }
+
+  // Build context object (plain object, not class)
+  const context = {
+    auth,
+    userId,
+    now,
+    device,
+    payload: request.payload,
+    query: request.query,
+    messageContext,
+    deviceLogType,
+    partnerId: partner.id,
+    partnerPluginName: partner.partnerPluginName,
+    deviceTypePluginName: device.deviceTypePluginName,
+    actions: {},
+  }
+  // --- End inlined resolveDeviceContext logic ---
+
   const deviceId = device.id
   // TODO Does Hapi Remote address work through proxies? Check headers?
   const remoteAddress = getRemoteAddress(request)
