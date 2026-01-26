@@ -1,6 +1,9 @@
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
 
-const { knex } = require('../db')
+const { knex, transact } = require('../db')
+const { deviceTypeToPlugin } = require('../shared/dictionary')
+
 const { getRemoteAddress } = require('../shared/request')
 
 const { deviceSeen } = require('../device/actions')
@@ -13,15 +16,16 @@ const { removeAdditionalData } = require('../result/common/logic')
 const { addDeviceDataWithContext } = require('./service')
 const { DEVICE_LOG_TYPE_NONE } = require('./constants')
 
-const { createNewDevice } = require('./deviceContext/deviceCreation')
+// const { createNewDevice } = require('./deviceContext/deviceCreation')
+const { createNewDevice: createNewDevice2 } = require('./device')
+
 const { sendNotificationToContacts } = require('./deviceContext/deviceNotifications')
 
 const processSyncPayload = async (request, existingDeviceLogId = null) => {
   const isFastImport = false
   const handlerOptions = { createDevice: true, updatePing: true, updateDeviceLog: true }
 
-  // --- Begin inlined resolveDeviceContext logic ---
-  const { createDevice = false, deviceLogType = DEVICE_LOG_TYPE_NONE } = handlerOptions // DEVICE_LOG_TYPE_NONE = 0
+  const { deviceLogType = DEVICE_LOG_TYPE_NONE } = handlerOptions
   const messageContext = request.plugins.messageContext.bindActionCreators({
     resultUpdated,
   })
@@ -57,14 +61,14 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
   // Try to resolve device (plugin first, then standard lookup)
   // Inline resolveDevice from deviceIdentification.js
   let device
-  const resolveDevicePlugin = await loadPlugin(partnerPluginName, deviceTypePluginName, 'resolveDevicePlugin')
-  if (resolveDevicePlugin && resolveDevicePlugin.identifyDevice) {
-    logger.debug('Trying resolveDevicePlugin.identifyDevice', {
+  const identifyDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'identifyDevice')
+  if (identifyDevice) {
+    logger.debug('Trying identifyDevice plugin', {
       reLabel: 'deviceApi:processSyncPayload',
     })
-    device = await resolveDevicePlugin.identifyDevice(request)
+    device = await identifyDevice(request)
     if (device) {
-      logger.debug('Device found via resolveDevicePlugin.identifyDevice', {
+      logger.debug('Device found via identifyDevice plugin', {
         reLabel: 'deviceApi:processSyncPayload',
       })
     }
@@ -112,31 +116,17 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
   }
 
   // If device not found and creation is enabled, try to create it
-  if (!device && createDevice) {
-    let createdDevice = null
-    if (resolveDevicePlugin && resolveDevicePlugin.createDevice) {
-      logger.debug('Using resolveDevicePlugin.createDevice', {
-        reLabel: 'deviceApi:processSyncPayload',
-      })
-      const deviceAndError = await resolveDevicePlugin.createDevice(request, now)
-      if (deviceAndError.error) {
-        await updateLogs(request)
-        return deviceAndError.error
-      }
-      createdDevice = deviceAndError.device
-    } else {
-      logger.debug('Using fallback createNewDevice', {
-        reLabel: 'deviceApi:processSyncPayload',
-      })
-      // Inline createNewDevice from deviceCreation.js (call, not logic)
-      const deviceAndError = await createNewDevice(request, now)
-      if (deviceAndError.error) {
-        await updateLogs(request)
-        return deviceAndError.error
-      }
-      createdDevice = deviceAndError.device
+  if (!device) {
+    logger.debug('Using createDevice', {
+      reLabel: 'deviceApi:processSyncPayload',
+    })
+    const deviceAndError = await createDevice2(request, now)
+    if (deviceAndError.error) {
+      await updateLogs(request)
+      return deviceAndError.error
     }
-    device = createdDevice
+
+    device = deviceAndError.device
     // Send notification
     await sendNotificationToContacts(request.payload, device)
   }
@@ -313,6 +303,99 @@ async function updateLogs(request) {
     createdOn: new Date(),
     senderIp: getRemoteAddress(request),
     rawMessage: JSON.stringify(request.plugins.rawPayload),
+  })
+}
+
+/**
+ * Creates a new CepheidGeneXpert device from the request payload.
+ * All device info from payload (instrumentSerial, MAC, serial, hostId, etc.) is available.
+ *
+ * @param {Object} request - The request object with auth, payload, etc.
+ * @param {Date} now - Current timestamp
+ * @returns {Promise<{device: Object, error: Object|null}>} Device object and optional error
+ */
+async function createDevice2(request, now) {
+  return transact(async trx => {
+    const { auth } = request
+    logger.debug('Create new CepheidGeneXpert device from request', {
+      reLabel: 'deviceApi:resolveDevicePlugin.createDevice',
+    })
+    // Find API Key to use as template for new device
+    const partnerApiKey = await trx('DeviceApiKey as k')
+      .where({
+        'k.token': auth.credentials.token,
+        'k.revoked': false,
+        'k.deviceId': null,
+      })
+      .leftJoin('Partner as p', 'p.id', 'k.partnerId')
+      .first('k.id', 'k.partnerId', 'k.geographyId', 'k.siteId', 'p.plugin')
+    if (!partnerApiKey) {
+      return {
+        error: Boom.notFound('Cannot find available API Key when creating new device'),
+      }
+    }
+    const partnerPluginName = _.get(partnerApiKey, 'plugin')
+    const deviceTypePluginName = await deviceTypeToPlugin(_.get(request, 'payload.type.id'))
+    const apiKey = partnerApiKey
+
+    // Require Device Type when creating device
+    const transformNewDevicePayload = await loadPlugin(
+      partnerPluginName,
+      deviceTypePluginName,
+      'transformNewDevicePayload'
+    )
+    const payload = await transformNewDevicePayload({
+      payload: request.payload,
+    })
+
+    // Check if device already exists (backward compatibility with preProcessCreateDevice)
+    const preProcessCreateDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessCreateDevice')
+    const existingDevice = await preProcessCreateDevice(request, now)
+
+    if (!_.isEmpty(existingDevice)) {
+      return { device: existingDevice }
+    }
+
+    const deviceTypeExternalId = _.get(payload, 'type.id', null)
+    if (!deviceTypeExternalId) {
+      return {
+        error: Boom.badRequest('Must specify device type on first request with new key'),
+      }
+    }
+
+    const siteExternalId = _.get(payload, 'site.id', null)
+    let defaultSite = {}
+    logger.debug(siteExternalId && !apiKey.geographyId && !apiKey.siteId, {
+      reLabel: 'deviceApi:resolveDevicePlugin.createDevice',
+    })
+    if (siteExternalId && !apiKey.geographyId && !apiKey.siteId)
+      defaultSite = await trx('Site as s').where('externalId', siteExternalId).first()
+
+    const hostId = _.get(payload, 'configuration.data.hostId', null) || payload.hostId
+    const serial = _.get(payload, 'configuration.data.deviceSerialNumber') || payload.serial
+    const macAddress = _.get(payload, 'configuration.data.macAddress') || payload.macAddress
+
+    const { device, error } = await createNewDevice2(trx, now, {
+      deviceTypeExternalId,
+      name: payload.name,
+      hostId: hostId || payload.name,
+      serial,
+      macAddress,
+      partnerId: apiKey.partnerId,
+      siteId: apiKey.siteId || _.get(defaultSite, 'id', null),
+      approval: apiKey.siteId ? 'approved' : 'provisioned',
+      timezone: _.get(payload, 'configuration.data.timezone', null),
+    })
+    logger.debug('Assign new device an api key', {
+      reLabel: 'deviceApi:resolveDevicePlugin.createDevice',
+    })
+    // Assign new device to API Key
+    await trx('DeviceApiKey').where({ id: apiKey.id }).update({ deviceId: device.id, updatedOn: now })
+
+    // Send notifications
+    await sendNotificationToContacts(request.payload, device)
+
+    return { device, error }
   })
 }
 
