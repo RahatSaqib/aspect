@@ -12,6 +12,7 @@ const { mergeResult } = require('./mergeResult')
 const { loadPlugin } = require('../plugin/loadPlugin')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
+const { withPayload, addDeviceLogUpdate } = require('./deviceContext')
 
 const { findOpenModuleDisabledIssues } = require('../issue/common/db')
 const { resolveIssues } = require('../issue/actions')
@@ -43,7 +44,7 @@ async function addDeviceDataWithContext(context) {
     })
     response = {
       ...response,
-      ...(await updateSiteWithContext(context.withPayload(site))),
+      ...(await updateSiteWithContext(withPayload(context, site))),
     }
   }
 
@@ -53,7 +54,7 @@ async function addDeviceDataWithContext(context) {
     })
     response = {
       ...response,
-      ...(await updateDeviceConfigurationWithContext(context.withPayload(configuration))),
+      ...(await updateDeviceConfigurationWithContext(withPayload(context, configuration))),
     }
   }
   if (includeDeviceConfiguration) {
@@ -77,7 +78,7 @@ async function addDeviceDataWithContext(context) {
     })
     response = {
       ...response,
-      ...(await addDeviceOperationWithContext(context.withPayload(operation))),
+      ...(await addDeviceOperationWithContext(withPayload(context, operation))),
     }
   }
 
@@ -87,7 +88,7 @@ async function addDeviceDataWithContext(context) {
     })
     response = {
       ...response,
-      ...(await mergeResultWithContext(context.withPayload(result))),
+      ...(await mergeResultWithContext(withPayload(context, result))),
     }
     response = transformMergeResultResponse(response)
   }
@@ -269,7 +270,7 @@ async function addDeviceOperationWithContext(context) {
     deviceTypePluginName,
   } = context
   const op = await addDeviceOperation(knex, deviceId, payload, now)
-  context.addDeviceLogUpdate('deviceOperationId', op.id)
+  addDeviceLogUpdate(context, 'deviceOperationId', op.id)
 
   const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessAddDeviceOperation')
   const postProcessResult = await postProcess(context)
@@ -292,7 +293,7 @@ async function updateDeviceConfigurationWithContext(context) {
   if (!context.isFastImport) {
     await updateDeviceConfiguration(knex, deviceId, payload, now, messageContext)
   }
-  context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
+  addDeviceLogUpdate(context, 'deviceConfigurationUpdated', true)
   const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessUpdateDeviceConfiguration')
   const postProcessResult = await postProcess(context)
 
@@ -430,7 +431,7 @@ async function mergeResultWithContext(context) {
     shouldTriggerResultNotification,
     // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
   } = await mergeResult(knex, deviceId, transformedPayload, { now }, pluginContext)
-  context.addDeviceLogUpdate('resultId', plainResult.id)
+  addDeviceLogUpdate(context, 'resultId', plainResult.id)
   const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessMergeResult')
   const postProcessResult = await postProcess(pluginContext, plainResult, plainPreviousResult)
 

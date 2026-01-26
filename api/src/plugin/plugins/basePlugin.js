@@ -58,6 +58,7 @@ const basePlugin = {
   getDevicePingOn,
   preProcessCreateDevice,
   transformNewDevicePayload,
+  resolveDevicePlugin: null,
   preProcessAddDeviceData,
   preProcessUpdateDeviceConfiguration,
   postProcessUpdateDeviceConfiguration,

@@ -6,8 +6,7 @@ const { getRemoteAddress } = require('../shared/request')
 const { deviceSeen } = require('../device/actions')
 const { loadPlugin } = require('../plugin/loadPlugin')
 const logger = require('../shared/logger')
-
-const { DeviceApiContext } = require('./DeviceApiContext')
+const { resolveDeviceContext } = require('./deviceContext')
 
 const { removeAdditionalData } = require('../result/common/logic')
 const { addDeviceDataWithContext } = require('./service')
@@ -16,24 +15,11 @@ const processSyncPayload = async (request, existingDeviceLogId = null) => {
   const defaultHandlerOptions = {}
   const isFastImport = false
 
-  logger.debug('createDeviceApiContext', {
-    reLabel: 'deviceApi:createDeviceApiContext',
-  })
-  const { error, context } = await DeviceApiContext.createDeviceApiContext(
-    addDeviceDataWithContext,
-    request,
-    defaultHandlerOptions
-  )
+  const { error, context } = await resolveDeviceContext(addDeviceDataWithContext, request, defaultHandlerOptions)
   if (error) {
-    logger.debug('Update logs because an error', {
-      reLabel: 'deviceApi:processSyncPayload',
-    })
     await updateLogs(request)
     return error
   }
-  logger.debug('getting handler options from context', {
-    reLabel: 'deviceApi:processSyncPayload',
-  })
 
   let handlerOptions = await getHandlerOptionsFromContext(addDeviceDataWithContext, context, defaultHandlerOptions)
   const { updateDeviceLog = false } = handlerOptions

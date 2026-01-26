@@ -1212,9 +1212,6 @@ async function onDeviceUpdateModuleSerials(action, { messageContext }) {
   })
 }
 
-/**
- *
- */
 async function updateDeviceConfigurationData(knex, deviceId) {
   let { configurationData } = await knex('Device').where({ id: deviceId }).first('configurationData')
   configurationData = configurationData ? JSON.parse(configurationData) : {}
