@@ -25,11 +25,26 @@ const processSyncPayload = async (request, deviceLogId) => {
   const { auth } = request
   const now = new Date()
 
+  // Get user ID
+  let userId = null
+  try {
+    const { getUser } = require('../auth/service')
+    ;({ id: userId } = (await getUser(auth.credentials.name)) || {})
+    // TODO: why to take the user from the device? better to use a DAK or 'device' user
+    // Commenting this as I want to create the context before identifyDevice is called
+    // if (!userId) {
+    //   ;({ createdBy: userId } = await knex('Device').where('id', device.id).first('createdBy'))
+    // }
+  } catch (e) {
+    userId = null
+  }
+
   // Get plugin names for device resolution
   let partnerPluginName
   let deviceTypePluginName
+  let partnerId
   if (auth.credentials.token) {
-    ;({ partnerPluginName, deviceTypePluginName } =
+    ;({ partnerPluginName, deviceTypePluginName, partnerId } =
       (await knex
         .from('DeviceApiKey as dak')
         .leftJoin('Partner as dak_p', 'dak_p.id', 'dak.partnerId')
@@ -39,7 +54,8 @@ const processSyncPayload = async (request, deviceLogId) => {
         .where('dak.token', auth.credentials.token)
         .first(
           knex.raw('COALESCE(dev_p.plugin, dak_p.plugin) as partnerPluginName'),
-          'dt.plugin as deviceTypePluginName'
+          'dt.plugin as deviceTypePluginName',
+          'dak.partnerId as partnerId'
         )) || {})
   }
   const { id: deviceTypeId } = _.get(request, 'payload.type', {})
@@ -51,68 +67,25 @@ const processSyncPayload = async (request, deviceLogId) => {
         .first('dt.plugin as deviceTypePluginName')) || {})
   }
 
-  // Try to resolve device (plugin first, then standard lookup)
-  // Inline resolveDevice from deviceIdentification.js
+  const context = {
+    auth,
+    userId,
+    now,
+    payload: request.payload,
+    query: request.query,
+    messageContext,
+    partnerId,
+  }
+
+  // Try to resolve device via identifyDevice plugin (e.g. gxConnect)
   let device
   const identifyDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'identifyDevice')
   if (identifyDevice) {
-    logger.debug('Trying identifyDevice plugin', {
-      reLabel: 'deviceApi:processSyncPayload',
-    })
-    device = await identifyDevice(request)
-    if (device) {
-      logger.debug('Device found via identifyDevice plugin', {
-        reLabel: 'deviceApi:processSyncPayload',
-      })
-    }
-  }
-  if (!device) {
-    // fallback to standard DeviceApiKey lookup
-    logger.debug('Falling back to standard DeviceApiKey lookup', {
-      reLabel: 'deviceApi:processSyncPayload',
-    })
-    const existingDeviceAndData = await knex('DeviceApiKey as dak')
-      .innerJoin('Device as d', 'dak.deviceId', 'd.id')
-      .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-      .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-      .leftJoin('Site as s', 'd.siteId', 's.id')
-      .leftJoin('Geography as g', 's.geographyId', 'g.id')
-      .leftJoin('Country as c', 'g.countryId', 'c.id')
-      .leftJoin('Partner as p', 'p.id', 'd.partnerId')
-      .where({
-        'dak.token': auth.credentials.token,
-        'dak.revoked': false,
-      })
-      .first(
-        'd.id',
-        'd.partnerId',
-        'd.siteId',
-        's.geographyId',
-        'd.name',
-        'd.shortName',
-        'd.serial',
-        'd.macAddress',
-        'd.configurationData',
-        'd.connectSettingsSentOn',
-        'd.lastSeenOn',
-        'd.putInService',
-        'da.token as approval',
-        'dt.externalId as deviceType',
-        'dt.plugin as deviceTypePluginName',
-        'p.plugin as partnerPluginName',
-        'dtc.name as deviceTypeCategory',
-        'c.abbreviation as countryAbbreviation',
-        'dak.token'
-      )
-    device = existingDeviceAndData || null
+    device = await identifyDevice(request, context)
   }
 
   // If device not found and creation is enabled, try to create it
   if (!device) {
-    logger.debug('Using createDevice', {
-      reLabel: 'deviceApi:processSyncPayload',
-    })
     const deviceAndError = await createDevice(request, now)
     if (deviceAndError.error) {
       await updateLogs(request)
@@ -131,41 +104,20 @@ const processSyncPayload = async (request, deviceLogId) => {
 
   // Get partner information
   const partner = await knex('Partner as p')
-    .innerJoin('Device as d', 'd.partnerId', 'p.id')
-    .where({ 'd.id': device.id })
+    .where('p.id', context.partnerId)
     .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin as partnerPluginName')
-  if (!partner) {
-    await updateLogs(request)
-    return { error: 'Device not assigned to partner' }
-  }
 
-  // Get user ID
-  let userId = null
-  try {
-    const { getUser } = require('../auth/service')
-    ;({ id: userId } = (await getUser(auth.credentials.name)) || {})
-    if (!userId) {
-      ;({ createdBy: userId } = await knex('Device').where('id', device.id).first('createdBy'))
-    }
-  } catch (e) {
-    userId = null
-  }
+  // Get instrument serial from payload (could be in result.instrument.serial or instrument.serial)
+  const instrumentSerial =
+    _.get(request.payload, 'result.instrument.serial') || _.get(request.payload, 'instrument.serial')
 
-  // Build context object (plain object, not class)
-  const context = {
-    auth,
-    userId,
-    now,
-    device,
-    payload: request.payload,
-    query: request.query,
-    messageContext,
-    partnerId: partner.id,
-    partnerPluginName: partner.partnerPluginName,
-    deviceTypePluginName: device.deviceTypePluginName,
-    actions: {},
-  }
-  // --- End inlined resolveDeviceContext logic ---
+  context.device = device
+  context.partnerId = partner.id
+  context.partnerPluginName = partner.partnerPluginName
+  context.deviceTypePluginName = device.deviceTypePluginName
+  context.instrumentSerial = instrumentSerial
+  context.actions = {}
+  // --- End device context ---
 
   const deviceId = device.id
   // TODO Does Hapi Remote address work through proxies? Check headers?
@@ -304,14 +256,6 @@ async function createDevice(request, now) {
       payload: request.payload,
     })
 
-    // Check if device already exists (backward compatibility with preProcessCreateDevice)
-    const preProcessCreateDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessCreateDevice')
-    const existingDevice = await preProcessCreateDevice(request, now)
-
-    if (!_.isEmpty(existingDevice)) {
-      return { device: existingDevice }
-    }
-
     const deviceTypeExternalId = _.get(payload, 'type.id', null)
     if (!deviceTypeExternalId) {
       return {
@@ -347,6 +291,34 @@ async function createDevice(request, now) {
     })
     // Assign new device to API Key
     await trx('DeviceApiKey').where({ id: apiKey.id }).update({ deviceId: device.id, updatedOn: now })
+
+    // Call postProcessCreateDevice plugin
+    const postProcessCreateDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessCreateDevice')
+    if (postProcessCreateDevice) {
+      // Get instrument serial from payload
+      const instrumentSerial =
+        _.get(request.payload, 'result.instrument.serial') || _.get(request.payload, 'instrument.serial')
+      // Get user ID if available
+      let userId = null
+      try {
+        const { getUser } = require('../auth/service')
+        ;({ id: userId } = (await getUser(auth.credentials.name)) || {})
+      } catch (e) {
+        userId = null
+      }
+      const context = {
+        device,
+        knex: trx,
+        now,
+        userId,
+        instrumentSerial,
+        payload: request.payload,
+        partnerPluginName,
+        deviceTypePluginName,
+        partnerId,
+      }
+      await postProcessCreateDevice(context)
+    }
 
     // Send notifications
     await sendNotificationToContacts(request.payload, device)

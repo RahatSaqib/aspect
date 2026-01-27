@@ -36,6 +36,7 @@ const basePlugin = {
   getDeviceSeenOn,
   getDevicePingOn,
   preProcessCreateDevice,
+  postProcessCreateDevice,
   transformNewDevicePayload,
   resolveDevicePlugin: null,
   preProcessAddDeviceData,
@@ -111,6 +112,18 @@ async function transformNewDevicePayload({ payload }) {
  */
 async function preProcessCreateDevice(/* request, now */) {
   return null
+}
+
+/**
+ * Device has been created, called after a new device record is inserted
+ *
+ * This can be used, for example, to create related records or
+ * perform post-creation setup tasks
+ *
+ * @param {Object} context - The context object with device, payload, knex, etc.
+ */
+async function postProcessCreateDevice(/* context */) {
+  // nothing to do by default
 }
 
 /**
