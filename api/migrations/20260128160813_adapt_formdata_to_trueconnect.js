@@ -1,27 +1,25 @@
 const { addCreateFields, addUpdateFieldsNullable } = require('./utils')
 
 exports.up = async function (knex) {
-  await knex.schema.alterTable('FormData', table => {
-    table.dropForeign('caseId')
-    table.dropIndex('caseId')
-    table.dropColumn('caseId')
-
+  await knex.schema.dropTableIfExists('FormData')
+  await knex.schema.createTable('FormData', table => {
+    table.increments('id')
+    table.integer('siteId').unsigned().nullable().index().references('id').inTable('Site')
+    table.integer('resultId').unsigned().nullable().index().references('id').inTable('Result')
+    table.string('sampleExternalId', 80).nullable()
+    table.json('data').notNullable()
+    table.dateTime('collectedOn').nullable()
     addCreateFields(table)
     addUpdateFieldsNullable(table)
   })
 }
 
 exports.down = async function (knex) {
-  await knex.schema.alterTable('FormData', table => {
-    table.dropForeign('createdBy')
-    table.dropIndex('createdBy')
-    table.dropForeign('updatedBy')
-    table.dropIndex('updatedBy')
-    table.dropColumn('createdOn')
-    table.dropColumn('createdBy')
-    table.dropColumn('updatedOn')
-    table.dropColumn('updatedBy')
-
+  await knex.schema.dropTableIfExists('FormData')
+  await knex.schema.createTable('FormData', table => {
+    table.increments('id')
+    table.integer('resultId').unsigned().nullable().index().references('id').inTable('Result')
     table.integer('caseId').unsigned().nullable().index().references('id').inTable('PatientCase')
+    table.json('data').notNullable()
   })
 }
