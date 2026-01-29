@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const customFieldsService = require('./service')
 const { upsertCustomFields } = require('./upsertCustomFields')
+const { getFormData } = require('./getFormData')
 const { asyncHandler } = require('../../routes')
 
 const customFieldsPayloadValidation = Joi.object({
@@ -19,6 +20,16 @@ const customFieldsPayloadValidation = Joi.object({
 })
 
 const routes = [
+  {
+    method: 'GET',
+    path: '/v4/custom-fields/form-data',
+    handler: asyncHandler(getFormData),
+    config: {
+      description: 'List FormData records for the current user',
+      notes: 'Returns FormData rows where createdBy equals the logged-in user id. No query params.',
+      auth: { scope: ['result:view'] },
+    },
+  },
   {
     method: 'GET',
     path: '/v4/custom-fields',
