@@ -11,6 +11,7 @@ exports.up = async function (knex) {
     table.dateTime('collectedOn').nullable()
     addCreateFields(table)
     addUpdateFieldsNullable(table)
+    table.unique(['siteId', 'sampleExternalId'])
   })
 }
 
