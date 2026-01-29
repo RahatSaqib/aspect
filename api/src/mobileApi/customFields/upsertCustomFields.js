@@ -37,32 +37,32 @@ async function upsertCustomFields(request) {
       }
     }
 
-    for (const item of payload.customFieldsData) {
-      const formDefinitionExternalId = item.formDefinitionExternalId
+    const operations = payload.customFieldsData.map(item => {
+      const { formDefinitionExternalId } = item
       const data = { formDefinitionExternalId, fields: item.fields ?? {} }
       const existing = existingByFormDefId.get(formDefinitionExternalId)
 
       if (existing) {
-        await trx('FormData').where('id', existing.id).update({
+        return trx('FormData').where('id', existing.id).update({
           data,
           collectedOn,
-          updatedOn: now,
-          updatedBy: currentlyLoggedInUser.id,
-        })
-      } else {
-        await trx('FormData').insert({
-          siteId,
-          resultId: null,
-          sampleExternalId,
-          data,
-          collectedOn,
-          createdOn: now,
-          createdBy: currentlyLoggedInUser.id,
           updatedOn: now,
           updatedBy: currentlyLoggedInUser.id,
         })
       }
-    }
+      return trx('FormData').insert({
+        siteId,
+        resultId: null,
+        sampleExternalId,
+        data,
+        collectedOn,
+        createdOn: now,
+        createdBy: currentlyLoggedInUser.id,
+        updatedOn: now,
+        updatedBy: currentlyLoggedInUser.id,
+      })
+    })
+    await Promise.all(operations)
   })
 
   return { ok: true }
