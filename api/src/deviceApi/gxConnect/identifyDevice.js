@@ -4,11 +4,10 @@ const { knex } = require('../../db')
  * Identifies a device by instrument serial number (GxConnect plugin).
  * Uses Instrument Serial from payload to match against Instrument.serial in the database.
  *
- * @param {Object} request - The request object with payload
+ * @param {Object} payload - The request payload
  * @returns {Promise<Object|null>} Device object with all related data, or null if not found
  */
-async function identifyDevice(request, context) {
-  const { payload } = request
+async function identifyDevice(payload, partnerId) {
   const instrumentSerial = payload?.result?.instrument?.serial || payload?.result?.instrumentSerial
 
   if (!instrumentSerial) {
@@ -25,7 +24,7 @@ async function identifyDevice(request, context) {
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Partner as p', 'p.id', 'd.partnerId')
     .where('i.serial', instrumentSerial)
-    .where('d.partnerId', context.partnerId)
+    .where('d.partnerId', partnerId)
     .first(
       'd.id',
       'd.partnerId',

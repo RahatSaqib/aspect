@@ -49,8 +49,6 @@ For checking the configuration of the plugin you should check the file
 - preProcessUpdateDeviceConfiguration: when the payload only contains device configuration information and we need to insert/update a device, this action should be performed before updating the database.
 - postProcessUpdateDeviceConfiguration: This action will take place after updating the data into the DB and you need to perform some extra actions once the data is in the DB.
 - postProcessAddDeviceOperation: This action will take place after inserting the device operation data into the DB. The common use case for this is to trigger an action from the message queue.
-- preProcessUpdateSite: This action will take place when we receive Site information we need to parse for inserting/updating the site into the DB. This action will take place before the DB operation.
-- postProcessUpdateSite: After updating the site into the DB we can trigger an action.
 - preProcessMergeResult: When we have a result received from the devices, sometimes it is a repeated one or sometimes it brings extra and further information about it. That is why we need this action to perform some actions before merging those results, the one received and the one already inserted into the DB.
 - transformMergeResultPayload: Based on the description made before in preProcessMergeResult, this place was meant for performing all the merge activities needed for storing/updating a result in the DB.
 - postProcessMergeResult: After storing a result in the DB probably we need to analyze or trigger some issues, so basically we are pushing the result updated/inserted into the message queue for future actions.

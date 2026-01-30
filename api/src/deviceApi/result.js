@@ -177,17 +177,17 @@ async function getResult(knex, resultId) {
 }
 
 async function postProcessMergeResult(context, result) {
-  const { knex, payload, messageContext, userId } = context
+  const { knex, payload, messageContext } = context
 
   await resolveAutoTagging(knex, result)
-  await consumeInventoryFromPayload(knex, payload, result, messageContext, userId)
+  await consumeInventoryFromPayload(knex, payload, result, messageContext)
   return {}
 }
 
 /**
  * Consumes inventory for the new result
  */
-async function consumeInventoryFromPayload(knex, payload, result, messageContext, userId) {
+async function consumeInventoryFromPayload(knex, payload, result, messageContext) {
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
   const expirationDate = consumablesInResultData[0]?.expirationDate
   const lotNumber = consumablesInResultData[0]?.lot
@@ -202,7 +202,6 @@ async function consumeInventoryFromPayload(knex, payload, result, messageContext
     partnerId: result.partnerId,
     testStartedOn: result.startedOn,
     messageContext,
-    userId,
   })
 }
 

@@ -484,10 +484,6 @@ async function deleteDeviceFromFactTables(deviceId, trknex) {
   await trknex('FactResultsDeviceByTimeFrame').where({ deviceId }).del()
 }
 
-async function deleteDeviceSiteHistory(deviceId, trknex) {
-  await trknex('DeviceSiteHistory').where('id', deviceId).del()
-}
-
 async function deleteDevice(deviceId, trknex) {
   await trknex('Device').where('id', deviceId).del()
 }
@@ -838,7 +834,6 @@ module.exports = {
   deleteDeviceFromDeviceApiRaw,
   deleteDeviceFromDeviceTag,
   deleteDeviceFromFactTables,
-  deleteDeviceSiteHistory,
   deleteDevice,
   getNotDecommissionedDevices,
   joinModuleAvailability,

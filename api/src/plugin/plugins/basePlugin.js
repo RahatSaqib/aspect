@@ -33,23 +33,15 @@ const basePlugin = {
   issueEscalations: {},
   dataCategories: {},
   filtersOpenIssues,
-  getDeviceSeenOn,
-  getDevicePingOn,
   preProcessCreateDevice,
   postProcessCreateDevice,
-  transformNewDevicePayload,
-  resolveDevicePlugin: null,
-  preProcessAddDeviceData,
   preProcessUpdateDeviceConfiguration,
   postProcessUpdateDeviceConfiguration,
   postProcessAddDeviceOperation,
-  preProcessUpdateSite,
-  postProcessUpdateSite,
   postProcessGetResult,
   preProcessMergeResult,
   excludeResult,
   transformMergeResultPayload,
-  transformMergeResultResponse,
   postProcessMergeResult,
   onResultLogged,
   onGxAlertAuthenticated,
@@ -61,49 +53,11 @@ const basePlugin = {
   findResult,
   extractCustomFieldsFromPayload,
   extractSampleId,
-}
-
-/**
- * Device API has been invoked for a given device. Return the
- * lastSeenOn date given this update, or null if this update
- * should not be considered device seen
- *
- * Default now
- */
-async function getDeviceSeenOn({ now }) {
-  return now
-}
-
-/**
- * Device API has been invoked with a call to update data for a
- * given device. Return the lastPingOn date given this update,
- * or null if this update should not be considered device ping
- *
- * Default now
- */
-async function getDevicePingOn({ now }) {
-  return now
-}
-
-/**
- * Device data is received for an API Key that does not yet have a device
- * Transform the payload to new payload  to process in format expected by
- * Device API
- *
- * This can be used, for example, to set default device type or name
- * with rules specific to this plugin.
- *
- * Default context.payload
- */
-async function transformNewDevicePayload({ payload }) {
-  return payload
+  identifyDevice,
 }
 
 /**
  * Device data is received with a new device API key
- *
- * This is called after transformNewDevicePayload but before a
- * new device record is inserted
  *
  * This can be used, for example, to perform required checks on
  * the payload and prevent duplicate devices from being created
@@ -123,22 +77,6 @@ async function preProcessCreateDevice(/* request, now */) {
  * @param {Object} context - The context object with device, payload, knex, etc.
  */
 async function postProcessCreateDevice(/* context */) {
-  // nothing to do by default
-}
-
-/**
- * A site is being updated, called before any processing
- * or querying of site.
- */
-async function preProcessUpdateSite(/* context */) {
-  // nothing to do by default
-}
-
-/**
- * Device payload has been sent to Aspect, called before
- * any of this data has been processed
- */
-async function preProcessAddDeviceData(/* context */) {
   // nothing to do by default
 }
 
@@ -169,14 +107,6 @@ async function postProcessAddDeviceOperation(/* context */) {
 }
 
 /**
- * A site has been updated, called after any processing
- * or querying of site.
- */
-async function postProcessUpdateSite(/* context, site, previousSite */) {
-  // nothing to do by default
-}
-
-/**
  * A result is queried
  * called after all processing of result.
  *
@@ -200,13 +130,6 @@ async function preProcessMergeResult(/* context */) {
  */
 async function transformMergeResultPayload(context) {
   return context.payload
-}
-
-/**
- * A new result is processed and transformed into a new response
- */
-function transformMergeResultResponse(response) {
-  return response
 }
 
 /**
@@ -271,6 +194,10 @@ async function onPatientUpdated(/* { patientId }, { messageContext } */) {
  */
 async function extractCustomFieldsFromPayload(/* { payload, countryAbbreviation, partnerId, assayId } */) {
   return {}
+}
+
+async function identifyDevice(/* payload, partnerId */) {
+  throw new Error('identifyDevice not implemented for this plugin')
 }
 
 module.exports = {

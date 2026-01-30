@@ -17,51 +17,6 @@ const {
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
 const { assayNameToExternalId } = require('../../shared/assayNameToExternalId')
-/*
-The purpose of this plugin is to ensure that results are captured
-even when the site is unknown to Aspect
-If the device is unknown, ignore this request
-If the site for the device in unknown, create a site and link it to the device
-*/
-async function preProcessAddDeviceData({ knex, device, payload, now, messageContext, isFastImport }) {
-  if (_.isEmpty(device)) {
-    throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
-  }
-  const configurationData = _.get(payload, 'configuration.data') || {}
-  const site = await getOrCreateSite(knex, device, payload, now)
-  const deviceDetails = {
-    lastSeenOn: now,
-    updatedOn: now,
-    updatedBy: null,
-  }
-  if (device.siteId !== site.id) {
-    deviceDetails.siteId = site.id
-  }
-  // A ping from GxConnect is just a configuration POST with a MAC address,
-  // host ID, device Serial and country abbreviation
-  // A ping from GxConnect forwarded by GxAlert is the same as a ping cooming
-  // directly from GxConnect but also includes gxAlertDeviceId
-  if (
-    !_.isEmpty(configurationData) &&
-    _.every(Object.keys(configurationData), configurationDataKey =>
-      ['macAddress', 'shortName', 'gxAlertDeviceId', 'hostId', 'deviceSerialNumber', 'country', 'lastPingOn'].includes(
-        configurationDataKey
-      )
-    )
-  ) {
-    deviceDetails.lastPingOn = parseDateOrDefault(configurationData.lastPingOn, now)
-  }
-
-  if (!isFastImport) {
-    await knex.from('Device').where({ id: device.id }).update(deviceDetails)
-  }
-
-  if (configurationData.disabledModules) {
-    await Promise.each(configurationData.disabledModules, modules =>
-      shouldTriggerModuleDisabled(knex, messageContext, device, modules)
-    )
-  }
-}
 
 /*
 The purpose of this plugin is to ensure that results are captured
@@ -231,7 +186,16 @@ async function postProcessAddDeviceOperation() {
   return {}
 }
 
-async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now, isFastImport }) {
+async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now, messageContext }) {
+  const configurationData = _.get(payload, 'configuration.data') || {}
+
+  if (configurationData.disabledModules) {
+    await Promise.each(configurationData.disabledModules, modules =>
+      shouldTriggerModuleDisabled(knex, messageContext, device, modules)
+    )
+  }
+
+  //
   let device = {}
   if (!_.isEmpty(_.get(payload, 'data'))) {
     const {
@@ -322,7 +286,7 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
       }
     }
     if (deviceId) {
-      await updateDeviceDetails(knex, deviceId, _.omitBy(deviceDetails, _.isNil), now, isFastImport)
+      await updateDeviceDetails(knex, deviceId, _.omitBy(deviceDetails, _.isNil), now)
       device = await getDeviceInfo(knex, deviceId)
     }
   }
@@ -337,114 +301,6 @@ async function getDeviceInfo(knex, deviceId) {
     .first('d.*', 'g.id as geographyId')
   delete device.configurationData
   return device
-}
-
-async function findDevices(availableDeviceDetails, knex) {
-  const { deviceId, partnerId, hostId, deviceSerialNumber, macAddress, countryCode, deviceIdFromGxAlertSource } =
-    availableDeviceDetails
-  const fields = [
-    'd.id',
-    'd.partnerId',
-    'd.siteId',
-    's.geographyId',
-    'd.name',
-    'd.serial',
-    'd.hostId',
-    'd.macAddress',
-    'd.configurationData',
-    'd.lastSeenOn',
-    'd.putInService',
-    'da.token as approval',
-    'dt.externalId as deviceType',
-    'dt.plugin as deviceTypePluginName',
-    'p.plugin as partnerPluginName',
-    'dtc.name as deviceTypeCategory',
-    'dms.externalId as deviceMaintenanceStatusExternalId',
-    'dms.id as deviceMaintenanceStatusId',
-  ]
-  const deviceQuery = knex
-    .from('Device as d')
-    .leftJoin('Site as s', 's.id', 'd.siteId')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-    .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
-    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
-    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-  if (deviceId) {
-    return deviceQuery.clone().where('d.id', deviceId).select(fields)
-  }
-  let matchingDevices = []
-  if (partnerId) {
-    const partnerDeviceQuery = deviceQuery.clone().modify(queryBuilder => {
-      queryBuilder.where('d.partnerId', partnerId)
-      if (countryCode) {
-        queryBuilder.andWhere('c.abbreviation', countryCode)
-      }
-    })
-    if (deviceIdFromGxAlertSource) {
-      matchingDevices = await partnerDeviceQuery
-        .clone()
-        .andWhereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`)
-        .select(fields)
-    }
-    if (_.isEmpty(matchingDevices) && countryCode) {
-      const partnerCountryDeviceQuery = partnerDeviceQuery.clone().andWhere('c.abbreviation', countryCode)
-      if (isValidHostId(hostId) && deviceSerialNumber) {
-        matchingDevices = await partnerCountryDeviceQuery
-          .clone()
-          .andWhere('d.hostId', hostId)
-          .andWhere('d.serial', deviceSerialNumber)
-          .select(fields)
-      }
-      if (isValidHostId(hostId)) {
-        if (_.isEmpty(matchingDevices)) {
-          matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.hostId', hostId).select(fields)
-          // There are multiple devices using this Host ID
-          //  therefore the Host ID cannot be used as a device identifier
-          if (matchingDevices.length > 1) {
-            matchingDevices = []
-          }
-        } else if (matchingDevices.length > 1) {
-          matchingDevices = matchingDevices.filter(d => d.hostId === hostId)
-        }
-      }
-      if (deviceSerialNumber) {
-        if (_.isEmpty(matchingDevices)) {
-          matchingDevices = await partnerCountryDeviceQuery
-            .clone()
-            .andWhere('d.serial', deviceSerialNumber)
-            .select(fields)
-          // There are multiple devices using this computer name
-          // therefore the device serial number cannot be used as a device identifier
-          if (matchingDevices.length > 1) {
-            matchingDevices = []
-          }
-        } else if (matchingDevices.length > 1) {
-          matchingDevices = matchingDevices.filter(d => d.serial === deviceSerialNumber)
-        }
-      }
-      if (macAddress && macAddress !== 'MAC') {
-        if (_.isEmpty(matchingDevices)) {
-          matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.macAddress', macAddress).select(fields)
-          // There are multiple devices using this MAC address
-          //  therefore the MAC address cannot be used as a device identifier
-          if (matchingDevices.length > 1) {
-            matchingDevices = []
-          }
-        } else if (matchingDevices.length > 1) {
-          matchingDevices = matchingDevices.filter(d => d.macAddress === macAddress)
-        }
-      }
-    }
-  }
-  return _.uniqBy(matchingDevices, 'id')
-}
-
-const isValidHostId = hostId => {
-  return hostId && hostId !== '0'
 }
 
 async function getOrCreateSite(knex, device, payload, now, countryCode, deviceName, deviceShortName, fromGxAlert) {
@@ -631,9 +487,7 @@ async function getModuleNameForResult(deviceId, moduleSerial, startedOn, knex) {
 }
 
 module.exports = {
-  findDevices,
   getOrCreateSite,
-  preProcessAddDeviceData,
   preProcessMergeResult,
   transformMergeResultPayload,
   postProcessAddDeviceOperation,

@@ -116,7 +116,6 @@ describe('Device API Raw routes', () => {
       await knex('DeviceLog').where('deviceId', deviceId).orWhereIn('resultId', resultIds).delete()
       await knex('DeviceOperation').whereIn('id', opIds).delete()
       await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
-      await knex('DeviceSiteHistory').where('deviceId', deviceId).delete()
       await knex('FactResultsDevice').where('deviceId', deviceId).delete()
       await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
       await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()

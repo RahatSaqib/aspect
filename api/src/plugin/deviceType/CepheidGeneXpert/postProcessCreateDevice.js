@@ -6,6 +6,7 @@
  */
 async function postProcessCreateDevice(context) {
   const { device, knex, now, userId, instrumentSerial } = context
+  console.log('\x1b[1;36m', '🚀 ~ postProcessCreateDevice ~ device:', device)
 
   // Check if instrument already exists for this device
   const existingInstrument = await knex('Instrument')

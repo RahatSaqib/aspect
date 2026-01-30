@@ -58,22 +58,12 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
   const issueIds = await knex('Issue').whereIn('deviceId', deviceIds).pluck('id')
 
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
-
   await knex('DeviceLog').whereIn('deviceId', deviceIds).orWhereIn('resultId', resultIds).delete()
-
   await knex('DeviceMaintenance').whereIn('deviceId', deviceIds).delete()
-
-  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
-
-  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)

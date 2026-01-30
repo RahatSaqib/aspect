@@ -115,7 +115,6 @@ class TruenatResult extends SynchronousDataProcessor {
               await knex('WebhookMessage').where('siteId', siteId).update({ siteId: null })
               await knex('DeviceApiKey').where('siteId', siteId).update({ siteId: null })
               await knex('Issue').where('siteId', siteId).update({ siteId: null })
-              await knex('DeviceSiteHistory').where('id', siteId).delete()
               await knex('FactInventoryConsumptionRate').where('id', siteId).delete()
               await knex('Site').where('id', siteId).delete()
             }

@@ -25,7 +25,6 @@ const {
   deleteDeviceFromDeviceApiRaw,
   deleteDeviceFromDeviceTag,
   deleteDeviceFromFactTables,
-  deleteDeviceSiteHistory,
   deleteDevice: deleteDeviceFromDb,
 } = require('./db')
 
@@ -52,7 +51,6 @@ async function deleteDevice(deviceId, trknex) {
   await deleteDeviceFromDeviceApiRaw(deviceId, trknex)
   await deleteDeviceFromDeviceTag(deviceId, trknex)
   await deleteDeviceFromFactTables(deviceId, trknex)
-  await deleteDeviceSiteHistory(deviceId, trknex)
   await deleteDeviceFromDb(deviceId, trknex)
 }
 

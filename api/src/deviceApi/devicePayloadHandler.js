@@ -11,20 +11,21 @@ const devicePayloadHandler = async request => {
   const isResultPayload = !!request.payload?.result
   const shouldProcessAsync = config.enableAsyncPayloadProcessing && isResultPayload
 
-  const deviceLogId = await createDeviceLog(request)
+  const remoteAddress = getRemoteAddress(request)
+
+  const deviceLogId = await createDeviceLog(request, remoteAddress)
 
   const response = shouldProcessAsync
-    ? await processAsyncPayload(request, deviceLogId)
-    : await processSyncPayload(request, deviceLogId)
+    ? await processAsyncPayload(request, deviceLogId, remoteAddress)
+    : await processSyncPayload(request, deviceLogId, remoteAddress)
 
   return response
 }
 
-async function createDeviceLog(request) {
+async function createDeviceLog(request, remoteAddress) {
   const formattedResult = removeAdditionalData(request.plugins.rawPayload)
   formattedResult.deviceApiKey = normalizeToken(request.auth.credentials.token)
   const deviceLogRawMessage = JSON.stringify(formattedResult)
-  const remoteAddress = getRemoteAddress(request)
   const now = new Date()
 
   const [deviceLogId] = await knex('DeviceLog').insert({

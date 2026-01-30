@@ -105,7 +105,7 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
 }
 
 // --------------------------------------------------------------------
-async function updateDeviceDetails(knex, deviceId, deviceDetails, now, isFastImport) {
+async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
   // Compare existing device to these details
   // which field vakues are different?
   const existingDevice = await knex('Device as d').where({ 'd.id': deviceId }).first()
@@ -130,7 +130,7 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now, isFastImp
     deviceDetails,
     (v, k) => ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
   )
-  if (!_.isEmpty(changedDetails) && !isFastImport) {
+  if (!_.isEmpty(changedDetails)) {
     await knex('Device')
       .where({ id: deviceId })
       .update(

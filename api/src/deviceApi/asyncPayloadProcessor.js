@@ -5,7 +5,7 @@ const { asyncPayloadReceived } = require('./actions')
 const config = require('../config')
 const { processSyncPayload } = require('./processSyncPayload')
 
-const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
+const onAsyncPayloadToProcess = async ({ deviceLogId, remoteAddress }, { messageContext }) => {
   if (!config.enableAsyncPayloadProcessing) {
     logger.warning(
       `Received async payload to process but async processing is disabled. Skipping DeviceLogId: ${deviceLogId}`
@@ -48,7 +48,7 @@ const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
     auth: { credentials },
     payload: formattedPayload,
   }
-  const response = await processSyncPayload(request, deviceLogId)
+  const response = await processSyncPayload(request, deviceLogId, remoteAddress)
   logger.info(
     `Completed processing async device payload for DeviceLogId: ${deviceLogId}. Response: ${JSON.stringify(response)}`
   )
