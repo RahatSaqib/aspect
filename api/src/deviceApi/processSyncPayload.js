@@ -36,12 +36,14 @@ const processSyncPayload = async (request, deviceLogId, remoteAddress) => {
       error: Boom.badRequest(`Cannot find DeviceType with externalId ${deviceTypeExternalId}`),
     }
   }
+  const instrumentSerial = payload?.result?.instrument?.serial || payload?.result?.instrumentSerial
 
   // Create context for processing payload
   const context = {
     defaultTimeZone,
     auth,
     now: new Date(),
+    instrumentSerial,
     payload: request.payload,
     query: request.query,
     messageContext,
@@ -57,8 +59,8 @@ const processSyncPayload = async (request, deviceLogId, remoteAddress) => {
   const identifyDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'identifyDevice')
   context.device = await identifyDevice(payload, partnerId)
 
-  const response = await context.messageContext.transact(async knex => {
-    context.knex = knex
+  const response = await knex.transaction(async trx => {
+    context.knex = trx
 
     // If device not found, try to create it
     if (!context.device) {
@@ -80,7 +82,7 @@ const processSyncPayload = async (request, deviceLogId, remoteAddress) => {
     const response = await processPayload(context)
 
     // Update DeviceLog with changes added to context when calling handler
-    await knex('DeviceLog')
+    await trx('DeviceLog')
       .where('id', deviceLogId)
       .update({
         ...context.deviceLogUpdate, // addDeviceLogUpdate may have added more fields to update

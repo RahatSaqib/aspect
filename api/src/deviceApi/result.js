@@ -180,7 +180,9 @@ async function postProcessMergeResult(context, result) {
   const { knex, payload, messageContext } = context
 
   await resolveAutoTagging(knex, result)
-  await consumeInventoryFromPayload(knex, payload, result, messageContext)
+  if (result.siteId) {
+    await consumeInventoryFromPayload(knex, payload, result, messageContext)
+  }
   return {}
 }
 

@@ -25,7 +25,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const { assays, site: deviceSite } = await getSiteAndAssays(knex, payload, existingResult, deviceId)
 
   // Exit on any error
-  const requestErrors = await getResultErrors({ site: deviceSite, resultTypeId, resultCategory1, assays, payload })
+  const requestErrors = await getResultErrors({ resultTypeId, resultCategory1, assays, payload })
   if (!_.isEmpty(requestErrors)) {
     throw Boom.badRequest(`Cannot find ${requestErrors.join(', ')}`)
   }
@@ -48,8 +48,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const payloadSampleExternalId = payload.sample?.id
   if (payloadSampleExternalId) {
     existingSample = isValidSampleExternalIdMobileFormat(payloadSampleExternalId)
-      ? await getMobileSampleByExternalId(knex, payloadSampleExternalId, deviceSite.countryId)
-      : await getMatchingSample(knex, payloadSampleExternalId, payloadSampleTypeId, deviceSite.countryId, testStartedOn)
+      ? await getMobileSampleByExternalId(knex, payloadSampleExternalId)
+      : await getMatchingSample(knex, payloadSampleExternalId, payloadSampleTypeId, testStartedOn)
   }
   const { sampleOriginSiteId, reportableSiteId } = await resolveSiteAssignments(
     knex,
@@ -75,8 +75,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   )
 
   const preProcessedResult = {
-    latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', deviceSite.latitude)),
-    longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', deviceSite.longitude)),
+    // latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', deviceSite.latitude)),
+    // longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', deviceSite.longitude)),
     assayId: assay.id,
     assayVersion: _.get(payload, 'assay.version', _.get(existingResult, 'assayVersion', null)),
     resultTypeId,
@@ -121,7 +121,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const customFieldsData = await context.extractCustomFieldsFromPayload({
     payload,
     countryAbbreviation,
-    partnerId: deviceSite.partnerId,
+    partnerId: context.partnerId,
     assayId: assay.id,
     deviceId,
   })
@@ -143,8 +143,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const processedResult = {
     externalId: payload.id,
     deviceId,
-    partnerId: deviceSite.partnerId,
-    siteId: deviceSite.id,
+    partnerId: context.partnerId,
+    siteId: deviceSite?.id,
     createdOn: now,
     ...result,
   }
@@ -200,11 +200,9 @@ async function getResultTypeId(payload, existingResult) {
   return resultTypeId
 }
 
-async function getResultErrors({ site, resultTypeId, resultCategory1, assays, payload }) {
+async function getResultErrors({ resultTypeId, resultCategory1, assays, payload }) {
   const requestErrors = []
-  if (!site) {
-    requestErrors.push('assigned site for device')
-  }
+
   if (!resultTypeId) {
     requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
   }
@@ -243,10 +241,10 @@ async function resolveSiteAssignments(knex, payload, deviceSite, existingResult,
 
   const sampleOriginSiteId = existingSample?.registeredInMobile
     ? existingSample.originSiteId
-    : payloadSampleOriginSiteId || deviceSite.id
+    : payloadSampleOriginSiteId || deviceSite?.id
 
   // Result.reportableSiteId
-  let reportableSiteId = deviceSite.id
+  let reportableSiteId = deviceSite?.id
   if (isTransferred) {
     reportableSiteId = existingResult.reportableSiteId
   } else if (existingSample?.registeredInMobile) {
