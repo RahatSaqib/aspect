@@ -75,6 +75,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   )
 
   const preProcessedResult = {
+    // TODO: Check transformMergeResultPayload for possible changes to latitude and longitude assignment
     // latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', deviceSite.latitude)),
     // longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', deviceSite.longitude)),
     assayId: assay.id,
@@ -109,11 +110,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     notes: _.get(payload, 'notes', _.get(existingResult, 'notes', null)),
     errorCode: _.get(payload, 'error.code', _.get(existingResult, 'errorCode', null)),
     errorNotes: _.get(payload, 'error.notes', _.get(existingResult, 'errorNotes', null)),
-    updatedOn: now,
-    createdOn: _.get(existingResult, 'createdOn', now),
     reportableSiteId,
-    gxAlertTestId: _.get(payload, 'gxAlertTestId'),
-    gxAlertSyncedOn: _.get(payload, 'gxAlertTestId') ? now : null,
+    updatedOn: now,
   }
 
   // Extract CustomFields from Payload
@@ -145,7 +143,6 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     deviceId,
     partnerId: context.partnerId,
     siteId: deviceSite?.id,
-    createdOn: now,
     ...result,
   }
 
@@ -154,11 +151,11 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
     resultId = existingResult.id
     await knex('Result').where({ id: resultId }).update(result)
   } else {
-    ;[resultId] = await knex('Result').insert(processedResult)
+    ;[resultId] = await knex('Result').insert({ ...processedResult, createdOn: now })
   }
 
   processedResult.id = resultId
-  processedResult.updatedOn = now
+
   return {
     processedResult,
     existingResult,

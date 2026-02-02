@@ -15,8 +15,10 @@ const { withPayload, addDeviceLogUpdate } = require('./deviceContext')
 const { sendNotificationToContacts } = require('./deviceContext/sendNotificationToContacts')
 const { findOpenModuleDisabledIssues } = require('../issue/common/db')
 const { resolveIssues } = require('../issue/actions')
+const { consumeInventoryForResult } = require('../inventory/consumeInventoryForResult')
+const { resultAutoTagging } = require('./result')
 
-const processSyncPayload = async (request, deviceLogId, remoteAddress) => {
+const processPayload = async (request, deviceLogId, remoteAddress) => {
   const { auth, payload } = request
   const messageContext = request.plugins.messageContext.bindActionCreators({
     resultUpdated,
@@ -79,7 +81,7 @@ const processSyncPayload = async (request, deviceLogId, remoteAddress) => {
     await updateDeviceTimestamps(context, remoteAddress)
 
     // invoke delegate handler
-    const response = await processPayload(context)
+    const response = await processPayloadHandlers(context)
 
     // Update DeviceLog with changes added to context when calling handler
     await trx('DeviceLog')
@@ -106,7 +108,7 @@ async function updateDeviceTimestamps(context, remoteAddress) {
   context.messageContext.dispatch(deviceSeen(device.id))
 }
 
-async function processPayload(context) {
+async function processPayloadHandlers(context) {
   const { payload } = context
 
   const handlers = [
@@ -334,15 +336,11 @@ async function addDeviceOperationWithContext(context) {
     payload,
     device: { id: deviceId },
     now,
-    partnerPluginName,
-    deviceTypePluginName,
   } = context
   const op = await addDeviceOperation(knex, deviceId, payload, now)
   addDeviceLogUpdate(context, 'deviceOperationId', op.id)
 
-  const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessAddDeviceOperation')
-  const postProcessResult = await postProcess(context)
-  return postProcessResult
+  return {}
 }
 
 async function updateDeviceConfigurationWithContext(context) {
@@ -378,6 +376,7 @@ const getCustomFields = async context => {
   if (customFields) CustomFields = _.get(await customFields(knex, partnerId, deviceId), 'CustomFields')
   return { CustomFields }
 }
+
 async function mergeResultWithContext(context) {
   const {
     knex,
@@ -391,10 +390,7 @@ async function mergeResultWithContext(context) {
     messageContext,
   } = context
 
-  const { findResult } = await loadPlugin(partnerPluginName, deviceTypePluginName, 'findResult')
-  // logger.debug('Processing findresult', {
-  //   reLabel: 'deviceApi:findResult',
-  // })
+  const findResult = await loadPlugin(partnerPluginName, deviceTypePluginName, 'findResult')
 
   const extractCustomFieldsFromPayload = await loadPlugin(
     partnerPluginName,
@@ -402,9 +398,11 @@ async function mergeResultWithContext(context) {
     'extractCustomFieldsFromPayload'
   )
 
+  // TODO: we should remove this in future
   const pluginContext = {
     knex,
     deviceId,
+    device: context.device,
     actions,
     deviceType,
     payload,
@@ -415,14 +413,18 @@ async function mergeResultWithContext(context) {
     extractCustomFieldsFromPayload,
   }
 
-  const preProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessMergeResult')
-  await preProcess(pluginContext)
+  const preProcessMergeResult = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessMergeResult')
+  await preProcessMergeResult(pluginContext)
 
   const excludeResult = await loadPlugin(partnerPluginName, deviceTypePluginName, 'excludeResult')
   await excludeResult(pluginContext)
 
-  const transformPayload = await loadPlugin(partnerPluginName, deviceTypePluginName, 'transformMergeResultPayload')
-  const transformedPayload = await transformPayload(pluginContext)
+  const transformMergeResultPayload = await loadPlugin(
+    partnerPluginName,
+    deviceTypePluginName,
+    'transformMergeResultPayload'
+  )
+  const transformedPayload = await transformMergeResultPayload(pluginContext)
   const {
     processedResult: plainResult,
     existingResult: plainPreviousResult,
@@ -430,8 +432,25 @@ async function mergeResultWithContext(context) {
     // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
   } = await mergeResult(knex, deviceId, transformedPayload, { now }, pluginContext)
   addDeviceLogUpdate(context, 'resultId', plainResult.id)
-  const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessMergeResult')
-  const postProcessResult = await postProcess(pluginContext, plainResult, plainPreviousResult)
+
+  await resultAutoTagging(knex, plainResult)
+
+  // consumeInventoryForResult
+  if (plainResult.siteId) {
+    const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
+
+    await consumeInventoryForResult({
+      knex,
+      resultId: plainResult.id,
+      assayId: plainResult.assayId,
+      siteId: plainResult.siteId,
+      lotNumber: consumablesInResultData[0]?.lot,
+      expirationDate: consumablesInResultData[0]?.expirationDate,
+      partnerId: plainResult.partnerId,
+      testStartedOn: plainResult.startedOn,
+      messageContext,
+    })
+  }
 
   // This is going to be used when we implement the Sample ID and Patient ID based notification
   // const result = plainToDeepObjectResult(plainResult)
@@ -456,7 +475,6 @@ async function mergeResultWithContext(context) {
   }
 
   return {
-    ...postProcessResult,
     aspectResultId: plainResult.id,
   }
 }
@@ -579,5 +597,5 @@ async function createDevice(context) {
 }
 
 module.exports = {
-  processSyncPayload,
+  processPayload,
 }

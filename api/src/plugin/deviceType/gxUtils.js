@@ -5,7 +5,7 @@ const { insertSite } = require('../../site/common/db')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
 const { updateDeviceDetails } = require('../../deviceApi/device')
-const { shouldTriggerModuleDisabled, getPartnerPluginName } = require('../utils')
+const { shouldTriggerModuleDisabled } = require('../utils')
 const {
   result1CategoryMapping,
   mapResultCategory2,
@@ -25,20 +25,12 @@ If the device is unknown, ignore this request
 If an unknown assay is detected, create it
 */
 async function preProcessMergeResult(context) {
-  const { knex, deviceId, payload, findResult } = context
-  if (!deviceId) {
-    throw Boom.notFound('Cannot find device')
-  }
+  const { partnerPluginName, knex, payload, findResult, partnerId } = context
+
   const startedOn = _.get(payload, 'startedOn') || _.get(payload, 'endedOn')
   const endedOn = _.get(payload, 'endedOn') || startedOn
   if (!startedOn) {
     throw Boom.badRequest('Start date or end date is required for a result from GxConnect')
-  }
-
-  const device = await knex('Device as d').where({ 'd.id': deviceId }).first('d.siteId', 'd.partnerId')
-
-  if (_.isEmpty(device)) {
-    throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
 
   // Override assay.id
@@ -55,7 +47,6 @@ async function preProcessMergeResult(context) {
   const instrumentSerial = _.get(payload, 'instrument.serial', null)
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
 
-  const partnerPluginName = await getPartnerPluginName({ partnerId: device.partnerId })
   // Lazy load the loadPlugin function to avoid circular dependency, as we are in a plugin function already
   const { loadPlugin } = require('../loadPlugin')
   const extractSampleIdPlugin = await loadPlugin(partnerPluginName, null, 'extractSampleId')
@@ -82,13 +73,13 @@ async function preProcessMergeResult(context) {
 
   const resultFindings = await findResult(
     {
-      partnerId: device.partnerId,
+      partnerId,
       geneXpertTestId,
       gxAlertUniqueId,
       cartridgeSerial,
       instrumentSerial,
       potentialSampleIds: [sampleId],
-      siteId: device.siteId,
+      siteId: context.device.siteId,
       potentialAssayIds,
       startedOn: payload.startedOn,
     },
@@ -97,25 +88,9 @@ async function preProcessMergeResult(context) {
 
   const { matchingResult: existingResult } = resultFindings
 
-  if (!existingResult) {
-    // Only assign assay to GxUnknown if result is new
-    await assignGxUnknownAssayIfNotExists(knex, payload)
-  } else {
+  if (existingResult) {
     context.existingResultId = existingResult.id // adding the existing result id to the context to make it available for the rest of the process
-    // Are we setting this result to NO RESULT?
-    if (!_.isEmpty(_.get(payload, 'category', [])) && _.every(_.get(payload, 'category'), { id: 'NoResult' })) {
-      // Has the result already been determined?
-      if (
-        (_.get(existingResult, 'resultCategory1') && _.get(existingResult, 'resultCategory1') !== 'NoResult') ||
-        (_.get(existingResult, 'resultCategory2') && _.get(existingResult, 'resultCategory2') !== 'NoResult')
-      ) {
-        // We should never merge an incomplete result over a complete result
-        const error = Boom.conflict('A later version of this result already exists')
-        error.output.statusCode = 201
-        error.reformat()
-        throw error
-      }
-    }
+
     if (_.get(existingResult, 'externalId') !== generatedExternalId) {
       try {
         await knex('Result').where('id', existingResult.id).update({ externalId: generatedExternalId })
@@ -132,16 +107,6 @@ async function preProcessMergeResult(context) {
     }
   }
   payload.id = generatedExternalId
-
-  // if the module name is not part of the payload, try to get it from
-  // existing results on the device
-  const moduleNamePath = 'instrument.module.name'
-  const moduleSerial = _.get(payload, 'instrument.module.serial')
-  if (!_.get(payload, moduleNamePath) && moduleSerial) {
-    const moduleName = await getModuleNameForResult(deviceId, moduleSerial, payload.startedOn, knex)
-    if (moduleName) _.set(payload, moduleNamePath, moduleName)
-    else _.unset(payload, moduleNamePath)
-  }
 }
 
 function getAdditionalDataFromPayload(payload, assays) {
@@ -180,10 +145,6 @@ async function transformMergeResultPayload({ deviceId, payload, knex }) {
     }
   }
   return Promise.resolve(payload)
-}
-
-async function postProcessAddDeviceOperation() {
-  return {}
 }
 
 async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now, messageContext }) {
@@ -426,14 +387,6 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
   return _.head(sites)
 }
 
-async function assignGxUnknownAssayIfNotExists(knex, payload) {
-  const payloadAssayId = _.get(payload, 'assay.id', false)
-  const assay = await knex.from('Assay as a').where({ 'a.externalId': payloadAssayId }).first('a.externalId')
-  if (_.isEmpty(assay)) {
-    _.set(payload, 'assay.id', 'GxUnknown')
-  }
-}
-
 function getResultCategories(assayExternalId, resultText) {
   const categories = []
 
@@ -475,22 +428,10 @@ function macAddressValid(macAddress) {
   )
 }
 
-async function getModuleNameForResult(deviceId, moduleSerial, startedOn, knex) {
-  const latestResultOnModuleSerial = await knex('Result')
-    .where({ deviceId, moduleSerial })
-    .where('startedOn', '<=', startedOn)
-    .whereNotNull('moduleName')
-    .orderBy('endedOn', 'desc')
-    .first('moduleName')
-
-  return latestResultOnModuleSerial ? latestResultOnModuleSerial.moduleName : null
-}
-
 module.exports = {
   getOrCreateSite,
   preProcessMergeResult,
   transformMergeResultPayload,
-  postProcessAddDeviceOperation,
   postProcessUpdateDeviceConfiguration,
   getAdditionalDataFromPayload,
   getResultCategories,

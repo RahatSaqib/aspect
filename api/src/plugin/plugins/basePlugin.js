@@ -1,6 +1,4 @@
-const { postProcessMergeResult } = require('../../deviceApi/result')
 const excludeResult = require('../result/excludeResult')
-const findResult = require('../result/geneXpert/resultIdentification/findResult_v1')
 const issueTriggers = require('../issueTriggers')
 const issueResolutions = require('../issueResolutions')
 const filtersOpenIssues = require('../../issue/filterConditions')
@@ -37,12 +35,10 @@ const basePlugin = {
   postProcessCreateDevice,
   preProcessUpdateDeviceConfiguration,
   postProcessUpdateDeviceConfiguration,
-  postProcessAddDeviceOperation,
   postProcessGetResult,
   preProcessMergeResult,
   excludeResult,
   transformMergeResultPayload,
-  postProcessMergeResult,
   onResultLogged,
   onGxAlertAuthenticated,
   onCaseAdded,
@@ -93,15 +89,6 @@ async function preProcessUpdateDeviceConfiguration(/* context */) {
  * called after configuration data has been saved
  */
 async function postProcessUpdateDeviceConfiguration(/* context */) {
-  // nothing to do by default
-  return {}
-}
-
-/**
- * Device operation payload has been sent to Aspect,
- * called after operation data has been saved
- */
-async function postProcessAddDeviceOperation(/* context */) {
   // nothing to do by default
   return {}
 }
@@ -194,6 +181,10 @@ async function onPatientUpdated(/* { patientId }, { messageContext } */) {
  */
 async function extractCustomFieldsFromPayload(/* { payload, countryAbbreviation, partnerId, assayId } */) {
   return {}
+}
+
+async function findResult(/* availableResultDetails, knex */) {
+  throw new Error('findResult not implemented for this plugin')
 }
 
 async function identifyDevice(/* payload, partnerId */) {

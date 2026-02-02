@@ -5,7 +5,7 @@ const { removeAdditionalData } = require('../result/common/logic')
 const { normalizeToken } = require('./apiKey')
 const { asyncPayloadReceived } = require('./actions')
 const config = require('../config')
-const { processSyncPayload } = require('./processSyncPayload')
+const { processPayload } = require('./processPayload')
 
 const devicePayloadHandler = async request => {
   const isResultPayload = !!request.payload?.result
@@ -17,7 +17,7 @@ const devicePayloadHandler = async request => {
 
   const response = shouldProcessAsync
     ? await processAsyncPayload(request, deviceLogId, remoteAddress)
-    : await processSyncPayload(request, deviceLogId, remoteAddress)
+    : await processPayload(request, deviceLogId, remoteAddress)
 
   return response
 }

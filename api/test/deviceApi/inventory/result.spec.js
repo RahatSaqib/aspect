@@ -4,8 +4,7 @@ const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
 const { knex } = require('../../../src/db')
 const { parseDateOrDefault, getLocalDateInUtc, startOfDayUtc } = require('../../../src/shared/date')
-const { getResult } = require('../../../src/deviceApi/result')
-const { createTestContext } = require('../utils')
+const { createTestContext, getResult } = require('../utils')
 
 const baseConfig = {
   requirePrinter: 'yes',

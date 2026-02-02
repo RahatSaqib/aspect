@@ -3,7 +3,7 @@ const { devicePayloadValidation } = require('./validation')
 const logger = require('../shared/logger')
 const { asyncPayloadReceived } = require('./actions')
 const config = require('../config')
-const { processSyncPayload } = require('./processSyncPayload')
+const { processPayload } = require('./processPayload')
 
 const onAsyncPayloadToProcess = async ({ deviceLogId, remoteAddress }, { messageContext }) => {
   if (!config.enableAsyncPayloadProcessing) {
@@ -48,7 +48,7 @@ const onAsyncPayloadToProcess = async ({ deviceLogId, remoteAddress }, { message
     auth: { credentials },
     payload: formattedPayload,
   }
-  const response = await processSyncPayload(request, deviceLogId, remoteAddress)
+  const response = await processPayload(request, deviceLogId, remoteAddress)
   logger.info(
     `Completed processing async device payload for DeviceLogId: ${deviceLogId}. Response: ${JSON.stringify(response)}`
   )
