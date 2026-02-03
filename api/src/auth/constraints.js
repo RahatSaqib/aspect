@@ -678,7 +678,12 @@ function applyConstraintObjectOnAlias(queryBuilder, alias, constraint) {
       _.keys(constraint)
         .filter(k => !!constraint[k])
         .forEach(k => {
-          nullOrEqualQb.where(knex.raw(`${alias}.${k} = ?`, [constraint[k]]))
+          // countryId is a special case because it can be null to support undeployed devices (no site, so no geography)
+          if (k === 'countryId') {
+            nullOrEqualQb.where(knex.raw(`(${alias}.countryId is null or ${alias}.countryId = ?)`, [constraint[k]]))
+          } else {
+            nullOrEqualQb.where(knex.raw(`${alias}.${k} = ?`, [constraint[k]]))
+          }
         })
     })
   }

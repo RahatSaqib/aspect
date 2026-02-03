@@ -130,7 +130,6 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
   const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields, true, true)
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .leftJoin('FactResultsDevice as frd30', function () {
@@ -178,15 +177,6 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
-    .modify(
-      addConstraints,
-      dataConstraints,
-      {
-        device: 'd',
-        deviceType: 'dt',
-      },
-      { showUnapprovedDevices: true, showDecommissionedDevices: true }
-    )
 
   if (!device) {
     return null
@@ -231,8 +221,9 @@ function getDeviceByIdBaseQuery(
 ) {
   const query = knex('Device as d')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .modify(
       addConstraints,
       dataConstraints,
@@ -241,6 +232,7 @@ function getDeviceByIdBaseQuery(
         geography: 'g',
         site: 's',
         device: 'd',
+        deviceType: 'dt',
       },
       { showUnapprovedDevices, showDecommissionedDevices }
     )
