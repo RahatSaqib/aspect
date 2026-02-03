@@ -4,7 +4,6 @@ const Promise = require('bluebird')
 const { insertSite } = require('../../site/common/db')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
-const { updateDeviceDetails } = require('../../deviceApi/device')
 const { shouldTriggerModuleDisabled } = require('../utils')
 const {
   result1CategoryMapping,
@@ -252,6 +251,43 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
     }
   }
   return { device }
+}
+
+async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
+  // Compare existing device to these details
+  // which field vakues are different?
+  const existingDevice = await knex('Device as d').where({ 'd.id': deviceId }).first()
+  /* validates if the tz is included in our db */
+  if (deviceDetails.timezone && existingDevice.timezone !== deviceDetails.timezone) {
+    const { timeZone: defaultTimeZone } =
+      (await knex('Site as s')
+        .join('Geography as g', 's.geographyId', 'g.id')
+        .join('Country as c', 'g.countryId', 'c.id')
+        .where('s.id', existingDevice.siteId)
+        .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
+      (await knex('Country as c').first('c.timezone as timeZone'))
+    const { existingTimeZone } = (await knex('TimeZone')
+      .where('id', deviceDetails.timezone)
+      .first('id as existingTimeZone')) || {
+      existingTimeZone: defaultTimeZone,
+    }
+
+    deviceDetails.timezone = existingTimeZone
+  }
+  const changedDetails = _.omitBy(
+    deviceDetails,
+    (v, k) => ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
+  )
+  if (!_.isEmpty(changedDetails)) {
+    await knex('Device')
+      .where({ id: deviceId })
+      .update(
+        _.merge({}, changedDetails, {
+          updatedBy: null,
+          updatedOn: now,
+        })
+      )
+  }
 }
 
 async function getDeviceInfo(knex, deviceId) {

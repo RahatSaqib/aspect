@@ -3,23 +3,42 @@ const { knex } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { removeAdditionalData } = require('../result/common/logic')
 const { normalizeToken } = require('./apiKey')
-const { asyncPayloadReceived } = require('./actions')
-const config = require('../config')
-const { processPayload } = require('./processPayload')
+const { handleResultPayload } = require('./payloadHandlers/handleResultPayload')
+const { handleLogPayload } = require('./payloadHandlers/handleLogPayload')
+const { handleDailyDetailsPayload } = require('./payloadHandlers/handleDailyDetailsPayload')
+const { handlePingPayload } = require('./payloadHandlers/handlePingPayload')
+const { handleInventoryOperationPayload } = require('./payloadHandlers/handleInventoryOperationPayload')
+
+const handlers = {
+  RESULT: handleResultPayload,
+  LOG: handleLogPayload,
+  DAILY_DETAILS: handleDailyDetailsPayload,
+  PING: handlePingPayload,
+  INVENTORY_OPERATION: handleInventoryOperationPayload,
+}
 
 const devicePayloadHandler = async request => {
-  const isResultPayload = !!request.payload?.result
-  const shouldProcessAsync = config.enableAsyncPayloadProcessing && isResultPayload
-
   const remoteAddress = getRemoteAddress(request)
+  const payloadType = detectPayloadType(request.payload)
 
   const deviceLogId = await createDeviceLog(request, remoteAddress)
 
-  const response = shouldProcessAsync
-    ? await processAsyncPayload(request, deviceLogId, remoteAddress)
-    : await processPayload(request, deviceLogId, remoteAddress)
+  const handler = handlers[payloadType]
+  if (!handler) {
+    throw new Error(`Unknown payload type: ${payloadType} deviceLogId: ${deviceLogId}`)
+  }
 
-  return response
+  return handler(request, deviceLogId, remoteAddress)
+}
+
+function detectPayloadType(payload) {
+  if (payload.result) return 'RESULT'
+  if (payload.log) return 'LOG'
+  if (payload.includeDeviceConfiguration === true) return 'DAILY_DETAILS'
+  if (payload.includeDeviceConfiguration === false && payload.operation) return 'INVENTORY_OPERATION'
+  if (payload.includeDeviceConfiguration === false && !payload.result && !payload.log && !payload.operation)
+    return 'PING'
+  return 'UNKNOWN'
 }
 
 async function createDeviceLog(request, remoteAddress) {
@@ -38,13 +57,6 @@ async function createDeviceLog(request, remoteAddress) {
   })
 
   return deviceLogId
-}
-
-async function processAsyncPayload(request, deviceLogId) {
-  // Add to queue for processing
-  const { messageContext } = request.plugins
-  messageContext.bindActionCreators({ asyncPayloadReceived })
-  messageContext.asyncPayloadReceived(deviceLogId)
 }
 
 module.exports = {
