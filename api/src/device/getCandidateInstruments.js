@@ -12,13 +12,18 @@ async function getCandidateInstruments({ params, auth }) {
   // Verify base device exists and get its info
   const baseDevice = await knex('Device as d')
     .leftJoin('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
-    .join('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .where('d.id', deviceId)
     .select('d.id', 'd.siteId', 'dak.token as deviceApiKey')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        site: 's',
+      },
+      { showUnapprovedDevices: true }
+    )
     .first()
 
   if (!baseDevice) {
@@ -75,14 +80,14 @@ async function getCandidateInstruments({ params, auth }) {
 function getCandidateInstrumentsData(deviceId, dataConstraints) {
   const query = knex('Device as d')
     .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
-    .join('Site as s', 'd.siteId', 's.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-    .leftJoin('Deployment as baseDep', function () {
-      this.on('baseDep.deviceId', knex.raw('?', deviceId)).andOnNull('baseDep.end')
-    })
+    .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .join('Instrument as i', function () {
       this.on('i.deviceId', 'd.id')
+    })
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Deployment as baseDep', function () {
+      this.on('baseDep.deviceId', knex.raw('?', deviceId)).andOnNull('baseDep.end')
     })
     .leftJoin(
       knex('Result as r')
@@ -127,10 +132,15 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
     .whereNot('d.id', deviceId) // Exclude the base device itself
     .whereNotNull('i.serial') // Only include devices with instruments
     .groupBy('d.id', 'd.name', 'i.id', 'i.serial')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        site: 's',
+      },
+      { showUnapprovedDevices: true }
+    )
     .select(
       'd.id as deviceId',
       'd.name as deviceName',
