@@ -74,6 +74,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.site',
       defaultMessage: 'Site',
     },
+    undeployed: {
+      id: 'pages.DeviceDetailProfile.undeployed',
+      defaultMessage: 'Undeployed',
+    },
     partner: {
       id: 'pages.DeviceDetailProfile.partner',
       defaultMessage: 'Implementing Partner',

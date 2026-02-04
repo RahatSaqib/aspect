@@ -292,8 +292,12 @@ const DeviceDetailProfile = ({
             />
             <Summary
               title={formatMessage(messages.site)}
-              description={device.get('siteName')}
-              to={() => navigate(`/browse/site/${device.get('siteId')}`)}
+              description={device.get('siteName') ? device.get('siteName') : formatMessage(messages.undeployed)}
+              to={
+                device.get('siteName') && device.get('siteId')
+                  ? () => navigate(`/browse/site/${device.get('siteId')}`)
+                  : undefined
+              }
             />
             <Summary
               title={formatMessage(messages.connectivity)}
