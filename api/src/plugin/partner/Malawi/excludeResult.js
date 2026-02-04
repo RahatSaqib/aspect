@@ -4,7 +4,7 @@ const EQA_RESULT_TYPE_EXTERNAL_ID = 'EQA'
 const PATIENT_RESULT_TYPE_EXTERNAL_ID = 'Patient'
 
 async function excludeResult(context) {
-  const { payload } = context
+  const payload = context.payload.result
   setResultTypeIfIsEqa(payload)
   // calling the default behaviour, so all countries can use `Partner.excludePattern` regex to exclude results
   defaultExcludeResultPlugin(context)

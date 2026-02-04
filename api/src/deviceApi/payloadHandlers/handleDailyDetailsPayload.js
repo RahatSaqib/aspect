@@ -5,55 +5,41 @@ const { loadPlugin } = require('../../plugin/loadPlugin')
 const { withPayload, addDeviceLogUpdate } = require('../deviceContext')
 const { deviceMaintenanceTypeToId } = require('../../shared/dictionary')
 const { parseDateOrDefault } = require('../../shared/date')
-const { setDeviceCalibrationStatus } = require('../../plugin/utils')
+const { setDeviceCalibrationStatus, shouldTriggerModuleDisabled } = require('../../plugin/utils')
 const { calibrationDateUpdated } = require('../../device/actions')
 const { getCreateAssignPerson } = require('../../person/common/db')
+const { getCustomFields } = require('../../forms/service')
+const gxConnectSchema = require('../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
+const validate = require('../../../jsonSchemas/validate')
+const {
+  mapGxConnectCustomFields,
+} = require('../../plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
 
-const handleDailyDetailsPayload = async (request, deviceLogId, remoteAddress) => {
+const handleDailyDetailsPayload = async (request /* , deviceLogId, remoteAddress */) => {
   const { payload } = request
 
-  const handlers = [
-    {
-      name: 'updateDeviceConfigurationWithContext',
-      when: payload.configuration,
-      run: () => updateDeviceConfigurationWithContext(withPayload(context, payload.configuration)),
-    },
-    {
-      name: 'getConnectionSettings',
-      when: payload.includeDeviceConfiguration,
-      run: () => getConnectionSettings(context),
-    },
-    {
-      name: 'getCustomFields',
-      when: payload.getFormsDefinition,
-      run: () => getCustomFields(context),
-    },
-  ]
+  if (payload.configuration) {
+    logger.debug('executing updateDeviceConfiguration')
+    await updateDeviceConfiguration(withPayload(context, payload.configuration))
+  }
 
-  let response = {}
-  for (const handler of handlers) {
-    // eslint-disable-next-line no-continue
-    if (!handler.when) continue
+  const response = {}
+  if (payload.includeDeviceConfiguration) {
+    logger.debug('executing getConnectionSettings')
+    const { deviceConfiguration } = await getConnectionSettings(knex, partnerId, deviceId)
+    response.deviceConfiguration = deviceConfiguration
+  }
 
-    if (handler.name) {
-      logger.debug(`executing ${handler.name}`)
-    }
-
-    response = {
-      ...response,
-      // eslint-disable-next-line no-await-in-loop
-      ...(await handler.run()),
-    }
+  if (payload.getFormsDefinition) {
+    logger.debug('executing getFormsDefinition')
+    const { CustomFields } = await getFormsDefinition(knex, partnerId, deviceId)
+    response.CustomFields = CustomFields
   }
 
   return response
 }
 
-async function getConnectionSettings(context) {
-  const {
-    knex,
-    device: { id: deviceId, partnerId },
-  } = context
+async function getConnectionSettings(knex, partnerId, deviceId) {
   const { data } =
     (await knex('DeviceConfiguration as dc')
       .join('Geography as g', 'g.id', 'dc.geographyId')
@@ -83,41 +69,142 @@ async function getConnectionSettings(context) {
   return { deviceConfiguration: _.isEmpty(data) ? null : JSON.parse(data) }
 }
 
-async function updateDeviceConfigurationWithContext(context) {
+async function updateDeviceConfiguration(context) {
   const {
     knex,
     payload,
     device: { id: deviceId },
     now,
-    partnerPluginName,
-    deviceTypePluginName,
     messageContext,
   } = context
-  const preProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessUpdateDeviceConfiguration')
-  await preProcess(context)
 
-  await updateDeviceConfiguration(knex, deviceId, payload, now, messageContext)
+  await updateDeviceConfiguration2(knex, deviceId, payload, now, messageContext)
+
   addDeviceLogUpdate(context, 'deviceConfigurationUpdated', true)
-  const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessUpdateDeviceConfiguration')
-  const postProcessResult = await postProcess(context)
 
-  return postProcessResult
+  const configurationData = _.get(payload, 'configuration.data') || {}
+
+  if (configurationData.disabledModules) {
+    await Promise.each(configurationData.disabledModules, modules =>
+      shouldTriggerModuleDisabled(knex, messageContext, device, modules)
+    )
+  }
+
+  //
+  let device = {}
+  if (!_.isEmpty(_.get(payload, 'data'))) {
+    const {
+      data: { macAddress, hostId, culture, timezone, deviceSerialNumber, lastPingOn, state, lga, latitude, longitude },
+    } = payload
+
+    const deviceDetails = {
+      hostId,
+      culture,
+      timezone,
+      lastSeenOn: now,
+      updatedOn: now,
+      updatedBy: null,
+    }
+    if (macAddress && macAddressValid(macAddress)) {
+      deviceDetails.macAddress = macAddress
+    }
+    if (lastPingOn) {
+      deviceDetails.lastPingOn = parseDateOrDefault(lastPingOn)
+    }
+    if (deviceSerialNumber) {
+      deviceDetails.serial = deviceSerialNumber
+    }
+    if (state || !_.isUndefined(latitude) || !_.isUndefined(latitude)) {
+      const currentDeviceGeography = await knex('Device as d')
+        .leftJoin('Site as s', 'd.siteId', 's.id')
+        .leftJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftJoin('State as st', 'g.stateId', 'st.id')
+        .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+        .where('d.id', deviceId)
+        .first(
+          'g.countryId',
+          'g.stateId',
+          'st.name as stateName',
+          'g.lgaId',
+          'l.name as lgaName',
+          'd.siteId',
+          's.latitude',
+          's.longitude'
+        )
+      const siteUpdateDetails = {}
+      if (!_.isEmpty(currentDeviceGeography)) {
+        let newStateId = currentDeviceGeography.stateId
+        let newLgaId = currentDeviceGeography.lgaId
+        if (state !== currentDeviceGeography.stateName) {
+          ;[newStateId] = await knex('Geography as g')
+            .join('State as s', 'g.stateId', 's.id')
+            .where('g.countryId', currentDeviceGeography.countryId)
+            .andWhere('s.name', state)
+            .pluck('s.id')
+        }
+        if (newStateId && lga) {
+          if (lga !== currentDeviceGeography.lgaName) {
+            ;[newLgaId] = await knex('Geography as g')
+              .join('Lga as l', 'g.lgaId', 'l.id')
+              .where('g.stateId', newStateId)
+              .andWhere('l.name', lga)
+              .pluck('l.id')
+          } else if (newStateId !== currentDeviceGeography.stateId) {
+            newLgaId = null
+          }
+        }
+        newStateId = newStateId || null
+        newLgaId = newLgaId || null
+        if (newStateId !== currentDeviceGeography.stateId || newLgaId !== currentDeviceGeography.lgaId) {
+          const newGeography = await knex('Geography as g')
+            .where({
+              countryId: currentDeviceGeography.countryId,
+              stateId: newStateId,
+              lgaId: newLgaId,
+            })
+            .first('g.id')
+          if (newGeography) {
+            if (currentDeviceGeography.siteId) {
+              siteUpdateDetails.geographyId = newGeography.id
+            }
+          }
+        }
+        if (!_.isUndefined(latitude) && currentDeviceGeography.latitude !== latitude) {
+          siteUpdateDetails.latitude = latitude
+        }
+        if (!_.isUndefined(longitude) && currentDeviceGeography.longitude !== longitude) {
+          siteUpdateDetails.longitude = longitude
+        }
+        if (!_.isEmpty(siteUpdateDetails)) {
+          await knex('Site').where({ id: currentDeviceGeography.siteId }).update(siteUpdateDetails)
+        }
+      }
+    }
+    if (deviceId) {
+      await updateDeviceDetails(knex, deviceId, _.omitBy(deviceDetails, _.isNil), now)
+    }
+  }
 }
 
-const getCustomFields = async context => {
-  const {
-    knex,
-    device: { id: deviceId, partnerId },
-    partnerPluginName,
-    deviceTypePluginName,
-  } = context
-  let CustomFields = null
-  const customFields = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getCustomFields')
-  if (customFields) CustomFields = _.get(await customFields(knex, partnerId, deviceId), 'CustomFields')
-  return { CustomFields }
+const getFormsDefinition = async (knex, partnerId, deviceId) => {
+  let finalCustomFields = { CustomFields: { Fields: [] } }
+
+  const customFields = await getCustomFields(partnerId, deviceId)
+  if (customFields.fields && customFields.fields.length > 0) {
+    finalCustomFields = await mapGxConnectCustomFields(customFields)
+    if (!validate(gxConnectSchema, finalCustomFields)) {
+      logger.error(
+        `Schema validation failed for deviceId ${deviceId}. Custom fields won't be returned to GxConnect and the test details form won't be updated. Please, ensure the collection of forms are not repeating ids.`
+      )
+      finalCustomFields.CustomFields = null
+    }
+  }
+
+  await knex('Device').update({ customFieldsSentOn: new Date() }).where({ id: deviceId })
+  return finalCustomFields
 }
 
-async function updateDeviceConfiguration(knex, deviceId, payload, now, messageContext) {
+async function updateDeviceConfiguration2(knex, deviceId, payload, now, messageContext) {
   const previousConfig = await getDeviceConfiguration(knex, deviceId)
   const configurationData =
     previousConfig == null ? payload.data : _.merge(previousConfig.data, _.omitBy(payload.data, _.isNull))
@@ -227,6 +314,52 @@ async function getDeviceConfigurationFromQuery(deviceQuery) {
   }
   // Exclude 'latestErrors' from 'configurationData' in the response to reduce network data usage
   return { data: _.omit(JSON.parse(device.configurationData), ['latestErrors']) }
+}
+
+async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
+  // Compare existing device to these details
+  // which field vakues are different?
+  const existingDevice = await knex('Device as d').where({ 'd.id': deviceId }).first()
+  /* validates if the tz is included in our db */
+  if (deviceDetails.timezone && existingDevice.timezone !== deviceDetails.timezone) {
+    const { timeZone: defaultTimeZone } =
+      (await knex('Site as s')
+        .join('Geography as g', 's.geographyId', 'g.id')
+        .join('Country as c', 'g.countryId', 'c.id')
+        .where('s.id', existingDevice.siteId)
+        .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
+      (await knex('Country as c').first('c.timezone as timeZone'))
+    const { existingTimeZone } = (await knex('TimeZone')
+      .where('id', deviceDetails.timezone)
+      .first('id as existingTimeZone')) || {
+      existingTimeZone: defaultTimeZone,
+    }
+
+    deviceDetails.timezone = existingTimeZone
+  }
+  const changedDetails = _.omitBy(
+    deviceDetails,
+    (v, k) => ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
+  )
+  if (!_.isEmpty(changedDetails)) {
+    await knex('Device')
+      .where({ id: deviceId })
+      .update(
+        _.merge({}, changedDetails, {
+          updatedBy: null,
+          updatedOn: now,
+        })
+      )
+  }
+}
+
+function macAddressValid(macAddress) {
+  return (
+    !_.isEmpty(macAddress) &&
+    macAddress.indexOf('MAC') === 0 &&
+    macAddress.trim().length > 3 &&
+    macAddress !== 'MAC005345000000'
+  )
 }
 
 module.exports = {

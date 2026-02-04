@@ -6,7 +6,7 @@ const { deviceSeen } = require('../device/actions')
 const { loadPlugin } = require('../plugin/loadPlugin')
 const { resultUpdated, resultReadyForNotification } = require('../result/actions')
 const { mergeResult } = require('./mergeResult')
-const { withPayload, addDeviceLogUpdate } = require('./deviceContext')
+const { addDeviceLogUpdate } = require('./deviceContext')
 const { sendNotificationToContacts } = require('./deviceContext/sendNotificationToContacts')
 const { findOpenModuleDisabledIssues } = require('../issue/common/db')
 const { resolveIssues } = require('../issue/actions')
@@ -15,6 +15,7 @@ const { resultAutoTagging } = require('./result')
 
 const processResultPayload = async (request, deviceLogId, remoteAddress) => {
   const { auth, payload } = request
+
   const messageContext = request.plugins.messageContext.bindActionCreators({
     resultUpdated,
   })
@@ -76,7 +77,7 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
     await updateDeviceTimestamps(context, remoteAddress)
 
     // TODO: Remove withPayload function
-    const { aspectResultId } = await mergeResultWithContext(withPayload(context, payload.result))
+    const { aspectResultId } = await mergeResultWithContext(context)
 
     // Update DeviceLog with changes added to context when calling handler
     await trx('DeviceLog')
@@ -104,59 +105,27 @@ async function updateDeviceTimestamps(context, remoteAddress) {
 }
 
 async function mergeResultWithContext(context) {
-  const {
-    knex,
-    actions,
-    device: { id: deviceId, deviceType },
-    partnerPluginName,
-    deviceTypePluginName,
-    payload,
-    partnerId,
-    now,
-    messageContext,
-  } = context
-
-  const findResult = await loadPlugin(partnerPluginName, deviceTypePluginName, 'findResult')
-
-  const extractCustomFieldsFromPayload = await loadPlugin(
-    partnerPluginName,
-    deviceTypePluginName,
-    'extractCustomFieldsFromPayload'
-  )
-
-  // TODO: we should remove this in future
-  const pluginContext = {
-    knex,
-    deviceId,
-    device: context.device,
-    actions,
-    deviceType,
-    payload,
-    partnerId,
-    now,
-    messageContext,
-    findResult,
-    extractCustomFieldsFromPayload,
-  }
+  const { knex, partnerPluginName, deviceTypePluginName, payload, messageContext } = context
 
   const preProcessMergeResult = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessMergeResult')
-  await preProcessMergeResult(pluginContext)
+  await preProcessMergeResult(context)
 
   const excludeResult = await loadPlugin(partnerPluginName, deviceTypePluginName, 'excludeResult')
-  await excludeResult(pluginContext)
+  await excludeResult(context)
 
   const transformMergeResultPayload = await loadPlugin(
     partnerPluginName,
     deviceTypePluginName,
     'transformMergeResultPayload'
   )
-  const transformedPayload = await transformMergeResultPayload(pluginContext)
+  await transformMergeResultPayload(context)
+
   const {
     processedResult: plainResult,
     existingResult: plainPreviousResult,
     shouldTriggerResultNotification,
     // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
-  } = await mergeResult(knex, deviceId, transformedPayload, { now }, pluginContext)
+  } = await mergeResult(context)
   addDeviceLogUpdate(context, 'resultId', plainResult.id)
 
   await resultAutoTagging(knex, plainResult)
@@ -273,6 +242,7 @@ async function createDevice(context) {
       hostId,
       timezone: defaultTimeZone, // For now we ignore this _.get(payload, 'configuration.data.timezone', null)
       configurationData: '{}',
+      deviceApiKeyId: context.auth.credentials.deviceApiKeyId,
       putInService: now, // TODO?
       lastSeenOn: now,
       lastPingOn: now,

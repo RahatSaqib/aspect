@@ -33,8 +33,6 @@ const basePlugin = {
   filtersOpenIssues,
   preProcessCreateDevice,
   postProcessCreateDevice,
-  preProcessUpdateDeviceConfiguration,
-  postProcessUpdateDeviceConfiguration,
   postProcessGetResult,
   preProcessMergeResult,
   excludeResult,
@@ -45,7 +43,6 @@ const basePlugin = {
   onCaseUpdated,
   onPatientAdded,
   onPatientUpdated,
-  getCustomFields,
   findResult,
   extractCustomFieldsFromPayload,
   extractSampleId,
@@ -77,23 +74,6 @@ async function postProcessCreateDevice(/* context */) {
 }
 
 /**
- * Device configuration payload has been sent to Aspect,
- * called before configuration data has been saved
- */
-async function preProcessUpdateDeviceConfiguration(/* context */) {
-  // nothing to do by default
-}
-
-/**
- * Device configuration payload has been sent to Aspect,
- * called after configuration data has been saved
- */
-async function postProcessUpdateDeviceConfiguration(/* context */) {
-  // nothing to do by default
-  return {}
-}
-
-/**
  * A result is queried
  * called after all processing of result.
  *
@@ -117,15 +97,6 @@ async function preProcessMergeResult(/* context */) {
  */
 async function transformMergeResultPayload(context) {
   return context.payload
-}
-
-/**
- * In daily details we are going to send the custom fields configured.
- * This function will return the daily details to be shared with all the gxconnect deployments.
- *
- */
-async function getCustomFields() {
-  return null
 }
 
 /**

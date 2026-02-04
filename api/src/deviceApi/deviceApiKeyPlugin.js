@@ -47,9 +47,15 @@ async function authToken(token) {
 
   // lookup single non-revoked API Key
   const data = await knex('DeviceApiKey as k')
-    .leftJoin('Device as d', 'd.id', 'k.deviceId')
+    .leftJoin('Device as d', 'd.deviceApiKeyId', 'k.id')
     .where({ 'k.token': token, 'k.revoked': false })
-    .first('k.id as deviceApiKeyId', 'd.name as deviceName', 'k.expiresOn')
+    .groupBy('k.id')
+    .first({
+      deviceApiKeyId: 'k.id',
+      expiresOn: 'k.expiresOn',
+      deviceIds: knex.raw('IFNULL(GROUP_CONCAT(d.id), "")'),
+    })
+
   if (!data) {
     logger.warning(`Cannot find API Key Token ${token}`)
     return
@@ -60,8 +66,7 @@ async function authToken(token) {
   }
 
   const scope = ['deviceApi']
-  const name = `(${data.deviceApiKeyId}) ${data.deviceName || ''}`.trim()
-  const credentials = { token, scope, name, deviceApiKeyId: data.deviceApiKeyId }
+  const credentials = { token, scope, deviceApiKeyId: data.deviceApiKeyId, deviceIds: data.deviceIds.split(',') }
   return credentials
 }
 

@@ -5,8 +5,13 @@ const { resultSourceToId, resultTypeToId, sampleTypeToId } = require('../shared/
 const { getResultCategoriesFromPayload } = require('./utils')
 const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
 const { getMobileSampleByExternalId, getMatchingSample } = require('../sample/common/db')
+const { loadPlugin } = require('../plugin/loadPlugin')
 
-async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, context) {
+async function mergeResult(context) {
+  const { knex, now, partnerId, deviceTypePluginName, partnerPluginName } = context
+  const deviceId = context.device.id
+  const payload = context.payload.result
+
   const { result: existingResult, isTransferred } = await getResultRecord(
     knex,
     payload,
@@ -116,10 +121,15 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
 
   // Extract CustomFields from Payload
   const countryAbbreviation = await getCountryAbbreviationByDeviceId(knex, deviceId)
-  const customFieldsData = await context.extractCustomFieldsFromPayload({
+  const extractCustomFieldsFromPayload = await loadPlugin(
+    partnerPluginName,
+    deviceTypePluginName,
+    'extractCustomFieldsFromPayload'
+  )
+  const customFieldsData = await extractCustomFieldsFromPayload({
     payload,
     countryAbbreviation,
-    partnerId: context.partnerId,
+    partnerId,
     assayId: assay.id,
     deviceId,
   })
@@ -141,7 +151,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date() } = {}, c
   const processedResult = {
     externalId: payload.id,
     deviceId,
-    partnerId: context.partnerId,
+    partnerId,
     siteId: deviceSite?.id,
     ...result,
   }
