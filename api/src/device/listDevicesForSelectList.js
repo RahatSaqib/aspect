@@ -18,13 +18,13 @@ async function listDevicesForSelectList(request) {
   const devicesQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(
       addConstraints,
       dataConstraints,
       { device: 'd', geography: 'g' },
-      { showUnapprovedDevices, showDecommissionedDevices }
+      { showUnapprovedDevices: true, showDecommissionedDevices }
     )
     .modify(filterParams, query, {
       countryId: 'g.countryId',

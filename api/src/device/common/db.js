@@ -801,7 +801,7 @@ async function getUnusedModulesReportData(dataConstraints, query) {
 async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) {
   return knex('Device as d')
     .whereIn('d.id', allDevicesIds)
-    .join('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .modify(addConstraints, dataConstraints, { site: 's' })
     .select('d.id')
 }
