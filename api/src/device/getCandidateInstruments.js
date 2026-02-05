@@ -79,7 +79,6 @@ async function getCandidateInstruments({ params, auth }) {
 
 function getCandidateInstrumentsData(deviceId, dataConstraints) {
   const query = knex('Device as d')
-    .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .join('Instrument as i', function () {
@@ -121,11 +120,8 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
     })
     .where(function () {
       // Same token as deviceApiKey as base device
-      this.whereIn('dak.token', function () {
-        this.select('token')
-          .from('Device as d')
-          .leftJoin('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
-          .where('d.id', deviceId)
+      this.whereIn('d.deviceApiKeyId', function () {
+        this.select('sd.deviceApiKeyId').from('Device as sd').where('sd.id', deviceId)
       })
     })
     .whereIn('da.token', ['approved', 'pendingDeployment'])
@@ -148,7 +144,6 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
       'i.serial as instrumentSerial',
       knex.raw('json_arrayagg(m.modules) as modules')
     )
-
   return query
 }
 
