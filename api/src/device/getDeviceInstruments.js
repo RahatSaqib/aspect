@@ -5,7 +5,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 function getDeviceInstrumentsData(deviceId, dataConstraints) {
   const query = knex('Device as d')
     .where('d.id', deviceId)
-    .join('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .join('Instrument as i', function () {
       this.on('i.deviceId', 'd.id')
     })
@@ -24,10 +24,15 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
       }
     )
     .groupBy('d.id', 'i.serial')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        site: 's',
+      },
+      { showUnapprovedDevices: true }
+    )
     .select(
       'd.id as deviceId',
       'i.id as instrumentId',
