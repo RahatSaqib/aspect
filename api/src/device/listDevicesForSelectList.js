@@ -19,12 +19,12 @@ async function listDevicesForSelectList(request) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(
       addConstraints,
       dataConstraints,
       { device: 'd', geography: 'g' },
-      { showUnapprovedDevices: true, showDecommissionedDevices }
+      { showUnapprovedDevices, showDecommissionedDevices }
     )
     .modify(filterParams, query, {
       countryId: 'g.countryId',

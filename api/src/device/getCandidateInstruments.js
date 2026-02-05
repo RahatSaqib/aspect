@@ -43,7 +43,7 @@ async function getCandidateInstruments({ params, auth }) {
   // Get candidate instruments data with constraints applied
   const instrumentRows = await getCandidateInstrumentsData(deviceId, dataConstraints)
 
-  // For each instrument, use the prefix from the most recent module to build an array of 4 modules (e.g. B1-B4),
+  // For each instrument, use the name from the most recent module to build an array of 4 modules (e.g. if latest module = B2 => B1-B4),
   // filling in any missing modules with null for lastResultDate.
   const instruments = instrumentRows.map(instrument => {
     const modulesData = instrument.modules ? JSON.parse(instrument.modules) : []
