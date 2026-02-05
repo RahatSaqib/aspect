@@ -53,6 +53,7 @@ async function authToken(token) {
     .first({
       deviceApiKeyId: 'k.id',
       expiresOn: 'k.expiresOn',
+      partnerId: 'k.partnerId',
       deviceIds: knex.raw('IFNULL(GROUP_CONCAT(d.id), "")'),
     })
 
@@ -65,8 +66,13 @@ async function authToken(token) {
     return
   }
 
-  const scope = ['deviceApi']
-  const credentials = { token, scope, deviceApiKeyId: data.deviceApiKeyId, deviceIds: data.deviceIds.split(',') }
+  const credentials = {
+    scope: ['deviceApi'],
+    token,
+    deviceApiKeyId: data.deviceApiKeyId,
+    deviceIds: data.deviceIds.split(','),
+    partnerId: data.partnerId,
+  }
   return credentials
 }
 

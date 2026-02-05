@@ -6,7 +6,6 @@ const { deviceSeen } = require('../device/actions')
 const { loadPlugin } = require('../plugin/loadPlugin')
 const { resultUpdated, resultReadyForNotification } = require('../result/actions')
 const { mergeResult } = require('./mergeResult')
-const { addDeviceLogUpdate } = require('./deviceContext')
 const { sendNotificationToContacts } = require('./deviceContext/sendNotificationToContacts')
 const { findOpenModuleDisabledIssues } = require('../issue/common/db')
 const { resolveIssues } = require('../issue/actions')
@@ -76,17 +75,15 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
     // Update lastSeenOn and lastPingOn even if handler fails
     await updateDeviceTimestamps(context, remoteAddress)
 
-    // TODO: Remove withPayload function
     const { aspectResultId } = await mergeResultWithContext(context)
 
-    // Update DeviceLog with changes added to context when calling handler
-    await trx('DeviceLog')
-      .where('id', deviceLogId)
-      .update({
-        ...context.deviceLogUpdate, // addDeviceLogUpdate may have added more fields to update
-        deviceId: context.device.id,
-        processed: true,
-      })
+    // Update DeviceLog
+    await trx('DeviceLog').where('id', deviceLogId).update({
+      deviceConfigurationUpdated: true,
+      resultId: aspectResultId,
+      deviceId: context.device.id,
+      processed: true,
+    })
 
     return { aspectResultId, device: { id: context.device.id } }
   })
@@ -113,6 +110,7 @@ async function mergeResultWithContext(context) {
   const excludeResult = await loadPlugin(partnerPluginName, deviceTypePluginName, 'excludeResult')
   await excludeResult(context)
 
+  // TODO: move this logic to preProcessMergeResult
   const transformMergeResultPayload = await loadPlugin(
     partnerPluginName,
     deviceTypePluginName,
@@ -126,7 +124,6 @@ async function mergeResultWithContext(context) {
     shouldTriggerResultNotification,
     // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
   } = await mergeResult(context)
-  addDeviceLogUpdate(context, 'resultId', plainResult.id)
 
   await resultAutoTagging(knex, plainResult)
 

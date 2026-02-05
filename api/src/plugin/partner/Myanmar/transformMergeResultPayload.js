@@ -30,21 +30,6 @@ async function transformMergeResultPayload(context) {
       context.payload.result.sample.type = { id: sampleTypeExternalId }
     }
   }
-
-  return defaultOrDeviceTypeTransformMergeResultPayload(context)
-}
-
-async function defaultOrDeviceTypeTransformMergeResultPayload(context) {
-  const { deviceTypePluginName } = context
-
-  const { loadPlugin } = require('../../loadPlugin')
-  const deviceTypeTransformMergeResultPayload = await loadPlugin(
-    undefined,
-    deviceTypePluginName,
-    'transformMergeResultPayload'
-  )
-  const transformedPayload = await deviceTypeTransformMergeResultPayload(context)
-  return transformedPayload
 }
 
 module.exports = transformMergeResultPayload

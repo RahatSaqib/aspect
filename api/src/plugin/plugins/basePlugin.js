@@ -95,8 +95,8 @@ async function preProcessMergeResult(/* context */) {
  * to process in format expected by Device API
  * Default context.payload
  */
-async function transformMergeResultPayload(context) {
-  return context.payload
+async function transformMergeResultPayload(/* context */) {
+  // nothing to do by default
 }
 
 /**

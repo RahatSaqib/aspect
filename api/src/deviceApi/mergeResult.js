@@ -80,9 +80,6 @@ async function mergeResult(context) {
   )
 
   const preProcessedResult = {
-    // TODO: Check transformMergeResultPayload for possible changes to latitude and longitude assignment
-    // latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', deviceSite.latitude)),
-    // longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', deviceSite.longitude)),
     assayId: assay.id,
     assayVersion: _.get(payload, 'assay.version', _.get(existingResult, 'assayVersion', null)),
     resultTypeId,
