@@ -22,6 +22,7 @@ async function getCustomFieldsByExternalIds(request) {
         formDefinitionExternalId: form.formDefinitionExternalId,
         fields: form.fields.map(field =>
           pick(field, [
+            'id',
             'name',
             'title',
             'fieldType',

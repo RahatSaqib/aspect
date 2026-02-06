@@ -25,6 +25,7 @@ describe('Mobile API Custom Fields', () => {
       assert.equal(response.body.data[0].fields.length, 6)
       assert.containsAllKeys(response.body.data[0], ['formDefinitionExternalId', 'fields'])
       assert.containsAllKeys(response.body.data[0].fields[0], [
+        'id',
         'name',
         'title',
         'fieldType',
