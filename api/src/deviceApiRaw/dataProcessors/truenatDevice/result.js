@@ -90,8 +90,8 @@ class TruenatResult extends SynchronousDataProcessor {
           time,
         } = getDetailsFromRequest(request)
 
-        const assigned = await deviceApprovalToId('assigned')
-        if (deviceApprovalId === assigned && labName && deviceName === username && siteName === username) {
+        const pendingDeployment = await deviceApprovalToId('pendingDeployment')
+        if (deviceApprovalId === pendingDeployment && labName && deviceName === username && siteName === username) {
           const site = await knex('Site').where('name', labName).where('partnerId', partnerId).first()
           if (site) {
             await knex('Device').where('id', deviceId).update({ siteId: site.id })

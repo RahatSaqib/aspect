@@ -1,6 +1,18 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
-import { Button, Card, IconButton, Tooltip } from '@mui/material'
+import {
+  Button,
+  Card,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  MenuItem,
+  TextField,
+  Tooltip,
+} from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -9,6 +21,7 @@ import { connect } from 'react-redux'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import DeviceResultHistory from '../../../../cleanComponents/DeviceResultHistory/DeviceResultHistory'
 import PermissionChecker from '../../../../components/PermissionChecker'
+import useDeviceApprovalType from '../../../../hooks/device/useDeviceApprovalType'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../../hooks/useFilterValues'
@@ -37,13 +50,6 @@ import styles from '../styles.module.css'
 import DeviceInstrumentsTable from './DeviceInstrumentsTable'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
-
-const tokens = {
-  PROVISIONED: 'provisioned',
-  ASSIGNED: 'assigned',
-  APPROVED: 'approved',
-  DECOMMISSIONED: 'decommissioned',
-}
 
 const FILTERS_CONFIG = {
   geography: true,
@@ -101,15 +107,6 @@ const enhance = compose(
           exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
         }
       },
-    onToggleDeviceApproval:
-      ({ device, updateSingleDevice }) =>
-      () =>
-        updateSingleDevice({
-          deviceId: device.get('id'),
-          data: {
-            approvalToken: device.get('approvalToken') !== tokens.APPROVED ? tokens.APPROVED : tokens.ASSIGNED,
-          },
-        }),
     onShowCalibrationDialog:
       ({ showDialog, device }) =>
       () => {
@@ -156,8 +153,8 @@ const DeviceDetailProfile = ({
   device,
   disabled,
   devicePerformance,
+  updateSingleDevice,
   // --- injected by recompose ---
-  onToggleDeviceApproval,
   sortCol,
   sortDir,
   pageAt,
@@ -204,6 +201,41 @@ const DeviceDetailProfile = ({
   )
 
   const formatMaintenanceDate = date => (date ? formatDate(date) : formatMessage(messages.undefinedValue))
+
+  // Approval status change state
+  const { data: approvalTypes } = useDeviceApprovalType()
+  const currentApprovalToken = device.get('approvalToken')
+  const [selectedApprovalToken, setSelectedApprovalToken] = useState('')
+  const [isApprovalDialogOpen, setApprovalDialogOpen] = useState(false)
+
+  const selectedApprovalLabel =
+    selectedApprovalToken && approvalTypes
+      ? (() => {
+          const item = approvalTypes.find(t => t.token === selectedApprovalToken)
+          return item && messages[item.i18nKey] ? formatMessage(messages[item.i18nKey]) : selectedApprovalToken
+        })()
+      : ''
+
+  const handleOpenApprovalDialog = () => {
+    setSelectedApprovalToken('')
+    setApprovalDialogOpen(true)
+  }
+
+  const handleApprovalConfirm = () => {
+    if (selectedApprovalToken && selectedApprovalToken !== currentApprovalToken) {
+      updateSingleDevice({
+        deviceId: device.get('id'),
+        data: { approvalToken: selectedApprovalToken },
+      })
+    }
+    setApprovalDialogOpen(false)
+    setSelectedApprovalToken('')
+  }
+
+  const handleApprovalCancel = () => {
+    setApprovalDialogOpen(false)
+    setSelectedApprovalToken('')
+  }
 
   return (
     <div>
@@ -412,19 +444,49 @@ const DeviceDetailProfile = ({
               title={formatMessage(messages.approval)}
               description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
               action={
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={onToggleDeviceApproval}
-                  disabled={
-                    disabled ||
-                    formatMessage(messages[device.get('approvalStatusI18nKey')]).toLowerCase() === tokens.DECOMMISSIONED
-                  }
-                >
+                <Button variant="contained" color="success" onClick={handleOpenApprovalDialog} disabled={disabled}>
                   {formatMessage(messages.buttonChange)}
                 </Button>
               }
             />
+            <Dialog open={isApprovalDialogOpen} onClose={handleApprovalCancel}>
+              <DialogTitle>{formatMessage(messages.changeApprovalStatusTitle)}</DialogTitle>
+              <DialogContent>
+                <TextField
+                  select
+                  fullWidth
+                  size="small"
+                  label={formatMessage(messages.approval)}
+                  value={selectedApprovalToken}
+                  onChange={e => setSelectedApprovalToken(e.target.value)}
+                  sx={{ mt: 1 }}
+                >
+                  {approvalTypes
+                    ?.filter(t => t.token !== currentApprovalToken)
+                    .map(t => (
+                      <MenuItem key={t.token} value={t.token}>
+                        {messages[t.i18nKey] ? formatMessage(messages[t.i18nKey]) : t.name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+                {selectedApprovalToken && (
+                  <DialogContentText sx={{ mt: 2 }}>
+                    {formatMessage(messages.changeApprovalStatusConfirmation, { status: selectedApprovalLabel })}
+                  </DialogContentText>
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleApprovalCancel}>{formatMessage(messages.changeApprovalStatusCancel)}</Button>
+                <Button
+                  onClick={handleApprovalConfirm}
+                  variant="contained"
+                  color="success"
+                  disabled={!selectedApprovalToken}
+                >
+                  {formatMessage(messages.changeApprovalStatusConfirm)}
+                </Button>
+              </DialogActions>
+            </Dialog>
             <Summary title={formatMessage(messages.dailyCapacity)} description={device.get('dailyTestCapacity')} />
             <Summary title={formatMessage(messages.moduleBayCapacity)} description={device.get('moduleBayCapacity')} />
 
@@ -510,7 +572,7 @@ DeviceDetailProfile.propTypes = {
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   disabled: PropTypes.bool.isRequired,
   devicePerformance: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  onToggleDeviceApproval: PropTypes.func.isRequired,
+  updateSingleDevice: PropTypes.func.isRequired,
   sortCol: PropTypes.string.isRequired,
   sortDir: PropTypes.string.isRequired,
   pageAt: PropTypes.number.isRequired,

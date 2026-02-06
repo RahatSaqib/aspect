@@ -66,7 +66,7 @@ async function listApprovalTypes() {
   const getCount = resultQuery.clone().count('da.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name', 'i18nKey')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name', 'i18nKey', 'token')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

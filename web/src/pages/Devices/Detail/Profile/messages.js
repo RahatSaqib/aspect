@@ -321,6 +321,22 @@ const messages = {
       id: 'pages.DeviceDetailProfile.targetDeviceIsSourceDevice',
       defaultMessage: 'Target device cannot be the same as the source device',
     },
+    changeApprovalStatusTitle: {
+      id: 'pages.DeviceDetailProfile.changeApprovalStatusTitle',
+      defaultMessage: 'Change Device Status',
+    },
+    changeApprovalStatusConfirmation: {
+      id: 'pages.DeviceDetailProfile.changeApprovalStatusConfirmation',
+      defaultMessage: 'Are you sure you want to change the device status to {status}?',
+    },
+    changeApprovalStatusConfirm: {
+      id: 'pages.DeviceDetailProfile.changeApprovalStatusConfirm',
+      defaultMessage: 'Confirm',
+    },
+    changeApprovalStatusCancel: {
+      id: 'pages.DeviceDetailProfile.changeApprovalStatusCancel',
+      defaultMessage: 'Cancel',
+    },
   }),
 }
 

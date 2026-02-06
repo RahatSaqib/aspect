@@ -98,7 +98,10 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           .single()
           .allow(null)
           .description('Filter for device maintenance status external id'),
-        deviceApprovalId: Joi.number().allow('').description('Filter for device approval ID'),
+        deviceApprovalId: Joi.alternatives()
+          .try(Joi.array().items(Joi.number()).single(), Joi.number())
+          .allow('', null)
+          .description('Filter for device approval ID(s)'),
         deviceTypeId: Joi.number().allow('').description('Filter for device type ID'),
         deviceType: Joi.string().allow('').description('Filter for device type ExternalId'),
         category: Joi.string().description('Filter for device type category'),

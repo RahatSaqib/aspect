@@ -222,7 +222,7 @@ async function createDevice(context) {
   const shortName = name.substr(0, 45)
 
   return transact(async trx => {
-    const deviceApprovalId = await deviceApprovalToId('provisioned')
+    const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
 
     const partnerData = await trx('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
 

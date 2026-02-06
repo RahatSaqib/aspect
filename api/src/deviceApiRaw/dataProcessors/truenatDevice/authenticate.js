@@ -110,7 +110,7 @@ class TruenatLogin extends SynchronousDataProcessor {
           site.id = siteId
         }
         const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
-        const deviceApprovalId = await deviceApprovalToId('assigned')
+        const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
         device = {
           name: payload.Username,
           shortName: payload.Username,

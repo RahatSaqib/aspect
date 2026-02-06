@@ -657,17 +657,27 @@ const BreakOutByLot = ({ remove, blocked }) => {
 const DeviceApprovalId = ({ deviceApprovalId, remove, blocked }) => {
   const { formatMessage } = useIntl()
   const { data } = useDeviceApprovalType()
-  const name = data?.find(it => it.id === deviceApprovalId)?.name
-  if (deviceApprovalId && name) {
-    const deviceApprovalName = formatMessage(messages[`deviceApproval${name}`])
-    return (
-      <Btn
-        lbl={formatMessage(messages.withDeviceApproval, { deviceApprovalName })}
-        del={blocked.includes('deviceApprovalId') ? undefined : () => remove(['deviceApprovalId'])}
-      />
-    )
-  }
-  return null
+
+  // Support both single id (legacy) and array of ids
+  const ids = Array.isArray(deviceApprovalId) ? deviceApprovalId : deviceApprovalId ? [deviceApprovalId] : []
+  if (!ids.length || !data) return null
+
+  const names = ids
+    .map(id => {
+      const item = data.find(it => it.id === id)
+      return item && item.i18nKey ? formatMessage(messages[item.i18nKey]) : null
+    })
+    .filter(Boolean)
+
+  if (!names.length) return null
+
+  const deviceApprovalName = names.join(', ')
+  return (
+    <Btn
+      lbl={formatMessage(messages.withDeviceApproval, { deviceApprovalName })}
+      del={blocked.includes('deviceApprovalId') ? undefined : () => remove(['deviceApprovalId'])}
+    />
+  )
 }
 
 const DeviceType = ({ deviceType, remove, blocked }) => {
