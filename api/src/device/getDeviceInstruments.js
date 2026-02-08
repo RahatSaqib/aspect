@@ -78,7 +78,7 @@ async function getDeviceInstruments({ params, auth }) {
   return {
     ok: true,
     data: {
-      deviceId,
+      deviceId: parseInt(deviceId, 10),
       instruments,
     },
   }

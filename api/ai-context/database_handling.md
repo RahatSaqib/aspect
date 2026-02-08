@@ -11,7 +11,7 @@ const { getConstraints, addConstraints } = require('./auth/constraints')
 
 ## Key Patterns
 
-DB access code should be located, for any non-trivial case, in a `db.js` file located at the lowest level possible. If the db code is reusable among use cases, the method must be hoisted to a higher level.
+DB access code should be colocated with its use case handler. Only create a shared `db.js` file when queries are reusable across multiple use cases; in that case, place it at the lowest common level. Do not create a `db.js` for single-use queries.
 
 ### 1. Constraint System
 
@@ -173,9 +173,10 @@ async function getDevices(dataConstraints, query) {
 ```
 
 ## Module Structure
-- `common/db.js` - Database queries
+- `common/db.js` - Shared/reusable database queries only (do not create for single-use queries)
 - `service.js` - Business logic
 - `routes.js` - HTTP endpoints
+- `useCaseHandler.js` - Use case handler with colocated DB queries when not shared
 
 ## References
 - `api/src/db.js` - Core utilities

@@ -337,6 +337,106 @@ const messages = {
       id: 'pages.DeviceDetailProfile.changeApprovalStatusCancel',
       defaultMessage: 'Cancel',
     },
+    deploymentsTitle: {
+      id: 'pages.DeviceDetailProfile.deploymentsTitle',
+      defaultMessage: 'Deployments',
+    },
+    addDeployment: {
+      id: 'pages.DeviceDetailProfile.addDeployment',
+      defaultMessage: 'Add Deployment',
+    },
+    finishDeployment: {
+      id: 'pages.DeviceDetailProfile.finishDeployment',
+      defaultMessage: 'Finish Deployment',
+    },
+    editDeployment: {
+      id: 'pages.DeviceDetailProfile.editDeployment',
+      defaultMessage: 'Edit',
+    },
+    deleteDeployment: {
+      id: 'pages.DeviceDetailProfile.deleteDeployment',
+      defaultMessage: 'Delete',
+    },
+    saveDeployments: {
+      id: 'pages.DeviceDetailProfile.saveDeployments',
+      defaultMessage: 'Save',
+    },
+    deploymentStartDate: {
+      id: 'pages.DeviceDetailProfile.deploymentStartDate',
+      defaultMessage: 'Start Date',
+    },
+    deploymentEndDate: {
+      id: 'pages.DeviceDetailProfile.deploymentEndDate',
+      defaultMessage: 'End Date',
+    },
+    deploymentSite: {
+      id: 'pages.DeviceDetailProfile.deploymentSite',
+      defaultMessage: 'Site',
+    },
+    deploymentActive: {
+      id: 'pages.DeviceDetailProfile.deploymentActive',
+      defaultMessage: 'Active',
+    },
+    deploymentSaved: {
+      id: 'pages.DeviceDetailProfile.deploymentSaved',
+      defaultMessage: 'Deployment changes saved successfully',
+    },
+    deploymentError: {
+      id: 'pages.DeviceDetailProfile.deploymentError',
+      defaultMessage: 'Failed to save deployment changes',
+    },
+    confirmDeleteDeployment: {
+      id: 'pages.DeviceDetailProfile.confirmDeleteDeployment',
+      defaultMessage: 'Are you sure you want to delete this deployment?',
+    },
+    resultsWillBeMoved: {
+      id: 'pages.DeviceDetailProfile.resultsWillBeMoved',
+      defaultMessage: '{count} results will be moved to {siteName}',
+    },
+    resultsWillLoseSite: {
+      id: 'pages.DeviceDetailProfile.resultsWillLoseSite',
+      defaultMessage: '{count} results between {start} and {end} will lose their site assignment',
+    },
+    noDeployments: {
+      id: 'pages.DeviceDetailProfile.noDeployments',
+      defaultMessage: 'No deployments',
+    },
+    finishDeploymentTitle: {
+      id: 'pages.DeviceDetailProfile.finishDeploymentTitle',
+      defaultMessage: 'Finish Deployment',
+    },
+    addDeploymentTitle: {
+      id: 'pages.DeviceDetailProfile.addDeploymentTitle',
+      defaultMessage: 'Add Deployment',
+    },
+    confirm: {
+      id: 'pages.DeviceDetailProfile.confirm',
+      defaultMessage: 'Confirm',
+    },
+    editDeploymentTitle: {
+      id: 'pages.DeviceDetailProfile.editDeploymentTitle',
+      defaultMessage: 'Edit Deployment',
+    },
+    editDeploymentOverlapWarning: {
+      id: 'pages.DeviceDetailProfile.editDeploymentOverlapWarning',
+      defaultMessage: 'This deployment overlaps with another deployment. The overlapping deployment will be adjusted.',
+    },
+    editDeploymentActiveWarning: {
+      id: 'pages.DeviceDetailProfile.editDeploymentActiveWarning',
+      defaultMessage: 'There is already an active deployment. Please set an end date or finish the other deployment first.',
+    },
+    unassignedPeriod: {
+      id: 'pages.DeviceDetailProfile.unassignedPeriod',
+      defaultMessage: 'Unassigned period: {start} to {end}',
+    },
+    deviceUndeployed: {
+      id: 'pages.DeviceDetailProfile.deviceUndeployed',
+      defaultMessage: 'This device is currently undeployed. Click "Add Deployment" to assign it to a site.',
+    },
+    undeployedPeriod: {
+      id: 'pages.DeviceDetailProfile.undeployedPeriod',
+      defaultMessage: 'Undeployed',
+    },
   }),
 }
 

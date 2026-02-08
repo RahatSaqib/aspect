@@ -10,6 +10,10 @@ const DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT = '/device/transfer-instruments'
 const DEVICE_KEY_TRANSFER_INSTRUMENT_TO_NEW_DEVICE_ENDPOINT = '/device/transfer-instrument-to-new-device'
 const DEVICE_INSTRUMENTS_KEY = 'device-instruments'
 const CANDIDATE_INSTRUMENTS_KEY = 'candidate-instruments'
+const DEVICE_DEPLOYMENTS_KEY = 'device-deployments'
+const DEVICE_DEPLOYMENTS_ENDPOINT = '/device/:deviceId/deployments'
+const DEVICE_DEPLOYMENTS_CHECK_RESULTS_ENDPOINT = '/device/:deviceId/deployments/check-results'
+const DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT = '/device/:deviceId/deployments/persist'
 
 export {
   DEVICE_KEY,
@@ -24,4 +28,8 @@ export {
   DEVICE_KEY_TRANSFER_INSTRUMENT_TO_NEW_DEVICE_ENDPOINT,
   DEVICE_INSTRUMENTS_KEY,
   CANDIDATE_INSTRUMENTS_KEY,
+  DEVICE_DEPLOYMENTS_KEY,
+  DEVICE_DEPLOYMENTS_ENDPOINT,
+  DEVICE_DEPLOYMENTS_CHECK_RESULTS_ENDPOINT,
+  DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT,
 }

@@ -47,6 +47,7 @@ import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import styles from '../styles.module.css'
+import DeploymentsSection from './DeploymentsSection'
 import DeviceInstrumentsTable from './DeviceInstrumentsTable'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
@@ -541,6 +542,9 @@ const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
+      <PermissionChecker permissions={['device:view']}>
+        <DeploymentsSection deviceId={device.get('id')} disabled={disabled} />
+      </PermissionChecker>
       {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
         <DeviceInstrumentsTable deviceId={device.get('id')} disabled={disabled} />
       )}

@@ -36,6 +36,8 @@ exports.up = async function (knex) {
 
   await knex.schema.alterTable('Deployment', table => {
     addAuditFieldsNullable(table)
+    table.dropUnique(['siteId', 'deviceId'])
+    table.unique(['deviceId', 'start'])
   })
 }
 
@@ -53,6 +55,8 @@ exports.down = async function (knex) {
   })
 
   await knex.schema.alterTable('Deployment', table => {
+    table.dropUnique(['deviceId', 'start'])
+    table.unique(['siteId', 'deviceId'])
     table.dropColumn('createdBy')
     table.dropColumn('createdOn')
     table.dropColumn('updatedBy')
