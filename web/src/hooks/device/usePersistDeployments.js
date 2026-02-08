@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
-import { aspectFetch } from '../../utils/utils/fetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
-import { DEVICE_KEY, DEVICE_DEPLOYMENTS_KEY, DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT } from './deviceKeys'
+import { aspectFetch } from '../../utils/utils/fetch'
+import { DEVICE_DEPLOYMENTS_KEY, DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT, DEVICE_KEY } from './deviceKeys'
 
 const persistChanges = async ({ deviceId, changes }) => {
   const endpoint = replaceRouteParams(DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT, { deviceId })
@@ -17,7 +17,10 @@ const usePersistDeployments = () => {
   return useMutation(persistChanges, {
     onSuccess: (_, { deviceId }) => {
       queryClient.invalidateQueries([DEVICE_DEPLOYMENTS_KEY, deviceId])
-      queryClient.invalidateQueries([DEVICE_KEY, deviceId])
+      // Invalidate device query so the profile site field refreshes (deviceId may be string or number)
+      queryClient.invalidateQueries({
+        predicate: query => query.queryKey[0] === DEVICE_KEY && query.queryKey[1] === deviceId,
+      })
     },
   })
 }

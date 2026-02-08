@@ -270,6 +270,38 @@ function startOfTodayUtc() {
 }
 
 /**
+ * Returns the UTC Date for start of the given calendar day (00:00:00.000) in the specified IANA timezone.
+ * @param {string|Date} dateInput - Date string (e.g. '2026-02-08') or Date
+ * @param {string|null} timezoneIANA - IANA timezone (e.g. 'Asia/Karachi') or null for UTC
+ * @returns {Date} UTC moment representing start of that day in the timezone
+ */
+function startOfDayInTimezone(dateInput, timezoneIANA) {
+  const d = parseDateOrDefault(dateInput)
+  if (!d) return null
+  const y = d.getUTCFullYear()
+  const m = d.getUTCMonth()
+  const day = d.getUTCDate()
+  const localMidnight = new Date(y, m, day, 0, 0, 0, 0)
+  return timezoneIANA ? slideDateToTimeZone(localMidnight, timezoneIANA) : new Date(Date.UTC(y, m, day, 0, 0, 0, 0))
+}
+
+/**
+ * Returns the UTC Date for end of the given calendar day (23:59:59.999) in the specified IANA timezone.
+ * @param {string|Date} dateInput - Date string (e.g. '2026-02-08') or Date
+ * @param {string|null} timezoneIANA - IANA timezone (e.g. 'Asia/Karachi') or null for UTC
+ * @returns {Date} UTC moment representing end of that day in the timezone
+ */
+function endOfDayInTimezone(dateInput, timezoneIANA) {
+  const d = parseDateOrDefault(dateInput)
+  if (!d) return null
+  const y = d.getUTCFullYear()
+  const m = d.getUTCMonth()
+  const day = d.getUTCDate()
+  const localEnd = new Date(y, m, day, 23, 59, 59, 999)
+  return timezoneIANA ? slideDateToTimeZone(localEnd, timezoneIANA) : new Date(Date.UTC(y, m, day, 23, 59, 59, 999))
+}
+
+/**
  * Returns the date part of a DateTime string in ISO format
  *
  * @param {string} isoDateTime The DateTime in ISO format (ex.: 2020-01-02T00:30:10.432-03:00).
@@ -288,6 +320,16 @@ function getFormattedDateTimeWithTimezone(dateTime, timezone) {
 function getFormattedDate(dateTime, timezone) {
   timezone = timezone || 'Etc/UTC'
   return formatInTimeZone(dateTime, timezone, 'E MMM dd yyyy')
+}
+
+/**
+ * Returns the calendar date (yyyy-MM-dd) of the given Date in the specified IANA timezone.
+ * Used for overlap checks so consecutive periods (end 13th, start 14th) compare correctly.
+ */
+function getDateStringInTimezone(date, timezoneIANA) {
+  if (!date) return null
+  const d = date instanceof Date ? date : new Date(date)
+  return timezoneIANA ? formatInTimeZone(d, timezoneIANA, 'yyyy-MM-dd') : d.toISOString().slice(0, 10)
 }
 
 /**
@@ -570,6 +612,8 @@ module.exports = {
   getTimeZoneById,
   startOfDayUtc,
   startOfTodayUtc,
+  startOfDayInTimezone,
+  endOfDayInTimezone,
   startOfMonthUTC,
   endOfMonthUTC,
   REGEX_ISODATESTRING,
@@ -579,6 +623,7 @@ module.exports = {
   getDateTimeExpressionInTimeZone,
   getFormattedDateTimeWithTimezone,
   getFormattedDate,
+  getDateStringInTimezone,
   getDatesFromQuery,
   getOffsetFromTimeZone,
   slideDateToTimeZone,

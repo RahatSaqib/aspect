@@ -385,6 +385,21 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deploymentError',
       defaultMessage: 'Failed to save deployment changes',
     },
+    deploymentOverlap: {
+      id: 'pages.DeviceDetailProfile.deploymentOverlap',
+      defaultMessage:
+        'Deployment periods must not overlap. Please set end dates so periods are consecutive or leave only one deployment open (active).',
+    },
+    deploymentOpenMustBeLast: {
+      id: 'pages.DeviceDetailProfile.deploymentOpenMustBeLast',
+      defaultMessage:
+        'An open (active) deployment must be the last one in the timeline. Please set an end date on the deployment that should end first.',
+    },
+    deploymentNewStartAfterCurrentEnd: {
+      id: 'pages.DeviceDetailProfile.deploymentNewStartAfterCurrentEnd',
+      defaultMessage:
+        'The new deployment must start after the current deployment ends. Please choose a start date on or after {minStartDate}.',
+    },
     confirmDeleteDeployment: {
       id: 'pages.DeviceDetailProfile.confirmDeleteDeployment',
       defaultMessage: 'Are you sure you want to delete this deployment?',
@@ -405,9 +420,21 @@ const messages = {
       id: 'pages.DeviceDetailProfile.finishDeploymentTitle',
       defaultMessage: 'Finish Deployment',
     },
+    finishDeploymentEndNotBeforeStart: {
+      id: 'pages.DeviceDetailProfile.finishDeploymentEndNotBeforeStart',
+      defaultMessage: 'End date must be on or after the deployment start date.',
+    },
     addDeploymentTitle: {
       id: 'pages.DeviceDetailProfile.addDeploymentTitle',
       defaultMessage: 'Add Deployment',
+    },
+    fillGapDeploymentTitle: {
+      id: 'pages.DeviceDetailProfile.fillGapDeploymentTitle',
+      defaultMessage: 'Add Deployment to fill undeployed period',
+    },
+    fillGapDeploymentDescription: {
+      id: 'pages.DeviceDetailProfile.fillGapDeploymentDescription',
+      defaultMessage: 'This deployment will fill the period from {start} to {end}. Select a site.',
     },
     confirm: {
       id: 'pages.DeviceDetailProfile.confirm',
@@ -423,7 +450,8 @@ const messages = {
     },
     editDeploymentActiveWarning: {
       id: 'pages.DeviceDetailProfile.editDeploymentActiveWarning',
-      defaultMessage: 'There is already an active deployment. Please set an end date or finish the other deployment first.',
+      defaultMessage:
+        'There is already an active deployment. Please set an end date or finish the other deployment first.',
     },
     unassignedPeriod: {
       id: 'pages.DeviceDetailProfile.unassignedPeriod',

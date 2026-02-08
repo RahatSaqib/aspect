@@ -36,8 +36,8 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, excludeSiteId }) => {
         validationSchema={validationSchema}
         onSubmit={(values, { resetForm }) => {
           const site = sites.find(s => s.id === values.siteId)
-          onConfirm({ siteId: values.siteId, siteName: site?.name || null, start: values.start })
-          resetForm()
+          const success = onConfirm({ siteId: values.siteId, siteName: site?.name || null, start: values.start })
+          if (success) resetForm()
         }}
       >
         {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid, dirty }) => (
