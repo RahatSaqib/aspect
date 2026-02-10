@@ -1,4 +1,4 @@
-const { knex } = require('../../db')
+const { knex } = require('../../../db')
 
 /**
  * Identifies a device by instrument serial number (GxConnect plugin).

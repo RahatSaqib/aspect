@@ -243,16 +243,13 @@ function deviceHasNewResults(deviceId) {
  * @param {*} moduleSerial // the serial number of the module which is disable
  * @param {*} disabledOn // the date when this module was disable
  */
-function deviceModuleDisabled(device, moduleSerial, disabledOn) {
-  if (!device || !moduleSerial || !disabledOn) {
-    throw new Error('Must specify deviceId, moduleSerial and disabledOn and for deviceModuleDisable')
+function deviceModuleDisabled(deviceId, moduleSerial, disabledOn) {
+  if (!moduleSerial || !disabledOn) {
+    throw new Error('Must specify moduleSerial and disabledOn and for deviceModuleDisable')
   }
   return {
     type: types.DEVICE_MODULE_DISABLE_RECEIVED,
-    deviceId: device.id,
-    siteId: device.siteId,
-    geographyId: device.geographyId,
-    partnerId: device.partnerId,
+    deviceId,
     options: { data: { moduleSerial, disabledOn } },
   }
 }

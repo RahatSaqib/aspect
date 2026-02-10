@@ -3,8 +3,8 @@ const transformMergeResultPayload = require('../deviceType/CepheidGeneXpert/tran
 const preProcessMergeResult = require('../deviceType/CepheidGeneXpert/preProcessMergeResult')
 const onResultLogged = require('../deviceType/CepheidGeneXpert/onResultLogged.js')
 const { extractCustomFieldsFromPayload } = require('../deviceType/GxConnect/extractCustomFieldsFromPayload')
-const { identifyDevice } = require('../../deviceApi/gxConnect/identifyDevice')
 const { findResult } = require('../result/geneXpert/resultIdentification/findResult_v1')
+const { identifyDevice } = require('../deviceType/CepheidGeneXpert/identifyDevice')
 
 const gxconnectPlugin = {
   findResult,

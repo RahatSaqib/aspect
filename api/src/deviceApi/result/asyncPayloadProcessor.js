@@ -1,8 +1,8 @@
-const { knex } = require('../db')
-const { devicePayloadValidation } = require('./validation')
-const logger = require('../shared/logger')
-const { asyncPayloadReceived } = require('./actions')
-const config = require('../config')
+const { knex } = require('../../db')
+const { devicePayloadValidation } = require('../validation')
+const logger = require('../../shared/logger')
+const { asyncPayloadReceived } = require('../actions')
+const config = require('../../config')
 const { processResultPayload } = require('./processResultPayload')
 
 const onAsyncPayloadToProcess = async ({ deviceLogId, remoteAddress }, { messageContext }) => {
@@ -39,8 +39,8 @@ const onAsyncPayloadToProcess = async ({ deviceLogId, remoteAddress }, { message
     .first('k.id as deviceApiKeyId', 'd.name as deviceName')
 
   const scope = ['deviceApi']
-  const name = `(${key.deviceApiKeyId}) ${key.deviceName || ''}`.trim()
-  const credentials = { token, scope, name, deviceApiKeyId: key.deviceApiKeyId }
+  const credentials = { token, scope, deviceApiKeyId: key.deviceApiKeyId }
+  // TODO: deviceIds: data.deviceIds.split(','), partnerId: data.partnerId,
 
   // Use original sync flow by simulating a hapi request
   const request = {

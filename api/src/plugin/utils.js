@@ -140,40 +140,6 @@ async function shouldTriggerModuleReplaced(
   }
 }
 
-async function shouldTriggerModuleDisabled(knex, messageContext, device, deviceModule) {
-  // only makes sense if the issue type is defined for the country
-  const moduleReplacedIssueTypeId = await issueTypeToId('ModuleReplaced')
-  if (!moduleReplacedIssueTypeId) return
-
-  /**
-   * Check if the module was already replaced
-   */
-  const moduleReplacedIssue = await knex('Issue')
-    .where({
-      issueTypeId: moduleReplacedIssueTypeId,
-      deviceId: device.id,
-    })
-    .andWhere(
-      knex.raw('data->>"$.replacedModuleSerial"=? AND DATE(createdOn)>=DATE(?)', [
-        deviceModule.SiteSerialNumber,
-        deviceModule.Creation,
-      ])
-    )
-    .first('data')
-  /**
-   * If the module wasn't replaced already, we trigger the event to create the new issue.
-   */
-  if (!moduleReplacedIssue) {
-    logger.debug(['shouldTriggerModuleDisabled', device, deviceModule])
-    if (!messageContext.deviceModuleDisabled) {
-      messageContext = messageContext.bindActionCreators({
-        deviceModuleDisabled,
-      })
-    }
-    messageContext.deviceModuleDisabled(device, deviceModule.SiteSerialNumber, deviceModule.Creation)
-  }
-}
-
 async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   const result = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -399,7 +365,6 @@ module.exports = {
   getDeviceTypePluginName,
   getReplacedModuleSerials,
   shouldTriggerModuleReplaced,
-  shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
   shouldTriggerHardwareErrorAnalysis,

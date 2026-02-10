@@ -1,11 +1,11 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { mergeResultWithPayload } = require('../result/common/logic')
-const { resultSourceToId, resultTypeToId, sampleTypeToId } = require('../shared/dictionary')
-const { getResultCategoriesFromPayload } = require('./utils')
-const { isValidSampleExternalIdMobileFormat } = require('../sample/common/logic')
-const { getMobileSampleByExternalId, getMatchingSample } = require('../sample/common/db')
-const { loadPlugin } = require('../plugin/loadPlugin')
+const { mergeResultWithPayload } = require('../../result/common/logic')
+const { resultSourceToId, resultTypeToId, sampleTypeToId } = require('../../shared/dictionary')
+const { getResultCategoriesFromPayload } = require('../utils')
+const { isValidSampleExternalIdMobileFormat } = require('../../sample/common/logic')
+const { getMobileSampleByExternalId, getMatchingSample } = require('../../sample/common/db')
+const { loadPlugin } = require('../../plugin/loadPlugin')
 
 async function mergeResult(context) {
   const { knex, now, partnerId, deviceTypePluginName, partnerPluginName } = context

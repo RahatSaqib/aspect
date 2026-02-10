@@ -1,4 +1,4 @@
-const { onAsyncPayloadToProcess } = require('./asyncPayloadProcessor')
+const { onAsyncPayloadToProcess } = require('./result/asyncPayloadProcessor')
 const { onResultLogged } = require('./service')
 
 const subscriptions = [

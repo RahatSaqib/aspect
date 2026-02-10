@@ -1,5 +1,5 @@
 const config = require('../../config')
-const { processResultPayload } = require('../processResultPayload')
+const { processResultPayload } = require('../result/processResultPayload')
 const { asyncPayloadReceived } = require('../actions')
 
 const handleResultPayload = async (request, deviceLogId, remoteAddress) => {

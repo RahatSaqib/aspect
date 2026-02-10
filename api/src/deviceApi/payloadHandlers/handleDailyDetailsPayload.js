@@ -1,11 +1,4 @@
-const _ = require('lodash')
-const Boom = require('@hapi/boom')
 const logger = require('../../shared/logger')
-const { deviceMaintenanceTypeToId } = require('../../shared/dictionary')
-const { parseDateOrDefault } = require('../../shared/date')
-const { setDeviceCalibrationStatus, shouldTriggerModuleDisabled } = require('../../plugin/utils')
-const { calibrationDateUpdated } = require('../../device/actions')
-const { getCreateAssignPerson } = require('../../person/common/db')
 const { getCustomFields } = require('../../forms/service')
 const gxConnectSchema = require('../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
 const validate = require('../../../jsonSchemas/validate')
@@ -14,6 +7,7 @@ const {
 } = require('../../plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
 const { knex } = require('../../db')
 const { deviceTypeToId } = require('../../shared/dictionary')
+const { updateDeviceConfiguration } = require('./shared/logic')
 
 const handleDailyDetailsPayload = async (request, deviceLogId /* , remoteAddress */) => {
   const { auth, payload } = request
@@ -84,69 +78,6 @@ async function processPendingDeviceConfiguration(knex, partnerId, deviceApiKeyId
   return { deviceConfiguration: JSON.parse(connectSettings) }
 }
 
-async function updateDeviceConfiguration({ knex, payload, devicesIds, messageContext }) {
-  const now = new Date()
-  const configurationData = _.omitBy(payload.configuration.data, _.isNull)
-
-  // const deviceId = 0
-
-  // process prop 'lastCalibrated' in 'payload', if any defined
-  await tryUpdateDeviceMaintenance(knex, deviceId, payload.configuration, messageContext)
-
-  // process props labContact* and installer* in 'payload', if any defined
-  await tryAssignLabTechnicianToSite(knex, deviceId, payload.configuration)
-
-  // Update device configuration data
-  await knex('Device')
-    .whereIn('id', devicesIds)
-    .update({
-      configurationData: knex.raw(
-        'JSON_MERGE_PATCH(IFNULL(configurationData, "{}"), ?)',
-        JSON.stringify(configurationData)
-      ),
-      updatedBy: null,
-      updatedOn: now,
-    })
-
-  if (configurationData.disabledModules) {
-    await Promise.each(configurationData.disabledModules, modules =>
-      shouldTriggerModuleDisabled(knex, messageContext, device, modules)
-    )
-  }
-
-  //
-  let device = {}
-  if (!_.isEmpty(_.get(payload, 'configuration.data'))) {
-    const {
-      data: { macAddress, hostId, culture, timezone, deviceSerialNumber, lastPingOn },
-    } = payload.configuration
-
-    const deviceDetails = {
-      hostId,
-      culture,
-      timezone,
-      lastSeenOn: now,
-      updatedOn: now,
-      updatedBy: null,
-    }
-    if (macAddress && macAddressValid(macAddress)) {
-      deviceDetails.macAddress = macAddress
-    }
-    if (lastPingOn) {
-      deviceDetails.lastPingOn = parseDateOrDefault(lastPingOn)
-    }
-    if (deviceSerialNumber) {
-      deviceDetails.serial = deviceSerialNumber
-    }
-    if (deviceId) {
-      await knex('Device')
-        .where({ id: deviceId })
-        .update({ ...deviceDetails, updatedBy: null, updatedOn: now })
-    }
-  }
-  // Exclude 'latestErrors' from 'configurationData' in the response to reduce network data usage
-}
-
 const getCustomFieldsDefinitionForGxconnect = async (partnerId, deviceTypeId) => {
   const customFields = await getCustomFields(partnerId, deviceTypeId)
   if (!customFields.fields || customFields.fields.length === 0) {
@@ -168,90 +99,6 @@ const getCustomFieldsDefinitionForGxconnect = async (partnerId, deviceTypeId) =>
   }
 
   return customFieldsForGxConnect
-}
-
-// --------------------------------------------------------------------
-async function tryUpdateDeviceMaintenance(knex, deviceId, payload, messageContext) {
-  const {
-    data: { lastCalibrated },
-  } = payload
-  const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
-  const calibratedOn = lastCalibrated ? parseDateOrDefault(lastCalibrated) : null
-
-  if (calibratedOn) {
-    await setDeviceCalibrationStatus(knex, deviceId, calibratedOn, {
-      deviceMaintenanceTypeId,
-      notes: 'From GxConnect basic settings',
-    })
-    if (!messageContext.calibrationDateUpdated) {
-      messageContext.bindActionCreators({
-        calibrationDateUpdated,
-      })
-    }
-    messageContext.calibrationDateUpdated(deviceId)
-  }
-}
-
-// --------------------------------------------------------------------
-async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
-  const {
-    data: {
-      timezone,
-      culture,
-      labContactCell,
-      labContactEmail,
-      labContactName,
-      installerCell,
-      installerEmail,
-      installerName,
-    },
-  } = payload
-  if (labContactName || labContactEmail || installerName || installerEmail) {
-    // get device props
-    const device = await knex('Device as d')
-      .join('Site as s', 'd.siteId', 's.id')
-      .join('Geography as g', 's.geographyId', 'g.id')
-      .where('d.id', deviceId)
-      .first('g.countryId', 's.id as siteId', 'd.partnerId', 's.geographyId')
-    const { countryId, partnerId, geographyId, siteId } = device || {}
-    // throw error if no device found or it is not assigned to site
-    if (!device || !siteId) {
-      return Boom.notFound()
-    }
-
-    const baseProps = {
-      countryId,
-      partnerId,
-      geographyId,
-      siteId,
-      timezone,
-      culture,
-    }
-    await getCreateAssignPerson(knex, {
-      ...baseProps,
-      name: labContactName,
-      email: labContactEmail,
-      cell: labContactCell,
-      jobFunctionExternalId: 'labUser',
-    })
-
-    await getCreateAssignPerson(knex, {
-      ...baseProps,
-      name: installerName,
-      email: installerEmail,
-      cell: installerCell,
-      jobFunctionExternalId: 'technician',
-    })
-  }
-}
-
-function macAddressValid(macAddress) {
-  return (
-    !_.isEmpty(macAddress) &&
-    macAddress.indexOf('MAC') === 0 &&
-    macAddress.trim().length > 3 &&
-    macAddress !== 'MAC005345000000'
-  )
 }
 
 module.exports = {

@@ -52,7 +52,7 @@ const { port } = config
 
 const AspectCacheSingleton = require('../aspectCache')
 const { registerMessageQueue } = require('./messageQueue')
-const { asyncPayloadProcessorStartUp } = require('./deviceApi/asyncPayloadProcessor')
+const { asyncPayloadProcessorStartUp } = require('./deviceApi/result/asyncPayloadProcessor')
 
 // version is cached to indicate the new version only when Aspect api restarts,
 // instead of doing so directly when package.json is updated.
