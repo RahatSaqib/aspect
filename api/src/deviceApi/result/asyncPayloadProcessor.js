@@ -5,7 +5,7 @@ const { asyncPayloadReceived } = require('../actions')
 const config = require('../../config')
 const { processResultPayload } = require('./processResultPayload')
 
-const onAsyncPayloadToProcess = async ({ deviceLogId, remoteAddress }, { messageContext }) => {
+const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
   if (!config.enableAsyncPayloadProcessing) {
     logger.warning(
       `Received async payload to process but async processing is disabled. Skipping DeviceLogId: ${deviceLogId}`
@@ -33,14 +33,24 @@ const onAsyncPayloadToProcess = async ({ deviceLogId, remoteAddress }, { message
   // Build auth credentials
   const token = formattedPayload.deviceApiKey
 
-  const key = await knex('DeviceApiKey as k')
-    .leftJoin('Device as d', 'd.id', 'k.deviceId')
+  const data = await knex('DeviceApiKey as k')
+    .leftJoin('Device as d', 'd.deviceApiKeyId', 'k.id')
     .where({ 'k.token': token })
-    .first('k.id as deviceApiKeyId', 'd.name as deviceName')
+    .groupBy('k.id')
+    .first({
+      deviceApiKeyId: 'k.id',
+      expiresOn: 'k.expiresOn',
+      partnerId: 'k.partnerId',
+      deviceIds: knex.raw('IFNULL(GROUP_CONCAT(d.id), "")'),
+    })
 
-  const scope = ['deviceApi']
-  const credentials = { token, scope, deviceApiKeyId: key.deviceApiKeyId }
-  // TODO: deviceIds: data.deviceIds.split(','), partnerId: data.partnerId,
+  const credentials = {
+    scope: ['deviceApi'],
+    token,
+    deviceApiKeyId: data.deviceApiKeyId,
+    deviceIds: data.deviceIds.split(','),
+    partnerId: data.partnerId,
+  }
 
   // Use original sync flow by simulating a hapi request
   const request = {
@@ -48,7 +58,7 @@ const onAsyncPayloadToProcess = async ({ deviceLogId, remoteAddress }, { message
     auth: { credentials },
     payload: formattedPayload,
   }
-  const response = await processResultPayload(request, deviceLogId, remoteAddress)
+  const response = await processResultPayload(request, deviceLogId, deviceLog.senderIp)
   logger.info(
     `Completed processing async device payload for DeviceLogId: ${deviceLogId}. Response: ${JSON.stringify(response)}`
   )

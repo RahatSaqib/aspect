@@ -9,16 +9,22 @@ const { knex } = require('../../db')
 const { deviceTypeToId } = require('../../shared/dictionary')
 const { updateDeviceConfiguration } = require('./shared/logic')
 
-const handleDailyDetailsPayload = async (request, deviceLogId /* , remoteAddress */) => {
+const handleDailyDetailsPayload = async (request, deviceLogId, remoteAddress) => {
   const { auth, payload } = request
-  const { partnerId, deviceApiKeyId, devicesIds } = auth.credentials
+  const { partnerId, deviceApiKeyId, deviceIds } = auth.credentials
 
   // This endpoint is currently used only by GxConnect devices and supports only the Cepheid GeneXpert device type.
   const deviceTypeId = await deviceTypeToId('CepheidGeneXpert')
 
   if (payload.configuration) {
     logger.debug('executing updateDeviceConfiguration')
-    await updateDeviceConfiguration({ knex, payload, devicesIds, messageContext: request.plugins.messageContext })
+    await updateDeviceConfiguration({
+      knex,
+      payload,
+      deviceIds,
+      messageContext: request.plugins.messageContext,
+      remoteAddress,
+    })
   }
 
   const response = {}
@@ -39,7 +45,9 @@ const handleDailyDetailsPayload = async (request, deviceLogId /* , remoteAddress
   if (payload.getFormsDefinition) {
     logger.debug('executing getCustomFieldsDefinitionForGxconnect')
     const { CustomFields } = await getCustomFieldsDefinitionForGxconnect(partnerId, deviceTypeId)
-    await knex('Device').update({ customFieldsSentOn: new Date() }).whereIn({ deviceApiKeyId })
+
+    // TODO: Reduce bandwidth by only sending custom fields when the definition was updated after this device last received them.
+    await knex('Device').update({ customFieldsSentOn: new Date() }).where('deviceApiKeyId', deviceApiKeyId)
     response.CustomFields = CustomFields
   }
 
@@ -52,28 +60,28 @@ const handleDailyDetailsPayload = async (request, deviceLogId /* , remoteAddress
 }
 
 async function processPendingDeviceConfiguration(knex, partnerId, deviceApiKeyId, deviceTypeId) {
-  const { connectSettings, devicesIdsToUpdate } =
+  const { connectSettings, deviceIdsToUpdate } =
     (await knex('DeviceConfiguration as dc')
       .where({
-        'd.partnerId': partnerId,
-        'd.deviceTypeId': deviceTypeId,
+        'dc.partnerId': partnerId,
+        'dc.deviceTypeId': deviceTypeId,
       })
       .first({
         connectSettings: 'dc.data',
-        devicesIdsToUpdate: knex('Device as d')
+        deviceIdsToUpdate: knex('Device as d')
           .where({ deviceApiKeyId })
           .andWhere(qb => {
             qb.whereNull('d.connectSettingsSentOn').orWhere('d.connectSettingsSentOn', '<', knex.raw('dc.updatedOn'))
           })
           .groupBy('d.deviceApiKeyId')
-          .pluck('d.id'),
+          .first(knex.raw('GROUP_CONCAT(d.id)')),
       })) || {}
 
-  if (!connectSettings || !devicesIdsToUpdate) {
+  if (!connectSettings || !deviceIdsToUpdate) {
     return { deviceConfiguration: null }
   }
 
-  await knex('Device').update({ connectSettingsSentOn: new Date() }).whereIn('id', devicesIdsToUpdate.split(','))
+  await knex('Device').update({ connectSettingsSentOn: new Date() }).whereIn('id', deviceIdsToUpdate.split(','))
 
   return { deviceConfiguration: JSON.parse(connectSettings) }
 }

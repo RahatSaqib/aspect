@@ -1,12 +1,18 @@
 const { updateDeviceConfiguration } = require('./shared/logic')
 const { knex } = require('../../db')
 
-const handlePingPayload = async (request, deviceLogId /* , remoteAddress */) => {
+const handlePingPayload = async (request, deviceLogId, remoteAddress) => {
   const { auth, payload } = request
-  const { devicesIds } = auth.credentials
+  const { deviceIds } = auth.credentials
 
   if (payload.configuration) {
-    await updateDeviceConfiguration({ knex, payload, devicesIds, messageContext: request.plugins.messageContext })
+    await updateDeviceConfiguration({
+      knex,
+      payload,
+      deviceIds,
+      messageContext: request.plugins.messageContext,
+      remoteAddress,
+    })
   }
 
   await knex('DeviceLog').where('id', deviceLogId).update({

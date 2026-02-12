@@ -23,10 +23,10 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
     plugins: { messageContext },
   } = request
 
-  const { devicesIds } = auth.credentials
+  const { deviceIds } = auth.credentials
 
-  if (payload.configuration) {
-    // await updateDeviceConfiguration({ knex, payload, devicesIds, messageContext })
+  if (payload.configuration && deviceIds.length > 0) {
+    await updateDeviceConfiguration({ knex, payload, deviceIds, messageContext, remoteAddress })
   }
 
   // Get plugin names for device resolution
@@ -91,7 +91,6 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
     await trx('DeviceLog').where('id', deviceLogId).update({
       deviceConfigurationUpdated: true,
       resultId: aspectResultId,
-      deviceId: context.device.id,
       processed: true,
     })
 
@@ -232,7 +231,7 @@ async function createDevice(context) {
   const shortName = name.substr(0, 45)
 
   return transact(async trx => {
-    const deviceApprovalId = await deviceApprovalToId('provisioned')
+    const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
 
     const partnerData = await trx('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
 
@@ -256,6 +255,7 @@ async function createDevice(context) {
       createdOn: now,
       updatedOn: now,
     })
+
     await trx('DeviceApprovalLog').insert({
       deviceId,
       deviceApprovalId,

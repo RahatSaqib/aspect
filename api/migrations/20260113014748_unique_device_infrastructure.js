@@ -34,10 +34,14 @@ exports.up = async function (knex) {
     table.integer('deviceApiKeyId').unsigned().nullable().references('id').inTable('DeviceApiKey')
   })
 
+  await knex.schema.alterTable('Deployment', table => {})
+
   await knex.schema.alterTable('Deployment', table => {
-    addAuditFieldsNullable(table)
+    table.dropForeign('siteId')
     table.dropUnique(['siteId', 'deviceId'])
     table.unique(['deviceId', 'start'])
+    table.foreign('siteId').references('Site.id')
+    addAuditFieldsNullable(table)
   })
 }
 
@@ -55,8 +59,10 @@ exports.down = async function (knex) {
   })
 
   await knex.schema.alterTable('Deployment', table => {
+    table.dropForeign('siteId')
     table.dropUnique(['deviceId', 'start'])
     table.unique(['siteId', 'deviceId'])
+    table.foreign('siteId').references('Site.id')
     table.dropColumn('createdBy')
     table.dropColumn('createdOn')
     table.dropColumn('updatedBy')

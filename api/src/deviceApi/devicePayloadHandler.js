@@ -21,7 +21,7 @@ const devicePayloadHandler = async request => {
   const remoteAddress = getRemoteAddress(request)
   const payloadType = detectPayloadType(request.payload)
 
-  const deviceLogId = await createDeviceLog(request, remoteAddress)
+  const deviceLogId = await createDeviceLog(request, remoteAddress, payloadType)
 
   const handler = handlers[payloadType]
   if (!handler) {
@@ -41,14 +41,16 @@ function detectPayloadType(payload) {
   return 'UNKNOWN'
 }
 
-async function createDeviceLog(request, remoteAddress) {
+async function createDeviceLog(request, remoteAddress, payloadType) {
   const formattedResult = removeAdditionalData(request.plugins.rawPayload)
-  formattedResult.deviceApiKey = normalizeToken(request.auth.credentials.token)
+  const deviceApiKey = normalizeToken(request.auth.credentials.token)
+  formattedResult.deviceApiKey = deviceApiKey
   const deviceLogRawMessage = JSON.stringify(formattedResult)
   const now = new Date()
 
   const [deviceLogId] = await knex('DeviceLog').insert({
-    deviceId: null,
+    deviceApiKeyId: request.auth.credentials.deviceApiKeyId,
+    type: payloadType,
     source: _.get(request.payload, 'log.source', ''),
     createdOn: now,
     senderIp: remoteAddress,

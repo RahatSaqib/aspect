@@ -15,6 +15,9 @@ async function enqueueResultPayload(request, deviceLogId) {
   const { messageContext } = request.plugins
   messageContext.bindActionCreators({ asyncPayloadReceived })
   messageContext.asyncPayloadReceived(deviceLogId)
+
+  // Respond immediately to device — result will be processed asynchronously, so aspectResultId and deviceId are not yet available
+  return {}
 }
 
 module.exports = {

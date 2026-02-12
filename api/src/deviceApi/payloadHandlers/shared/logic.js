@@ -4,7 +4,7 @@ const { parseDateOrDefault } = require('../../../shared/date')
 const { setDeviceCalibrationStatus } = require('../../../plugin/utils')
 const { calibrationDateUpdated } = require('../../../device/actions')
 
-async function updateDeviceConfiguration({ knex, payload, devicesIds, messageContext }) {
+async function updateDeviceConfiguration({ knex, payload, deviceIds, messageContext, remoteAddress }) {
   const now = new Date()
   const configurationData = _.omitBy(payload.configuration.data, _.isNull)
 
@@ -22,12 +22,13 @@ async function updateDeviceConfiguration({ knex, payload, devicesIds, messageCon
       'JSON_MERGE_PATCH(IFNULL(configurationData, "{}"), ?)',
       JSON.stringify(configurationData)
     ),
-    lastSeenOn: now,
+    lastPingFromIp: remoteAddress,
     lastPingOn: now,
+    lastSeenOn: now,
   }
 
   await knex('Device')
-    .whereIn('id', devicesIds)
+    .whereIn('id', deviceIds)
     .update({
       ..._.omitBy(deviceDetails, _.isNil), // Only update fields that are not null or undefined
       updatedOn: now,

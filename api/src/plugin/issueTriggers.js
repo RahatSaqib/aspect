@@ -218,26 +218,26 @@ async function hardwareErrors(knex, deviceId, daysPeriod, errorCodes) {
     // We can then use that subquery to only select entries that are at least 60 minutes apart from the previous one
     const subquery = knex('DeviceOperation')
       .where('deviceId', deviceId)
-      .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+      .where('occurredOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
       .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
       .whereRaw(`data->>'$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`)
       .select(
         'id',
-        'startedOn',
-        knex.raw('lag(startedOn, 1) over (partition by deviceId order by startedOn) as previousStartedOn')
+        'occurredOn',
+        knex.raw('lag(occurredOn, 1) over (partition by deviceId order by occurredOn) as previousOccurredOn')
       )
       .as('logEntriesWithTimeSpan')
 
     return knex
       .count('id as totalErrors')
       .from(subquery)
-      .whereRaw('timestampdiff(minute, previousStartedOn, startedOn) > 60')
-      .orWhere('previousStartedOn', null)
+      .whereRaw('timestampdiff(minute, previousOccurredOn, occurredOn) > 60')
+      .orWhere('previousOccurredOn', null)
   }
 
   return knex('DeviceOperation')
     .where('deviceId', deviceId)
-    .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+    .where('occurredOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
     .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
     .whereRaw(`data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`)
     .where(qb => {

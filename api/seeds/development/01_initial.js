@@ -3,8 +3,6 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { addMilliseconds, addMinutes, addHours, subDays, addDays, subYears, subMonths } = require('date-fns')
-const uuid = require('node-uuid')
-
 const config = require('../../src/config')
 const helpers = require('./fixtures/helpers')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
@@ -3491,7 +3489,7 @@ async function seed(knex) {
       devicesGeneXpert.push(device)
 
       // Create API Keys
-      await knex('DeviceApiKey').insert({
+      ;[device.deviceApiKeyId] = await knex('DeviceApiKey').insert({
         token: randomToken(),
         revoked: 0,
         partnerId: siteData.partnerId,
@@ -3553,11 +3551,10 @@ async function seed(knex) {
         ])
 
         return {
-          deviceId: device.id,
+          deviceApiKeyId: device.deviceApiKeyId,
           data: JSON.stringify(data),
-          startedOn: addDays(now, -1 * _.random(1, 30, true)),
+          occurredOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
-          guid: uuid.v4(),
         }
       })
       await knex('DeviceOperation').insert(operations)
@@ -3861,7 +3858,8 @@ async function seed(knex) {
           })
 
         await knex('DeviceLog').insert({
-          deviceId: device.id,
+          deviceApiKeyId: device.deviceApiKeyId,
+          type: 'RESULT',
           createdOn: addHours(randomDate, 1),
           senderIp: '0.0.0.0',
           source: 'seed data',
@@ -4064,7 +4062,8 @@ async function seed(knex) {
         })
 
         await knex('DeviceLog').insert({
-          deviceId: device.id,
+          deviceApiKeyId: device.deviceApiKeyId,
+          type: 'RESULT',
           createdOn: addHours(randomDate, 1),
           senderIp: '0.0.0.0',
           source: 'seed data',
@@ -4280,7 +4279,8 @@ async function seed(knex) {
         })
 
         await knex('DeviceLog').insert({
-          deviceId: device.id,
+          deviceApiKeyId: device.deviceApiKeyId,
+          type: 'RESULT',
           createdOn: addHours(randomDate, 1),
           senderIp: '0.0.0.0',
           source: 'seed data',
