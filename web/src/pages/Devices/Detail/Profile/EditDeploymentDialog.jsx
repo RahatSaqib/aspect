@@ -36,12 +36,23 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherAc
       const endsAfter = (de || new Date('9999-12-31')) >= s
       const otherStartsBefore = ds <= (e || new Date('9999-12-31'))
 
-      return startsBefore && endsAfter && otherStartsBefore && ds <= (e || new Date('9999-12-31')) && s <= (de || new Date('9999-12-31'))
+      return (
+        startsBefore &&
+        endsAfter &&
+        otherStartsBefore &&
+        ds <= (e || new Date('9999-12-31')) &&
+        s <= (de || new Date('9999-12-31'))
+      )
     })
   }
 
   return (
-    <AspectDialog open={open} onRequestClose={onClose} title={formatMessage(messages.editDeploymentTitle)} maxWidth="sm">
+    <AspectDialog
+      open={open}
+      onRequestClose={onClose}
+      title={formatMessage(messages.editDeploymentTitle)}
+      maxWidth="sm"
+    >
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}

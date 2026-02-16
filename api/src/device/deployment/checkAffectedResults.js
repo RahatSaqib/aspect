@@ -34,9 +34,11 @@ async function checkAffectedResults(request) {
       .count('r.id as resultCount')
       .first()
 
+    // eslint-disable-next-line no-await-in-loop
     const { resultCount } = await query
 
     if (resultCount > 0 && dep.siteId) {
+      // eslint-disable-next-line no-await-in-loop
       const site = await knex('Site').where('id', dep.siteId).select('name').first()
       moves.push({
         siteId: dep.siteId,
@@ -51,6 +53,7 @@ async function checkAffectedResults(request) {
     const current = sorted[i]
     const next = sorted[i + 1]
 
+    // eslint-disable-next-line no-continue
     if (!current.end) continue // active deployment has no gap after it
 
     const gapStart = new Date(current.end)
@@ -58,8 +61,10 @@ async function checkAffectedResults(request) {
     const gapEnd = new Date(next.start)
     gapEnd.setDate(gapEnd.getDate() - 1)
 
+    // eslint-disable-next-line no-continue
     if (gapStart > gapEnd) continue // no gap
 
+    // eslint-disable-next-line no-await-in-loop
     const { resultCount } = await knex('Result as r')
       .where('r.deviceId', deviceId)
       .where(knex.raw('DATE(r.endedOn) >= DATE(?)', [gapStart]))

@@ -34,8 +34,6 @@ exports.up = async function (knex) {
     table.integer('deviceApiKeyId').unsigned().nullable().references('id').inTable('DeviceApiKey')
   })
 
-  await knex.schema.alterTable('Deployment', table => {})
-
   await knex.schema.alterTable('Deployment', table => {
     table.dropForeign('siteId')
     table.dropUnique(['siteId', 'deviceId'])

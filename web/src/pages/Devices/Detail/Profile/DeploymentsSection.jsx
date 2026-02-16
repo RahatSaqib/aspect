@@ -274,23 +274,20 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
     [pendingChanges, activeDeployment]
   )
 
-  const handleAddDeploymentInGap = useCallback(
-    ({ siteId, siteName, start, end }) => {
-      setPendingChanges(prev => [
-        ...prev,
-        {
-          action: 'add',
-          tempId: `temp-${Date.now()}`,
-          siteId,
-          siteName,
-          start: formatDate(start),
-          end: formatDate(end),
-        },
-      ])
-      setGapToFill(null)
-    },
-    []
-  )
+  const handleAddDeploymentInGap = useCallback(({ siteId, siteName, start, end }) => {
+    setPendingChanges(prev => [
+      ...prev,
+      {
+        action: 'add',
+        tempId: `temp-${Date.now()}`,
+        siteId,
+        siteName,
+        start: formatDate(start),
+        end: formatDate(end),
+      },
+    ])
+    setGapToFill(null)
+  }, [])
 
   const handleEditDeployment = useCallback(
     ({ start, end }) => {
