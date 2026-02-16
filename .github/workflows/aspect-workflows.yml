@@ -157,24 +157,27 @@ jobs:
           MYSQL_DATABASE: ${{ env.dbname }}
         ports:
           - 3306:3306
-        options: >-
-          --character-set-server=utf8
-          --collation-server=utf8_general_ci
-          --default-authentication-plugin=mysql_native_password
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        env:
+          RABBITMQ_DEFAULT_USER: ${{ env.rabbitUser }}
+          RABBITMQ_DEFAULT_PASS: ${{ env.rabbitPassword }}
+        ports:
+          - 5672:5672
+          - 15672:15672
     strategy:
       fail-fast: false
       matrix:
         chunk: ${{ fromJson(needs.be-contract-chunks.outputs.test-chunks) }}
     steps:
-      - name: 'Setup RabbitMQ'
+      - name: Wait for MySQL and configure authentication
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
-        uses: mer-team/rabbitmq-mng-action@v1.2
-        with:
-          RABBITMQ_USER: $rabbitUser
-          RABBITMQ_PASS: $rabbitPassword
-          RABBITMQ_PORT: 5672
-          RABBITMQ_MNG_PORT: 15672
-          RABBITMQ_TAG: '3-management-alpine'
+        run: |
+          until mysqladmin ping -h 127.0.0.1 -u root -proot --silent; do
+            echo "Waiting for MySQL..."
+            sleep 3
+          done
+          mysql -h 127.0.0.1 -u root -proot -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root'; FLUSH PRIVILEGES;"
 
       - uses: actions/checkout@v3
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
@@ -258,16 +261,21 @@ jobs:
           MYSQL_DATABASE: ${{ env.dbname }}
         ports:
           - 3306:3306
-        options: >-
-          --character-set-server=utf8
-          --collation-server=utf8_general_ci
-          --default-authentication-plugin=mysql_native_password
     strategy:
       fail-fast: false
       matrix:
         # find seeds -mindepth 1 -maxdepth 1 -type d ! -path "seeds/relatedObjects" ! -path "seeds/test" ! -path "seeds/daily_new_results" ! -path "seeds/zz_shared" ! -path "seeds/fixtures" ! -path "seeds/common" ! -path "seeds/scripts"
         seed: ['./seeds/pakistan','./seeds/bangladesh','./seeds/ukraine','./seeds/png','./seeds/tanzania','./seeds/nigeria','./seeds/angola','./seeds/eswatini','./seeds/ghana','./seeds/zimbabwe','./seeds/malawi','./seeds/myanmar','./seeds/mozambique','./seeds/development','./seeds/lesotho','./seeds/chad']
     steps:
+      - name: Wait for MySQL and configure authentication
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
+        run: |
+          until mysqladmin ping -h 127.0.0.1 -u root -proot --silent; do
+            echo "Waiting for MySQL..."
+            sleep 3
+          done
+          mysql -h 127.0.0.1 -u root -proot -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root'; FLUSH PRIVILEGES;"
+
       - uses: actions/checkout@v3
         if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
 
