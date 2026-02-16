@@ -25,7 +25,7 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
 
   const { deviceIds } = auth.credentials
 
-  if (payload.configuration && deviceIds.length > 0) {
+  if (payload.configuration) {
     await updateDeviceConfiguration({ knex, payload, deviceIds, messageContext, remoteAddress })
   }
 

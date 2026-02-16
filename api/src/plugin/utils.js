@@ -1,15 +1,8 @@
-const _ = require('lodash')
 const { subYears, subMonths, subDays } = require('date-fns')
 const { knex } = require('../db')
 const { resultModuleReplaced, resultAnalyzeCategoriesAndErrors } = require('../result/actions')
-const {
-  deviceInstrumentReplaced,
-  deviceModuleDisabled,
-  deviceHardwareError,
-  hardwareErrorActions,
-  calibrationDateUpdated,
-} = require('../device/actions')
-const { deviceMaintenanceTypeToId, issueTypeToId } = require('../shared/dictionary')
+const { deviceInstrumentReplaced } = require('../device/actions')
+const { deviceMaintenanceTypeToId } = require('../shared/dictionary')
 const logger = require('../shared/logger')
 
 const DAYS_TO_DISCARD_NOTIFICATIONS = 7
@@ -212,62 +205,6 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   }
 }
 
-async function shouldTriggerHardwareErrorAnalysis(messageContext, device, payload, deviceOperationId) {
-  const {
-    startedOn,
-    data: { details = {} },
-  } = payload
-
-  if (details.Errors && _.isArray(details.Errors) && details.Errors.length) {
-    const errorForTriggering = _.find(details.Errors, error =>
-      _.includes(Object.keys(hardwareErrorActions), error.ErrorCode)
-    )
-    if (errorForTriggering) {
-      logger.debug(`shouldTriggerHardwareErrorAnalysis error:${JSON.stringify(errorForTriggering)}`)
-      const options = {
-        startedOn,
-        details,
-        deviceOperationId,
-      }
-      if (!messageContext.deviceHardwareError) {
-        messageContext = messageContext.bindActionCreators({
-          deviceHardwareError,
-        })
-      }
-      messageContext.deviceHardwareError(device, errorForTriggering.ErrorCode, options)
-    }
-  }
-}
-
-async function shouldLogDeviceCalibration(knex, deviceId, payload, deviceMaintenanceTypeId, messageContext) {
-  const {
-    startedOn: calibratedOn,
-    data: { details = {} },
-  } = payload
-  /**
-   * if log entry contains non-empty array `Calibrations`
-   * then insert/update entry into DeviceMaintenance table
-   */
-  if (
-    details.Calibrations &&
-    _.isArray(details.Calibrations) &&
-    details.Calibrations.length &&
-    deviceId &&
-    calibratedOn
-  ) {
-    await setDeviceCalibrationStatus(knex, deviceId, calibratedOn, {
-      deviceMaintenanceTypeId,
-      notes: 'Create calibration from GeneXpert logs',
-    })
-    if (!messageContext.calibrationDateUpdated) {
-      messageContext.bindActionCreators({
-        calibrationDateUpdated,
-      })
-    }
-    messageContext.calibrationDateUpdated(deviceId)
-  }
-}
-
 async function setDeviceCalibrationStatus(knex, deviceId, calibratedOn, { deviceMaintenanceTypeId, notes }) {
   logger.debug(
     `shouldLogDeviceCalibration: analyzing value ${JSON.stringify({
@@ -367,7 +304,5 @@ module.exports = {
   shouldTriggerModuleReplaced,
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
-  shouldTriggerHardwareErrorAnalysis,
-  shouldLogDeviceCalibration,
   setDeviceCalibrationStatus,
 }

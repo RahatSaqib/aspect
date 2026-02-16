@@ -9,7 +9,6 @@ const types = {
   DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
-  CEPHEID_C360_INSTRUMENT_LOG_RECEIVED: 'CEPHEID_C360_INSTRUMENT_LOG_RECEIVED',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
@@ -102,14 +101,6 @@ function calibrationDateUpdated(deviceId) {
   return {
     type: types.CALIBRATION_DATE_UPDATED,
     deviceId,
-  }
-}
-
-function cepheidc360InstrumentLogsReceived(deviceId, deviceOperationId) {
-  return {
-    type: types.CEPHEID_C360_INSTRUMENT_LOG_RECEIVED,
-    deviceId,
-    options: { data: { deviceOperationId } },
   }
 }
 
@@ -399,7 +390,6 @@ module.exports = {
   hardwareErrorActions,
   logDeviceMaintenanceStatus,
   deviceUpdateModuleSerials,
-  cepheidc360InstrumentLogsReceived,
   deviceExpectedBackOnline,
   expectedBackOnlineAnalysis,
 }

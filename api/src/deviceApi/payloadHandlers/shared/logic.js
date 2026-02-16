@@ -5,6 +5,10 @@ const { setDeviceCalibrationStatus } = require('../../../plugin/utils')
 const { calibrationDateUpdated } = require('../../../device/actions')
 
 async function updateDeviceConfiguration({ knex, payload, deviceIds, messageContext, remoteAddress }) {
+  if (deviceIds.length === 0) {
+    return
+  }
+
   const now = new Date()
   const configurationData = _.omitBy(payload.configuration.data, _.isNull)
 
