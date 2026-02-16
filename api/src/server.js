@@ -199,10 +199,12 @@ const start = async () => {
       mobileApiPath: '/mobile/api/',
     },
   })
+
   if (config.sentry?.dsn && !config.isDevelopment) {
     logger.info('Sentry is enabled')
     Sentry.hapiIntegration({ server })
   }
+
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     // ==========================================================================
     // ==========================================================================
