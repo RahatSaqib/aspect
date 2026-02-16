@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { deviceMaintenanceTypeToId, issueTypeToId } = require('../../../shared/dictionary')
 const { parseDateOrDefault } = require('../../../shared/date')
 const { setDeviceCalibrationStatus } = require('../../../plugin/utils')
-const { calibrationDateUpdated } = require('../../../device/actions')
+const { calibrationDateUpdated, deviceModuleDisabled } = require('../../../device/actions')
 
 async function updateDeviceConfiguration({ knex, payload, deviceIds, messageContext, remoteAddress }) {
   if (deviceIds.length === 0) {
@@ -44,17 +44,18 @@ async function updateDeviceConfiguration({ knex, payload, deviceIds, messageCont
       calibrationDateUpdated,
     })
 
-    // TODO
-    /*
-    await Promise.each(configurationData.disabledModules, modules =>
-      shouldTriggerModuleDisabled(knex, messageContext, deviceId, modules)
-    )
-      */
+    for (const modules of configurationData.disabledModules) {
+      // eslint-disable-next-line no-await-in-loop
+      await Promise.all(deviceIds.map(deviceId => shouldTriggerModuleDisabled(knex, messageContext, deviceId, modules)))
+    }
   }
 
   if (configurationData.lastCalibrated) {
-    // TODO
-    // await tryUpdateDeviceMaintenance(knex, deviceId, configurationData.lastCalibrated, messageContext)
+    await Promise.all(
+      deviceIds.map(deviceId =>
+        tryUpdateDeviceMaintenance(knex, deviceId, configurationData.lastCalibrated, messageContext)
+      )
+    )
   }
 }
 
@@ -105,6 +106,10 @@ async function shouldTriggerModuleDisabled(knex, messageContext, deviceId, devic
    * If the module wasn't replaced already, we trigger the event to create the new issue.
    */
   if (!moduleReplacedIssue) {
+    if (!messageContext.deviceModuleDisabled) {
+      messageContext.bindActionCreators({ deviceModuleDisabled })
+    }
+
     messageContext.deviceModuleDisabled(deviceId, deviceModule.SiteSerialNumber, deviceModule.Creation)
   }
 }
