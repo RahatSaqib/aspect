@@ -17,6 +17,7 @@ const {
   resultTypeToId,
   sampleTypeToId,
 } = require('../../../src/shared/dictionary')
+const { insertSite } = require('../../../src/site/common/db')
 
 const { assert } = chai
 
@@ -45,15 +46,19 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
-  await knex('DeviceApiKey')
+  const deviceApiKeyIds = await knex('DeviceApiKey')
     .whereIn('token', tokens)
     .orWhereIn('deviceId', deviceIds)
     .orWhereIn('siteId', siteIds)
-    .delete()
+    .pluck('id')
+
+  await knex('Device').whereIn('deviceApiKeyId', deviceApiKeyIds).update({ deviceApiKeyId: null })
+
+  await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
 
   const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
-  const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
+  const opIds = await knex('DeviceOperation').whereIn('deviceApiKeyId', deviceApiKeyIds).pluck('id')
   await knex('EmailMessage').whereIn('resultId', resultIds).delete()
   await knex('ResultDownloadLog').whereIn('resultId', resultIds).delete()
   await knex('ResultStatusLog').whereIn('resultId', resultIds).delete()
@@ -62,7 +67,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('PushNotificationMessage').whereIn('resultId', resultIds).delete()
   await knex('WebhookMessage').whereIn('resultId', resultIds).delete()
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
-  await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).delete()
   await knex('DeviceLog').whereIn('resultId', resultIds).delete()
   await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
@@ -172,6 +177,7 @@ class GxConnectApiTestContext {
       },
       site: null,
       log: null,
+      includeDeviceConfiguration: false,
       configuration: {
         data: { macAddress, hostId, deviceSerialNumber },
       },
@@ -230,7 +236,39 @@ class GxConnectApiTestContext {
   async registerDevice() {
     const clientAccessToken = await this.requestClientToken()
     const deviceApiKey = await this.requestNewDeviceApiKey(clientAccessToken)
-    await this.sendInitialDeviceConfiguration(deviceApiKey)
+
+    const deviceApiKeyRecord = await knex('DeviceApiKey').where({ token: deviceApiKey }).first()
+
+    const { id: geographyId } = await knex('Geography as g')
+      .join('JobContext as jc', 'g.id', 'jc.geographyId')
+      .join('Person as p', 'jc.personId', 'p.id')
+      .join('User as u', 'p.userId', 'u.id')
+      .where('p.lastPartnerId', deviceApiKeyRecord.partnerId)
+      .andWhere('u.name', this.adminUsername)
+      .first('g.id')
+
+    const [siteId] = await insertSite(knex, {
+      name: this.deviceName,
+      shortName: this.deviceName,
+      externalId: `gxconnect-${this.deviceName}-${Date.now()}`,
+      partnerId: deviceApiKeyRecord.partnerId,
+      geographyId,
+    })
+
+    const { id: deviceTypeId } = await knex('DeviceType').where('externalId', 'CepheidGeneXpert').first('id')
+    const [deviceId] = await knex('Device').insert({
+      partnerId: deviceApiKeyRecord.partnerId,
+      siteId,
+      name: this.deviceName,
+      shortName: this.deviceName,
+      deviceTypeId,
+      serial: this.deviceSerialNumber,
+      macAddress: this.macAddress,
+      timezone: 'Eastern Standard Time',
+    })
+    await knex('DeviceApiKey').where('id', deviceApiKeyRecord.id).update({ deviceId, siteId, geographyId })
+    await knex('Device').where('id', deviceId).update({ deviceApiKeyId: deviceApiKeyRecord.id })
+
     return deviceApiKey
   }
 
@@ -374,6 +412,7 @@ class GxConnectApiTestContext {
     return run(async knex => {
       const resultDetails = await knex('DeviceLog as dl')
         .join('Result as r', 'dl.resultId', 'r.id')
+        .join('Device as d', 'r.deviceId', 'd.id')
         .leftJoin('Site as si', 'r.siteId', 'si.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
@@ -382,7 +421,7 @@ class GxConnectApiTestContext {
         .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
         .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
         .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-        .where('dl.deviceId', this.device.id)
+        .where('d.id', this.device.id)
         .orderBy('dl.id', 'desc')
         .first(
           'r.id',

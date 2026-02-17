@@ -11,7 +11,7 @@ const upsertPartnerData = require('../common/upsert_partner_data')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()
-const { adminUserName, adminPassword, partnerAbbreviation, deviceApiToken, lowerLevelUserPassword } = partnerData
+const { adminUserName, adminPassword, partnerAbbreviation, lowerLevelUserPassword } = partnerData
 
 async function seed(knex) {
   const partnerId = await upsertPartnerData(knex, {
@@ -35,7 +35,6 @@ async function seed(knex) {
     adminId,
     geography,
     partnerAbbreviation,
-    deviceApiToken,
     {
       password: lowerLevelUserPassword,
     },

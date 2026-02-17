@@ -41,14 +41,7 @@ describe('Module Replaced Issue testing', () => {
   afterEach(afterCleanUp)
   const now = new Date()
   it('should create a module replaced issue when a new serial is detected in a slot', async () => {
-    // Post to deviceApi to ensure the device in in Aspect
-    let response = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        name: deviceName,
-      }),
-    })
-    const deviceId = response.body.device.id
+    const deviceId = context.device.id
 
     // Post one result to slot A1
     let resultId = `UNIQUE-ID-1`
@@ -75,7 +68,7 @@ describe('Module Replaced Issue testing', () => {
     let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
       result,
     })
-    response = await postToDeviceApi({
+    let response = await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
     })
@@ -153,14 +146,7 @@ describe('Module Replaced Issue testing', () => {
     assert.equal(JSON.parse(issues[0].data).oldResultId, oldResultId)
   })
   it('should NOT create a module replaced issue when a new serial is detected in a slot and the last message is older than 2 years', async () => {
-    // Post to deviceApi to ensure the device in in Aspect
-    let response = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        name: deviceName,
-      }),
-    })
-    const deviceId = response.body.device.id
+    const deviceId = context.device.id
 
     // Post one result to slot A1
     let resultId = `UNIQUE-ID-1`
@@ -187,7 +173,7 @@ describe('Module Replaced Issue testing', () => {
     let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
       result,
     })
-    response = await postToDeviceApi({
+    await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
     })
@@ -219,7 +205,7 @@ describe('Module Replaced Issue testing', () => {
     })
 
     // Should create one module replaced issue
-    response = await postToDeviceApi({
+    await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
     })
@@ -229,14 +215,7 @@ describe('Module Replaced Issue testing', () => {
     assert.equal(issues.length, 0)
   })
   it('should NOT create a module replaced issue when a new serial is detected in a different slot', async () => {
-    // Post to deviceApi to ensure the device in in Aspect
-    const response = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        name: deviceName,
-      }),
-    })
-    const deviceId = response.body.device.id
+    const deviceId = context.device.id
 
     // Post one result to slot A1
     let resultId = `UNIQUE-ID-1`
@@ -306,14 +285,7 @@ describe('Module Replaced Issue testing', () => {
     assert.equal(issues.length, 0)
   })
   it('should NOT create a module replaced issue when a new serial is detected in null module bay', async () => {
-    // Post to deviceApi to ensure the device in in Aspect
-    const response = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        name: deviceName,
-      }),
-    })
-    const deviceId = response.body.device.id
+    const deviceId = context.device.id
 
     // Post one result to slot A1
     let resultId = `UNIQUE-ID-1`
@@ -383,14 +355,7 @@ describe('Module Replaced Issue testing', () => {
   })
 
   it('should NOT create a module replaced issue when the same serial is detected in a slot', async () => {
-    // Post to deviceApi to ensure the device in in Aspect
-    const response = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        name: deviceName,
-      }),
-    })
-    const deviceId = response.body.device.id
+    const deviceId = context.device.id
 
     // Post one result to slot A1
     let resultId = `UNIQUE-ID-1`

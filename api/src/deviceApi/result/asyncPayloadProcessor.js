@@ -48,7 +48,7 @@ const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
     scope: ['deviceApi'],
     token,
     deviceApiKeyId: data.deviceApiKeyId,
-    deviceIds: data.deviceIds.split(','),
+    deviceIds: data.deviceIds ? data.deviceIds.split(',') : [],
     partnerId: data.partnerId,
   }
 

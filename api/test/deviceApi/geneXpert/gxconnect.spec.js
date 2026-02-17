@@ -223,7 +223,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             newDevice = await knexDb('Device as d').where('d.id', device.id).first('d.*')
             assert.isOk(newDevice)
-            assert.equal(newDevice.timezone, 'Eastern Standard Time')
+            assert.equal(newDevice.timezone, 'South Africa Standard Time')
             assert.equal(newDevice.serial, null)
           })
         })

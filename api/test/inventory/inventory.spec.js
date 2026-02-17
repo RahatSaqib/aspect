@@ -943,6 +943,10 @@ describe('Reset Inventory', () => {
     ;[resultId1] = resultIds
   })
 
+  after(async () => {
+    await testContext.cleanUp()
+  })
+
   afterEach(async () => {
     // Clean up inventory items and related records
     await knex('InventoryItem').where('id', '>=', inventoryItem1.id).delete()

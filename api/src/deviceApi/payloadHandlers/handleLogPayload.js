@@ -21,7 +21,7 @@ const handleLogPayload = async (request, deviceLogId, remoteAddress) => {
     })
   }
 
-  if (payload.log.source !== 'GeneXpert') return
+  if (payload.log.source !== 'GeneXpert') return {}
 
   const { data } = payload.log
   const now = new Date()
@@ -118,7 +118,7 @@ async function shouldLogDeviceCalibration({ knex, deviceIds, occurredOn, data, m
 }
 
 async function shouldTriggerHardwareErrorAnalysis({ messageContext, deviceIds, data, occurredOn, deviceOperationId }) {
-  if (data.details.Errors && _.isArray(data.details.Errors) && data.details.Errors.length) {
+  if (data.details.Errors && _.isArray(data.details.Errors) && data.details.Errors.length > 0) {
     const errorForTriggering = _.find(data.details.Errors, error =>
       _.includes(Object.keys(hardwareErrorActions), error.ErrorCode)
     )

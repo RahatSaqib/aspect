@@ -1020,7 +1020,7 @@ async function seed(knex) {
     devicesDaktari.push(device)
 
     // Create API Keys
-    await knex('DeviceApiKey').insert({
+    const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
       token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
@@ -1029,6 +1029,8 @@ async function seed(knex) {
       deviceId: device.id,
       ...auditFields,
     })
+
+    await knex('Device').where('id', device.id).update({ deviceApiKeyId })
   })
 
   // Insert Inventory Items

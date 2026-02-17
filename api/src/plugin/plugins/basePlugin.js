@@ -38,11 +38,8 @@ const basePlugin = {
   excludeResult,
   transformMergeResultPayload,
   onResultLogged,
-  onGxAlertAuthenticated,
   onCaseAdded,
   onCaseUpdated,
-  onPatientAdded,
-  onPatientUpdated,
   findResult,
   extractCustomFieldsFromPayload,
   extractSampleId,
@@ -108,14 +105,6 @@ async function onResultLogged(/* { resultId }, { messageContext } */) {
 }
 
 /**
- * A user, that does not yet exist in Aspect, has logged in using GxAlert credentials
- * and the user has been migrated into Aspect.
- */
-async function onGxAlertAuthenticated(/* { gxUser, user, personId, partnerId, knex } */) {
-  // do nothing by default
-}
-
-/**
  * CASE_ADDED action has been published referencing
  * a Case handled by this plugin
  */
@@ -128,22 +117,6 @@ async function onCaseAdded(/* { caseId }, { messageContext } */) {
  * a Case handled by this plugin
  */
 async function onCaseUpdated(/* { caseId }, { messageContext } */) {
-  // do nothing by default
-}
-
-/**
- * PATIENT_ADDED action has been published referencing
- * a Patient handled by this plugin
- */
-async function onPatientAdded(/* { patientId }, { messageContext } */) {
-  // do nothing by default
-}
-
-/**
- * PATIENT_UPDATED action has been published referencing
- * a Patient handled by this plugin
- */
-async function onPatientUpdated(/* { patientId }, { messageContext } */) {
   // do nothing by default
 }
 

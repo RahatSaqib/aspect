@@ -54,7 +54,7 @@ async function mergeResult(context) {
   if (payloadSampleExternalId) {
     existingSample = isValidSampleExternalIdMobileFormat(payloadSampleExternalId)
       ? await getMobileSampleByExternalId(knex, payloadSampleExternalId)
-      : await getMatchingSample(knex, payloadSampleExternalId, payloadSampleTypeId, testStartedOn)
+      : await getMatchingSample(knex, payloadSampleExternalId, testStartedOn)
   }
   const { sampleOriginSiteId, reportableSiteId } = await resolveSiteAssignments(
     knex,

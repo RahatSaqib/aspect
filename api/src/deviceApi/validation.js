@@ -251,9 +251,7 @@ const logItem = {
 
 const logPayload = {
   source: Joi.string().allow('', null).description('The source of the log, determined by client'),
-  data: Joi.alternatives()
-    .allow(null)
-    .try(Joi.object().keys(logItem), Joi.array().items(Joi.object().keys(logItem))),
+  data: Joi.array().allow(null).items(Joi.object().keys(logItem)),
 }
 
 const devicePayloadValidation = Joi.object().keys({

@@ -1,14 +1,7 @@
 const _ = require('lodash')
 const chai = require('chai')
 const subDays = require('date-fns/subDays')
-const {
-  createTestContext,
-  getDeviceConfigurationData,
-  getLastDeviceOperation,
-  getLastDeviceOperationData,
-  getLastDeviceOperationId,
-  getDeviceFromApiKey,
-} = require('./utils')
+const { createTestContext, getDeviceConfigurationData, getDeviceFromApiKey } = require('./utils')
 const { createMessageContext, waitForIdle } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
@@ -46,7 +39,7 @@ describe('Device API routes', () => {
       res = await server
         .post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ configuration: { data: { a: 'b' } } })
+        .send({ includeDeviceConfiguration: true, configuration: { data: { a: 'b' } } })
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
 
@@ -56,7 +49,7 @@ describe('Device API routes', () => {
       res = await server
         .post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ configuration: { data: { b: 3 } } })
+        .send({ includeDeviceConfiguration: true, configuration: { data: { b: 3 } } })
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
 
@@ -67,6 +60,7 @@ describe('Device API routes', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          includeDeviceConfiguration: true,
           configuration: { data: { a: 'e', c: 2, d: false, e: { f: 'g' } } },
         })
 
@@ -87,7 +81,7 @@ describe('Device API routes', () => {
       res = await server
         .post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ configuration: { data: { e: { f: 'h' } } } })
+        .send({ includeDeviceConfiguration: true, configuration: { data: { e: { f: 'h' } } } })
 
       assert.equal(res.status, 200)
 
@@ -102,85 +96,6 @@ describe('Device API routes', () => {
           e: { f: 'h' },
         })
       )
-    })
-  })
-
-  describe('operation', () => {
-    it('should add and return device operation', async () => {
-      const { deviceId, deviceAuth } = context
-      let res
-      res = await server
-        .post(devicePath)
-        .set('Authorization', deviceAuth)
-        .send({ operation: { data: { a: 'b' } } })
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body, 'Object')
-
-      const op1 = await getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(op1, { a: 'b' })
-
-      let previousOpId = null
-      let currentOpId = await getLastDeviceOperationId(knex, deviceId)
-
-      res = await server
-        .post(devicePath)
-        .set('Authorization', deviceAuth)
-        .send({
-          operation: {
-            startedOn: '2013-12-01',
-            endedOn: '2013-12-01T01:30',
-            data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-          },
-        })
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body, 'Object')
-
-      const op2 = await getLastDeviceOperation(knex, deviceId)
-      assert.deepEqual(op2.data, { a: 'b', c: 2, d: false, e: { f: 'g' } })
-      assert.deepEqual(op2.startedOn, new Date('2013-12-01'))
-      assert.deepEqual(op2.endedOn, new Date('2013-12-01T01:30'))
-
-      previousOpId = currentOpId
-      currentOpId = await getLastDeviceOperationId(knex, deviceId)
-
-      assert.notEqual(previousOpId, currentOpId)
-    })
-  })
-
-  describe('add and get device data', () => {
-    it('should add and return device data', async () => {
-      const { deviceAuth, deviceId } = context
-      let res
-      res = await server
-        .post(devicePath)
-        .set('Authorization', deviceAuth)
-        .send({
-          configuration: { data: { a: 'b' } },
-          operation: { data: { a: 'b' } },
-        })
-
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body, 'Object')
-
-      const config1 = await getDeviceConfigurationData(knex, deviceId)
-      const op1 = await getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
-      assert.deepEqual(op1, { a: 'b' })
-
-      res = await server
-        .post(devicePath)
-        .set('Authorization', deviceAuth)
-        .send({
-          configuration: { data: { a: 'c', c: 2, d: false, e: { f: 'g' } } },
-          operation: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } },
-        })
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body, 'Object')
-
-      const config2 = await getDeviceConfigurationData(knex, deviceId)
-      const op2 = await getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } }))
-      assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
     })
   })
 
@@ -227,7 +142,7 @@ describe('Device API routes', () => {
       assert.equal(newDevice.timezone, 'Hawaiian Standard Time')
       assert.equal(newDevice.serial, null)
 
-      const deviceLogs = await knex('DeviceApprovalLog as dl').where('dl.deviceId', newDevice.id)
+      const deviceLogs = await knex('DeviceApprovalLog as dal').where('dal.deviceId', newDevice.id)
       assert.isOk(deviceLogs)
       assert.propertyVal(newDevice, 'id', deviceLogs[0].deviceId)
       assert.isAtLeast(deviceLogs.length, 1)
@@ -303,6 +218,7 @@ describe('Device API routes', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          includeDeviceConfiguration: true,
           type: { id: 'DaktariInSight' },
           site: { id: 'CHIZ' },
           name: 'Chanayethazan 1 GeneXpert, Chanayethazan 2 GeneXpert and Patheingyi 1 GeneXpert',

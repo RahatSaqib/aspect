@@ -216,13 +216,14 @@ async function hardwareErrors(knex, deviceId, daysPeriod, errorCodes) {
   if (errorCodes.some(e => errorCodesToDeduplicateIfWithinTimeFrame.includes(e))) {
     // In this subquery, we're using the 'lag' function in MySQL to select the date of the previous row's log entry
     // We can then use that subquery to only select entries that are at least 60 minutes apart from the previous one
-    const subquery = knex('DeviceOperation')
-      .where('deviceId', deviceId)
+    const subquery = knex('DeviceOperation as do')
+      .join('Device as d', 'do.deviceApiKeyId', 'd.deviceApiKeyId')
+      .where('d.id', deviceId)
       .where('occurredOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
       .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
       .whereRaw(`data->>'$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`)
       .select(
-        'id',
+        'do.id',
         'occurredOn',
         knex.raw('lag(occurredOn, 1) over (partition by deviceId order by occurredOn) as previousOccurredOn')
       )

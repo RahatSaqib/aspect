@@ -19,7 +19,6 @@ async function updateDeviceConfiguration({ knex, payload, deviceIds, messageCont
   const deviceDetails = {
     macAddress: macAddressValid(macAddress) ? macAddress : null,
     hostId,
-    timezone,
     culture,
     serial: deviceSerialNumber,
     configurationData: knex.raw(
@@ -29,6 +28,14 @@ async function updateDeviceConfiguration({ knex, payload, deviceIds, messageCont
     lastPingFromIp: remoteAddress,
     lastPingOn: now,
     lastSeenOn: now,
+  }
+
+  if (timezone) {
+    const timezoneExists = await knex('TimeZone').where('id', timezone).first('id as existingTimeZone')
+
+    if (timezoneExists) {
+      deviceDetails.timezone = timezone
+    }
   }
 
   await knex('Device')
