@@ -286,7 +286,9 @@ function startOfDayInTimezone(dateInput, timezoneIANA) {
 }
 
 /**
- * Returns the UTC Date for end of the given calendar day (23:59:59.999) in the specified IANA timezone.
+ * Returns the UTC Date for end of the given calendar day (23:59:59.000) in the specified IANA timezone.
+ * Uses whole seconds (not .999) to avoid MySQL DATETIME rounding: 23:59:59.999 can round up to 00:00:00
+ * of the next day when the column has no fractional precision.
  * @param {string|Date} dateInput - Date string (e.g. '2026-02-08') or Date
  * @param {string|null} timezoneIANA - IANA timezone (e.g. 'Asia/Karachi') or null for UTC
  * @returns {Date} UTC moment representing end of that day in the timezone
@@ -297,8 +299,8 @@ function endOfDayInTimezone(dateInput, timezoneIANA) {
   const y = d.getUTCFullYear()
   const m = d.getUTCMonth()
   const day = d.getUTCDate()
-  const localEnd = new Date(y, m, day, 23, 59, 59, 999)
-  return timezoneIANA ? slideDateToTimeZone(localEnd, timezoneIANA) : new Date(Date.UTC(y, m, day, 23, 59, 59, 999))
+  const localEnd = new Date(y, m, day, 23, 59, 59, 0)
+  return timezoneIANA ? slideDateToTimeZone(localEnd, timezoneIANA) : new Date(Date.UTC(y, m, day, 23, 59, 59, 0))
 }
 
 /**
