@@ -5,7 +5,7 @@ import { DEVICE_DEPLOYMENTS_KEY, DEVICE_DEPLOYMENTS_ENDPOINT } from './deviceKey
 
 const getDeployments = async deviceId =>
   fetchWrapperForQueries({ endpoint: replaceRouteParams(DEVICE_DEPLOYMENTS_ENDPOINT, { deviceId }) }).then(
-    response => response.data
+    response => ({ deployments: response.data, timezoneIANA: response.timezoneIANA ?? null })
   )
 
 const useDeployments = deviceId =>

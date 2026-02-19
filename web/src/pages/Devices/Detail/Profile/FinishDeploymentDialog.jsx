@@ -20,9 +20,9 @@ const FinishDeploymentDialog = ({ open, onClose, onConfirm, startDate }) => {
   const defaultEnd = startStr && startStr > today ? startStr : startStr || today
 
   const validationSchema = React.useMemo(() => {
-    const endSchema = Yup.date().required(formatMessage(validationErrorMessages.required))
+    let endSchema = Yup.date().required(formatMessage(validationErrorMessages.required))
     if (startStr) {
-      endSchema.min(startStr, formatMessage(messages.finishDeploymentEndNotBeforeStart))
+      endSchema = endSchema.min(startStr, formatMessage(messages.finishDeploymentEndNotBeforeStart))
     }
     return Yup.object({ end: endSchema })
   }, [startStr, formatMessage])

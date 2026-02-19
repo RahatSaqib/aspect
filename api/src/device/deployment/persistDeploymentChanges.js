@@ -4,21 +4,6 @@ const { getUserFromCredentials } = require('../../auth/constraints')
 const { recalculateDeviceFactTables } = require('../common/logic')
 const { startOfDayInTimezone, endOfDayInTimezone, getDateStringInTimezone } = require('../../shared/date')
 
-/**
- * Get partner timezone IANA (e.g. 'Asia/Karachi') for a device.
- * Uses the first site's country timezone for the device's partner.
- */
-async function getPartnerTimezoneIANAForDevice(trx, deviceId) {
-  const row = await trx('Device as d')
-    .join('Site as s', 's.partnerId', 'd.partnerId')
-    .join('Geography as g', 's.geographyId', 'g.id')
-    .join('Country as c', 'g.countryId', 'c.id')
-    .join('TimeZone as tz', 'c.timezone', 'tz.id')
-    .where('d.id', deviceId)
-    .first('tz.timeZone as timezoneIANA')
-  return row ? row.timezoneIANA : null
-}
-
 function normalizeDeploymentDates(change, timezoneIANA) {
   const start = startOfDayInTimezone(change.start, timezoneIANA)
   const end = change.end ? endOfDayInTimezone(change.end, timezoneIANA) : null
@@ -38,11 +23,10 @@ async function persistDeploymentChanges(request) {
   const { deviceId } = params
   const { changes } = payload
   const user = await getUserFromCredentials(auth.credentials)
+  const timezoneIANA = user?.timezoneIANA ?? user?.personTimezoneIANA ?? null
   const now = new Date()
 
   await transact(async trx => {
-    const timezoneIANA = await getPartnerTimezoneIANAForDevice(trx, deviceId)
-
     // Apply deletes
     const deletePromises = changes
       .filter(c => c.action === 'delete')

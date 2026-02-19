@@ -48,6 +48,7 @@ const routes = [
               end: Joi.date().allow(null).required(),
             })
           ),
+          timezoneIANA: Joi.string().allow(null).optional(),
         }),
       },
     },

@@ -424,6 +424,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.finishDeploymentEndNotBeforeStart',
       defaultMessage: 'End date must be on or after the deployment start date.',
     },
+    editDeploymentEndNotBeforeStart: {
+      id: 'pages.DeviceDetailProfile.editDeploymentEndNotBeforeStart',
+      defaultMessage: 'End date must be on or after the start date.',
+    },
     addDeploymentTitle: {
       id: 'pages.DeviceDetailProfile.addDeploymentTitle',
       defaultMessage: 'Add Deployment',

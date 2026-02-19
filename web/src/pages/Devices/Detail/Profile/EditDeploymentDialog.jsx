@@ -1,5 +1,6 @@
 import React from 'react'
 import { Alert, DialogActions, TextField } from '@mui/material'
+import { formatInTimeZone } from 'date-fns-tz'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
@@ -9,17 +10,36 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 
-const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherActiveDeployment, otherDeployments }) => {
+const formatDateForInput = (dateStr, timezoneIANA) => {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return timezoneIANA ? formatInTimeZone(d, timezoneIANA, 'yyyy-MM-dd') : d.toISOString().slice(0, 10)
+}
+
+const EditDeploymentDialog = ({
+  open,
+  onClose,
+  onConfirm,
+  deployment,
+  hasOtherActiveDeployment,
+  otherDeployments,
+  timezoneIANA,
+}) => {
   const { formatMessage } = useIntl()
 
   const validationSchema = Yup.object({
     start: Yup.date().required(formatMessage(validationErrorMessages.required)),
-    end: Yup.date().nullable().notRequired(),
+    end: Yup.date()
+      .nullable()
+      .notRequired()
+      .when('start', (start, schema) =>
+        start ? schema.min(start, formatMessage(messages.editDeploymentEndNotBeforeStart)) : schema
+      ),
   })
 
   const initialValues = {
-    start: deployment ? new Date(deployment.start).toISOString().slice(0, 10) : '',
-    end: deployment?.end ? new Date(deployment.end).toISOString().slice(0, 10) : '',
+    start: deployment ? formatDateForInput(deployment.start, timezoneIANA) : '',
+    end: deployment?.end ? formatDateForInput(deployment.end, timezoneIANA) : '',
   }
 
   const checkOverlap = (start, end) => {
@@ -96,6 +116,7 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherAc
                 fullWidth
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
+                inputProps={values.start ? { min: values.start } : undefined}
                 error={touched.end && !!errors.end}
                 helperText={touched.end && errors.end}
               />
@@ -105,8 +126,8 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherAc
                 </Alert>
               )}
               {hasOverlap && !activeConflict && (
-                <Alert severity="warning" sx={{ mt: 1 }}>
-                  {formatMessage(messages.editDeploymentOverlapWarning)}
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  {formatMessage(messages.deploymentOverlap)}
                 </Alert>
               )}
               <DialogActions>
@@ -115,7 +136,7 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherAc
                   type="submit"
                   color="primary"
                   variant="contained"
-                  disabled={!isValid || !dirty || activeConflict}
+                  disabled={!isValid || !dirty || activeConflict || hasOverlap}
                 >
                   {formatMessage(messages.confirm)}
                 </AspectButton>
@@ -135,12 +156,14 @@ EditDeploymentDialog.propTypes = {
   deployment: PropTypes.object,
   hasOtherActiveDeployment: PropTypes.bool,
   otherDeployments: PropTypes.array,
+  timezoneIANA: PropTypes.string,
 }
 
 EditDeploymentDialog.defaultProps = {
   deployment: null,
   hasOtherActiveDeployment: false,
   otherDeployments: [],
+  timezoneIANA: null,
 }
 
 export default EditDeploymentDialog
