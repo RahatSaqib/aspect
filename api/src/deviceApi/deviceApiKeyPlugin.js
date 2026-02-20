@@ -70,7 +70,7 @@ async function authToken(token) {
     scope: ['deviceApi'],
     token,
     deviceApiKeyId: data.deviceApiKeyId,
-    deviceIds: data.deviceIds ? data.deviceIds.split(',') : [],
+    deviceIds: data.deviceIds ? data.deviceIds.split(',').map(Number) : [],
     partnerId: data.partnerId,
   }
   return credentials

@@ -4,7 +4,7 @@ const { knex, transact } = require('../../db')
 const { deviceApprovalToId } = require('../../shared/dictionary')
 const { deviceSeen } = require('../../device/actions')
 const { loadPlugin } = require('../../plugin/loadPlugin')
-const { resultReadyForNotification } = require('../../result/actions')
+const { resultReadyForNotification, resultLogged } = require('../../result/actions')
 const { mergeResult } = require('./mergeResult')
 const { findOpenModuleDisabledIssues } = require('../../issue/common/db')
 const { resolveIssues } = require('../../issue/actions')
@@ -133,6 +133,9 @@ async function mergeResultWithContext(context) {
     shouldTriggerResultNotification,
     // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
   } = await mergeResult(context)
+
+  context.messageContext.bindActionCreators({ resultLogged })
+  context.messageContext.resultLogged(plainResult.id, context.deviceLogId, null, { isResultUpdated: true })
 
   await resultAutoTagging(knex, plainResult)
 

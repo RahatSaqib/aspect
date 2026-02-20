@@ -17,7 +17,7 @@ async function onResultLogged({ resultId, deviceLogId, userId }, { messageContex
 
     const { externalId: deviceLogDeviceTypeExternalId } =
       (await knex('DeviceLog as dl')
-        .join('Device as d', 'dl.deviceId', 'd.id')
+        .join('Device as d', 'dl.deviceApiKeyId', 'd.deviceApiKeyId')
         .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
         .where(function () {
           if (deviceLogId) {
