@@ -1,16 +1,30 @@
 const Boom = require('@hapi/boom')
+const { addDays, subDays, format, parseISO } = require('date-fns')
 const { transact } = require('../../db')
 const { getUserFromCredentials } = require('../../auth/constraints')
 const { recalculateDeviceFactTables } = require('../common/logic')
-const { startOfDayInTimezone, endOfDayInTimezone, getDateStringInTimezone } = require('../../shared/date')
+const { parseDateOrDefault } = require('../../shared/date')
 
-function normalizeDeploymentDates(change, timezoneIANA) {
-  const start = startOfDayInTimezone(change.start, timezoneIANA)
-  const end = change.end ? endOfDayInTimezone(change.end, timezoneIANA) : null
-  if (end && end < start) {
+/** Persist date-only as sent; no timezone conversion (deployment start/end are calendar dates). */
+function toDateOnlyStr(val) {
+  if (val == null) return null
+  if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}/.test(val)) return val.slice(0, 10)
+  const d = parseDateOrDefault(val)
+  return d ? d.toISOString().slice(0, 10) : null
+}
+
+function normalizeDeploymentDates(change) {
+  const start = toDateOnlyStr(change.start)
+  const end = change.end != null ? toDateOnlyStr(change.end) : null
+  if (start && end && end < start) {
     throw Boom.conflict('Deployment end date cannot be before start date')
   }
   return { start, end }
+}
+
+function resultEndedOnDateInTZ(trx, timezoneIANA) {
+  const tz = timezoneIANA || 'Etc/UTC'
+  return trx.raw('DATE(CONVERT_TZ(endedOn, "+00:00", ?))', [tz])
 }
 
 async function persistDeploymentChanges(request) {
@@ -23,7 +37,7 @@ async function persistDeploymentChanges(request) {
   const { deviceId } = params
   const { changes } = payload
   const user = await getUserFromCredentials(auth.credentials)
-  const timezoneIANA = user?.timezoneIANA ?? user?.personTimezoneIANA ?? null
+  const timezoneIANA = user?.timezoneIANA ?? user?.personTimezoneIANA ?? 'Etc/UTC'
   const now = new Date()
 
   await transact(async trx => {
@@ -33,11 +47,11 @@ async function persistDeploymentChanges(request) {
       .map(change => trx('Deployment').where('id', change.id).where('deviceId', deviceId).del())
     await Promise.all(deletePromises)
 
-    // Apply updates (persist start/end as start/end of day in partner timezone, stored as UTC)
+    // Apply updates (persist start/end as date only, as sent by client — no timezone conversion)
     const updatePromises = changes
       .filter(c => c.action === 'update')
       .map(change => {
-        const { start, end } = normalizeDeploymentDates(change, timezoneIANA)
+        const { start, end } = normalizeDeploymentDates(change)
         return trx('Deployment').where('id', change.id).where('deviceId', deviceId).update({
           siteId: change.siteId,
           start,
@@ -52,7 +66,7 @@ async function persistDeploymentChanges(request) {
     const insertPromises = changes
       .filter(c => c.action === 'add')
       .map(change => {
-        const { start, end } = normalizeDeploymentDates(change, timezoneIANA)
+        const { start, end } = normalizeDeploymentDates(change)
         return trx('Deployment').insert({
           deviceId,
           siteId: change.siteId,
@@ -66,7 +80,7 @@ async function persistDeploymentChanges(request) {
       })
     await Promise.all(insertPromises)
 
-    // Validate no overlaps in resulting deployment set (compare calendar dates in partner TZ so consecutive periods are valid)
+    // Validate no overlaps in resulting deployment set (compare date-only values as stored, no timezone)
     const resultingDeployments = await trx('Deployment')
       .where('deviceId', deviceId)
       .orderBy('start', 'asc')
@@ -80,64 +94,55 @@ async function persistDeploymentChanges(request) {
         throw Boom.conflict('An open deployment must be the last one in the timeline')
       }
 
-      const currentEnd = new Date(current.end)
-      const nextStart = new Date(next.start)
-      const currentEndDateStr = getDateStringInTimezone(currentEnd, timezoneIANA)
-      const nextStartDateStr = getDateStringInTimezone(nextStart, timezoneIANA)
+      const currentEndDateStr = toDateOnlyStr(current.end)
+      const nextStartDateStr = toDateOnlyStr(next.start)
       if (currentEndDateStr >= nextStartDateStr) {
         throw Boom.conflict('Deployment periods must not overlap')
       }
     }
 
-    // Update Result.siteId for each deployment span (use DB values directly)
+    // Update Result.siteId for each deployment span (compare result date in user timezone from auth to deployment date)
+    const endedOnDateExpr = resultEndedOnDateInTZ(trx, timezoneIANA)
     const resultUpdatePromises = resultingDeployments.map(dep => {
-      const query = trx('Result').where('deviceId', deviceId).where('endedOn', '>=', dep.start)
+      const query = trx('Result').where('deviceId', deviceId).where(endedOnDateExpr, '>=', dep.start)
       if (dep.end) {
-        query.where('endedOn', '<=', dep.end)
+        query.where(endedOnDateExpr, '<=', dep.end)
       }
       return query.update({ siteId: dep.siteId })
     })
     await Promise.all(resultUpdatePromises)
 
-    // Set Result.siteId = NULL for results in gaps
-    // Gap before first deployment
+    // Set Result.siteId = NULL for results in gaps (compare result date in user timezone from auth)
     if (resultingDeployments.length > 0) {
       const first = resultingDeployments[0]
-      await trx('Result').where('deviceId', deviceId).where('endedOn', '<', first.start).update({ siteId: null })
+      await trx('Result').where('deviceId', deviceId).where(endedOnDateExpr, '<', first.start).update({ siteId: null })
     }
 
-    // Gaps between deployments
-    const gapPromises = []
+    // Gaps between deployments (date-based)
     for (let i = 0; i < resultingDeployments.length - 1; i++) {
       const current = resultingDeployments[i]
       const next = resultingDeployments[i + 1]
 
       if (current.end) {
-        const gapStart = new Date(current.end)
-        gapStart.setUTCDate(gapStart.getUTCDate() + 1)
-        gapStart.setUTCHours(0, 0, 0, 0)
-        const gapEnd = new Date(next.start)
-        gapEnd.setUTCDate(gapEnd.getUTCDate() - 1)
-        gapEnd.setUTCHours(23, 59, 59, 999)
-
-        if (gapStart <= gapEnd) {
-          gapPromises.push(
-            trx('Result')
-              .where('deviceId', deviceId)
-              .where('endedOn', '>=', gapStart)
-              .where('endedOn', '<=', gapEnd)
-              .update({ siteId: null })
-          )
+        const currentEndDate = typeof current.end === 'string' ? parseISO(current.end) : new Date(current.end)
+        const nextStartDate = typeof next.start === 'string' ? parseISO(next.start) : new Date(next.start)
+        const gapStartStr = format(addDays(currentEndDate, 1), 'yyyy-MM-dd')
+        const gapEndStr = format(subDays(nextStartDate, 1), 'yyyy-MM-dd')
+        if (gapStartStr <= gapEndStr) {
+          // eslint-disable-next-line no-await-in-loop -- sequential updates per gap
+          await trx('Result')
+            .where('deviceId', deviceId)
+            .where(endedOnDateExpr, '>=', gapStartStr)
+            .where(endedOnDateExpr, '<=', gapEndStr)
+            .update({ siteId: null })
         }
       }
     }
-    await Promise.all(gapPromises)
 
-    // Gap after last deployment (if closed)
     if (resultingDeployments.length > 0) {
       const last = resultingDeployments[resultingDeployments.length - 1]
       if (last.end) {
-        await trx('Result').where('deviceId', deviceId).where('endedOn', '>', last.end).update({ siteId: null })
+        await trx('Result').where('deviceId', deviceId).where(endedOnDateExpr, '>', last.end).update({ siteId: null })
       }
     }
 

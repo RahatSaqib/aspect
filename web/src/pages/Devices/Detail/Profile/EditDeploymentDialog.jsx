@@ -1,6 +1,5 @@
 import React from 'react'
 import { Alert, DialogActions, TextField } from '@mui/material'
-import { formatInTimeZone } from 'date-fns-tz'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
@@ -10,21 +9,15 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 
-const formatDateForInput = (dateStr, timezoneIANA) => {
-  if (!dateStr) return ''
-  const d = new Date(dateStr)
-  return timezoneIANA ? formatInTimeZone(d, timezoneIANA, 'yyyy-MM-dd') : d.toISOString().slice(0, 10)
+/** Deployment start/end are date-only in the DB; use as-is for inputs (no timezone conversion). */
+function getDeploymentDateForInput(value) {
+  if (value == null) return ''
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10)
 }
 
-const EditDeploymentDialog = ({
-  open,
-  onClose,
-  onConfirm,
-  deployment,
-  hasOtherActiveDeployment,
-  otherDeployments,
-  timezoneIANA,
-}) => {
+const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherActiveDeployment, otherDeployments }) => {
   const { formatMessage } = useIntl()
 
   const validationSchema = Yup.object({
@@ -38,8 +31,8 @@ const EditDeploymentDialog = ({
   })
 
   const initialValues = {
-    start: deployment ? formatDateForInput(deployment.start, timezoneIANA) : '',
-    end: deployment?.end ? formatDateForInput(deployment.end, timezoneIANA) : '',
+    start: deployment ? getDeploymentDateForInput(deployment.start) : '',
+    end: deployment?.end ? getDeploymentDateForInput(deployment.end) : '',
   }
 
   const checkOverlap = (start, end) => {
@@ -156,14 +149,12 @@ EditDeploymentDialog.propTypes = {
   deployment: PropTypes.object,
   hasOtherActiveDeployment: PropTypes.bool,
   otherDeployments: PropTypes.array,
-  timezoneIANA: PropTypes.string,
 }
 
 EditDeploymentDialog.defaultProps = {
   deployment: null,
   hasOtherActiveDeployment: false,
   otherDeployments: [],
-  timezoneIANA: null,
 }
 
 export default EditDeploymentDialog

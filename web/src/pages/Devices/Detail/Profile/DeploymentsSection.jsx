@@ -13,7 +13,6 @@ import {
   TableBody,
   TableContainer,
 } from '@mui/material'
-import { formatInTimeZone } from 'date-fns-tz'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
@@ -32,10 +31,12 @@ import FillGapDeploymentDialog from './FillGapDeploymentDialog'
 import FinishDeploymentDialog from './FinishDeploymentDialog'
 import messages from './messages'
 
-const formatDate = (dateStr, timezoneIANA) => {
-  if (!dateStr) return null
-  const d = new Date(dateStr)
-  return timezoneIANA ? formatInTimeZone(d, timezoneIANA, 'yyyy-MM-dd') : d.toISOString().slice(0, 10)
+/** Deployment start/end are date-only in the DB; show as stored without timezone conversion. */
+function getDeploymentDateString(value) {
+  if (value == null) return null
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
 }
 
 /**
@@ -72,7 +73,6 @@ function getDeploymentValidationError(deployments) {
 const DeploymentsSection = ({ deviceId, disabled }) => {
   const { formatMessage } = useIntl()
   const { data: deploymentsData, isLoading, refetch } = useDeployments(deviceId)
-  const timezoneIANA = deploymentsData?.timezoneIANA ?? null
   const checkResults = useCheckDeploymentResults()
   const persistMutation = usePersistDeployments()
 
@@ -172,8 +172,8 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
 
     const proposedDeployments = workingDeployments.map(d => ({
       siteId: d.siteId,
-      start: formatDate(d.start, timezoneIANA),
-      end: d.end ? formatDate(d.end, timezoneIANA) : null,
+      start: getDeploymentDateString(d.start),
+      end: d.end ? getDeploymentDateString(d.end) : null,
     }))
 
     checkResults.mutate(
@@ -184,7 +184,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pendingChanges, deviceId, timezoneIANA])
+  }, [pendingChanges, deviceId])
 
   const handleAddDeployment = useCallback(
     ({ siteId, start, siteName }) => {
@@ -196,7 +196,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
         const dayBefore = new Date(newStart)
         dayBefore.setDate(dayBefore.getDate() - 1)
         const dayBeforeStr = dayBefore.toISOString().slice(0, 10)
-        const activeStartStr = formatDate(activeDeployment.start, timezoneIANA)
+        const activeStartStr = getDeploymentDateString(activeDeployment.start)
         // Ensure we never set end before start: end = max(active.start, day before new start)
         const activeStartDate = new Date(activeStartStr)
         const dayBeforeDate = new Date(dayBeforeStr)
@@ -227,7 +227,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
             id: activeDeployment.id,
             siteId: activeDeployment.siteId,
             siteName: activeDeployment.siteName,
-            start: formatDate(activeDeployment.start, timezoneIANA),
+            start: getDeploymentDateString(activeDeployment.start),
             end: endDate,
           })
         }
@@ -245,7 +245,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
       setPendingChanges(newChanges)
       return true
     },
-    [pendingChanges, activeDeployment, formatMessage, timezoneIANA]
+    [pendingChanges, activeDeployment, formatMessage]
   )
 
   const handleFinishDeployment = useCallback(
@@ -257,7 +257,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
       if (activeDeployment.isNew) {
         newChanges.forEach(c => {
           if (c.tempId === activeDeployment.id && c.action === 'add') {
-            c.end = formatDate(end, timezoneIANA)
+            c.end = getDeploymentDateString(end)
           }
         })
       } else {
@@ -266,34 +266,31 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
           id: activeDeployment.id,
           siteId: activeDeployment.siteId,
           siteName: activeDeployment.siteName,
-          start: formatDate(activeDeployment.start, timezoneIANA),
-          end: formatDate(end, timezoneIANA),
+          start: getDeploymentDateString(activeDeployment.start),
+          end: getDeploymentDateString(end),
         })
       }
 
       setPendingChanges(newChanges)
       setFinishDialogOpen(false)
     },
-    [pendingChanges, activeDeployment, timezoneIANA]
+    [pendingChanges, activeDeployment]
   )
 
-  const handleAddDeploymentInGap = useCallback(
-    ({ siteId, siteName, start, end }) => {
-      setPendingChanges(prev => [
-        ...prev,
-        {
-          action: 'add',
-          tempId: `temp-${Date.now()}`,
-          siteId,
-          siteName,
-          start: formatDate(start, timezoneIANA),
-          end: formatDate(end, timezoneIANA),
-        },
-      ])
-      setGapToFill(null)
-    },
-    [timezoneIANA]
-  )
+  const handleAddDeploymentInGap = useCallback(({ siteId, siteName, start, end }) => {
+    setPendingChanges(prev => [
+      ...prev,
+      {
+        action: 'add',
+        tempId: `temp-${Date.now()}`,
+        siteId,
+        siteName,
+        start: getDeploymentDateString(start),
+        end: getDeploymentDateString(end),
+      },
+    ])
+    setGapToFill(null)
+  }, [])
 
   const handleEditDeployment = useCallback(
     ({ start, end }) => {
@@ -305,8 +302,8 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
       if (dep.isNew) {
         newChanges.forEach(c => {
           if (c.tempId === dep.id && c.action === 'add') {
-            c.start = formatDate(start, timezoneIANA)
-            c.end = end ? formatDate(end, timezoneIANA) : null
+            c.start = getDeploymentDateString(start)
+            c.end = end ? getDeploymentDateString(end) : null
           }
         })
       } else {
@@ -317,8 +314,8 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
           id: dep.id,
           siteId: dep.siteId,
           siteName: dep.siteName,
-          start: formatDate(start, timezoneIANA),
-          end: end ? formatDate(end, timezoneIANA) : null,
+          start: getDeploymentDateString(start),
+          end: end ? getDeploymentDateString(end) : null,
         }
         if (existingIdx >= 0) {
           newChanges[existingIdx] = updateChange
@@ -330,7 +327,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
       setPendingChanges(newChanges)
       setEditingDeployment(null)
     },
-    [pendingChanges, editingDeployment, timezoneIANA]
+    [pendingChanges, editingDeployment]
   )
 
   const handleDelete = useCallback(
@@ -504,9 +501,9 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
                         }}
                       >
                         <TableCell>{dep.siteName || '—'}</TableCell>
-                        <TableCell>{formatDate(dep.start, timezoneIANA)}</TableCell>
+                        <TableCell>{getDeploymentDateString(dep.start)}</TableCell>
                         <TableCell>
-                          {dep.end ? formatDate(dep.end, timezoneIANA) : formatMessage(messages.deploymentActive)}
+                          {dep.end ? getDeploymentDateString(dep.end) : formatMessage(messages.deploymentActive)}
                         </TableCell>
                         {!disabled && (
                           <TableCell align="right">
@@ -614,7 +611,6 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
           deployment={editingDeployment}
           hasOtherActiveDeployment={!!(activeDeployment && activeDeployment.id !== editingDeployment.id)}
           otherDeployments={workingDeployments.filter(d => d.id !== editingDeployment.id)}
-          timezoneIANA={timezoneIANA}
         />
       )}
 
