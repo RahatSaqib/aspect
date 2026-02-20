@@ -1,3 +1,8 @@
+---
+name: database-handling
+description: Use when writing database queries, accessing the database with Knex.js, applying constraints, or understanding database access patterns in the Aspect API.
+---
+
 # Database Access Context for AI Tools
 
 This document provides patterns for database access in the Aspect API codebase using Knex.js with MySQL.

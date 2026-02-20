@@ -1,3 +1,8 @@
+---
+name: database-seeding
+description: Use when working with database seeds, creating new seeds, understanding the seeding system, or troubleshooting seeding issues in the Aspect project.
+---
+
 # Database Seeding System
 
 ## Overview
@@ -218,4 +223,4 @@ console.log(`Current item: ${JSON.stringify(item)}`)
 - `api/seeds/utils.js` - Core seeding utilities
 - `api/src/shared/dictionary.js` - ID mapping utilities
 - `api/seeds/fixtures/` - Static data definitions
-- `api/knexfile.js` - Database configuration 
+- `api/knexfile.js` - Database configuration
