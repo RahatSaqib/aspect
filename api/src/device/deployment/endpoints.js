@@ -4,10 +4,11 @@ const { listDeployments } = require('./listDeployments')
 const { checkAffectedResults } = require('./checkAffectedResults')
 const { persistDeploymentChanges } = require('./persistDeploymentChanges')
 
+// start is nullable: the first deployment has no start (covers "from the beginning")
 const deploymentSchema = Joi.object({
   id: Joi.number().integer().optional(),
   siteId: Joi.number().integer().required(),
-  start: Joi.date().iso().required(),
+  start: Joi.date().iso().allow(null).optional(),
   end: Joi.date().iso().allow(null).optional(),
 })
 
@@ -28,7 +29,7 @@ const routes = [
     handler: asyncHandler(listDeployments),
     config: {
       description: 'List Deployments',
-      notes: 'List deployment history for a device',
+      notes: 'List deployment history for a device. The first (oldest) deployment has null start.',
       auth: { scope: ['device:view'] },
       validate: {
         params: {
@@ -44,11 +45,10 @@ const routes = [
               id: Joi.number().required(),
               siteId: Joi.number().allow(null).required(),
               siteName: Joi.string().allow(null).required(),
-              start: Joi.date().required(),
+              start: Joi.date().allow(null).required(),
               end: Joi.date().allow(null).required(),
             })
           ),
-          timezoneIANA: Joi.string().allow(null).optional(),
         }),
       },
     },
@@ -59,7 +59,7 @@ const routes = [
     handler: asyncHandler(checkAffectedResults),
     config: {
       description: 'Check Affected Results',
-      notes: 'Preview how many results would be moved or lose site assignment with proposed deployment changes',
+      notes: 'Preview how many results would be moved with proposed deployment changes',
       auth: { scope: ['device:edit'] },
       validate: {
         params: {
@@ -99,7 +99,7 @@ const routes = [
     handler: asyncHandler(persistDeploymentChanges),
     config: {
       description: 'Persist Deployment Changes',
-      notes: 'Save deployment changes, update Result.siteId and Device.siteId accordingly',
+      notes: 'Save deployment changes enforcing a continuous timeline. Update Result.siteId and Device.siteId.',
       auth: { scope: ['device:edit'] },
       validate: {
         params: {

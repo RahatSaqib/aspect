@@ -27,11 +27,9 @@ import DataTableHead from '../../../../oldComponents/shared/tableHead'
 import styles from '../styles.module.css'
 import AddDeploymentDialog from './AddDeploymentDialog'
 import EditDeploymentDialog from './EditDeploymentDialog'
-import FillGapDeploymentDialog from './FillGapDeploymentDialog'
-import FinishDeploymentDialog from './FinishDeploymentDialog'
 import messages from './messages'
 
-/** Deployment start/end are date-only in the DB; show as stored without timezone conversion. */
+/** Deployment start/end are date-only; show as stored with no timezone conversion. */
 function getDeploymentDateString(value) {
   if (value == null) return null
   if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
@@ -39,34 +37,79 @@ function getDeploymentDateString(value) {
   return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
 }
 
+/** Sort deployments chronologically: null start (oldest/first) comes first. */
+function sortChronological(deps) {
+  return [...deps].sort((a, b) => {
+    if (a.start === null) return -1
+    if (b.start === null) return 1
+    return new Date(a.start) - new Date(b.start)
+  })
+}
+
+/** Return YYYY-MM-DD string for the day before the given date string. */
+function dayBefore(dateStr) {
+  if (!dateStr) return null
+  const d = new Date(dateStr)
+  d.setDate(d.getDate() - 1)
+  return d.toISOString().slice(0, 10)
+}
+
 /**
- * Validates that deployments don't overlap, any open deployment is last, and no end before start.
- * Same-day deployments (start === end) are allowed.
- * Returns a message key (for formatMessage(messages[key])) or null if valid.
+ * Apply a field update to an existing change record or push a new 'update' change.
+ * Mutates the `changes` array in place.
+ */
+function applyUpdateChange(changes, dep, fields) {
+  if (dep.isNew) {
+    const c = changes.find(x => x.tempId === dep.id && x.action === 'add')
+    if (c) Object.assign(c, fields)
+  } else {
+    const existingIdx = changes.findIndex(x => x.id === dep.id && x.action === 'update')
+    if (existingIdx >= 0) {
+      Object.assign(changes[existingIdx], fields)
+    } else {
+      changes.push({
+        action: 'update',
+        id: dep.id,
+        siteId: dep.siteId,
+        siteName: dep.siteName,
+        start: dep.start ? getDeploymentDateString(dep.start) : null,
+        end: dep.end ? getDeploymentDateString(dep.end) : null,
+        ...fields,
+      })
+    }
+  }
+}
+
+/**
+ * Validate that the working deployments form a valid continuous timeline:
+ * - Exactly one null start (oldest), exactly one null end (active).
+ * - All adjacent pairs are consecutive (dep[i].end + 1 == dep[i+1].start).
+ * Returns a message key or null.
  */
 function getDeploymentValidationError(deployments) {
   if (!deployments || deployments.length === 0) return null
-  const sorted = [...deployments].sort((a, b) => new Date(a.start) - new Date(b.start))
-  for (const d of sorted) {
-    if (d.end) {
-      const start = new Date(d.start)
-      const end = new Date(d.end)
-      if (end < start) return 'deploymentOverlap'
-    }
-  }
-  if (sorted.length <= 1) return null
+  const sorted = sortChronological(deployments)
+
+  const nullStartCount = sorted.filter(d => d.start === null).length
+  const nullEndCount = sorted.filter(d => d.end === null).length
+
+  if (nullStartCount > 1 || nullEndCount > 1) return 'deploymentNotConsecutive'
+  if (sorted.length > 0 && (nullStartCount !== 1 || nullEndCount !== 1)) return 'deploymentNotConsecutive'
+
   for (let i = 0; i < sorted.length - 1; i++) {
     const current = sorted[i]
-    const next = sorted[i + 1]
-    if (!current.end) {
-      return 'deploymentOpenMustBeLast'
-    }
-    const currentEnd = new Date(current.end)
-    const nextStart = new Date(next.start)
-    if (currentEnd >= nextStart) {
-      return 'deploymentOverlap'
-    }
+    if (!current.end) return 'deploymentNotConsecutive'
+    const currentEndStr = getDeploymentDateString(current.end)
+    const nextStartStr = getDeploymentDateString(sorted[i + 1].start)
+    if (!currentEndStr || !nextStartStr) return 'deploymentNotConsecutive'
+    const expectedNextStart = (() => {
+      const d = new Date(currentEndStr)
+      d.setDate(d.getDate() + 1)
+      return d.toISOString().slice(0, 10)
+    })()
+    if (nextStartStr !== expectedNextStart) return 'deploymentNotConsecutive'
   }
+
   return null
 }
 
@@ -76,19 +119,16 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
   const checkResults = useCheckDeploymentResults()
   const persistMutation = usePersistDeployments()
 
-  // Local state for pending changes
   const [pendingChanges, setPendingChanges] = useState([])
   const [addDialogOpen, setAddDialogOpen] = useState(false)
-  const [finishDialogOpen, setFinishDialogOpen] = useState(false)
   const [editingDeployment, setEditingDeployment] = useState(null)
   const [deletingDeployment, setDeletingDeployment] = useState(null)
   const [preview, setPreview] = useState(null)
   const [saveError, setSaveError] = useState(null)
-  const [gapToFill, setGapToFill] = useState(null)
 
   const hasPendingChanges = pendingChanges.length > 0
 
-  // Compute the "working" deployment list by applying pending changes to server data
+  // Apply pending changes on top of server data to get the current working list
   const workingDeployments = useMemo(() => {
     const serverDeployments = deploymentsData?.deployments ?? []
     let result = serverDeployments.map(d => ({ ...d, status: 'saved' }))
@@ -115,67 +155,36 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
           siteId: change.siteId,
           siteName: change.siteName,
           start: change.start,
-          end: change.end || null,
+          end: change.end ?? null,
           status: 'pending',
           isNew: true,
         })
       }
     }
 
-    // Sort by start date descending
-    result.sort((a, b) => new Date(b.start) - new Date(a.start))
+    // Display order: most recent first; null start (oldest) is always last
+    result.sort((a, b) => {
+      if (a.start === null) return 1
+      if (b.start === null) return -1
+      return new Date(b.start) - new Date(a.start)
+    })
     return result
   }, [deploymentsData, pendingChanges])
 
+  // The active (last) deployment: always null end
   const activeDeployment = useMemo(() => workingDeployments.find(d => !d.end), [workingDeployments])
 
-  // Build display list with phantom "undeployed" rows for inner gaps
-  const displayRows = useMemo(() => {
-    if (workingDeployments.length <= 1) return workingDeployments.map(d => ({ ...d, type: 'deployment' }))
-
-    // Work with ascending order for gap detection
-    const sorted = [...workingDeployments].sort((a, b) => new Date(a.start) - new Date(b.start))
-    const rows = []
-
-    for (let i = 0; i < sorted.length; i++) {
-      rows.push({ ...sorted[i], type: 'deployment' })
-
-      // Only insert gap rows between inner deployments (not after last)
-      if (i < sorted.length - 1 && sorted[i].end) {
-        const gapStart = new Date(sorted[i].end)
-        gapStart.setDate(gapStart.getDate() + 1)
-        const gapEnd = new Date(sorted[i + 1].start)
-        gapEnd.setDate(gapEnd.getDate() - 1)
-
-        if (gapStart <= gapEnd) {
-          rows.push({
-            type: 'gap',
-            gapId: `gap-${i}`,
-            start: gapStart.toISOString().slice(0, 10),
-            end: gapEnd.toISOString().slice(0, 10),
-          })
-        }
-      }
-    }
-
-    // Return in descending order (most recent first)
-    rows.reverse()
-    return rows
-  }, [workingDeployments])
-
-  // Run check-results whenever pending changes change
+  // Trigger check-results preview whenever pending changes change
   useEffect(() => {
     if (!hasPendingChanges) {
       setPreview(null)
       return
     }
-
     const proposedDeployments = workingDeployments.map(d => ({
       siteId: d.siteId,
-      start: getDeploymentDateString(d.start),
+      start: d.start ? getDeploymentDateString(d.start) : null,
       end: d.end ? getDeploymentDateString(d.end) : null,
     }))
-
     checkResults.mutate(
       { deviceId, deployments: proposedDeployments },
       {
@@ -186,170 +195,112 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingChanges, deviceId])
 
+  /**
+   * Add a new active deployment.
+   * - First deployment (no active exists): start is null (covers from the beginning).
+   * - Subsequent deployments: start is a date string; the current active is closed at (start - 1).
+   */
   const handleAddDeployment = useCallback(
-    ({ siteId, start, siteName }) => {
-      const newStart = typeof start === 'string' ? start : new Date(start).toISOString().slice(0, 10)
-
-      // If there's an active deployment, we close it so the new one can start. End must be >= start (no inconsistent span).
-      let closedEndDate = null
-      if (activeDeployment) {
-        const dayBefore = new Date(newStart)
-        dayBefore.setDate(dayBefore.getDate() - 1)
-        const dayBeforeStr = dayBefore.toISOString().slice(0, 10)
-        const activeStartStr = getDeploymentDateString(activeDeployment.start)
-        // Ensure we never set end before start: end = max(active.start, day before new start)
-        const activeStartDate = new Date(activeStartStr)
-        const dayBeforeDate = new Date(dayBeforeStr)
-        closedEndDate = activeStartDate > dayBeforeDate ? activeStartStr : dayBeforeStr
-        // New deployment must start after the closed period to avoid overlap
-        if (new Date(newStart) <= new Date(closedEndDate)) {
-          const minStart = new Date(closedEndDate)
-          minStart.setDate(minStart.getDate() + 1)
-          const minStartStr = minStart.toISOString().slice(0, 10)
-          toast.error(formatMessage(messages.deploymentNewStartAfterCurrentEnd, { minStartDate: minStartStr }))
-          return false
-        }
-      }
-
+    ({ siteId, siteName, start }) => {
       const newChanges = [...pendingChanges]
 
       if (activeDeployment) {
-        const endDate = closedEndDate
-        if (activeDeployment.isNew) {
-          newChanges.forEach(c => {
-            if (c.tempId === activeDeployment.id && c.action === 'add') {
-              c.end = endDate
-            }
-          })
-        } else {
-          newChanges.push({
-            action: 'update',
-            id: activeDeployment.id,
-            siteId: activeDeployment.siteId,
-            siteName: activeDeployment.siteName,
-            start: getDeploymentDateString(activeDeployment.start),
-            end: endDate,
-          })
-        }
+        // Subsequent deployment: requires a start date
+        const newStartStr = typeof start === 'string' ? start : null
+        if (!newStartStr) return false
+        applyUpdateChange(newChanges, activeDeployment, { end: dayBefore(newStartStr) })
+        newChanges.push({
+          action: 'add',
+          tempId: `temp-${Date.now()}`,
+          siteId,
+          siteName,
+          start: newStartStr,
+          end: null,
+        })
+      } else {
+        // First deployment: no start date (covers from the beginning)
+        newChanges.push({ action: 'add', tempId: `temp-${Date.now()}`, siteId, siteName, start: null, end: null })
       }
-
-      newChanges.push({
-        action: 'add',
-        tempId: `temp-${Date.now()}`,
-        siteId,
-        siteName,
-        start: newStart,
-        end: null,
-      })
 
       setPendingChanges(newChanges)
       return true
     },
-    [pendingChanges, activeDeployment, formatMessage]
-  )
-
-  const handleFinishDeployment = useCallback(
-    ({ end }) => {
-      if (!activeDeployment) return
-
-      const newChanges = [...pendingChanges]
-
-      if (activeDeployment.isNew) {
-        newChanges.forEach(c => {
-          if (c.tempId === activeDeployment.id && c.action === 'add') {
-            c.end = getDeploymentDateString(end)
-          }
-        })
-      } else {
-        newChanges.push({
-          action: 'update',
-          id: activeDeployment.id,
-          siteId: activeDeployment.siteId,
-          siteName: activeDeployment.siteName,
-          start: getDeploymentDateString(activeDeployment.start),
-          end: getDeploymentDateString(end),
-        })
-      }
-
-      setPendingChanges(newChanges)
-      setFinishDialogOpen(false)
-    },
     [pendingChanges, activeDeployment]
   )
 
-  const handleAddDeploymentInGap = useCallback(({ siteId, siteName, start, end }) => {
-    setPendingChanges(prev => [
-      ...prev,
-      {
-        action: 'add',
-        tempId: `temp-${Date.now()}`,
-        siteId,
-        siteName,
-        start: getDeploymentDateString(start),
-        end: getDeploymentDateString(end),
-      },
-    ])
-    setGapToFill(null)
-  }, [])
-
+  /**
+   * Edit a deployment. Receives { siteId, siteName, start }.
+   * Start is null for the first deployment (cannot be changed).
+   * If start changes, the previous deployment's end is auto-adjusted to (newStart - 1).
+   */
   const handleEditDeployment = useCallback(
-    ({ start, end }) => {
+    ({ siteId, siteName, start }) => {
       if (!editingDeployment) return
-
-      const newChanges = [...pendingChanges]
       const dep = editingDeployment
+      const newChanges = [...pendingChanges]
 
-      if (dep.isNew) {
-        newChanges.forEach(c => {
-          if (c.tempId === dep.id && c.action === 'add') {
-            c.start = getDeploymentDateString(start)
-            c.end = end ? getDeploymentDateString(end) : null
-          }
-        })
-      } else {
-        // Check if there's already an update change for this deployment
-        const existingIdx = newChanges.findIndex(c => c.id === dep.id && c.action === 'update')
-        const updateChange = {
-          action: 'update',
-          id: dep.id,
-          siteId: dep.siteId,
-          siteName: dep.siteName,
-          start: getDeploymentDateString(start),
-          end: end ? getDeploymentDateString(end) : null,
-        }
-        if (existingIdx >= 0) {
-          newChanges[existingIdx] = updateChange
-        } else {
-          newChanges.push(updateChange)
+      const newStartStr = start ? getDeploymentDateString(start) : null
+      const oldStartStr = dep.start ? getDeploymentDateString(dep.start) : null
+
+      // If start changed, adjust the previous deployment's end
+      if (newStartStr !== oldStartStr && newStartStr) {
+        const sorted = sortChronological(workingDeployments)
+        const idx = sorted.findIndex(d => d.id === dep.id)
+        const prev = idx > 0 ? sorted[idx - 1] : null
+        if (prev) {
+          applyUpdateChange(newChanges, prev, { end: dayBefore(newStartStr) })
         }
       }
 
+      applyUpdateChange(newChanges, dep, { siteId, siteName, start: newStartStr })
       setPendingChanges(newChanges)
       setEditingDeployment(null)
     },
-    [pendingChanges, editingDeployment]
+    [pendingChanges, editingDeployment, workingDeployments]
   )
 
+  /**
+   * Delete a deployment, adjusting adjacent deployments to maintain continuous timeline:
+   * - Middle: previous absorbs this period (prev.end = dep.end)
+   * - First (null start): next becomes first (next.start = null)
+   * - Last (active): previous becomes active (prev.end = null)
+   * - Only: device becomes undeployed
+   */
   const handleDelete = useCallback(
     dep => {
       if (!dep) return
-
       const newChanges = [...pendingChanges]
 
+      const sorted = sortChronological(workingDeployments)
+      const idx = sorted.findIndex(d => d.id === dep.id)
+      const prev = idx > 0 ? sorted[idx - 1] : null
+      const next = idx < sorted.length - 1 ? sorted[idx + 1] : null
+
+      // Remove the deleted deployment
       if (dep.isNew) {
-        const idx = newChanges.findIndex(c => c.tempId === dep.id && c.action === 'add')
-        if (idx >= 0) newChanges.splice(idx, 1)
+        const addIdx = newChanges.findIndex(c => c.tempId === dep.id && c.action === 'add')
+        if (addIdx >= 0) newChanges.splice(addIdx, 1)
       } else {
-        newChanges.push({
-          action: 'delete',
-          id: dep.id,
-        })
+        newChanges.push({ action: 'delete', id: dep.id })
       }
+
+      // Adjust adjacent deployments
+      if (prev && next) {
+        // Middle: previous absorbs the deleted period
+        applyUpdateChange(newChanges, prev, { end: getDeploymentDateString(dep.end) })
+      } else if (!prev && next) {
+        // First deployment (null start): next becomes the new first
+        applyUpdateChange(newChanges, next, { start: null })
+      } else if (prev && !next) {
+        // Last (active) deployment: previous becomes the new active
+        applyUpdateChange(newChanges, prev, { end: null })
+      }
+      // If only deployment: no adjacent adjustments, device becomes undeployed
 
       setPendingChanges(newChanges)
       setDeletingDeployment(null)
     },
-    [pendingChanges]
+    [pendingChanges, workingDeployments]
   )
 
   const handleSave = useCallback(async () => {
@@ -363,15 +314,10 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
 
     setSaveError(null)
     const changes = pendingChanges.map(c => {
-      if (c.action === 'add') {
-        return { action: 'add', siteId: c.siteId, start: c.start, end: c.end || null }
-      }
-      if (c.action === 'update') {
-        return { action: 'update', id: c.id, siteId: c.siteId, start: c.start, end: c.end || null }
-      }
-      if (c.action === 'delete') {
-        return { action: 'delete', id: c.id }
-      }
+      if (c.action === 'add') return { action: 'add', siteId: c.siteId, start: c.start, end: c.end ?? null }
+      if (c.action === 'update')
+        return { action: 'update', id: c.id, siteId: c.siteId, start: c.start, end: c.end ?? null }
+      if (c.action === 'delete') return { action: 'delete', id: c.id }
       return c
     })
 
@@ -407,7 +353,41 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
   ]
 
   const hasPreviewMoves = preview?.moves?.some(m => m.resultCount > 0)
-  const hasPreviewGaps = preview?.gaps?.some(g => g.resultCount > 0)
+
+  // Compute the delete confirmation message based on position in the timeline
+  const deleteConfirmMessage = useMemo(() => {
+    if (!deletingDeployment) return null
+    const sorted = sortChronological(workingDeployments)
+    const idx = sorted.findIndex(d => d.id === deletingDeployment.id)
+    const prev = idx > 0 ? sorted[idx - 1] : null
+    const next = idx < sorted.length - 1 ? sorted[idx + 1] : null
+
+    if (!prev && !next) {
+      return formatMessage(messages.deploymentDeleteOnly)
+    }
+    if (!prev && next) {
+      return formatMessage(messages.deploymentDeleteFirst, {
+        nextSite: next.siteName || `Site #${next.siteId}`,
+      })
+    }
+    if (prev && !next) {
+      return formatMessage(messages.deploymentDeleteLast, {
+        prevSite: prev.siteName || `Site #${prev.siteId}`,
+      })
+    }
+    return formatMessage(messages.deploymentDeleteMiddle, {
+      prevSite: prev.siteName || `Site #${prev.siteId}`,
+      date: getDeploymentDateString(deletingDeployment.end) || '—',
+    })
+  }, [deletingDeployment, workingDeployments, formatMessage])
+
+  // Find the previous deployment for the edit dialog warning
+  const editingPreviousDeployment = useMemo(() => {
+    if (!editingDeployment) return null
+    const sorted = sortChronological(workingDeployments)
+    const idx = sorted.findIndex(d => d.id === editingDeployment.id)
+    return idx > 0 ? sorted[idx - 1] : null
+  }, [editingDeployment, workingDeployments])
 
   return (
     <section className={styles.Section}>
@@ -443,6 +423,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
             {saveError || (validationErrorKey ? formatMessage(messages[validationErrorKey]) : null)}
           </Alert>
         )}
+
         {isLoading ? (
           <Box display="flex" justifyContent="center" padding={2}>
             <CircularProgress />
@@ -460,37 +441,10 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
               <Table className={styles.ResultDataTable} size="small">
                 <DataTableHead columns={columns} />
                 <TableBody>
-                  {displayRows.map((row, index) => {
-                    if (row.type === 'gap') {
-                      return (
-                        <TableRow key={row.gapId} sx={{ bgcolor: '#f5f5f5' }}>
-                          <TableCell sx={{ color: '#888', fontStyle: 'italic' }}>
-                            {formatMessage(messages.undeployedPeriod)}
-                          </TableCell>
-                          <TableCell sx={{ color: '#888', fontStyle: 'italic' }}>{row.start}</TableCell>
-                          <TableCell sx={{ color: '#888', fontStyle: 'italic' }}>{row.end}</TableCell>
-                          {!disabled && (
-                            <TableCell align="right">
-                              <PermissionChecker permissions={['device:edit']}>
-                                <AspectVertMenu
-                                  actions={[
-                                    {
-                                      icon: 'FaPlus',
-                                      text: formatMessage(messages.addDeployment),
-                                      action: () => setGapToFill({ start: row.start, end: row.end }),
-                                    },
-                                  ]}
-                                />
-                              </PermissionChecker>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      )
-                    }
-
-                    const dep = row
+                  {workingDeployments.map((dep, index) => {
                     const isPending = dep.status === 'pending'
                     const isActive = !dep.end
+                    const isFirst = dep.start === null
 
                     return (
                       <TableRow
@@ -501,24 +455,19 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
                         }}
                       >
                         <TableCell>{dep.siteName || '—'}</TableCell>
-                        <TableCell>{getDeploymentDateString(dep.start)}</TableCell>
                         <TableCell>
-                          {dep.end ? getDeploymentDateString(dep.end) : formatMessage(messages.deploymentActive)}
+                          {isFirst
+                            ? formatMessage(messages.deploymentFromBeginning)
+                            : getDeploymentDateString(dep.start)}
+                        </TableCell>
+                        <TableCell>
+                          {isActive ? formatMessage(messages.deploymentActive) : getDeploymentDateString(dep.end)}
                         </TableCell>
                         {!disabled && (
                           <TableCell align="right">
                             <PermissionChecker permissions={['device:edit']}>
                               <AspectVertMenu
                                 actions={[
-                                  ...(isActive
-                                    ? [
-                                        {
-                                          icon: 'FaCalendarCheck',
-                                          text: formatMessage(messages.finishDeployment),
-                                          action: () => setFinishDialogOpen(true),
-                                        },
-                                      ]
-                                    : []),
                                   {
                                     icon: 'FaEdit',
                                     text: formatMessage(messages.editDeployment),
@@ -543,8 +492,8 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
           </>
         )}
 
-        {/* Preview warnings for result moves and gaps with results */}
-        {hasPendingChanges && (hasPreviewMoves || hasPreviewGaps) && (
+        {/* Preview warnings for result site changes */}
+        {hasPendingChanges && hasPreviewMoves && (
           <Box padding={2}>
             {preview?.moves
               ?.filter(m => m.resultCount > 0)
@@ -553,17 +502,6 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
                   {formatMessage(messages.resultsWillBeMoved, {
                     count: m.resultCount,
                     siteName: m.siteName || `Site #${m.siteId}`,
-                  })}
-                </Alert>
-              ))}
-            {preview?.gaps
-              ?.filter(g => g.resultCount > 0)
-              .map((g, i) => (
-                <Alert key={`gap-${i}`} severity="warning" sx={{ mb: 1 }}>
-                  {formatMessage(messages.resultsWillLoseSite, {
-                    count: g.resultCount,
-                    start: g.start || '—',
-                    end: g.end || '—',
                   })}
                 </Alert>
               ))}
@@ -577,7 +515,6 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
         )}
       </Card>
 
-      {/* Dialogs */}
       <AddDeploymentDialog
         open={addDialogOpen}
         onClose={() => setAddDialogOpen(false)}
@@ -586,21 +523,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
           if (applied) setAddDialogOpen(false)
           return applied
         }}
-        excludeSiteId={activeDeployment?.siteId}
-      />
-
-      <FinishDeploymentDialog
-        open={finishDialogOpen}
-        onClose={() => setFinishDialogOpen(false)}
-        onConfirm={handleFinishDeployment}
-        startDate={activeDeployment?.start}
-      />
-
-      <FillGapDeploymentDialog
-        open={!!gapToFill}
-        onClose={() => setGapToFill(null)}
-        onConfirm={handleAddDeploymentInGap}
-        gap={gapToFill}
+        activeDeployment={activeDeployment}
       />
 
       {editingDeployment && (
@@ -609,8 +532,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
           onClose={() => setEditingDeployment(null)}
           onConfirm={handleEditDeployment}
           deployment={editingDeployment}
-          hasOtherActiveDeployment={!!(activeDeployment && activeDeployment.id !== editingDeployment.id)}
-          otherDeployments={workingDeployments.filter(d => d.id !== editingDeployment.id)}
+          previousDeployment={editingPreviousDeployment}
         />
       )}
 
@@ -618,7 +540,7 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
       <Dialog open={!!deletingDeployment} onClose={() => setDeletingDeployment(null)}>
         <DialogTitle>{formatMessage(messages.deleteDeployment)}</DialogTitle>
         <DialogContent>
-          <DialogContentText>{formatMessage(messages.confirmDeleteDeployment)}</DialogContentText>
+          <DialogContentText>{deleteConfirmMessage}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <AspectButton onClick={() => setDeletingDeployment(null)}>{formatMessage(messages.cancel)}</AspectButton>

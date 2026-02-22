@@ -50,6 +50,7 @@ export const DeviceDetail = props => {
   )
 
   const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
+  const isDeviceNotFound = !isDeviceLoading && !device
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = () => queryClient.invalidateQueries([DEVICE_KEY, deviceId])
@@ -115,6 +116,10 @@ export const DeviceDetail = props => {
       <Box component="main" sx={{ flex: '1 1 auto' }}>
         {isLoading ? (
           <Loading centered level={2} />
+        ) : isDeviceNotFound ? (
+          <Box display="flex" justifyContent="center" alignItems="center" p={6}>
+            <span>Device not found.</span>
+          </Box>
         ) : (
           <Routes>
             <Route

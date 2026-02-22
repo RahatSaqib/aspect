@@ -469,6 +469,39 @@ const messages = {
       id: 'pages.DeviceDetailProfile.undeployedPeriod',
       defaultMessage: 'Undeployed',
     },
+    deploymentFromBeginning: {
+      id: 'pages.DeviceDetailProfile.deploymentFromBeginning',
+      defaultMessage: '—',
+    },
+    deploymentAddClosesActive: {
+      id: 'pages.DeviceDetailProfile.deploymentAddClosesActive',
+      defaultMessage: 'The current {site} deployment will end on {date}.',
+    },
+    deploymentEditAdjustsPrev: {
+      id: 'pages.DeviceDetailProfile.deploymentEditAdjustsPrev',
+      defaultMessage: 'The previous {site} deployment will end on {date}.',
+    },
+    deploymentDeleteMiddle: {
+      id: 'pages.DeviceDetailProfile.deploymentDeleteMiddle',
+      defaultMessage:
+        'Deleting this deployment will extend the {prevSite} deployment to cover the period up to {date}.',
+    },
+    deploymentDeleteFirst: {
+      id: 'pages.DeviceDetailProfile.deploymentDeleteFirst',
+      defaultMessage: 'The {nextSite} deployment will become the first (covering from the beginning).',
+    },
+    deploymentDeleteLast: {
+      id: 'pages.DeviceDetailProfile.deploymentDeleteLast',
+      defaultMessage: 'The {prevSite} deployment will become the active one.',
+    },
+    deploymentDeleteOnly: {
+      id: 'pages.DeviceDetailProfile.deploymentDeleteOnly',
+      defaultMessage: 'This will remove all deployments from this device.',
+    },
+    deploymentNotConsecutive: {
+      id: 'pages.DeviceDetailProfile.deploymentNotConsecutive',
+      defaultMessage: 'Deployments must form a continuous timeline with no gaps.',
+    },
   }),
 }
 

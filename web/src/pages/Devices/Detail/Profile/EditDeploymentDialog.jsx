@@ -4,12 +4,14 @@ import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import * as Yup from 'yup'
+import SiteSelect from '../../../../cleanComponents/SiteSelect/SiteSelect'
+import useSiteList from '../../../../hooks/site/useSiteList'
 import validationErrorMessages from '../../../../messages/validationErrorMessages'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 
-/** Deployment start/end are date-only in the DB; use as-is for inputs (no timezone conversion). */
+/** Deployment dates are date-only in the DB; show as stored without timezone conversion. */
 function getDeploymentDateForInput(value) {
   if (value == null) return ''
   if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
@@ -17,46 +19,45 @@ function getDeploymentDateForInput(value) {
   return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10)
 }
 
-const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherActiveDeployment, otherDeployments }) => {
+function addDaysBefore(dateStr) {
+  if (!dateStr) return null
+  const d = new Date(dateStr)
+  d.setDate(d.getDate() - 1)
+  return d.toISOString().slice(0, 10)
+}
+
+/**
+ * Dialog for editing a deployment. In the continuous timeline model:
+ * - The user can change the site (always).
+ * - The user can change the start date, EXCEPT for the first deployment (which has null start).
+ * - Changing the start date automatically adjusts the previous deployment's end to (newStart - 1).
+ */
+const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, previousDeployment }) => {
   const { formatMessage } = useIntl()
+  const { data: sites = [] } = useSiteList()
+
+  const isFirstDeployment = !deployment?.start
+  const currentStartStr = getDeploymentDateForInput(deployment?.start)
+
+  // Min start: day after previous deployment's start (to ensure previous has ≥1 day duration)
+  const minStart = previousDeployment?.start ? (() => {
+    const d = new Date(getDeploymentDateForInput(previousDeployment.start))
+    d.setDate(d.getDate() + 1)
+    return d.toISOString().slice(0, 10)
+  })() : null
 
   const validationSchema = Yup.object({
-    start: Yup.date().required(formatMessage(validationErrorMessages.required)),
-    end: Yup.date()
-      .nullable()
-      .notRequired()
-      .when('start', (start, schema) =>
-        start ? schema.min(start, formatMessage(messages.editDeploymentEndNotBeforeStart)) : schema
-      ),
+    siteId: Yup.number().nullable().required(formatMessage(validationErrorMessages.required)),
+    start: isFirstDeployment
+      ? Yup.string().nullable()
+      : Yup.date()
+          .required(formatMessage(validationErrorMessages.required))
+          .min(minStart || '1900-01-01', formatMessage(messages.editDeploymentEndNotBeforeStart)),
   })
 
   const initialValues = {
-    start: deployment ? getDeploymentDateForInput(deployment.start) : '',
-    end: deployment?.end ? getDeploymentDateForInput(deployment.end) : '',
-  }
-
-  const checkOverlap = (start, end) => {
-    if (!start || !otherDeployments) return false
-    const s = new Date(start)
-    const e = end ? new Date(end) : null
-
-    return otherDeployments.some(d => {
-      const ds = new Date(d.start)
-      const de = d.end ? new Date(d.end) : null
-
-      // Two ranges overlap if one starts before the other ends
-      const startsBefore = e ? s <= (de || new Date('9999-12-31')) : true
-      const endsAfter = (de || new Date('9999-12-31')) >= s
-      const otherStartsBefore = ds <= (e || new Date('9999-12-31'))
-
-      return (
-        startsBefore &&
-        endsAfter &&
-        otherStartsBefore &&
-        ds <= (e || new Date('9999-12-31')) &&
-        s <= (de || new Date('9999-12-31'))
-      )
-    })
+    siteId: deployment?.siteId ?? '',
+    start: currentStartStr,
   }
 
   return (
@@ -71,20 +72,32 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherAc
         validationSchema={validationSchema}
         enableReinitialize
         onSubmit={(values, { resetForm }) => {
+          const site = sites.find(s => s.id === values.siteId)
           onConfirm({
-            start: values.start,
-            end: values.end || null,
+            siteId: values.siteId,
+            siteName: site?.name ?? null,
+            start: isFirstDeployment ? null : values.start,
           })
           resetForm()
         }}
       >
-        {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid, dirty }) => {
-          const endIsEmpty = !values.end
-          const activeConflict = endIsEmpty && hasOtherActiveDeployment
-          const hasOverlap = checkOverlap(values.start, values.end)
+        {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid }) => {
+          const startChanged = !isFirstDeployment && values.start && values.start !== currentStartStr
+          const newPrevEndDate = startChanged ? addDaysBefore(values.start) : null
 
           return (
             <Form onSubmit={handleSubmit}>
+              <SiteSelect
+                id="siteId"
+                name="siteId"
+                label={formatMessage(messages.deploymentSite)}
+                value={values.siteId || ''}
+                onChange={e => handleChange({ target: { name: 'siteId', value: e.target.value } })}
+                onBlur={handleBlur}
+                error={touched.siteId && !!errors.siteId}
+                helperText={touched.siteId && errors.siteId}
+                required
+              />
               <TextField
                 label={formatMessage(messages.deploymentStartDate)}
                 name="start"
@@ -92,45 +105,29 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, hasOtherAc
                 value={values.start}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                required
+                disabled={isFirstDeployment}
                 fullWidth
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
+                inputProps={minStart ? { min: minStart } : undefined}
                 error={touched.start && !!errors.start}
-                helperText={touched.start && errors.start}
+                helperText={
+                  isFirstDeployment
+                    ? formatMessage(messages.deploymentFromBeginning)
+                    : touched.start && errors.start
+                }
               />
-              <TextField
-                label={formatMessage(messages.deploymentEndDate)}
-                name="end"
-                type="date"
-                value={values.end}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{ shrink: true }}
-                inputProps={values.start ? { min: values.start } : undefined}
-                error={touched.end && !!errors.end}
-                helperText={touched.end && errors.end}
-              />
-              {activeConflict && (
-                <Alert severity="error" sx={{ mt: 1 }}>
-                  {formatMessage(messages.editDeploymentActiveWarning)}
-                </Alert>
-              )}
-              {hasOverlap && !activeConflict && (
-                <Alert severity="error" sx={{ mt: 1 }}>
-                  {formatMessage(messages.deploymentOverlap)}
+              {startChanged && previousDeployment && newPrevEndDate && (
+                <Alert severity="info" sx={{ mt: 1 }}>
+                  {formatMessage(messages.deploymentEditAdjustsPrev, {
+                    site: previousDeployment.siteName || `Site #${previousDeployment.siteId}`,
+                    date: newPrevEndDate,
+                  })}
                 </Alert>
               )}
               <DialogActions>
                 <AspectButton onClick={onClose}>{formatMessage(messages.cancel)}</AspectButton>
-                <AspectButton
-                  type="submit"
-                  color="primary"
-                  variant="contained"
-                  disabled={!isValid || !dirty || activeConflict || hasOverlap}
-                >
+                <AspectButton type="submit" color="primary" variant="contained" disabled={!isValid}>
                   {formatMessage(messages.confirm)}
                 </AspectButton>
               </DialogActions>
@@ -147,14 +144,12 @@ EditDeploymentDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   deployment: PropTypes.object,
-  hasOtherActiveDeployment: PropTypes.bool,
-  otherDeployments: PropTypes.array,
+  previousDeployment: PropTypes.object,
 }
 
 EditDeploymentDialog.defaultProps = {
   deployment: null,
-  hasOtherActiveDeployment: false,
-  otherDeployments: [],
+  previousDeployment: null,
 }
 
 export default EditDeploymentDialog

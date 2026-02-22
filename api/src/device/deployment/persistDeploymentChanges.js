@@ -1,11 +1,11 @@
 const Boom = require('@hapi/boom')
-const { addDays, subDays, format, parseISO } = require('date-fns')
+const { addDays, format, parseISO } = require('date-fns')
 const { transact } = require('../../db')
 const { getUserFromCredentials } = require('../../auth/constraints')
 const { recalculateDeviceFactTables } = require('../common/logic')
 const { parseDateOrDefault } = require('../../shared/date')
 
-/** Persist date-only as sent; no timezone conversion (deployment start/end are calendar dates). */
+/** Returns date as YYYY-MM-DD string without timezone conversion. Null-safe. */
 function toDateOnlyStr(val) {
   if (val == null) return null
   if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}/.test(val)) return val.slice(0, 10)
@@ -14,7 +14,7 @@ function toDateOnlyStr(val) {
 }
 
 function normalizeDeploymentDates(change) {
-  const start = toDateOnlyStr(change.start)
+  const start = change.start != null ? toDateOnlyStr(change.start) : null
   const end = change.end != null ? toDateOnlyStr(change.end) : null
   if (start && end && end < start) {
     throw Boom.conflict('Deployment end date cannot be before start date')
@@ -22,6 +22,7 @@ function normalizeDeploymentDates(change) {
   return { start, end }
 }
 
+/** Returns a Knex raw expression for the calendar date of endedOn in the user's timezone. */
 function resultEndedOnDateInTZ(trx, timezoneIANA) {
   const tz = timezoneIANA || 'Etc/UTC'
   return trx.raw('DATE(CONVERT_TZ(endedOn, "+00:00", ?))', [tz])
@@ -47,7 +48,7 @@ async function persistDeploymentChanges(request) {
       .map(change => trx('Deployment').where('id', change.id).where('deviceId', deviceId).del())
     await Promise.all(deletePromises)
 
-    // Apply updates (persist start/end as date only, as sent by client — no timezone conversion)
+    // Apply updates
     const updatePromises = changes
       .filter(c => c.action === 'update')
       .map(change => {
@@ -80,82 +81,73 @@ async function persistDeploymentChanges(request) {
       })
     await Promise.all(insertPromises)
 
-    // Validate no overlaps in resulting deployment set (compare date-only values as stored, no timezone)
+    // Load resulting deployments in chronological order (null start = oldest, comes first)
     const resultingDeployments = await trx('Deployment')
       .where('deviceId', deviceId)
-      .orderBy('start', 'asc')
+      .orderByRaw('start IS NULL DESC, start ASC')
       .select('id', 'siteId', 'start', 'end')
 
+    // If device becomes fully undeployed, clear all result site assignments
+    if (resultingDeployments.length === 0) {
+      await trx('Result').where('deviceId', deviceId).update({ siteId: null })
+      await trx('Device').where('id', deviceId).update({ siteId: null })
+      return
+    }
+
+    // Enforce continuous timeline invariants
+    const nullStartCount = resultingDeployments.filter(d => d.start === null).length
+    if (nullStartCount !== 1) {
+      throw Boom.conflict('Exactly one deployment must have no start date (the first/oldest one)')
+    }
+    const nullEndCount = resultingDeployments.filter(d => d.end === null).length
+    if (nullEndCount !== 1) {
+      throw Boom.conflict('Exactly one deployment must be active (no end date)')
+    }
+    if (resultingDeployments[0].start !== null) {
+      throw Boom.conflict('The oldest deployment must have no start date')
+    }
+    if (resultingDeployments[resultingDeployments.length - 1].end !== null) {
+      throw Boom.conflict('The newest deployment must be active (no end date)')
+    }
+
+    // All adjacent pairs must be consecutive (no gaps, no overlaps)
     for (let i = 0; i < resultingDeployments.length - 1; i++) {
       const current = resultingDeployments[i]
       const next = resultingDeployments[i + 1]
-
       if (!current.end) {
-        throw Boom.conflict('An open deployment must be the last one in the timeline')
+        throw Boom.conflict('Only the last deployment may be active (have no end date)')
       }
-
-      const currentEndDateStr = toDateOnlyStr(current.end)
-      const nextStartDateStr = toDateOnlyStr(next.start)
-      if (currentEndDateStr >= nextStartDateStr) {
-        throw Boom.conflict('Deployment periods must not overlap')
+      const currentEndDate = typeof current.end === 'string' ? parseISO(current.end) : new Date(current.end)
+      const expectedNextStart = format(addDays(currentEndDate, 1), 'yyyy-MM-dd')
+      if (toDateOnlyStr(next.start) !== expectedNextStart) {
+        throw Boom.conflict('Deployments must form a continuous timeline with no gaps or overlaps')
       }
     }
 
-    // Update Result.siteId for each deployment span (compare result date in user timezone from auth to deployment date)
+    // Update Result.siteId for each deployment span (result date in user timezone)
     const endedOnDateExpr = resultEndedOnDateInTZ(trx, timezoneIANA)
     const resultUpdatePromises = resultingDeployments.map(dep => {
-      const query = trx('Result').where('deviceId', deviceId).where(endedOnDateExpr, '>=', dep.start)
-      if (dep.end) {
+      const query = trx('Result').where('deviceId', deviceId)
+      // First deployment (null start) covers all results from the beginning
+      if (dep.start !== null) {
+        query.where(endedOnDateExpr, '>=', dep.start)
+      }
+      // Last deployment (null end) covers all results to the present
+      if (dep.end !== null) {
         query.where(endedOnDateExpr, '<=', dep.end)
       }
       return query.update({ siteId: dep.siteId })
     })
     await Promise.all(resultUpdatePromises)
 
-    // Set Result.siteId = NULL for results in gaps (compare result date in user timezone from auth)
-    if (resultingDeployments.length > 0) {
-      const first = resultingDeployments[0]
-      await trx('Result').where('deviceId', deviceId).where(endedOnDateExpr, '<', first.start).update({ siteId: null })
-    }
-
-    // Gaps between deployments (date-based)
-    for (let i = 0; i < resultingDeployments.length - 1; i++) {
-      const current = resultingDeployments[i]
-      const next = resultingDeployments[i + 1]
-
-      if (current.end) {
-        const currentEndDate = typeof current.end === 'string' ? parseISO(current.end) : new Date(current.end)
-        const nextStartDate = typeof next.start === 'string' ? parseISO(next.start) : new Date(next.start)
-        const gapStartStr = format(addDays(currentEndDate, 1), 'yyyy-MM-dd')
-        const gapEndStr = format(subDays(nextStartDate, 1), 'yyyy-MM-dd')
-        if (gapStartStr <= gapEndStr) {
-          // eslint-disable-next-line no-await-in-loop -- sequential updates per gap
-          await trx('Result')
-            .where('deviceId', deviceId)
-            .where(endedOnDateExpr, '>=', gapStartStr)
-            .where(endedOnDateExpr, '<=', gapEndStr)
-            .update({ siteId: null })
-        }
-      }
-    }
-
-    if (resultingDeployments.length > 0) {
-      const last = resultingDeployments[resultingDeployments.length - 1]
-      if (last.end) {
-        await trx('Result').where('deviceId', deviceId).where(endedOnDateExpr, '>', last.end).update({ siteId: null })
-      }
-    }
-
     // Sync Device.siteId with the active deployment
-    const activeDeployment = resultingDeployments.find(d => !d.end)
+    const activeDeployment = resultingDeployments.find(d => d.end === null)
     await trx('Device')
       .where('id', deviceId)
-      .update({ siteId: activeDeployment ? activeDeployment.siteId : null })
+      .update({ siteId: activeDeployment?.siteId ?? null })
   })
 
-  // Trigger fact table recalculation after commit
   await recalculateDeviceFactTables(messageContext, [parseInt(deviceId, 10)])
-
   return { ok: true }
 }
 
