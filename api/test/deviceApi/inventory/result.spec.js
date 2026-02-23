@@ -85,6 +85,9 @@ describe('admin result updates', () => {
               .post(devicePath)
               .set('Authorization', deviceAuth)
               .send({
+                type: {
+                  id: 'CepheidGeneXpert',
+                },
                 result: {
                   startedOn: now,
                   data: { a: 'b' },
@@ -168,6 +171,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -224,6 +230,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -276,6 +285,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -374,6 +386,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -473,6 +488,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { b: 'c' },
@@ -568,6 +586,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { b: 'c' },
@@ -609,6 +630,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: new Date().toISOString(),
             data: { b: 'd' },
@@ -707,6 +731,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             id: fakeResultId,
             startedOn: past,
@@ -764,6 +791,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             id: fakeResultId,
             startedOn: past,
@@ -813,6 +843,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             id: fakeResultId,
             startedOn: past,
@@ -874,6 +907,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -932,6 +968,9 @@ describe('admin result updates', () => {
               .post(devicePath)
               .set('Authorization', deviceAuth)
               .send({
+                type: {
+                  id: 'CepheidGeneXpert',
+                },
                 result: {
                   startedOn: now,
                   data: { a: 'b' },
@@ -1011,6 +1050,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -1063,6 +1105,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -1115,6 +1160,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -1214,6 +1262,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },
@@ -1311,6 +1362,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { b: 'c' },
@@ -1409,6 +1463,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             id: fakeResultId,
             startedOn: past,
@@ -1466,6 +1523,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             id: fakeResultId,
             startedOn: past,
@@ -1517,6 +1577,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             id: fakeResultId,
             startedOn: past,
@@ -1617,6 +1680,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { b: 'c' },
@@ -1675,6 +1741,9 @@ describe('admin result updates', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
           result: {
             startedOn: now,
             data: { a: 'b' },

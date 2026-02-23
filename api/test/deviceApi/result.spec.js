@@ -94,10 +94,16 @@ describe('Device Result API routes', () => {
           instrument: { serial: '1234567' },
           sample: { id: '29347293' },
         }
-        const postNewResultResponse1 = await server.post(devicePath).set('Authorization', deviceAuth).send({
-          name: deviceChangedName,
-          result: resultPayload,
-        })
+        const postNewResultResponse1 = await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            name: deviceChangedName,
+            result: resultPayload,
+          })
         assert.equal(postNewResultResponse1.status, 200)
         assert.typeOf(postNewResultResponse1.body, 'Object')
 
@@ -168,6 +174,9 @@ describe('Device Result API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             result: {
               data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
               type: { id: 'Study' },
@@ -513,10 +522,16 @@ describe('Device Result API routes', () => {
             },
           },
         }
-        const postNewResultResponse = await server.post(devicePath).set('Authorization', deviceAuth).send({
-          name: 'Device Name',
-          result: resultPayload,
-        })
+        const postNewResultResponse = await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            name: 'Device Name',
+            result: resultPayload,
+          })
         assert.equal(postNewResultResponse.status, 200)
         assert.typeOf(postNewResultResponse.body, 'Object')
 
@@ -570,10 +585,16 @@ describe('Device Result API routes', () => {
           hoursStart: expectedSampleOriginSite.hoursStart,
           hoursEnd: expectedSampleOriginSite.hoursEnd,
         }
-        await server.post(devicePath).set('Authorization', deviceAuth).send({
-          name: 'Device Name',
-          result: resultPayload,
-        })
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            name: 'Device Name',
+            result: resultPayload,
+          })
         assert.equal(postNewResultResponse.status, 200)
         assert.typeOf(postNewResultResponse.body, 'Object')
 
@@ -607,7 +628,12 @@ describe('Device Result API routes', () => {
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ result: resultPayload })
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -636,7 +662,12 @@ describe('Device Result API routes', () => {
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ result: resultErrorPayload })
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultErrorPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -665,7 +696,12 @@ describe('Device Result API routes', () => {
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ result: resultInvalidErrorPayload })
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultInvalidErrorPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -692,7 +728,12 @@ describe('Device Result API routes', () => {
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ result: resultDetectedNotDetectedPayload })
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultDetectedNotDetectedPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -735,7 +776,12 @@ describe('Device Result API routes', () => {
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ result: resultPayload })
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -774,7 +820,12 @@ describe('Device Result API routes', () => {
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ result: resultPayload })
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -805,6 +856,9 @@ describe('Device Result API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             result: {
               id: resultExternalIds[0],
               startedOn: now,
@@ -844,6 +898,9 @@ describe('Device Result API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             result: {
               id: resultExternalIds[0],
               startedOn: now.toISOString(),
@@ -868,6 +925,9 @@ describe('Device Result API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             result: {
               id: resultExternalIds[1],
               startedOn: now.toISOString(),
@@ -910,6 +970,9 @@ describe('Device Result API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             result: {
               id: resultExternalIds[1],
               data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
@@ -1110,6 +1173,9 @@ describe('Device Result API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             configuration: { data: { a: 'b' } },
             operation: { data: { a: 'c' } },
             result: {
@@ -1161,6 +1227,9 @@ describe('Device Result API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             configuration: { data: { a: 'c' } },
             operation: { data: { a: 'd' } },
             result: {
@@ -1228,6 +1297,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', `Bearer ${deviceWithNoDefaultReportableSiteId.token}`)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               name: 'Device Name',
               result: resultPayload,
             })
@@ -1277,6 +1349,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', `Bearer ${deviceWithNoDefaultReportableSiteId.token}`)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               name: 'Device Name',
               result: resultPayload,
             })
@@ -1327,6 +1402,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', `Bearer ${deviceWithDefaultReportableSiteId.token}`)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               name: 'Device Name',
               result: resultPayload,
             })
@@ -1366,6 +1444,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', `Bearer ${deviceWithDefaultReportableSiteId.token}`)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               name: 'Device Name',
               result: resultPayload,
             })
@@ -1387,10 +1468,16 @@ describe('Device Result API routes', () => {
       const getResult = async (knex, resultId) => knex('Result as r').where({ id: resultId }).first()
 
       const postResult = async resultPayload =>
-        server.post(devicePath).set('Authorization', context.deviceAuth).send({
-          name: 'Device Name',
-          result: resultPayload,
-        })
+        server
+          .post(devicePath)
+          .set('Authorization', context.deviceAuth)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            name: 'Device Name',
+            result: resultPayload,
+          })
 
       it('should trigger event resultReadyForNotification', () =>
         runTest(async knex => {
@@ -1508,6 +1595,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', context.deviceAuth)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               result: {
                 id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
                 data: { a: 'b' },
@@ -1541,6 +1631,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', context.deviceAuth)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               result: {
                 id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
                 data: { a: 'b' },
