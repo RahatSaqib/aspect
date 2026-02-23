@@ -1,0 +1,201 @@
+import React, { useMemo } from 'react'
+import { Box, Tooltip, Typography } from '@mui/material'
+import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
+
+/** Share of total timeline width used for the left fade on the first segment (estimated start). Fixed so it looks the same regardless of segment duration. */
+const LEFT_FADE_PCT_OF_TIMELINE = 3
+
+/** Min distance (as share of timeline width) between two boundary labels before we displace one down to avoid overlap. */
+const MIN_LABEL_DISTANCE_PCT = 0.1
+
+/** Format YYYY-MM-DD (or date string) as localized year and month for display (uses locale for translations). */
+function toYearMonth(dateStr, locale) {
+  if (!dateStr || typeof dateStr !== 'string') return dateStr
+  const m = dateStr.match(/^(\d{4})-(\d{2})/)
+  if (!m) return dateStr
+  const year = parseInt(m[1], 10)
+  const month = parseInt(m[2], 10) - 1
+  const date = new Date(year, month, 1)
+  try {
+    return new Intl.DateTimeFormat(locale, { month: 'short', year: 'numeric' }).format(date)
+  } catch {
+    return dateStr
+  }
+}
+
+const DeploymentTimeline = ({ segments, boundaryPcts, boundaryLabels, palette, ariaLabel, messageActive }) => {
+  const { formatMessage } = useIntl()
+  const firstSegmentPct = segments.length > 0 ? segments[0].widthPct : 0
+  const fadePctInsideFirstSegment = firstSegmentPct > 0 ? (LEFT_FADE_PCT_OF_TIMELINE / firstSegmentPct) * 100 : 0
+
+  const shiftLabelDown = useMemo(() => {
+    const out = boundaryPcts.map(() => false)
+    for (let i = 1; i < boundaryPcts.length; i++) {
+      if (boundaryPcts[i] - boundaryPcts[i - 1] < MIN_LABEL_DISTANCE_PCT) {
+        out[i] = true
+      }
+    }
+    return out
+  }, [boundaryPcts])
+
+  return (
+    <>
+      <Typography variant="caption" sx={{ display: 'block', mb: 0.5, color: 'text.secondary' }}>
+        {ariaLabel}
+      </Typography>
+      {/* Site names above the bar when segment is wide enough */}
+      <Box display="flex" sx={{ height: 20, mb: 0.25 }}>
+        {segments.map(seg => {
+          const showSiteName = seg.widthPct >= 18
+          return (
+            <Box
+              key={seg.deployment.id}
+              sx={{
+                width: `${seg.widthPct}%`,
+                minWidth: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                px: 0.5,
+              }}
+            >
+              {showSiteName && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: '0.7rem',
+                    fontWeight: 500,
+                    color: 'text.secondary',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '100%',
+                  }}
+                >
+                  {seg.deployment.siteName || '—'}
+                </Typography>
+              )}
+            </Box>
+          )
+        })}
+      </Box>
+      {/* Colored bar with tooltips; first segment has left fade for estimated start */}
+      <Box
+        display="flex"
+        role="img"
+        aria-label={ariaLabel}
+        sx={{
+          height: 28,
+          borderRadius: 1,
+          overflow: 'hidden',
+          bgcolor: 'action.hover',
+        }}
+      >
+        {segments.map(seg => {
+          const siteName = seg.deployment.siteName || '—'
+          const endLabel = seg.isActive ? formatMessage(messageActive) : seg.endStr
+          const tooltipText = seg.isFirst ? `${siteName}: ${endLabel}` : `${siteName}: ${seg.startStr} – ${endLabel}`
+          const colorIndex = seg.colorIndex ?? 0
+          const color = palette[colorIndex % palette.length]
+          const isFirstWithFade = seg.isFirst && firstSegmentPct > 0 && fadePctInsideFirstSegment < 100
+          const bg = isFirstWithFade
+            ? `linear-gradient(to right, transparent 0%, ${color} ${fadePctInsideFirstSegment}%, ${color} 100%)`
+            : color
+
+          return (
+            <Tooltip key={seg.deployment.id} title={tooltipText} placement="top">
+              <Box
+                sx={{
+                  width: `${seg.widthPct}%`,
+                  minWidth: 4,
+                  background: bg,
+                  transition: 'opacity 0.15s',
+                  '&:hover': { opacity: 0.9 },
+                }}
+                aria-label={tooltipText}
+              />
+            </Tooltip>
+          )
+        })}
+      </Box>
+      {/* Boundary markers: year-month in labels, full date in tooltips; displace close labels down */}
+      <Box sx={{ position: 'relative', height: 48, mt: 0.25 }}>
+        {boundaryPcts.map((pct, i) => {
+          const fullLabel = boundaryLabels[i]
+          const displayLabel =
+            fullLabel === '' ? '' : fullLabel === 'Active' ? formatMessage(messageActive) : toYearMonth(fullLabel)
+          const tooltipTitle = fullLabel === '' ? '' : fullLabel === 'Active' ? formatMessage(messageActive) : fullLabel
+          return (
+            <Box
+              key={i}
+              sx={{
+                position: 'absolute',
+                left: `${pct}%`,
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                minWidth: 0,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 2,
+                  height: 6,
+                  borderRadius: 1,
+                  bgcolor: 'grey.500',
+                  flexShrink: 0,
+                }}
+              />
+              {displayLabel !== '' && (
+                <Tooltip title={tooltipTitle} placement="top">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: '0.65rem',
+                      color: 'text.secondary',
+                      whiteSpace: 'nowrap',
+                      mt: 0.25,
+                      maxWidth: 80,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      ...(shiftLabelDown[i] ? { mt: 2.5 } : {}),
+                    }}
+                  >
+                    {displayLabel}
+                  </Typography>
+                </Tooltip>
+              )}
+            </Box>
+          )
+        })}
+      </Box>
+    </>
+  )
+}
+
+DeploymentTimeline.propTypes = {
+  segments: PropTypes.arrayOf(
+    PropTypes.shape({
+      deployment: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        siteName: PropTypes.string,
+      }).isRequired,
+      widthPct: PropTypes.number.isRequired,
+      startStr: PropTypes.string,
+      endStr: PropTypes.string.isRequired,
+      isFirst: PropTypes.bool.isRequired,
+      isActive: PropTypes.bool.isRequired,
+      colorIndex: PropTypes.number,
+    })
+  ).isRequired,
+  boundaryPcts: PropTypes.arrayOf(PropTypes.number).isRequired,
+  boundaryLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  palette: PropTypes.arrayOf(PropTypes.string).isRequired,
+  ariaLabel: PropTypes.string.isRequired,
+  messageActive: PropTypes.object.isRequired,
+}
+
+export default DeploymentTimeline

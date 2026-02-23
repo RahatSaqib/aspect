@@ -40,11 +40,13 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, previousDe
   const currentStartStr = getDeploymentDateForInput(deployment?.start)
 
   // Min start: day after previous deployment's start (to ensure previous has ≥1 day duration)
-  const minStart = previousDeployment?.start ? (() => {
-    const d = new Date(getDeploymentDateForInput(previousDeployment.start))
-    d.setDate(d.getDate() + 1)
-    return d.toISOString().slice(0, 10)
-  })() : null
+  const minStart = previousDeployment?.start
+    ? (() => {
+        const d = new Date(getDeploymentDateForInput(previousDeployment.start))
+        d.setDate(d.getDate() + 1)
+        return d.toISOString().slice(0, 10)
+      })()
+    : null
 
   const validationSchema = Yup.object({
     siteId: Yup.number().nullable().required(formatMessage(validationErrorMessages.required)),
@@ -98,25 +100,22 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, previousDe
                 helperText={touched.siteId && errors.siteId}
                 required
               />
-              <TextField
-                label={formatMessage(messages.deploymentStartDate)}
-                name="start"
-                type="date"
-                value={values.start}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isFirstDeployment}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{ shrink: true }}
-                inputProps={minStart ? { min: minStart } : undefined}
-                error={touched.start && !!errors.start}
-                helperText={
-                  isFirstDeployment
-                    ? formatMessage(messages.deploymentFromBeginning)
-                    : touched.start && errors.start
-                }
-              />
+              {!isFirstDeployment && (
+                <TextField
+                  label={formatMessage(messages.deploymentStartDate)}
+                  name="start"
+                  type="date"
+                  value={values.start}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={minStart ? { min: minStart } : undefined}
+                  error={touched.start && !!errors.start}
+                  helperText={touched.start && errors.start}
+                />
+              )}
               {startChanged && previousDeployment && newPrevEndDate && (
                 <Alert severity="info" sx={{ mt: 1 }}>
                   {formatMessage(messages.deploymentEditAdjustsPrev, {

@@ -333,6 +333,9 @@ const deviceDetailsResponseFields = Joi.object()
     instrumentModel: Joi.string().allow('', null).description('Cepheid instrument model'),
     softwareType: Joi.string().allow('', null).description('Cepheid software type'),
     isDaisyChained: Joi.bool().allow('', null).description('Determines if the instrument is daisy chained'),
+    firstResultEndedOn: Joi.date()
+      .allow(null)
+      .description('Date of the device’s first result (for deployment timeline)'),
   })
 module.exports = {
   listWorkloadRequestSchema,

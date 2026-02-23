@@ -473,6 +473,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deploymentFromBeginning',
       defaultMessage: '—',
     },
+    deploymentTimelineAriaLabel: {
+      id: 'pages.DeviceDetailProfile.deploymentTimelineAriaLabel',
+      defaultMessage: 'Deployment timeline by site',
+    },
     deploymentAddClosesActive: {
       id: 'pages.DeviceDetailProfile.deploymentAddClosesActive',
       defaultMessage: 'The current {site} deployment will end on {date}.',

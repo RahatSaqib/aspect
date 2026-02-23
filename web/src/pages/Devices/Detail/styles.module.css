@@ -134,6 +134,10 @@
   margin-left: 20px;
 }
 
+.deploymentTimeline {
+  /* Graphical deployment timeline above the table; hidden on mobile via conditional render */
+}
+
 .ResultDataTable,
 .DeviceOperationDataTable {
   width: 100%;

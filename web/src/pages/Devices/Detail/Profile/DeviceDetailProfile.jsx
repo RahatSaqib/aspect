@@ -543,7 +543,11 @@ const DeviceDetailProfile = ({
         />
       </section>
       <PermissionChecker permissions={['device:view']}>
-        <DeploymentsSection deviceId={device.get('id')} disabled={disabled} />
+        <DeploymentsSection
+          deviceId={device.get('id')}
+          firstResultDate={device.get('firstResultEndedOn')}
+          disabled={disabled}
+        />
       </PermissionChecker>
       {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
         <DeviceInstrumentsTable deviceId={device.get('id')} disabled={disabled} />

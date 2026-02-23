@@ -12,6 +12,8 @@ import {
   Table,
   TableBody,
   TableContainer,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
@@ -26,6 +28,7 @@ import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../.
 import DataTableHead from '../../../../oldComponents/shared/tableHead'
 import styles from '../styles.module.css'
 import AddDeploymentDialog from './AddDeploymentDialog'
+import DeploymentTimeline from './DeploymentTimeline'
 import EditDeploymentDialog from './EditDeploymentDialog'
 import messages from './messages'
 
@@ -113,8 +116,22 @@ function getDeploymentValidationError(deployments) {
   return null
 }
 
-const DeploymentsSection = ({ deviceId, disabled }) => {
+/** Palette for timeline segments and table row accent; matches theme variables. */
+const DEPLOYMENT_TIMELINE_PALETTE = [
+  'var(--aspect-color-mint, #439B45)',
+  'var(--aspect-color-mountain, #9874b2)',
+  'var(--aspect-color-ship-cove, #7d96bb)',
+  'var(--aspect-color-feijoa, #aed581)',
+  'var(--aspect-color-crayola, #FFC099)',
+  'var(--aspect-color-supernova, #f0bc2c)',
+  'var(--aspect-color-sushi, #7cb342)',
+  'var(--aspect-color-chill-blue-3, #67abb4)',
+]
+
+const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
   const { formatMessage } = useIntl()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const { data: deploymentsData, isLoading, refetch } = useDeployments(deviceId)
   const checkResults = useCheckDeploymentResults()
   const persistMutation = usePersistDeployments()
@@ -389,6 +406,89 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
     return idx > 0 ? sorted[idx - 1] : null
   }, [editingDeployment, workingDeployments])
 
+  // Chronological order (oldest first) for timeline and color index
+  const chronologicalDeployments = useMemo(() => sortChronological(workingDeployments), [workingDeployments])
+
+  // Same site => same color (by first appearance in chronological order)
+  const siteToColorIndex = useMemo(() => {
+    const map = {}
+    let nextIndex = 0
+    chronologicalDeployments.forEach(dep => {
+      const key = dep.siteId != null ? dep.siteId : `temp-${dep.id}`
+      if (map[key] === undefined) {
+        nextIndex += 1
+        map[key] = nextIndex
+      }
+    })
+    return map
+  }, [chronologicalDeployments])
+
+  // Timeline range and segment widths; null when timeline should be hidden
+  const timelineData = useMemo(() => {
+    if (chronologicalDeployments.length === 0) return null
+    const first = chronologicalDeployments[0]
+    const last = chronologicalDeployments[chronologicalDeployments.length - 1]
+    const todayStr = new Date().toISOString().slice(0, 10)
+
+    const rangeStart =
+      first.start === null
+        ? firstResultDate != null
+          ? typeof firstResultDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(firstResultDate)
+            ? firstResultDate.slice(0, 10)
+            : new Date(firstResultDate).toISOString().slice(0, 10)
+          : null
+        : getDeploymentDateString(first.start)
+
+    const rangeEnd = last.end === null ? todayStr : getDeploymentDateString(last.end)
+
+    if (rangeStart == null || rangeEnd == null) return null
+
+    const rangeStartMs = new Date(`${rangeStart}T12:00:00Z`).getTime()
+    const rangeEndMs = new Date(`${rangeEnd}T12:00:00Z`).getTime()
+    const totalMs = Math.max(1, rangeEndMs - rangeStartMs)
+
+    const segments = chronologicalDeployments.map((dep, i) => {
+      const segStartStr = i === 0 && dep.start === null ? rangeStart : getDeploymentDateString(dep.start)
+      const segEndStr =
+        i === chronologicalDeployments.length - 1 && !dep.end ? rangeEnd : getDeploymentDateString(dep.end)
+      const segStartMs = new Date(`${segStartStr}T12:00:00Z`).getTime()
+      const segEndMs = new Date(`${segEndStr}T12:00:00Z`).getTime()
+      const widthPct = Math.max(2, ((segEndMs - segStartMs) / totalMs) * 100)
+      const siteKey = dep.siteId != null ? dep.siteId : `temp-${dep.id}`
+      return {
+        deployment: dep,
+        widthPct,
+        startStr: segStartStr,
+        endStr: segEndStr,
+        isFirst: dep.start === null,
+        isActive: !dep.end,
+        colorIndex: siteToColorIndex[siteKey] ?? 0,
+      }
+    })
+
+    const totalPct = segments.reduce((s, seg) => s + seg.widthPct, 0)
+    const scale = totalPct > 0 ? 100 / totalPct : 1
+    segments.forEach(seg => {
+      seg.widthPct *= scale
+    })
+
+    const boundaryPcts = [0]
+    let cum = 0
+    segments.forEach(seg => {
+      cum += seg.widthPct
+      boundaryPcts.push(cum)
+    })
+    const boundaryLabels = [
+      first.start === null ? '' : rangeStart,
+      ...segments.map(seg => (seg.isActive ? 'Active' : seg.endStr)),
+    ]
+
+    return { rangeStart, rangeEnd, segments, boundaryPcts, boundaryLabels }
+  }, [chronologicalDeployments, firstResultDate, siteToColorIndex])
+
+  const showTimeline =
+    !isMobile && workingDeployments.length > 0 && timelineData != null && timelineData.segments.length > 0
+
   return (
     <section className={styles.Section}>
       <Card className={styles.Section}>
@@ -437,6 +537,18 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
                 {formatMessage(messages.deviceUndeployed)}
               </Alert>
             )}
+            {showTimeline && (
+              <Box className={styles.deploymentTimeline} sx={{ px: 2, pt: 1, pb: 2 }}>
+                <DeploymentTimeline
+                  segments={timelineData.segments}
+                  boundaryPcts={timelineData.boundaryPcts}
+                  boundaryLabels={timelineData.boundaryLabels}
+                  palette={DEPLOYMENT_TIMELINE_PALETTE}
+                  ariaLabel={formatMessage(messages.deploymentTimelineAriaLabel)}
+                  messageActive={messages.deploymentActive}
+                />
+              </Box>
+            )}
             <TableContainer>
               <Table className={styles.ResultDataTable} size="small">
                 <DataTableHead columns={columns} />
@@ -445,6 +557,12 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
                     const isPending = dep.status === 'pending'
                     const isActive = !dep.end
                     const isFirst = dep.start === null
+                    const siteKey = dep.siteId != null ? dep.siteId : `temp-${dep.id}`
+                    const colorIndex = siteToColorIndex[siteKey]
+                    const segmentColor =
+                      colorIndex !== undefined
+                        ? DEPLOYMENT_TIMELINE_PALETTE[colorIndex % DEPLOYMENT_TIMELINE_PALETTE.length]
+                        : undefined
 
                     return (
                       <TableRow
@@ -454,7 +572,18 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
                           color: isPending ? '#888' : 'inherit',
                         }}
                       >
-                        <TableCell>{dep.siteName || '—'}</TableCell>
+                        <TableCell
+                          sx={
+                            segmentColor
+                              ? {
+                                  borderLeft: '4px solid',
+                                  borderLeftColor: segmentColor,
+                                }
+                              : undefined
+                          }
+                        >
+                          {dep.siteName || '—'}
+                        </TableCell>
                         <TableCell>
                           {isFirst
                             ? formatMessage(messages.deploymentFromBeginning)
@@ -555,10 +684,12 @@ const DeploymentsSection = ({ deviceId, disabled }) => {
 
 DeploymentsSection.propTypes = {
   deviceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  firstResultDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
   disabled: PropTypes.bool,
 }
 
 DeploymentsSection.defaultProps = {
+  firstResultDate: null,
   disabled: false,
 }
 
