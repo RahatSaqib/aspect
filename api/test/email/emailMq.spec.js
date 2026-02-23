@@ -4,7 +4,6 @@ const { subDays } = require('date-fns')
 const excel = require('exceljs')
 const { Readable } = require('stream')
 const Promise = require('bluebird')
-const uuid = require('node-uuid')
 
 const { createEmailTestContext } = require('./utils')
 const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
@@ -156,8 +155,8 @@ describe('Sending Email via Message Queue', () => {
        */
       const [deviceOperationId] = await knex('DeviceOperation').insert({
         externalId: new Date().getTime(),
-        deviceId,
-        startedOn: eventStartedOn,
+        deviceApiKeyId: knex('Device').where('id', deviceId).first('deviceApiKeyId'),
+        occurredOn: eventStartedOn,
         data: JSON.stringify({
           type: 'gx-log',
           details: {
@@ -172,7 +171,6 @@ describe('Sending Email via Message Queue', () => {
           logLevel: 'SEVERE',
           logFileName: 'C:\\GeneXpert\\log\\XpertCal-2017.10.10_15.49.26.026-0.log',
         }),
-        guid: uuid.v4(),
       })
       context.deviceOperationsToDelete = [deviceOperationId]
 

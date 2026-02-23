@@ -236,17 +236,18 @@ async function hardwareErrors(knex, deviceId, daysPeriod, errorCodes) {
       .orWhere('previousOccurredOn', null)
   }
 
-  return knex('DeviceOperation')
-    .where('deviceId', deviceId)
-    .where('occurredOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
-    .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
-    .whereRaw(`data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`)
+  return knex('DeviceOperation as do')
+    .join('Device as d', 'do.deviceApiKeyId', 'd.deviceApiKeyId')
+    .where('d.id', deviceId)
+    .where('do.occurredOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+    .whereRaw(`IFNULL(do.data ->> '$.type', '') = 'gx-log'`)
+    .whereRaw(`do.data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`)
     .where(qb => {
       qb.whereRaw(
-        `data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(',')})`
-      ).orWhereRaw(`IFNULL(data ->> '$.logLevel', '') = 'INFO'`)
+        `do.data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(',')})`
+      ).orWhereRaw(`IFNULL(do.data ->> '$.logLevel', '') = 'INFO'`)
     })
-    .count('id as totalErrors')
+    .count('do.id as totalErrors')
 }
 module.exports = {
   analyzeErrors,

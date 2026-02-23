@@ -97,11 +97,11 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
        * select hardware errors from DeviceOperation table
        */
       knex('DeviceOperation as do')
-        .innerJoin('Device as d', 'do.deviceId', 'd.id')
+        .innerJoin('Device as d', 'do.deviceApiKeyId', 'd.deviceApiKeyId')
         .leftOuterJoin('TimeZone as tz', 'd.timezone', 'tz.id')
-        .where('do.deviceId', deviceId)
-        .where('do.startedOn', '>=', minDate)
-        .modify(filterUntilDate, maxDate, 'do.startedOn')
+        .where('d.id', deviceId)
+        .where('do.occurredOn', '>=', minDate)
+        .modify(filterUntilDate, maxDate, 'do.occurredOn')
         // JSON prop type='gx-log' marks entry received from GxConnect as GeneXpert log
         .whereRaw(`IFNULL(do.data ->> '$.type', '') = 'gx-log'`)
         /**
@@ -113,8 +113,8 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         .whereRaw(`IFNULL(do.data ->> '$.details.Errors[0].ErrorCode', 0) > 0`)
         .select(
           knex.raw('"System Log" as source'),
-          'do.startedOn as dateTime',
-          knex.raw(`convert_tz(do.startedOn, tz.timeZone, '+00:00') as actualDateTime`),
+          'do.occurredOn as dateTime',
+          knex.raw(`convert_tz(do.occurredOn, tz.timeZone, '+00:00') as actualDateTime`),
           knex.raw(`'-' as instrumentSerial`),
           knex.raw(`ifnull(d.configurationData ->> '$.systemName', '-') as gxSystemName`),
           knex.raw(`'-' as gxSoftwareVersion`),

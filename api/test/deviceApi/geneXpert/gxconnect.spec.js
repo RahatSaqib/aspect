@@ -816,7 +816,7 @@ describe('Device API routes for GxConnect Devices', () => {
       const res = await server
         .post('/device')
         .set('Authorization', deviceAuth)
-        .send({ getFormsDefinition: true, ...basicDevicePayload })
+        .send({ ...basicDevicePayload, getFormsDefinition: true, includeDeviceConfiguration: true })
         .catch(assert.fail)
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')

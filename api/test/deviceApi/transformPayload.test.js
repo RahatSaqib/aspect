@@ -1,7 +1,7 @@
 const chai = require('chai')
 
 const { assert } = chai
-const { normalizePhoneNumber } = require('../../../src/shared/phoneNormalization')
+const { normalizePhoneNumber } = require('../../src/shared/phoneNormalization')
 
 describe('This test is for normalizing the cellphone numbers for sending sms', () => {
   it('it should return a phone number depending on the country', async () => {

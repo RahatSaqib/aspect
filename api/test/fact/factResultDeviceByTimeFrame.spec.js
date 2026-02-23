@@ -17,7 +17,10 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const delay = 5000
 
 const deleteDevice = async deviceIds => {
-  await knex('DeviceLog').delete().whereIn('deviceId', deviceIds)
+  await knex('DeviceLog')
+    .join('Device', 'DeviceLog.deviceApiKeyId', 'Device.deviceApiKeyId')
+    .whereIn('Device.id', deviceIds)
+    .delete()
 
   await knex('FactDeviceModulesCount').delete().whereIn('deviceId', deviceIds)
 

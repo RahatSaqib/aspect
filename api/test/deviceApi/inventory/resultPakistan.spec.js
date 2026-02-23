@@ -125,7 +125,12 @@ describe('inventory strategy for Pakistan', () => {
     await server
       .post(devicePath)
       .set('Authorization', deviceAuth)
-      .send({ result: getResultPayload({ startedOn: now, expirationDate: resultDetails.expirationDate }) })
+      .send({
+        type: {
+          id: 'CepheidGeneXpert',
+        },
+        result: getResultPayload({ startedOn: now, expirationDate: resultDetails.expirationDate }),
+      })
       .expect(200)
     const inventoryAfter = await getInventoryItemsAtSite(knex, siteId)
     const stockAfter = _.find(
@@ -156,7 +161,12 @@ describe('inventory strategy for Pakistan', () => {
     const res = await server
       .post(devicePath)
       .set('Authorization', deviceAuth)
-      .send({ result: getResultPayload({ startedOn: now, expirationDate: resultDetails.expirationDate }) })
+      .send({
+        type: {
+          id: 'CepheidGeneXpert',
+        },
+        result: getResultPayload({ startedOn: now, expirationDate: resultDetails.expirationDate }),
+      })
       .expect(200)
     const { aspectResultId: resultId } = res.body
 
