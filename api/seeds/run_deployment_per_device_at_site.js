@@ -6,9 +6,7 @@
  * Used by zz_shared, development, and test seeds.
  */
 async function seedDeploymentPerDeviceAtSite(knex) {
-  const devicesWithSite = await knex('Device')
-    .whereNotNull('siteId')
-    .select('id as deviceId', 'siteId')
+  const devicesWithSite = await knex('Device').whereNotNull('siteId').select('id as deviceId', 'siteId')
 
   if (devicesWithSite.length === 0) return
 
