@@ -1,6 +1,5 @@
 const chai = require('chai')
 const chaiSubset = require('chai-subset')
-const Promise = require('bluebird')
 const _ = require('lodash')
 const { addDays, subDays, subMonths, startOfToday, startOfMonth, endOfMonth, setMilliseconds } = require('date-fns')
 const shared = require('../utils/sharedToken')
@@ -85,47 +84,51 @@ describe('Device routes', () => {
         [issueTypes.StockLevelUpdate.id]: 'Stock Level',
         [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
       }
-      issuesToDelete = await Promise.map([issueTypes.ModuleReplaced, issueTypes.ModuleDisabled], async issueTypeId => {
-        const issueId = await knex('Issue').insert({
-          issueTypeId,
-          issueStatusId: issueTypeId === issueTypes.ModuleDisabled ? issueStatus.Resolved : issueStatus.Active,
-          partnerId: device.partnerId,
-          geographyId: device.geographyId,
-          siteId: device.siteId,
-          deviceId: device.id,
-          createdOn: new Date(),
-          updatedOn: new Date(),
-        })
+      issuesToDelete = await Promise.all(
+        [issueTypes.ModuleReplaced, issueTypes.ModuleDisabled].map(async issueTypeId => {
+          const issueId = await knex('Issue').insert({
+            issueTypeId,
+            issueStatusId: issueTypeId === issueTypes.ModuleDisabled ? issueStatus.Resolved : issueStatus.Active,
+            partnerId: device.partnerId,
+            geographyId: device.geographyId,
+            siteId: device.siteId,
+            deviceId: device.id,
+            createdOn: new Date(),
+            updatedOn: new Date(),
+          })
 
-        const { id: alertTemplateId } = await knex('AlertTemplate').first()
-        const [alertMessageId] = await knex('AlertMessage').insert({
-          messageStatusId: messageStatusSentId,
-          message: luAlertMessages[issueTypeId],
-          createdOn: new Date(),
-          updatedOn: new Date(),
-          siteId: device.siteId,
-          personId,
-          deviceId: device.id,
-          alertTemplateId,
-        })
-        const { id: notificationTypeId } = await knex('NotificationType').where({ partnerId: device.partnerId }).first()
+          const { id: alertTemplateId } = await knex('AlertTemplate').first()
+          const [alertMessageId] = await knex('AlertMessage').insert({
+            messageStatusId: messageStatusSentId,
+            message: luAlertMessages[issueTypeId],
+            createdOn: new Date(),
+            updatedOn: new Date(),
+            siteId: device.siteId,
+            personId,
+            deviceId: device.id,
+            alertTemplateId,
+          })
+          const { id: notificationTypeId } = await knex('NotificationType')
+            .where({ partnerId: device.partnerId })
+            .first()
 
-        await knex('Notification').insert({
-          createdOn: new Date(),
-          alertMessageId,
-          issueId,
-          personId,
-          notificationTypeId,
-        })
+          await knex('Notification').insert({
+            createdOn: new Date(),
+            alertMessageId,
+            issueId,
+            personId,
+            notificationTypeId,
+          })
 
-        return issueId
-      })
+          return issueId
+        })
+      )
 
       // Status test
       statusesToTest = [
         // [approval status, maintenance status, expected status]
-        [deviceApprovals.provisioned, null, 'Provisioned'],
-        [deviceApprovals.provisioned, deviceMaintenanceStatuses.active, 'Provisioned'],
+        [deviceApprovals.pendingDeployment, null, 'PendingDeployment'],
+        [deviceApprovals.pendingDeployment, deviceMaintenanceStatuses.active, 'PendingDeployment'],
         [deviceApprovals.approved, null, 'Approved'],
         [deviceApprovals.approved, deviceMaintenanceStatuses.active, 'Active'],
         [deviceApprovals.approved, deviceMaintenanceStatuses.inactiveOutOfInventory, 'Out of Inventory'],
@@ -159,7 +162,9 @@ describe('Device routes', () => {
     })
 
     it('should return a list of devices with the correspondent status', async () => {
-      await Promise.each(statusesToTest, async ([deviceApprovalId, deviceMaintenanceStatusId, expectedStatus]) => {
+      // Sequential execution required: each iteration mutates the same device and asserts
+      /* eslint-disable no-await-in-loop */
+      for (const [deviceApprovalId, deviceMaintenanceStatusId, expectedStatus] of statusesToTest) {
         if (deviceMaintenanceStatusId) {
           const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
             deviceId: theGreatestDeviceIEverCreated.id,
@@ -183,7 +188,8 @@ describe('Device routes', () => {
           .get(`${path}?deviceName=The greatest device I ever created`)
           .set('Authorization', `Bearer ${shared.token}`)
         assert.equal(res.body.data[0].status, expectedStatus)
-      })
+      }
+      /* eslint-enable no-await-in-loop */
     })
 
     it('should return a list of devices when using valid token "approved"', async () => {
