@@ -28,6 +28,7 @@ const messages = {
     operation: { id: 'pages.DeviceDetail.operation', defaultMessage: 'Operation' },
     alerts: { id: 'pages.DeviceDetail.alerts', defaultMessage: 'Alerts' },
     edit: { id: 'pages.DeviceDetail.edit', defaultMessage: 'Edit' },
+    deviceNotFound: { id: 'pages.DeviceDetail.deviceNotFound', defaultMessage: 'Device not found.' },
   }),
 }
 
@@ -118,7 +119,7 @@ export const DeviceDetail = props => {
           <Loading centered level={2} />
         ) : isDeviceNotFound ? (
           <Box display="flex" justifyContent="center" alignItems="center" p={6}>
-            <span>Device not found.</span>
+            <span>{intl.formatMessage(messages.deviceNotFound)}</span>
           </Box>
         ) : (
           <Routes>
