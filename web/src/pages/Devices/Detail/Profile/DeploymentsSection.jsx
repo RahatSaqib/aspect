@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
   Box,
@@ -15,7 +16,6 @@ import {
   useTheme,
 } from '@mui/material'
 import PropTypes from 'prop-types'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import AspectVertMenu from '../../../../components/AspectVertMenu'
@@ -24,6 +24,7 @@ import useCheckDeploymentResults from '../../../../hooks/device/useCheckDeployme
 import useDeployments from '../../../../hooks/device/useDeployments'
 import usePersistDeployments from '../../../../hooks/device/usePersistDeployments'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
+import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../../oldComponents/shared/tableHead'
 import styles from '../styles.module.css'
@@ -31,14 +32,6 @@ import AddDeploymentDialog from './AddDeploymentDialog'
 import DeploymentTimeline from './DeploymentTimeline'
 import EditDeploymentDialog from './EditDeploymentDialog'
 import messages from './messages'
-
-/** Deployment start/end are date-only; show as stored with no timezone conversion. */
-function getDeploymentDateString(value) {
-  if (value == null) return null
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
-  const d = new Date(value)
-  return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
-}
 
 /** Sort deployments chronologically: null start (oldest/first) comes first. */
 function sortChronological(deps) {
@@ -75,8 +68,8 @@ function applyUpdateChange(changes, dep, fields) {
         id: dep.id,
         siteId: dep.siteId,
         siteName: dep.siteName,
-        start: dep.start ? getDeploymentDateString(dep.start) : null,
-        end: dep.end ? getDeploymentDateString(dep.end) : null,
+        start: dep.start ? toDateOnly(dep.start) : null,
+        end: dep.end ? toDateOnly(dep.end) : null,
         ...fields,
       })
     }
@@ -102,8 +95,8 @@ function getDeploymentValidationError(deployments) {
   for (let i = 0; i < sorted.length - 1; i++) {
     const current = sorted[i]
     if (!current.end) return 'deploymentNotConsecutive'
-    const currentEndStr = getDeploymentDateString(current.end)
-    const nextStartStr = getDeploymentDateString(sorted[i + 1].start)
+    const currentEndStr = toDateOnly(current.end)
+    const nextStartStr = toDateOnly(sorted[i + 1].start)
     if (!currentEndStr || !nextStartStr) return 'deploymentNotConsecutive'
     const expectedNextStart = (() => {
       const d = new Date(currentEndStr)
@@ -199,8 +192,8 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
     }
     const proposedDeployments = workingDeployments.map(d => ({
       siteId: d.siteId,
-      start: d.start ? getDeploymentDateString(d.start) : null,
-      end: d.end ? getDeploymentDateString(d.end) : null,
+      start: d.start ? toDateOnly(d.start) : null,
+      end: d.end ? toDateOnly(d.end) : null,
     }))
     checkResults.mutate(
       { deviceId, deployments: proposedDeployments },
@@ -256,8 +249,8 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
       const dep = editingDeployment
       const newChanges = [...pendingChanges]
 
-      const newStartStr = start ? getDeploymentDateString(start) : null
-      const oldStartStr = dep.start ? getDeploymentDateString(dep.start) : null
+      const newStartStr = start ? toDateOnly(start) : null
+      const oldStartStr = dep.start ? toDateOnly(dep.start) : null
 
       // If start changed, adjust the previous deployment's end
       if (newStartStr !== oldStartStr && newStartStr) {
@@ -304,7 +297,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
       // Adjust adjacent deployments
       if (prev && next) {
         // Middle: previous absorbs the deleted period
-        applyUpdateChange(newChanges, prev, { end: getDeploymentDateString(dep.end) })
+        applyUpdateChange(newChanges, prev, { end: toDateOnly(dep.end) })
       } else if (!prev && next) {
         // First deployment (null start): next becomes the new first
         applyUpdateChange(newChanges, next, { start: null })
@@ -394,7 +387,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
     }
     return formatMessage(messages.deploymentDeleteMiddle, {
       prevSite: prev.siteName || `Site #${prev.siteId}`,
-      date: getDeploymentDateString(deletingDeployment.end) || '—',
+      date: toDateOnly(deletingDeployment.end) || '—',
     })
   }, [deletingDeployment, workingDeployments, formatMessage])
 
@@ -526,12 +519,10 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
                           {dep.siteName || '—'}
                         </TableCell>
                         <TableCell>
-                          {isFirst
-                            ? formatMessage(messages.deploymentFromBeginning)
-                            : getDeploymentDateString(dep.start)}
+                          {isFirst ? formatMessage(messages.deploymentFromBeginning) : toDateOnly(dep.start)}
                         </TableCell>
                         <TableCell>
-                          {isActive ? formatMessage(messages.deploymentActive) : getDeploymentDateString(dep.end)}
+                          {isActive ? formatMessage(messages.deploymentActive) : toDateOnly(dep.end)}
                         </TableCell>
                         {!disabled && (
                           <TableCell align="right">

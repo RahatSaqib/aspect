@@ -2,20 +2,13 @@ import React, { useMemo } from 'react'
 import { Box, Tooltip, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
+import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 
 /** Share of total timeline width used for the left fade on the first segment (estimated start). Fixed so it looks the same regardless of segment duration. */
 const LEFT_FADE_PCT_OF_TIMELINE = 3
 
 /** Min distance (as share of timeline width) between two boundary labels before we displace one down to avoid overlap. */
 const MIN_LABEL_DISTANCE_PCT = 0.1
-
-/** Deployment start/end are date-only; show as stored with no timezone conversion. */
-function getDeploymentDateString(value) {
-  if (value == null) return null
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
-  const d = new Date(value)
-  return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
-}
 
 /** Sort deployments chronologically: null start (oldest/first) comes first. */
 function sortChronological(deps) {
@@ -69,18 +62,12 @@ const DeploymentTimeline = ({ deployments, firstResultDate, palette, ariaLabel, 
     if (chronologicalDeployments.length === 0) return null
     const first = chronologicalDeployments[0]
     const last = chronologicalDeployments[chronologicalDeployments.length - 1]
-    const todayStr = new Date().toISOString().slice(0, 10)
+    const todayStr = toDateOnly(new Date())
 
     const rangeStart =
-      first.start === null
-        ? firstResultDate != null
-          ? typeof firstResultDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(firstResultDate)
-            ? firstResultDate.slice(0, 10)
-            : new Date(firstResultDate).toISOString().slice(0, 10)
-          : null
-        : getDeploymentDateString(first.start)
+      first.start === null ? (firstResultDate != null ? toDateOnly(firstResultDate) : null) : toDateOnly(first.start)
 
-    const rangeEnd = last.end === null ? todayStr : getDeploymentDateString(last.end)
+    const rangeEnd = last.end === null ? todayStr : toDateOnly(last.end)
 
     if (rangeStart == null || rangeEnd == null) return null
 
@@ -89,9 +76,8 @@ const DeploymentTimeline = ({ deployments, firstResultDate, palette, ariaLabel, 
     const totalMs = Math.max(1, rangeEndMs - rangeStartMs)
 
     const segments = chronologicalDeployments.map((dep, i) => {
-      const segStartStr = i === 0 && dep.start === null ? rangeStart : getDeploymentDateString(dep.start)
-      const segEndStr =
-        i === chronologicalDeployments.length - 1 && !dep.end ? rangeEnd : getDeploymentDateString(dep.end)
+      const segStartStr = i === 0 && dep.start === null ? rangeStart : toDateOnly(dep.start)
+      const segEndStr = i === chronologicalDeployments.length - 1 && !dep.end ? rangeEnd : toDateOnly(dep.end)
       const segStartMs = new Date(`${segStartStr}T12:00:00Z`).getTime()
       const segEndMs = new Date(`${segEndStr}T12:00:00Z`).getTime()
       const widthPct = Math.max(2, ((segEndMs - segStartMs) / totalMs) * 100)

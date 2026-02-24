@@ -151,6 +151,11 @@ function formatDateOrDefault(date, dateFormat = 'yyyy-MM-dd', defaultValue = nul
   return format(date, dateFormat)
 }
 
+/** Normalize a value (Date, string, etc.) to YYYY-MM-DD. Returns null if invalid. */
+function toDateOnly(val) {
+  return formatDateOrDefault(val, 'yyyy-MM-dd', null)
+}
+
 function returnIso8601StringWithoutTimeZoneOffset(date) {
   if (!date) {
     return null
@@ -605,6 +610,7 @@ module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
   formatDateOrDefault,
+  toDateOnly,
   returnIso8601StringWithoutTimeZoneOffset,
   dateEqual,
   getArrayOfDaysInRange,

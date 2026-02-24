@@ -9,14 +9,8 @@ import useSiteList from '../../../../hooks/site/useSiteList'
 import validationErrorMessages from '../../../../messages/validationErrorMessages'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import messages from './messages'
-
-function getDateString(value) {
-  if (value == null) return null
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
-  const d = new Date(value)
-  return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
-}
 
 /**
  * Dialog for adding a new deployment. The new deployment becomes the active one.
@@ -29,10 +23,10 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => 
 
   const isFirstDeployment = !activeDeployment
 
-  const today = new Date().toISOString().slice(0, 10)
+  const today = toDateOnly(new Date())
 
   // Min start: day after active deployment's start (so the current active has ≥1 day duration)
-  const activeStartStr = getDateString(activeDeployment?.start)
+  const activeStartStr = toDateOnly(activeDeployment?.start)
   const minStart = activeStartStr
     ? (() => {
         const d = new Date(activeStartStr)

@@ -3,19 +3,11 @@ const { addDays, format, parseISO } = require('date-fns')
 const { transact } = require('../../db')
 const { getUserFromCredentials } = require('../../auth/constraints')
 const { recalculateDeviceFactTables } = require('../common/logic')
-const { parseDateOrDefault } = require('../../shared/date')
-
-/** Returns date as YYYY-MM-DD string without timezone conversion. Null-safe. */
-function toDateOnlyStr(val) {
-  if (val == null) return null
-  if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}/.test(val)) return val.slice(0, 10)
-  const d = parseDateOrDefault(val)
-  return d ? d.toISOString().slice(0, 10) : null
-}
+const { toDateOnly } = require('../../shared/date')
 
 function normalizeDeploymentDates(change) {
-  const start = change.start != null ? toDateOnlyStr(change.start) : null
-  const end = change.end != null ? toDateOnlyStr(change.end) : null
+  const start = change.start != null ? toDateOnly(change.start) : null
+  const end = change.end != null ? toDateOnly(change.end) : null
   if (start && end && end < start) {
     throw Boom.conflict('Deployment end date cannot be before start date')
   }
@@ -119,7 +111,7 @@ async function persistDeploymentChanges(request) {
       }
       const currentEndDate = typeof current.end === 'string' ? parseISO(current.end) : new Date(current.end)
       const expectedNextStart = format(addDays(currentEndDate, 1), 'yyyy-MM-dd')
-      if (toDateOnlyStr(next.start) !== expectedNextStart) {
+      if (toDateOnly(next.start) !== expectedNextStart) {
         throw Boom.conflict('Deployments must form a continuous timeline with no gaps or overlaps')
       }
     }

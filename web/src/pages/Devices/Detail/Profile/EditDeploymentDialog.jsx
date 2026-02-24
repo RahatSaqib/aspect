@@ -9,15 +9,8 @@ import useSiteList from '../../../../hooks/site/useSiteList'
 import validationErrorMessages from '../../../../messages/validationErrorMessages'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import messages from './messages'
-
-/** Deployment dates are date-only in the DB; show as stored without timezone conversion. */
-function getDeploymentDateForInput(value) {
-  if (value == null) return ''
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
-  const d = new Date(value)
-  return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10)
-}
 
 function addDaysBefore(dateStr) {
   if (!dateStr) return null
@@ -37,12 +30,12 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, previousDe
   const { data: sites = [] } = useSiteList()
 
   const isFirstDeployment = !deployment?.start
-  const currentStartStr = getDeploymentDateForInput(deployment?.start)
+  const currentStartStr = toDateOnly(deployment?.start, '')
 
   // Min start: day after previous deployment's start (to ensure previous has ≥1 day duration)
   const minStart = previousDeployment?.start
     ? (() => {
-        const d = new Date(getDeploymentDateForInput(previousDeployment.start))
+        const d = new Date(toDateOnly(previousDeployment.start, ''))
         d.setDate(d.getDate() + 1)
         return d.toISOString().slice(0, 10)
       })()

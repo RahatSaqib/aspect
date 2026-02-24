@@ -7,15 +7,14 @@ import * as Yup from 'yup'
 import validationErrorMessages from '../../../../messages/validationErrorMessages'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import messages from './messages'
-
-const formatDateStr = d => (d ? new Date(d).toISOString().slice(0, 10) : null)
 
 const FinishDeploymentDialog = ({ open, onClose, onConfirm, startDate }) => {
   const { formatMessage } = useIntl()
 
-  const startStr = formatDateStr(startDate)
-  const today = new Date().toISOString().slice(0, 10)
+  const startStr = toDateOnly(startDate)
+  const today = toDateOnly(new Date())
   // Default end to start (same-day) or today, whichever is later, so end is never before start
   const defaultEnd = startStr && startStr > today ? startStr : startStr || today
 
