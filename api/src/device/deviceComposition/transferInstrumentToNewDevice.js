@@ -128,6 +128,17 @@ async function createNewDevice(trknex, sourceDevice, instrumentId, { name, short
     createdBy: userId,
   })
 
+  await trknex('Deployment').insert({
+    deviceId,
+    siteId,
+    start: null,
+    end: null,
+    createdOn: now,
+    createdBy: userId,
+    updatedOn: now,
+    updatedBy: userId,
+  })
+
   return deviceId
 }
 
