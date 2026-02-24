@@ -1,4 +1,4 @@
-const { formatDateOrDefault, parseDateOrDefault } = require('../../src/shared/date')
+const { formatDateOrDefault, parseDateOrDefault, toDateOnly } = require('../../src/shared/date')
 
 /**
  * Infers deployment history from the Result table: one Deployment per (deviceId, siteId)
@@ -8,13 +8,11 @@ const { formatDateOrDefault, parseDateOrDefault } = require('../../src/shared/da
  * (the one with the latest endedOn / last result at that site) to satisfy the unique (deviceId, start) constraint.
  * Assumes no existing Deployment rows. Only devices that have results get deployments.
  *
+ * Result.endedOn/startedOn are stored in UTC; dates are computed in the device's timezone
+ * (Device.timezone -> TimeZone.timeZone IANA) via CONVERT_TZ so the calendar date is correct for the device location.
+ *
  * Used by zz_shared, development, and test seeds.
  */
-
-/** Normalize DB date (Date object or string) to YYYY-MM-DD. Returns null if invalid. */
-function toDateOnly(val) {
-  return formatDateOrDefault(val, 'yyyy-MM-dd', null)
-}
 
 /** Returns YYYY-MM-DD for the day before the given date. */
 function subtractOneDay(dateStr) {
@@ -26,15 +24,18 @@ function subtractOneDay(dateStr) {
 }
 
 async function seedDeploymentPerDeviceAtSite(knex) {
-  const rows = await knex('Result')
-    .whereNotNull(knex.raw('COALESCE(endedOn, startedOn)'))
+  const dateInDeviceTz = 'DATE(CONVERT_TZ(COALESCE(r.endedOn, r.startedOn), "+00:00", IFNULL(tz.timeZone, "Etc/UTC")))'
+  const rows = await knex('Result as r')
+    .join('Device as d', 'd.id', 'r.deviceId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'd.timezone')
+    .whereNotNull(knex.raw('COALESCE(r.endedOn, r.startedOn)'))
     .select(
-      'deviceId',
-      'siteId',
-      knex.raw('MIN(DATE(COALESCE(endedOn, startedOn))) as minDate'),
-      knex.raw('MAX(DATE(COALESCE(endedOn, startedOn))) as maxDate')
+      'r.deviceId',
+      'r.siteId',
+      knex.raw(`MIN(${dateInDeviceTz}) as minDate`),
+      knex.raw(`MAX(${dateInDeviceTz}) as maxDate`)
     )
-    .groupBy('deviceId', 'siteId')
+    .groupBy('r.deviceId', 'r.siteId')
 
   const byDevice = new Map()
   for (const r of rows) {
