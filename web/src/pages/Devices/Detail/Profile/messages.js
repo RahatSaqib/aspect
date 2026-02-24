@@ -506,6 +506,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deploymentNotConsecutive',
       defaultMessage: 'Deployments must form a continuous timeline with no gaps.',
     },
+    deploymentSaveRequired: {
+      id: 'pages.DeviceDetailProfile.deploymentSaveRequired',
+      defaultMessage: 'You have unsaved changes. Click "Save" to apply them.',
+    },
   }),
 }
 

@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
   Box,
@@ -16,6 +15,7 @@ import {
   useTheme,
 } from '@mui/material'
 import PropTypes from 'prop-types'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import AspectVertMenu from '../../../../components/AspectVertMenu'
@@ -473,6 +473,11 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
                 {formatMessage(messages.deviceUndeployed)}
               </Alert>
             )}
+            {hasPendingChanges && (
+              <Alert severity="warning" sx={{ mx: 2, mb: 1 }}>
+                {formatMessage(messages.deploymentSaveRequired)}
+              </Alert>
+            )}
             {showTimeline && (
               <Box className={styles.deploymentTimeline} sx={{ px: 2, pt: 1, pb: 2 }}>
                 <DeploymentTimeline
@@ -484,6 +489,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
                 />
               </Box>
             )}
+
             <TableContainer>
               <Table className={styles.ResultDataTable} size="small">
                 <DataTableHead columns={columns} />
@@ -556,13 +562,13 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
           </>
         )}
 
-        {/* Preview warnings for result site changes */}
+        {/* Preview messages for result site changes */}
         {hasPendingChanges && hasPreviewMoves && (
           <Box padding={2}>
             {preview?.moves
               ?.filter(m => m.resultCount > 0)
               .map(m => (
-                <Alert key={m.siteId} severity="warning" sx={{ mb: 1 }}>
+                <Alert key={m.siteId} severity="info" sx={{ mb: 1 }}>
                   {formatMessage(messages.resultsWillBeMoved, {
                     count: m.resultCount,
                     siteName: m.siteName || `Site #${m.siteId}`,
