@@ -1,14 +1,12 @@
 const { formatDateOrDefault, parseDateOrDefault } = require('../../src/shared/date')
 
 /**
- * Infers deployment history from the Result table and creates one Deployment per
- * inferred period per device, so every Result matches a Deployment (by siteId and
- * endedOn within [start, end]). Assumes no existing Deployment rows. Only devices
- * that have results get deployments (device list is derived from the ranges).
- *
- * Uses aggregated (deviceId, siteId, minDate, maxDate) from Result so the query
- * stays small. Overlapping site ranges are split so that when a device was at site A,
- * then site B, then site A again, we get three deployments (A, B, A) with correct dates.
+ * Infers deployment history from the Result table: one Deployment per (deviceId, siteId)
+ * using only the first result date at each site. Gaps are filled by extending each
+ * deployment's end to the day before the next deployment's start (no empty periods).
+ * When multiple sites share the same first-result date for a device, only one is kept
+ * (the one with the latest endedOn / last result at that site) to satisfy the unique (deviceId, start) constraint.
+ * Assumes no existing Deployment rows. Only devices that have results get deployments.
  *
  * Used by zz_shared, development, and test seeds.
  */
@@ -16,15 +14,6 @@ const { formatDateOrDefault, parseDateOrDefault } = require('../../src/shared/da
 /** Normalize DB date (Date object or string) to YYYY-MM-DD. Returns null if invalid. */
 function toDateOnly(val) {
   return formatDateOrDefault(val, 'yyyy-MM-dd', null)
-}
-
-/** Returns YYYY-MM-DD for the day after the given date (date-only string or Date). */
-function addOneDay(dateStr) {
-  const d = parseDateOrDefault(dateStr)
-  if (!d) return null
-  const next = new Date(d)
-  next.setDate(next.getDate() + 1)
-  return formatDateOrDefault(next, 'yyyy-MM-dd', null)
 }
 
 /** Returns YYYY-MM-DD for the day before the given date. */
@@ -36,51 +25,8 @@ function subtractOneDay(dateStr) {
   return formatDateOrDefault(prev, 'yyyy-MM-dd', null)
 }
 
-/**
- * Builds deployment periods from per-site ranges. When ranges overlap (e.g. site 1
- * 2025-01-01..2026-02-20 and site 2 2025-06-15..2025-07-18), splits so we get
- * site 1 to 2025-06-14, site 2 2025-06-15..2025-07-18, site 1 from 2025-07-19.
- * Returns array of { siteId, startDate, endDate } in chronological order.
- */
-function buildDeploymentPeriods(ranges) {
-  if (ranges.length === 0) return []
-  const boundaries = new Set()
-  for (const r of ranges) {
-    const next = addOneDay(r.maxDate)
-    if (r.minDate) boundaries.add(r.minDate)
-    if (next) boundaries.add(next)
-  }
-  const sorted = [...boundaries].filter(Boolean).sort()
-  const segments = []
-  for (let i = 0; i < sorted.length - 1; i++) {
-    const segStart = toDateOnly(sorted[i]) || sorted[i]
-    const nextBound = toDateOnly(sorted[i + 1]) || sorted[i + 1]
-    if (segStart && nextBound) {
-      const segEnd = subtractOneDay(nextBound)
-      if (segEnd) {
-        let best = null
-        for (const r of ranges) {
-          if (r.minDate <= segStart && r.maxDate >= segEnd) {
-            if (!best || r.minDate > best.minDate) best = r
-          }
-        }
-        if (best) segments.push({ siteId: best.siteId, startDate: segStart, endDate: segEnd })
-      }
-    }
-  }
-  const merged = []
-  for (const s of segments) {
-    if (merged.length > 0 && merged[merged.length - 1].siteId === s.siteId) {
-      merged[merged.length - 1].endDate = s.endDate
-    } else {
-      merged.push({ ...s })
-    }
-  }
-  return merged
-}
-
 async function seedDeploymentPerDeviceAtSite(knex) {
-  const ranges = await knex('Result')
+  const rows = await knex('Result')
     .whereNotNull(knex.raw('COALESCE(endedOn, startedOn)'))
     .select(
       'deviceId',
@@ -91,27 +37,41 @@ async function seedDeploymentPerDeviceAtSite(knex) {
     .groupBy('deviceId', 'siteId')
 
   const byDevice = new Map()
-  for (const r of ranges) {
+  for (const r of rows) {
     const minDate = toDateOnly(r.minDate)
     const maxDate = toDateOnly(r.maxDate)
-    if (minDate && maxDate) {
+    if (minDate) {
       if (!byDevice.has(r.deviceId)) byDevice.set(r.deviceId, [])
       byDevice.get(r.deviceId).push({ siteId: r.siteId, minDate, maxDate })
     }
   }
 
   const deploymentRows = []
-  for (const [deviceId, deviceRanges] of byDevice) {
-    const periods = buildDeploymentPeriods(deviceRanges)
-    for (let i = 0; i < periods.length; i++) {
-      const p = periods[i]
+  for (const [deviceId, stays] of byDevice) {
+    // Sort by minDate then maxDate descending. Deduplicate by minDate: unique (deviceId, start)
+    // allows only one per start date; when multiple sites share the same minDate we keep the one
+    // with the latest endedOn (last result at that site).
+    const sorted = [...stays].sort((a, b) => {
+      const d = a.minDate.localeCompare(b.minDate)
+      if (d !== 0) return d
+      return (b.maxDate || '').localeCompare(a.maxDate || '')
+    })
+    const byMinDate = []
+    for (const s of sorted) {
+      if (byMinDate.length === 0 || byMinDate[byMinDate.length - 1].minDate !== s.minDate) {
+        byMinDate.push({ siteId: s.siteId, minDate: s.minDate })
+      }
+    }
+    for (let i = 0; i < byMinDate.length; i++) {
+      const s = byMinDate[i]
       const isFirst = i === 0
-      const isLast = i === periods.length - 1
+      const isLast = i === byMinDate.length - 1
+      const nextStart = isLast ? null : byMinDate[i + 1].minDate
       deploymentRows.push({
         deviceId,
-        siteId: p.siteId,
-        start: isFirst ? null : p.startDate,
-        end: isLast ? null : p.endDate,
+        siteId: s.siteId,
+        start: isFirst ? null : s.minDate,
+        end: isLast ? null : subtractOneDay(nextStart),
       })
     }
   }
