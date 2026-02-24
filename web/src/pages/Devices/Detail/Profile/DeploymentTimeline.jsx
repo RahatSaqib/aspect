@@ -9,6 +9,23 @@ const LEFT_FADE_PCT_OF_TIMELINE = 3
 /** Min distance (as share of timeline width) between two boundary labels before we displace one down to avoid overlap. */
 const MIN_LABEL_DISTANCE_PCT = 0.1
 
+/** Deployment start/end are date-only; show as stored with no timezone conversion. */
+function getDeploymentDateString(value) {
+  if (value == null) return null
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
+}
+
+/** Sort deployments chronologically: null start (oldest/first) comes first. */
+function sortChronological(deps) {
+  return [...deps].sort((a, b) => {
+    if (a.start === null) return -1
+    if (b.start === null) return 1
+    return new Date(a.start) - new Date(b.start)
+  })
+}
+
 /** Format YYYY-MM-DD (or date string) as localized year and month for display (uses locale for translations). */
 function toYearMonth(dateStr, locale) {
   if (!dateStr || typeof dateStr !== 'string') return dateStr
@@ -24,20 +41,108 @@ function toYearMonth(dateStr, locale) {
   }
 }
 
-const DeploymentTimeline = ({ segments, boundaryPcts, boundaryLabels, palette, ariaLabel, messageActive }) => {
+const DeploymentTimeline = ({ deployments, firstResultDate, palette, ariaLabel, messageActive }) => {
   const { formatMessage } = useIntl()
-  const firstSegmentPct = segments.length > 0 ? segments[0].widthPct : 0
-  const fadePctInsideFirstSegment = firstSegmentPct > 0 ? (LEFT_FADE_PCT_OF_TIMELINE / firstSegmentPct) * 100 : 0
+
+  // Chronological order (oldest first) for timeline and color index
+  const chronologicalDeployments = useMemo(
+    () => (deployments?.length ? sortChronological(deployments) : []),
+    [deployments]
+  )
+
+  // Same site => same color (by first appearance in chronological order)
+  const siteToColorIndex = useMemo(() => {
+    const map = {}
+    let nextIndex = 0
+    chronologicalDeployments.forEach(dep => {
+      const key = dep.siteId != null ? dep.siteId : `temp-${dep.id}`
+      if (map[key] === undefined) {
+        nextIndex += 1
+        map[key] = nextIndex
+      }
+    })
+    return map
+  }, [chronologicalDeployments])
+
+  // Timeline range and segment widths; null when timeline should be hidden
+  const timelineData = useMemo(() => {
+    if (chronologicalDeployments.length === 0) return null
+    const first = chronologicalDeployments[0]
+    const last = chronologicalDeployments[chronologicalDeployments.length - 1]
+    const todayStr = new Date().toISOString().slice(0, 10)
+
+    const rangeStart =
+      first.start === null
+        ? firstResultDate != null
+          ? typeof firstResultDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(firstResultDate)
+            ? firstResultDate.slice(0, 10)
+            : new Date(firstResultDate).toISOString().slice(0, 10)
+          : null
+        : getDeploymentDateString(first.start)
+
+    const rangeEnd = last.end === null ? todayStr : getDeploymentDateString(last.end)
+
+    if (rangeStart == null || rangeEnd == null) return null
+
+    const rangeStartMs = new Date(`${rangeStart}T12:00:00Z`).getTime()
+    const rangeEndMs = new Date(`${rangeEnd}T12:00:00Z`).getTime()
+    const totalMs = Math.max(1, rangeEndMs - rangeStartMs)
+
+    const segments = chronologicalDeployments.map((dep, i) => {
+      const segStartStr = i === 0 && dep.start === null ? rangeStart : getDeploymentDateString(dep.start)
+      const segEndStr =
+        i === chronologicalDeployments.length - 1 && !dep.end ? rangeEnd : getDeploymentDateString(dep.end)
+      const segStartMs = new Date(`${segStartStr}T12:00:00Z`).getTime()
+      const segEndMs = new Date(`${segEndStr}T12:00:00Z`).getTime()
+      const widthPct = Math.max(2, ((segEndMs - segStartMs) / totalMs) * 100)
+      const siteKey = dep.siteId != null ? dep.siteId : `temp-${dep.id}`
+      return {
+        deployment: dep,
+        widthPct,
+        startStr: segStartStr,
+        endStr: segEndStr,
+        isFirst: dep.start === null,
+        isActive: !dep.end,
+        colorIndex: siteToColorIndex[siteKey] ?? 0,
+      }
+    })
+
+    const totalPct = segments.reduce((s, seg) => s + seg.widthPct, 0)
+    const scale = totalPct > 0 ? 100 / totalPct : 1
+    segments.forEach(seg => {
+      seg.widthPct *= scale
+    })
+
+    const boundaryPcts = [0]
+    let cum = 0
+    segments.forEach(seg => {
+      cum += seg.widthPct
+      boundaryPcts.push(cum)
+    })
+    const boundaryLabels = [
+      first.start === null ? '' : rangeStart,
+      ...segments.map(seg => (seg.isActive ? 'Active' : seg.endStr)),
+    ]
+
+    return { segments, boundaryPcts, boundaryLabels }
+  }, [chronologicalDeployments, firstResultDate, siteToColorIndex])
 
   const shiftLabelDown = useMemo(() => {
-    const out = boundaryPcts.map(() => false)
-    for (let i = 1; i < boundaryPcts.length; i++) {
-      if (boundaryPcts[i] - boundaryPcts[i - 1] < MIN_LABEL_DISTANCE_PCT) {
+    if (!timelineData?.boundaryPcts?.length) return []
+    const out = timelineData.boundaryPcts.map(() => false)
+    for (let i = 1; i < timelineData.boundaryPcts.length; i++) {
+      if (timelineData.boundaryPcts[i] - timelineData.boundaryPcts[i - 1] < MIN_LABEL_DISTANCE_PCT) {
         out[i] = true
       }
     }
     return out
-  }, [boundaryPcts])
+  }, [timelineData])
+
+  if (!timelineData || timelineData.segments.length === 0) return null
+
+  const { segments, boundaryPcts, boundaryLabels } = timelineData
+  const firstSegmentPct = segments.length > 0 ? segments[0].widthPct : 0
+  const fadePctInsideFirstSegment = firstSegmentPct > 0 ? (LEFT_FADE_PCT_OF_TIMELINE / firstSegmentPct) * 100 : 0
 
   return (
     <>
@@ -177,25 +282,23 @@ const DeploymentTimeline = ({ segments, boundaryPcts, boundaryLabels, palette, a
 }
 
 DeploymentTimeline.propTypes = {
-  segments: PropTypes.arrayOf(
+  deployments: PropTypes.arrayOf(
     PropTypes.shape({
-      deployment: PropTypes.shape({
-        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-        siteName: PropTypes.string,
-      }).isRequired,
-      widthPct: PropTypes.number.isRequired,
-      startStr: PropTypes.string,
-      endStr: PropTypes.string.isRequired,
-      isFirst: PropTypes.bool.isRequired,
-      isActive: PropTypes.bool.isRequired,
-      colorIndex: PropTypes.number,
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      siteId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      siteName: PropTypes.string,
+      start: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+      end: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
     })
   ).isRequired,
-  boundaryPcts: PropTypes.arrayOf(PropTypes.number).isRequired,
-  boundaryLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  firstResultDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
   palette: PropTypes.arrayOf(PropTypes.string).isRequired,
   ariaLabel: PropTypes.string.isRequired,
   messageActive: PropTypes.object.isRequired,
+}
+
+DeploymentTimeline.defaultProps = {
+  firstResultDate: null,
 }
 
 export default DeploymentTimeline

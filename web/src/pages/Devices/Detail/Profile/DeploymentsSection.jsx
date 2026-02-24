@@ -406,10 +406,10 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
     return idx > 0 ? sorted[idx - 1] : null
   }, [editingDeployment, workingDeployments])
 
-  // Chronological order (oldest first) for timeline and color index
+  // Chronological order (oldest first) for table color index and dialogs
   const chronologicalDeployments = useMemo(() => sortChronological(workingDeployments), [workingDeployments])
 
-  // Same site => same color (by first appearance in chronological order)
+  // Same site => same color (by first appearance in chronological order) for table row accent
   const siteToColorIndex = useMemo(() => {
     const map = {}
     let nextIndex = 0
@@ -423,71 +423,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
     return map
   }, [chronologicalDeployments])
 
-  // Timeline range and segment widths; null when timeline should be hidden
-  const timelineData = useMemo(() => {
-    if (chronologicalDeployments.length === 0) return null
-    const first = chronologicalDeployments[0]
-    const last = chronologicalDeployments[chronologicalDeployments.length - 1]
-    const todayStr = new Date().toISOString().slice(0, 10)
-
-    const rangeStart =
-      first.start === null
-        ? firstResultDate != null
-          ? typeof firstResultDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(firstResultDate)
-            ? firstResultDate.slice(0, 10)
-            : new Date(firstResultDate).toISOString().slice(0, 10)
-          : null
-        : getDeploymentDateString(first.start)
-
-    const rangeEnd = last.end === null ? todayStr : getDeploymentDateString(last.end)
-
-    if (rangeStart == null || rangeEnd == null) return null
-
-    const rangeStartMs = new Date(`${rangeStart}T12:00:00Z`).getTime()
-    const rangeEndMs = new Date(`${rangeEnd}T12:00:00Z`).getTime()
-    const totalMs = Math.max(1, rangeEndMs - rangeStartMs)
-
-    const segments = chronologicalDeployments.map((dep, i) => {
-      const segStartStr = i === 0 && dep.start === null ? rangeStart : getDeploymentDateString(dep.start)
-      const segEndStr =
-        i === chronologicalDeployments.length - 1 && !dep.end ? rangeEnd : getDeploymentDateString(dep.end)
-      const segStartMs = new Date(`${segStartStr}T12:00:00Z`).getTime()
-      const segEndMs = new Date(`${segEndStr}T12:00:00Z`).getTime()
-      const widthPct = Math.max(2, ((segEndMs - segStartMs) / totalMs) * 100)
-      const siteKey = dep.siteId != null ? dep.siteId : `temp-${dep.id}`
-      return {
-        deployment: dep,
-        widthPct,
-        startStr: segStartStr,
-        endStr: segEndStr,
-        isFirst: dep.start === null,
-        isActive: !dep.end,
-        colorIndex: siteToColorIndex[siteKey] ?? 0,
-      }
-    })
-
-    const totalPct = segments.reduce((s, seg) => s + seg.widthPct, 0)
-    const scale = totalPct > 0 ? 100 / totalPct : 1
-    segments.forEach(seg => {
-      seg.widthPct *= scale
-    })
-
-    const boundaryPcts = [0]
-    let cum = 0
-    segments.forEach(seg => {
-      cum += seg.widthPct
-      boundaryPcts.push(cum)
-    })
-    const boundaryLabels = [
-      first.start === null ? '' : rangeStart,
-      ...segments.map(seg => (seg.isActive ? 'Active' : seg.endStr)),
-    ]
-
-    return { rangeStart, rangeEnd, segments, boundaryPcts, boundaryLabels }
-  }, [chronologicalDeployments, firstResultDate, siteToColorIndex])
-
-  const showTimeline =
-    !isMobile && workingDeployments.length > 0 && timelineData != null && timelineData.segments.length > 0
+  const showTimeline = !isMobile && workingDeployments.length > 0
 
   return (
     <section className={styles.Section}>
@@ -540,9 +476,8 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
             {showTimeline && (
               <Box className={styles.deploymentTimeline} sx={{ px: 2, pt: 1, pb: 2 }}>
                 <DeploymentTimeline
-                  segments={timelineData.segments}
-                  boundaryPcts={timelineData.boundaryPcts}
-                  boundaryLabels={timelineData.boundaryLabels}
+                  deployments={workingDeployments}
+                  firstResultDate={firstResultDate}
                   palette={DEPLOYMENT_TIMELINE_PALETTE}
                   ariaLabel={formatMessage(messages.deploymentTimelineAriaLabel)}
                   messageActive={messages.deploymentActive}
