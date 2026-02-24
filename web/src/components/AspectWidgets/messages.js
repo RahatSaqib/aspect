@@ -225,15 +225,6 @@ const messages = defineMessages({
     defaultMessage:
       'Counts the percentage of module bays used in the last 7 days, based on the count of all available bays in all GeneXpert devices that were active in the last 7 days.',
   },
-  instrumentsReplaced: {
-    id: 'component.Widget.instrumentsReplaced',
-    defaultMessage: 'Average Days for Instrument Replacement.',
-  },
-  instrumentsReplacedDescription: {
-    id: 'component.Widget.instrumentsReplacedDescription',
-    defaultMessage:
-      'The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
-  },
   averageRecipientsOfEmail: {
     id: 'component.Widget.averageRecipientsOfEmail',
     defaultMessage: 'Average email recipients per positive result',

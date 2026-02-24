@@ -36,7 +36,6 @@ const validationSchema = formatMessage =>
             'ModuleReplaced',
             'ModuleDisabled',
             'UnusedModules',
-            'InstrumentReplaced',
             'SiteWithLowFieldCompletionRate',
             'DeviceExpectedBackOnline',
           ])

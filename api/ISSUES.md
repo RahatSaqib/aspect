@@ -127,7 +127,6 @@ Not scheduled or dual behaviour actions:
 - ProbeCheckTooHighModule: This is triggered when there are more than 3 results with the error code 5007 in the last 30 days for the same device/module pair.
 - ProbeCheckTooHighLot: This is triggered when there are more than 3 results with the error code 5007 in the last 30 days for the same device/lot/assay trio.
 - InventoryStockExpiring: This is triggered when there are some inventory items near to expire. 30 days before (default value) we are going to notify the user about the exception. This is a partner configuration setting.
-- InstrumentReplaced: This is triggered when the same device pushes a result with a different instrument serial than the previous one.
 
 ### Custom Actions (Myanmar)
 

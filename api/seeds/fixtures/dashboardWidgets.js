@@ -1069,83 +1069,6 @@ FROM
   },
 }
 
-const instrumentsReplaced = {
-  jobFunctions: ['all'],
-  icon: 'MdSwapVert',
-  title: 'Average Days for Instrument Replacement',
-  titleI18nKey: 'instrumentsReplaced',
-  subTitle: null,
-  subTitleI18nKey: null,
-  sqlForIndicator: `
-  SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
-  FROM (
-    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
-    FROM (SELECT i.data ->> '$.replacedInstrumentSerial' as replacedInstrumentSerial, i.deviceId, r.endedOn
-          FROM Issue AS i
-          INNER JOIN Result AS r on i.resultId = r.id
-          INNER JOIN Device AS d on r.deviceId = d.id
-          INNER JOIN Site AS s ON d.siteId = s.id
-          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-          INNER JOIN IssueType AS it ON i.issueTypeId = it.id
-          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-          WHERE it.externalId = 'InstrumentReplaced'
-          AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
-          AND dt.externalId = 'CepheidGeneXpert'
-        )
-        AS issueData
-    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.replacedInstrumentSerial = r.instrumentSerial AND r.endedOn < issueData.endedOn
-    GROUP by r.deviceId, r.instrumentSerial
-  ) as innerQuery`,
-  sqlForStatUnit: `
-  SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
-  FROM (
-    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
-    FROM (SELECT i.data ->> '$.replacedInstrumentSerial' as replacedInstrumentSerial, i.deviceId, r.endedOn
-          FROM Issue AS i
-          INNER JOIN Result AS r on i.resultId = r.id
-          INNER JOIN Device AS d on r.deviceId = d.id
-          INNER JOIN Site AS s ON d.siteId = s.id
-          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-          INNER JOIN IssueType AS it ON i.issueTypeId = it.id
-          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-          WHERE it.externalId = 'InstrumentReplaced'
-          AND  r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
-          AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
-          AND dt.externalId = 'CepheidGeneXpert'
-        )
-        AS issueData
-    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.replacedInstrumentSerial = r.instrumentSerial AND r.endedOn < issueData.endedOn
-    GROUP by r.deviceId, r.instrumentSerial
-  ) as innerQuery`,
-  statUnit: '{unit} last month',
-  statUnitI18nKey: 'lastMonth',
-  link: '/browse/device/list',
-  linkParams: {
-    deviceType: 'CepheidGeneXpert',
-    issueTypeId: 'InstrumentReplaced',
-  },
-  sortOrder: 3,
-  externalId: 'instrumentsReplaced',
-  description:
-    'The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting in the consecutive result conducted.',
-  descriptionI18nKey: 'instrumentsReplacedDescription',
-  dashboards: {
-    operational: {
-      groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
-    },
-  },
-  options: {
-    extraFields: {
-      alert: {
-        dependsOn: 'count',
-        whenIs: 'greaterThan',
-        comparedTo: '14',
-        representing: 'averageDaysForInstrumentReplacement',
-      },
-    },
-  },
-}
-
 const averageRecipientsOfEmail = {
   jobFunctions: ['all'],
   icon: 'MdEmail',
@@ -2127,7 +2050,6 @@ module.exports = {
     gxPositiveResultsNotified,
     avgTimeToUpload,
     percentageOfModulesFunctioning,
-    instrumentsReplaced,
     averageRecipientsOfEmail,
     averageRecipientsOfSms,
     averageLengthOfSms,

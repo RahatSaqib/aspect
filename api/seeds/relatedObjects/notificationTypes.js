@@ -45,7 +45,6 @@ async function getBaseNotificationTypes() {
     FailedToVerifyValidBackgroundErrorForAnalyteLot: notifyTechnician,
     ProbeCheckFailedModule: notifyTechnician,
     ProbeCheckFailedLot: notifyTechnician,
-    InstrumentReplaced: notifyTechnician,
     SignalLossDetectedInAmplificationCurveModule: notifyTechnician,
     SignalLossDetectedInAmplificationCurveLot: notifyTechnician,
     CartridgeIntegrityTestFailureLot: notifyTechnician,

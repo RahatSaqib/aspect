@@ -19,7 +19,6 @@ const {
   isWeekend,
 } = require('../shared/date')
 
-const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const {
   getDeviceBaseExtendedQuery,
   getBasicsForDevicesReport,
@@ -649,8 +648,6 @@ async function onResultLogged(action, { messageContext }) {
         .count('r.id as numberOfPreviousTestsInDay')
         .first()
       if (numberOfPreviousTestsInDay === 0) await updateStatusUnknownToNoTestsPerformed(deviceId, testDateToUse)
-
-      await shouldTriggerInstrumentReplaced(knex, messageContext, resultId)
     }
   })
 }
