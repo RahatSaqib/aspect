@@ -3,7 +3,7 @@
  * with no start and no end (active deployment from the beginning).
  * Runs for test seeds.
  */
-const { seedDeploymentPerDeviceAtSite } = require('../run_deployment_per_device_at_site')
+const { seedDeploymentPerDeviceAtSite } = require('../common/seed_initial_deployments')
 
 async function seed(knex) {
   return seedDeploymentPerDeviceAtSite(knex)
