@@ -210,7 +210,6 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
   device.isDaisyChained = !!device.isDaisyChained
 
   const firstResultRow = await knex('Result as r')
-    .modify(addConstraints, dataConstraints, { result: 'r' })
     .where('r.deviceId', deviceId)
     .select(knex.raw('MIN(r.endedOn) as firstEndedOn'))
     .first()
