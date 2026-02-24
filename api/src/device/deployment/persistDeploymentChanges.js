@@ -109,7 +109,7 @@ async function persistDeploymentChanges(request) {
       if (!current.end) {
         throw Boom.conflict('Only the last deployment may be active (have no end date)')
       }
-      const currentEndDate = typeof current.end === 'string' ? parseISO(current.end) : new Date(current.end)
+      const currentEndDate = current.end
       const expectedNextStart = format(addDays(currentEndDate, 1), 'yyyy-MM-dd')
       if (toDateOnly(next.start) !== expectedNextStart) {
         throw Boom.conflict('Deployments must form a continuous timeline with no gaps or overlaps')

@@ -1,5 +1,7 @@
 import React from 'react'
 import { Alert, DialogActions, TextField } from '@mui/material'
+import { addDays, subDays } from 'date-fns'
+import parseISO from 'date-fns/parseISO'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
@@ -12,11 +14,16 @@ import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import messages from './messages'
 
-function addDaysBefore(dateStr) {
-  if (!dateStr) return null
-  const d = new Date(dateStr)
-  d.setDate(d.getDate() - 1)
-  return d.toISOString().slice(0, 10)
+function dayBefore(dateStr) {
+  const s = toDateOnly(dateStr)
+  if (!s) return null
+  return toDateOnly(subDays(parseISO(s), 1))
+}
+
+function dayAfter(dateStr) {
+  const s = toDateOnly(dateStr, '')
+  if (!s) return null
+  return toDateOnly(addDays(parseISO(s), 1))
 }
 
 /**
@@ -33,13 +40,7 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, previousDe
   const currentStartStr = toDateOnly(deployment?.start, '')
 
   // Min start: day after previous deployment's start (to ensure previous has ≥1 day duration)
-  const minStart = previousDeployment?.start
-    ? (() => {
-        const d = new Date(toDateOnly(previousDeployment.start, ''))
-        d.setDate(d.getDate() + 1)
-        return d.toISOString().slice(0, 10)
-      })()
-    : null
+  const minStart = previousDeployment?.start ? dayAfter(previousDeployment.start) : null
 
   const validationSchema = Yup.object({
     siteId: Yup.number().nullable().required(formatMessage(validationErrorMessages.required)),
@@ -78,7 +79,7 @@ const EditDeploymentDialog = ({ open, onClose, onConfirm, deployment, previousDe
       >
         {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid }) => {
           const startChanged = !isFirstDeployment && values.start && values.start !== currentStartStr
-          const newPrevEndDate = startChanged ? addDaysBefore(values.start) : null
+          const newPrevEndDate = startChanged ? dayBefore(values.start) : null
 
           return (
             <Form onSubmit={handleSubmit}>
