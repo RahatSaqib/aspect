@@ -52,7 +52,7 @@ async function mergeDeviceLevelIssues(trknex, sourceDeviceId, targetDeviceId) {
 async function mergeNonRepeatedResults(trknex, sourceDeviceId, targetDeviceId) {
   const repeatedResultsQuery = trknex(
     trknex('Result')
-      .where('deviceID', targetDeviceId)
+      .where('deviceId', targetDeviceId)
       .where('externalId', knex.raw(`sourceResults.externalId`))
       .select('externalId')
       .as('t')

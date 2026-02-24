@@ -1,6 +1,5 @@
 const { expect, assert } = require('chai')
 const { addDays, subDays } = require('date-fns')
-const uuid = require('node-uuid')
 const { deviceMaintenanceTypeToId, resultCategoryToId, consumableReasonToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
@@ -94,17 +93,20 @@ describe('Merge Devices', () => {
       .whereIn('issueId', knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).select('id'))
       .del()
     await knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
-    await knex('DeviceApiKey')
-      .whereIn('siteId', [targetSiteId, sourceSiteId])
-      .orWhereIn('deviceId', [sourceDeviceId, targetDevice.id])
-      .del()
+
+    const deviceApiKeyIds = await knex('Device')
+      .whereIn('id', [targetDevice.id, sourceDeviceId])
+      .pluck('deviceApiKeyId')
+    await knex('DeviceOperation').whereIn('deviceApiKeyId', deviceApiKeyIds).del()
+    await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).update({ deviceApiKeyId: null })
+    await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).del()
+    await knex('InventoryLog').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
     await knex('InventoryItem').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
     await knex('Result').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('Sample').whereIn('originSiteId', [sourceSiteId, targetSiteId]).del()
-    await knex('DeviceLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).del()
     await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
-    await knex('DeviceOperation').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('Instrument').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
 
     // Delete fact tables sequentially to avoid deadlocks
@@ -225,10 +227,9 @@ async function assertFactTables(deviceId) {
 
 async function seedDeviceOperation() {
   await knex('DeviceOperation').insert({
-    deviceId: sourceDeviceId,
-    startedOn: new Date(),
+    deviceApiKeyId: knex('Device').where('id', sourceDeviceId).first('deviceApiKeyId'),
+    occurredOn: new Date(),
     data: '{"someJsonData": "someValue"}',
-    guid: uuid.v4(),
   })
 }
 

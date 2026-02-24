@@ -30,6 +30,7 @@ describe('Module Replaced Issue testing', () => {
     adminPassword,
     deviceName,
     macAddress,
+    instrumentSerial: 'CEPH-PC-123',
   })
   const { beforeRegisterAndSetDevice, basicDevicePayload, afterCleanUp } = context
   let { deviceAuth } = context

@@ -140,7 +140,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
 function createGxConnectTestContext(
   server,
-  { countryCode, deviceName, hostId, macAddress, deviceSerialNumber, adminUsername, adminPassword }
+  { countryCode, deviceName, hostId, macAddress, deviceSerialNumber, adminUsername, adminPassword, instrumentSerial }
 ) {
   return new GxConnectApiTestContext(server, {
     countryCode,
@@ -150,13 +150,14 @@ function createGxConnectTestContext(
     deviceSerialNumber,
     adminUsername,
     adminPassword,
+    instrumentSerial,
   })
 }
 
 class GxConnectApiTestContext {
   constructor(
     server,
-    { countryCode, deviceName, hostId, macAddress, deviceSerialNumber, adminUsername, adminPassword }
+    { countryCode, deviceName, hostId, macAddress, deviceSerialNumber, adminUsername, adminPassword, instrumentSerial }
   ) {
     this.server = server
     this.countryCode = countryCode
@@ -166,6 +167,7 @@ class GxConnectApiTestContext {
     this.deviceSerialNumber = deviceSerialNumber
     this.adminUsername = adminUsername
     this.adminPassword = adminPassword
+    this.instrumentSerial = instrumentSerial
     this.clientId = `${Math.floor(Math.random() * 800000000) + 100000000}`
     this.apiKeys = []
     this.basicDevicePayload = {
@@ -268,6 +270,9 @@ class GxConnectApiTestContext {
     })
     await knex('DeviceApiKey').where('id', deviceApiKeyRecord.id).update({ deviceId, siteId, geographyId })
     await knex('Device').where('id', deviceId).update({ deviceApiKeyId: deviceApiKeyRecord.id })
+    if (this.instrumentSerial) {
+      await knex('Instrument').insert({ deviceId, serial: this.instrumentSerial })
+    }
 
     return deviceApiKey
   }
