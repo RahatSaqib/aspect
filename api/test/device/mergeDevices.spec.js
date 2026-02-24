@@ -15,6 +15,7 @@ let issueIdOnRepeatedSourceResult
 let repeatedSourceResultId
 let uniqueSourceResultId
 let repeatedTargetResultId
+let deviceApiKeyIds
 
 describe('Merge Devices', () => {
   before(async () => shared.checkToken(server, path))
@@ -65,6 +66,8 @@ describe('Merge Devices', () => {
       resultCategory1: resultCategoryDetected,
     }
 
+    deviceApiKeyIds = await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).pluck('deviceApiKeyId')
+
     repeatedSourceResultId = await sourceDeviceContext.createResultForThisDevice({
       resultDetails,
     })
@@ -94,16 +97,14 @@ describe('Merge Devices', () => {
       .del()
     await knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
 
-    const deviceApiKeyIds = await knex('Device')
-      .whereIn('id', [targetDevice.id, sourceDeviceId])
-      .pluck('deviceApiKeyId')
     await knex('DeviceOperation').whereIn('deviceApiKeyId', deviceApiKeyIds).del()
     await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).update({ deviceApiKeyId: null })
     await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).del()
     await knex('InventoryLog').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
-    await knex('InventoryItem').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
     await knex('Result').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('Sample').whereIn('originSiteId', [sourceSiteId, targetSiteId]).del()
+    await knex('InventoryItem').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
+    await knex('Site').whereIn('id', [targetSiteId, sourceSiteId]).del()
     await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).del()
     await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
@@ -117,10 +118,10 @@ describe('Merge Devices', () => {
     await knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
 
     await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).del()
-    await knex('Site').whereIn('id', [targetSiteId, sourceSiteId]).del()
   })
 
   it('If source device pings in the last 24 hs should throw validation', async () => {
+    await knex('Device').where('id', sourceDeviceId).update({ lastPingOn: new Date() })
     await server
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })

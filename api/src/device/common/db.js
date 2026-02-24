@@ -451,10 +451,6 @@ async function deleteResults(deviceId, trknex) {
   await trknex('Result').where('deviceId', deviceId).del()
 }
 
-async function deleteDeviceFromDeviceOperation(deviceId, trknex) {
-  await trknex('DeviceOperation').where('deviceId', deviceId).del()
-}
-
 async function deleteDeviceFromDeviceMaintenance(deviceId, trknex) {
   await trknex('DeviceMaintenance').where('deviceId', deviceId).del()
 }
@@ -826,7 +822,6 @@ module.exports = {
   deleteMessages,
   deleteResults,
   deleteDeviceLog,
-  deleteDeviceFromDeviceOperation,
   deleteDeviceFromDeviceMaintenance,
   deleteDeviceFromDeviceApprovalLog,
   deleteDeviceFromDeviceApiRaw,

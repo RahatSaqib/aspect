@@ -62,8 +62,6 @@ async function mergeNonRepeatedResults(trknex, sourceDeviceId, targetDeviceId) {
     .where({ deviceId: sourceDeviceId })
     .whereNotIn('sourceResults.externalId', repeatedResultsQuery)
     .update('deviceId', targetDeviceId)
-
-  await trknex('DeviceLog').where({ deviceId: sourceDeviceId }).update({ deviceId: targetDeviceId })
 }
 
 async function mergeMessages(trknex, sourceDeviceId, targetDeviceId) {

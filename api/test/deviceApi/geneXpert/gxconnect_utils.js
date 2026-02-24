@@ -24,15 +24,16 @@ const { assert } = chai
 async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const tokens = apiKeys.map(key => key.token)
   const siteIds = await knex('DeviceApiKey as dak')
-    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+    .innerJoin('Device as d', 'dak.id', 'd.deviceApiKeyId')
     .whereIn('dak.token', tokens)
     .pluck('d.siteId')
     .union(function () {
       this.from('DeviceApiKey as dak').whereNotNull('dak.siteId').whereIn('dak.token', tokens).pluck('dak.siteId')
     })
-  const deviceIds = await knex('DeviceApiKey as dak')
+  const deviceIds = await knex('Device as d')
+    .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
     .whereIn('dak.token', tokens)
-    .pluck('dak.deviceId')
+    .pluck('d.id')
     .union(function () {
       this.from('Device').whereIn('siteId', siteIds).pluck('id as deviceId')
     })
@@ -46,11 +47,11 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
-  const deviceApiKeyIds = await knex('DeviceApiKey')
-    .whereIn('token', tokens)
-    .orWhereIn('deviceId', deviceIds)
-    .orWhereIn('siteId', siteIds)
-    .pluck('id')
+  const deviceApiKeyIds = await knex('DeviceApiKey as dak')
+    .whereIn('dak.token', tokens)
+    .orWhereIn('dak.siteId', siteIds)
+    .orWhereIn('dak.id', knex('Device').whereIn('id', deviceIds).whereNotNull('deviceApiKeyId').pluck('deviceApiKeyId'))
+    .pluck('dak.id')
 
   await knex('Device').whereIn('deviceApiKeyId', deviceApiKeyIds).update({ deviceApiKeyId: null })
 
@@ -268,7 +269,7 @@ class GxConnectApiTestContext {
       macAddress: this.macAddress,
       timezone: 'Eastern Standard Time',
     })
-    await knex('DeviceApiKey').where('id', deviceApiKeyRecord.id).update({ deviceId, siteId, geographyId })
+    await knex('DeviceApiKey').where('id', deviceApiKeyRecord.id).update({ siteId, geographyId })
     await knex('Device').where('id', deviceId).update({ deviceApiKeyId: deviceApiKeyRecord.id })
     if (this.instrumentSerial) {
       await knex('Instrument').insert({ deviceId, serial: this.instrumentSerial })
