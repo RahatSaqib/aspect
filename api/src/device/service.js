@@ -1182,14 +1182,14 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
 // This method will sometimes be called in a context of a database transaction.
 //  In this case the transaction's knex instance can be passed as the optionalKnex
 //  parameter below.
-async function postPayloadFromDevice(deviceLogDetails, optionalKnex) {
+async function postPayloadFromDevice(deviceLogDetails, deviceId, optionalKnex) {
   const now = new Date()
   const databaseTransaction = async inlineKnex => {
     const [deviceLogId] = await inlineKnex('DeviceLog').insert({
       createdOn: now,
       ...deviceLogDetails,
     })
-    await inlineKnex('Device').where({ id: deviceLogDetails.deviceId }).update({ lastSeenOn: now, updatedOn: now })
+    await inlineKnex('Device').where({ id: deviceId }).update({ lastSeenOn: now, updatedOn: now })
     return deviceLogId
   }
   if (!optionalKnex) {

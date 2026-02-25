@@ -121,7 +121,7 @@ async function updateResult(request) {
   if (deviceId) {
     const senderIp = getRemoteAddress(request)
     await knex('DeviceLog').insert({
-      deviceId,
+      deviceApiKeyId: knex('Device').where('id', deviceId).first('deviceApiKeyId'),
       resultId,
       source: 'Custom Fields Edited in Aspect',
       createdOn: now,

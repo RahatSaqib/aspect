@@ -50,6 +50,10 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('DeviceOperation').whereIn('id', opIds).delete()
   await knex('DeviceApiKey').whereIn('token', tokens).update({ deviceId: null })
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
+  await knex('Instrument')
+    .join('Device as d', 'Instrument.deviceId', 'd.id')
+    .whereIn('d.deviceApiKeyId', deviceApiKeyIds)
+    .delete()
   await knex('Device').whereIn('deviceApiKeyId', deviceApiKeyIds).delete()
   await knex('DeviceApiKey').whereIn('token', tokens).delete()
 }
@@ -366,6 +370,18 @@ async function createDevice(
     deviceApiKeyId: knex('DeviceApiKey').where({ token }).first('id'),
   })
 
+  if (instrumentSerial) {
+    await knex('Instrument').insert({
+      deviceId,
+      serial: instrumentSerial,
+      macAddress: null,
+      createdOn: now,
+      createdBy: null,
+      updatedOn: now,
+      updatedBy: null,
+    })
+  }
+
   await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
   if (insertLog) {
     await knex('DeviceLog').insert({
@@ -515,10 +531,14 @@ class DeviceApiTestContext {
     }
   }
 
-  async createDeviceWithResult(props = {}) {
+  async createDeviceWithResult({ instrumentSerial }) {
     const { knex } = this
     const { userId } = await knex('User').where({ name: this.user }).first('id as userId')
     this.userId = userId
+
+    if (instrumentSerial) {
+      this.instrumentSerial = instrumentSerial
+    }
 
     const clientToken = await this.requestClientToken({
       user: this.user,
@@ -558,7 +578,7 @@ class DeviceApiTestContext {
     this.deviceId = deviceId
     this.deviceIds.push(deviceId)
 
-    const resultProps = await this.getResultProps(props)
+    const resultProps = await this.getResultProps({})
     this.resultId = await createResult(knex, {
       deviceId,
       instrumentSerial: this.instrumentSerial,

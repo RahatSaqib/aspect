@@ -222,12 +222,13 @@ class TruenatResult extends SynchronousDataProcessor {
 
         await postPayloadFromDevice(
           {
-            deviceId,
+            deviceApiKeyId,
             source: 'Diagnostic Device POST',
             senderIp: getRemoteAddress(request),
             resultId: result.id,
             rawMessage: JSON.stringify(request.plugins.rawPayload),
           },
+          deviceId,
           knex
         )
 
