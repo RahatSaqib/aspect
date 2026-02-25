@@ -50,7 +50,10 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const deviceApiKeyIds = await knex('DeviceApiKey as dak')
     .whereIn('dak.token', tokens)
     .orWhereIn('dak.siteId', siteIds)
-    .orWhereIn('dak.id', knex('Device').whereIn('id', deviceIds).whereNotNull('deviceApiKeyId').pluck('deviceApiKeyId'))
+    .orWhereIn(
+      'dak.id',
+      knex('Device').whereIn('id', deviceIds).whereNotNull('deviceApiKeyId').select('deviceApiKeyId')
+    )
     .pluck('dak.id')
 
   await knex('Device').whereIn('deviceApiKeyId', deviceApiKeyIds).update({ deviceApiKeyId: null })
