@@ -35,7 +35,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('dak.token', tokens)
     .pluck('d.id')
     .union(function () {
-      this.from('Device').whereIn('siteId', siteIds).pluck('id as deviceId')
+      this.from('Device').whereIn('siteId', siteIds).pluck('id')
     })
 
   const inventoryItemIds = await knex('InventoryItem as ii')
@@ -55,10 +55,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
       knex('Device').whereIn('id', deviceIds).whereNotNull('deviceApiKeyId').select('deviceApiKeyId')
     )
     .pluck('dak.id')
-
-  await knex('Device').whereIn('deviceApiKeyId', deviceApiKeyIds).update({ deviceApiKeyId: null })
-
-  await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
 
   const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
@@ -107,6 +103,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
       _.map(sitesAndDevices, elem => elem.siteId)
     )
   await knex('DeviceOperation').whereIn('id', opIds).delete()
+  await knex('Device').whereIn('deviceApiKeyId', deviceApiKeyIds).update({ deviceApiKeyId: null })
+  await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
 
   await knex('Notification').whereIn('issueId', issueIds).delete()
   await knex('Issue').whereIn('id', issueIds).delete()
