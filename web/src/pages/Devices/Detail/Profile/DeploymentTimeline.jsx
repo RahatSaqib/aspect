@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react'
 import { Box, Tooltip, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
+import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 
 /** Share of total timeline width used for the left fade on the first segment (estimated start). Fixed so it looks the same regardless of segment duration. */
 const LEFT_FADE_PCT_OF_TIMELINE = 3
 
-/** Min distance (as share of timeline width) between two boundary labels before we displace one down to avoid overlap. */
-const MIN_LABEL_DISTANCE_PCT = 0.1
+/** Min distance (as % of timeline width, 0–100) between two boundary labels before we displace one down to avoid overlap. */
+const MIN_LABEL_DISTANCE_PCT = 20
 
 /** Sort deployments chronologically: null start (oldest/first) comes first. */
 function sortChronological(deps) {
@@ -113,12 +113,19 @@ const DeploymentTimeline = ({ deployments, firstResultDate, palette, ariaLabel, 
     return { segments, boundaryPcts, boundaryLabels }
   }, [chronologicalDeployments, firstResultDate, siteToColorIndex])
 
-  const shiftLabelDown = useMemo(() => {
+  /** For each boundary label: 0 = default row, 1 = first offset row, 2 = second, etc. Consecutive close labels get staggered rows so they don't overlap. */
+  const labelOffsetRow = useMemo(() => {
     if (!timelineData?.boundaryPcts?.length) return []
-    const out = timelineData.boundaryPcts.map(() => false)
-    for (let i = 1; i < timelineData.boundaryPcts.length; i++) {
-      if (timelineData.boundaryPcts[i] - timelineData.boundaryPcts[i - 1] < MIN_LABEL_DISTANCE_PCT) {
-        out[i] = true
+    const pcts = timelineData.boundaryPcts
+    const out = pcts.map(() => 0)
+    let runStart = 0
+    for (let i = 1; i < pcts.length; i++) {
+      const tooClose = pcts[i] - pcts[i - 1] < MIN_LABEL_DISTANCE_PCT
+      if (tooClose) {
+        const rowInRun = i - runStart
+        out[i] = rowInRun
+      } else {
+        runStart = i
       }
     }
     return out
@@ -211,13 +218,15 @@ const DeploymentTimeline = ({ deployments, firstResultDate, palette, ariaLabel, 
           )
         })}
       </Box>
-      {/* Boundary markers: year-month in labels, full date in tooltips; displace close labels down */}
-      <Box sx={{ position: 'relative', height: 48, mt: 0.25 }}>
+      {/* Boundary markers: year-month in labels, full date in tooltips; displace close labels down in staggered rows */}
+      <Box sx={{ position: 'relative', height: 56, mt: 0.25 }}>
         {boundaryPcts.map((pct, i) => {
           const fullLabel = boundaryLabels[i]
           const displayLabel =
             fullLabel === '' ? '' : fullLabel === 'Active' ? formatMessage(messageActive) : toYearMonth(fullLabel)
           const tooltipTitle = fullLabel === '' ? '' : fullLabel === 'Active' ? formatMessage(messageActive) : fullLabel
+          const row = labelOffsetRow[i] ?? 0
+          const labelMt = 0.25 + row * 1.5
           return (
             <Box
               key={i}
@@ -248,11 +257,10 @@ const DeploymentTimeline = ({ deployments, firstResultDate, palette, ariaLabel, 
                       fontSize: '0.65rem',
                       color: 'text.secondary',
                       whiteSpace: 'nowrap',
-                      mt: 0.25,
+                      mt: labelMt,
                       maxWidth: 80,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      ...(shiftLabelDown[i] ? { mt: 2.5 } : {}),
                     }}
                   >
                     {displayLabel}
