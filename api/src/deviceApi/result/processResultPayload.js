@@ -97,6 +97,10 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
     return { aspectResultId, device: { id: context.device.id } }
   })
 
+  // Dispatch after transaction commits so consumers see the result row
+  messageContext.bindActionCreators({ resultLogged })
+  messageContext.resultLogged(response.aspectResultId, deviceLogId, null, { isResultUpdated: true })
+
   return response
 }
 
@@ -133,9 +137,6 @@ async function mergeResultWithContext(context) {
     shouldTriggerResultNotification,
     // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
   } = await mergeResult(context)
-
-  context.messageContext.bindActionCreators({ resultLogged })
-  context.messageContext.resultLogged(plainResult.id, context.deviceLogId, null, { isResultUpdated: true })
 
   await resultAutoTagging(knex, plainResult)
 

@@ -13,9 +13,8 @@ const { knex } = require('../../../src/db')
 const server = require('../../utils/testUtils')
 
 const { assert } = chai
-const { resultModuleReplaced } = require('../../../src/result/actions')
 
-const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
+const { waitForIdle, subscribe, waitForAction } = require('../../utils/mqUtils')
 
 describe('Module Replaced Issue testing', () => {
   const macAddress = 'MAC00000000FAKE'
@@ -34,6 +33,14 @@ describe('Module Replaced Issue testing', () => {
   })
   const { beforeRegisterAndSetDevice, basicDevicePayload, afterCleanUp } = context
   let { deviceAuth } = context
+
+  before(async () => {
+    const deviceApiSubscriptions = require('../../../src/deviceApi/subscriptions').subscriptions
+    const issueSubscriptions = require('../../../src/issue/endpoints').subscriptions
+    await subscribe('deviceApi', deviceApiSubscriptions)
+    await subscribe('issue', issueSubscriptions)
+  })
+
   beforeEach(async () => {
     await beforeRegisterAndSetDevice()
     ;({ deviceAuth } = context)
@@ -74,7 +81,7 @@ describe('Module Replaced Issue testing', () => {
       payload,
     })
 
-    // Post another result with same module serial to the same slot
+    // Post another result with new module serial to the same slot (triggers RESULT_MODULE_REPLACED)
     resultId = `UNIQUE-ID-3`
     sampleId = `GENMAC25B3`
     moduleSerial = `GENMAC123B`
@@ -101,17 +108,16 @@ describe('Module Replaced Issue testing', () => {
       result,
     })
 
-    // Should create one module replaced issue
+    // Wait for RESULT_MODULE_REPLACED so we know the issue path ran before asserting on DB
+    const waitForModuleReplaced = waitForAction({ type: 'RESULT_MODULE_REPLACED', deviceId }, 10000)
     response = await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
     })
-
-    let waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.aspectResultId))
-    await waitForModuleReplacedIssue
+    await waitForModuleReplaced
     await waitForIdle()
+    let issues = await waitForIssueCount(knex, deviceId, 1, 5000)
 
-    let issues = await getIssuesByDeviceId(knex, deviceId)
     assert.equal(issues.length, 1)
     assert.equal(issues[0].issueType, 'ModuleReplaced')
     assert.equal(issues[0].deviceId, deviceId)
@@ -132,8 +138,7 @@ describe('Module Replaced Issue testing', () => {
       payload,
     })
 
-    waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.aspectResultId))
-    await waitForModuleReplacedIssue
+    // No RESULT_MODULE_REPLACED expected (same module serial); just wait for queue to settle
     await waitForIdle()
 
     issues = await getIssuesByDeviceId(knex, deviceId)
@@ -146,6 +151,7 @@ describe('Module Replaced Issue testing', () => {
     assert.equal(JSON.parse(issues[0].data).replacedModuleSerial, 'GENMAC123A')
     assert.equal(JSON.parse(issues[0].data).oldResultId, oldResultId)
   })
+
   it('should NOT create a module replaced issue when a new serial is detected in a slot and the last message is older than 2 years', async () => {
     const deviceId = context.device.id
 
@@ -425,6 +431,19 @@ describe('Module Replaced Issue testing', () => {
     assert.equal(issues.length, 0)
   })
 })
+
+function waitForIssueCount(knex, deviceId, expectedCount, timeoutMs = 5000) {
+  const interval = 200
+  const deadline = Date.now() + timeoutMs
+  function poll() {
+    return getIssuesByDeviceId(knex, deviceId).then(issues => {
+      if (issues.length >= expectedCount) return issues
+      if (Date.now() >= deadline) return issues
+      return new Promise(r => setTimeout(r, interval)).then(poll)
+    })
+  }
+  return poll()
+}
 
 async function getIssuesByDeviceId(knex, deviceId) {
   return knex('Issue as i')
