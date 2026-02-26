@@ -22,7 +22,6 @@ async function transferDeviceInstruments(trknex, { groupedInstruments, targetDev
       const sourceInstrumentIds = instrumentsByDevice.get(deviceId)
       await mergeIssuesFromDuplicatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
       await mergeNonRepeatedResultsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
-      await mergeDeviceLogsForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
       await mergeMessagesForInstruments(trknex, sourceInstrumentIds, targetDeviceId)
       await transferInstrumentIds(trknex, sourceInstrumentIds, targetDeviceId, userId)
     })
@@ -73,21 +72,6 @@ async function mergeNonRepeatedResultsForInstruments(trknex, sourceInstrumentIds
     .whereIn('i.id', sourceInstrumentIds)
     .whereNotIn('sourceResults.externalId', repeatedResultsQuery)
     .update('sourceResults.deviceId', targetDeviceId)
-}
-
-async function mergeDeviceLogsForInstruments(trknex, sourceInstrumentIds, targetDeviceId) {
-  await trknex('DeviceLog')
-    .whereIn(
-      'resultId',
-      trknex('Result as r')
-        .join('Instrument as i', qb => {
-          qb.on('i.serial', 'r.instrumentSerial').andOn('i.deviceId', 'r.deviceId')
-        })
-        .where('r.deviceId', targetDeviceId)
-        .whereIn('i.id', sourceInstrumentIds)
-        .select('r.id')
-    )
-    .update({ deviceId: targetDeviceId })
 }
 
 async function mergeMessagesForInstruments(trknex, sourceInstrumentIds, targetDeviceId) {

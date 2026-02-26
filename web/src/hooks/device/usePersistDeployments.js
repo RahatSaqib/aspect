@@ -1,7 +1,13 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
 import { aspectFetch } from '../../utils/utils/fetch'
-import { DEVICE_DEPLOYMENTS_KEY, DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT, DEVICE_KEY } from './deviceKeys'
+import {
+  CANDIDATE_INSTRUMENTS_KEY,
+  DEVICE_DEPLOYMENTS_KEY,
+  DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT,
+  DEVICE_INSTRUMENTS_KEY,
+  DEVICE_KEY,
+} from './deviceKeys'
 
 const persistChanges = async ({ deviceId, changes }) => {
   const endpoint = replaceRouteParams(DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT, { deviceId })
@@ -21,6 +27,9 @@ const usePersistDeployments = () => {
       queryClient.invalidateQueries({
         predicate: query => query.queryKey[0] === DEVICE_KEY && query.queryKey[1] === deviceId,
       })
+      // Refresh device instruments section (instruments may be tied to deployments)
+      queryClient.invalidateQueries([DEVICE_INSTRUMENTS_KEY, deviceId])
+      queryClient.invalidateQueries([CANDIDATE_INSTRUMENTS_KEY, deviceId])
     },
   })
 }

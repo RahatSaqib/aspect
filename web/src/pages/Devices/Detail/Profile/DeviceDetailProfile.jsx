@@ -542,16 +542,17 @@ const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
-      <PermissionChecker permissions={['device:view']}>
-        <DeploymentsSection
-          deviceId={device.get('id')}
-          firstResultDate={device.get('firstResultEndedOn')}
-          disabled={disabled}
-        />
-      </PermissionChecker>
+
+      <DeploymentsSection
+        deviceId={device.get('id')}
+        firstResultDate={device.get('firstResultEndedOn')}
+        disabled={disabled}
+      />
+
       {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
         <DeviceInstrumentsTable deviceId={device.get('id')} disabled={disabled} />
       )}
+
       <PerformanceReport
         performanceReport={devicePerformance}
         dailyCapacity={dailyCapacity || 0}

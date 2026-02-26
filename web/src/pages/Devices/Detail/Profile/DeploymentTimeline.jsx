@@ -1,6 +1,6 @@
+import React, { useMemo } from 'react'
 import { Box, Tooltip, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
-import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 
