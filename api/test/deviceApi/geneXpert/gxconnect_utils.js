@@ -129,6 +129,10 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('FactInventoryConsumptionRate', siteIds).delete()
   await knex('SiteTag').whereIn('siteId', siteIds).delete()
   await knex('InventoryLog').whereIn('siteId', siteIds).delete()
+
+  const siteIdsToDelete = _.uniq([...siteIds, ..._.map(sitesAndDevices, elem => elem.siteId)])
+  await knex('AlertMessage').whereIn('siteId', siteIdsToDelete).delete()
+
   await knex('Site')
     .whereIn('id', siteIds)
     .orWhereIn(
