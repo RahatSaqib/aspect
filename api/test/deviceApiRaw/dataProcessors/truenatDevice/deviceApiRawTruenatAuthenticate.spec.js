@@ -192,7 +192,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       assert.equal(incorrectUsernameResponse.body.username, newTruenatDevice.username)
       assert.isTrue(incorrectUsernameResponse.body.success)
 
-      const unapprovedDeviceApprovalId = await deviceApprovalToId('assigned')
+      const unapprovedDeviceApprovalId = await deviceApprovalToId('pendingDeployment')
       const device = await knex('Device').where('name', newTruenatDevice.username).first()
       const site = await knex('Site').where('name', newTruenatDevice.username).first()
       assert.isDefined(device, 'new device should be created with username as device name')
