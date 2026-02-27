@@ -25,12 +25,13 @@ async function preProcessMergeResult(context) {
   const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
   _.set(payload, 'assay.id', mappedAssayExternalId)
 
-  if (!_.isEmpty(payload.data)) {
+  if (!_.isEmpty(payload.data) && _.isEmpty(payload.category)) {
     const resultText = _.get(payload, 'data.resultText')
     payload.category = getResultCategories(mappedAssayExternalId, resultText)
-  } else {
+  } else if (_.isEmpty(payload.data)) {
     payload.data = {}
   }
+
   const instrumentSerial = _.get(payload, 'instrument.serial', null)
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
 

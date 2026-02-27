@@ -18,7 +18,7 @@ describe('inventory strategy for Pakistan', () => {
   const context = createTestContext(knex, server, {
     user: 'pk_admin',
     password: 'test07',
-    type: 'DaktariVirology',
+    type: 'CepheidGeneXpert',
     partner: 'Pakistan NTP',
   })
 
@@ -29,7 +29,6 @@ describe('inventory strategy for Pakistan', () => {
     })
   )
 
-  // let deviceId
   let deviceAuth
   let clientAuth
   let now
@@ -40,21 +39,21 @@ describe('inventory strategy for Pakistan', () => {
   let createdBy
   let updatedBy
   let adminId
-  const assayExternalId = 'DaktariHivVL'
+  const assayExternalId = 'GxMtbRif'
   let consumableId
   let past
   let future
   let inventoryItemIdsToDelete
 
   beforeEach(async () => {
-    await context.createDeviceWithResult({})
+    await context.createDeviceWithResult({ instrumentSerial: '02384702' })
     ;({ deviceAuth, clientAuth, now, user, siteIds } = context)
     ;[siteId, toSiteId] = siteIds
     ;({ id: adminId } = await knex('User').where({ name: user }).first('id'))
     createdBy = adminId
     updatedBy = adminId
 
-    consumableId = (await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')).id
+    consumableId = (await knex('Consumable as c').where('c.externalId', 'GxMtbRifCartridge').first('c.id')).id
 
     past = subDays(now, 7)
     future = addDays(startOfDay(now), 7)
@@ -83,7 +82,7 @@ describe('inventory strategy for Pakistan', () => {
   const getResultPayload = ({ startedOn, expirationDate }) => {
     return {
       startedOn,
-      data: { a: 'b' },
+      data: { assay: 'Xpert MTB-RIF', a: 'b' },
       assay: { id: assayExternalId },
       sample: {
         id: Math.random().toString(36).slice(2),

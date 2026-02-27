@@ -142,7 +142,7 @@ async function mergeResultWithContext(context) {
 
   // consumeInventoryForResult
   if (plainResult.siteId) {
-    const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
+    const consumablesInResultData = _.isEmpty(payload.result.consumable) ? [] : payload.result.consumable
 
     await consumeInventoryForResult({
       knex,
