@@ -26,7 +26,7 @@ describe('admin result updates', () => {
   })
 
   beforeEach(async () => {
-    await context.createDeviceWithResult()
+    await context.createDeviceWithResult({})
   })
   afterEach(context.afterEach)
   async function getInventoryItemsAtSite(knex, siteId) {

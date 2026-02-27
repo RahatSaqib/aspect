@@ -61,7 +61,7 @@ describe('Device Result API routes', () => {
     }
 
     beforeEach(async () => {
-      await context.createDeviceWithResult()
+      await context.createDeviceWithResult({})
     })
     afterEach(context.afterEach)
 

@@ -47,7 +47,7 @@ describe('inventory strategy for Pakistan', () => {
   let inventoryItemIdsToDelete
 
   beforeEach(async () => {
-    await context.createDeviceWithResult()
+    await context.createDeviceWithResult({})
     ;({ deviceAuth, clientAuth, now, user, siteIds } = context)
     ;[siteId, toSiteId] = siteIds
     ;({ id: adminId } = await knex('User').where({ name: user }).first('id'))
