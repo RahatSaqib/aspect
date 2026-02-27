@@ -1,5 +1,6 @@
 import React from 'react'
 import { Alert, DialogActions, TextField } from '@mui/material'
+import { formatInTimeZone } from 'date-fns-tz'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
@@ -12,6 +13,25 @@ import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import messages from './messages'
 
+const getTodayInUserTimezone = () => {
+  const fallback = toDateOnly(new Date())
+
+  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
+    return fallback
+  }
+
+  const timezoneId = window.localStorage.getItem('asTimezoneId')
+  if (!timezoneId) {
+    return fallback
+  }
+
+  try {
+    return formatInTimeZone(new Date(), timezoneId, 'yyyy-MM-dd')
+  } catch (e) {
+    return fallback
+  }
+}
+
 /**
  * Dialog for adding a new deployment. The new deployment becomes the active one.
  * - First deployment (activeDeployment is null): only site is asked; start will be null.
@@ -23,7 +43,7 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => 
 
   const isFirstDeployment = !activeDeployment
 
-  const today = toDateOnly(new Date())
+  const today = getTodayInUserTimezone()
 
   // Min start: day after active deployment's start (so the current active has ≥1 day duration)
   const activeStartStr = toDateOnly(activeDeployment?.start)
@@ -44,6 +64,12 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => 
             .min(
               minStart || '1900-01-01',
               formatMessage(messages.deploymentNewStartAfterCurrentEnd, { minStartDate: minStart })
+            )
+            .max(
+              today,
+              formatMessage(messages.deploymentStartNotInFuture, {
+                maxStartDate: today,
+              })
             ),
         }),
     siteId: Yup.number().nullable(true).required(formatMessage(validationErrorMessages.required)),
@@ -96,7 +122,10 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => 
                     fullWidth
                     margin="normal"
                     InputLabelProps={{ shrink: true }}
-                    inputProps={minStart ? { min: minStart } : undefined}
+                    inputProps={{
+                      ...(minStart ? { min: minStart } : {}),
+                      max: today,
+                    }}
                     error={touched.start && !!errors.start}
                     helperText={touched.start && errors.start}
                   />

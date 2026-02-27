@@ -400,6 +400,10 @@ const messages = {
       defaultMessage:
         'The new deployment must start after the current deployment ends. Please choose a start date on or after {minStartDate}.',
     },
+    deploymentStartNotInFuture: {
+      id: 'pages.DeviceDetailProfile.deploymentStartNotInFuture',
+      defaultMessage: 'The deployment start date cannot be in the future. Please choose today or an earlier date.',
+    },
     confirmDeleteDeployment: {
       id: 'pages.DeviceDetailProfile.confirmDeleteDeployment',
       defaultMessage: 'Are you sure you want to delete this deployment?',
