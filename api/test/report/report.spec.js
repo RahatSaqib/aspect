@@ -108,7 +108,7 @@ describe.skip('Global reports', () => {
       deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
     })
     beforeEach(async () => {
-      await context.createDeviceWithResult({})
+      await context.createDeviceWithResult()
 
       const { deviceId } = context
       // just in case - reset device's current state for calibration

@@ -28,7 +28,7 @@ describe('Device API routes', () => {
   const devicePath = '/device'
 
   beforeEach(async () => {
-    await context.createDeviceWithResult({})
+    await context.createDeviceWithResult()
   })
   afterEach(context.afterEach)
 

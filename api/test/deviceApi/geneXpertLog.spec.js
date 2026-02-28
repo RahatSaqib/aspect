@@ -106,7 +106,7 @@ const postLog = async (deviceAuth, source, data) =>
 
 describe('Process GeneXpert Logs', () => {
   beforeEach(async () => {
-    await context.createDeviceWithResult({})
+    await context.createDeviceWithResult()
   })
   afterEach(context.afterEach)
   it('should create entry with log details in table DeviceOperation', async () => {
@@ -716,7 +716,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
   })
 
   beforeEach(async () => {
-    await context.createDeviceWithResult({})
+    await context.createDeviceWithResult()
 
     const { apiKey } = context
     ;[{ deviceAuth, deviceId }] = [context]
