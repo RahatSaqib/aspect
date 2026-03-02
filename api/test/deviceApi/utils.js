@@ -20,9 +20,9 @@ const server = require('../utils/testUtils')
 async function deleteDeviceAndTestData(knex, apiKeys) {
   const tokens = apiKeys.map(key => key.token)
   const deviceIds = await knex('DeviceApiKey as dak')
+    .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
     .whereIn('dak.token', tokens)
-    .whereNotNull('dak.deviceId')
-    .pluck('dak.deviceId')
+    .pluck('d.id')
   const deviceApiKeyIds = await knex('DeviceApiKey as dak').whereIn('dak.token', tokens).pluck('dak.id')
 
   const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')

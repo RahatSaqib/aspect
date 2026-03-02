@@ -28,7 +28,7 @@ describe('Device API routes', () => {
   const devicePath = '/device'
 
   beforeEach(async () => {
-    await context.createDeviceWithResult()
+    await context.createDeviceWithResult({ instrumentSerial: 'GX-00001' })
   })
   afterEach(context.afterEach)
 
@@ -219,8 +219,16 @@ describe('Device API routes', () => {
         .set('Authorization', deviceAuth)
         .send({
           includeDeviceConfiguration: true,
-          type: { id: 'DaktariInSight' },
-          site: { id: 'CHIZ' },
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: new Date(),
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'GX-00001' },
+            sample: { id: '29347293' },
+          },
           name: 'Chanayethazan 1 GeneXpert, Chanayethazan 2 GeneXpert and Patheingyi 1 GeneXpert',
         })
 
