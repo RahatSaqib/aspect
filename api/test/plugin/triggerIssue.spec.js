@@ -653,6 +653,7 @@ describe('This test suite is for testing different triggers conditions', async (
         macAddress: `4nd${macAddress}`,
         hostId: `4nd${hostId}`,
         deviceSerialNumber: `4nd${deviceSerialNumber}`,
+        instrumentSerial: 'S-1234-0',
       })
       await deviceContextForUnusedModules.beforeRegisterAndSetDevice()
       const { device } = deviceContextForUnusedModules

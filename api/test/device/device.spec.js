@@ -985,7 +985,7 @@ describe('Device routes', () => {
 
       beforeEach(async () => {
         // creates result for today (Result.endedOn = now)
-        await context.createDeviceWithResult()
+        await context.createDeviceWithResult({ instrumentSerial: 'AA1' })
       })
       afterEach(context.afterEach)
 
