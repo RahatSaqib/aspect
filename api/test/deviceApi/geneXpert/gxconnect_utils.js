@@ -242,6 +242,14 @@ class GxConnectApiTestContext {
   }
 
   async registerDevice() {
+    const existingDevice = await knex('Device as d')
+      .innerJoin('Instrument as i', 'i.deviceId', 'd.id')
+      .innerJoin('DeviceApiKey as dak', 'dak.id', 'd.deviceApiKeyId')
+      .where('i.serial', this.instrumentSerial)
+      .first('dak.token')
+    if (existingDevice) {
+      return existingDevice.token
+    }
     const clientAccessToken = await this.requestClientToken()
     const deviceApiKey = await this.requestNewDeviceApiKey(clientAccessToken)
 
