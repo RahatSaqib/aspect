@@ -6,13 +6,7 @@ const { knex } = require('../../src/db')
 const { resultTypeToId } = require('../../src/shared/dictionary')
 const { resultReadyForNotification } = require('../../src/result/actions')
 
-const {
-  createTestContext,
-  getDeviceConfigurationData,
-  getLastDeviceOperationId,
-  getLastResultId,
-  createSite,
-} = require('./utils')
+const { createTestContext, getDeviceConfigurationData, getLastResultId, createSite } = require('./utils')
 
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 
@@ -1139,8 +1133,6 @@ describe('Device Result API routes', () => {
       runTest(async knex => {
         const { deviceId, deviceAuth, now } = context
         const resultIds = []
-        const opIds = []
-
         const [{ count: initialLogLength }] = await knex('DeviceLog').count('id as count')
 
         const res = await server
@@ -1158,12 +1150,14 @@ describe('Device Result API routes', () => {
                 assay: 'Xpert MTB-RIF',
                 a: 'd',
               },
+              sample: { id: '123-456789-012' },
               instrument: {
-                serial: 'A NICE INSTRUMENT SERIAL',
+                serial: '1234567',
               },
               assay: { id: 'GxMtbRif' },
             },
           })
+
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
@@ -1171,10 +1165,9 @@ describe('Device Result API routes', () => {
         const { lastInstrumentSerial, deviceId: lastDeviceId } = await knex('Instrument')
           .orderBy('id', 'desc')
           .first('serial as lastInstrumentSerial', 'deviceId')
-        assert.equal(lastInstrumentSerial, 'A NICE INSTRUMENT SERIAL')
+        assert.equal(lastInstrumentSerial, '1234567')
 
         resultIds.push(await getLastResultId(knex, lastDeviceId))
-        opIds.push(await getLastDeviceOperationId(knex, lastDeviceId))
 
         const [{ count: logLength2 }] = await knex('DeviceLog').count('id as count')
         assert.equal(logLength2, initialLogLength + 1) // I add new devicelog for the current device
@@ -1183,17 +1176,13 @@ describe('Device Result API routes', () => {
           .where({ id: resultIds[resultIds.length - 1] })
           .first()
         const deviceLogConfig2 = await getDeviceConfigurationData(knex, lastDeviceId)
-        const deviceLogOp2 = await knex('DeviceOperation')
-          .where({ id: opIds[opIds.length - 1] })
-          .first()
+
         assert.deepEqual(deviceLogConfig2, _.assign({}, baseConfig, { a: 'b' }))
-        assert.property(deviceLogOp2, 'data')
-        assert.deepEqual(JSON.parse(deviceLogOp2.data), { a: 'c' })
         assert.property(deviceLogResult2, 'resultData')
-        assert.deepEqual(JSON.parse(deviceLogResult2.resultData), { a: 'd' })
+        assert.deepEqual(JSON.parse(deviceLogResult2.resultData), { a: 'd', assay: 'Xpert MTB-RIF' })
+
         const deviceLogUpdates2 = await knex('DeviceLog').where({
           deviceConfigurationUpdated: true,
-          deviceOperationId: deviceLogOp2.id,
         })
 
         assert.equal(deviceLogUpdates2.length, 1)
@@ -1211,7 +1200,11 @@ describe('Device Result API routes', () => {
             operation: { data: { a: 'd' } },
             result: {
               startedOn: now,
-              data: { a: 'd' },
+              data: { assay: 'Xpert MTB-RIF', a: 'd' },
+              sample: { id: '123-456789-012' },
+              instrument: {
+                serial: '1234567',
+              },
               assay: { id: 'GxMtbRif' },
             },
           })
@@ -1221,25 +1214,16 @@ describe('Device Result API routes', () => {
           })
 
         resultIds.push(await getLastResultId(knex, deviceId))
-        opIds.push(await getLastDeviceOperationId(knex, deviceId))
 
         const deviceLogConfig3 = await getDeviceConfigurationData(knex, deviceId)
-        const deviceLogOp3 = await knex('DeviceOperation')
-          .where({ id: opIds[opIds.length - 1] })
-          .first()
-
         assert.deepEqual(deviceLogConfig3, _.assign({}, baseConfig, { a: 'c' }))
-        assert.property(deviceLogOp3, 'data')
-        assert.deepEqual(JSON.parse(deviceLogOp3.data), { a: 'd' })
-
         const deviceLogUpdates3 = await knex('DeviceLog').where({
           deviceConfigurationUpdated: true,
-          deviceOperationId: deviceLogOp3.id,
         })
 
-        assert.equal(deviceLogUpdates3.length, 1)
-        assert.isOk(deviceLogUpdates3[0].id)
-        assert.isOk(deviceLogUpdates3[0].resultId)
+        assert.equal(deviceLogUpdates3.length, 2)
+        assert.isOk(deviceLogUpdates3[1].id)
+        assert.isOk(deviceLogUpdates3[1].resultId)
       }))
 
     describe.skip('the reportable site of a result', () => {
