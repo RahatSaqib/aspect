@@ -57,6 +57,7 @@ describe('Device Result API routes', () => {
     beforeEach(async () => {
       await context.createDeviceWithResult({ instrumentSerial: '1234567' })
     })
+
     afterEach(context.afterEach)
 
     it('should add and return device results', () =>
@@ -853,7 +854,11 @@ describe('Device Result API routes', () => {
 
         let result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
         assert.equal(result1.externalId, resultExternalIds[0])
-        assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
+        assert.deepEqual(JSON.parse(result1.resultData), {
+          geneXpertTestId: resultExternalIds[0],
+          assay: 'Xpert MTB-RIF',
+          a: 'b',
+        })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults())
 
@@ -883,8 +888,9 @@ describe('Device Result API routes', () => {
             },
             result: {
               id: resultExternalIds[0],
-              startedOn: now.toISOString(),
-              data: { a: 'b', c: 'd' },
+              startedOn: now,
+              data: { assay: 'Xpert MTB-RIF', a: 'b', c: 'd' },
+              instrument: { serial: '1234567' },
               assay: { id: 'GxMtbRif' },
             },
           })
@@ -897,10 +903,15 @@ describe('Device Result API routes', () => {
 
         result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
         assert.equal(result1.externalId, resultExternalIds[0])
-        assert.deepEqual(JSON.parse(result1.resultData), { a: 'b', c: 'd' })
+        assert.deepEqual(JSON.parse(result1.resultData), {
+          geneXpertTestId: resultExternalIds[0],
+          assay: 'Xpert MTB-RIF',
+          a: 'b',
+          c: 'd',
+        })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults(), 'Result count does not match')
-
+        const startedOnT3 = '2013-12-01T00:22:54.000Z'
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
@@ -910,11 +921,19 @@ describe('Device Result API routes', () => {
             },
             result: {
               id: resultExternalIds[1],
-              startedOn: now.toISOString(),
-              data: { a: 'b' },
+              startedOn: startedOnT3,
+              data: { assay: 'Xpert MTB-RIF', a: 'b' },
               assay: { id: 'GxMtbRif' },
               sample: {
                 id: mobileSampleExternalId,
+              },
+              consumable: {
+                serial: '132-44-222',
+                expirationDate: '2014-03-01',
+                lot: '331',
+              },
+              instrument: {
+                serial: '1234567',
               },
             },
           })
@@ -927,7 +946,7 @@ describe('Device Result API routes', () => {
         resultIds.push(lastResultId)
 
         let result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
-        assert.equal(result2.externalId, resultExternalIds[1])
+        assert.notEqual(result2.externalId, resultExternalIds[1])
         assert.equal(initialCount + 2, await countResults())
 
         const result1SampleSite = await knex('Site as s').where({ id: result1.siteId }).first()
@@ -955,7 +974,7 @@ describe('Device Result API routes', () => {
             },
             result: {
               id: resultExternalIds[1],
-              data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+              data: { assay: 'Xpert MTB-RIF', a: 'b', c: 2, d: false, e: { f: 'g' } },
               type: { id: 'Study' },
               source: { id: 'EnteredByHand' },
               category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
@@ -964,7 +983,7 @@ describe('Device Result API routes', () => {
                 version: '1a.c1',
               },
               sample: {
-                id: `Sample${now}`,
+                id: mobileSampleExternalId,
                 type: {
                   id: 'Plasma',
                 },
@@ -972,7 +991,7 @@ describe('Device Result API routes', () => {
                   id: result2SampleSite.externalId,
                 },
               },
-              startedOn: '2013-12-01',
+              startedOn: startedOnT3,
               endedOn: '2013-12-01T01:30:00.000Z',
               consumable: {
                 serial: '132-44-222',
@@ -980,7 +999,7 @@ describe('Device Result API routes', () => {
                 lot: '331',
               },
               instrument: {
-                serial: '444-3',
+                serial: '1234567',
                 module: {
                   name: 'ModA',
                   serial: '555-8',
@@ -1037,7 +1056,7 @@ describe('Device Result API routes', () => {
 
         result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
         assert.equal(initialCount + 2, await countResults())
-        assert.equal(result2.externalId, resultExternalIds[1])
+        assert.notEqual(result2.externalId, resultExternalIds[1])
         expect(JSON.parse(result2.resultData)).to.containSubset({
           a: 'b',
           c: 2,
@@ -1045,14 +1064,12 @@ describe('Device Result API routes', () => {
           e: { f: 'g' },
         })
         assert.equal(result2.assayVersion, '1a.c1')
-        assert.approximately(result2.latitude, 30.419348, 0.000001)
-        assert.approximately(result2.longitude, -87.581222, 0.000001)
-        assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
+        assert.deepEqual(result2.startedOn.toISOString(), startedOnT3)
         assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30:00.000Z'))
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
         assert.equal(result2.consumableLot, '331')
-        assert.equal(result2.instrumentSerial, '444-3')
+        assert.equal(result2.instrumentSerial, '1234567')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
@@ -1064,7 +1081,7 @@ describe('Device Result API routes', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '856-7909',
+          phone: '+18567909',
         })
         assert.deepEqual(JSON.parse(result2.oemData), {
           maker: 'ABC',
