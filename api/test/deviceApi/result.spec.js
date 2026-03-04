@@ -1458,15 +1458,16 @@ describe('Device Result API routes', () => {
 
       it('should trigger event resultReadyForNotification', () =>
         runTest(async knex => {
-          const { now, deviceId } = context
+          const { now } = context
 
           const resultPayload = {
             startedOn: now,
             endedOn: addHours(now, 2),
             id: 'test-external-id', // this is `Result.externalId`
-            data: { a: 'b', b: 'c' },
+            data: { assay: 'Xpert MTB-RIF', a: 'b', b: 'c' },
             assay: { id: 'GxMtbRif' },
-            deviceId,
+            sample: { id: '123-456789-012' },
+            instrument: { serial: '1234567' },
           }
 
           /**
@@ -1486,7 +1487,7 @@ describe('Device Result API routes', () => {
            * prepare MQ action to check it was triggered after updating
            * same result with new data
            */
-          let action = resultReadyForNotification(result.id)
+          let action = resultReadyForNotification(result.id, true)
           let waitForResultReadyForNotification = waitForAction(action)
           /**
            * update result
