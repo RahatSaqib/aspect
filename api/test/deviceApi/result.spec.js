@@ -1584,6 +1584,7 @@ describe('Device Result API routes', () => {
                   { id: resultDetails.resultCategory2ExternalId },
                 ],
                 endedOn: new Date(),
+                instrument: { serial: '1234567' },
               },
             })
             .then(res => {
@@ -1621,6 +1622,7 @@ describe('Device Result API routes', () => {
                 ],
                 startedOn: new Date(),
                 endedOn: addHours(new Date(), 2),
+                instrument: { serial: '1234567' },
               },
             })
             .then(res => {
