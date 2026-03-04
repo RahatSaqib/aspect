@@ -55,7 +55,7 @@ describe('Device Result API routes', () => {
     }
 
     beforeEach(async () => {
-      await context.createDeviceWithResult({ instrumentSerial: '1234567' })
+      await context.createDeviceWithResult({ instrumentSerial: 'Aa123456' })
     })
 
     afterEach(context.afterEach)
@@ -86,7 +86,7 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { assay: 'Xpert MTB-RIF', a: 'b' },
           assay: { id: 'GxMtbRif' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '29347293' },
         }
         const postNewResultResponse1 = await server
@@ -201,7 +201,7 @@ describe('Device Result API routes', () => {
                 lot: '331',
               },
               instrument: {
-                serial: '1234567',
+                serial: 'Aa123456',
                 module: {
                   name: 'ModA',
                   serial: '555-8',
@@ -289,7 +289,7 @@ describe('Device Result API routes', () => {
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
         assert.equal(result2.consumableLot, '331')
-        assert.equal(result2.instrumentSerial, '1234567')
+        assert.equal(result2.instrumentSerial, 'Aa123456')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
@@ -390,7 +390,7 @@ describe('Device Result API routes', () => {
               lot: '331',
             },
             instrument: {
-              serial: '1234567',
+              serial: 'Aa123456',
               module: {
                 name: 'ModA',
                 serial: '555-8',
@@ -498,7 +498,7 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { assay: 'Xpert MTB-RIF', a: 'b' },
           assay: { id: 'GxMtbRif' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: 'Aa123456' },
           sample: {
             id: '493284729',
             originSite: {
@@ -602,7 +602,7 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { a: 'b' },
           assay: { id: 'GxMtbRif' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '76543789' },
         }
         await server
@@ -636,7 +636,7 @@ describe('Device Result API routes', () => {
           data: { a: 'c' },
           error: { code: '1' },
           assay: { id: 'GxMtbRif' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '76543788' },
         }
         await server
@@ -670,7 +670,7 @@ describe('Device Result API routes', () => {
           category: { id: 'Invalid' },
           error: { code: '1' },
           assay: { id: 'GxMtbRif' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '76543787' },
         }
         await server
@@ -702,7 +702,7 @@ describe('Device Result API routes', () => {
           data: { a: 'e' },
           category: [{ id: 'Detected' }, { id: 'NotDetected' }],
           assay: { id: 'GxMtbRif' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '76543786' },
         }
         await server
@@ -740,7 +740,7 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { a: 'b' },
           assay: { id: 'GxMtbRif' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: 'Aa123456' },
           patient: {
             id: 'PAT-DFD-1234',
             name: 'Bob',
@@ -785,7 +785,7 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { a: 'b', sampleId: excludeSampleId },
           assay: { id: 'GxMtbRif' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: 'Aa123456' },
           patient: {
             name: 'Bob',
             surname: 'Hope',
@@ -843,7 +843,7 @@ describe('Device Result API routes', () => {
               id: resultExternalIds[0],
               startedOn: now,
               data: { assay: 'Xpert MTB-RIF', a: 'b' },
-              instrument: { serial: '1234567' },
+              instrument: { serial: 'Aa123456' },
               assay: { id: 'GxMtbRif' },
             },
           })
@@ -890,7 +890,7 @@ describe('Device Result API routes', () => {
               id: resultExternalIds[0],
               startedOn: now,
               data: { assay: 'Xpert MTB-RIF', a: 'b', c: 'd' },
-              instrument: { serial: '1234567' },
+              instrument: { serial: 'Aa123456' },
               assay: { id: 'GxMtbRif' },
             },
           })
@@ -933,7 +933,7 @@ describe('Device Result API routes', () => {
                 lot: '331',
               },
               instrument: {
-                serial: '1234567',
+                serial: 'Aa123456',
               },
             },
           })
@@ -999,7 +999,7 @@ describe('Device Result API routes', () => {
                 lot: '331',
               },
               instrument: {
-                serial: '1234567',
+                serial: 'Aa123456',
                 module: {
                   name: 'ModA',
                   serial: '555-8',
@@ -1069,7 +1069,7 @@ describe('Device Result API routes', () => {
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
         assert.equal(result2.consumableLot, '331')
-        assert.equal(result2.instrumentSerial, '1234567')
+        assert.equal(result2.instrumentSerial, 'Aa123456')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
@@ -1120,10 +1120,10 @@ describe('Device Result API routes', () => {
 
         const result2Sample = await knex('Sample as s').where({ id: result2.sampleId }).first()
 
-        assert.notEqual(
+        assert.equal(
           result2.siteId,
           result2Sample.originSiteId,
-          'Sample origin site Id should change on result updates if the sample was not registered in the mobile app'
+          'Sample origin site Id should not change on result updates if the sample was created in another site'
         )
 
         assert.notEqual(
@@ -1137,7 +1137,7 @@ describe('Device Result API routes', () => {
           result2.reportableSiteId,
           'Result.reportableSiteId should not change on result updates if the result is transferred'
         )
-        assert.equal(result2Sample.externalId, `Sample${now}`)
+        assert.equal(result2Sample.externalId, mobileSampleExternalId)
 
         const [result2Category1, result2Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result2.resultCategory1, result2.resultCategory2])
@@ -1169,7 +1169,7 @@ describe('Device Result API routes', () => {
               },
               sample: { id: '123-456789-012' },
               instrument: {
-                serial: '1234567',
+                serial: 'Aa123456',
               },
               assay: { id: 'GxMtbRif' },
             },
@@ -1182,7 +1182,7 @@ describe('Device Result API routes', () => {
         const { lastInstrumentSerial, deviceId: lastDeviceId } = await knex('Instrument')
           .orderBy('id', 'desc')
           .first('serial as lastInstrumentSerial', 'deviceId')
-        assert.equal(lastInstrumentSerial, '1234567')
+        assert.equal(lastInstrumentSerial, 'Aa123456')
 
         resultIds.push(await getLastResultId(knex, lastDeviceId))
 
@@ -1220,7 +1220,7 @@ describe('Device Result API routes', () => {
               data: { assay: 'Xpert MTB-RIF', a: 'd' },
               sample: { id: '123-456789-012' },
               instrument: {
-                serial: '1234567',
+                serial: 'Aa123456',
               },
               assay: { id: 'GxMtbRif' },
             },
@@ -1266,7 +1266,7 @@ describe('Device Result API routes', () => {
             startedOn: now,
             data: { a: 'b' },
             assay: { id: 'GxMtbRif' },
-            instrument: { serial: '1234567' },
+            instrument: { serial: 'Aa123456' },
             sample: {
               id: '493284729-REPORTABLE',
             },
@@ -1315,7 +1315,7 @@ describe('Device Result API routes', () => {
             startedOn: now,
             data: { a: 'b' },
             assay: { id: 'GxMtbRif' },
-            instrument: { serial: '1234567' },
+            instrument: { serial: 'Aa123456' },
             sample: {
               id: '493284729-REPORTABLE',
               originSite: {
@@ -1368,7 +1368,7 @@ describe('Device Result API routes', () => {
             startedOn: now,
             data: { a: 'b' },
             assay: { id: 'GxMtbRif' },
-            instrument: { serial: '1234567' },
+            instrument: { serial: 'Aa123456' },
             sample: {
               id: '493284729-REPORTABLE',
               originSite: {
@@ -1413,7 +1413,7 @@ describe('Device Result API routes', () => {
             startedOn: now,
             data: { a: 'b' },
             assay: { id: 'GxMtbRif' },
-            instrument: { serial: '1234567' },
+            instrument: { serial: 'Aa123456' },
             sample: {
               id: '493284729-REPORTABLE',
             },
@@ -1468,7 +1468,7 @@ describe('Device Result API routes', () => {
             data: { assay: 'Xpert MTB-RIF', a: 'b', b: 'c' },
             assay: { id: 'GxMtbRif' },
             sample: { id: '123-456789-012' },
-            instrument: { serial: '1234567' },
+            instrument: { serial: 'Aa123456' },
           }
 
           /**
@@ -1586,7 +1586,7 @@ describe('Device Result API routes', () => {
                   { id: resultDetails.resultCategory2ExternalId },
                 ],
                 endedOn: new Date(),
-                instrument: { serial: '1234567' },
+                instrument: { serial: 'Aa123456' },
               },
             })
             .then(res => {
@@ -1624,7 +1624,7 @@ describe('Device Result API routes', () => {
                 ],
                 startedOn: new Date(),
                 endedOn: addHours(new Date(), 2),
-                instrument: { serial: '1234567' },
+                instrument: { serial: 'Aa123456' },
               },
             })
             .then(res => {

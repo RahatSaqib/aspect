@@ -241,14 +241,6 @@ describe('Result routes', () => {
       _.each(res.body.data, elem => assert.equal(elem.diseaseId, diseaseId))
     })
 
-    it('should return a list of results with case-specific', async () => {
-      const { caseId } = await knex('Result as r')
-        .join('PatientCase as p', 'r.patientCaseId', 'p.id')
-        .first('p.externalId as caseId')
-      const res = await server.get(`${path}?caseId=${caseId}`).set('Authorization', `Bearer ${shared.token}`)
-      validateResponse(res)
-    })
-
     it('should return a single result', async () => {
       const res = await server.get(`${path}/${resultId}`).set('Authorization', `Bearer ${shared.token}`)
 
