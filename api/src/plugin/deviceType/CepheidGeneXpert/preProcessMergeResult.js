@@ -95,7 +95,7 @@ async function preProcessMergeResult(context) {
       }
     }
   }
-  payload.id = generatedExternalId
+  payload.id = generatedExternalId || payload.id
 }
 
 module.exports = preProcessMergeResult
