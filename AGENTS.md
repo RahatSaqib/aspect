@@ -1,5 +1,16 @@
 # Aspect IoT — Agent Instructions
 
+## Skill Discovery
+
+Additional project-specific guidance lives in `ai-context/skills/`.
+
+When working in these areas, consult the matching skill first:
+
+- API use cases: `ai-context/skills/api/use-case-development/SKILL.md`
+- API database work: `ai-context/skills/api/database-handling/SKILL.md`
+- API migrations: `ai-context/skills/api/database-migrations/SKILL.md`
+- API seeds: `ai-context/skills/api/database-seeding/SKILL.md`
+
 ## Project Overview
 
 Aspect is a full-stack IoT management platform (monorepo) for tracking medical diagnostic results. Two sub-projects:

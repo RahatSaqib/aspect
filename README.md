@@ -9,6 +9,8 @@ React Client App lives under `web`
 
 ## AI Context
 
+`AGENTS.md` is the canonical entrypoint for OpenCode and other coding agents working in this repository.
+
 AI context files are located following the Agent Skills standard (see https://agentskills.io).
 The skill files are located in
 `./ai-context/skills/api`
