@@ -10,25 +10,34 @@ This document provides patterns for database access in the Aspect API codebase u
 ## Core Module
 
 ```javascript
-const { knex, filterParams, sortPageParams, transact, run } = require('./db')
-const { getConstraints, addConstraints } = require('./auth/constraints')
+const { knex, filterParams, sortPageParams, transact, run } = require('./db');
+const { getConstraints, addConstraints } = require('./auth/constraints');
 ```
 
 ## Key Patterns
 
 DB access code should be colocated with its use case handler. Only create a shared `db.js` file when queries are reusable across multiple use cases; in that case, place it at the lowest common level. Do not create a `db.js` for single-use queries.
 
+### Naming Conventions
+
+- Use `knex` as the variable or parameter name for the default Knex query builder.
+- Use `trx` as the variable or parameter name for transaction-scoped Knex instances.
+- Do not use generic names like `db` for Knex builders or transactions.
+
 ### 1. Constraint System
 
 Constrainst is the way Aspect handles permissions, the constraints are rules obtained from the user's access profile, and then converted to filtering conditions in any db query.
 
 #### Get User Constraints First:
+
 The constraints are usually obtained in the service, where the auth object is passed as part of the request coming from the endpoint.
+
 ```javascript
-const dataConstraints = await getConstraints(auth.credentials)
+const dataConstraints = await getConstraints(auth.credentials);
 ```
 
 #### Apply to Queries:
+
 ```javascript
 .modify(addConstraints, dataConstraints, {
   site: 's',      // table: alias
@@ -38,6 +47,7 @@ const dataConstraints = await getConstraints(auth.credentials)
 ```
 
 #### Supported Constraint Tables:
+
 - **Geography**: `geography`, `country`, `site`
 - **Medical**: `disease`, `assay`, `assayType`, `result`, `sample`
 - **Device**: `device`, `deviceType`
@@ -45,13 +55,16 @@ const dataConstraints = await getConstraints(auth.credentials)
 - **Other**: `issue`, `case`, `transferLog`
 
 #### Constraint Mechanisms:
+
 1. **Direct** - Applied to aliased tables
 2. **OR** (`$or`) - Multiple conditions with OR logic
 3. **Derived** - Auto-joins missing tables (e.g., Result→Assay→AssayType for disease constraints, if an alias is not provided, a join will be added to match the user's constraint)
 
 ### 2. Table Aliases
+
 Always use table aliases in queries.
 Default aliases:
+
 - `s`: Site
 - `g`: Geography
 - `r`: Result
@@ -87,19 +100,18 @@ Default aliases:
 ### 4. `raw` methods - Minimize Usage
 
 ```javascript
-// NEVER: 
+// NEVER:
 .whereRaw('r2.endedOn > r.endedOn')
-// ALWAYS: 
+// ALWAYS:
 .where('r2.endedOn', '>', 'r.endedOn')
 ```
 
 ```javascript
-// NEVER: 
+// NEVER:
 .whereRaw('r2.endedOn > MAX(r.endedOn)')
-// ALWAYS: 
+// ALWAYS:
 .where('r2.endedOn', '>', knex.raw('max(r.endedOn)'))
 ```
-
 
 ### 5. `.modify()` Method (Preferred for Composable Queries)
 
@@ -109,47 +121,50 @@ knex('Result as r')
   .modify(addConstraints, dataConstraints, {
     result: 'r',
     site: 's',
-    geography: 'g'
+    geography: 'g',
   })
   .modify(filterParams, query, {
     deviceId: 'd.id',
-    siteName: 's.name'
+    siteName: 's.name',
   })
 
-// Conditional logic
-.modify(qb => {
-  if (condition) qb.where('field', value)
-})
+  // Conditional logic
+  .modify((qb) => {
+    if (condition) qb.where('field', value);
+  });
 ```
 
 ### 6. Transactions
 
 ```javascript
-await transact(async trx => {
-  await trx('Table1').insert(data1)
-  await trx('Table2').insert(data2)
-})
+await transact(async (trx) => {
+  await trx('Table1').insert(data1);
+  await trx('Table2').insert(data2);
+});
 ```
 
 ## Critical Rules
 
 1. **SQL Injection**: Never use string interpolation in SQL
+
    ```javascript
-   // WRONG: 
-   knex.raw(`WHERE x = '${value}'`)
-   // RIGHT: 
-   knex.raw('WHERE x = ?', [value])
+   // WRONG:
+   knex.raw(`WHERE x = '${value}'`);
+   // RIGHT:
+   knex.raw('WHERE x = ?', [value]);
    ```
 
 2. **Joins**: Use `leftJoin` for optional relationships, `join` for required
 
 3. **Null Handling**: Explicit for nullable columns
+
    ```javascript
    .modify(filterDateRangeParams, params, 'field', { allowNulls: true })
    ```
 
 4. Sorting
    Use field names for ASC and object for desc sorting.
+
 ```javascript
    .orderBy(['i.serial', { column: 'm.startedOn', order: 'desc' }])
 ```
@@ -165,25 +180,27 @@ async function getDevices(dataConstraints, query) {
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
-      geography: 'g'
+      geography: 'g',
     })
     .modify(filterParams, query, {
       deviceName: 'd.name',
       siteName: 's.name',
-      countryId: 'g.countryId'
+      countryId: 'g.countryId',
     })
     .modify(sortPageParams, query, 'd.name')
-    .select('d.id', 'd.name', 's.name as siteName')
+    .select('d.id', 'd.name', 's.name as siteName');
 }
 ```
 
 ## Module Structure
+
 - `common/db.js` - Shared/reusable database queries only (do not create for single-use queries)
 - `service.js` - Business logic
 - `routes.js` - HTTP endpoints
 - `useCaseHandler.js` - Use case handler with colocated DB queries when not shared
 
 ## References
+
 - `api/src/db.js` - Core utilities
 - `api/src/auth/constraints.js` - Constraint implementation
 - `api/src/site/common/db.js` - Complex query examples

@@ -1,5 +1,7 @@
 # Aspect IoT — Agent Instructions
 
+Important: This project runs on node 14.19.0, AI agents are more likely running in node 22+, never try to update or reinstall bcrypt or other libraries due to version issues. Instead open a terminal and switch to node 14.19.0 to execute whatever you need.
+
 ## Skill Discovery
 
 Additional project-specific guidance lives in `ai-context/skills/`.
