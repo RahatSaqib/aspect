@@ -17,7 +17,10 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const delay = 5000
 
 const deleteDevice = async deviceIds => {
-  const deviceApiKeyIds = (await knex('Device').whereIn('id', deviceIds).pluck('deviceApiKeyId')).filter(Boolean)
+  const deviceApiKeyIds = [
+    ...(await knex('Device').whereIn('id', deviceIds).pluck('deviceApiKeyId')),
+    ...(await knex('DeviceApiKey').whereIn('deviceId', deviceIds).pluck('id')),
+  ].filter(Boolean)
   const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
   if (resultIds.length > 0) {
