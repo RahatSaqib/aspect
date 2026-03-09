@@ -2,9 +2,13 @@ const Joi = require('joi')
 const customFieldsService = require('./service')
 const { upsertCustomFields } = require('./upsertCustomFields')
 const { listForms } = require('./listForms')
+const { getFormDataByExternalId } = require('./getFormDataByExternalId')
 const { asyncHandler } = require('../../routes')
 
+const EXTERNAL_ID_MAX_LENGTH = 36
+
 const customFieldsPayloadValidation = Joi.object({
+  externalId: Joi.string().allow(null, '').max(EXTERNAL_ID_MAX_LENGTH),
   sampleExternalId: Joi.string().allow(null, '').max(80).required(),
   collectedOn: Joi.date().iso().allow(null, ''),
   originSiteId: Joi.number().integer().required(),
@@ -32,6 +36,21 @@ const routes = [
   },
   {
     method: 'GET',
+    path: '/v4/custom-fields/{externalId}',
+    handler: asyncHandler(getFormDataByExternalId),
+    config: {
+      description: 'Get a FormData record by externalId',
+      notes: 'Returns a single FormData row visible to the current user for the provided externalId.',
+      auth: { scope: ['result:view'] },
+      validate: {
+        params: Joi.object({
+          externalId: Joi.string().max(EXTERNAL_ID_MAX_LENGTH).required(),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
     path: '/v4/custom-fields',
     handler: asyncHandler(customFieldsService.getCustomFieldsByExternalIds),
     config: {
@@ -55,7 +74,7 @@ const routes = [
     handler: asyncHandler(upsertCustomFields),
     config: {
       description: 'Upsert custom fields for a sample into FormData',
-      notes: 'Creates or updates FormData rows by siteId, sampleExternalId and formDefinitionExternalId',
+      notes: 'Creates or updates FormData rows by externalId when present, otherwise by siteId and sampleExternalId.',
       auth: { scope: ['result:edit'] },
       validate: {
         payload: customFieldsPayloadValidation,

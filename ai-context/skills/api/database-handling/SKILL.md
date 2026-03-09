@@ -10,8 +10,8 @@ This document provides patterns for database access in the Aspect API codebase u
 ## Core Module
 
 ```javascript
-const { knex, filterParams, sortPageParams, transact, run } = require('./db')
-const { getConstraints, addConstraints } = require('./auth/constraints')
+const { knex, filterParams, sortPageParams, transact, run } = require('./db');
+const { getConstraints, addConstraints } = require('./auth/constraints');
 ```
 
 ## Key Patterns
@@ -20,17 +20,26 @@ For the sake of clarity, all knex queries that are not executed immediatly (awai
 
 DB access code should be colocated with its use case handler. Only create a shared `db.js` file when queries are reusable across multiple use cases; in that case, place it at the lowest common level. Do not create a `db.js` for single-use queries.
 
+### Naming Conventions
+
+- Use `knex` as the variable or parameter name for the default Knex query builder.
+- Use `trx` as the variable or parameter name for transaction-scoped Knex instances.
+- Do not use generic names like `db` for Knex builders or transactions.
+
 ### 1. Constraint System
 
 Constrainst is the way Aspect handles permissions, the constraints are rules obtained from the user's access profile, and then converted to filtering conditions in any db query.
 
 #### Get User Constraints First:
+
 The constraints are usually obtained in the service, where the auth object is passed as part of the request coming from the endpoint.
+
 ```javascript
-const dataConstraints = await getConstraints(auth.credentials)
+const dataConstraints = await getConstraints(auth.credentials);
 ```
 
 #### Apply to Queries:
+
 ```javascript
 .modify(addConstraints, dataConstraints, {
   site: 's',      // table: alias
@@ -130,10 +139,10 @@ knex('Result as r')
 ### 6. Transactions
 
 ```javascript
-await transact(async trx => {
-  await trx('Table1').insert(data1)
-  await trx('Table2').insert(data2)
-})
+await transact(async (trx) => {
+  await trx('Table1').insert(data1);
+  await trx('Table2').insert(data2);
+});
 ```
 
 ## Critical Rules
@@ -173,15 +182,15 @@ async function getDevices(dataConstraints, query) {
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
-      geography: 'g'
+      geography: 'g',
     })
     .modify(filterParams, query, {
       deviceName: 'd.name',
       siteName: 's.name',
-      countryId: 'g.countryId'
+      countryId: 'g.countryId',
     })
     .modify(sortPageParams, query, 'd.name')
-    .select('d.id', 'd.name', 's.name as siteName')
+    .select('d.id', 'd.name', 's.name as siteName');
 }
 ```
 

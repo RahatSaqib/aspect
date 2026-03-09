@@ -14,9 +14,9 @@ async function listForms(request) {
 
   const rawRows = await knex('FormData')
     .where('createdBy', user.id)
-    .select('id', 'siteId', 'resultId', 'sampleExternalId', 'data', 'collectedOn')
+    .select('id', 'siteId', 'resultId', 'sampleExternalId', 'externalId', 'data', 'collectedOn')
 
-  const rows = rawRows.map(({ data, ...row }) => ({ ...row, ...JSON.parse(data) }))
+  const rows = rawRows.map(({ data, ...row }) => ({ ...row, ...(typeof data === 'string' ? JSON.parse(data) : data) }))
 
   return { ok: true, data: rows }
 }
