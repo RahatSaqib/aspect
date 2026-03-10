@@ -6,7 +6,7 @@ const basicResultPayload = {
       version: '2',
     },
     instrument: {
-      serial: '123456',
+      serial: '123456799',
       module: {
         serial: '654321',
         name: 'A1',
