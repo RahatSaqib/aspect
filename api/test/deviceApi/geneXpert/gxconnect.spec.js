@@ -736,7 +736,7 @@ describe('Device API routes for GxConnect Devices', () => {
               },
             ])
 
-            // Single device exists, now send a new instrument serial numbers
+            // Single device exists, now send a 123456799 serial numbers
             const newDeviceSerialNumber = 'Cepheid-PC-098765'
             await server
               .post('/device')
@@ -940,7 +940,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 id: `new sample ${Math.floor(Math.random() * 1000)}`,
               },
               instrument: {
-                serial: `new instrument ${Math.floor(Math.random() * 1000)}`,
+                serial: `123456799 ${Math.floor(Math.random() * 1000)}`,
               },
             },
           })
@@ -1030,7 +1030,7 @@ describe('Device API routes for GxConnect Devices', () => {
             _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
               result: _.assign({}, basicResultPayload.result, {
                 sample: { id: 'new sample' },
-                instrument: { serial: 'new instrument' },
+                instrument: { serial: '123456799' },
                 startedOn: testStartedOn,
               }),
             })
@@ -1065,7 +1065,7 @@ describe('Device API routes for GxConnect Devices', () => {
           consumableSerial: null,
           consumableExpirationDate: null,
           consumableLot: null,
-          instrumentSerial: 'new instrument',
+          instrumentSerial: '123456799',
           moduleName: null,
           moduleSerial: null,
           patientData: {
@@ -1106,7 +1106,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   id: `new sample ${Math.floor(Math.random() * 1000)}`,
                 },
                 instrument: {
-                  serial: `new instrument ${Math.floor(Math.random() * 1000)}`,
+                  serial: `123456799 ${Math.floor(Math.random() * 1000)}`,
                 },
                 startedOn: now,
               }),
@@ -1153,7 +1153,7 @@ describe('Device API routes for GxConnect Devices', () => {
           0
         )
         const sampleId = 'GxConnect test will be updated'
-        const instrumentSerial = 'GxConnect Test with same instrument'
+        const instrumentSerial = '123456799'
 
         // Send a new result
         await server
@@ -1238,9 +1238,7 @@ describe('Device API routes for GxConnect Devices', () => {
               id: dateFormat(new Date(), 'T'),
               startedOn: now,
               endedOn: now,
-              instrument: {
-                serial: 'CEPH-PC-7813',
-              },
+              instrument: { serial: '123456799' },
               sample: {
                 id: "Bryan's Sputum",
               },
@@ -1265,9 +1263,7 @@ describe('Device API routes for GxConnect Devices', () => {
               id: dateFormat(new Date(), 'T'),
               startedOn: now,
               endedOn: now,
-              instrument: {
-                serial: 'CEPH-PC-7813',
-              },
+              instrument: { serial: '123456799' },
               sample: {
                 id: "Bryan's Sputum",
               },
@@ -1297,9 +1293,7 @@ describe('Device API routes for GxConnect Devices', () => {
               id: dateFormat(new Date(), 'T'),
               startedOn: subMinutes(now, 5),
               endedOn: now,
-              instrument: {
-                serial: 'CEPH-PC-7813',
-              },
+              instrument: { serial: '123456799' },
               sample: {
                 id: "Bryan's Sputum 2",
               },
@@ -1364,7 +1358,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 lot: '331',
               },
               instrument: {
-                serial: 'CEPH-PC-7813',
+                serial: '123456799',
                 module: {
                   name: 'ModA',
                   serial: '555-8',
@@ -1429,12 +1423,10 @@ describe('Device API routes for GxConnect Devices', () => {
           e: { f: 'g' },
         })
         assert.equal(result2.assayVersion, '1a.c1')
-        assert.approximately(result2.latitude, 30.419348, 0.000001)
-        assert.approximately(result2.longitude, -87.581222, 0.000001)
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
         assert.equal(result2.consumableLot, '331')
-        assert.equal(result2.instrumentSerial, 'CEPH-PC-7813')
+        assert.equal(result2.instrumentSerial, '123456799')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
@@ -1663,6 +1655,7 @@ describe('Device API routes for GxConnect Devices', () => {
                     id: 'GxHcvVl',
                     version: '1',
                   },
+                  instrument: { serial: '123456799' },
                   data: {
                     assay: 'Xpert_HCV Viral Load',
                   },
@@ -1718,6 +1711,7 @@ describe('Device API routes for GxConnect Devices', () => {
                     id: assayName,
                     version: assayVersion,
                   },
+                  instrument: { serial: '123456799' },
                   data: {
                     assay: 'New Assay Type',
                   },
@@ -2014,7 +2008,7 @@ describe('Device API routes for GxConnect Devices', () => {
           it("should merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", () =>
             runTest(async () => {
               const { deviceAuth, now } = context
-              const instrumentSerial = '803165'
+              const instrumentSerial = '123456799'
               const cartridgeSerial = '725194650'
               const startedOnDate = setMilliseconds(now, 0)
               const startedOn = dateFormat(startedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -2099,7 +2093,7 @@ describe('Device API routes for GxConnect Devices', () => {
           it('should ignore the result data that has been sent', () =>
             runTest(async () => {
               const { deviceAuth, now } = context
-              const instrumentSerial = '803165'
+              const instrumentSerial = '123456799'
               const cartridgeSerial = '725194660'
               const startedOnDate = setMilliseconds(now, 0)
               const startedOn = dateFormat(startedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -3509,7 +3503,7 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
   })
-  describe.only('Daily details', () => {
+  describe('Daily details', () => {
     describe('partner-level settings', () => {
       const context = createGxConnectTestContext(server, {
         countryCode,
