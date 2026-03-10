@@ -3509,8 +3509,8 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
   })
-  describe('Daily details', () => {
-    describe('whole country same settings', () => {
+  describe.only('Daily details', () => {
+    describe('partner-level settings', () => {
       const context = createGxConnectTestContext(server, {
         countryCode,
         adminUsername,
@@ -3518,29 +3518,39 @@ describe('Device API routes for GxConnect Devices', () => {
         deviceName,
         macAddress,
       })
-      let insertedConfiguration = null
+      let originalConfiguration = null
+      beforeEach(context.beforeRegisterAndSetDevice)
       beforeEach(async () => {
-        await context.beforeRegisterAndSetDevice()
         const { partnerId } = context.device
-        const { geographyId } = await knexDb('Site as s').where({ externalId: 'Ohio_Wayne' }).first('s.geographyId')
-        ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
-          deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
-          geographyId,
-          partnerId,
-          data: JSON.stringify({
-            EnableInventoryModule: true,
-            AspectUploadExcludePatientId: true,
-            GxAlertUploadExcludePatientId: true,
-          }),
-          updatedOn: new Date(),
-        })
+        const deviceTypeId = await deviceTypeToId('CepheidGeneXpert')
+        originalConfiguration = await knexDb('DeviceConfiguration')
+          .where({ partnerId, deviceTypeId })
+          .first('id', 'data', 'updatedOn')
+
+        assert.isOk(originalConfiguration)
+
+        await knexDb('DeviceConfiguration')
+          .where({ id: originalConfiguration.id })
+          .update({
+            data: JSON.stringify({
+              EnableInventoryModule: true,
+              AspectUploadExcludePatientId: true,
+              GxAlertUploadExcludePatientId: true,
+            }),
+            updatedOn: new Date(),
+          })
       })
       afterEach(async () => {
-        await context.afterCleanUp()
-        await knexDb('DeviceConfiguration').where({ id: insertedConfiguration }).delete()
+        if (originalConfiguration) {
+          await knexDb('DeviceConfiguration').where({ id: originalConfiguration.id }).update({
+            data: originalConfiguration.data,
+            updatedOn: originalConfiguration.updatedOn,
+          })
+        }
       })
+      afterEach(context.afterCleanUp)
 
-      it('should receive deviceConfiguration for the whole country', async () => {
+      it('should receive updated deviceConfiguration for the partner and device type', async () => {
         const { deviceAuth, basicDevicePayload } = context
         let res = await server
           .post('/device')
@@ -3550,9 +3560,9 @@ describe('Device API routes for GxConnect Devices', () => {
 
         assert.equal(res.statusCode, 200)
         assert.deepEqual(res.body.deviceConfiguration, {
-          EnableInventoryModule: false,
-          AspectUploadExcludePatientId: false,
-          GxAlertUploadExcludePatientId: false,
+          EnableInventoryModule: true,
+          AspectUploadExcludePatientId: true,
+          GxAlertUploadExcludePatientId: true,
         })
         // the second time, device configuration it will be null because was already responded
 
