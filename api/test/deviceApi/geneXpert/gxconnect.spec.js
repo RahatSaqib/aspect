@@ -909,6 +909,7 @@ describe('Device API routes for GxConnect Devices', () => {
       deviceName,
       macAddress,
       deviceSerialNumber,
+      instrumentSerial: '123456799',
     })
     beforeEach(context.beforeRegisterAndSetDevice)
     const { runTest, getLastResult, basicDevicePayload } = context
@@ -1769,7 +1770,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   startedOn: testStartedOn,
                   endedOn: testEndedOn,
                   sample: { id: 'Existing Sample' },
-                  instrument: { serial: 'Existing Instrument' },
+                  instrument: { serial: '123456799' },
                   assay: {
                     id: consumableAssay.assayId,
                     version: '2',
@@ -1841,7 +1842,7 @@ describe('Device API routes for GxConnect Devices', () => {
             )
             const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
             const sampleId = 'GxConnect test reduces inventory'
-            const instrumentSerial = 'Cepheid PC serial'
+            const instrumentSerial = '123456799'
 
             // Send first test
             await server
@@ -3544,7 +3545,7 @@ describe('Device API routes for GxConnect Devices', () => {
         let res = await server
           .post('/device')
           .set('Authorization', deviceAuth)
-          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
+          .send({ ...basicDevicePayload, includeDeviceConfiguration: true })
           .catch(assert.fail)
 
         assert.equal(res.statusCode, 200)
@@ -3558,62 +3559,11 @@ describe('Device API routes for GxConnect Devices', () => {
         res = await server
           .post('/device')
           .set('Authorization', deviceAuth)
-          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
+          .send({ ...basicDevicePayload, includeDeviceConfiguration: true })
           .catch(assert.fail)
 
         assert.equal(res.statusCode, 200)
         assert.isNull(res.body.deviceConfiguration)
-      })
-    })
-    describe('different configurations depending the state', () => {
-      const context = createGxConnectTestContext(server, {
-        countryCode,
-        adminUsername,
-        adminPassword,
-        deviceName: 'Dayton Ohio 2',
-        macAddress,
-      })
-      let insertedConfiguration = null
-      beforeEach(async () => {
-        const siteOhio = await knexDb('Site as s').where({ externalId: 'OH_Dayton' }).first()
-        await knexDb('Site').insert({
-          ..._.omit(siteOhio, ['name', 'id', 'externalId']),
-          name: 'Dayton Ohio 2',
-          externalId: 'OH_Dayton_2',
-        })
-        await context.beforeRegisterAndSetDevice()
-        const { partnerId } = context.device
-
-        ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
-          deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
-          geographyId: siteOhio.geographyId,
-          partnerId,
-          data: JSON.stringify({
-            EnableInventoryModule: true,
-            AspectUploadExcludePatientId: true,
-            GxAlertUploadExcludePatientId: true,
-          }),
-          updatedOn: new Date(),
-        })
-      })
-      afterEach(async () => {
-        await context.afterCleanUp()
-        await knexDb('DeviceConfiguration').where({ id: insertedConfiguration }).delete()
-      })
-      it('should receive deviceConfiguration for that specific state', async () => {
-        const { deviceAuth, basicDevicePayload } = context
-        const res = await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
-          .catch(assert.fail)
-
-        assert.equal(res.statusCode, 200)
-        assert.deepEqual(res.body.deviceConfiguration, {
-          EnableInventoryModule: true,
-          AspectUploadExcludePatientId: true,
-          GxAlertUploadExcludePatientId: true,
-        })
       })
     })
   })

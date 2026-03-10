@@ -37,9 +37,7 @@ const handleDailyDetailsPayload = async (request, deviceLogId, remoteAddress) =>
       deviceTypeId
     )
 
-    if (deviceConfiguration) {
-      response.deviceConfiguration = deviceConfiguration
-    }
+    response.deviceConfiguration = deviceConfiguration
   }
 
   if (payload.getFormsDefinition) {
