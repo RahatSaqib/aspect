@@ -80,6 +80,10 @@ async function preProcessMergeResult(context) {
   if (existingResult) {
     context.existingResultId = existingResult.id // adding the existing result id to the context to make it available for the rest of the process
 
+    if (isOutdatedPayload(existingResult, payload.category)) {
+      context.ignoreResultPayload = true
+    }
+
     if (_.get(existingResult, 'externalId') !== generatedExternalId) {
       try {
         await knex('Result').where('id', existingResult.id).update({ externalId: generatedExternalId })
@@ -96,6 +100,23 @@ async function preProcessMergeResult(context) {
     }
   }
   payload.id = generatedExternalId || payload.id
+}
+
+// We can't accept a No Result (a.k.a. In Progress) result after a finalized result has been received.
+function isOutdatedPayload(existingResult, incomingCategories = []) {
+  if (_.isEmpty(incomingCategories) || !incomingCategories.every(isNoResultCategory)) {
+    return false
+  }
+
+  return [existingResult.resultCategory1, existingResult.resultCategory2].some(isCompletedCategory)
+}
+
+function isNoResultCategory(category) {
+  return _.get(category, 'id', category) === 'NoResult'
+}
+
+function isCompletedCategory(category) {
+  return !!category && !isNoResultCategory(category)
 }
 
 module.exports = preProcessMergeResult

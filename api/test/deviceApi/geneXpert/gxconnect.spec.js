@@ -2148,7 +2148,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   })
                 )
                 .then(res => {
-                  assert.equal(res.status, 201)
+                  assert.equal(res.status, 200)
                 })
                 .catch(assert.fail)
               const result2 = await getLastResult()
@@ -2174,7 +2174,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   })
                 )
                 .then(res => {
-                  assert.equal(res.status, 201)
+                  assert.equal(res.status, 200)
                 })
                 .catch(assert.fail)
               const result3 = await getLastResult()

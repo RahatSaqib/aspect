@@ -131,6 +131,12 @@ async function mergeResultWithContext(context) {
   )
   await transformMergeResultPayload(context)
 
+  if (context.ignoreResultPayload) {
+    return {
+      aspectResultId: context.existingResultId,
+    }
+  }
+
   const {
     processedResult: plainResult,
     existingResult: plainPreviousResult,
