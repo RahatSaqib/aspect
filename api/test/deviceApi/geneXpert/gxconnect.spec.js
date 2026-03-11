@@ -876,6 +876,14 @@ describe('Device API routes for GxConnect Devices', () => {
     it('should update the last seen and last ping time', () =>
       runTest(async knex => {
         const { basicDevicePayload, deviceAuth, device } = context
+        const previousPingDate = subMinutes(new Date(), 5)
+
+        await knex('Device').where('id', device.id).update({
+          lastSeenOn: previousPingDate,
+          lastPingOn: previousPingDate,
+          updatedOn: previousPingDate,
+        })
+
         const deviceBefore = await knex('Device').where('id', device.id).first()
 
         const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
