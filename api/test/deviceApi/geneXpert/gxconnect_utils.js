@@ -282,6 +282,7 @@ class GxConnectApiTestContext {
       deviceTypeId,
       serial: this.deviceSerialNumber,
       macAddress: this.macAddress,
+      hostId: this.hostId,
       timezone: 'Eastern Standard Time',
     })
     await knex('DeviceApiKey').where('id', deviceApiKeyRecord.id).update({ siteId, geographyId })
