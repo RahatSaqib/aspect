@@ -38,6 +38,11 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
       this.from('Device').whereIn('siteId', siteIds).pluck('id')
     })
 
+  const gxConnectSiteIds = await knex('Site')
+    .whereIn('id', siteIds)
+    .where('externalId', 'like', 'gxconnect-%')
+    .pluck('id')
+
   const inventoryItemIds = await knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)
     .distinct('ii.id')
@@ -128,21 +133,25 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('Device').whereIn('id', deviceIdsToRemove).delete()
 
   await knex('Sample').whereIn('id', sampleIds).delete()
+  await knex('Sample')
+    .whereIn('originSiteId', gxConnectSiteIds)
+    .whereNotIn('id', knex('Result').whereNotNull('sampleId').select('sampleId'))
+    .delete()
 
   await knex('FactInventoryConsumptionRate', siteIds).delete()
   await knex('SiteTag').whereIn('siteId', siteIds).delete()
   await knex('InventoryLog').whereIn('siteId', siteIds).delete()
 
-  const siteIdsToDelete = _.uniq([...siteIds, ..._.map(sitesAndDevices, elem => elem.siteId)])
+  const siteIdsFromResults = _.uniq(_.map(sitesAndDevices, elem => elem.siteId))
+  const gxConnectSiteIdsFromResults = await knex('Site')
+    .whereIn('id', siteIdsFromResults)
+    .where('externalId', 'like', 'gxconnect-%')
+    .pluck('id')
+
+  const siteIdsToDelete = _.uniq([...gxConnectSiteIds, ...gxConnectSiteIdsFromResults])
   await knex('AlertMessage').whereIn('siteId', siteIdsToDelete).delete()
 
-  await knex('Site')
-    .whereIn('id', siteIds)
-    .orWhereIn(
-      'id',
-      _.map(sitesAndDevices, elem => elem.siteId)
-    )
-    .delete()
+  await knex('Site').whereIn('id', siteIdsToDelete).delete()
 
   await knex('RefreshToken').where({ clientId }).delete()
 }
