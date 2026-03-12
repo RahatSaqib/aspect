@@ -1536,7 +1536,9 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
-      after(() => run(async knex => knex('Assay').where({ externalId: assayName }).delete()))
+      after(async () => {
+        await knex('Assay').where({ externalId: assayName }).delete()
+      })
 
       it('should set the result to assay GxUnknown', () =>
         runTest(async knex => {
