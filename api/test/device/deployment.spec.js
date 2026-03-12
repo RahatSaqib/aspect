@@ -3,6 +3,7 @@ const { addDays, format, subHours } = require('date-fns')
 const shared = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const { resultSourceToId, resultTypeToId, resultCategoryToId, sampleTypeToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
@@ -24,6 +25,18 @@ describe('Deployment endpoints', () => {
   let refDevice
 
   before(async () => {
+    if (!shared.token) {
+      const authRes = await server.post('/api/auth').send({
+        name: 'admin',
+        password: 'test07',
+        clientName: 'deployment-test',
+        clientId: `deployment-test-${Date.now()}`,
+      })
+
+      assert.equal(authRes.status, 200)
+      shared.token = authRes.body.access
+    }
+
     shared.checkToken(server, path)
     const device = await knex('Device as d')
       .join('Site as s', 'd.siteId', 's.id')
@@ -245,6 +258,136 @@ describe('Deployment endpoints', () => {
           await knex('Result').where({ id: resultId }).del()
           await knex('Sample').where({ id: sampleId }).del()
         }
+      })
+    })
+
+    describe('when reconciling device API key site after adding an active deployment', () => {
+      let primaryDeviceId
+      let secondaryDeviceId
+      let deviceApiKeyId
+      let alternateSiteId
+
+      beforeEach(async () => {
+        const now = new Date()
+        const admin = await knex('User').where({ name: 'admin' }).first('id')
+        const [{ id: initialSiteId }, alternateSite, { id: geographyId }] = await Promise.all([
+          knex('Site').where({ id: refDevice.siteId }).first('id'),
+          knex('Site').where('partnerId', refDevice.partnerId).whereNot('id', refDevice.siteId).first('id'),
+          knex('Site as s')
+            .join('Geography as g', 'g.id', 's.geographyId')
+            .where('s.id', refDevice.siteId)
+            .first('g.id'),
+        ])
+
+        alternateSiteId = alternateSite?.id
+        assert.isOk(alternateSiteId, 'Seed data should have an alternate site for the same partner')
+        ;[deviceApiKeyId] = await knex('DeviceApiKey').insert({
+          token: randomToken(),
+          revoked: 0,
+          partnerId: refDevice.partnerId,
+          geographyId,
+          siteId: initialSiteId,
+          createdOn: now,
+          createdBy: admin.id,
+          updatedOn: now,
+          updatedBy: admin.id,
+        })
+        ;[primaryDeviceId] = await knex('Device').insert({
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceTypeId: refDevice.deviceTypeId,
+          deviceApprovalId: refDevice.deviceApprovalId,
+          deviceApiKeyId,
+          name: `Deployment Active Device ${now.getTime()}`,
+          shortName: `Dep Active ${now.getTime()}`,
+          lastSeenOn: now,
+          createdOn: now,
+          updatedOn: now,
+        })
+
+        await knex('FactDeviceFlag').insert({ deviceId: primaryDeviceId, updatedOn: now })
+      })
+
+      afterEach(async () => {
+        if (secondaryDeviceId) {
+          await cleanupDeploymentTestDevice(knex, secondaryDeviceId)
+          secondaryDeviceId = null
+        }
+        await cleanupDeploymentTestDevice(knex, primaryDeviceId)
+        if (deviceApiKeyId) {
+          await knex('DeviceApiKey').where({ id: deviceApiKeyId }).delete()
+          deviceApiKeyId = null
+        }
+      })
+
+      it('should move the DAK site to the active deployment site when the DAK is used by only one device', async () => {
+        const res = await server
+          .post(persistPath(primaryDeviceId))
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send({
+            changes: [{ action: 'add', siteId: alternateSiteId, start: null, end: null }],
+          })
+
+        assert.equal(res.status, 200)
+        assert.isTrue(res.body.ok)
+
+        const [deviceRow, deviceApiKeyRow, deploymentRow] = await Promise.all([
+          knex('Device').where({ id: primaryDeviceId }).first('siteId'),
+          knex('DeviceApiKey').where({ id: deviceApiKeyId }).first('siteId'),
+          knex('Deployment').where({ deviceId: primaryDeviceId }).first('siteId', 'start', 'end'),
+        ])
+
+        assert.equal(deviceRow.siteId, alternateSiteId)
+        assert.equal(deviceApiKeyRow.siteId, alternateSiteId)
+        assert.equal(deploymentRow.siteId, alternateSiteId)
+        assert.isNull(deploymentRow.start)
+        assert.isNull(deploymentRow.end)
+      })
+
+      it('should clear the DAK site when an active deployment is added and the DAK is shared', async () => {
+        const now = new Date()
+        ;[secondaryDeviceId] = await knex('Device').insert({
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceTypeId: refDevice.deviceTypeId,
+          deviceApprovalId: refDevice.deviceApprovalId,
+          deviceApiKeyId,
+          name: `Deployment Shared Device ${now.getTime()}`,
+          shortName: `Dep Shared ${now.getTime()}`,
+          lastSeenOn: now,
+          createdOn: now,
+          updatedOn: now,
+        })
+        await knex('FactDeviceFlag').insert({ deviceId: secondaryDeviceId, updatedOn: now })
+
+        const res = await server
+          .post(persistPath(primaryDeviceId))
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send({
+            changes: [{ action: 'add', siteId: alternateSiteId, start: null, end: null }],
+          })
+
+        assert.equal(res.status, 200)
+        assert.isTrue(res.body.ok)
+
+        const [deviceRow, deviceApiKeyRow] = await Promise.all([
+          knex('Device').where({ id: primaryDeviceId }).first('siteId'),
+          knex('DeviceApiKey').where({ id: deviceApiKeyId }).first('siteId'),
+        ])
+
+        assert.equal(deviceRow.siteId, alternateSiteId)
+        assert.isNull(deviceApiKeyRow.siteId)
+      })
+
+      it('should not change the DAK site when only a historical deployment is added', async () => {
+        const res = await server
+          .post(persistPath(primaryDeviceId))
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send({
+            changes: [{ action: 'add', siteId: alternateSiteId, start: null, end: '2025-01-01' }],
+          })
+
+        assert.equal(res.status, 409)
       })
     })
 

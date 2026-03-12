@@ -32,6 +32,13 @@ async function persistDeploymentChanges(request) {
   const user = await getUserFromCredentials(auth.credentials)
   const timezoneIANA = user?.timezoneIANA ?? user?.personTimezoneIANA ?? 'Etc/UTC'
   const now = new Date()
+  const hasAddedActiveDeployment = changes.some(change => {
+    if (change.action !== 'add') {
+      return false
+    }
+
+    return normalizeDeploymentDates(change).end === null
+  })
 
   await transact(async trx => {
     // Apply deletes
@@ -137,6 +144,21 @@ async function persistDeploymentChanges(request) {
     await trx('Device')
       .where('id', deviceId)
       .update({ siteId: activeDeployment?.siteId ?? null })
+
+    if (!hasAddedActiveDeployment) {
+      return
+    }
+
+    const device = await trx('Device').where('id', deviceId).first('deviceApiKeyId')
+    if (!device?.deviceApiKeyId) {
+      return
+    }
+
+    const [{ cnt: deviceCount }] = await trx('Device').where('deviceApiKeyId', device.deviceApiKeyId).count('id as cnt')
+
+    await trx('DeviceApiKey')
+      .where('id', device.deviceApiKeyId)
+      .update({ siteId: Number(deviceCount) === 1 ? activeDeployment?.siteId ?? null : null })
   })
 
   await recalculateDeviceFactTables(messageContext, [parseInt(deviceId, 10)])

@@ -25,7 +25,7 @@ const {
   badCategorizedResults,
   badCategorizedResults2,
 } = require('./HIV_VL_payload')
-const { run, knex: knexDb } = require('../../../src/db')
+const { knex: knexDb } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')

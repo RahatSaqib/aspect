@@ -242,12 +242,16 @@ async function createDevice(context) {
 
   return transact(async trx => {
     const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
+    const deviceApiKey = await trx('DeviceApiKey')
+      .where({ id: context.auth.credentials.deviceApiKeyId })
+      .first('id', 'siteId')
 
     const partnerData = await trx('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
 
     const [deviceId] = await trx('Device').insert({
       partnerId,
       deviceTypeId,
+      siteId: deviceApiKey?.siteId || null,
       dailyTestCapacity: deviceTypeExternalId === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
       moduleBayCapacity: deviceTypeExternalId === 'CepheidGeneXpert' ? 4 : 0,
       deviceApprovalId,
@@ -273,6 +277,20 @@ async function createDevice(context) {
       createdOn: now,
       createdBy: null,
     })
+
+    if (deviceApiKey?.siteId) {
+      await trx('Deployment').insert({
+        deviceId,
+        siteId: deviceApiKey.siteId,
+        start: null,
+        end: null,
+        createdOn: now,
+        createdBy: null,
+        updatedOn: now,
+        updatedBy: null,
+      })
+    }
+
     const device = await trx('Device as d')
       .leftJoin('Site as s', 'd.siteId', 's.id')
       .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
