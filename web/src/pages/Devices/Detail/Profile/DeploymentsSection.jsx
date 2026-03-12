@@ -121,7 +121,7 @@ const DEPLOYMENT_TIMELINE_PALETTE = [
   'var(--aspect-color-chill-blue-3, #67abb4)',
 ]
 
-const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
+const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled }) => {
   const { formatMessage } = useIntl()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
@@ -135,6 +135,8 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
   const [deletingDeployment, setDeletingDeployment] = useState(null)
   const [preview, setPreview] = useState(null)
   const [saveError, setSaveError] = useState(null)
+  const isDecommissioned = approvalToken === 'decommissioned'
+  const isReadOnly = disabled || isDecommissioned
 
   const hasPendingChanges = pendingChanges.length > 0
 
@@ -359,7 +361,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
     { key: 'siteName', label: formatMessage(messages.deploymentSite), sortable: false },
     { key: 'start', label: formatMessage(messages.deploymentStartDate), sortable: false },
     { key: 'end', label: formatMessage(messages.deploymentEndDate), sortable: false },
-    ...(!disabled ? [{ key: 'actions', label: '' }] : []),
+    ...(!isReadOnly ? [{ key: 'actions', label: '' }] : []),
   ]
 
   const hasPreviewMoves = preview?.moves?.some(m => m.resultCount > 0)
@@ -423,7 +425,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
       <Card className={styles.Section}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <p data-panel-title>{formatMessage(messages.deploymentsTitle)}</p>
-          {!disabled && (
+          {!isReadOnly && (
             <Box display="flex" gap={1}>
               <PermissionChecker permissions={['device:edit']}>
                 <AspectButton color="primary" variant="contained" inverse onClick={() => setAddDialogOpen(true)}>
@@ -458,9 +460,21 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
             <CircularProgress />
           </Box>
         ) : workingDeployments.length === 0 ? (
-          <p style={{ padding: '20px', textAlign: 'center' }}>{formatMessage(messages.noDeployments)}</p>
+          <>
+            {hasPendingChanges && (
+              <Alert severity="warning" sx={{ mx: 2, mb: 1 }}>
+                {formatMessage(messages.deploymentSaveRequired)}
+              </Alert>
+            )}
+            <p style={{ padding: '20px', textAlign: 'center' }}>{formatMessage(messages.noDeployments)}</p>
+          </>
         ) : (
           <>
+            {isDecommissioned && (
+              <Alert severity="info" sx={{ mx: 2, mb: 1 }}>
+                {formatMessage(messages.deploymentReadOnlyDecommissioned)}
+              </Alert>
+            )}
             {!activeDeployment && (
               <Alert severity="info" sx={{ mx: 2, mb: 1 }}>
                 {formatMessage(messages.deviceUndeployed)}
@@ -524,7 +538,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
                         <TableCell>
                           {isActive ? formatMessage(messages.deploymentActive) : toDateOnly(dep.end)}
                         </TableCell>
-                        {!disabled && (
+                        {!isReadOnly && (
                           <TableCell align="right">
                             <PermissionChecker permissions={['device:edit']}>
                               <AspectVertMenu
@@ -617,11 +631,13 @@ const DeploymentsSection = ({ deviceId, firstResultDate, disabled }) => {
 DeploymentsSection.propTypes = {
   deviceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   firstResultDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+  approvalToken: PropTypes.string,
   disabled: PropTypes.bool,
 }
 
 DeploymentsSection.defaultProps = {
   firstResultDate: null,
+  approvalToken: null,
   disabled: false,
 }
 

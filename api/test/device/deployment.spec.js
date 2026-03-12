@@ -4,13 +4,20 @@ const shared = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
 const { randomToken } = require('../../src/deviceApi/apiKey')
-const { resultSourceToId, resultTypeToId, resultCategoryToId, sampleTypeToId } = require('../../src/shared/dictionary')
+const {
+  resultSourceToId,
+  resultTypeToId,
+  resultCategoryToId,
+  sampleTypeToId,
+  allDeviceApprovalToId,
+} = require('../../src/shared/dictionary')
 
 const { assert } = chai
 
 async function cleanupDeploymentTestDevice(knex, deviceId) {
   if (!deviceId) return
   await knex('Deployment').where({ deviceId }).del()
+  await knex('DeviceApprovalLog').where({ deviceId }).del()
   await knex('FactDeviceFlag').where({ deviceId }).del()
   await knex('FactDeviceModulesCount').where({ deviceId }).del()
   await knex('Instrument').where({ deviceId }).del()
@@ -23,19 +30,10 @@ describe('Deployment endpoints', () => {
   let deviceId
   let siteId
   let refDevice
+  let deviceApprovals
 
   before(async () => {
-    if (!shared.token) {
-      const authRes = await server.post('/api/auth').send({
-        name: 'admin',
-        password: 'test07',
-        clientName: 'deployment-test',
-        clientId: `deployment-test-${Date.now()}`,
-      })
-
-      assert.equal(authRes.status, 200)
-      shared.token = authRes.body.access
-    }
+    await shared.ensureToken(server, { clientName: 'deployment-test', clientId: `deployment-test-${Date.now()}` })
 
     shared.checkToken(server, path)
     const device = await knex('Device as d')
@@ -45,6 +43,7 @@ describe('Deployment endpoints', () => {
     assert(device, 'Seed data should have at least one device with a site')
     deviceId = device.deviceId
     siteId = device.siteId
+    deviceApprovals = await allDeviceApprovalToId()
     refDevice = await knex('Device')
       .where({ id: deviceId })
       .first('partnerId', 'siteId', 'deviceTypeId', 'deviceApprovalId')
@@ -141,6 +140,88 @@ describe('Deployment endpoints', () => {
       assert.isTrue(res.body.ok)
 
       await knex('Deployment').where({ deviceId: id }).del()
+    })
+
+    it('should change approval to approved when adding the first deployment', async () => {
+      const now = new Date()
+      const [newDeviceId] = await knex('Device').insert({
+        partnerId: refDevice.partnerId,
+        siteId: refDevice.siteId,
+        deviceTypeId: refDevice.deviceTypeId,
+        deviceApprovalId: deviceApprovals.pendingDeployment,
+        name: `Pending deployment device ${now.getTime()}`,
+        shortName: `PD ${now.getTime()}`,
+        lastSeenOn: now,
+        createdOn: now,
+        updatedOn: now,
+      })
+      await knex('FactDeviceFlag').insert({ deviceId: newDeviceId, updatedOn: now })
+
+      try {
+        const res = await server
+          .post(persistPath(newDeviceId))
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send({
+            changes: [{ action: 'add', siteId: refDevice.siteId, start: null, end: null }],
+          })
+
+        assert.equal(res.status, 200)
+
+        const deviceRow = await knex('Device as d')
+          .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+          .where('d.id', newDeviceId)
+          .first('da.token as approvalToken')
+
+        assert.equal(deviceRow.approvalToken, 'approved')
+      } finally {
+        await cleanupDeploymentTestDevice(knex, newDeviceId)
+      }
+    })
+
+    it('should change approval to pending deployment when all deployments are removed', async () => {
+      const now = new Date()
+      const [newDeviceId] = await knex('Device').insert({
+        partnerId: refDevice.partnerId,
+        siteId: refDevice.siteId,
+        deviceTypeId: refDevice.deviceTypeId,
+        deviceApprovalId: deviceApprovals.approved,
+        name: `Approved deployment device ${now.getTime()}`,
+        shortName: `AD ${now.getTime()}`,
+        lastSeenOn: now,
+        createdOn: now,
+        updatedOn: now,
+      })
+      await knex('FactDeviceFlag').insert({ deviceId: newDeviceId, updatedOn: now })
+      const [deploymentId] = await knex('Deployment').insert({
+        deviceId: newDeviceId,
+        siteId: refDevice.siteId,
+        start: null,
+        end: null,
+        createdOn: now,
+        createdBy: 1,
+        updatedOn: now,
+        updatedBy: 1,
+      })
+
+      try {
+        const res = await server
+          .post(persistPath(newDeviceId))
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send({
+            changes: [{ action: 'delete', id: deploymentId }],
+          })
+
+        assert.equal(res.status, 200)
+
+        const deviceRow = await knex('Device as d')
+          .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+          .where('d.id', newDeviceId)
+          .first('da.token as approvalToken')
+
+        assert.equal(deviceRow.approvalToken, 'pendingDeployment')
+      } finally {
+        await cleanupDeploymentTestDevice(knex, newDeviceId)
+      }
     })
 
     describe('when updating an existing deployment', () => {

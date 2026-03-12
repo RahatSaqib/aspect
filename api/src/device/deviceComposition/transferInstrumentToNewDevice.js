@@ -4,6 +4,7 @@ const { getUser } = require('../../auth/service')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
 const { recalculateDeviceFactTables } = require('../common/logic')
+const { syncDeviceApprovalFromDeployments } = require('../common/deviceApprovalService')
 
 async function transferInstrumentToNewDevice({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
@@ -120,14 +121,6 @@ async function createNewDevice(trknex, sourceDevice, instrumentId, { name, short
     updatedBy: userId,
   })
 
-  await trknex('DeviceApprovalLog').insert({
-    deviceId,
-    deviceApprovalId: sourceDevice.deviceApprovalId,
-    changedOn: now,
-    createdOn: now,
-    createdBy: userId,
-  })
-
   await trknex('Deployment').insert({
     deviceId,
     siteId,
@@ -138,6 +131,8 @@ async function createNewDevice(trknex, sourceDevice, instrumentId, { name, short
     updatedOn: now,
     updatedBy: userId,
   })
+
+  await syncDeviceApprovalFromDeployments(trknex, { deviceId, userId, now })
 
   return deviceId
 }

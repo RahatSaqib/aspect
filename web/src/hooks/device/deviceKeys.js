@@ -14,6 +14,7 @@ const DEVICE_DEPLOYMENTS_KEY = 'device-deployments'
 const DEVICE_DEPLOYMENTS_ENDPOINT = '/device/:deviceId/deployments'
 const DEVICE_DEPLOYMENTS_CHECK_RESULTS_ENDPOINT = '/device/:deviceId/deployments/check-results'
 const DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT = '/device/:deviceId/deployments/persist'
+const DEVICE_APPROVAL_ACTION_ENDPOINT = '/device/:deviceId/approval'
 
 export {
   DEVICE_KEY,
@@ -32,4 +33,5 @@ export {
   DEVICE_DEPLOYMENTS_ENDPOINT,
   DEVICE_DEPLOYMENTS_CHECK_RESULTS_ENDPOINT,
   DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT,
+  DEVICE_APPROVAL_ACTION_ENDPOINT,
 }

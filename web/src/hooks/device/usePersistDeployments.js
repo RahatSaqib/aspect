@@ -23,9 +23,10 @@ const usePersistDeployments = () => {
   return useMutation(persistChanges, {
     onSuccess: (_, { deviceId }) => {
       queryClient.invalidateQueries([DEVICE_DEPLOYMENTS_KEY, deviceId])
-      // Invalidate device query so the profile site field refreshes (deviceId may be string or number)
+      // Invalidate device query so the profile site and approval refresh even when
+      // one caller uses a numeric id and another uses a string id.
       queryClient.invalidateQueries({
-        predicate: query => query.queryKey[0] === DEVICE_KEY && query.queryKey[1] === deviceId,
+        predicate: query => query.queryKey[0] === DEVICE_KEY && String(query.queryKey[1]) === String(deviceId),
       })
       // Refresh device instruments section (instruments may be tied to deployments)
       queryClient.invalidateQueries([DEVICE_INSTRUMENTS_KEY, deviceId])

@@ -1,5 +1,6 @@
 const { knex } = require('../../db')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../../auth/constraints')
+const { assertDeploymentsEditable } = require('../common/deviceApprovalService')
 
 /** Returns a Knex raw expression for the calendar date of r.endedOn in the user's timezone. */
 function resultEndedOnDateInTZ(knex, timezoneIANA) {
@@ -11,6 +12,9 @@ async function checkAffectedResults(request) {
   const { params, auth, payload } = request
   const { deviceId } = params
   const { deployments } = payload
+
+  await assertDeploymentsEditable(knex, deviceId)
+
   const [dataConstraints, user] = await Promise.all([
     getConstraints(auth.credentials),
     getUserFromCredentials(auth.credentials),

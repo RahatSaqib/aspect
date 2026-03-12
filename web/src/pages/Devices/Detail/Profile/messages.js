@@ -321,22 +321,6 @@ const messages = {
       id: 'pages.DeviceDetailProfile.targetDeviceIsSourceDevice',
       defaultMessage: 'Target device cannot be the same as the source device',
     },
-    changeApprovalStatusTitle: {
-      id: 'pages.DeviceDetailProfile.changeApprovalStatusTitle',
-      defaultMessage: 'Change Device Status',
-    },
-    changeApprovalStatusConfirmation: {
-      id: 'pages.DeviceDetailProfile.changeApprovalStatusConfirmation',
-      defaultMessage: 'Are you sure you want to change the device status to {status}?',
-    },
-    changeApprovalStatusConfirm: {
-      id: 'pages.DeviceDetailProfile.changeApprovalStatusConfirm',
-      defaultMessage: 'Confirm',
-    },
-    changeApprovalStatusCancel: {
-      id: 'pages.DeviceDetailProfile.changeApprovalStatusCancel',
-      defaultMessage: 'Cancel',
-    },
     deploymentsTitle: {
       id: 'pages.DeviceDetailProfile.deploymentsTitle',
       defaultMessage: 'Deployments',
@@ -513,6 +497,10 @@ const messages = {
     deploymentSaveRequired: {
       id: 'pages.DeviceDetailProfile.deploymentSaveRequired',
       defaultMessage: 'You have unsaved changes. Click "Save" to apply them.',
+    },
+    deploymentReadOnlyDecommissioned: {
+      id: 'pages.DeviceDetailProfile.deploymentReadOnlyDecommissioned',
+      defaultMessage: 'Deployments cannot be edited while this device is decommissioned.',
     },
   }),
 }

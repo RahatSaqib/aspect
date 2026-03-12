@@ -3,6 +3,7 @@ const { addDays, format } = require('date-fns')
 const { transact } = require('../../db')
 const { getUserFromCredentials } = require('../../auth/constraints')
 const { recalculateDeviceFactTables } = require('../common/logic')
+const { assertDeploymentsEditable, syncDeviceApprovalFromDeployments } = require('../common/deviceApprovalService')
 const { toDateOnly } = require('../../shared/date')
 
 function normalizeDeploymentDates(change) {
@@ -41,6 +42,8 @@ async function persistDeploymentChanges(request) {
   })
 
   await transact(async trx => {
+    await assertDeploymentsEditable(trx, deviceId)
+
     // Apply deletes
     const deletePromises = changes
       .filter(c => c.action === 'delete')
@@ -89,7 +92,8 @@ async function persistDeploymentChanges(request) {
     // If device becomes fully undeployed, clear all result site assignments
     if (resultingDeployments.length === 0) {
       await trx('Result').where('deviceId', deviceId).update({ siteId: null })
-      await trx('Device').where('id', deviceId).update({ siteId: null })
+      await trx('Device').where('id', deviceId).update({ siteId: null, updatedOn: now, updatedBy: user.id })
+      await syncDeviceApprovalFromDeployments(trx, { deviceId, userId: user.id, now })
       return
     }
 
@@ -143,7 +147,9 @@ async function persistDeploymentChanges(request) {
     const activeDeployment = resultingDeployments.find(d => d.end === null)
     await trx('Device')
       .where('id', deviceId)
-      .update({ siteId: activeDeployment?.siteId ?? null })
+      .update({ siteId: activeDeployment?.siteId ?? null, updatedOn: now, updatedBy: user.id })
+
+    await syncDeviceApprovalFromDeployments(trx, { deviceId, userId: user.id, now })
 
     if (!hasAddedActiveDeployment) {
       return

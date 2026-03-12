@@ -2,7 +2,6 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
-const { deviceApprovalToId } = require('../shared/dictionary')
 const { showDevice, getDeviceByRequest } = require('./service')
 
 async function updateDevice(request) {
@@ -20,10 +19,8 @@ async function updateDevice(request) {
 
   const configurationData = _.assign({}, device.configurationData, payload.configurationData)
 
-  let { deviceApprovalId } = device
-  // check if a approvalToken is provided
-  if (_.has(payload, 'approvalToken') && device.approvalToken !== payload.approvalToken) {
-    deviceApprovalId = await deviceApprovalToId(payload.approvalToken)
+  if (Object.hasOwn(payload, 'approvalToken') && device.approvalToken !== payload.approvalToken) {
+    throw Boom.badRequest('Device approval must be changed using the device approval workflow')
   }
 
   const prevDeviceApprovalId = await knex('Device').where('id', params.deviceId).first('deviceApprovalId')
@@ -33,7 +30,7 @@ async function updateDevice(request) {
     .where('id', params.deviceId)
     .update({
       siteId: payload.siteId || device.siteId,
-      deviceApprovalId,
+      deviceApprovalId: device.deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
       dailyTestCapacity: payload.dailyTestCapacity,
       moduleBayCapacity: payload.moduleBayCapacity,
@@ -52,10 +49,10 @@ async function updateDevice(request) {
       updatedBy: currentlyLoggedInUserId,
     })
 
-  if (prevDeviceApprovalId !== deviceApprovalId) {
+  if (prevDeviceApprovalId !== device.deviceApprovalId) {
     await knex('DeviceApprovalLog').insert({
       deviceId: params.deviceId,
-      deviceApprovalId,
+      deviceApprovalId: device.deviceApprovalId,
       changedOn: now,
       createdOn: now,
       createdBy: currentlyLoggedInUserId,

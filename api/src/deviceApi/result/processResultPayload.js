@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { knex, transact } = require('../../db')
 const { deviceApprovalToId } = require('../../shared/dictionary')
+const { syncDeviceApprovalFromDeployments } = require('../../device/common/deviceApprovalService')
 const { deviceSeen } = require('../../device/actions')
 const { loadPlugin } = require('../../plugin/loadPlugin')
 const { resultReadyForNotification, resultLogged } = require('../../result/actions')
@@ -289,6 +290,8 @@ async function createDevice(context) {
         updatedOn: now,
         updatedBy: null,
       })
+
+      await syncDeviceApprovalFromDeployments(trx, { deviceId, userId: null, now })
     }
 
     const device = await trx('Device as d')

@@ -25,6 +25,7 @@ const {
 const exportWorkload = require('./exportWorkload')
 const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
+const { updateDeviceApproval } = require('./updateDeviceApproval')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 const { deviceReport } = require('./serviceReports/deviceReport')
 const getMtbErrorGraph = require('./getErrorGraph')
@@ -278,6 +279,33 @@ const routes = [
           softwareType: Joi.string().allow('', null).optional(),
           isDaisyChained: Joi.bool().allow('', null).optional(),
         },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/{deviceId}/approval',
+    handler: asyncHandler(updateDeviceApproval),
+    config: {
+      description: 'Update Device Approval Workflow',
+      notes: 'Executes approval workflow actions like decommission and reactivate',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+        payload: {
+          action: Joi.string().valid('decommission', 'reactivate').required(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: deviceDetailsResponseFields,
+        }),
       },
     },
   },
