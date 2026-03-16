@@ -95,7 +95,7 @@ async function reactivateDevice(trx, { deviceId, userId = null, now = new Date()
   return saveDeviceApprovalIfChanged(trx, { deviceId, approvalToken, userId, now })
 }
 
-async function assertDeploymentsEditable(trx, deviceId) {
+async function assertDeviceIsNotDecommissioned(trx, deviceId) {
   const device = await getDeviceApprovalState(trx, deviceId)
 
   if (device.approvalToken === DECOMMISSIONED) {
@@ -106,7 +106,7 @@ async function assertDeploymentsEditable(trx, deviceId) {
 }
 
 module.exports = {
-  assertDeploymentsEditable,
+  assertDeviceIsNotDecommissioned,
   decommissionDevice,
   reactivateDevice,
   syncDeviceApprovalFromDeployments,

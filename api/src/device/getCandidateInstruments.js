@@ -22,7 +22,7 @@ async function getCandidateInstruments({ params, auth }) {
         device: 'd',
         site: 's',
       },
-      { showUnapprovedDevices: true }
+      { showUnapprovedDevices: true, showDecommissionedDevices: true }
     )
     .first()
 

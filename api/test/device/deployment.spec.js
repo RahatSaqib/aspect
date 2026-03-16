@@ -340,6 +340,502 @@ describe('Deployment endpoints', () => {
           await knex('Sample').where({ id: sampleId }).del()
         }
       })
+
+      it('should update Result.reportableSiteId and Result.referringSiteId when they matched old site', async () => {
+        const deployment = await knex('Deployment')
+          .where({ deviceId: deploymentTestDeviceId })
+          .first('id', 'siteId', 'start', 'end')
+        assert(deployment, 'Setup should have created one deployment')
+
+        const alternateSite = await knex('Site')
+          .where('partnerId', refDevice.partnerId)
+          .whereNot('id', refDevice.siteId)
+          .first('id')
+        assert(alternateSite, 'Seed data should have an alternate site for the same partner')
+        const alternateSiteId = alternateSite.id
+
+        const now = new Date()
+        const admin = await knex('User').where({ name: 'admin' }).first('id')
+        const assay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first('id')
+        const resultSourceId = await resultSourceToId('DiagnosticDevice')
+        const resultTypeId = await resultTypeToId('Patient')
+        const sampleTypeId = await sampleTypeToId('DBS')
+        const resultCategoryId = await resultCategoryToId('NoResult')
+
+        const [sampleId] = await knex('Sample').insert({
+          externalId: `Deployment reportable test ${now.getTime()}`,
+          collectedOn: now,
+          sampleTypeId,
+          originSiteId: refDevice.siteId,
+        })
+
+        const [resultId] = await knex('Result').insert({
+          createdOn: now,
+          createdBy: admin.id,
+          updatedOn: now,
+          updatedBy: admin.id,
+          externalId: `Deployment reportable result ${now.getTime()}`,
+          assayId: assay.id,
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceId: deploymentTestDeviceId,
+          reportableSiteId: refDevice.siteId,
+          referringSiteId: refDevice.siteId,
+          resultSourceId,
+          resultTypeId,
+          sampleId,
+          resultCategory1: resultCategoryId,
+          resultCategory2: resultCategoryId,
+          startedOn: subHours(now, 2),
+          endedOn: now,
+        })
+
+        try {
+          const startStr = deployment.start && format(new Date(deployment.start), 'yyyy-MM-dd')
+          const endStr = deployment.end && format(new Date(deployment.end), 'yyyy-MM-dd')
+          const res = await server
+            .post(persistPath(deploymentTestDeviceId))
+            .set('Authorization', `Bearer ${shared.token}`)
+            .send({
+              changes: [{ action: 'update', id: deployment.id, siteId: alternateSiteId, start: startStr, end: endStr }],
+            })
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+
+          const resultRow = await knex('Result')
+            .where({ id: resultId })
+            .first('siteId', 'reportableSiteId', 'referringSiteId')
+          assert.equal(resultRow.siteId, alternateSiteId)
+          assert.equal(resultRow.reportableSiteId, alternateSiteId)
+          assert.equal(resultRow.referringSiteId, alternateSiteId)
+        } finally {
+          await knex('Result').where({ id: resultId }).del()
+          await knex('Sample').where({ id: sampleId }).del()
+        }
+      })
+
+      it('should never set Result.referringSiteId when it was null (deploy only updates non-null)', async () => {
+        const deployment = await knex('Deployment')
+          .where({ deviceId: deploymentTestDeviceId })
+          .first('id', 'siteId', 'start', 'end')
+        assert(deployment, 'Setup should have created one deployment')
+
+        const alternateSite = await knex('Site')
+          .where('partnerId', refDevice.partnerId)
+          .whereNot('id', refDevice.siteId)
+          .first('id')
+        assert(alternateSite, 'Seed data should have an alternate site for the same partner')
+        const alternateSiteId = alternateSite.id
+
+        const now = new Date()
+        const admin = await knex('User').where({ name: 'admin' }).first('id')
+        const assay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first('id')
+        const resultSourceId = await resultSourceToId('DiagnosticDevice')
+        const resultTypeId = await resultTypeToId('Patient')
+        const sampleTypeId = await sampleTypeToId('DBS')
+        const resultCategoryId = await resultCategoryToId('NoResult')
+
+        const [sampleId] = await knex('Sample').insert({
+          externalId: `Deployment referring null test ${now.getTime()}`,
+          collectedOn: now,
+          sampleTypeId,
+          originSiteId: refDevice.siteId,
+        })
+
+        const [resultId] = await knex('Result').insert({
+          createdOn: now,
+          createdBy: admin.id,
+          updatedOn: now,
+          updatedBy: admin.id,
+          externalId: `Deployment referring null result ${now.getTime()}`,
+          assayId: assay.id,
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceId: deploymentTestDeviceId,
+          reportableSiteId: refDevice.siteId,
+          referringSiteId: null,
+          resultSourceId,
+          resultTypeId,
+          sampleId,
+          resultCategory1: resultCategoryId,
+          resultCategory2: resultCategoryId,
+          startedOn: subHours(now, 2),
+          endedOn: now,
+        })
+
+        try {
+          const startStr = deployment.start && format(new Date(deployment.start), 'yyyy-MM-dd')
+          const endStr = deployment.end && format(new Date(deployment.end), 'yyyy-MM-dd')
+          const res = await server
+            .post(persistPath(deploymentTestDeviceId))
+            .set('Authorization', `Bearer ${shared.token}`)
+            .send({
+              changes: [{ action: 'update', id: deployment.id, siteId: alternateSiteId, start: startStr, end: endStr }],
+            })
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+
+          const resultRow = await knex('Result')
+            .where({ id: resultId })
+            .first('siteId', 'reportableSiteId', 'referringSiteId')
+          assert.equal(resultRow.siteId, alternateSiteId)
+          assert.isNull(resultRow.referringSiteId, 'referringSiteId must stay null when it was null before deploy')
+        } finally {
+          await knex('Result').where({ id: resultId }).del()
+          await knex('Sample').where({ id: sampleId }).del()
+        }
+      })
+
+      it('should preserve Result.reportableSiteId and referringSiteId when they did not match old site', async () => {
+        const deployment = await knex('Deployment')
+          .where({ deviceId: deploymentTestDeviceId })
+          .first('id', 'siteId', 'start', 'end')
+        assert(deployment, 'Setup should have created one deployment')
+
+        const alternateSite = await knex('Site')
+          .where('partnerId', refDevice.partnerId)
+          .whereNot('id', refDevice.siteId)
+          .first('id')
+        assert(alternateSite, 'Seed data should have an alternate site for the same partner')
+        const alternateSiteId = alternateSite.id
+
+        const now = new Date()
+        const admin = await knex('User').where({ name: 'admin' }).first('id')
+        const assay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first('id')
+        const resultSourceId = await resultSourceToId('DiagnosticDevice')
+        const resultTypeId = await resultTypeToId('Patient')
+        const sampleTypeId = await sampleTypeToId('DBS')
+        const resultCategoryId = await resultCategoryToId('NoResult')
+
+        const [sampleId] = await knex('Sample').insert({
+          externalId: `Deployment preserve test ${now.getTime()}`,
+          collectedOn: now,
+          sampleTypeId,
+          originSiteId: refDevice.siteId,
+        })
+
+        const [resultId] = await knex('Result').insert({
+          createdOn: now,
+          createdBy: admin.id,
+          updatedOn: now,
+          updatedBy: admin.id,
+          externalId: `Deployment preserve result ${now.getTime()}`,
+          assayId: assay.id,
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceId: deploymentTestDeviceId,
+          reportableSiteId: alternateSiteId,
+          referringSiteId: alternateSiteId,
+          resultSourceId,
+          resultTypeId,
+          sampleId,
+          resultCategory1: resultCategoryId,
+          resultCategory2: resultCategoryId,
+          startedOn: subHours(now, 2),
+          endedOn: now,
+        })
+
+        try {
+          const startStr = deployment.start && format(new Date(deployment.start), 'yyyy-MM-dd')
+          const endStr = deployment.end && format(new Date(deployment.end), 'yyyy-MM-dd')
+          const res = await server
+            .post(persistPath(deploymentTestDeviceId))
+            .set('Authorization', `Bearer ${shared.token}`)
+            .send({
+              changes: [{ action: 'update', id: deployment.id, siteId: alternateSiteId, start: startStr, end: endStr }],
+            })
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+
+          const resultRow = await knex('Result')
+            .where({ id: resultId })
+            .first('siteId', 'reportableSiteId', 'referringSiteId')
+          assert.equal(resultRow.siteId, alternateSiteId)
+          assert.equal(resultRow.reportableSiteId, alternateSiteId, 'reportableSiteId was already alternateSiteId')
+          assert.equal(resultRow.referringSiteId, alternateSiteId, 'referringSiteId was already alternateSiteId')
+
+          const thirdSite = await knex('Site')
+            .where('partnerId', refDevice.partnerId)
+            .whereNotIn('id', [refDevice.siteId, alternateSiteId])
+            .first('id')
+          if (thirdSite) {
+            await knex('Result').where({ id: resultId }).update({
+              reportableSiteId: thirdSite.id,
+              referringSiteId: refDevice.siteId,
+            })
+            const res2 = await server
+              .post(persistPath(deploymentTestDeviceId))
+              .set('Authorization', `Bearer ${shared.token}`)
+              .send({
+                changes: [
+                  { action: 'update', id: deployment.id, siteId: refDevice.siteId, start: startStr, end: endStr },
+                ],
+              })
+            assert.equal(res2.status, 200)
+            const after = await knex('Result').where({ id: resultId }).first('reportableSiteId', 'referringSiteId')
+            assert.equal(
+              after.reportableSiteId,
+              thirdSite.id,
+              'reportableSiteId should be preserved when it did not match old site'
+            )
+            assert.equal(
+              after.referringSiteId,
+              refDevice.siteId,
+              'referringSiteId should be preserved when it did not match old site'
+            )
+          }
+        } finally {
+          await knex('Result').where({ id: resultId }).del()
+          await knex('Sample').where({ id: sampleId }).del()
+        }
+      })
+
+      it('should update Sample.originSiteId when all results for sample shared old site', async () => {
+        const deployment = await knex('Deployment')
+          .where({ deviceId: deploymentTestDeviceId })
+          .first('id', 'siteId', 'start', 'end')
+        assert(deployment, 'Setup should have created one deployment')
+
+        const alternateSite = await knex('Site')
+          .where('partnerId', refDevice.partnerId)
+          .whereNot('id', refDevice.siteId)
+          .first('id')
+        assert(alternateSite, 'Seed data should have an alternate site for the same partner')
+        const alternateSiteId = alternateSite.id
+
+        const now = new Date()
+        const admin = await knex('User').where({ name: 'admin' }).first('id')
+        const assay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first('id')
+        const resultSourceId = await resultSourceToId('DiagnosticDevice')
+        const resultTypeId = await resultTypeToId('Patient')
+        const sampleTypeId = await sampleTypeToId('DBS')
+        const resultCategoryId = await resultCategoryToId('NoResult')
+
+        const [sampleId] = await knex('Sample').insert({
+          externalId: `Deployment sample origin test ${now.getTime()}`,
+          collectedOn: now,
+          sampleTypeId,
+          originSiteId: refDevice.siteId,
+        })
+
+        const [resultId] = await knex('Result').insert({
+          createdOn: now,
+          createdBy: admin.id,
+          updatedOn: now,
+          updatedBy: admin.id,
+          externalId: `Deployment sample origin result ${now.getTime()}`,
+          assayId: assay.id,
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceId: deploymentTestDeviceId,
+          reportableSiteId: refDevice.siteId,
+          resultSourceId,
+          resultTypeId,
+          sampleId,
+          resultCategory1: resultCategoryId,
+          resultCategory2: resultCategoryId,
+          startedOn: subHours(now, 2),
+          endedOn: now,
+        })
+
+        try {
+          const startStr = deployment.start && format(new Date(deployment.start), 'yyyy-MM-dd')
+          const endStr = deployment.end && format(new Date(deployment.end), 'yyyy-MM-dd')
+          const res = await server
+            .post(persistPath(deploymentTestDeviceId))
+            .set('Authorization', `Bearer ${shared.token}`)
+            .send({
+              changes: [{ action: 'update', id: deployment.id, siteId: alternateSiteId, start: startStr, end: endStr }],
+            })
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+
+          const sampleRow = await knex('Sample').where({ id: sampleId }).first('originSiteId')
+          assert.equal(sampleRow.originSiteId, alternateSiteId)
+        } finally {
+          await knex('Result').where({ id: resultId }).del()
+          await knex('Sample').where({ id: sampleId }).del()
+        }
+      })
+
+      it('should not update Sample.originSiteId when origin did not match old Result.siteId', async () => {
+        const deployment = await knex('Deployment')
+          .where({ deviceId: deploymentTestDeviceId })
+          .first('id', 'siteId', 'start', 'end')
+        assert(deployment, 'Setup should have created one deployment')
+
+        const alternateSite = await knex('Site')
+          .where('partnerId', refDevice.partnerId)
+          .whereNot('id', refDevice.siteId)
+          .first('id')
+        assert(alternateSite, 'Seed data should have an alternate site for the same partner')
+        const alternateSiteId = alternateSite.id
+
+        const now = new Date()
+        const admin = await knex('User').where({ name: 'admin' }).first('id')
+        const assay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first('id')
+        const resultSourceId = await resultSourceToId('DiagnosticDevice')
+        const resultTypeId = await resultTypeToId('Patient')
+        const sampleTypeId = await sampleTypeToId('DBS')
+        const resultCategoryId = await resultCategoryToId('NoResult')
+
+        const [sampleId] = await knex('Sample').insert({
+          externalId: `Deployment sample no-update test ${now.getTime()}`,
+          collectedOn: now,
+          sampleTypeId,
+          originSiteId: alternateSiteId,
+        })
+
+        const [resultId] = await knex('Result').insert({
+          createdOn: now,
+          createdBy: admin.id,
+          updatedOn: now,
+          updatedBy: admin.id,
+          externalId: `Deployment sample no-update result ${now.getTime()}`,
+          assayId: assay.id,
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceId: deploymentTestDeviceId,
+          reportableSiteId: refDevice.siteId,
+          resultSourceId,
+          resultTypeId,
+          sampleId,
+          resultCategory1: resultCategoryId,
+          resultCategory2: resultCategoryId,
+          startedOn: subHours(now, 2),
+          endedOn: now,
+        })
+
+        try {
+          const startStr = deployment.start && format(new Date(deployment.start), 'yyyy-MM-dd')
+          const endStr = deployment.end && format(new Date(deployment.end), 'yyyy-MM-dd')
+          const res = await server
+            .post(persistPath(deploymentTestDeviceId))
+            .set('Authorization', `Bearer ${shared.token}`)
+            .send({
+              changes: [{ action: 'update', id: deployment.id, siteId: alternateSiteId, start: startStr, end: endStr }],
+            })
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+
+          const sampleRow = await knex('Sample').where({ id: sampleId }).first('originSiteId')
+          assert.equal(
+            sampleRow.originSiteId,
+            alternateSiteId,
+            'Sample.originSiteId should be preserved when it did not match old Result.siteId'
+          )
+        } finally {
+          await knex('Result').where({ id: resultId }).del()
+          await knex('Sample').where({ id: sampleId }).del()
+        }
+      })
+
+      it('should not update Sample.originSiteId when sample is also used by a result from another device', async () => {
+        const deployment = await knex('Deployment')
+          .where({ deviceId: deploymentTestDeviceId })
+          .first('id', 'siteId', 'start', 'end')
+        assert(deployment, 'Setup should have created one deployment')
+
+        const alternateSite = await knex('Site')
+          .where('partnerId', refDevice.partnerId)
+          .whereNot('id', refDevice.siteId)
+          .first('id')
+        assert(alternateSite, 'Seed data should have an alternate site for the same partner')
+        const alternateSiteId = alternateSite.id
+
+        const now = new Date()
+        const admin = await knex('User').where({ name: 'admin' }).first('id')
+        const assay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first('id')
+        const resultSourceId = await resultSourceToId('DiagnosticDevice')
+        const resultTypeId = await resultTypeToId('Patient')
+        const sampleTypeId = await sampleTypeToId('DBS')
+        const resultCategoryId = await resultCategoryToId('NoResult')
+
+        const [sampleId] = await knex('Sample').insert({
+          externalId: `Deployment sample shared test ${now.getTime()}`,
+          collectedOn: now,
+          sampleTypeId,
+          originSiteId: refDevice.siteId,
+        })
+
+        const [resultId] = await knex('Result').insert({
+          createdOn: now,
+          createdBy: admin.id,
+          updatedOn: now,
+          updatedBy: admin.id,
+          externalId: `Deployment sample shared result A ${now.getTime()}`,
+          assayId: assay.id,
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceId: deploymentTestDeviceId,
+          reportableSiteId: refDevice.siteId,
+          resultSourceId,
+          resultTypeId,
+          sampleId,
+          resultCategory1: resultCategoryId,
+          resultCategory2: resultCategoryId,
+          startedOn: subHours(now, 2),
+          endedOn: now,
+        })
+
+        const [otherDeviceId] = await knex('Device').insert({
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceTypeId: refDevice.deviceTypeId,
+          deviceApprovalId: refDevice.deviceApprovalId,
+          name: `Deployment other device ${now.getTime()}`,
+          shortName: `Other ${now.getTime()}`,
+          lastSeenOn: now,
+          createdOn: now,
+          updatedOn: now,
+        })
+        await knex('FactDeviceFlag').insert({ deviceId: otherDeviceId, updatedOn: now })
+
+        const [resultIdOther] = await knex('Result').insert({
+          createdOn: now,
+          createdBy: admin.id,
+          updatedOn: now,
+          updatedBy: admin.id,
+          externalId: `Deployment sample shared result B ${now.getTime()}`,
+          assayId: assay.id,
+          partnerId: refDevice.partnerId,
+          siteId: refDevice.siteId,
+          deviceId: otherDeviceId,
+          reportableSiteId: refDevice.siteId,
+          resultSourceId,
+          resultTypeId,
+          sampleId,
+          resultCategory1: resultCategoryId,
+          resultCategory2: resultCategoryId,
+          startedOn: subHours(now, 2),
+          endedOn: now,
+        })
+
+        try {
+          const startStr = deployment.start && format(new Date(deployment.start), 'yyyy-MM-dd')
+          const endStr = deployment.end && format(new Date(deployment.end), 'yyyy-MM-dd')
+          const res = await server
+            .post(persistPath(deploymentTestDeviceId))
+            .set('Authorization', `Bearer ${shared.token}`)
+            .send({
+              changes: [{ action: 'update', id: deployment.id, siteId: alternateSiteId, start: startStr, end: endStr }],
+            })
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+
+          const sampleRow = await knex('Sample').where({ id: sampleId }).first('originSiteId')
+          assert.equal(
+            sampleRow.originSiteId,
+            refDevice.siteId,
+            'Sample.originSiteId must not change when sample is used by a result from another device'
+          )
+        } finally {
+          await knex('Result').whereIn('id', [resultId, resultIdOther]).del()
+          await knex('Sample').where({ id: sampleId }).del()
+          await knex('FactDeviceFlag').where({ deviceId: otherDeviceId }).del()
+          await knex('Device').where({ id: otherDeviceId }).del()
+        }
+      })
     })
 
     describe('when reconciling device API key site after adding an active deployment', () => {

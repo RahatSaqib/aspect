@@ -3,7 +3,10 @@ const { addDays, format } = require('date-fns')
 const { transact } = require('../../db')
 const { getUserFromCredentials } = require('../../auth/constraints')
 const { recalculateDeviceFactTables } = require('../common/logic')
-const { assertDeploymentsEditable, syncDeviceApprovalFromDeployments } = require('../common/deviceApprovalService')
+const {
+  assertDeviceIsNotDecommissioned,
+  syncDeviceApprovalFromDeployments,
+} = require('../common/deviceApprovalService')
 const { toDateOnly } = require('../../shared/date')
 
 function normalizeDeploymentDates(change) {
@@ -13,12 +16,6 @@ function normalizeDeploymentDates(change) {
     throw Boom.conflict('Deployment end date cannot be before start date')
   }
   return { start, end }
-}
-
-/** Returns a Knex raw expression for the calendar date of endedOn in the user's timezone. */
-function resultEndedOnDateInTZ(trx, timezoneIANA) {
-  const tz = timezoneIANA || 'Etc/UTC'
-  return trx.raw('DATE(CONVERT_TZ(endedOn, "+00:00", ?))', [tz])
 }
 
 async function persistDeploymentChanges(request) {
@@ -42,7 +39,7 @@ async function persistDeploymentChanges(request) {
   })
 
   await transact(async trx => {
-    await assertDeploymentsEditable(trx, deviceId)
+    await assertDeviceIsNotDecommissioned(trx, deviceId)
 
     // Apply deletes
     const deletePromises = changes
@@ -127,21 +124,10 @@ async function persistDeploymentChanges(request) {
       }
     }
 
+    // Update Sample.originSiteId to deployment site only when no result from another device points to the same sample
+    await updateSampleOriginSiteId(resultingDeployments, trx, deviceId, timezoneIANA)
     // Update Result.siteId for each deployment span (result date in user timezone)
-    const endedOnDateExpr = resultEndedOnDateInTZ(trx, timezoneIANA)
-    const resultUpdatePromises = resultingDeployments.map(dep => {
-      const query = trx('Result').where('deviceId', deviceId)
-      // First deployment (null start) covers all results from the beginning
-      if (dep.start !== null) {
-        query.where(endedOnDateExpr, '>=', dep.start)
-      }
-      // Last deployment (null end) covers all results to the present
-      if (dep.end !== null) {
-        query.where(endedOnDateExpr, '<=', dep.end)
-      }
-      return query.update({ siteId: dep.siteId })
-    })
-    await Promise.all(resultUpdatePromises)
+    await updateResultSites(trx, timezoneIANA, resultingDeployments, deviceId)
 
     // Sync Device.siteId with the active deployment
     const activeDeployment = resultingDeployments.find(d => d.end === null)
@@ -172,3 +158,68 @@ async function persistDeploymentChanges(request) {
 }
 
 module.exports = { persistDeploymentChanges }
+async function updateResultSites(trx, timezoneIANA, resultingDeployments, deviceId) {
+  const resultUpdatePromises = resultingDeployments.map(dep => {
+    // Subquery that captures the old siteId per result within this deployment span
+    const spanResultsSubquery = trx('Result as r2')
+      .where('r2.deviceId', deviceId)
+      .modify(qb => {
+        if (dep.start !== null) {
+          qb.whereRaw('DATE(CONVERT_TZ(r2.endedOn, "+00:00", ?)) >= ?', [timezoneIANA, dep.start])
+        }
+        if (dep.end !== null) {
+          qb.whereRaw('DATE(CONVERT_TZ(r2.endedOn, "+00:00", ?)) <= ?', [timezoneIANA, dep.end])
+        }
+      })
+      .select('r2.id', 'r2.siteId as oldSiteId')
+
+    // Single UPDATE per span, using the captured oldSiteId
+    return trx('Result as r')
+      .join(spanResultsSubquery.as('x'), 'x.id', 'r.id')
+      .where('r.deviceId', deviceId)
+      .update({
+        siteId: dep.siteId,
+        reportableSiteId: trx.raw('IF(r.reportableSiteId = x.oldSiteId, ?, r.reportableSiteId)', [dep.siteId]),
+        referringSiteId: trx.raw(
+          'IF(r.referringSiteId IS NOT NULL AND r.referringSiteId = x.oldSiteId, ?, r.referringSiteId)',
+          [dep.siteId]
+        ),
+      })
+  })
+
+  await Promise.all(resultUpdatePromises)
+}
+
+async function updateSampleOriginSiteId(resultingDeployments, trx, deviceId, timezoneIANA) {
+  const sampleUpdatePromises = resultingDeployments.map(dep => {
+    const sampleIdsInSpanQuery = trx('Result as r')
+      .where('r.deviceId', deviceId)
+      .whereNotNull('r.sampleId')
+      .select('r.sampleId')
+    if (dep.start !== null) {
+      sampleIdsInSpanQuery.whereRaw('DATE(CONVERT_TZ(r.endedOn, "+00:00", ?)) >= ?', [timezoneIANA, dep.start])
+    }
+    if (dep.end !== null) {
+      sampleIdsInSpanQuery.whereRaw('DATE(CONVERT_TZ(r.endedOn, "+00:00", ?)) <= ?', [timezoneIANA, dep.end])
+    }
+
+    return (
+      trx('Sample as s')
+        .whereIn('s.id', sampleIdsInSpanQuery)
+        // Only update samples whose current originSiteId matches the Result.siteId before the change
+        .whereExists(
+          trx('Result as r3')
+            .select(trx.raw('1'))
+            .whereRaw('r3.sampleId = s.id')
+            .where('r3.deviceId', deviceId)
+            .whereRaw('r3.siteId = s.originSiteId')
+        )
+        .whereNotExists(
+          // Skip if sample was also used in another device.
+          trx('Result as r2').select(trx.raw(1)).whereRaw('r2.sampleId = s.id').where('r2.deviceId', '!=', deviceId)
+        )
+        .update({ originSiteId: dep.siteId })
+    )
+  })
+  await Promise.all(sampleUpdatePromises)
+}
