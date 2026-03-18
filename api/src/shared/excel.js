@@ -76,7 +76,8 @@ const getCellsBySubstring = (sheet, value) => {
 const getMaxLimitPlaceHolders = () => [
   {
     placeholder: '<PerformanceTotalRecordLimit>',
-    value: ({ data: { length = 0 }, total = 0 }) => {
+    value: ({ data, total = 0 }) => {
+      const length = Array.isArray(data) ? data.length : 0
       return total - length
     },
     condition: ({ data = [], total = 0 }) => data?.length === total,
@@ -91,7 +92,8 @@ const getMaxLimitPlaceHolders = () => [
   },
   {
     placeholder: '<PerformanceQueryLimit>',
-    value: ({ data: { length = 0 } }) => {
+    value: ({ data }) => {
+      const length = Array.isArray(data) ? data.length : 0
       return length
     },
   },

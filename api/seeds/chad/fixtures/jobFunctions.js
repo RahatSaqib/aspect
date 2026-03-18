@@ -12,7 +12,7 @@ const {
 
 const withChadEidReport = jobFunction => ({
   ...jobFunction,
-  reports: _.uniq([...jobFunction.reports, 'eid_monthly_report']),
+  reports: _.uniq([...jobFunction.reports, 'eid_testing_window']),
 })
 
 module.exports = [

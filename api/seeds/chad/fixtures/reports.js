@@ -1,10 +1,10 @@
-const EidMonthlyReport = {
-  name: 'EID Monthly Report',
-  description: 'HIV EID (Early Infant Diagnosis) tests with EID testing window.',
-  i18nKey: 'eid_monthly_report',
-  i18nKeyDescription: 'eid_monthly_report_description',
-  externalId: 'chad_eid_monthly_report',
-  fileName: 'ChadEidMonthlyReport',
+const EidWindowReport = {
+  name: 'HIV Results with EID testing window',
+  description: 'HIV-1 Qual EID (Early Infant Diagnosis) aggregated by testing window — Includes results.',
+  i18nKey: 'eid_testing_window',
+  i18nKeyDescription: 'eid_testing_window',
+  externalId: 'eid_testing_window',
+  fileName: 'EID_Results_and_testing_window',
   sortOrder: 25,
   availableForNotification: 1,
   exportCsv: false,
@@ -13,24 +13,24 @@ const EidMonthlyReport = {
   sheets: [
     {
       sortOrder: 0,
+      moduleName: 'result/serviceReportChad',
+      functionName: 'getEidTestingWindowSummaryReport',
+      query: {},
+    },
+    {
+      sortOrder: 1,
       moduleName: 'result/serviceReport',
       functionName: 'getAllResultsReport',
       query: {
         assayId: 'GxHiv1Qual',
         sortCol: 'endedOn',
         sortDir: 'desc',
-        maxNumberOfRecords: 1000000,
+        maxNumberOfRecords: 100000,
       },
-    },
-    {
-      sortOrder: 1,
-      moduleName: 'result/serviceReportChad',
-      functionName: 'getEidAgeGroupSummaryReport',
-      query: {},
     },
   ],
 }
 
 module.exports = {
-  EidMonthlyReport,
+  EidWindowReport,
 }
