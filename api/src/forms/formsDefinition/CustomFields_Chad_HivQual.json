@@ -1,0 +1,33 @@
+{
+  "fields": [
+    {
+      "id": 50,
+      "name": "EIDTestingWindow",
+      "title": "EID testing window",
+      "i18nKey": "EIDTestingWindowI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 10,
+      "gxAlertDbColumn": "EIDTestingWindow",
+      "caption": "Was the infant tested within 8 weeks of birth?",
+      "i18nKeyCaption": "EIDTestingWindowI18nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.50.value",
+      "source": "patientData.EIDTestingWindow",
+      "mandatory": true,
+      "items": [
+        {
+          "key": "< 8 weeks",
+          "value": "< 8 weeks",
+          "order": 10
+        },
+        {
+          "key": "> 8 weeks",
+          "value": "> 8 weeks",
+          "order": 20
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

@@ -1,0 +1,92 @@
+const _ = require('lodash')
+const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
+const { knex, filterDateRangeParams } = require('../../db')
+const { getBaseQueryForResults } = require('../common/db')
+const { assayToId } = require('../../shared/dictionary')
+
+const EID_FIELD_PATH = "r.patientData ->> '$.ChadEIDTestingWindow'"
+const WITHIN_8_WEEKS = '< 8 weeks'
+const AFTER_8_WEEKS = '> 8 weeks'
+
+/**
+ * Chad EID monthly report – sheet 2: summary of % tests within vs after 8 weeks, by facility.
+ * Returns one row per reportable site with total EID tests and counts/percentages for the EID testing window.
+ */
+async function getEidAgeGroupSummaryReport(auth, query, _timezone, _options = {}) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const assayId = await assayToId('GxHiv1Qual')
+  if (!assayId) {
+    return {
+      ok: false,
+      errorMessage: 'GxHiv1Qual assay not found',
+    }
+  }
+
+  const baseQuery = getBaseQueryForResults()
+    .where('r.assayId', assayId)
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      deviceType: 'dt',
+      site: 'si',
+      geography: 'g',
+      result: 'r',
+      country: 'c',
+      disease: 'dis',
+      assay: 'a',
+      assayType: 'at',
+      sample: 'sp',
+    })
+
+  const summaryQuery = baseQuery
+    .clone()
+    .select(
+      'sirep.id as reportableSiteId',
+      knex.raw("COALESCE(sirep.name, 'Unknown') as facilityName"),
+      knex.raw('COUNT(*) as totalTests'),
+      knex.raw(`SUM(CASE WHEN ${EID_FIELD_PATH} = ? THEN 1 ELSE 0 END) as within8Weeks`, [WITHIN_8_WEEKS]),
+      knex.raw(`SUM(CASE WHEN ${EID_FIELD_PATH} = ? THEN 1 ELSE 0 END) as after8Weeks`, [AFTER_8_WEEKS])
+    )
+    .groupBy('sirep.id', 'sirep.name')
+
+  const rows = await summaryQuery
+
+  const data = rows.map(row => {
+    const total = _.toNumber(row.totalTests) || 0
+    const within = _.toNumber(row.within8Weeks) || 0
+    const after = _.toNumber(row.after8Weeks) || 0
+    const pctWithin = total > 0 ? Math.round((within / total) * 1000) / 10 : null
+    const pctAfter = total > 0 ? Math.round((after / total) * 1000) / 10 : null
+    return {
+      facilityName: row.facilityName,
+      totalTests: total,
+      within8Weeks: within,
+      after8Weeks: after,
+      pctWithin8Weeks: pctWithin,
+      pctAfter8Weeks: pctAfter,
+    }
+  })
+
+  const dynamicColumns = [
+    { key: 'facilityName', header: 'Facility' },
+    { key: 'totalTests', header: 'Total EID tests' },
+    { key: 'within8Weeks', header: 'Within 8 weeks (count)' },
+    { key: 'after8Weeks', header: 'After 8 weeks (count)' },
+    { key: 'pctWithin8Weeks', header: 'Within 8 weeks (%)' },
+    { key: 'pctAfter8Weeks', header: 'After 8 weeks (%)' },
+  ]
+
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+    dynamicColumns,
+    defaultNoDataMessage: 'No data',
+  }
+}
+
+module.exports = {
+  getEidAgeGroupSummaryReport,
+}
