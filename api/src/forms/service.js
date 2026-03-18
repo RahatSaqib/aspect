@@ -195,7 +195,7 @@ function getFormsBaseQuery(partnerId, query) {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
+      knex.raw("REPLACE(REPLACE(fd.jsonSchemaFile, '.json', ''), '.js', '') as jsonSchemaFileName")
     )
   return queryForm
 }

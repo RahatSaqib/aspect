@@ -1,6 +1,6 @@
 {
   "CustomFields_Chad_HivQual": {
-    "fileName": "CustomFields_Chad_HivQual.json",
+    "fileName": "CustomFields_Chad_HivQual.js",
     "formDefinition": {
       "order": 1,
       "title": "CustomFields_Chad_HivQual",

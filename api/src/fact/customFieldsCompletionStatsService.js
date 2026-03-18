@@ -233,24 +233,32 @@ async function getCustomFieldsDefinitions() {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
+      knex.raw("REPLACE(REPLACE(fd.jsonSchemaFile, '.json', ''), '.js', '') as jsonSchemaFileName")
     )
 
-  return queryForm.map(qf => ({
-    file: qf.jsonSchemaFileName,
-    assayId: qf.assayId,
-    diseaseId: qf.diseaseId,
-    formTypeId: qf.assayId,
-    fields: formDictionary[qf.jsonSchemaFileName].fields
-      .filter(field => field.completionWeight && field.source)
-      .map(field => ({
-        id: field.id,
+  return queryForm
+    .map(qf => {
+      const formDef = formDictionary[qf.jsonSchemaFileName]
+      if (!formDef) {
+        return null
+      }
+      return {
+        file: qf.jsonSchemaFileName,
         assayId: qf.assayId,
         diseaseId: qf.diseaseId,
-        completionWeight: field.completionWeight || 0,
-        fieldName: field.source,
-      })),
-  }))
+        formTypeId: qf.assayId,
+        fields: formDef.fields
+          .filter(field => field.completionWeight && field.source)
+          .map(field => ({
+            id: field.id,
+            assayId: qf.assayId,
+            diseaseId: qf.diseaseId,
+            completionWeight: field.completionWeight || 0,
+            fieldName: field.source,
+          })),
+      }
+    })
+    .filter(def => def !== null)
 }
 
 /**

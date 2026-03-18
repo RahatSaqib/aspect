@@ -4,7 +4,8 @@ const { getBaseQueryForResults } = require('../common/db')
 const { assayToId } = require('../../shared/dictionary')
 const { addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 
-const EID_FIELD_PATH = "r.patientData ->> '$.ChadEIDTestingWindow'"
+const EID_TESTING_WINDOW_FIELD = 'EIDTestingWindow'
+const EID_FIELD_PATH = `r.patientData ->> '$.${EID_TESTING_WINDOW_FIELD}'`
 const WITHIN_8_WEEKS = '< 8 weeks'
 const AFTER_8_WEEKS = '> 8 weeks'
 
@@ -74,4 +75,7 @@ async function getEidTestingWindowSummaryData(dataConstraints, query) {
 
 module.exports = {
   getEidTestingWindowSummaryData,
+  EID_TESTING_WINDOW_FIELD,
+  WITHIN_8_WEEKS,
+  AFTER_8_WEEKS,
 }
