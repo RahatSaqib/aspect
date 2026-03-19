@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { knex, transact } = require('../../db')
+const { knex } = require('../../db')
 const { deviceApprovalToId } = require('../../shared/dictionary')
 const { syncDeviceApprovalFromDeployments } = require('../../device/common/deviceApprovalService')
 const { deviceSeen } = require('../../device/actions')
@@ -232,7 +232,7 @@ async function generateDeviceName(context, serial) {
  * Creates a new device from the request payload.
  */
 async function createDevice(context) {
-  const { payload, now, deviceTypeId, deviceTypeExternalId, partnerId, defaultTimeZone } = context
+  const { payload, now, deviceTypeId, deviceTypeExternalId, partnerId, defaultTimeZone, knex } = context
   const hostId = _.get(payload, 'configuration.data.hostId', null) || payload.hostId
   const serial = _.get(payload, 'configuration.data.deviceSerialNumber') || payload.serial
   const macAddress = _.get(payload, 'configuration.data.macAddress') || payload.macAddress
@@ -241,93 +241,91 @@ async function createDevice(context) {
   const name = await generateDeviceName(context, serial)
   const shortName = name.substr(0, 45)
 
-  return transact(async trx => {
-    const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
-    const deviceApiKey = await trx('DeviceApiKey')
-      .where({ id: context.auth.credentials.deviceApiKeyId })
-      .first('id', 'siteId')
+  const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
+  const deviceApiKey = await knex('DeviceApiKey')
+    .where({ id: context.auth.credentials.deviceApiKeyId })
+    .first('id', 'siteId')
 
-    const partnerData = await trx('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
+  const partnerData = await knex('Partner').where({ id: partnerId }).first('deviceCapacityFactor')
 
-    const [deviceId] = await trx('Device').insert({
-      partnerId,
-      deviceTypeId,
-      siteId: deviceApiKey?.siteId || null,
-      dailyTestCapacity: deviceTypeExternalId === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
-      moduleBayCapacity: deviceTypeExternalId === 'CepheidGeneXpert' ? 4 : 0,
-      deviceApprovalId,
-      name,
-      serial,
-      shortName,
-      macAddress,
-      hostId,
-      timezone: defaultTimeZone, // For now we ignore this _.get(payload, 'configuration.data.timezone', null)
-      configurationData: '{}',
-      deviceApiKeyId: context.auth.credentials.deviceApiKeyId,
-      putInService: now, // TODO?
-      lastSeenOn: now,
-      lastPingOn: now,
-      createdOn: now,
-      updatedOn: now,
-    })
+  const [deviceId] = await knex('Device').insert({
+    partnerId,
+    deviceTypeId,
+    siteId: deviceApiKey?.siteId || null,
+    dailyTestCapacity: deviceTypeExternalId === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
+    moduleBayCapacity: deviceTypeExternalId === 'CepheidGeneXpert' ? 4 : 0,
+    deviceApprovalId,
+    name,
+    serial,
+    shortName,
+    macAddress,
+    hostId,
+    timezone: defaultTimeZone, // For now we ignore this _.get(payload, 'configuration.data.timezone', null)
+    configurationData: '{}',
+    deviceApiKeyId: context.auth.credentials.deviceApiKeyId,
+    putInService: now, // TODO?
+    lastSeenOn: now,
+    lastPingOn: now,
+    createdOn: now,
+    updatedOn: now,
+  })
 
-    await trx('DeviceApprovalLog').insert({
+  await knex('DeviceApprovalLog').insert({
+    deviceId,
+    deviceApprovalId,
+    changedOn: now,
+    createdOn: now,
+    createdBy: null,
+  })
+
+  if (deviceApiKey?.siteId) {
+    await knex('Deployment').insert({
       deviceId,
-      deviceApprovalId,
-      changedOn: now,
+      siteId: deviceApiKey.siteId,
+      start: null,
+      end: null,
       createdOn: now,
       createdBy: null,
+      updatedOn: now,
+      updatedBy: null,
     })
 
-    if (deviceApiKey?.siteId) {
-      await trx('Deployment').insert({
-        deviceId,
-        siteId: deviceApiKey.siteId,
-        start: null,
-        end: null,
-        createdOn: now,
-        createdBy: null,
-        updatedOn: now,
-        updatedBy: null,
-      })
+    await syncDeviceApprovalFromDeployments(knex, { deviceId, userId: null, now })
+  }
 
-      await syncDeviceApprovalFromDeployments(trx, { deviceId, userId: null, now })
-    }
+  const device = await knex('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
+    .where('d.id', deviceId)
+    // TODO: this proyection should be the same as identifyDevice
+    .first(
+      'd.id',
+      'd.partnerId',
+      'd.siteId',
+      's.geographyId',
+      'd.name',
+      'd.shortName',
+      'd.serial',
+      'd.macAddress',
+      'd.configurationData',
+      'd.connectSettingsSentOn',
+      'd.lastSeenOn',
+      'd.putInService',
+      'da.token as approval',
+      'dt.externalId as deviceType',
+      'dt.plugin as deviceTypePluginName',
+      'p.plugin as partnerPluginName',
+      'dtc.name as deviceTypeCategory'
+    )
 
-    const device = await trx('Device as d')
-      .leftJoin('Site as s', 'd.siteId', 's.id')
-      .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-      .leftJoin('Partner as p', 'd.partnerId', 'p.id')
-      .where('d.id', deviceId)
-      // TODO: this proyection should be the same as identifyDevice
-      .first(
-        'd.id',
-        'd.partnerId',
-        'd.siteId',
-        's.geographyId',
-        'd.name',
-        'd.shortName',
-        'd.serial',
-        'd.macAddress',
-        'd.configurationData',
-        'd.connectSettingsSentOn',
-        'd.lastSeenOn',
-        'd.putInService',
-        'da.token as approval',
-        'dt.externalId as deviceType',
-        'dt.plugin as deviceTypePluginName',
-        'p.plugin as partnerPluginName',
-        'dtc.name as deviceTypeCategory'
-      )
+  // TODO: Refactor this to an event
+  // Send notifications
+  await sendNotificationToContacts(payload, device)
 
-    // TODO: Refactor this to an event
-    // Send notifications
-    await sendNotificationToContacts(payload, device)
-
-    return device
-  })
+  return device
 }
 
 /**
