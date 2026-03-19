@@ -16,9 +16,20 @@ function detectPayloadType(rawMessage) {
 }
 
 async function migrateDeviceApiKeyId(knex) {
+  await knex('Device as d')
+    .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .where('dt.externalId', 'CepheidGeneXpert')
+    .update('d.deviceApiKeyId', knex.raw('dak.id'))
+
+  await knex('DeviceApiKey as dak')
+    .join('Device as d', 'dak.deviceId', 'd.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .where('dt.externalId', 'CepheidGeneXpert')
+    .update('dak.deviceId', null)
+
   await knex('DeviceLog as dl')
     .join('Device as d', 'dl.deviceId', 'd.id')
-    .whereNotNull('d.deviceApiKeyId')
     .update('dl.deviceApiKeyId', knex.raw('d.deviceApiKeyId'))
 }
 
