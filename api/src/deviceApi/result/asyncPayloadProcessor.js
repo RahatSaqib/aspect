@@ -14,7 +14,7 @@ const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
   }
 
   logger.info(`Processing async device payload for DeviceLogId: ${deviceLogId}`)
-  const deviceLog = await knex('DeviceLog').where({ id: deviceLogId }).first('rawMessage')
+  const deviceLog = await knex('DeviceLog').where({ id: deviceLogId }).first()
   if (!deviceLog) {
     logger.warning(`DeviceLog with id ${deviceLogId} not found. Skipping.`)
     return
@@ -31,13 +31,12 @@ const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
   })
 
   // Build auth credentials
-  const token = formattedPayload.deviceApiKey
-
   const data = await knex('DeviceApiKey as k')
     .leftJoin('Device as d', 'd.deviceApiKeyId', 'k.id')
-    .where({ 'k.token': token })
+    .where({ 'k.id': deviceLog.deviceApiKeyId })
     .groupBy('k.id')
     .first({
+      token: 'k.token',
       deviceApiKeyId: 'k.id',
       expiresOn: 'k.expiresOn',
       partnerId: 'k.partnerId',
@@ -46,7 +45,7 @@ const onAsyncPayloadToProcess = async ({ deviceLogId }, { messageContext }) => {
 
   const credentials = {
     scope: ['deviceApi'],
-    token,
+    token: data.token,
     deviceApiKeyId: data.deviceApiKeyId,
     deviceIds: data.deviceIds ? data.deviceIds.split(',').map(Number) : [],
     partnerId: data.partnerId,
