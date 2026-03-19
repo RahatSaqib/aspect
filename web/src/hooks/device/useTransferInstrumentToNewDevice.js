@@ -14,8 +14,8 @@ const useTransferInstrumentToNewDevice = () => {
 
   const mutation = useMutation(data => transferInstrumentToNewDevice(data), {
     onSuccess: () => {
-      // Invalidate device list
-      queryClient.invalidateQueries([DEVICE_KEY, 'list'])
+      // Invalidate device list + any device detail queries
+      queryClient.invalidateQueries([DEVICE_KEY])
     },
   })
 

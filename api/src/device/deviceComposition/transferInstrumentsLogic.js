@@ -27,7 +27,20 @@ async function transferDeviceInstruments(trknex, { groupedInstruments, targetDev
     })
   )
 
+  const deviceIdsToSync = [...new Set([...devicesToPartiallyTransfer, targetDeviceId])]
+  await syncInstrumentsConnectedFromInstruments(trknex, deviceIdsToSync)
+
   return { deletedDeviceIds: [...devicesToFullyMerge] }
+}
+
+async function syncInstrumentsConnectedFromInstruments(trknex, deviceIds) {
+  await Promise.all(
+    deviceIds.map(async deviceId => {
+      const row = await trknex('Instrument').where('deviceId', deviceId).count({ cnt: '*' }).first()
+      const cnt = row ? Number(row.cnt) : 0
+      await trknex('Device').where('id', deviceId).update({ instrumentsConnected: cnt })
+    })
+  )
 }
 
 async function transferInstrumentIds(trknex, sourceInstrumentIds, targetDeviceId, userId) {

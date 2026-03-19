@@ -35,7 +35,6 @@ async function updateDevice(request) {
       dailyTestCapacity: payload.dailyTestCapacity,
       moduleBayCapacity: payload.moduleBayCapacity,
       implementingPartnerId: payload.implementingPartnerId,
-      instrumentsConnected: payload.instrumentsConnected,
       gx6cModulesCount: payload.gx6cModulesCount,
       gx10cModulesCount: payload.gx10cModulesCount,
       name: payload.name,
@@ -48,6 +47,10 @@ async function updateDevice(request) {
       updatedOn: now,
       updatedBy: currentlyLoggedInUserId,
     })
+
+  const row = await knex('Instrument').where('deviceId', params.deviceId).count({ cnt: '*' }).first()
+  const instrumentsConnected = row ? Number(row.cnt) : 0
+  await knex('Device').where('id', params.deviceId).update({ instrumentsConnected })
 
   if (prevDeviceApprovalId !== device.deviceApprovalId) {
     await knex('DeviceApprovalLog').insert({
