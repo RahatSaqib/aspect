@@ -16,8 +16,7 @@ function formDictionary() {
     const fullPath = path.join(__dirname, 'formsDefinition/', fileName)
     const form = require(`./formsDefinition/${fileName}`)
     form.updatedOn = getFileUpdatedDate(fullPath)
-    const baseName = fileName.replace(path.extname(fileName), '')
-    dict[baseName] = form
+    dict[fileName.replace('.json', '')] = form
   })
 }
 formDictionary()
