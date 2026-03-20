@@ -187,6 +187,14 @@ const messages = defineMessages({
     defaultMessage:
       'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)',
   },
+  eid_testing_window: {
+    id: 'pages.ReportIndex.eid_testing_window',
+    defaultMessage: 'HIV Results with EID testing window',
+  },
+  eid_testing_window_description: {
+    id: 'pages.ReportIndex.eid_testing_window_description',
+    defaultMessage: 'HIV-1 Qual EID (Early Infant Diagnosis) aggregated by testing window — Includes results.',
+  },
   xpertTestActivitiesReport: {
     id: 'pages.ReportIndex."xpertTestActivitiesReport"',
     defaultMessage: 'Xpert Test Activities Report',

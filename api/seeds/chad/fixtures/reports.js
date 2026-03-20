@@ -2,7 +2,7 @@ const EidWindowReport = {
   name: 'HIV Results with EID testing window',
   description: 'HIV-1 Qual EID (Early Infant Diagnosis) aggregated by testing window — Includes results.',
   i18nKey: 'eid_testing_window',
-  i18nKeyDescription: 'eid_testing_window',
+  i18nKeyDescription: 'eid_testing_window_description',
   externalId: 'eid_testing_window',
   fileName: 'EID_Results_and_testing_window',
   sortOrder: 25,

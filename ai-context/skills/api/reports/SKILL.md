@@ -49,6 +49,7 @@ const reportDefinition = {
 
 **Key Properties:**
 - `externalId`: Must match folder name in `/api/templates/`
+- `i18nKey` / `i18nKeyDescription`: Message keys used by the web Reports UI (`ReportCard`). **Whenever you create or change a report definition that sets these fields**, add or update matching entries in `web/src/messages/report.js` (`defineMessages`): one message for `i18nKey` (title) and one for `i18nKeyDescription` (card description). Use distinct keys (e.g. `my_report` and `my_report_description`); do not reuse the same key for both. `defaultMessage` values should match the seeded `name` and `description` (English source strings).
 - `sheets`: Array defining data sources for each Excel sheet
 - `moduleName`/`functionName`: Points to service functions that generate data
 - `query`: Parameters passed to data generation functions
@@ -242,10 +243,15 @@ api/
 ### Creating New Reports:
 
 1. **Define Report Configuration**: Add to appropriate `seeds/*/fixtures/reports.js`
-2. **Create Template**: Design Excel file in `templates/{externalId}/`
-3. **Create Mapping**: If needed, add `mapping.js` for cell-specific data
-4. **Implement Service**: Create data generation function
-5. **Test Both Modes**: Verify sync and async generation
+2. **Frontend strings**: For each `i18nKey` and `i18nKeyDescription` on the report, add corresponding `defineMessages` entries in `web/src/messages/report.js` (see Key Properties above). Do this whenever a report is added or those keys/text change.
+3. **Create Template**: Design Excel file in `templates/{externalId}/`
+4. **Create Mapping**: If needed, add `mapping.js` for cell-specific data
+5. **Implement Service**: Create data generation function
+6. **Test Both Modes**: Verify sync and async generation
+
+### Report seeding — no per-report seed file
+
+**Do not** add a new country-specific seed file (for example `NN_upsert_report.js`) whose only job is to insert or update `Report` rows. That work is already handled by the repeatable shared seed **`api/seeds/zz_shared/03_upsert_reports_with_country_specific.js`**, which runs whenever seeds run on deploy: it resolves the active country’s `seeds/<country>/fixtures/reports.js` and calls `updateReportsAndJobFunctions` to upsert reports (and related job functions). **Put new or changed report definitions only in that country’s `fixtures/reports.js`.** For when `zz_shared` seeds run in each environment, see `ai-context/skills/api/database-seeding/SKILL.md`.
 
 ### Template Design:
 - Use clear placeholder names: `<FieldName>` not `<field>`
