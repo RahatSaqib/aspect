@@ -5,8 +5,8 @@ const { assayToId } = require('../../shared/dictionary')
 const { addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 
 const EID_FIELD_PATH = "r.patientData ->> '$.ChadEIDTestingWindow'"
-const WITHIN_8_WEEKS = '< 8 weeks'
-const AFTER_8_WEEKS = '> 8 weeks'
+const WITHIN_8_WEEKS = '< 8 semaines'
+const AFTER_8_WEEKS = '8 semaines-12 moiss'
 
 async function getEidTestingWindowSummaryData(dataConstraints, query) {
   const assayId = await assayToId('GxHiv1Qual')
@@ -61,14 +61,13 @@ async function getEidTestingWindowSummaryData(dataConstraints, query) {
   })
 
   const dynamicColumns = [
-    { key: 'facilityName', header: 'Facility' },
-    { key: 'totalTests', header: 'Total EID tests' },
-    { key: 'within8Weeks', header: 'Within 8 weeks (count)' },
-    { key: 'after8Weeks', header: 'After 8 weeks (count)' },
-    { key: 'pctWithin8Weeks', header: 'Within 8 weeks (%)' },
-    { key: 'pctAfter8Weeks', header: 'After 8 weeks (%)' },
+    { key: 'facilityName', header: 'Établissement' },
+    { key: 'totalTests', header: 'Nombre total de tests EID' },
+    { key: 'within8Weeks', header: 'Dans les 8 semaines (nombre)' },
+    { key: 'after8Weeks', header: 'Après 8 semaines (nombre)' },
+    { key: 'pctWithin8Weeks', header: 'Dans les 8 semaines (%)' },
+    { key: 'pctAfter8Weeks', header: 'Après 8 semaines (%)' },
   ]
-
   return { data, dynamicColumns }
 }
 

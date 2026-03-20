@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-13T13:25:22.286Z\n"
+"POT-Creation-Date: 2026-03-20T03:52:41.775Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.9\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -5674,6 +5674,13 @@ msgstr "VIH non détecté"
 msgid "HIV Qual"
 msgstr "VIH Qual"
 
+#. [pages.ReportIndex.eid_testing_window]
+#. defaultMessage is:
+#. HIV Results with EID testing window
+#: extracted_strings.json
+msgid "HIV Results with EID testing window"
+msgstr "Résultats du dépistage du VIH selon la fenêtre de dépistage EID"
+
 #. [pages.resultEdit.HIVStatusI18nKey]
 #. defaultMessage is:
 #. HIV Status
@@ -5701,6 +5708,17 @@ msgstr "Personne infectée par le VIH, avec TB S/S"
 #: extracted_strings.json
 msgid "HIV not Detected"
 msgstr "VIH non détecté"
+
+#. [pages.ReportIndex.eid_testing_window_description]
+#. defaultMessage is:
+#. HIV-1 Qual EID (Early Infant Diagnosis) aggregated by testing window — Includes results.
+#: extracted_strings.json
+msgid ""
+"HIV-1 Qual EID (Early Infant Diagnosis) aggregated by testing window — "
+"Includes results."
+msgstr ""
+"Données agrégées du VIH-1 qualitatif (EID, diagnostic précoce du nourrisson) "
+"par fenêtre de dépistage — résultats inclus"
 
 #. [filter.DiseaseSelectField.diseaseNameHIVAIDS]
 #. defaultMessage is:
