@@ -4,9 +4,9 @@ const { getBaseQueryForResults } = require('../common/db')
 const { assayToId } = require('../../shared/dictionary')
 const { addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 
-const EID_FIELD_PATH = "r.patientData ->> '$.ChadEIDTestingWindow'"
+const EID_FIELD_PATH = "r.patientData ->> '$.EIDTestingWindow'"
 const WITHIN_8_WEEKS = '< 8 semaines'
-const AFTER_8_WEEKS = '8 semaines-12 moiss'
+const AFTER_8_WEEKS = '8 semaines-12 mois'
 
 async function getEidTestingWindowSummaryData(dataConstraints, query) {
   const assayId = await assayToId('GxHiv1Qual')
