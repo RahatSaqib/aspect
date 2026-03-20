@@ -323,7 +323,8 @@ async function createDevice(context) {
 
   // TODO: Refactor this to an event
   // Send notifications
-  await sendNotificationToContacts(payload, device)
+  // Commented for now, This notification should be sent only once per GxConnect instance, in this place we are going to generate multiple notifications
+  // await sendNotificationToContacts(payload, device)
 
   return device
 }
@@ -334,6 +335,7 @@ async function createDevice(context) {
  * @param {Object} payload - The request payload containing configuration data
  * @param {Object} device - The newly created device object
  */
+// eslint-disable-next-line no-unused-vars
 async function sendNotificationToContacts(payload, device) {
   const { configuration } = payload
   if (configuration && configuration.data) {
