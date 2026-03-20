@@ -31,7 +31,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
         device: 'd',
         site: 's',
       },
-      { showUnapprovedDevices: true }
+      { showUnapprovedDevices: true, showDecommissionedDevices: true }
     )
     .select(
       'd.id as deviceId',
