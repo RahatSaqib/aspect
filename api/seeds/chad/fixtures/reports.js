@@ -1,4 +1,4 @@
-const EidWindowReport = {
+const eidWindowReport = {
   name: 'HIV Results with EID testing window',
   description: 'HIV-1 Qual EID (Early Infant Diagnosis) aggregated by testing window — Includes results.',
   i18nKey: 'eid_testing_window',
@@ -32,5 +32,5 @@ const EidWindowReport = {
 }
 
 module.exports = {
-  EidWindowReport,
+  eidWindowReport,
 }
