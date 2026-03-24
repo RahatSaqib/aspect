@@ -24,6 +24,7 @@ function subtractOneDay(dateStr) {
 }
 
 async function seedDeploymentPerDeviceAtSite(knex) {
+  const now = new Date()
   const dateInDeviceTz = 'DATE(CONVERT_TZ(COALESCE(r.endedOn, r.startedOn), "+00:00", IFNULL(tz.timeZone, "Etc/UTC")))'
   const rows = await knex('Result as r')
     .join('Device as d', 'd.id', 'r.deviceId')
@@ -73,6 +74,8 @@ async function seedDeploymentPerDeviceAtSite(knex) {
         siteId: s.siteId,
         start: isFirst ? null : s.minDate,
         end: isLast ? null : subtractOneDay(nextStart),
+        createdOn: now,
+        updatedOn: now,
       })
     }
   }
