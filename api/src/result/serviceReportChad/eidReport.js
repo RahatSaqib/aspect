@@ -60,15 +60,7 @@ async function getEidTestingWindowSummaryData(dataConstraints, query) {
     }
   })
 
-  const dynamicColumns = [
-    { key: 'facilityName', header: 'Établissement' },
-    { key: 'totalTests', header: 'Nombre total de tests EID' },
-    { key: 'within8Weeks', header: 'Dans les 8 semaines (nombre)' },
-    { key: 'after8Weeks', header: 'Après 8 semaines (nombre)' },
-    { key: 'pctWithin8Weeks', header: 'Dans les 8 semaines (%)' },
-    { key: 'pctAfter8Weeks', header: 'Après 8 semaines (%)' },
-  ]
-  return { data, dynamicColumns }
+  return { data }
 }
 
 module.exports = {
