@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
+import { DEVICE_LIST } from '../../components/QueryFetch/Device'
 import { aspectFetch } from '../../utils/utils/fetch'
-import { DEVICE_KEY, DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT } from './deviceKeys.js'
+import { DEVICE_INSTRUMENTS_KEY, DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT } from './deviceKeys.js'
 
 const transferInstruments = async data => {
   return aspectFetch(DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT, {
@@ -14,8 +15,8 @@ const useTransferInstruments = () => {
 
   const mutation = useMutation(data => transferInstruments(data), {
     onSuccess: () => {
-      // Invalidate device list + any device detail queries (e.g. currently open device page)
-      queryClient.invalidateQueries([DEVICE_KEY])
+      queryClient.invalidateQueries([DEVICE_LIST.KEY])
+      queryClient.invalidateQueries([DEVICE_INSTRUMENTS_KEY])
     },
   })
 
