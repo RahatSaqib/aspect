@@ -80,7 +80,7 @@ async function upsertCustomFields(request) {
   return { ok: true }
 }
 
-function validateConflicts({ existingByExternalId, existingBySiteAndSample, siteId, sampleExternalId, externalId }) {
+function validateConflicts({ existingByExternalId, existingBySiteAndSample, externalId }) {
   if (existingByExternalId && existingBySiteAndSample && existingByExternalId.id !== existingBySiteAndSample.id) {
     throw Boom.conflict('The provided site and sample combination is already linked to a different externalId.')
   }
