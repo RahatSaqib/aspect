@@ -399,11 +399,6 @@ const DeviceDetailProfile = ({
             <Summary title={formatMessage(messages.dailyCapacity)} description={device.get('dailyTestCapacity')} />
             <Summary title={formatMessage(messages.moduleBayCapacity)} description={device.get('moduleBayCapacity')} />
 
-            <Summary
-              title={formatMessage(messages.instrumentsConnected)}
-              description={device.get('instrumentsConnected') ?? 'n/a'}
-            />
-
             {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID ? (
               <>
                 <Summary

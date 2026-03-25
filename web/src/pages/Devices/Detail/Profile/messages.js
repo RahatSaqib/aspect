@@ -206,10 +206,6 @@ const messages = {
       id: 'pages.deviceDetail.countryAverage',
       defaultMessage: 'Country Average',
     },
-    instrumentsConnected: {
-      id: 'pages.deviceDetail.instrumentsConnected',
-      defaultMessage: 'Instruments Connected',
-    },
     gx6cModulesCount: { id: 'pages.deviceDetail.gx6cModulesCount', defaultMessage: 'Number of GX-6C modules' },
     gx10cModulesCount: { id: 'pages.deviceDetail.gx10cModulesCount', defaultMessage: 'Number of GX-10C modules' },
     deviceCapacityModules: {

@@ -259,7 +259,6 @@ const routes = [
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number(),
           implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
-          instrumentsConnected: Joi.number().min(1).description('Number of connected instruments'),
           gx6cModulesCount: Joi.number()
             .allow('', null)
             .min(0)

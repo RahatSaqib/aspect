@@ -54,7 +54,6 @@ const SELECT_SHOW_FIELDS = [
   'd.hostId',
   'd.deviceTypeId',
   'd.deviceApprovalId',
-  'd.instrumentsConnected',
   'd.gx6cModulesCount',
   'd.gx10cModulesCount',
   'd.configurationData',
