@@ -156,7 +156,7 @@ const instrumentsConnected = {
    * we are getting sum of all instruments connected - i.e. `sum(d.instrumentsConnected)`
    */
   sqlForIndicator: `
-    select sum(d.instrumentsConnected) as cnt
+    select count(*) as cnt
     from Device as d
       inner join DeviceApproval da on d.deviceApprovalId = da.id
       inner join Site as s on s.id = d.siteId
@@ -168,6 +168,9 @@ const instrumentsConnected = {
       dt.externalId not in ('${INTERNAL_DEVICE_IDS.join("','")}')
   `,
   link: '/browse/device/list',
+  linkParams: {
+    deviceApprovalId: 3, // TODO: This should not be hardcoded. We should get the id of 'approved' status from the database
+  },
   sortOrder: 2,
   externalId: 'instrumentsConnected',
   description: 'The number of devices connected.',
