@@ -12,6 +12,21 @@ const SELECT_LIST_FIELDS = [
   's.sampleRegistrationAllowed',
 ]
 
+function applyMobileSiteListFilters(qb, filters) {
+  if (!filters || !Object.keys(filters).length) {
+    return
+  }
+  const { nameContains, modifiedSince } = filters
+  if (nameContains) {
+    qb.andWhere('s.name', 'like', `%${nameContains}%`)
+  }
+  if (modifiedSince) {
+    qb.andWhere(function filterStaleSites() {
+      this.where('s.createdOn', '>=', modifiedSince).orWhere('s.updatedOn', '>=', modifiedSince)
+    })
+  }
+}
+
 /**
  * Gets a list of sites for mobile view with user-specific access controls.
  *
@@ -23,6 +38,7 @@ const SELECT_LIST_FIELDS = [
  * @param {Object} dataConstraints - User data constraints containing partner and access information
  * @param {string[]|null} type - Optional array of site type external IDs to filter by, default is lab and clinic
  * @param {string} [sortBy='name'] - Field to sort results by, defaults to 'name'
+ * @param {Object} [filters={}] - Optional filters: `nameContains` (substring, min 3 chars in validation), `modifiedSince` (Date; omits sites where both createdOn and updatedOn are before this instant)
  * @returns {Promise<Array<Object>>} Promise that resolves to an array of site objects with the following properties:
  *   - {number} id - Site ID
  *   - {string} name - Site name
@@ -36,12 +52,13 @@ const SELECT_LIST_FIELDS = [
  * By "user states" we mean the states where the user has any job assignment.
  * @throws {Error} Database errors from knex operations
  */
-const getSitesMobileView = async (dataConstraints, type, sortBy = 'name') => {
+const getSitesMobileView = async (dataConstraints, type, sortBy = 'name', filters = {}) => {
   // Query for sites the user has a Job Assignment to (onlyForTransfers = false)
   const assignedSitesQuery = getSitesQuery(dataConstraints).modify(qb => {
     if (type) {
       qb.andWhere(qbSiteType => qbSiteType.whereIn('st.externalId', type))
     }
+    applyMobileSiteListFilters(qb, filters)
   })
 
   // Query to fetch all remaining sites, including those outside the user’s scope (onlyForTransfers = true)
@@ -54,6 +71,7 @@ const getSitesMobileView = async (dataConstraints, type, sortBy = 'name') => {
       if (type) {
         qb.andWhere(qbSiteType => qbSiteType.whereIn('st.externalId', type))
       }
+      applyMobileSiteListFilters(qb, filters)
     })
     .where('s.partnerId', dataConstraints.partner.id)
     .modify(qb => {

@@ -12,7 +12,20 @@ const downloadSitesRequestValidationV4 = () => {
       stateId: Joi.number()
         .optional()
         .allow(null, '')
-        .description("The ID of the state of site. Defaults to the contact's state"),
+        .description("The ID of the state of the site. Defaults to the contact's state"),
+      nameContains: Joi.alternatives()
+        .try(Joi.string().valid(''), Joi.string().trim().min(3))
+        .optional()
+        .description(
+          'Optional substring; when provided must be at least 3 characters. Filters sites by name (contains).'
+        ),
+      modifiedSince: Joi.date()
+        .allow(null, '')
+        .iso()
+        .optional()
+        .description(
+          'Optional UTC ISO 8601 instant. Omits sites where both createdOn and updatedOn are strictly before this time.'
+        ),
     },
   }
 }
