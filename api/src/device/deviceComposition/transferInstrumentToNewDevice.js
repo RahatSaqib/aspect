@@ -143,9 +143,11 @@ const getLastDeviceApiKey = async instrumentId => {
       .join('Instrument as i', qb => {
         qb.on('i.serial', 'r.instrumentSerial').andOn('i.deviceId', 'r.deviceId')
       })
+      .join('Device as d', 'd.id', 'r.deviceId')
       .where('i.id', instrumentId)
+      .whereNotNull('d.deviceApiKeyId')
       .orderBy('r.endedOn', 'desc')
-      .first('r.deviceApiKeyId')) || {}
+      .first('d.deviceApiKeyId')) || {}
 
   return deviceApiKeyId
 }
