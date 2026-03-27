@@ -203,6 +203,27 @@ describe('Device routes', () => {
       assertPropertiesOfListItem(res)
     })
 
+    it('should filter devices by device approval external id', async () => {
+      await knex('Device').where({ id: theGreatestDeviceIEverCreated.id }).update({
+        deviceApprovalId: deviceApprovals.approved,
+      })
+
+      const approvedResponse = await server
+        .get(`${path}?deviceName=The greatest device I ever created&deviceApprovalExternalId=approved`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(approvedResponse.status, 200)
+      assert.equal(approvedResponse.body.length, 1)
+      assert.equal(approvedResponse.body.data[0].name, 'The greatest device I ever created')
+
+      const pendingResponse = await server
+        .get(`${path}?deviceName=The greatest device I ever created&deviceApprovalExternalId=pendingDeployment`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(pendingResponse.status, 200)
+      assert.equal(pendingResponse.body.length, 0)
+    })
+
     it('should return only medical devices if hasResults=1', async () => {
       const res = await server
         .get(`${path}?hasResults=1&page=0&size=100`)

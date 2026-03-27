@@ -752,6 +752,7 @@ async function deviceMaintenanceStatusHistory(request) {
           lgaId: 'g.lgaId',
           deviceName: 'd.name',
           deviceApprovalId: 'd.deviceApprovalId',
+          deviceApprovalExternalId: 'da.token',
           deviceTypeId: 'd.deviceTypeId',
           deviceType: 'dt.externalId',
           hasConnectivity: 'dc.hasConnectivity',

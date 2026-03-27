@@ -84,8 +84,8 @@ const DeviceListFilter = () => {
         <Grid item xs={3}>
           <DeviceApprovalSelect
             label={formatMessage(messages.deviceApproval)}
-            value={state.deviceApprovalId || []}
-            onChange={e => setState({ ...state, deviceApprovalId: [...e.target.value] })}
+            value={state.deviceApprovalExternalId || []}
+            onChange={e => setState({ ...state, deviceApprovalExternalId: [...e.target.value] })}
             multiple
           />
         </Grid>
