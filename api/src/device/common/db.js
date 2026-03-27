@@ -128,7 +128,7 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
 
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
-  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields, true, true)
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields, true)
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .leftJoin('FactResultsDevice as frd30', function () {
@@ -217,13 +217,7 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
   return device
 }
 
-function getDeviceByIdBaseQuery(
-  dataConstraints,
-  deviceId,
-  fields = 'd.*',
-  showUnapprovedDevices = false,
-  showDecommissionedDevices = false
-) {
+function getDeviceByIdBaseQuery(dataConstraints, deviceId, fields = 'd.*', showUnapprovedDevices = false) {
   const query = knex('Device as d')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftJoin('Site as s', 'd.siteId', 's.id')
@@ -239,7 +233,7 @@ function getDeviceByIdBaseQuery(
         device: 'd',
         deviceType: 'dt',
       },
-      { showUnapprovedDevices, showDecommissionedDevices }
+      { showUnapprovedDevices, showDecommissionedDevices: true }
     )
     .where('d.id', +deviceId)
     .first(fields)
@@ -299,7 +293,6 @@ function getDeviceBaseExtendedQuery(
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
-      deviceApprovalId: 'd.deviceApprovalId',
       deviceApprovalExternalId: 'da.token',
       deviceTypeId: 'd.deviceTypeId',
       deviceType: 'dt.externalId',

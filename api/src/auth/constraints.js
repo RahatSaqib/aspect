@@ -318,7 +318,7 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
 function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options) {
   let filterAlias = null
   const { device, assay, result } = aliases
-  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = options
+  const { showUnapprovedDevices = false, showDecommissionedDevices = true } = options
   if (!result) {
     if (!aliases.site && device && !aliases.resultTransferFlag) {
       aliases.site = alias('Site')
@@ -589,7 +589,7 @@ function addConstraints(
   queryBuilder,
   constraints,
   receivedAliases,
-  options = { displayResult: 'actual', showUnapprovedDevices: false, showDecommissionedDevices: false }
+  options = { displayResult: 'actual', showUnapprovedDevices: false, showDecommissionedDevices: true }
 ) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')

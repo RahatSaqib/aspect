@@ -135,7 +135,7 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
         device: 'd',
         site: 's',
       },
-      { showUnapprovedDevices: true }
+      { showUnapprovedDevices: true, showDecommissionedDevices: false }
     )
     .select(
       'd.id as deviceId',

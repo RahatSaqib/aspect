@@ -2,7 +2,7 @@ const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false, showDecommissionedDevices = false, assayId } = query
+  const { showUnapprovedDevices = false, showDecommissionedDevices = true, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseResults()
