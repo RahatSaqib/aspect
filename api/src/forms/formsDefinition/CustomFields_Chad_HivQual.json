@@ -1,0 +1,33 @@
+{
+  "fields": [
+    {
+      "id": 50,
+      "name": "Fenêtre de dépistage EID",
+      "title": "Fenêtre de dépistage EID",
+      "i18nKey": "EIDTestingWindowI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 10,
+      "gxAlertDbColumn": "EIDTestingWindow",
+      "caption": "Le nourrisson a-t-il été testé dans les 8 semaines suivant la naissance?",
+      "i18nKeyCaption": "EIDTestingWindowI18nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.50.value",
+      "source": "patientData.EIDTestingWindow",
+      "mandatory": true,
+      "items": [
+        {
+          "key": "< 8 semaines",
+          "value": "< 8 semaines",
+          "order": 10
+        },
+        {
+          "key": "8 semaines-12 mois",
+          "value": "8 semaines-12 mois",
+          "order": 20
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}
