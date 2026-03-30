@@ -66,6 +66,7 @@ describe('Integration test for device status', () => {
       await knex('Instrument').insert({
         deviceId: context.device.id,
         serial: '123456',
+        active: 1,
         createdOn: new Date(),
         updatedOn: new Date(),
       })

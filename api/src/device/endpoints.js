@@ -170,6 +170,7 @@ const routes = [
                 .items(
                   Joi.object().keys({
                     instrumentId: Joi.number().required().description('Instrument ID'),
+                    active: Joi.bool().description('Whether the instrument is active'),
                     instrumentSerial: Joi.string().allow(null).required().description('Instrument serial number'),
                     modules: Joi.array()
                       .items(

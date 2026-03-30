@@ -62,6 +62,8 @@ const MoveToExistingDeviceModal = ({ open, onClose, onConfirm, instrumentId }) =
                 setSubmitError(true)
                 if (error?.data?.errorKeyCode === 'targetDeviceIsSourceDevice') {
                   setFieldError('deviceId', formatMessage(messages.targetDeviceIsSourceDevice))
+                } else if (error?.data?.errorKeyCode === 'transferInstrumentsDuplicatedSerials') {
+                  setFieldError('deviceId', formatMessage(messages.transferInstrumentsDuplicatedSerials))
                 }
                 // Optionally handle specific error codes here
                 toast.error(formatMessage(messages.transferError))

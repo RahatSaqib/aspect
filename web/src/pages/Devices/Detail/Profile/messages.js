@@ -182,6 +182,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.buttonChange',
       defaultMessage: 'Change',
     },
+    duplicatedInstrumentTooltip: {
+      id: 'pages.DeviceDetailProfile.duplicatedInstrumentTooltip',
+      defaultMessage: 'This instrument cannot be transferred because it is duplicated.',
+    },
     testHistory: {
       id: 'pages.DeviceDetailProfile.testHistory',
       defaultMessage: 'Test history',
@@ -316,6 +320,10 @@ const messages = {
     targetDeviceIsSourceDevice: {
       id: 'pages.DeviceDetailProfile.targetDeviceIsSourceDevice',
       defaultMessage: 'Target device cannot be the same as the source device',
+    },
+    transferInstrumentsDuplicatedSerials: {
+      id: 'pages.DeviceDetailProfile.transferInstrumentsDuplicatedSerials',
+      defaultMessage: 'Cannot transfer instruments with duplicated serials.',
     },
     deploymentsTitle: {
       id: 'pages.DeviceDetailProfile.deploymentsTitle',

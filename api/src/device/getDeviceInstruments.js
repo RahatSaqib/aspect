@@ -36,6 +36,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
     .select(
       'd.id as deviceId',
       'i.id as instrumentId',
+      'i.active as active',
       'i.serial as instrumentSerial',
       knex.raw('json_arrayagg(modules) as modules')
     )
@@ -70,6 +71,7 @@ async function getDeviceInstruments({ params, auth }) {
 
     return {
       instrumentId: instrument.instrumentId,
+      active: Boolean(instrument.active),
       instrumentSerial: instrument.instrumentSerial,
       modules,
     }

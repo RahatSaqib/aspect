@@ -24,6 +24,7 @@ async function postProcessCreateDevice(context) {
     deviceId: device.id,
     serial: instrumentSerial,
     macAddress: null,
+    active: true,
     createdOn: now,
     createdBy: userId || null,
     updatedOn: now,

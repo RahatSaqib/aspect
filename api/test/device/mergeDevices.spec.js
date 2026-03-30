@@ -146,6 +146,7 @@ describe('Merge Devices', () => {
       deviceId: sourceDeviceId,
       serial: 'SRCINST1',
       macAddress: 'SRCMAC1',
+      active: true,
       createdOn: new Date(),
       updatedOn: new Date(),
     })
@@ -153,6 +154,7 @@ describe('Merge Devices', () => {
       deviceId: targetDevice.id,
       serial: 'TGTINST1',
       macAddress: 'TGTMAC1',
+      active: true,
       createdOn: new Date(),
       updatedOn: new Date(),
     })

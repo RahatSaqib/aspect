@@ -78,7 +78,21 @@ async function validate(sourceInstruments, sourceDeviceIds, targetDevice, creden
   validateTargetDeviceExists(targetDevice)
   validateDifferentDevices(sourceInstruments, targetDevice)
   validateTargetDeviceIsGeneXpert(targetDevice)
+  await validateInstruments(sourceDeviceIds, targetDevice)
   await validatePersmissions(sourceDeviceIds, targetDevice, credentials)
+}
+
+async function validateInstruments(sourceDeviceIds, targetDevice) {
+  const allDevicesIds = [...sourceDeviceIds, targetDevice.id]
+  const serials = await knex('Instrument').whereIn('deviceId', allDevicesIds).pluck('serial')
+  const [{ count: serialCounts }] = await knex('Instrument').whereIn('serial', serials).count('* as count')
+  const hasDuplicateSerials = serials.length !== serialCounts
+
+  if (hasDuplicateSerials) {
+    throw Boom.badData('Cannot transfer instruments with duplicated serials.', {
+      errorKeyCode: 'transferInstrumentsDuplicatedSerials',
+    })
+  }
 }
 
 function validateDifferentDevices(sourceInstruments, targetDevice) {

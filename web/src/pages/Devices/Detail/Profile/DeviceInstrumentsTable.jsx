@@ -1,5 +1,6 @@
 import React from 'react'
-import { Card, CircularProgress, Table, TableBody, TableContainer } from '@mui/material'
+import WarningIcon from '@mui/icons-material/Warning'
+import { Card, CircularProgress, Table, TableBody, TableContainer, Tooltip } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
@@ -58,22 +59,28 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                       <GeneXpertModulesNames modules={instrument.modules} />
                     </TableCell>
                     <TableCell align="right">
-                      <InstrumentContextualMenu
-                        deviceId={deviceId}
-                        instrument={instrument}
-                        onMoveToExisting={async () => {
-                          // After moving instrument, refresh the instrument list
-                          await refetch()
-                          queryClient.invalidateQueries(['device-instruments', deviceId])
-                        }}
-                        onMoveToNew={async () => {
-                          await refetch()
-                          // Invalidate device instruments for current device
-                          queryClient.invalidateQueries([DEVICE_INSTRUMENTS_KEY, deviceId])
-                          // Invalidate candidate instruments for current device
-                          queryClient.invalidateQueries([CANDIDATE_INSTRUMENTS_KEY, deviceId])
-                        }}
-                      />
+                      {instrument.active ? (
+                        <InstrumentContextualMenu
+                          deviceId={deviceId}
+                          instrument={instrument}
+                          onMoveToExisting={async () => {
+                            // After moving instrument, refresh the instrument list
+                            await refetch()
+                            queryClient.invalidateQueries(['device-instruments', deviceId])
+                          }}
+                          onMoveToNew={async () => {
+                            await refetch()
+                            // Invalidate device instruments for current device
+                            queryClient.invalidateQueries([DEVICE_INSTRUMENTS_KEY, deviceId])
+                            // Invalidate candidate instruments for current device
+                            queryClient.invalidateQueries([CANDIDATE_INSTRUMENTS_KEY, deviceId])
+                          }}
+                        />
+                      ) : (
+                        <Tooltip title={formatMessage(messages.duplicatedInstrumentTooltip)}>
+                          <WarningIcon className={styles.InactiveInstrumentWarningIcon} color="warning" />
+                        </Tooltip>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

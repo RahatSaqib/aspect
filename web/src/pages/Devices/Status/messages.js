@@ -14,6 +14,30 @@ const messages = {
       id: 'pages.DeviceList.devicesMergeFailed',
       defaultMessage: 'Failed to merge devices.',
     },
+    mergeDevicesPermissionDenied: {
+      id: 'pages.DeviceList.mergeDevicesPermissionDenied',
+      defaultMessage: `You don't have permission to merge one or more of the selected devices.`,
+    },
+    mergeDevicesSourceDevicesStillActive: {
+      id: 'pages.DeviceList.mergeDevicesSourceDevicesStillActive',
+      defaultMessage: 'All source devices must be offline for at least 24 hours before they can be merged.',
+    },
+    mergeDevicesTargetIsSourceDevice: {
+      id: 'pages.DeviceList.mergeDevicesTargetIsSourceDevice',
+      defaultMessage: 'The target device cannot also be selected as a source device.',
+    },
+    mergeDevicesDifferentSites: {
+      id: 'pages.DeviceList.mergeDevicesDifferentSites',
+      defaultMessage: 'Only devices from the same site can be merged.',
+    },
+    mergeDevicesDifferentDeviceTypes: {
+      id: 'pages.DeviceList.mergeDevicesDifferentDeviceTypes',
+      defaultMessage: 'Only devices of the same type can be merged.',
+    },
+    mergeDevicesDuplicatedInstruments: {
+      id: 'pages.DeviceList.mergeDevicesDuplicatedInstruments',
+      defaultMessage: 'Devices cannot be merged when they contain duplicated instruments.',
+    },
     button_Merge: {
       id: 'pages.DeviceList.merge',
       defaultMessage: 'Merge',

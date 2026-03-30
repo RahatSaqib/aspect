@@ -126,6 +126,7 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
     })
     .whereIn('da.token', ['approved', 'pendingDeployment'])
     .whereNot('d.id', deviceId) // Exclude the base device itself
+    .where('i.active', 1)
     .whereNotNull('i.serial') // Only include devices with instruments
     .groupBy('d.id', 'd.name', 'i.id', 'i.serial')
     .modify(
