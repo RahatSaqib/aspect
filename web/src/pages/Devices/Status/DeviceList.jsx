@@ -116,7 +116,7 @@ const getAvailableTargetDevices = (deviceList, sourceDevicesIds, siteToMergeDevi
   return (
     deviceList?.filter(
       o =>
-        !sourceDevicesIds.includes(+o.key) &&
+        !sourceDevicesIds.includes(o.id) &&
         (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
         (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
     ) || []
@@ -144,7 +144,7 @@ const DeviceList = () => {
   const [total, setTotal] = useState()
   const [sourceDevicesIds, setSourceDevicesIds] = useState([])
   const [targetDevice, setTargetDevice] = useState(null)
-  const targetDeviceId = useMemo(() => +targetDevice?.key || null, [targetDevice])
+  const targetDeviceId = useMemo(() => +targetDevice?.id || null, [targetDevice])
   const filters = useFilterValues(location.pathname)
   const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
   const [isConfirmationVisible, setConfirmationVisible] = useState(false)
@@ -318,9 +318,9 @@ const DeviceList = () => {
                 <Autocomplete
                   multiple
                   onChange={(_, values) => {
-                    const newSourceValues = values.map(v => +v.key)
-                    const newSourceSiteId = deviceList.find(o => o.key === values[0]?.key)?.siteId || null
-                    const newDeviceTypeToMergeId = deviceList.find(o => o.key === values[0]?.key)?.deviceTypeId || null
+                    const newSourceValues = values.map(v => v.id)
+                    const newSourceSiteId = deviceList.find(o => o.id === values[0]?.id)?.siteId || null
+                    const newDeviceTypeToMergeId = deviceList.find(o => o.id === values[0]?.id)?.deviceTypeId || null
 
                     /**
                      * get new list of available target devices after changing selected source devices
@@ -335,7 +335,7 @@ const DeviceList = () => {
                       /**
                        * target device selected but is not a member of new targetDevices list
                        */
-                      (targetDeviceId && !targetDevices.find(o => +o.key === targetDeviceId)) ||
+                      (targetDeviceId && !targetDevices.find(o => o.id === targetDeviceId)) ||
                       /**
                        * removed all from Source devices
                        */
@@ -351,15 +351,15 @@ const DeviceList = () => {
                   options={
                     deviceList?.filter(
                       o =>
-                        +o.key !== targetDeviceId &&
+                        o.id !== targetDeviceId &&
                         (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
                         (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
                     ) || []
                   }
-                  getOptionLabel={option => option.value}
+                  getOptionLabel={option => option.name}
                   renderOption={(props, option) => (
-                    <li {...props} key={option.key}>
-                      {option.value}
+                    <li {...props} key={option.id}>
+                      {option.name}
                     </li>
                   )}
                   renderInput={params => (
@@ -383,10 +383,10 @@ const DeviceList = () => {
                     deviceTypeToMerge
                   )}
                   disabled={isEmpty(sourceDevicesIds)}
-                  getOptionLabel={option => option.value}
+                  getOptionLabel={option => option.name}
                   renderOption={(props, option) => (
-                    <li {...props} key={option.key}>
-                      {option.value}
+                    <li {...props} key={option.id}>
+                      {option.name}
                     </li>
                   )}
                   renderInput={params => (
@@ -409,9 +409,8 @@ const DeviceList = () => {
                 >
                   {formatMessage(messages.button_Cancel)}
                 </AspectButton>
-
                 <AspectButton
-                  disabled={!sourceDevicesIds.length > 0 || !targetDeviceId}
+                  disabled={!(sourceDevicesIds.length > 0 && targetDeviceId)}
                   onClick={() => {
                     setConfirmationVisible(true)
                   }}
