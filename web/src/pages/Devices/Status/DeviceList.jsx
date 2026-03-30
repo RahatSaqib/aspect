@@ -223,6 +223,16 @@ const DeviceList = () => {
       })
   }
 
+  const getMergeDevicesErrorMessage = useCallback(
+    mergeError => {
+      const errorKeyCode = mergeError?.data?.errorKeyCode
+      return errorKeyCode && messages[errorKeyCode]
+        ? formatMessage(messages[errorKeyCode])
+        : formatMessage(messages.devicesMergeFailed)
+    },
+    [formatMessage]
+  )
+
   if (isError) {
     throw new Error(error)
   }
@@ -451,9 +461,9 @@ const DeviceList = () => {
                           setProcessingMergeDevices(false)
                           toast.success(formatMessage(messages.devicesMergedSuccessfully))
                         },
-                        onError: () => {
+                        onError: error => {
                           setProcessingMergeDevices(false)
-                          toast.error(formatMessage(messages.devicesMergeFailed))
+                          toast.error(getMergeDevicesErrorMessage(error))
                         },
                       }
                     )

@@ -42,14 +42,19 @@ async function validatePersmissions(sourceDevices, targetDevice, credentials) {
   const devices = await getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints)
 
   if (devices.length !== allDevicesIds.length) {
-    throw Boom.forbidden(`You don't have permission to merge this devices.`)
+    throw Boom.forbidden(`You don't have permission to merge this devices.`, {
+      errorKeyCode: 'mergeDevicesPermissionDenied',
+    })
   }
 }
 
 function validateDeviceIsNotActive(sourceDevices) {
   if (sourceDevices.some(d => lessThan24HsFrom(d.lastPingOn))) {
     throw Boom.badData(
-      `All devices to be merged must have been offline for at least 24 hours. Select only inactive devices and try again.`
+      `All devices to be merged must have been offline for at least 24 hours. Select only inactive devices and try again.`,
+      {
+        errorKeyCode: 'mergeDevicesSourceDevicesStillActive',
+      }
     )
   }
 }
@@ -60,19 +65,25 @@ function lessThan24HsFrom(lastPingOn) {
 
 function validateDifferentDevices(sourceDevices, targetDevice) {
   if (sourceDevices.some(sourceDevice => sourceDevice.id === targetDevice.id)) {
-    throw Boom.badData('Cannot merge a device into itself.')
+    throw Boom.badData('Cannot merge a device into itself.', {
+      errorKeyCode: 'mergeDevicesTargetIsSourceDevice',
+    })
   }
 }
 
 function validateSameSite(sourceDevices, targetDevice) {
   if (sourceDevices.some(sourceDevice => sourceDevice.siteId !== targetDevice.siteId)) {
-    throw Boom.badData('Cannot merge devices from different sites.')
+    throw Boom.badData('Cannot merge devices from different sites.', {
+      errorKeyCode: 'mergeDevicesDifferentSites',
+    })
   }
 }
 
 function validateDeviceType(sourceDevices, targetDevice) {
   if (sourceDevices.some(sourceDevice => sourceDevice.deviceTypeId !== targetDevice.deviceTypeId)) {
-    throw Boom.badData('Cannot merge different type of devices.')
+    throw Boom.badData('Cannot merge different type of devices.', {
+      errorKeyCode: 'mergeDevicesDifferentDeviceTypes',
+    })
   }
 }
 
