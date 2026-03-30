@@ -193,7 +193,7 @@ const getBaseQueryForResults = () =>
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false, showDecommissionedDevices = true, assayId } = query
+  const { showUnapprovedDevices = false, showDecommissionedDevices = false, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseQueryForResults()
@@ -407,7 +407,7 @@ async function showResultFollowUps(resultId, dataConstraints) {
 }
 
 function getQueryForDataExtract(query, dataConstraints) {
-  const { showUnapprovedDevices = false, showDecommissionedDevices = true } = query
+  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = query
   const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseResults()

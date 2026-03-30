@@ -115,7 +115,7 @@ async function updateDeviceMaintenance(request) {
   } = request
   const dataConstraints = await getConstraints(credentials)
 
-  let device = await getDeviceByIdBaseQuery(dataConstraints, params.deviceId, 'd.id', true)
+  let device = await getDeviceByIdBaseQuery(dataConstraints, params.deviceId, 'd.id', true, true)
   if (!device) {
     return Boom.notFound()
   }
@@ -457,7 +457,7 @@ async function setStatusForDateRange(request) {
   const user = await getUser(credentials.name)
 
   // Get device or throw boom error if it's a bad request
-  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, 'd.*', true)
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, 'd.*', true, true)
   if (!device) throw Boom.forbidden("You don't have permissions for updating the requested device")
 
   // >>> VALIDATIONS
@@ -751,6 +751,7 @@ async function deviceMaintenanceStatusHistory(request) {
           stateId: 'g.stateId',
           lgaId: 'g.lgaId',
           deviceName: 'd.name',
+          deviceApprovalId: 'd.deviceApprovalId',
           deviceApprovalExternalId: 'da.token',
           deviceTypeId: 'd.deviceTypeId',
           deviceType: 'dt.externalId',
