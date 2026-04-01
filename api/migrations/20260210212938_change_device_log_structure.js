@@ -56,11 +56,11 @@ async function migratePayloadType(knex) {
     console.log(`migrating DeviceLog type batch: ${start}-${end}`)
 
     // eslint-disable-next-line no-await-in-loop
-    const deviceLogs = await knex('DeviceLog').whereBetween('id', [start, end]).select('id', 'rawMessage')
+    const deviceLogs = await knex('DeviceLog').whereBetween('id', [start, end]).select()
 
     if (deviceLogs.length > 0) {
       const updates = deviceLogs.map(dl => ({
-        id: dl.id,
+        ...dl,
         type: detectPayloadType(dl.rawMessage),
       }))
 
