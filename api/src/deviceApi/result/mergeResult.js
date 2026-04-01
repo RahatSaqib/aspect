@@ -2,13 +2,14 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { mergeResultWithPayload } = require('../../result/common/logic')
 const { resultSourceToId, resultTypeToId, sampleTypeToId } = require('../../shared/dictionary')
+const { convertTimezonetoIANA, getDateTimeExpressionInTimeZone } = require('../../shared/date')
 const { getResultCategoriesFromPayload } = require('../utils')
 const { isValidSampleExternalIdMobileFormat } = require('../../sample/common/logic')
 const { getMobileSampleByExternalId, getMatchingSample } = require('../../sample/common/db')
 const { loadPlugin } = require('../../plugin/loadPlugin')
 
 async function mergeResult(context) {
-  const { knex, now, partnerId, deviceTypePluginName, partnerPluginName } = context
+  const { knex, now, partnerId, deviceTypePluginName, partnerPluginName, defaultTimeZone } = context
   const deviceId = context.device.id
   const payload = context.payload.result
 
@@ -20,6 +21,7 @@ async function mergeResult(context) {
   )
 
   const testStartedOn = _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null))
+  const testEndedOn = _.get(payload, 'endedOn', _.get(existingResult, 'endedOn', null))
   // Select ResultType if specified, otherwise Patient
   const resultTypeId = await getResultTypeId(payload, existingResult)
 
@@ -27,7 +29,15 @@ async function mergeResult(context) {
   const { resultCategory1, resultCategory2 } = await getResultCategoriesFromPayload(payload, existingResult)
 
   // Gets the site that is linked to the device as well as the valid types of assays that can be used on the device
-  const { assays, site: deviceSite } = await getSiteAndAssays(knex, payload, existingResult, deviceId)
+  const { assays, site: deviceSite } = await getSiteAndAssays(
+    knex,
+    payload,
+    existingResult,
+    deviceId,
+    testStartedOn,
+    testEndedOn,
+    defaultTimeZone
+  )
 
   // Exit on any error
   const requestErrors = await getResultErrors({ resultTypeId, resultCategory1, assays, payload })
@@ -92,7 +102,7 @@ async function mergeResult(context) {
     resultData: _.omit(resultData, ['errorNotes']),
     resultDataHash,
     startedOn: testStartedOn,
-    endedOn: _.get(payload, 'endedOn', _.get(existingResult, 'endedOn', null)),
+    endedOn: testEndedOn,
     consumableSerial: _.get(payload, 'consumable[0].serial', _.get(existingResult, 'consumableSerial', null)),
     consumableExpirationDate: _.get(
       payload,
@@ -311,34 +321,49 @@ async function upsertSample(knex, payload, existingSample, opts) {
   return sampleId
 }
 
-async function getSiteAndAssays(knex, payload, existingResult, deviceId) {
-  const assayQ = knex('Assay as a')
+async function getDeviceSiteForResult(knex, deviceId, startedOn, endedOn, defaultTimeZone) {
+  const resultDate = endedOn ?? startedOn
+
+  const timezoneIANA = convertTimezonetoIANA(defaultTimeZone) || 'Etc/UTC'
+
+  const resultDateExpression = knex.raw(`DATE(${getDateTimeExpressionInTimeZone(knex, '?', timezoneIANA)})`, [
+    resultDate,
+  ])
+
+  const deploymentSite = await knex('Deployment as dep')
+    .where('dep.deviceId', deviceId)
+    .where(function () {
+      this.whereNull('dep.start').orWhere('dep.start', '<=', resultDateExpression)
+    })
+    .where(function () {
+      this.whereNull('dep.end').orWhere('dep.end', '>=', resultDateExpression)
+    })
+    .orderBy('dep.start', 'desc')
+    .first({ id: 'dep.siteId' })
+
+  if (deploymentSite) {
+    return deploymentSite
+  }
+
+  return knex('Device as d').where('d.id', deviceId).first({ id: 'd.siteId' })
+}
+
+async function getSiteAndAssays(knex, payload, existingResult, deviceId, startedOn, endedOn, defaultTimeZone) {
+  const assayQuery = knex('Assay as a')
     .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
     .where({ 'd.id': deviceId })
     .limit(2)
     .select('a.id', 'a.externalId', 'a.resultSourceId')
   const payloadAssayId = _.get(payload, 'assay.id', false)
   if (payloadAssayId) {
-    assayQ.where({ 'a.externalId': payloadAssayId })
+    assayQuery.where({ 'a.externalId': payloadAssayId })
   } else if (existingResult) {
-    assayQ.where({ 'a.id': existingResult.assayId })
+    assayQuery.where({ 'a.id': existingResult.assayId })
   }
 
-  const siteQ = knex('Site as s')
-    .join('Device as d', 's.id', 'd.siteId')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .where({ 'd.id': deviceId })
-    .first(
-      's.id',
-      's.partnerId',
-      'g.countryId',
-      's.geographyId',
-      's.latitude',
-      's.longitude',
-      'd.defaultReportableSiteId'
-    )
+  const sitePromise = getDeviceSiteForResult(knex, deviceId, startedOn, endedOn, defaultTimeZone)
 
-  const [assays, site] = await Promise.all([assayQ, siteQ])
+  const [assays, site] = await Promise.all([assayQuery, sitePromise])
   return { assays, site }
 }
 
