@@ -209,23 +209,21 @@ async function getPartnerAndDeviceTypePlugins({ token, deviceTypeExternalId, cou
 
 async function generateDeviceName(context, serial) {
   const { payload, partnerId, deviceTypeId, deviceTypeExternalId } = context
-  const { name } = payload
+  const { name, hostId } = payload
 
-  if (!name) {
-    if (serial) {
-      return serial
-    }
+  const candidateName = name ?? hostId ?? serial ?? deviceTypeExternalId
 
-    const [deviceCount] = await knex('Device')
-      .where({
-        partnerId,
-        deviceTypeId,
-      })
-      .count('id as cnt')
-    return `${deviceTypeExternalId} #${deviceCount.cnt + 1}`
-  }
+  const [existingDevicesWithSameName] = await knex('Device')
+    .where({
+      partnerId,
+      deviceTypeId,
+    })
+    .whereLike('name', `${candidateName}%`)
+    .count('id as cnt')
 
-  return name
+  return existingDevicesWithSameName.cnt === 0
+    ? candidateName
+    : `${candidateName} #${existingDevicesWithSameName.cnt + 1}`
 }
 
 /**
