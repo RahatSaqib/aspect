@@ -11,12 +11,12 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
     })
     .leftJoin(
       knex('Result as r')
-        .groupBy('deviceId', 'instrumentSerial', 'moduleName')
+        .groupBy('deviceId', 'instrumentSerial', knex.raw('TRIM(moduleName)'))
         .select(
           'deviceId',
           'instrumentSerial',
-          'moduleName',
-          knex.raw(`json_object('moduleName', moduleName, 'lastResultDate', date(max(endedOn))) as modules`)
+          knex.raw('TRIM(moduleName) as moduleName'),
+          knex.raw(`json_object('moduleName', TRIM(moduleName), 'lastResultDate', date(max(endedOn))) as modules`)
         )
         .as('m'),
       function () {
@@ -41,6 +41,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
       knex.raw('json_arrayagg(modules) as modules')
     )
 
+  console.log('\x1b[1;36m', '🚀 ~ getDeviceInstrumentsData ~ query:', query.toString())
   return query
 }
 
