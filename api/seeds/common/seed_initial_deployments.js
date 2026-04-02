@@ -92,14 +92,30 @@ function appendSiteStay(siteStays, siteId, localEndedOn) {
   siteStays.push({ siteId, startDate: localDate, endDate: localDate })
 }
 
+function compactContinuousSiteStays(siteStays) {
+  return siteStays.reduce((acc, stay) => {
+    const previous = acc[acc.length - 1]
+
+    if (!previous || previous.siteId !== stay.siteId) {
+      acc.push({ ...stay })
+      return acc
+    }
+
+    previous.endDate = stay.endDate
+    return acc
+  }, [])
+}
+
 function buildDeviceDeployments(deviceId, siteStays, now) {
   if (!deviceId || siteStays.length === 0) return []
 
-  return siteStays.map((siteStay, index) => ({
+  const compactedSiteStays = compactContinuousSiteStays(siteStays)
+
+  return compactedSiteStays.map((siteStay, index) => ({
     deviceId,
     siteId: siteStay.siteId,
     start: index === 0 ? null : siteStay.startDate,
-    end: index === siteStays.length - 1 ? null : siteStay.endDate,
+    end: index === compactedSiteStays.length - 1 ? null : siteStay.endDate,
     createdOn: now,
     updatedOn: now,
   }))
