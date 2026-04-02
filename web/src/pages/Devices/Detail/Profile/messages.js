@@ -361,6 +361,11 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deploymentSite',
       defaultMessage: 'Site',
     },
+    deploymentSiteDeleted: {
+      id: 'pages.DeviceDetailProfile.deploymentSiteDeleted',
+      defaultMessage:
+        'This site has been deleted. If you change this deployment to another site, the related deleted results will be restored.',
+    },
     deploymentActive: {
       id: 'pages.DeviceDetailProfile.deploymentActive',
       defaultMessage: 'Active',
