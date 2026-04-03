@@ -535,7 +535,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled
                         >
                           <Box display="flex" alignItems="center" gap={0.5}>
                             <span>{dep.siteName || '—'}</span>
-                            {isSiteDisabled && (
+                            {!!isSiteDisabled && (
                               <Tooltip title={formatMessage(messages.deploymentSiteDeleted)} placement="top">
                                 <WarningAmberIcon fontSize="small" sx={{ color: 'warning.main', fontSize: 16 }} />
                               </Tooltip>
