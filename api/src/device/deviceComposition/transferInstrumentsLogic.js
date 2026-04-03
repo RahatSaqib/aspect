@@ -1,5 +1,6 @@
 const { executeMergeDevices: mergeDevice } = require('./mergeDevicesLogic')
 const { knex } = require('../../db')
+const { convertTimezonetoIANA } = require('../../shared/date')
 
 // Handles merging and transferring instruments/devices in a transaction
 async function transferDeviceInstruments(trknex, { groupedInstruments, targetDeviceId }, userId) {
@@ -21,7 +22,7 @@ async function transferDeviceInstruments(trknex, { groupedInstruments, targetDev
       await updateTransferredResultsSiteIds(trknex, {
         targetDeviceId,
         partnerId: targetDeviceMeta.partnerId,
-        timezoneIANA: targetDeviceMeta.timezone,
+        timezone: targetDeviceMeta.timezone,
         deployments: targetDeployments,
         instrumentSerials,
       })
@@ -75,8 +76,10 @@ async function getInstrumentSerialsByDeviceId(trknex, deviceId) {
 
 async function updateTransferredResultsSiteIds(
   trknex,
-  { targetDeviceId, partnerId, timezoneIANA, deployments, instrumentSerials }
+  { targetDeviceId, partnerId, timezone, deployments, instrumentSerials }
 ) {
+  const timezoneIANA = convertTimezonetoIANA(timezone) || 'Etc/UTC'
+
   if (!instrumentSerials || instrumentSerials.length === 0) {
     return
   }
