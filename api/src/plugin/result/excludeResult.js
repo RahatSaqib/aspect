@@ -4,8 +4,9 @@ const PATIENT_RESULT_TYPE_EXTERNAL_ID = 'Patient'
  * This plugin set the result type to EQA if PatientId matches PartnerData.excludePattern regular expression
  * @param {request} request
  */
-async function excludeResult(pluginContext) {
-  const { knex, partnerId, payload } = pluginContext
+async function excludeResult(context) {
+  const { knex, partnerId } = context
+  const payload = context.payload.result
 
   const { excludePattern } = await knex('Partner').where({ id: partnerId }).first('excludePattern')
   if (excludePattern) {

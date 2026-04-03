@@ -10,6 +10,8 @@ description: Use when working with database seeds, creating new seeds, understan
 The Aspect project uses database seeding system built on top of Knex.js. The seeding system is designed to handle both shared data (applied to all countries) and country-specific data, with different execution behaviors for different environments. The seeding process occurs after the migration process on each deploy.
 In the db the seeding files are applied incrementally using the table `AspectSeed` that records already applied seedings.
 
+> Every time knex must be preferred over raw sql. If raw sql is needed, the user must be warned about it.
+
 ## Folder Structure
 
 ```
@@ -24,12 +26,14 @@ api/seeds/
 ## Seed Types
 
 ### 1. Shared Seeds (`zz_shared/`)
+
 - **Location**: `api/seeds/zz_shared/`
 - **Execution**: Runs for all countries during deployment
 - **Environment Restriction**: **Not executed in develop and test environments**
 - **Purpose**: Apply universal data and configurations
 
 ### 2. Country-Specific Seeds
+
 - **Location**: `api/seeds/[country]/`
 - **Execution**: Runs only for the specific country
 - **Purpose**: Apply country-specific configurations and data
@@ -37,6 +41,11 @@ api/seeds/
 ## Execution Patterns
 
 ### One-Time Execution
+
+```javascript
+module.exports = require('../utils').seed(seed, __filename);
+```
+
 ```javascript
 module.exports = require('../utils').seed(seed, __filename)
 ```

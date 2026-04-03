@@ -8,8 +8,7 @@ const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
 const partnerData = require('./fixtures/partnerData')
 const upsertPartnerData = require('../common/upsert_partner_data')
 
-const { adminUserName, adminPassword, deviceApiToken, lowerLevelUserPassword, partnerAbbreviation, assays } =
-  partnerData
+const { adminUserName, adminPassword, lowerLevelUserPassword, partnerAbbreviation, assays } = partnerData
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()
@@ -36,7 +35,6 @@ async function seed(knex) {
     adminId,
     geography,
     partnerAbbreviation,
-    deviceApiToken,
     {
       password: lowerLevelUserPassword,
     },

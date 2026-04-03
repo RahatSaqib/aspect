@@ -1,10 +1,5 @@
 const { allIssueCategoryToId, allMessageSeverityToId } = require('../../src/shared/dictionary')
 
-const msgInstrumentReplaced = `{{device.name}}:
-  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
-  "{{issue.data.newInstrumentSerial}}"
-`
-
 const getDeviceBaseHtml = ({ customPart }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -956,29 +951,6 @@ async function getBaseIssues(auditFields) {
         subject: 'stock expiring at {{site.name}}',
         htmlBody: '{{issue.data.totalWasted}} consumables likely to expire.',
         body: '{{issue.data.totalWasted}} consumables likely to expire.',
-      },
-    },
-    InstrumentReplaced: {
-      issueType: {
-        name: 'Instrument Replaced',
-        externalId: 'InstrumentReplaced',
-        i18nKey: 'issueTypeInstrumentReplaced',
-        issueCategoryId: issueCategories.DeviceHealth,
-        readyForNotification: true,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: msgInstrumentReplaced,
-      },
-      SmsTemplate: {
-        message: msgInstrumentReplaced,
-      },
-      EmailTemplate: {
-        subject: 'Instrument has been replaced',
-        body: msgInstrumentReplaced,
-        htmlBody: msgInstrumentReplaced,
       },
     },
     SignalLossDetectedInAmplificationCurveModule: {

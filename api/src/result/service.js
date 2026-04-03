@@ -550,7 +550,7 @@ async function getResultForStringTemplateProcessing(resultId, fields = RESULT_ST
   return knex('Result as r')
     .join('Assay as a', 'r.assayId', 'a.id')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
-    .join('Site as s', 'r.siteId', 's.id')
+    .leftJoin('Site as s', 'r.siteId', 's.id')
     .join('Device as d', 'r.deviceId', 'd.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sample', 'r.sampleId', 'sample.id')

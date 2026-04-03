@@ -21,7 +21,6 @@ module.exports = {
       'stockNotRecorded',
       'avgTimeToUpload',
       'moduleSwaps',
-      'instrumentsReplaced',
       'percentageOfModulesFunctioning',
       'averageRecipientsOfEmail',
       'averageRecipientsOfSms',

@@ -1046,7 +1046,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         }
         await knex('Device').where('id', device.id).update(deviceUpdates)
         const [configDeviceLogId] = await knex('DeviceLog').insert({
-          deviceId: device.id,
+          deviceApiKeyId: deviceApiKey.id,
           source: this.name,
           deviceConfigurationUpdated: true,
           createdOn: now,
@@ -1057,7 +1057,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         if (!_.isEmpty(deviceDetailsInPayload.comments)) {
           const commentDeviceLogIds = await Promise.each(deviceDetailsInPayload.comments, async comment => {
             const [commentDeviceLogId] = await knex('DeviceLog').insert({
-              deviceId: device.id,
+              deviceApiKeyId: deviceApiKey.id,
               source: this.name,
               createdOn: now,
               senderIp: remoteAddress,
@@ -1070,7 +1070,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         if (!_.isEmpty(deviceDetailsInPayload.enquiries)) {
           const enquiryDeviceLogIds = await Promise.each(deviceDetailsInPayload.enquiries, async comment => {
             const [enquiryDeviceLogId] = await knex('DeviceLog').insert({
-              deviceId: device.id,
+              deviceApiKeyId: deviceApiKey.id,
               source: this.name,
               createdOn: now,
               senderIp: remoteAddress,
@@ -1105,7 +1105,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           knex
         )
         const [resultDeviceLogId] = await knex('DeviceLog').insert({
-          deviceId: device.id,
+          deviceApiKeyId: deviceApiKey.id,
           source: this.name,
           createdOn: now,
           senderIp: remoteAddress,

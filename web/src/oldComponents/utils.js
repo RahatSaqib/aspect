@@ -109,7 +109,7 @@ const sanitizerByConfigKey = {
   reportableSiteName: defaultSanitizer,
   reportableSiteId: defaultSanitizer,
   consumable: makeKeySanitizer('consumableId'),
-  deviceApproval: makeKeySanitizer('deviceApprovalId'),
+  deviceApproval: makeKeySanitizer('deviceApprovalExternalId'),
   deviceMaintenanceStatus: makeKeySanitizer('deviceMaintenanceStatusId'),
   onlyEverTransferred: defaultSanitizer,
   onlyReportableResults: defaultSanitizer,

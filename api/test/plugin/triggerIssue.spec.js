@@ -139,6 +139,7 @@ describe('This test suite is for testing different triggers conditions', async (
   const adminPassword = 'test07'
   const countryCode = 'US'
   const macAddress = 'MAC00000000FAKE'
+  const instrumentSerial = 'S-1234-0'
   let results
 
   const deviceName = 'New GeneXpert Laboratory'
@@ -184,7 +185,7 @@ describe('This test suite is for testing different triggers conditions', async (
             assay: 'Xpert MTB-RIF',
           },
           instrument: {
-            serial: _.get(results, 'instrumentSerial') || 'S-1234-0',
+            serial: 'S-1234-0',
             module: {
               serial: _.get(results, 'moduleSerial') || 'M-123456-0',
               name: _.get(results, 'moduleName') || 'Module A',
@@ -312,6 +313,7 @@ describe('This test suite is for testing different triggers conditions', async (
             macAddress: `2nd${macAddress}`,
             hostId: `2nd${hostId}`,
             deviceSerialNumber: `2nd${deviceSerialNumber}`,
+            instrumentSerial,
           })
 
           await context.beforeRegisterAndSetDevice()
@@ -651,6 +653,7 @@ describe('This test suite is for testing different triggers conditions', async (
         macAddress: `4nd${macAddress}`,
         hostId: `4nd${hostId}`,
         deviceSerialNumber: `4nd${deviceSerialNumber}`,
+        instrumentSerial: 'S-1234-0',
       })
       await deviceContextForUnusedModules.beforeRegisterAndSetDevice()
       const { device } = deviceContextForUnusedModules

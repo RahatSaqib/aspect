@@ -244,6 +244,7 @@ describe('Result route Job constraints', () => {
         .join('Result as r', 'a.id', 'r.assayId')
         .join('Site as rs', 'r.reportableSiteId', 'rs.id')
         .where('d.externalId', diseaseHivExternalId)
+        .orderBy('r.id', 'asc')
         .first('rs.externalId'))
       await Promise.each(_.range(0, 15), async () => {
         resultIdsToRemove.push(
@@ -266,6 +267,7 @@ describe('Result route Job constraints', () => {
         .join('Result as r', 'a.id', 'r.assayId')
         .join('Site as rs', 'r.reportableSiteId', 'rs.id')
         .where('d.externalId', diseaseCovid19ExternalId)
+        .orderBy('r.id', 'asc')
         .first('rs.externalId'))
       bothDiseasesClinicianUserId = await createUser(
         'Partner One',

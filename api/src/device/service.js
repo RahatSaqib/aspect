@@ -19,8 +19,6 @@ const {
   isWeekend,
 } = require('../shared/date')
 
-const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
-const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const {
   getDeviceBaseExtendedQuery,
   getBasicsForDevicesReport,
@@ -67,7 +65,7 @@ async function listApprovalTypes() {
   const getCount = resultQuery.clone().count('da.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name', 'i18nKey')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name', 'i18nKey', 'token')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -101,42 +99,6 @@ async function listMaintenanceStatuses(request) {
 
   const result = { ok: true, total, length: data.length, data }
   return result
-}
-
-async function listDevicesForSelectList(request) {
-  const {
-    query,
-    query: { showUnapprovedDevices, showDecommissionedDevices, onlyResultDevices },
-    auth,
-  } = request
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const devicesQuery = knex('Device as d')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(
-      addConstraints,
-      dataConstraints,
-      { device: 'd', geography: 'g' },
-      { showUnapprovedDevices, showDecommissionedDevices }
-    )
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      partnerId: 'd.partnerId',
-      siteId: 'd.siteId',
-    })
-    .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
-    .orderBy(['d.name'], 'asc')
-    .select('d.id', 'd.name', 'd.serial as deviceSerial', 'd.siteId', 'd.deviceTypeId', 'dt.name as deviceType')
-  if (onlyResultDevices) {
-    devicesQuery.where('dtc.hasResults', 1)
-  }
-
-  const devices = await devicesQuery
-  return { ok: true, data: devices }
 }
 
 async function getDevice(deviceId) {
@@ -686,8 +648,6 @@ async function onResultLogged(action, { messageContext }) {
         .count('r.id as numberOfPreviousTestsInDay')
         .first()
       if (numberOfPreviousTestsInDay === 0) await updateStatusUnknownToNoTestsPerformed(deviceId, testDateToUse)
-
-      await shouldTriggerInstrumentReplaced(knex, messageContext, resultId)
     }
   })
 }
@@ -792,6 +752,7 @@ async function deviceMaintenanceStatusHistory(request) {
           lgaId: 'g.lgaId',
           deviceName: 'd.name',
           deviceApprovalId: 'd.deviceApprovalId',
+          deviceApprovalExternalId: 'da.token',
           deviceTypeId: 'd.deviceTypeId',
           deviceType: 'dt.externalId',
           hasConnectivity: 'dc.hasConnectivity',
@@ -1222,14 +1183,14 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
 // This method will sometimes be called in a context of a database transaction.
 //  In this case the transaction's knex instance can be passed as the optionalKnex
 //  parameter below.
-async function postPayloadFromDevice(deviceLogDetails, optionalKnex) {
+async function postPayloadFromDevice(deviceLogDetails, deviceId, optionalKnex) {
   const now = new Date()
   const databaseTransaction = async inlineKnex => {
     const [deviceLogId] = await inlineKnex('DeviceLog').insert({
       createdOn: now,
       ...deviceLogDetails,
     })
-    await inlineKnex('Device').where({ id: deviceLogDetails.deviceId }).update({ lastSeenOn: now, updatedOn: now })
+    await inlineKnex('Device').where({ id: deviceId }).update({ lastSeenOn: now, updatedOn: now })
     return deviceLogId
   }
   if (!optionalKnex) {
@@ -1249,9 +1210,6 @@ async function onDeviceUpdateModuleSerials(action, { messageContext }) {
   })
 }
 
-/**
- *
- */
 async function updateDeviceConfigurationData(knex, deviceId) {
   let { configurationData } = await knex('Device').where({ id: deviceId }).first('configurationData')
   configurationData = configurationData ? JSON.parse(configurationData) : {}
@@ -1277,6 +1235,8 @@ async function updateDeviceConfigurationData(knex, deviceId) {
     .where({ id: deviceId })
     .update({ configurationData: JSON.stringify(configurationData) })
 }
+
+const listDevicesForSelectList = require('./listDevicesForSelectList')
 
 module.exports = {
   showDevice,

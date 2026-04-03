@@ -49,8 +49,4 @@ export const notificationCategories = [
     i18Name: messages.notificationTypeModuleUnused,
     id: 'UnusedModules=issue',
   },
-  {
-    i18Name: messages.notificationTypeInstrumentReplaced,
-    id: 'InstrumentReplaced=issue',
-  },
 ]

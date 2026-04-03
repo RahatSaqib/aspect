@@ -1,19 +1,6 @@
 @import '../../../theme/variables.css';
 
-.TableRow {
-}
-
 .TableCell__alerts {
   line-height: 20px;
 }
 
-.Rate__hover {
-  color: var(--aspect-color-grey-4);
-  opacity: 0;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.TableRow:hover .Rate__hover {
-  opacity: 1;
-}

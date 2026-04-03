@@ -2,7 +2,7 @@ const { Boom } = require('@hapi/boom')
 const _ = require('lodash')
 const { getUser } = require('../auth/service')
 const { getResultByResultId } = require('./common/db')
-const { resultUpdated, resultReadyForNotification } = require('./actions')
+const { resultReadyForNotification } = require('./actions')
 const { knex } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { resultTypeToId } = require('../shared/dictionary')
@@ -118,11 +118,10 @@ async function updateResult(request) {
       updatedOn: now,
     })
 
-  let deviceLogId
   if (deviceId) {
     const senderIp = getRemoteAddress(request)
-    ;[deviceLogId] = await knex('DeviceLog').insert({
-      deviceId,
+    await knex('DeviceLog').insert({
+      deviceApiKeyId: knex('Device').where('id', deviceId).first('deviceApiKeyId'),
       resultId,
       source: 'Custom Fields Edited in Aspect',
       createdOn: now,
@@ -130,9 +129,6 @@ async function updateResult(request) {
       rawMessage: deviceLogRawMessage,
     })
   }
-
-  messageContext.bindActionCreators({ resultUpdated })
-  messageContext.resultUpdated(resultId, deviceLogId, userId)
 
   if (isResultUpdated) {
     messageContext.bindActionCreators({ resultReadyForNotification })

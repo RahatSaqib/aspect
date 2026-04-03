@@ -1,93 +1,44 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { MenuItem } from '@mui/material'
-import _fp from 'lodash/fp'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
-import { fetchDevicesForSelectList } from '../../store/DeviceRedux'
+import { useDeviceForSelect } from '../../hooks/device/useDeviceForSelect'
 import SelectField from '../shared/SelectField'
 
-const enhance = compose(
-  pure,
-  setPropTypes({
-    countryId: PropTypes.string,
-    partnerId: PropTypes.string,
-    siteId: PropTypes.string,
-    onDeviceChange: PropTypes.func.isRequired,
-    value: PropTypes.string,
-  }),
-  connect(
-    state => ({
-      devicesSelectList: state.device.selectList,
-    }),
-    (dispatch, props) => ({
-      fetchDevicesWithFiltersForSelectList() {
-        dispatch(
-          fetchDevicesForSelectList(true, {
-            countryId: props.countryId,
-            partnerId: props.partnerId,
-            siteId: props.siteId,
-          })
-        )
-      },
-    })
-  ),
-  lifecycle({
-    componentDidMount() {
-      this.props.fetchDevicesWithFiltersForSelectList()
-    },
-    componentDidUpdate(prevProps) {
-      const filtersChanged = _fp.any(name => this.props[name] !== prevProps[name], ['countryId', 'partnerId', 'siteId'])
-      if (filtersChanged) {
-        this.props.fetchDevicesWithFiltersForSelectList()
-      }
-    },
-  }),
-  withHandlers({
-    onChange:
-      props =>
-      ({ target: { value } }) => {
-        props.onDeviceChange(value)
-      },
-  }),
-  mapProps(props => ({
-    ..._fp.omit(
-      [
-        'countryId',
-        'partnerId',
-        'siteId',
-        'onDeviceChange',
-        'fetchDevicesWithFiltersForSelectList',
-        'devicesSelectList',
-      ],
-      props
-    ),
-    devicesSelectList: props.devicesSelectList.items
-      .map(item => ({
-        value: item.get('id'),
-        text: item.get('name'),
-      }))
-      .toJS(),
-  }))
-)
+function DeviceSelectField({
+  countryId,
+  partnerId,
+  siteId,
+  deviceTypeExternalId,
+  onDeviceChange,
+  value,
+  disabled,
+  ...restProps
+}) {
+  const { data = [], isLoading } = useDeviceForSelect({ countryId, partnerId, siteId, deviceTypeExternalId })
 
-function DeviceSelectField({ devicesSelectList, onChange, disabled, ...restProps }) {
-  const disable = disabled || devicesSelectList.length === 0
+  const handleChange = useCallback(
+    ({ target: { value } }) => {
+      onDeviceChange(value)
+    },
+    [onDeviceChange]
+  )
+
+  const disable = disabled || data.length === 0 || isLoading
   return (
     <SelectField
       {...restProps}
-      onChange={onChange}
-      helperText={devicesSelectList.length === 0 ? 'No devices for this site' : ''}
+      value={value}
+      onChange={handleChange}
+      helperText={restProps.helperText || (data.length === 0 ? 'No devices for this site' : '')}
       disabled={disable}
     >
-      {devicesSelectList.length > 0 &&
-        devicesSelectList.map(s => (
-          <MenuItem key={s.value} value={s.value}>
-            {s.text}
+      {data.length > 0 &&
+        data.map(s => (
+          <MenuItem key={s.id} value={s.id}>
+            {s.name}
           </MenuItem>
         ))}
     </SelectField>
   )
 }
 
-export default enhance(DeviceSelectField)
+export default DeviceSelectField

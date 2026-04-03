@@ -72,7 +72,6 @@ async function seed(knex) {
     },
     'WK',
     null,
-    null,
     {
       fixtures: {
         jobFunctions: jobFunctionsFixtureWakanda,

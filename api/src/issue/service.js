@@ -83,7 +83,6 @@ function getAllActions() {
     ..._.omit(require('./actions'), ['types']), // i.e. ../issue/actions.js
     ..._.omit(require('../logger/actions'), ['types']),
     ..._.omit(require('../notification/actions'), ['types']),
-    ..._.omit(require('../patient/actions'), ['types']),
     ..._.omit(require('../pushNotification/actions'), ['types']),
     ..._.omit(require('../sms/actions'), ['types']),
     ..._.omit(require('../webhook/actions'), ['types']),
@@ -250,12 +249,6 @@ async function triggerIssue(request) {
       break
     }
     case 'ResultDataEntered'.toLowerCase(): {
-      break
-    }
-    case 'InstrumentReplaced'.toLowerCase(): {
-      const { device, options } = data
-      await messageContext.deviceInstrumentReplaced(device, options)
-      triggered = true
       break
     }
     case 'DeviceExpectedBackOnline'.toLowerCase(): {

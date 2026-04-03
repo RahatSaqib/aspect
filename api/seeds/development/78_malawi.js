@@ -34,7 +34,6 @@ async function seed(knex) {
     },
     'MW',
     null,
-    null,
     {
       fixtures: {
         jobFunctions: jobFunctionsPartnerOne,

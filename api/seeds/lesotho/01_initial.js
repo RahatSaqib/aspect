@@ -22,7 +22,6 @@ const {
   partner: { externalId: partnerExternalId },
   adminUserName,
   adminPassword,
-  deviceApiToken,
   partnerAbbreviation,
   partnerPlugin: pluginName,
 } = partnerData
@@ -42,7 +41,7 @@ async function seed(knex) {
     createdOn: now,
   })
 
-  await commonUpserts(knex, partnerId, adminId, geography, partnerAbbreviation, deviceApiToken, null, partnerData)
+  await commonUpserts(knex, partnerId, adminId, geography, partnerAbbreviation, null, partnerData)
   const auditFields = {
     createdOn: now,
     createdBy: adminId,

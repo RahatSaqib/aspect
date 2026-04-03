@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 // ----------- Action Types ---------------------
 const types = {
   CALIBRATION_DUE_DATE_ANALYSIS: 'CALIBRATION_DUE_DATE_ANALYSIS',
@@ -9,7 +7,6 @@ const types = {
   DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
-  CEPHEID_C360_INSTRUMENT_LOG_RECEIVED: 'CEPHEID_C360_INSTRUMENT_LOG_RECEIVED',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
@@ -17,7 +14,6 @@ const types = {
   DEVICE_MAINTENANCE_STATUS_LOGGED: 'DEVICE_MAINTENANCE_STATUS_LOGGED',
   DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED: 'DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED',
   DEVICE_MODULE_DISABLE_RECEIVED: 'DEVICE_MODULE_DISABLE_RECEIVED',
-  DEVICE_INSTRUMENT_REPLACED: 'DEVICE_INSTRUMENT_REPLACED',
   DEVICE_UNUSED_MODULES: 'DEVICE_UNUSED_MODULES',
   DEVICE_UPDATE_MODULE_SERIALS: 'DEVICE_UPDATE_MODULE_SERIALS',
   DEVICE_EXPECTED_BACK_ONLINE: 'DEVICE_EXPECTED_BACK_ONLINE',
@@ -102,14 +98,6 @@ function calibrationDateUpdated(deviceId) {
   return {
     type: types.CALIBRATION_DATE_UPDATED,
     deviceId,
-  }
-}
-
-function cepheidc360InstrumentLogsReceived(deviceId, deviceOperationId) {
-  return {
-    type: types.CEPHEID_C360_INSTRUMENT_LOG_RECEIVED,
-    deviceId,
-    options: { data: { deviceOperationId } },
   }
 }
 
@@ -243,16 +231,13 @@ function deviceHasNewResults(deviceId) {
  * @param {*} moduleSerial // the serial number of the module which is disable
  * @param {*} disabledOn // the date when this module was disable
  */
-function deviceModuleDisabled(device, moduleSerial, disabledOn) {
-  if (!device || !moduleSerial || !disabledOn) {
-    throw new Error('Must specify deviceId, moduleSerial and disabledOn and for deviceModuleDisable')
+function deviceModuleDisabled(deviceId, moduleSerial, disabledOn) {
+  if (!moduleSerial || !disabledOn) {
+    throw new Error('Must specify moduleSerial and disabledOn and for deviceModuleDisable')
   }
   return {
     type: types.DEVICE_MODULE_DISABLE_RECEIVED,
-    deviceId: device.id,
-    siteId: device.siteId,
-    geographyId: device.geographyId,
-    partnerId: device.partnerId,
+    deviceId,
     options: { data: { moduleSerial, disabledOn } },
   }
 }
@@ -268,25 +253,6 @@ function deviceModuleUnused(deviceId) {
   return {
     type: types.DEVICE_UNUSED_MODULES,
     deviceId,
-  }
-}
-
-/**
- * Creates an action to notify that an instrument in the given device
- * was replaced
- *
- * @param {*} device
- * @param {*} instrumentSerial the serial number of the instrument replaced
- */
-function deviceInstrumentReplaced(device, options) {
-  if (!device && !options) {
-    throw new Error('Must specify device and options for deviceInstrumentReplaced')
-  }
-  const issueProps = _.pick(device, ['deviceId', 'siteId', 'geographyId', 'partnerId', 'resultId'])
-  return {
-    ...issueProps,
-    type: types.DEVICE_INSTRUMENT_REPLACED,
-    options: { data: options },
   }
 }
 
@@ -396,13 +362,11 @@ module.exports = {
   deviceHasNewResults,
   deviceMaintenanceStatusLogged,
   deviceModuleDisabled,
-  deviceInstrumentReplaced,
   deviceModuleUnused,
   deviceHardwareError,
   hardwareErrorActions,
   logDeviceMaintenanceStatus,
   deviceUpdateModuleSerials,
-  cepheidc360InstrumentLogsReceived,
   deviceExpectedBackOnline,
   expectedBackOnlineAnalysis,
 }

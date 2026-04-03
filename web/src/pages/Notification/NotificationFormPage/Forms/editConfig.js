@@ -48,7 +48,7 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     issueBasedSection(formatMessage), // only for ['issueBased]
     resultBasedSection(formatMessage, partner), // only for ['resultBased']
     ...reportBasedSection(formatMessage),
-    geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'CalibrationDueDate', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
+    geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'CalibrationDueDate', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
     deviceOfflineSection(formatMessage), // only for ['DeviceOffline']
     deviceOfflineRecurringSection(formatMessage), // only for ['DeviceOffline']

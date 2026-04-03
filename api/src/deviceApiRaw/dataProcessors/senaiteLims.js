@@ -77,7 +77,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
       }
       await knex('DeviceLog').insert({
-        deviceId,
+        deviceApiKeyId: knex('DeviceApiKey').where('id', deviceId).first('id'),
         source: _.get(payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,

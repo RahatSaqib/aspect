@@ -6,7 +6,7 @@ const { formatDateOrDefault } = require('../../shared/date')
 const getDeviceKeyGeography = auth => {
   return knex('DeviceApiKey as k')
     .leftJoin('Geography as g', 'g.id', 'k.geographyId')
-    .where({ 'k.id': auth.credentials.keyId })
+    .where({ 'k.id': auth.credentials.deviceApiKeyId })
     .first('g.countryId')
 }
 

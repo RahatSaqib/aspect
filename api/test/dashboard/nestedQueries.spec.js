@@ -241,7 +241,6 @@ describe('Parse nested queries', () => {
       'stockNotRecorded',
       'avgTimeToUpload',
       'moduleSwaps',
-      'instrumentsReplaced',
       'percentageOfModulesFunctioning',
       'averageRecipientsOfEmail',
       'averageRecipientsOfSms',

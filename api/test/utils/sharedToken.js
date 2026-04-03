@@ -3,6 +3,33 @@ const chai = require('chai')
 const { assert } = chai
 
 module.exports = {
+  async ensureToken(server, opts = {}) {
+    if (this.token) {
+      return this.token
+    }
+
+    const {
+      name = 'admin',
+      password = 'test07',
+      clientName = 'test-suite',
+      clientId = `test-suite-${Date.now()}`,
+    } = opts
+
+    const res = await server.post('/api/auth').send({
+      name,
+      password,
+      clientName,
+      clientId,
+    })
+
+    assert.equal(res.status, 200)
+    assert.isString(res.body.access)
+    assert.notEqual(res.body.access, '')
+
+    this.token = res.body.access
+    return this.token
+  },
+
   checkToken(server, path) {
     describe(`Shared - Check token on "${path}"`, () => {
       it('should return 401 and error message when trying to get without access token', async () => {

@@ -48,7 +48,7 @@ const filtersOrdering = {
   destinationSiteName: 160,
   externalId: 170,
   contactStatus: 180,
-  deviceApprovalId: 200,
+  deviceApprovalExternalId: 200,
   minDate: 210,
   maxDate: 220,
   notificationName: 230,
@@ -158,8 +158,8 @@ const buttonMapping = {
   lotNumber: ({ lotNumber, remove, blocked }) => <LotNumber lotNumber={lotNumber} remove={remove} blocked={blocked} />,
   hasStock: ({ remove, blocked }) => <HasStock remove={remove} blocked={blocked} />,
   breakOutByLot: ({ remove, blocked }) => <BreakOutByLot remove={remove} blocked={blocked} />,
-  deviceApprovalId: ({ deviceApprovalId, remove, blocked }) => (
-    <DeviceApprovalId deviceApprovalId={deviceApprovalId} remove={remove} blocked={blocked} />
+  deviceApprovalExternalId: ({ deviceApprovalExternalId, remove, blocked }) => (
+    <DeviceApprovalExternalId deviceApprovalExternalId={deviceApprovalExternalId} remove={remove} blocked={blocked} />
   ),
   deviceMaintenanceStatusId: ({ deviceMaintenanceStatusId, remove, blocked }) => (
     <DeviceMaintenanceStatusId
@@ -654,20 +654,33 @@ const BreakOutByLot = ({ remove, blocked }) => {
   )
 }
 
-const DeviceApprovalId = ({ deviceApprovalId, remove, blocked }) => {
+const DeviceApprovalExternalId = ({ deviceApprovalExternalId, remove, blocked }) => {
   const { formatMessage } = useIntl()
   const { data } = useDeviceApprovalType()
-  const name = data?.find(it => it.id === deviceApprovalId)?.name
-  if (deviceApprovalId && name) {
-    const deviceApprovalName = formatMessage(messages[`deviceApproval${name}`])
-    return (
-      <Btn
-        lbl={formatMessage(messages.withDeviceApproval, { deviceApprovalName })}
-        del={blocked.includes('deviceApprovalId') ? undefined : () => remove(['deviceApprovalId'])}
-      />
-    )
-  }
-  return null
+
+  const externalIds = Array.isArray(deviceApprovalExternalId)
+    ? deviceApprovalExternalId
+    : deviceApprovalExternalId
+    ? [deviceApprovalExternalId]
+    : []
+  if (!externalIds.length || !data) return null
+
+  const names = externalIds
+    .map(externalId => {
+      const item = data.find(it => it.token === externalId)
+      return item && item.i18nKey ? formatMessage(messages[item.i18nKey]) : null
+    })
+    .filter(Boolean)
+
+  if (!names.length) return null
+
+  const deviceApprovalName = names.join(', ')
+  return (
+    <Btn
+      lbl={formatMessage(messages.withDeviceApproval, { deviceApprovalName })}
+      del={blocked.includes('deviceApprovalExternalId') ? undefined : () => remove(['deviceApprovalExternalId'])}
+    />
+  )
 }
 
 const DeviceType = ({ deviceType, remove, blocked }) => {

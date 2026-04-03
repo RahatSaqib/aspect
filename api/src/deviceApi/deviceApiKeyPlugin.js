@@ -2,8 +2,6 @@ const Boom = require('@hapi/boom')
 const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
-const { lookupUsingCredentials } = require('../deviceApiKey/service')
-const { authenticate: tryAnonymousAuthenticate } = require('./deviceApiRawUnauthenticatedPlugin')
 const logger = require('../shared/logger')
 
 function register(plugin) {
@@ -16,7 +14,7 @@ function register(plugin) {
   })
 }
 
-function authenticate(request, h) {
+async function authenticate(request, h) {
   const { query, headers } = request
   let token = ''
   if (query.token) {
@@ -26,59 +24,17 @@ function authenticate(request, h) {
     // Remove Bearer from Authorization header
     token = headers.authorization.replace(/Bearer/gi, '')
   }
-  if (!token) {
-    return tryAnonymousAuthenticate(request, h)
-  }
-  return authToken(token)
-    .then(credentials => {
-      return credentials
-        ? h.authenticated({ credentials })
-        : h.unauthenticated(Boom.unauthorized('Invalid Credentials'))
-    })
-    .catch(err => {
-      logger.warning(err)
-      throw err
-    })
-}
 
-const validateApiKeyAuthBasic = {
-  async validate(request, username, password) {
-    if (!username) {
-      return authToken(password)
-        .then(credentials => ({ isValid: !!credentials, credentials }))
-        .catch(() => ({ isValid: false }))
+  try {
+    const credentials = await authToken(token)
+    if (credentials) {
+      return h.authenticated({ credentials })
     }
-    return authUsernameAndPassword(username, password)
-      .then((credentials, error) => {
-        if (error) {
-          return authToken(password)
-        }
-        return credentials
-      })
-      .then(credentials => ({ isValid: !!credentials, credentials }))
-      .catch(() => ({ isValid: false }))
-  },
-}
-
-async function authUsernameAndPassword(username, password) {
-  if (!username || !password) {
-    logger.warning('Invalid Credentials')
-    return
+    return h.unauthenticated(Boom.unauthorized('Invalid Credentials'))
+  } catch (err) {
+    logger.warning(err)
+    throw err
   }
-  const deviceApiKeyAuthResult = await lookupUsingCredentials(username, password)
-  const { authenticated, data } = deviceApiKeyAuthResult || {}
-  if (!authenticated || !data) {
-    if (password) {
-      return authToken(password)
-    }
-    logger.warning('Cannot authorize API Key')
-    return
-  }
-  const { id, token } = data
-  const scope = ['deviceApi']
-  const name = `(${id}) ${username || ''}`.trim()
-  const credentials = { token, scope, name }
-  return credentials
 }
 
 async function authToken(token) {
@@ -90,22 +46,33 @@ async function authToken(token) {
   }
 
   // lookup single non-revoked API Key
-  const key = await knex('DeviceApiKey as k')
-    .leftJoin('Device as d', 'd.id', 'k.deviceId')
+  const data = await knex('DeviceApiKey as k')
+    .leftJoin('Device as d', 'd.deviceApiKeyId', 'k.id')
     .where({ 'k.token': token, 'k.revoked': false })
-    .first('k.id as keyId', 'd.name as deviceName', 'k.expiresOn')
-  if (!key) {
+    .groupBy('k.id')
+    .first({
+      deviceApiKeyId: 'k.id',
+      expiresOn: 'k.expiresOn',
+      partnerId: 'k.partnerId',
+      deviceIds: knex.raw('IFNULL(GROUP_CONCAT(d.id), "")'),
+    })
+
+  if (!data) {
     logger.warning(`Cannot find API Key Token ${token}`)
     return
   }
-  if (!!key.expiresOn && key.expiresOn < new Date()) {
+  if (!!data.expiresOn && data.expiresOn < new Date()) {
     logger.warning(`API Key Token ${token} has Expired`)
     return
   }
 
-  const scope = ['deviceApi']
-  const name = `(${key.keyId}) ${key.deviceName || ''}`.trim()
-  const credentials = { token, scope, name, keyId: key.keyId }
+  const credentials = {
+    scope: ['deviceApi'],
+    token,
+    deviceApiKeyId: data.deviceApiKeyId,
+    deviceIds: data.deviceIds ? data.deviceIds.split(',').map(Number) : [],
+    partnerId: data.partnerId,
+  }
   return credentials
 }
 
@@ -115,5 +82,5 @@ module.exports = {
     version,
     register,
   },
-  validateApiKeyAuthBasic,
+  authenticate,
 }

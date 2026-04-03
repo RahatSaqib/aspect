@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import DeviceResultHistory from '../../../../cleanComponents/DeviceResultHistory/DeviceResultHistory'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useAuthState from '../../../../hooks/useAuthState'
@@ -17,32 +17,27 @@ import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
 import Summary from '../../../../oldComponents/Summary'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
 import {
-  showDialog,
+  exportDeviceLogs,
   hideDialog,
+  showDialog,
   updateDeviceMaintenance,
   updateDeviceMaintenanceStatus,
-  exportDeviceLogs,
 } from '../../../../store/DeviceRedux'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
   composeSanitizer,
+  makeSearchParamsSanitizer,
+  makeSortPageSelector,
 } from '../../../../utils/selectors/searchParams'
 import { formatRelative } from '../../../../utils/utils/dateFormat'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import styles from '../styles.module.css'
+import DeploymentsSection from './DeploymentsSection'
+import DeviceInstrumentsTable from './DeviceInstrumentsTable'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
-
-const tokens = {
-  PROVISIONED: 'provisioned',
-  ASSIGNED: 'assigned',
-  APPROVED: 'approved',
-  DECOMMISSIONED: 'decommissioned',
-}
 
 const FILTERS_CONFIG = {
   geography: true,
@@ -100,15 +95,6 @@ const enhance = compose(
           exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
         }
       },
-    onToggleDeviceApproval:
-      ({ device, updateSingleDevice }) =>
-      () =>
-        updateSingleDevice({
-          deviceId: device.get('id'),
-          data: {
-            approvalToken: device.get('approvalToken') !== tokens.APPROVED ? tokens.APPROVED : tokens.ASSIGNED,
-          },
-        }),
     onShowCalibrationDialog:
       ({ showDialog, device }) =>
       () => {
@@ -156,7 +142,6 @@ const DeviceDetailProfile = ({
   disabled,
   devicePerformance,
   // --- injected by recompose ---
-  onToggleDeviceApproval,
   sortCol,
   sortDir,
   pageAt,
@@ -208,7 +193,7 @@ const DeviceDetailProfile = ({
     <div>
       <section className={`${styles.Section} ${styles.Section__first}`}>
         <Card className={styles.Section__Content}>
-          <div>
+          <div className={styles.summaryGrid}>
             <Summary
               title={formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
@@ -291,8 +276,12 @@ const DeviceDetailProfile = ({
             />
             <Summary
               title={formatMessage(messages.site)}
-              description={device.get('siteName')}
-              to={() => navigate(`/browse/site/${device.get('siteId')}`)}
+              description={device.get('siteName') ? device.get('siteName') : formatMessage(messages.undeployed)}
+              to={
+                device.get('siteName') && device.get('siteId')
+                  ? () => navigate(`/browse/site/${device.get('siteId')}`)
+                  : undefined
+              }
             />
             <Summary
               title={formatMessage(messages.connectivity)}
@@ -406,27 +395,9 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.approval)}
               description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
-              action={
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={onToggleDeviceApproval}
-                  disabled={
-                    disabled ||
-                    formatMessage(messages[device.get('approvalStatusI18nKey')]).toLowerCase() === tokens.DECOMMISSIONED
-                  }
-                >
-                  {formatMessage(messages.buttonChange)}
-                </Button>
-              }
             />
             <Summary title={formatMessage(messages.dailyCapacity)} description={device.get('dailyTestCapacity')} />
             <Summary title={formatMessage(messages.moduleBayCapacity)} description={device.get('moduleBayCapacity')} />
-
-            <Summary
-              title={formatMessage(messages.instrumentsConnected)}
-              description={device.get('instrumentsConnected') ?? 'n/a'}
-            />
 
             {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID ? (
               <>
@@ -475,6 +446,18 @@ const DeviceDetailProfile = ({
         />
       </section>
 
+      <DeploymentsSection
+        deviceId={device.get('id')}
+        firstResultDate={device.get('firstResultEndedOn')}
+        approvalToken={device.get('approvalToken')}
+        disabled={disabled}
+      />
+
+      <PermissionChecker permissions={['admin:edit']}>
+        {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
+          <DeviceInstrumentsTable deviceId={device.get('id')} disabled={disabled} />
+        )}
+      </PermissionChecker>
       <PerformanceReport
         performanceReport={devicePerformance}
         dailyCapacity={dailyCapacity || 0}
@@ -503,7 +486,6 @@ DeviceDetailProfile.propTypes = {
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   disabled: PropTypes.bool.isRequired,
   devicePerformance: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  onToggleDeviceApproval: PropTypes.func.isRequired,
   sortCol: PropTypes.string.isRequired,
   sortDir: PropTypes.string.isRequired,
   pageAt: PropTypes.number.isRequired,

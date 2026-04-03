@@ -22,7 +22,7 @@ async function getListDevices(query, auth) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin(
       knex('FactResultsDeviceByAssay as fact')
         .where('fact.days', 30)
@@ -102,11 +102,11 @@ async function getListDevices(query, auth) {
       if (geneXpertType === '10cModules') queryBuilder.where('d.gx10cModulesCount', '>', 0)
     })
     .modify(filterParams, query, {
-      countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
       deviceApprovalId: 'd.deviceApprovalId',
+      deviceApprovalExternalId: 'da.token',
       deviceTypeId: 'd.deviceTypeId',
       deviceType: 'dt.externalId',
       hasConnectivity: 'dc.hasConnectivity',

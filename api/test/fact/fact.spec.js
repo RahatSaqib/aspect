@@ -7,25 +7,29 @@ const server = require('../utils/testUtils')
 
 const { assert } = chai
 
-const devicePostResultPath = '/device/result'
+const devicePath = '/device'
 const context = createTestContext(knex, server, {
   user: 'admin',
-  type: 'DaktariVirology',
+  type: 'CepheidGeneXpert',
   partner: 'Partner One',
 })
 
 describe('Fact tables initial data', () => {
   beforeEach(async () => {
-    await context.createDeviceWithResult()
+    await context.createDeviceWithResult({ instrumentSerial: '1234567' })
     const { now, deviceAuth } = context
     await server
-      .post(devicePostResultPath)
+      .post(devicePath)
       .set('Authorization', deviceAuth)
       .send({
-        data: { a: 'b' },
-        assay: { id: 'DaktariHivVL' },
-        startedOn: now,
-        endedOn: new Date(),
+        type: { id: 'CepheidGeneXpert' },
+        result: {
+          assay: { id: 'GxMtbRifUltra', version: '4' },
+          startedOn: now,
+          endedOn: new Date(),
+          instrument: { serial: '1234567' },
+          data: { assay: 'Xpert MTB-RIF Ultra' },
+        },
       })
       .then(res => {
         assert.equal(res.status, 200)

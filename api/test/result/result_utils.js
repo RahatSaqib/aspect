@@ -126,7 +126,7 @@ async function createResult(
     await knex('DeviceLog').insert({
       createdOn: randomDate,
       deviceConfigurationUpdated: 0,
-      deviceId: device.id,
+      deviceApiKeyId: device.deviceApiKeyId,
       rawMessage: `Some raw message from ${device.name}`,
       resultId,
       senderIp: '127.0.0.1',

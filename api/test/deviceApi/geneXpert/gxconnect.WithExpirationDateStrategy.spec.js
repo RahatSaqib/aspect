@@ -48,6 +48,7 @@ describe('Device API routes for GxConnect Devices', () => {
       deviceName,
       macAddress,
       deviceSerialNumber,
+      instrumentSerial: '123456788',
     })
 
     beforeEach(context.beforeRegisterAndSetDevice)
@@ -94,7 +95,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 startedOn: testStartedOn,
                 endedOn: testEndedOn,
                 sample: { id: 'Existing Sample' },
-                instrument: { serial: 'Existing Instrument' },
+                instrument: { serial: '123456788' },
                 assay: {
                   id: consumableAssay.assayId,
                   version: '2',
@@ -196,7 +197,7 @@ describe('Device API routes for GxConnect Devices', () => {
           )
           const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
           const sampleId = 'GxConnect test reduces inventory'
-          const instrumentSerial = 'Cepheid PC serial'
+          const instrumentSerial = '123456788'
 
           // Send first test
           await server
