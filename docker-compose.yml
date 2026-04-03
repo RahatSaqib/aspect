@@ -4,9 +4,9 @@ services:
     container_name: redis-aspect
     restart: always
     ports:
-      - "6379:6379" # Redis default port
+      - "6379:6379"
     volumes:
-      - ./.devcontainer/data/redis/data:/data
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -14,6 +14,7 @@ services:
       retries: 1
     networks:
       - aspectnet
+
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
     container_name: rabbitmq-aspect
@@ -22,11 +23,11 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "5672:5672" # RabbitMQ default port
-      - "15672:15672" # RabbitMQ management console port
+      - "5672:5672"
+      - "15672:15672"
     volumes:
-      - ./.devcontainer/data/rabbitmq/data:/var/lib/rabbitmq
-      - ./.devcontainer/data/rabbitmq/log:/var/log/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_logs:/var/log/rabbitmq
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "5672"]
       interval: 5s
@@ -39,14 +40,12 @@ services:
     image: mysql:8.0.35
     container_name: mysql-aspect
     restart: always
+
     command: >
-      --innodb_force_recovery=0
       --default_authentication_plugin=mysql_native_password
       --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
       --default-time-zone=+00:00
-      --innodb-buffer-pool-size=4G
-      --innodb-buffer-pool-instances=4
-      --innodb-buffer-pool-chunk-size=1G
+      --innodb-buffer-pool-size=1G
       --disable-log-bin
       --innodb-strict-mode=0
 
@@ -54,19 +53,29 @@ services:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: aspect
       TZ: UTC
+
     ports:
-      - "3306:3306" # MySQL default port
+      - "3306:3306"
+
     volumes:
-      - ./.devcontainer/data/db:/var/lib/mysql
-      # - ./.devcontainer/data/mysqld.cnf:/etc/mysql/my.cnf
+      - mysql_data:/var/lib/mysql
+      - ./.devcontainer/data/mysqld.cnf:/etc/mysql/my.cnf
+
     healthcheck:
       test:
         ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1234"]
       timeout: 20s
       retries: 10
+
     networks:
       - aspectnet
 
 networks:
   aspectnet:
     driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+  rabbitmq_data:
+  rabbitmq_logs:

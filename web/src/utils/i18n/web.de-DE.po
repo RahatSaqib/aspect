@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2026-01-13T13:25:22.286Z\n"
+"POT-Creation-Date: 2026-04-03T18:53:52.664Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.9\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -151,18 +151,27 @@ msgstr ""
 "p> <p><strong>Die Geräte sollten vom gleichen Standort und Gerätetyp sein, "
 "wie auch die Quellgeräte länger als 24 Stunden offline sein.<strong></p>"
 
-#. [pages.DeviceList.mergeDevicesConfirmationTitle]
+#. [pages.DeviceList.mergeDevicesConfirmationDescription]
 #. defaultMessage is:
-#. <p>This process will perform the following actions:</P> <p><br/> <ul> <li>• Results not repeated between devices will moved to target device.</li> <li>• Issues and Notifications from duplicated results will be moved to target results.</li> <li>• Device issues not related to results, like Device Offline, will be moved to target device.</li> <li>• Source devices will be deleted from Aspect.</li> <ul> </p> <br/> <p style="color: red;"> **IMPORTANT:** This action is unreversible! </p>
+#. <p>This process will perform the following actions:</P> <p><br/> <ul> <li>Results not repeated between devices will moved to target device.</li> <li>Issues and Notifications from duplicated results will be moved to target results.</li> <li>Device issues not related to results, like Device Offline, will be moved to target device.</li> <li>Source devices will be deleted from Aspect.</li> <ul> </p> <br/> <p style="color: red;"> **IMPORTANT:** This action is unreversible! </p>
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "<p>This process will perform the following actions:</P> <p><br/> <ul> "
+#| "<li>• Results not repeated between devices will moved to target device.</"
+#| "li> <li>• Issues and Notifications from duplicated results will be moved "
+#| "to target results.</li> <li>• Device issues not related to results, like "
+#| "Device Offline, will be moved to target device.</li> <li>• Source devices "
+#| "will be deleted from Aspect.</li> <ul> </p> <br/> <p style=\"color: red;"
+#| "\"> **IMPORTANT:** This action is unreversible! </p>"
 msgid ""
-"<p>This process will perform the following actions:</P> <p><br/> <ul> <li>• "
-"Results not repeated between devices will moved to target device.</li> <li>• "
-"Issues and Notifications from duplicated results will be moved to target "
-"results.</li> <li>• Device issues not related to results, like Device "
-"Offline, will be moved to target device.</li> <li>• Source devices will be "
-"deleted from Aspect.</li> <ul> </p> <br/> <p style=\"color: red;\"> "
-"**IMPORTANT:** This action is unreversible! </p>"
+"<p>This process will perform the following actions:</P> <p><br/> <ul> "
+"<li>Results not repeated between devices will moved to target device.</li> "
+"<li>Issues and Notifications from duplicated results will be moved to target "
+"results.</li> <li>Device issues not related to results, like Device Offline, "
+"will be moved to target device.</li> <li>Source devices will be deleted from "
+"Aspect.</li> <ul> </p> <br/> <p style=\"color: red;\"> **IMPORTANT:** This "
+"action is unreversible! </p>"
 msgstr ""
 "<p>Dieser Prozess führt die folgenden Aktionen aus:</P> <p><br/> <ul> <li>• "
 "Ergebnisse, die zwischen Geräten nicht wiederholt werden, werden auf das "
@@ -406,6 +415,9 @@ msgstr "Kontodetails"
 #. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
+#. [pages.DeviceDetailProfile.deploymentActive]
+#. defaultMessage is:
+#. Active
 #: extracted_strings.json
 msgid "Active"
 msgstr "Aktiv"
@@ -455,6 +467,24 @@ msgstr "Hinzufügen"
 msgid "Add Assignment"
 msgstr "Übung hinzufügen"
 
+#. [pages.DeviceDetailProfile.addDeployment]
+#. defaultMessage is:
+#. Add Deployment
+#. [pages.DeviceDetailProfile.addDeploymentTitle]
+#. defaultMessage is:
+#. Add Deployment
+#: extracted_strings.json
+msgid "Add Deployment"
+msgstr "Deployment hinzufügen"
+
+#. [pages.DeviceDetailProfile.fillGapDeploymentTitle]
+#. defaultMessage is:
+#. Add Deployment to fill undeployed period
+#: extracted_strings.json
+msgid "Add Deployment to fill undeployed period"
+msgstr ""
+"Bereitstellung hinzufügen, um den Zeitraum ohne Bereitstellung zu füllen"
+
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
 #. Add Inventory
@@ -475,6 +505,15 @@ msgstr "Datensatz hinzufügen"
 #: extracted_strings.json
 msgid "Add Row"
 msgstr "Zeile hinzufügen"
+
+#. [pages.DeviceDetailProfile.addToThisDevice]
+#. defaultMessage is:
+#. Add to this device
+#: extracted_strings.json
+#, fuzzy
+#| msgid "From this device"
+msgid "Add to this device"
+msgstr "Von diesem Gerät"
 
 #. [errorResponseMessages.addInventory.PUT.default.title]
 #. defaultMessage is:
@@ -619,6 +658,9 @@ msgstr "Benachrichtigungen"
 #. [filter.AssaySelectField.All]
 #. defaultMessage is:
 #. All
+#. [pages.shared.deviceApproval.all]
+#. defaultMessage is:
+#. All
 #. [pages.TablePaginator.all]
 #. defaultMessage is:
 #. All
@@ -699,6 +741,17 @@ msgstr "Alle Krankheiten"
 msgid "All sites"
 msgstr "Alle Standorte"
 
+#. [pages.DeviceList.mergeDevicesSourceDevicesStillActive]
+#. defaultMessage is:
+#. All source devices must be offline for at least 24 hours before they can be merged.
+#: extracted_strings.json
+msgid ""
+"All source devices must be offline for at least 24 hours before they can be "
+"merged."
+msgstr ""
+"Alle Quellgeräte müssen mindestens 24 Stunden lang offline sein, bevor sie "
+"zusammengeführt werden können."
+
 #. [pages.JobAssignments.allStates]
 #. defaultMessage is:
 #. All states
@@ -744,6 +797,17 @@ msgstr "Beim Versuch, das Gerät zu speichern, ist ein Fehler aufgetreten"
 #: extracted_strings.json
 msgid "An email has been sent to you"
 msgstr "Es wurde eine E-Mail an Sie gesendet"
+
+#. [pages.DeviceDetailProfile.deploymentOpenMustBeLast]
+#. defaultMessage is:
+#. An open (active) deployment must be the last one in the timeline. Please set an end date on the deployment that should end first.
+#: extracted_strings.json
+msgid ""
+"An open (active) deployment must be the last one in the timeline. Please set "
+"an end date on the deployment that should end first."
+msgstr ""
+"Ein offener (aktiver) Deployment muss der letzte in der Zeitleiste sein. "
+"Bitte legen Sie für den Deployment, der zuerst enden soll, ein Enddatum fest."
 
 #. [pages.ReportIndex.DeviceAndSiteSummaryReport_description]
 #. defaultMessage is:
@@ -905,6 +969,24 @@ msgid "Are you sure to toggle notification status?"
 msgstr ""
 "Sind Sie sicher, dass Sie den Benachrichtigungsstatus umschalten können?"
 
+#. [pages.DeviceDetail.decommissionConfirmMessage]
+#. defaultMessage is:
+#. Are you sure you want to decommission this device?
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Are you sure to delete this {entity}?"
+msgid "Are you sure you want to decommission this device?"
+msgstr "Sind Sie sicher, dass Sie diese {entity} löschen wollen?"
+
+#. [pages.DeviceDetailProfile.confirmDeleteDeployment]
+#. defaultMessage is:
+#. Are you sure you want to delete this deployment?
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Are you sure to delete this {entity}?"
+msgid "Are you sure you want to delete this deployment?"
+msgstr "Sind Sie sicher, dass Sie diese {entity} löschen wollen?"
+
 #. [pages.SiteDetail.disable.confirmation.message]
 #. defaultMessage is:
 #. Are you sure you want to delete this site? This action is intented only for test sites, all site data will be lost.
@@ -915,6 +997,15 @@ msgid ""
 msgstr ""
 "Sind Sie sicher, dass Sie diese Website löschen möchten? Diese Aktion ist "
 "nur für Test-Sites gedacht, alle Site-Daten gehen dabei verloren."
+
+#. [pages.DeviceDetail.reactivateConfirmMessage]
+#. defaultMessage is:
+#. Are you sure you want to reactivate this device?
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Are you sure to delete this {entity}?"
+msgid "Are you sure you want to reactivate this device?"
+msgstr "Sind Sie sicher, dass Sie diese {entity} löschen wollen?"
 
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
@@ -996,13 +1087,6 @@ msgstr "Zuordnen"
 msgid "Assign {count} Keys"
 msgstr "{count} API Keys zuweisen"
 
-#. [pages.shared.deviceApproval.assigned]
-#. defaultMessage is:
-#. Assigned
-#: extracted_strings.json
-msgid "Assigned"
-msgstr "Zugewiesen"
-
 #. [pages.UserPreferences.assignmentDetails]
 #. defaultMessage is:
 #. Assignment Details
@@ -1080,13 +1164,6 @@ msgstr "Presse"
 #: extracted_strings.json
 msgid "Average Confirmed Response"
 msgstr "Durchschnittlich Bestätigt"
-
-#. [component.Widget.instrumentsReplaced]
-#. defaultMessage is:
-#. Average Days for Instrument Replacement.
-#: extracted_strings.json
-msgid "Average Days for Instrument Replacement."
-msgstr "Durchschnittliche Tage für den Austausch von Instrumenten."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -1327,6 +1404,22 @@ msgid ""
 msgstr ""
 "Stellt auf der Grundlage der letzten 30 Tage den Prozentsatz der Ergebnisse "
 "mit Fehlern im Vergleich zur Gesamtzahl der durchgeführten Ergebnisse dar"
+
+#. [device.instrumentList.bayNames]
+#. defaultMessage is:
+#. Bay Names
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Assay Name"
+msgid "Bay Names"
+msgstr "Assay Name"
+
+#. [pages.DeviceDetailProfile.bays]
+#. defaultMessage is:
+#. Bays
+#: extracted_strings.json
+msgid "Bays"
+msgstr "Buchten"
 
 #. [pages.Notifications.daysBeforeCalibrationDueDate]
 #. defaultMessage is:
@@ -1706,6 +1799,9 @@ msgstr "Kann nicht bearbeitet werden"
 #. [pages.InventoryAdjustmentDialogForm.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.DeviceDetail.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.BaseDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1724,6 +1820,9 @@ msgstr "Kann nicht bearbeitet werden"
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.DeviceDetailProfile.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [contextualMenu.notifications.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1733,6 +1832,14 @@ msgstr "Kann nicht bearbeitet werden"
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Abbrechen"
+
+#. [pages.DeviceDetailProfile.transferInstrumentsDuplicatedSerials]
+#. defaultMessage is:
+#. Cannot transfer instruments with duplicated serials.
+#: extracted_strings.json
+msgid "Cannot transfer instruments with duplicated serials."
+msgstr ""
+"Instrumente mit doppelten Seriennummern können nicht übertragen werden."
 
 #. [pages.InventoryLog.withLotStrategy]
 #. defaultMessage is:
@@ -2034,7 +2141,13 @@ msgstr "Abschlussquote Prozentsatz"
 msgid "Conditions Should be Fulfilled"
 msgstr "Bedingungen sollten erfüllt sein"
 
+#. [pages.DeviceDetail.confirm]
+#. defaultMessage is:
+#. Confirm
 #. [pages.DeviceList.buttonConfirmMerge]
+#. defaultMessage is:
+#. Confirm
+#. [pages.DeviceDetailProfile.confirm]
 #. defaultMessage is:
 #. Confirm
 #: extracted_strings.json
@@ -3147,6 +3260,18 @@ msgstr "Dez"
 msgid "December"
 msgstr "Dezember"
 
+#. [pages.DeviceDetail.decommissionDevice]
+#. defaultMessage is:
+#. Decommission device
+#. [pages.DeviceDetail.decommissionConfirmTitle]
+#. defaultMessage is:
+#. Decommission device
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Decommissioned"
+msgid "Decommission device"
+msgstr "Außer Betrieb genommen"
+
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
@@ -3174,6 +3299,9 @@ msgstr "Definieren Sie, welche Prüfung diesen Bestandsposten verbraucht"
 #. [pages.admin.delete]
 #. defaultMessage is:
 #. Delete
+#. [pages.DeviceDetailProfile.deleteDeployment]
+#. defaultMessage is:
+#. Delete
 #: extracted_strings.json
 msgid "Delete"
 msgstr "Löschen"
@@ -3184,6 +3312,17 @@ msgstr "Löschen"
 #: extracted_strings.json
 msgid "Delete (Only 0 triggers)"
 msgstr "Löschen (Nur 0 Trigger)"
+
+#. [pages.DeviceDetailProfile.deploymentDeleteMiddle]
+#. defaultMessage is:
+#. Deleting this deployment will extend the {prevSite} deployment to cover the period up to {date}.
+#: extracted_strings.json
+msgid ""
+"Deleting this deployment will extend the {prevSite} deployment to cover the "
+"period up to {date}."
+msgstr ""
+"Durch das Löschen dieser Bereitstellung wird die {prevSite}-Bereitstellung "
+"auf den Zeitraum bis {date} ausgedehnt."
 
 #. [filter.AssayTypeSelectField.assayTypeDengue]
 #. defaultMessage is:
@@ -3198,6 +3337,61 @@ msgstr "Dengue"
 #: extracted_strings.json
 msgid "Dengue Fever"
 msgstr "Dengue-Fieber"
+
+#. [pages.DeviceDetailProfile.deploymentSaved]
+#. defaultMessage is:
+#. Deployment changes saved successfully
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Details Changed Successfully"
+msgid "Deployment changes saved successfully"
+msgstr "Details wurden erfolgreich geändert"
+
+#. [pages.DeviceDetailProfile.deploymentOverlap]
+#. defaultMessage is:
+#. Deployment periods must not overlap. Please set end dates so periods are consecutive or leave only one deployment open (active).
+#: extracted_strings.json
+msgid ""
+"Deployment periods must not overlap. Please set end dates so periods are "
+"consecutive or leave only one deployment open (active)."
+msgstr ""
+"Einsatzzeiträume dürfen sich nicht überschneiden. Bitte legen Sie Enddaten "
+"so fest, dass die Zeiträume aufeinanderfolgen, oder lassen Sie nur einen "
+"Einsatz offen (aktiv)."
+
+#. [pages.DeviceDetailProfile.deploymentTimelineAriaLabel]
+#. defaultMessage is:
+#. Deployment timeline by site
+#: extracted_strings.json
+msgid "Deployment timeline by site"
+msgstr "Zeitplan für die Einführung nach Standort"
+
+#. [pages.DeviceDetailProfile.deploymentsTitle]
+#. defaultMessage is:
+#. Deployments
+#: extracted_strings.json
+msgid "Deployments"
+msgstr "Bereitstellungen"
+
+#. [pages.DeviceDetailProfile.deploymentReadOnlyDecommissioned]
+#. defaultMessage is:
+#. Deployments cannot be edited while this device is decommissioned.
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "You cannot change the status of a device in days when it was "
+#| "decommissioned"
+msgid "Deployments cannot be edited while this device is decommissioned."
+msgstr ""
+"Sie können den Status eines Geräts in Tagen, in denen es außer Betrieb "
+"genommen wurde, nicht ändern"
+
+#. [pages.DeviceDetailProfile.deploymentNotConsecutive]
+#. defaultMessage is:
+#. Deployments must form a continuous timeline with no gaps.
+#: extracted_strings.json
+msgid "Deployments must form a continuous timeline with no gaps."
+msgstr "Die Bereitstellungen müssen eine lückenlose Zeitachse bilden."
 
 #. [filter.popover.destinationSiteName]
 #. defaultMessage is:
@@ -3255,6 +3449,9 @@ msgstr "Erkannt"
 #. defaultMessage is:
 #. Device
 #. [pages.DailyStatusDialog.deviceLabel]
+#. defaultMessage is:
+#. Device
+#. [pages.DeviceDetailProfile.device]
 #. defaultMessage is:
 #. Device
 #: extracted_strings.json
@@ -3353,6 +3550,15 @@ msgstr "Gerät Land"
 msgid "Device Inactive"
 msgstr "Gerät inaktiv"
 
+#. [device.instrumentList.title]
+#. defaultMessage is:
+#. Device Instruments
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Instruments"
+msgid "Device Instruments"
+msgstr "Instrumente"
+
 #. [filter.btnGroup.deviceIssueType]
 #. defaultMessage is:
 #. Device Issue: {issueTypeId}
@@ -3378,6 +3584,9 @@ msgstr "Gerätehersteller"
 #. defaultMessage is:
 #. Device Name
 #. [pages.workload.name]
+#. defaultMessage is:
+#. Device Name
+#. [pages.DeviceDetailProfile.deviceName]
 #. defaultMessage is:
 #. Device Name
 #: extracted_strings.json
@@ -3490,6 +3699,15 @@ msgstr "Gerät aus Zustand"
 msgid "Device logs"
 msgstr "Geräteprotokolle"
 
+#. [pages.DeviceDetail.deviceNotFound]
+#. defaultMessage is:
+#. Device not found.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Device Country"
+msgid "Device not found."
+msgstr "Gerät Land"
+
 #. [pages.DeviceDetailProfile.deviceType]
 #. defaultMessage is:
 #. Device type
@@ -3503,6 +3721,20 @@ msgstr "Gerätetyp"
 #: extracted_strings.json
 msgid "Device updated successfully"
 msgstr "Details wurden erfolgreich geändert"
+
+#. [pages.DeviceDetailProfile.deviceNameAlreadyExists]
+#. defaultMessage is:
+#. Device with this name already exists
+#: extracted_strings.json
+msgid "Device with this name already exists"
+msgstr "Ein Gerät mit diesem Namen ist bereits vorhanden"
+
+#. [pages.DeviceDetailProfile.deviceShortNameAlreadyExists]
+#. defaultMessage is:
+#. Device with this short name already exists
+#: extracted_strings.json
+msgid "Device with this short name already exists"
+msgstr "Ein Gerät mit diesem Kurznamen existiert bereits"
 
 #. [legends.Unknown.devices]
 #. defaultMessage is:
@@ -3547,6 +3779,15 @@ msgstr "Geräteliste"
 msgid "Devices With Service Interruption"
 msgstr "Geräte mit Betriebsunterbrechung"
 
+#. [pages.DeviceList.mergeDevicesDuplicatedInstruments]
+#. defaultMessage is:
+#. Devices cannot be merged when they contain duplicated instruments.
+#: extracted_strings.json
+msgid "Devices cannot be merged when they contain duplicated instruments."
+msgstr ""
+"Geräte können nicht zusammengeführt werden, wenn sie doppelte Instrumente "
+"enthalten."
+
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
 #. Devices from LGA
@@ -3560,6 +3801,15 @@ msgstr "Geräte von LGA"
 #: extracted_strings.json
 msgid "Devices from Lab"
 msgstr "Geräte aus dem Labor"
+
+#. [pages.DeviceList.devicesMergedSuccessfully]
+#. defaultMessage is:
+#. Devices merged successfully.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Device updated successfully"
+msgid "Devices merged successfully."
+msgstr "Details wurden erfolgreich geändert"
 
 #. [component.Widget.unusedModulesTitle]
 #. defaultMessage is:
@@ -3829,12 +4079,22 @@ msgstr "Ebola"
 #. [pages.SiteDetail.edit]
 #. defaultMessage is:
 #. Edit
+#. [pages.DeviceDetailProfile.editDeployment]
+#. defaultMessage is:
+#. Edit
 #. [contextualMenu.notifications.edit.title]
 #. defaultMessage is:
 #. Edit
 #: extracted_strings.json
 msgid "Edit"
 msgstr "Bearbeiten"
+
+#. [pages.DeviceDetailProfile.editDeploymentTitle]
+#. defaultMessage is:
+#. Edit Deployment
+#: extracted_strings.json
+msgid "Edit Deployment"
+msgstr "Deployment bearbeiten"
 
 #. [pages.NotificationDetail.New.editNotification]
 #. defaultMessage is:
@@ -3971,9 +4231,27 @@ msgstr "Ermöglicht"
 #. [forms.formItem.endDate]
 #. defaultMessage is:
 #. End Date
+#. [pages.DeviceDetailProfile.deploymentEndDate]
+#. defaultMessage is:
+#. End Date
 #: extracted_strings.json
 msgid "End Date"
 msgstr "Enddatum"
+
+#. [pages.DeviceDetailProfile.finishDeploymentEndNotBeforeStart]
+#. defaultMessage is:
+#. End date must be on or after the deployment start date.
+#: extracted_strings.json
+msgid "End date must be on or after the deployment start date."
+msgstr ""
+"Das Enddatum muss am oder nach dem Startdatum der Bereitstellung liegen."
+
+#. [pages.DeviceDetailProfile.editDeploymentEndNotBeforeStart]
+#. defaultMessage is:
+#. End date must be on or after the start date.
+#: extracted_strings.json
+msgid "End date must be on or after the start date."
+msgstr "Das Enddatum muss am oder nach dem Startdatum liegen."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
 #. defaultMessage is:
@@ -4207,6 +4485,15 @@ msgstr "Fehler beim Speichern des neuen Passworts"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Fehler beim Senden der E-Mail zum Zurücksetzen des Kennworts"
+
+#. [pages.DeviceDetailProfile.transferError]
+#. defaultMessage is:
+#. Error transferring instrument.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Error Transferring Result"
+msgid "Error transferring instrument."
+msgstr "Fehler beim Übertragen des Ergebnisses"
 
 #. [pages.consumables.errorUpdatingConsumables]
 #. defaultMessage is:
@@ -4639,6 +4926,29 @@ msgstr ""
 "paar Minuten erneut. Wenn der Fehler weiterhin besteht, wenden Sie sich "
 "bitte an Ihren Administrator, um Unterstützung zu erhalten."
 
+#. [pages.DeviceList.devicesMergeFailed]
+#. defaultMessage is:
+#. Failed to merge devices.
+#: extracted_strings.json
+msgid "Failed to merge devices."
+msgstr "Das Zusammenführen der Geräte ist fehlgeschlagen."
+
+#. [pages.DeviceDetailProfile.deploymentError]
+#. defaultMessage is:
+#. Failed to save deployment changes
+#: extracted_strings.json
+msgid "Failed to save deployment changes"
+msgstr "Das Speichern der Bereitstellungsänderungen ist fehlgeschlagen"
+
+#. [pages.DeviceDetailProfile.instrumentsTransferFailed]
+#. defaultMessage is:
+#. Failed to transfer instruments
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Linked to treatment"
+msgid "Failed to transfer instruments"
+msgstr "In Behandlung"
+
 #. [pages.InventoryReconciliationForm.ErrorMessage]
 #. defaultMessage is:
 #. Failed to update inventory settings. Please try again later.
@@ -4713,6 +5023,16 @@ msgstr "Standort Finden"
 #: extracted_strings.json
 msgid "Finish"
 msgstr "Fertigstellen"
+
+#. [pages.DeviceDetailProfile.finishDeployment]
+#. defaultMessage is:
+#. Finish Deployment
+#. [pages.DeviceDetailProfile.finishDeploymentTitle]
+#. defaultMessage is:
+#. Finish Deployment
+#: extracted_strings.json
+msgid "Finish Deployment"
+msgstr "Bereitstellung abschließen"
 
 #. [pages.TablePaginator.first]
 #. defaultMessage is:
@@ -4956,6 +5276,19 @@ msgstr "Magenspülung"
 #: extracted_strings.json
 msgid "Gender"
 msgstr "Geschlecht"
+
+#. [pages.DeviceDetailProfile.geneXpertInstrumentsTooltip]
+#. defaultMessage is:
+#. GeneXpert 16-module devices report themselves as four separate 4-module instruments. Aspect creates one device per instrument. You can configure the correct device composition here.
+#: extracted_strings.json
+msgid ""
+"GeneXpert 16-module devices report themselves as four separate 4-module "
+"instruments. Aspect creates one device per instrument. You can configure the "
+"correct device composition here."
+msgstr ""
+"GeneXpert-Geräte mit 16 Modulen melden sich als vier separate Geräte mit "
+"jeweils 4 Modulen. Aspect erstellt pro Gerät ein eigenes Gerät. Hier können "
+"Sie die richtige Gerätekonfiguration vornehmen."
 
 #. [legends.Unknown.assayGXCovid19]
 #. defaultMessage is:
@@ -5671,6 +6004,13 @@ msgstr "HIV nicht erkannt"
 msgid "HIV Qual"
 msgstr "HIV Qual"
 
+#. [pages.ReportIndex.eid_testing_window]
+#. defaultMessage is:
+#. HIV Results with EID testing window
+#: extracted_strings.json
+msgid "HIV Results with EID testing window"
+msgstr "HIV-Befunde mit EID-Testfenster"
+
 #. [pages.resultEdit.HIVStatusI18nKey]
 #. defaultMessage is:
 #. HIV Status
@@ -5698,6 +6038,17 @@ msgstr "HIV-infizierte Person, mit TB S/S"
 #: extracted_strings.json
 msgid "HIV not Detected"
 msgstr "HIV nicht erkannt"
+
+#. [pages.ReportIndex.eid_testing_window_description]
+#. defaultMessage is:
+#. HIV-1 Qual EID (Early Infant Diagnosis) aggregated by testing window — Includes results.
+#: extracted_strings.json
+msgid ""
+"HIV-1 Qual EID (Early Infant Diagnosis) aggregated by testing window — "
+"Includes results."
+msgstr ""
+"HIV-1 Qual EID (Früherkennung bei Säuglingen), nach Testfenster "
+"zusammengefasst – einschließlich der Ergebnisse."
 
 #. [filter.DiseaseSelectField.diseaseNameHIVAIDS]
 #. defaultMessage is:
@@ -6030,22 +6381,21 @@ msgstr "Platzhalter einfügen"
 msgid "Instrument Model"
 msgstr "Instrumentenmodell"
 
-#. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
-#. defaultMessage is:
-#. Instrument Replaced
-#. [pages.Notification.type.InstrumentReplaced]
-#. defaultMessage is:
-#. Instrument Replaced
-#: extracted_strings.json
-msgid "Instrument Replaced"
-msgstr "Ersetztes Instrument"
-
 #. [forms.formItem.instrumentSerial]
 #. defaultMessage is:
 #. Instrument Serial
 #: extracted_strings.json
 msgid "Instrument Serial"
 msgstr "Seriennummer"
+
+#. [pages.DeviceDetailProfile.transferSuccess]
+#. defaultMessage is:
+#. Instrument transferred successfully!
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Consumables updated successfully"
+msgid "Instrument transferred successfully!"
+msgstr "Details wurden erfolgreich geändert"
 
 #. [component.Widget.instrumentsConnectedTitle]
 #. defaultMessage is:
@@ -6054,15 +6404,14 @@ msgstr "Seriennummer"
 msgid "Instruments"
 msgstr "Instrumente"
 
-#. [pages.DeviceDetailEdit.instrumentsConnected]
+#. [pages.DeviceDetailProfile.instrumentsTransferredSuccessfully]
 #. defaultMessage is:
-#. Instruments Connected
-#. [pages.deviceDetail.instrumentsConnected]
-#. defaultMessage is:
-#. Instruments Connected
+#. Instruments transferred successfully
 #: extracted_strings.json
-msgid "Instruments Connected"
-msgstr "Angeschlossene Instrumente"
+#, fuzzy
+#| msgid "Consumables updated successfully"
+msgid "Instruments transferred successfully"
+msgstr "Details wurden erfolgreich geändert"
 
 #. [errorResponseMessages.exportSites.GET.403.title]
 #. defaultMessage is:
@@ -6492,6 +6841,15 @@ msgstr "Job-Zuweisung"
 msgid "Job Functions"
 msgstr "Jobfunktionen"
 
+#. [pages.DeviceDetailProfile.joinDevicesButton]
+#. defaultMessage is:
+#. Join Devices
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Devices"
+msgid "Join Devices"
+msgstr "Geräte"
+
 #. [months.jul]
 #. defaultMessage is:
 #. Jul
@@ -6747,6 +7105,15 @@ msgstr "Letztes Ergebnis"
 msgid "Last Result Conducted On"
 msgstr "Letztes Ergebnis durchgeführt am"
 
+#. [device.instrumentList.lastResultDateTooltip]
+#. defaultMessage is:
+#. Last Result Date: {date}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Last calibrated {date}"
+msgid "Last Result Date: {date}"
+msgstr "Zuletzt kalibriert {date}"
+
 #. [pages.DeviceList.lastSeen]
 #. defaultMessage is:
 #. Last Seen
@@ -6930,13 +7297,6 @@ msgstr ""
 "Listet die Anzahl der derzeit aktiven/deaktivierten Module auf sowie die "
 "Anzahl der Module, die in einem durch Filter definierten Zeitraum ersetzt "
 "wurden"
-
-#. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
-#. defaultMessage is:
-#. Loading Devices Failed
-#: extracted_strings.json
-msgid "Loading Devices Failed"
-msgstr "Laden von Geräten"
 
 #. [legends.Unknown.location]
 #. defaultMessage is:
@@ -8049,6 +8409,38 @@ msgstr "Mehr als 550 cp/mL"
 msgid "More filters"
 msgstr "Weitere Filter"
 
+#. [pages.DeviceDetailProfile.moveToExistingDeviceTitle]
+#. defaultMessage is:
+#. Move to Existing Device
+#: extracted_strings.json
+msgid "Move to Existing Device"
+msgstr "Auf vorhandenes Gerät übertragen"
+
+#. [pages.DeviceDetailProfile.moveToNewDeviceTitle]
+#. defaultMessage is:
+#. Move to New Device
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Merge Devices"
+msgid "Move to New Device"
+msgstr "Geräte zusammenführen"
+
+#. [pages.DeviceDetailProfile.moveToNewDevice]
+#. defaultMessage is:
+#. Move to a new Device
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Merge Devices"
+msgid "Move to a new Device"
+msgstr "Geräte zusammenführen"
+
+#. [pages.DeviceDetailProfile.moveToExistingDevice]
+#. defaultMessage is:
+#. Move to an existing Device
+#: extracted_strings.json
+msgid "Move to an existing Device"
+msgstr "Auf ein vorhandenes Gerät übertragen"
+
 #. [form.error.mustBeANumber]
 #. defaultMessage is:
 #. Must be a number
@@ -8547,6 +8939,22 @@ msgstr "Durchgeführte Tests"
 msgid "No contacts assigned to site"
 msgstr "Keine Kontakte dem Standort zugeordnet"
 
+#. [pages.DeviceDetailProfile.noDeployments]
+#. defaultMessage is:
+#. No deployments
+#: extracted_strings.json
+msgid "No deployments"
+msgstr "Keine Bereitstellungen"
+
+#. [device.instrumentList.noInstruments]
+#. defaultMessage is:
+#. No instruments
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Instruments"
+msgid "No instruments"
+msgstr "Instrumente"
+
 #. [pages.NewInventoryDialogForm.quantityMissingToRemove]
 #. defaultMessage is:
 #. No inventory to remove
@@ -8594,6 +9002,15 @@ msgstr "Keine Optionen"
 #. No result
 #: extracted_strings.json
 msgid "No result"
+msgstr "Kein Ergebnis"
+
+#. [device.instrumentList.noResult]
+#. defaultMessage is:
+#. No results
+#: extracted_strings.json
+#, fuzzy
+#| msgid "No result"
+msgid "No results"
 msgstr "Kein Ergebnis"
 
 #. [shared.EmptyList.noResultsTitle]
@@ -9129,6 +9546,20 @@ msgstr "Laden von Ergebnis-Behandlungszuständen fehlgeschlagen"
 msgid "Only Results with unreconciled inventories"
 msgstr "Nur Ergebnisse mit unabgestimmten Beständen"
 
+#. [pages.DeviceList.mergeDevicesDifferentSites]
+#. defaultMessage is:
+#. Only devices from the same site can be merged.
+#: extracted_strings.json
+msgid "Only devices from the same site can be merged."
+msgstr "Es können nur Geräte vom selben Standort zusammengeführt werden."
+
+#. [pages.DeviceList.mergeDevicesDifferentDeviceTypes]
+#. defaultMessage is:
+#. Only devices of the same type can be merged.
+#: extracted_strings.json
+msgid "Only devices of the same type can be merged."
+msgstr "Es können nur Geräte desselben Typs zusammengeführt werden."
+
 #. [filter.btnGroup.hasStock]
 #. defaultMessage is:
 #. Only lots with stock
@@ -9210,6 +9641,13 @@ msgstr "Andere"
 #: extracted_strings.json
 msgid "Other Referring Facility"
 msgstr "Andere einweisende Einrichtung"
+
+#. [pages.DeviceDetailProfile.otherInstrumentsDetected]
+#. defaultMessage is:
+#. Other instruments detected ({count})
+#: extracted_strings.json
+msgid "Other instruments detected ({count})"
+msgstr "Weitere erkannte Instrumente ({count})"
 
 #. [pages.resultEdit.Others_Extra_Pulmonary]
 #. defaultMessage is:
@@ -9401,6 +9839,13 @@ msgstr "Rückführung der Patienten"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "Patienten-/Fall-ID"
+
+#. [pages.shared.deviceApproval.pendingDeployment]
+#. defaultMessage is:
+#. Pending Deployment
+#: extracted_strings.json
+msgid "Pending Deployment"
+msgstr "Bereitstellung steht noch aus"
 
 #. [page.contacts.person.pendingChanges]
 #. defaultMessage is:
@@ -10107,13 +10552,6 @@ msgstr "Provinz/Region"
 msgid "Provinces annual utilization rates"
 msgstr "Jährliche Nutzungsraten der Provinzen"
 
-#. [pages.shared.deviceApproval.provisioned]
-#. defaultMessage is:
-#. Provisioned
-#: extracted_strings.json
-msgid "Provisioned"
-msgstr "Bereitgestellt"
-
 #. [pages.resultEdit.pulmonary]
 #. defaultMessage is:
 #. Pulmonary
@@ -10371,6 +10809,18 @@ msgstr "RRTB-Diagnose"
 #: extracted_strings.json
 msgid "RRTB Diagnosis Trends"
 msgstr "RRTB-Diagnosetrends"
+
+#. [pages.DeviceDetail.reactivateDevice]
+#. defaultMessage is:
+#. Reactivate device
+#. [pages.DeviceDetail.reactivateConfirmTitle]
+#. defaultMessage is:
+#. Reactivate device
+#: extracted_strings.json
+#, fuzzy
+#| msgid "percentage of active devices"
+msgid "Reactivate device"
+msgstr "Anteil der aktiven Geräte"
 
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
@@ -11524,6 +11974,9 @@ msgstr "Samstag"
 #. [pages.DeviceDetailEdit.save]
 #. defaultMessage is:
 #. Save
+#. [pages.DeviceDetailProfile.saveDeployments]
+#. defaultMessage is:
+#. Save
 #: extracted_strings.json
 msgid "Save"
 msgstr "Speichern"
@@ -11936,6 +12389,9 @@ msgid "Serial No"
 msgstr "Seriennummer"
 
 #. [pages.DeviceDetailEdit.serial]
+#. defaultMessage is:
+#. Serial Number
+#. [device.instrumentList.instrumentSerial]
 #. defaultMessage is:
 #. Serial Number
 #: extracted_strings.json
@@ -12378,6 +12834,9 @@ msgstr "Ausloggen"
 #. [pages.DeviceDetailProfile.site]
 #. defaultMessage is:
 #. Site
+#. [pages.DeviceDetailProfile.deploymentSite]
+#. defaultMessage is:
+#. Site
 #. [pages.XDR.site]
 #. defaultMessage is:
 #. Site
@@ -12685,6 +13144,9 @@ msgid "Sputum"
 msgstr "Sputum"
 
 #. [forms.formItem.startDate]
+#. defaultMessage is:
+#. Start Date
+#. [pages.DeviceDetailProfile.deploymentStartDate]
 #. defaultMessage is:
 #. Start Date
 #: extracted_strings.json
@@ -13147,6 +13609,13 @@ msgstr "Ziel"
 msgid "Target device"
 msgstr "Zielgerät"
 
+#. [pages.DeviceDetailProfile.targetDeviceIsSourceDevice]
+#. defaultMessage is:
+#. Target device cannot be the same as the source device
+#: extracted_strings.json
+msgid "Target device cannot be the same as the source device"
+msgstr "Das Zielgerät darf nicht mit dem Quellgerät identisch sein"
+
 #. [header.link.taskList.title]
 #. defaultMessage is:
 #. Task List
@@ -13424,22 +13893,6 @@ msgstr ""
 "Problem des Modultauschs tritt auf, wenn zwei aufeinanderfolgende Ergebnisse "
 "im selben Steckplatz des Geräts eine unterschiedliche Modulseriennummer haben"
 
-#. [component.Widget.instrumentsReplacedDescription]
-#. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
-#: extracted_strings.json
-msgid ""
-"The average number of days between when an instrument serial last reported "
-"from a GeneXpert device and a new instrument serial reporting. An Instrument "
-"is marked as replaced when two consecutive results performed in the same "
-"device, have a different Instrument serial number"
-msgstr ""
-"Die durchschnittliche Anzahl von Tagen zwischen der letzten Meldung einer "
-"Instrumentenserie von einem Gerät und der Meldung einer neuen "
-"Instrumentenserie. Ein Instrument wird als ersetzt markiert, wenn zwei "
-"aufeinanderfolgende Ergebnisse, die mit demselben Gerät durchgeführt wurden, "
-"eine unterschiedliche Instrumentenseriennummer aufweisen"
-
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
 #. The average number of email recipients per positive result.
@@ -13468,6 +13921,24 @@ msgid "The average uptime of the Aspect server this month."
 msgstr ""
 "Die durchschnittliche Verfügbarkeit des Aspect-Servers in diesem Monat."
 
+#. [pages.DeviceDetailProfile.deploymentAddClosesActive]
+#. defaultMessage is:
+#. The current {site} deployment will end on {date}.
+#: extracted_strings.json
+msgid "The current {site} deployment will end on {date}."
+msgstr "Die aktuelle {site} Bereitstellung endet am {date}."
+
+#. [pages.DeviceDetailProfile.deploymentStartNotInFuture]
+#. defaultMessage is:
+#. The deployment start date cannot be in the future. Please choose today or an earlier date.
+#: extracted_strings.json
+msgid ""
+"The deployment start date cannot be in the future. Please choose today or an "
+"earlier date."
+msgstr ""
+"Das Startdatum der Bereitstellung darf nicht in der Zukunft liegen. Bitte "
+"wählen Sie das heutige Datum oder ein früheres Datum."
+
 #. [legends.Unknown.hover]
 #. defaultMessage is:
 #. The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.
@@ -13492,6 +13963,17 @@ msgstr ""
 "Die Fehlerrate wird berechnet, indem alle Fehler in den im Monat "
 "durchgeführten Tests gezählt und diese Zahl durch die Gesamtzahl der von "
 "allen Geräten durchgeführten Tests dividiert wird."
+
+#. [pages.DeviceDetailProfile.deploymentNewStartAfterCurrentEnd]
+#. defaultMessage is:
+#. The new deployment must start after the current deployment ends. Please choose a start date on or after {minStartDate}.
+#: extracted_strings.json
+msgid ""
+"The new deployment must start after the current deployment ends. Please "
+"choose a start date on or after {minStartDate}."
+msgstr ""
+"Die neue Bereitstellung muss beginnen, nachdem die aktuelle Bereitstellung "
+"beendet ist. Bitte wählen Sie ein Startdatum am oder nach dem {minStartDate}."
 
 #. [pages.Notifications.notificationNameRequired]
 #. defaultMessage is:
@@ -13764,6 +14246,13 @@ msgid "The percentage of reported results that were reported via SMS."
 msgstr ""
 "Der Prozentsatz der gemeldeten Ergebnisse, die per SMS gemeldet wurden."
 
+#. [pages.DeviceDetailProfile.deploymentEditAdjustsPrev]
+#. defaultMessage is:
+#. The previous {site} deployment will end on {date}.
+#: extracted_strings.json
+msgid "The previous {site} deployment will end on {date}."
+msgstr "Die vorherige {site} Bereitstellung endet am {date}."
+
 #. [pages.InventoryItemsList.projectedWasteDescription]
 #. defaultMessage is:
 #. The projected stock waste, assuming that the cartridges to be consumed are always the ones closer to their expiration
@@ -13856,6 +14345,14 @@ msgstr ""
 "Lagerbestandsproblemen während des Monats gezählt und durch alle aktiven "
 "Websites dividiert werden."
 
+#. [pages.DeviceList.mergeDevicesTargetIsSourceDevice]
+#. defaultMessage is:
+#. The target device cannot also be selected as a source device.
+#: extracted_strings.json
+msgid "The target device cannot also be selected as a source device."
+msgstr ""
+"Das Zielgerät kann nicht gleichzeitig als Quellgerät ausgewählt werden."
+
 #. [component.Widget.dashboardWidgetSmsSentDescription]
 #. defaultMessage is:
 #. The total number of text messages sent in the month
@@ -13875,6 +14372,22 @@ msgstr ""
 "Die Auslastungsrate wird berechnet, indem alle im Monat durchgeführten Tests "
 "gezählt und diese Zahl durch die Gesamtkapazität aller Geräte dividiert "
 "wird. Diese Berechnung schließt Wochenenden aus."
+
+#. [pages.DeviceDetailProfile.deploymentDeleteFirst]
+#. defaultMessage is:
+#. The {nextSite} deployment will become the first (covering from the beginning).
+#: extracted_strings.json
+msgid ""
+"The {nextSite} deployment will become the first (covering from the "
+"beginning)."
+msgstr "Die {nextSite}-Bereitstellung wird die erste sein (ab dem Anfang)."
+
+#. [pages.DeviceDetailProfile.deploymentDeleteLast]
+#. defaultMessage is:
+#. The {prevSite} deployment will become the active one.
+#: extracted_strings.json
+msgid "The {prevSite} deployment will become the active one."
+msgstr "Die {prevSite}-Bereitstellung wird zur aktiven Bereitstellung."
 
 #. [widgetAlerts.between]
 #. defaultMessage is:
@@ -13919,6 +14432,17 @@ msgid "There are existing ones with the same name or abbreviation"
 msgstr ""
 "Es gibt bereits welche mit dem gleichen Namen oder der gleichen Abkürzung"
 
+#. [pages.DeviceDetailProfile.joinDevicesMessage]
+#. defaultMessage is:
+#. There are more instruments using the same connection, are they a single device?
+#: extracted_strings.json
+msgid ""
+"There are more instruments using the same connection, are they a single "
+"device?"
+msgstr ""
+"Es gibt weitere Geräte, die denselben Anschluss nutzen – handelt es sich "
+"dabei um ein einziges Gerät?"
+
 #. [errorResponseMessages.common.conflict.resolution]
 #. defaultMessage is:
 #. There is a conflict between this request and the existent data in the system. Please review, try again, or contact your administrator for help.
@@ -13930,6 +14454,17 @@ msgstr ""
 "Es gibt einen Konflikt zwischen dieser Anfrage und den vorhandenen Daten im "
 "System. Bitte überprüfen Sie die Anfrage, versuchen Sie es erneut oder "
 "wenden Sie sich an Ihren Administrator, um Hilfe zu erhalten."
+
+#. [pages.DeviceDetailProfile.editDeploymentActiveWarning]
+#. defaultMessage is:
+#. There is already an active deployment. Please set an end date or finish the other deployment first.
+#: extracted_strings.json
+msgid ""
+"There is already an active deployment. Please set an end date or finish the "
+"other deployment first."
+msgstr ""
+"Es ist bereits eine aktive Bereitstellung vorhanden. Bitte legen Sie ein "
+"Enddatum fest oder schließen Sie zuerst die andere Bereitstellung ab."
 
 #. [errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message]
 #. defaultMessage is:
@@ -14000,6 +14535,46 @@ msgstr "Dieser Kontakt ist zugewiesen an"
 #: extracted_strings.json
 msgid "This contact is assigned to:"
 msgstr "Dieser Kontakt ist zugewiesen an:"
+
+#. [pages.DeviceDetailProfile.editDeploymentOverlapWarning]
+#. defaultMessage is:
+#. This deployment overlaps with another deployment. The overlapping deployment will be adjusted.
+#: extracted_strings.json
+msgid ""
+"This deployment overlaps with another deployment. The overlapping deployment "
+"will be adjusted."
+msgstr ""
+"Diese Bereitstellung überschneidet sich mit einer anderen Bereitstellung. "
+"Die sich überschneidende Bereitstellung wird angepasst."
+
+#. [pages.DeviceDetailProfile.fillGapDeploymentDescription]
+#. defaultMessage is:
+#. This deployment will fill the period from {start} to {end}. Select a site.
+#: extracted_strings.json
+msgid ""
+"This deployment will fill the period from {start} to {end}. Select a site."
+msgstr ""
+"Diese Bereitstellung deckt den Zeitraum von {start} bis {end} ab. Wählen Sie "
+"einen Standort aus."
+
+#. [pages.DeviceDetailProfile.deviceUndeployed]
+#. defaultMessage is:
+#. This device is currently undeployed. Click "Add Deployment" to assign it to a site.
+#: extracted_strings.json
+msgid ""
+"This device is currently undeployed. Click \"Add Deployment\" to assign it "
+"to a site."
+msgstr ""
+"Dieses Gerät ist derzeit nicht bereitgestellt. Klicken Sie auf "
+"„Bereitstellung hinzufügen“, um es einem Standort zuzuweisen."
+
+#. [pages.DeviceDetailProfile.duplicatedInstrumentTooltip]
+#. defaultMessage is:
+#. This instrument cannot be transferred because it is duplicated.
+#: extracted_strings.json
+msgid "This instrument cannot be transferred because it is duplicated."
+msgstr ""
+"Dieses Dokument kann nicht übertragen werden, da es doppelt vorhanden ist."
 
 #. [pages.InventoryItemsList.inventoryOnHand.mandatoryNote]
 #. defaultMessage is:
@@ -14166,6 +14741,18 @@ msgstr ""
 "Zeitraums, aufgeschlüsselt nach Monaten (standardmäßig die letzten 12 "
 "Monate)."
 
+#. [pages.DeviceDetailProfile.deploymentSiteDeleted]
+#. defaultMessage is:
+#. This site has been deleted. If you change this deployment to another site, the related deleted results will be restored.
+#: extracted_strings.json
+msgid ""
+"This site has been deleted. If you change this deployment to another site, "
+"the related deleted results will be restored."
+msgstr ""
+"Diese Website wurde gelöscht. Wenn Sie diese Bereitstellung auf eine andere "
+"Website umstellen, werden die entsprechenden gelöschten Ergebnisse "
+"wiederhergestellt."
+
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
 #. This username is unavailable
@@ -14194,6 +14781,13 @@ msgid ""
 msgstr ""
 "Dadurch wird dieser Benutzer wieder aktiviert und kann sich erneut anmelden. "
 "Möchten Sie fortfahren?"
+
+#. [pages.DeviceDetailProfile.deploymentDeleteOnly]
+#. defaultMessage is:
+#. This will remove all deployments from this device.
+#: extracted_strings.json
+msgid "This will remove all deployments from this device."
+msgstr "Dadurch werden alle Bereitstellungen von diesem Gerät entfernt."
 
 #. [pages.InventoryAdjustmentDialogForm.resetWarning]
 #. defaultMessage is:
@@ -14565,6 +15159,15 @@ msgstr "Übertrage {consumableName}"
 msgid "Transferring Inventory Failed"
 msgstr "Übertragen von Inventar fehlgeschlagen"
 
+#. [pages.DeviceDetailProfile.transferLoading]
+#. defaultMessage is:
+#. Transferring...
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Transfer"
+msgid "Transferring..."
+msgstr "Transfer"
+
 #. [browsePage.browseDropdown.inventoryTransfers]
 #. defaultMessage is:
 #. Transfers
@@ -14762,6 +15365,23 @@ msgstr "Bitte geben Sie ein Verbrauchsmaterial an"
 #: extracted_strings.json
 msgid "Unable to update some sites"
 msgstr "Passwort kann nicht zurückgesetzt werden"
+
+#. [pages.DeviceDetailProfile.unassignedPeriod]
+#. defaultMessage is:
+#. Unassigned period: {start} to {end}
+#: extracted_strings.json
+msgid "Unassigned period: {start} to {end}"
+msgstr "Nicht zugewiesener Zeitraum: {start} bis {end}"
+
+#. [pages.DeviceDetailProfile.undeployed]
+#. defaultMessage is:
+#. Undeployed
+#. [pages.DeviceDetailProfile.undeployedPeriod]
+#. defaultMessage is:
+#. Undeployed
+#: extracted_strings.json
+msgid "Undeployed"
+msgstr "Nicht bereitgestellt"
 
 #. [pages.Consumable.New.unit]
 #. defaultMessage is:
@@ -15489,6 +16109,31 @@ msgstr ""
 "Sie können den Status eines Geräts nicht auf \"Reported Active\" für Tage "
 "ändern, an denen es als \"No Tests Performed\" gemeldet wurde"
 
+#. [pages.DeviceDetailProfile.sitePermissionDenied]
+#. defaultMessage is:
+#. You do not have permission to create a device in this site
+#: extracted_strings.json
+msgid "You do not have permission to create a device in this site"
+msgstr "Sie haben keine Berechtigung, auf dieser Website ein Gerät anzulegen"
+
+#. [pages.DeviceList.mergeDevicesPermissionDenied]
+#. defaultMessage is:
+#. You don't have permission to merge one or more of the selected devices.
+#: extracted_strings.json
+msgid "You don't have permission to merge one or more of the selected devices."
+msgstr ""
+"Sie haben keine Berechtigung, eines oder mehrere der ausgewählten Geräte "
+"zusammenzuführen."
+
+#. [pages.DeviceDetailProfile.deploymentSaveRequired]
+#. defaultMessage is:
+#. You have unsaved changes. Click "Save" to apply them.
+#: extracted_strings.json
+msgid "You have unsaved changes. Click \"Save\" to apply them."
+msgstr ""
+"Es sind noch nicht gespeicherte Änderungen vorhanden. Klicken Sie auf "
+"„Speichern“, um sie zu übernehmen."
+
 #. [pages.ResetPassword.passwordUpdatedMessage]
 #. defaultMessage is:
 #. You may now login with your new login details.
@@ -16142,6 +16787,23 @@ msgstr "{count} von {total}"
 msgid "{count} of {total} days"
 msgstr "{count} von {total} Tagen"
 
+#. [pages.DeviceDetailProfile.resultsWillLoseSite]
+#. defaultMessage is:
+#. {count} results between {start} and {end} will lose their site assignment
+#: extracted_strings.json
+msgid ""
+"{count} results between {start} and {end} will lose their site assignment"
+msgstr ""
+"{count} Ergebnisse zwischen {start} und {end} verlieren ihre Zuordnung zu "
+"einer Website"
+
+#. [pages.DeviceDetailProfile.resultsWillBeMoved]
+#. defaultMessage is:
+#. {count} results will be moved to {siteName}
+#: extracted_strings.json
+msgid "{count} results will be moved to {siteName}"
+msgstr "{count} Ergebnisse werden nach {siteName} verschoben"
+
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithoutStatus]
 #. defaultMessage is:
 #. {daysInSameStatus, plural, one {# day} other {# days} } since last update
@@ -16281,6 +16943,43 @@ msgstr "{unit} seit letzter Woche"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} gesamt kalibrierungen"
+
+#. [pages.DeviceDetailProfile.deploymentFromBeginning]
+#. defaultMessage is:
+#. —
+#: extracted_strings.json
+msgid "—"
+msgstr "—"
+
+#~ msgid "Assigned"
+#~ msgstr "Zugewiesen"
+
+#~ msgid "Average Days for Instrument Replacement."
+#~ msgstr "Durchschnittliche Tage für den Austausch von Instrumenten."
+
+#~ msgid "Instrument Replaced"
+#~ msgstr "Ersetztes Instrument"
+
+#~ msgid "Instruments Connected"
+#~ msgstr "Angeschlossene Instrumente"
+
+#~ msgid "Loading Devices Failed"
+#~ msgstr "Laden von Geräten"
+
+#~ msgid "Provisioned"
+#~ msgstr "Bereitgestellt"
+
+#~ msgid ""
+#~ "The average number of days between when an instrument serial last "
+#~ "reported from a GeneXpert device and a new instrument serial reporting. "
+#~ "An Instrument is marked as replaced when two consecutive results "
+#~ "performed in the same device, have a different Instrument serial number"
+#~ msgstr ""
+#~ "Die durchschnittliche Anzahl von Tagen zwischen der letzten Meldung einer "
+#~ "Instrumentenserie von einem Gerät und der Meldung einer neuen "
+#~ "Instrumentenserie. Ein Instrument wird als ersetzt markiert, wenn zwei "
+#~ "aufeinanderfolgende Ergebnisse, die mit demselben Gerät durchgeführt "
+#~ "wurden, eine unterschiedliche Instrumentenseriennummer aufweisen"
 
 #~ msgid "MTB Error Rif Error"
 #~ msgstr "MTB-Fehler Rif-Fehler"
@@ -16799,9 +17498,6 @@ msgstr "{unit} gesamt kalibrierungen"
 #~ msgid "Error Loading All Sites"
 #~ msgstr "Fehler beim Laden aller Standorte"
 
-#~ msgid "Error Transferring Result"
-#~ msgstr "Fehler beim Übertragen des Ergebnisses"
-
 #~ msgid ""
 #~ "{value} ({records}/{total, plural, one {# result} other {# results} })"
 #~ msgstr ""
@@ -16879,9 +17575,6 @@ msgstr "{unit} gesamt kalibrierungen"
 
 #~ msgid "Lab:"
 #~ msgstr "Labor:"
-
-#~ msgid "Linked to treatment"
-#~ msgstr "In Behandlung"
 
 #~ msgid "Loading Device Approval Statuses Failed"
 #~ msgstr "Laden von Gerätefreigabestatus fehlgeschlagen"
@@ -17078,9 +17771,6 @@ msgstr "{unit} gesamt kalibrierungen"
 
 #~ msgid "Invalid Password"
 #~ msgstr "Ungültiges Kennwort"
-
-#~ msgid "Last calibrated {date}"
-#~ msgstr "Zuletzt kalibriert {date}"
 
 #~ msgid "Loading Account Details Failed"
 #~ msgstr "Laden der Kontodaten fehlgeschlagen"
@@ -17282,9 +17972,6 @@ msgstr "{unit} gesamt kalibrierungen"
 #~ msgid "Demo Device"
 #~ msgstr "Demo-Gerät"
 
-#~ msgid "From this device"
-#~ msgstr "Von diesem Gerät"
-
 #~ msgid "Ok"
 #~ msgstr "Ok"
 
@@ -17310,9 +17997,6 @@ msgstr "{unit} gesamt kalibrierungen"
 
 #~ msgid "All device calibrations up to date"
 #~ msgstr "Alle Gerätekalibrierungen auf dem neuesten Stand"
-
-#~ msgid "Assay Name"
-#~ msgstr "Assay Name"
 
 #~ msgid "Counting only {ASSAY} assays {RESULT}{DATE}."
 #~ msgstr "Zählen nur {ASSAY} Assays {RESULT}{DATE}."
