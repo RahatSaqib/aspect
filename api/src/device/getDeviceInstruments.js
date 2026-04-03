@@ -41,7 +41,6 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
       knex.raw('json_arrayagg(modules) as modules')
     )
 
-  console.log('\x1b[1;36m', '🚀 ~ getDeviceInstrumentsData ~ query:', query.toString())
   return query
 }
 
