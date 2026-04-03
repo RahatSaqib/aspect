@@ -67,42 +67,70 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
   const identifyDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'identifyDevice')
   context.device = await identifyDevice(payload, partnerId)
 
-  const response = await knex.transaction(async trx => {
-    context.knex = trx
+  const { shouldTriggerResultNotification, isResultUpdated, resultId, moduleSerialForIssueResolution } =
+    await knex.transaction(async trx => {
+      context.knex = trx
 
-    // If device not found, try to create it
-    if (!context.device) {
-      context.device = await createDevice(context)
+      // If device not found, try to create it
+      if (!context.device) {
+        context.device = await createDevice(context)
 
-      const postProcessCreateDevice = await loadPlugin(
-        partnerPluginName,
-        deviceTypePluginName,
-        'postProcessCreateDevice'
-      )
-      await postProcessCreateDevice(context)
-    }
+        const postProcessCreateDevice = await loadPlugin(
+          partnerPluginName,
+          deviceTypePluginName,
+          'postProcessCreateDevice'
+        )
+        await postProcessCreateDevice(context)
+      }
 
-    // TODO: this should be only in case of existing device, and for the new one maybe just send the event deviceSeen
-    // Update lastSeenOn and lastPingOn even if handler fails
-    await updateDeviceTimestamps(context, remoteAddress)
+      // TODO: this should be only in case of existing device, and for the new one maybe just send the event deviceSeen
+      // Update lastSeenOn and lastPingOn even if handler fails
+      await updateDeviceTimestamps(context, remoteAddress)
 
-    const { aspectResultId } = await mergeResultWithContext(context)
+      const {
+        shouldTriggerResultNotification: shouldTriggerNotification,
+        isResultUpdated: isUpdated,
+        resultId,
+        moduleSerial,
+      } = await mergeResultWithContext(context)
 
-    // Update DeviceLog
-    await trx('DeviceLog').where('id', deviceLogId).update({
-      deviceConfigurationUpdated: true,
-      resultId: aspectResultId,
-      processed: true,
+      // Update DeviceLog
+      await trx('DeviceLog').where('id', deviceLogId).update({
+        deviceConfigurationUpdated: true,
+        resultId,
+        processed: true,
+      })
+
+      return {
+        shouldTriggerResultNotification: shouldTriggerNotification,
+        isResultUpdated: isUpdated,
+        resultId,
+        moduleSerialForIssueResolution: moduleSerial,
+      }
     })
-
-    return { aspectResultId, device: { id: context.device.id } }
-  })
 
   // Dispatch after transaction commits so consumers see the result row
   messageContext.bindActionCreators({ resultLogged })
-  messageContext.resultLogged(response.aspectResultId, deviceLogId, null, { isResultUpdated: true })
+  messageContext.resultLogged(resultId, deviceLogId, null, { isResultUpdated: true })
 
-  return response
+  if (shouldTriggerResultNotification) {
+    context.messageContext.bindActionCreators({ resultReadyForNotification })
+    context.messageContext.resultReadyForNotification(resultId, isResultUpdated)
+  }
+  if (moduleSerialForIssueResolution && context.device.id) {
+    const openModuleDisabledIssuesByModuleSerial = await findOpenModuleDisabledIssues(
+      knex,
+      context.device.id,
+      moduleSerialForIssueResolution
+    )
+
+    if (openModuleDisabledIssuesByModuleSerial.length > 0) {
+      context.messageContext.bindActionCreators({ resolveIssues })
+      openModuleDisabledIssuesByModuleSerial.map(issue => context.messageContext.resolveIssues(issue.id))
+    }
+  }
+
+  return { aspectResultId: resultId, device: { id: context.device.id } }
 }
 
 async function updateDeviceTimestamps(context, remoteAddress) {
@@ -168,26 +196,11 @@ async function mergeResultWithContext(context) {
   // const result = plainToDeepObjectResult(plainResult)
   // const previousResult = plainToDeepObjectResult(plainPreviousResult)
 
-  if (shouldTriggerResultNotification) {
-    context.messageContext.bindActionCreators({ resultReadyForNotification })
-    const isResultUpdated = !!plainPreviousResult
-    context.messageContext.resultReadyForNotification(plainResult.id, isResultUpdated)
-  }
-  if (plainResult?.moduleSerial && plainResult?.deviceId) {
-    const openModuleDisabledIssuesByModuleSerial = await findOpenModuleDisabledIssues(
-      knex,
-      plainResult.deviceId,
-      plainResult.moduleSerial
-    )
-
-    if (openModuleDisabledIssuesByModuleSerial.length > 0) {
-      context.messageContext.bindActionCreators({ resolveIssues })
-      openModuleDisabledIssuesByModuleSerial.map(issue => context.messageContext.resolveIssues(issue.id))
-    }
-  }
-
   return {
-    aspectResultId: plainResult.id,
+    shouldTriggerResultNotification,
+    isResultUpdated: !!plainPreviousResult,
+    resultId: plainResult.id,
+    moduleSerial: plainResult.moduleSerial,
   }
 }
 

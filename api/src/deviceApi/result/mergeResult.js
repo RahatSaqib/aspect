@@ -113,8 +113,6 @@ async function mergeResult(context) {
     instrumentSerial: _.get(payload, 'instrument.serial', _.get(existingResult, 'instrumentSerial', null)),
     moduleSerial: _.get(payload, 'instrument.module.serial', _.get(existingResult, 'moduleSerial', null)),
     moduleName: _.get(payload, 'instrument.module.name', _.get(existingResult, 'moduleName', null)),
-    oemData: _.has(payload, 'oemData') ? String(payload.oemData) : _.get(existingResult, 'oemData'),
-    rawData: _.has(payload, 'rawData') ? String(payload.rawData) : _.get(existingResult, 'rawData'),
     researchId: _.get(payload, 'research.id', _.get(existingResult, 'researchId', null)),
     patientData,
     senderVersion: _.get(payload, 'sender.version', _.get(existingResult, 'senderVersion', null)),
