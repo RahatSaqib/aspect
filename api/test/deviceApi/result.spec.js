@@ -218,25 +218,6 @@ describe('Device Result API routes', () => {
                 address: '123 Main Street',
                 phone: '856-7909',
               },
-              oemData: JSON.stringify({
-                maker: 'XYZ',
-                model: '876A',
-                serial: '123-456-789',
-              }),
-              rawData: JSON.stringify({
-                startedOn: '2013-05-13',
-                endedOn: '2013-12-01T01:30:00.000Z',
-                patientData: {
-                  id: 'P-333',
-                  name: 'Bob',
-                  surname: 'Hope',
-                  gender: 'M',
-                  age: 72,
-                  dateOfBirth: '1903-05-29',
-                  address: '123 Main Street',
-                  phone: '856-7909',
-                },
-              }),
               sender: {
                 version: '99-1',
                 operator: 'Bob O',
@@ -302,25 +283,6 @@ describe('Device Result API routes', () => {
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
           phone: '+18567909',
-        })
-        assert.deepEqual(JSON.parse(result2.oemData), {
-          maker: 'XYZ',
-          model: '876A',
-          serial: '123-456-789',
-        })
-        assert.deepEqual(JSON.parse(result2.rawData), {
-          startedOn: '2013-05-13',
-          endedOn: '2013-12-01T01:30:00.000Z',
-          patientData: {
-            id: 'P-333',
-            name: 'Bob',
-            surname: 'Hope',
-            gender: 'M',
-            age: 72,
-            dateOfBirth: '1903-05-29',
-            address: '123 Main Street',
-            phone: '856-7909',
-          },
         })
         assert.equal(result2.senderVersion, '99-1')
         assert.equal(result2.senderOperator, 'Bob O')
@@ -407,25 +369,6 @@ describe('Device Result API routes', () => {
               address: '123 Main Street',
               phone: '856-7909',
             },
-            oemData: JSON.stringify({
-              maker: 'XYZ',
-              model: '876A',
-              serial: '123-456-789',
-            }),
-            rawData: JSON.stringify({
-              startedOn: '2013-05-13',
-              endedOn: '2013-12-01T01:30:00.000Z',
-              patientData: {
-                id: 'P-333',
-                name: 'Bob',
-                surname: 'Hope',
-                gender: 'M',
-                age: 72,
-                dateOfBirth: '1903-05-29',
-                address: '123 Main Street',
-                phone: '856-7909',
-              },
-            }),
             sender: {
               version: '99-1',
               operator: 'Bob O',
@@ -1082,25 +1025,6 @@ describe('Device Result API routes', () => {
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
           phone: '+18567909',
-        })
-        assert.deepEqual(JSON.parse(result2.oemData), {
-          maker: 'ABC',
-          model: '123A',
-          serial: '123-456-789',
-        })
-        assert.deepEqual(JSON.parse(result2.rawData), {
-          startedOn: '2013-05-13',
-          endedOn: '2013-12-01T01:30:00.000Z',
-          patientData: {
-            id: 'P-333',
-            name: 'Bob',
-            surname: 'Hope',
-            gender: 'M',
-            age: 72,
-            dateOfBirth: '1903-05-29',
-            address: '123 Main Street',
-            phone: '856-7909',
-          },
         })
         assert.equal(result2.senderVersion, '99-1')
         assert.equal(result2.senderOperator, 'Bob O')
