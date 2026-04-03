@@ -162,7 +162,7 @@ async function mergeResultWithContext(context) {
 
   if (context.ignoreResultPayload) {
     return {
-      aspectResultId: context.existingResultId,
+      resultId: context.existingResultId,
     }
   }
 
