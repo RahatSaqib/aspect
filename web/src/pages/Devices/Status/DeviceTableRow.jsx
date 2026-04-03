@@ -1,4 +1,5 @@
 import React from 'react'
+import { Tooltip } from '@mui/material'
 import { useIntl } from 'react-intl'
 import ColoredNumber from '../../../oldComponents/shared/ColoredNumber'
 import stylesShared from '../../../oldComponents/shared/DataTableRow.module.css'
@@ -17,10 +18,12 @@ const Rate = ({ it, messageId, threshold }) => {
       {it.total === 0 ? (
         formatMessage(messages.notAvailable)
       ) : (
-        <ColoredNumber number={it.rate} formatNumberStyle="percent" error={threshold && it.rate > threshold} />
+        <Tooltip title={formatMessage(messageId, it)}>
+          <span style={{ display: 'inline-block' }}>
+            <ColoredNumber number={it.rate} formatNumberStyle="percent" error={threshold && it.rate > threshold} />
+          </span>
+        </Tooltip>
       )}
-      <br />
-      <span className={styles.Rate__hover}>{formatMessage(messageId, it)}</span>
     </span>
   )
 }

@@ -47,7 +47,6 @@ async function seed(knex) {
       countries: [geography.countries.find(country => country.abbreviation === 'CM')],
     },
     'CM',
-    'fkhrolf5kovl5ynya44h',
     null,
     {
       fixtures: {

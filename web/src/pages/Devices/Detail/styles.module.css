@@ -1,3 +1,28 @@
+/* Responsive grid for device summary */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px 32px;
+  align-items: start;
+}
+
+@media (max-width: 1600px) {
+  .summaryGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+}
 @import '../../../theme/variables.css';
 
 .Section {
@@ -109,6 +134,10 @@
   margin-left: 20px;
 }
 
+.deploymentTimeline {
+  /* Graphical deployment timeline above the table; hidden on mobile via conditional render */
+}
+
 .ResultDataTable,
 .DeviceOperationDataTable {
   width: 100%;
@@ -133,4 +162,17 @@
   font-size: 1rem;
   margin: 2px 0 2px 3px;
   color: var(--aspect-color-grey-4, #91949d);
+}
+
+.inlineTooltip {
+  display: inline-block;
+}
+
+.inline__tooltip {
+  display: flex;
+  align-items: center;
+}
+
+.InactiveInstrumentWarningIcon {
+  vertical-align: middle;
 }

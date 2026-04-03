@@ -11,7 +11,7 @@ const { upsertTruenatDeviceTypeAndAssays } = require('../commonTruenat')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()
-const { adminUserName, adminPassword, deviceApiToken, partnerAbbreviation } = partnerData
+const { adminUserName, adminPassword, partnerAbbreviation } = partnerData
 
 async function seed(knex) {
   const partnerId = await upsertPartnerData(knex, {
@@ -27,7 +27,7 @@ async function seed(knex) {
     createdOn: now,
   })
 
-  await commonUpserts(knex, partnerId, adminId, geography, partnerAbbreviation, deviceApiToken, null, partnerData)
+  await commonUpserts(knex, partnerId, adminId, geography, partnerAbbreviation, null, partnerData)
 
   await upsertGeneXpertDeviceTypeAndAssays(knex, [
     'GxUnknown',

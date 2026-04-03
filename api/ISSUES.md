@@ -41,7 +41,6 @@ For checking the configuration of the plugin you should check the file
 - issueEscalations: All the conditions to determine if a specific issue is not resolved, should be escalated to another person.
 - dataCategories: This is a function fully linked to an specific issue called "DataCategoryLowError". Refer [Issues section](#Issues) for more detailed information. Right now it is only used in Myanmar’s plugin.
 - filtersOpenIssues: There are some issues which need extra filtering conditions, here is the place for adding those.
-- transformInitialPayload: All the actions we need to do to transform the received payload from devices (with or without results on it)
 - getDeviceSeenOn: From the device payload or result pushed, it could be different ways to determine if a device is active since a specific date of the last action performed.
 - getDevicePingOn: Same as getDeviceSeenOn, but in more detail, trying to determine any heartbeat or ping from the device payload.
 - preProcessCreateDevice: Every time we need to create a device, we need to transform and/or obtain some specific information from the information received in the payload. This action will take place before the insertion into the database of the device and was meant for extracting and manipulating data.
@@ -49,12 +48,8 @@ For checking the configuration of the plugin you should check the file
 - preProcessAddDeviceData: when the payload only contains device data and we need to insert/update a device, this action should be performed before updating the database.
 - preProcessUpdateDeviceConfiguration: when the payload only contains device configuration information and we need to insert/update a device, this action should be performed before updating the database.
 - postProcessUpdateDeviceConfiguration: This action will take place after updating the data into the DB and you need to perform some extra actions once the data is in the DB.
-- postProcessAddDeviceOperation: This action will take place after inserting the device operation data into the DB. The common use case for this is to trigger an action from the message queue.
-- preProcessUpdateSite: This action will take place when we receive Site information we need to parse for inserting/updating the site into the DB. This action will take place before the DB operation.
-- postProcessUpdateSite: After updating the site into the DB we can trigger an action.
 - preProcessMergeResult: When we have a result received from the devices, sometimes it is a repeated one or sometimes it brings extra and further information about it. That is why we need this action to perform some actions before merging those results, the one received and the one already inserted into the DB.
 - transformMergeResultPayload: Based on the description made before in preProcessMergeResult, this place was meant for performing all the merge activities needed for storing/updating a result in the DB.
-- postProcessMergeResult: After storing a result in the DB probably we need to analyze or trigger some issues, so basically we are pushing the result updated/inserted into the message queue for future actions.
 - onResultLogged: every time a result is updated/inserted into the DB this action will take place. Here we can decide what is the next step in the workflow for a result.
 - onGxAlertAuthenticated: When we link aspect with GxAlert, we are going to still use GxAlert credentials, so this action will take place when GxAlert authenticates a user and grant access to aspect. We can perform for example here the creation of the new user in Aspect DB.
 - onCaseAdded: For every single result we receive, we need to assign to an existing or new case, so every time we create a new case this action will be triggered.
@@ -132,7 +127,6 @@ Not scheduled or dual behaviour actions:
 - ProbeCheckTooHighModule: This is triggered when there are more than 3 results with the error code 5007 in the last 30 days for the same device/module pair.
 - ProbeCheckTooHighLot: This is triggered when there are more than 3 results with the error code 5007 in the last 30 days for the same device/lot/assay trio.
 - InventoryStockExpiring: This is triggered when there are some inventory items near to expire. 30 days before (default value) we are going to notify the user about the exception. This is a partner configuration setting.
-- InstrumentReplaced: This is triggered when the same device pushes a result with a different instrument serial than the previous one.
 
 ### Custom Actions (Myanmar)
 

@@ -4,8 +4,7 @@ const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
 const { knex } = require('../../../src/db')
 const { parseDateOrDefault, getLocalDateInUtc, startOfDayUtc } = require('../../../src/shared/date')
-const { getResult } = require('../../../src/deviceApi/result')
-const { createTestContext } = require('../utils')
+const { createTestContext, getResult } = require('../utils')
 
 const baseConfig = {
   requirePrinter: 'yes',
@@ -17,17 +16,17 @@ const { selectAssayConsumables } = require('../../../src/consumable/assayConsuma
 
 const { assert } = chai.use(chaiSubset)
 
-const devicePostResultPath = '/device/result'
+const devicePath = '/device'
 describe('admin result updates', () => {
   const context = createTestContext(knex, server, {
     user: 'admin',
-    type: 'DaktariVirology',
+    type: 'CepheidGeneXpert',
     partner: 'Partner One',
     baseConfig,
   })
 
   beforeEach(async () => {
-    await context.createDeviceWithResult()
+    await context.createDeviceWithResult({ instrumentSerial: '02384702' })
   })
   afterEach(context.afterEach)
   async function getInventoryItemsAtSite(knex, siteId) {
@@ -83,15 +82,20 @@ describe('admin result updates', () => {
               .select('ca.consumableId', 'ca.assayId', 'ca.quantity')
 
             await server
-              .post(devicePostResultPath)
+              .post(devicePath)
               .set('Authorization', deviceAuth)
               .send({
-                startedOn: now,
-                data: { a: 'b' },
-                assay: { id: resultDetails.assayExternalId },
-                consumable: {
-                  lot: firstCartridgeConsumable.lotNumber,
-                  expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                type: {
+                  id: 'CepheidGeneXpert',
+                },
+                result: {
+                  startedOn: now,
+                  data: { assay: 'Xpert MTB-RIF', a: 'b' },
+                  assay: { id: resultDetails.assayExternalId },
+                  consumable: {
+                    lot: firstCartridgeConsumable.lotNumber,
+                    expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                  },
                 },
               })
               .then(res => {
@@ -126,9 +130,9 @@ describe('admin result updates', () => {
       const past = new Date(+now - 36000)
       const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
       const { id: adminId } = await knex('User').where({ name: user }).first('id')
-      const assayExternalId = 'DaktariHivVL'
-      const daktariHivVlCartridgeId = (
-        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
+      const assayExternalId = 'GxMtbRif'
+      const gxMtbRifCartridgeId = (
+        await knex('Consumable as c').where('c.externalId', 'GxMtbRifCartridge').first('c.id')
       ).id
 
       let resultDetails = {
@@ -137,7 +141,7 @@ describe('admin result updates', () => {
       }
 
       const [lotNumberAndExpirationDateMatch] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: resultDetails.lotNumber,
         expiresOn: new Date(resultDetails.expirationDate),
@@ -152,7 +156,7 @@ describe('admin result updates', () => {
         await knex('ConsumableAssay as ca')
           .join('Assay as a', 'ca.assayId', 'a.id')
           .where('a.externalId', assayExternalId)
-          .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+          .andWhere('ca.consumableId', gxMtbRifCartridgeId)
           .first('ca.quantity')
       ).quantity
 
@@ -164,19 +168,24 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
+          type: {
+            id: 'CepheidGeneXpert',
           },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -200,7 +209,7 @@ describe('admin result updates', () => {
       }
       const randomExpiryDate = new Date('2017-03-05 00:00:00Z')
       const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: resultDetails.lotNumber,
         expiresOn: randomExpiryDate,
@@ -218,19 +227,24 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
+          type: {
+            id: 'CepheidGeneXpert',
           },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: randomExpiryDate,
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: randomExpiryDate,
+            },
           },
         })
         .expect(200)
@@ -250,7 +264,7 @@ describe('admin result updates', () => {
       }
       const randomLotNumber = 'RANDOM-LOT'
       const [onlyExpirationDateMatches] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: randomLotNumber,
         expiresOn: new Date(resultDetails.expirationDate),
@@ -268,19 +282,24 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
+          type: {
+            id: 'CepheidGeneXpert',
           },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: randomLotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: randomLotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -316,9 +335,9 @@ describe('admin result updates', () => {
         .where('partnerId', partnerId)
       const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
       const { id: adminId } = await knex('User').where({ name: user }).first('id')
-      const assayExternalId = 'DaktariHivVL'
-      const daktariHivVlCartridgeId = (
-        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
+      const assayExternalId = 'GxMtbRif'
+      const gxMtbRifCartridgeId = (
+        await knex('Consumable as c').where('c.externalId', 'GxMtbRifCartridge').first('c.id')
       ).id
 
       const resultDetails = {
@@ -327,7 +346,7 @@ describe('admin result updates', () => {
       }
       const randomExpiryDate = new Date('2017-03-05 00:00:00Z')
       const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: resultDetails.lotNumber,
         expiresOn: randomExpiryDate,
@@ -339,7 +358,7 @@ describe('admin result updates', () => {
       })
       const randomLotNumber = 'SOME-LOT-NUMBER'
       const [onlyExpirationDateMatches] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: randomLotNumber,
         expiresOn: new Date(resultDetails.expirationDate),
@@ -364,15 +383,21 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -416,17 +441,17 @@ describe('admin result updates', () => {
       const past = subDays(now, 1)
       const future = addDays(startOfDayUtc(now), 7)
 
-      const assayExternalId = 'DaktariHivVL'
-      const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
-        .where('c.name', 'Daktari HIV-VL Cartridge')
+      const assayExternalId = 'GxMtbRif'
+      const { id: gxMtbRifCartridgeId } = await knex('Consumable as c')
+        .where('c.externalId', 'GxMtbRifCartridge')
         .first('c.id')
 
       // Remove inventory item if it already exists
-      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
+      await knex('InventoryItem').where({ consumableId: gxMtbRifCartridgeId, siteId }).del()
 
       const expiresOn = future.toISOString().split('T')[0]
       const [inventoryItemId] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: 'HIV582',
         expiresOn,
@@ -440,7 +465,7 @@ describe('admin result updates', () => {
       const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
-        .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+        .andWhere('ca.consumableId', gxMtbRifCartridgeId)
         .first('ca.quantity')
 
       const resultDetails = {
@@ -461,17 +486,22 @@ describe('admin result updates', () => {
       assert.equal(inventoryLogsBefore.length, 0)
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct From Null Item' },
-          instrument: { serial: '123456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct From Null Item' },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -511,16 +541,16 @@ describe('admin result updates', () => {
       const future = addDays(now, 7)
       const futureExpiresOn = getLocalDateInUtc(startOfDay(future))
 
-      const assayExternalId = 'DaktariHivVL'
+      const assayExternalId = 'GxMtbRif'
       const { assayId } = await knex('Assay').where('externalId', assayExternalId).first('id as assayId')
-      const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
-        .where('c.name', 'Daktari HIV-VL Cartridge')
+      const { id: gxMtbRifCartridgeId } = await knex('Consumable as c')
+        .where('c.externalId', 'GxMtbRifCartridge')
         .first('c.id')
 
-      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
+      await knex('InventoryItem').where({ consumableId: gxMtbRifCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: null,
         expiresOn: futureExpiresOn,
@@ -554,17 +584,22 @@ describe('admin result updates', () => {
       assert.equal(inventoryLogsBefore.length, 0)
 
       let res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct Update Lot Number' },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct Update Lot Number' },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
       assert.equal(res.status, 200)
@@ -593,17 +628,22 @@ describe('admin result updates', () => {
       )
 
       res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: new Date().toISOString(),
-          data: { b: 'd' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct Update Lot Number 2' },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: new Date().toISOString(),
+            data: { assay: 'Xpert MTB-RIF', b: 'd' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct Update Lot Number 2' },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
       assert.equal(res.status, 200)
@@ -644,15 +684,15 @@ describe('admin result updates', () => {
       const future = addDays(now, 7)
       const futureExpiresOn = startOfDay(future)
 
-      const assayExternalId = 'DaktariHivVL'
-      const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
-        .where('c.name', 'Daktari HIV-VL Cartridge')
+      const assayExternalId = 'GxMtbRif'
+      const { id: gxMtbRifCartridgeId } = await knex('Consumable as c')
+        .where('c.externalId', 'GxMtbRifCartridge')
         .first('c.id')
 
-      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
+      await knex('InventoryItem').where({ consumableId: gxMtbRifCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: 'HIV58210',
         expiresOn: futureExpiresOn,
@@ -666,7 +706,7 @@ describe('admin result updates', () => {
       const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
-        .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+        .andWhere('ca.consumableId', gxMtbRifCartridgeId)
         .first('ca.quantity')
 
       const resultDetails = {
@@ -689,18 +729,23 @@ describe('admin result updates', () => {
       const fakeSampleId = 'fake-sample-id'
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { assay: 'Xpert MTB-RIF', b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -744,18 +789,23 @@ describe('admin result updates', () => {
         .update({ updatedOn: now, quantityOnHand: newQuantityOnHand })
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'd' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { assay: 'Xpert MTB-RIF', b: 'd' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -791,18 +841,23 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'e' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { b: 'e' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -833,12 +888,12 @@ describe('admin result updates', () => {
     it('should not log inventory consumption when no inventory item exists for site', async () => {
       const { deviceId, deviceAuth, now } = context
       const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
-      const assayExternalId = 'DaktariHivVL'
-      const daktariHivVlCartridgeId = (
-        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
+      const assayExternalId = 'GxMtbRif'
+      const gxMtbRifCartridgeId = (
+        await knex('Consumable as c').where('c.externalId', 'GxMtbRifCartridge').first('c.id')
       ).id
       // Remove inventory item if it already exists
-      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
+      await knex('InventoryItem').where({ consumableId: gxMtbRifCartridgeId, siteId }).del()
       const resultDetails = {
         lotNumber: 'HIV533',
         expirationDate: getLocalDateInUtc(
@@ -850,17 +905,22 @@ describe('admin result updates', () => {
       assert.isUndefined(_.find(inventoryItemsBefore, { lotNumber: resultDetails.lotNumber }))
 
       const res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct Unknown Item' },
-          instrument: { serial: '123456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct Unknown Item' },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -906,15 +966,20 @@ describe('admin result updates', () => {
               .select('ca.consumableId', 'ca.assayId', 'ca.quantity')
 
             await server
-              .post(devicePostResultPath)
+              .post(devicePath)
               .set('Authorization', deviceAuth)
               .send({
-                startedOn: now,
-                data: { a: 'b' },
-                assay: { id: resultDetails.assayExternalId },
-                consumable: {
-                  lot: firstCartridgeConsumable.lotNumber,
-                  expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                type: {
+                  id: 'CepheidGeneXpert',
+                },
+                result: {
+                  startedOn: now,
+                  data: { a: 'b' },
+                  assay: { id: resultDetails.assayExternalId },
+                  consumable: {
+                    lot: firstCartridgeConsumable.lotNumber,
+                    expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                  },
                 },
               })
               .then(res => {
@@ -949,9 +1014,9 @@ describe('admin result updates', () => {
       const past = new Date(+now - 36000)
       const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
       const { id: adminId } = await knex('User').where({ name: user }).first('id')
-      const assayExternalId = 'DaktariHivVL'
-      const daktariHivVlCartridgeId = (
-        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
+      const assayExternalId = 'GxMtbRif'
+      const gxMtbRifCartridgeId = (
+        await knex('Consumable as c').where('c.externalId', 'GxMtbRifCartridge').first('c.id')
       ).id
 
       let resultDetails = {
@@ -960,7 +1025,7 @@ describe('admin result updates', () => {
       }
 
       const [lotNumberAndExpirationDateMatch] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: resultDetails.lotNumber,
         expiresOn: new Date(resultDetails.expirationDate),
@@ -974,7 +1039,7 @@ describe('admin result updates', () => {
       const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
-        .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+        .andWhere('ca.consumableId', gxMtbRifCartridgeId)
         .first('ca.quantity')
 
       let cartridgeAtSiteBefore = _.find(
@@ -983,19 +1048,24 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
+          type: {
+            id: 'CepheidGeneXpert',
           },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1017,7 +1087,7 @@ describe('admin result updates', () => {
       }
       const randomExpiryDate = new Date('2017-03-05 00:00:00Z')
       const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: resultDetails.lotNumber,
         expiresOn: randomExpiryDate,
@@ -1033,19 +1103,24 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
+          type: {
+            id: 'CepheidGeneXpert',
           },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: randomExpiryDate,
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: randomExpiryDate,
+            },
           },
         })
         .expect(200)
@@ -1067,7 +1142,7 @@ describe('admin result updates', () => {
       }
       const randomLotNumber = 'RANDOM-LOT'
       const [onlyExpirationDateMatches] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: randomLotNumber,
         expiresOn: new Date(resultDetails.expirationDate),
@@ -1083,19 +1158,24 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: {
-            id: Math.random().toString(36).slice(2),
+          type: {
+            id: 'CepheidGeneXpert',
           },
-          instrument: { serial: '02384702' },
-          consumable: {
-            lot: randomLotNumber,
-            expirationDate: resultDetails.expirationDate,
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            sample: {
+              id: Math.random().toString(36).slice(2),
+            },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: randomLotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1125,15 +1205,15 @@ describe('admin result updates', () => {
       const past = new Date(+now - 36000)
       const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
       const { id: adminId } = await knex('User').where({ name: user }).first('id')
-      const assayExternalId = 'DaktariHivVL'
-      const daktariHivVlCartridgeId = (
-        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
+      const assayExternalId = 'GxMtbRif'
+      const gxMtbRifCartridgeId = (
+        await knex('Consumable as c').where('c.externalId', 'GxMtbRifCartridge').first('c.id')
       ).id
       const inventoryConsumedByTest = (
         await knex('ConsumableAssay as ca')
           .join('Assay as a', 'ca.assayId', 'a.id')
           .where('a.externalId', assayExternalId)
-          .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+          .andWhere('ca.consumableId', gxMtbRifCartridgeId)
           .first('ca.quantity')
       ).quantity
 
@@ -1143,7 +1223,7 @@ describe('admin result updates', () => {
       }
       const randomExpiryDate = new Date('2017-03-05 00:00:00Z')
       const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: resultDetails.lotNumber,
         expiresOn: randomExpiryDate,
@@ -1155,7 +1235,7 @@ describe('admin result updates', () => {
       })
       const randomLotNumber = 'SOME-LOT-NUMBER'
       const [onlyExpirationDateMatches] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: randomLotNumber,
         expiresOn: new Date(resultDetails.expirationDate),
@@ -1180,15 +1260,21 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .then(res => {
@@ -1231,16 +1317,16 @@ describe('admin result updates', () => {
       const past = subDays(now, 1)
       const future = addDays(startOfDay(now), 7)
 
-      const assayExternalId = 'DaktariHivVL'
-      const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
-        .where('c.name', 'Daktari HIV-VL Cartridge')
+      const assayExternalId = 'GxMtbRif'
+      const { id: gxMtbRifCartridgeId } = await knex('Consumable as c')
+        .where('c.externalId', 'GxMtbRifCartridge')
         .first('c.id')
 
       // Remove inventory item if it already exists
-      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
+      await knex('InventoryItem').where({ consumableId: gxMtbRifCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: null,
         expiresOn: future.toISOString().split('T')[0],
@@ -1254,7 +1340,7 @@ describe('admin result updates', () => {
       const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
-        .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+        .andWhere('ca.consumableId', gxMtbRifCartridgeId)
         .first('ca.quantity')
 
       const resultDetails = {
@@ -1275,17 +1361,22 @@ describe('admin result updates', () => {
       assert.equal(inventoryLogsBefore.length, 0)
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct From Null Item' },
-          instrument: { serial: '123456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct From Null Item' },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .then(res => {
@@ -1326,15 +1417,15 @@ describe('admin result updates', () => {
       const future = addDays(now, 7)
       const futureExpiresOn = startOfDay(future)
 
-      const assayExternalId = 'DaktariHivVL'
-      const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
-        .where('c.name', 'Daktari HIV-VL Cartridge')
+      const assayExternalId = 'GxMtbRif'
+      const { id: gxMtbRifCartridgeId } = await knex('Consumable as c')
+        .where('c.externalId', 'GxMtbRifCartridge')
         .first('c.id')
 
-      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
+      await knex('InventoryItem').where({ consumableId: gxMtbRifCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: 'HIV58210',
         expiresOn: futureExpiresOn,
@@ -1348,7 +1439,7 @@ describe('admin result updates', () => {
       const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
-        .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+        .andWhere('ca.consumableId', gxMtbRifCartridgeId)
         .first('ca.quantity')
 
       const resultDetails = {
@@ -1371,18 +1462,23 @@ describe('admin result updates', () => {
       const fakeResultId = 'fake-result-id'
       const fakeSampleId = 'fake-sample-id'
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { assay: 'Xpert MTB-RIF', b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1426,18 +1522,23 @@ describe('admin result updates', () => {
         .update({ updatedOn: now, quantityOnHand: newQuantityOnHand })
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'd' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { assay: 'Xpert MTB-RIF', b: 'd' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1475,18 +1576,23 @@ describe('admin result updates', () => {
       )
 
       await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          id: fakeResultId,
-          startedOn: past,
-          data: { b: 'e' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '1234567893' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            id: fakeResultId,
+            startedOn: past,
+            data: { assay: 'Xpert MTB-RIF', b: 'e' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1524,16 +1630,16 @@ describe('admin result updates', () => {
       const past = subDays(now, 1)
       const future = addDays(now, 7)
 
-      const assayExternalId = 'DaktariHivVL'
-      const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
-        .where('c.name', 'Daktari HIV-VL Cartridge')
+      const assayExternalId = 'GxMtbRif'
+      const { id: gxMtbRifCartridgeId } = await knex('Consumable as c')
+        .where('c.externalId', 'GxMtbRifCartridge')
         .first('c.id')
 
       // Remove inventory item if it already exists
-      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
+      await knex('InventoryItem').where({ consumableId: gxMtbRifCartridgeId, siteId }).del()
 
       const [inventoryItemNotAsCloseId] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: 'not as close',
         expiresOn: addDays(future, 2),
@@ -1544,7 +1650,7 @@ describe('admin result updates', () => {
         updatedOn: past,
       })
       const [inventoryItemClosestId] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: 'closest',
         expiresOn: addDays(future, 1),
@@ -1556,7 +1662,7 @@ describe('admin result updates', () => {
       })
 
       const [inventoryItemStillNotAsCloseId] = await knex('InventoryItem').insert({
-        consumableId: daktariHivVlCartridgeId,
+        consumableId: gxMtbRifCartridgeId,
         siteId,
         lotNumber: 'still not as close',
         expiresOn: subDays(future, 2),
@@ -1573,17 +1679,22 @@ describe('admin result updates', () => {
       }
 
       const res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { b: 'c' },
-          assay: { id: assayExternalId },
-          sample: { id: fakeSampleId },
-          instrument: { serial: '423456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', b: 'c' },
+            assay: { id: assayExternalId },
+            sample: { id: fakeSampleId },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)
@@ -1614,12 +1725,12 @@ describe('admin result updates', () => {
     it('should not log inventory consumption when no inventory item exists for site', async () => {
       const { deviceId, deviceAuth, now } = context
       const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
-      const assayExternalId = 'DaktariHivVL'
-      const daktariHivVlCartridgeId = (
-        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
+      const assayExternalId = 'GxMtbRif'
+      const gxMtbRifCartridgeId = (
+        await knex('Consumable as c').where('c.externalId', 'GxMtbRifCartridge').first('c.id')
       ).id
       // Remove inventory item if it already exists
-      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
+      await knex('InventoryItem').where({ consumableId: gxMtbRifCartridgeId, siteId }).del()
 
       const resultDetails = {
         lotNumber: 'HIV533',
@@ -1629,17 +1740,22 @@ describe('admin result updates', () => {
       }
 
       const res = await server
-        .post(devicePostResultPath)
+        .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          startedOn: now,
-          data: { a: 'b' },
-          assay: { id: assayExternalId },
-          sample: { id: 'New Test Deduct Unknown Item' },
-          instrument: { serial: '123456789' },
-          consumable: {
-            lot: resultDetails.lotNumber,
-            expirationDate: resultDetails.expirationDate,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: now,
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: assayExternalId },
+            sample: { id: 'New Test Deduct Unknown Item' },
+            instrument: { serial: '02384702' },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate,
+            },
           },
         })
         .expect(200)

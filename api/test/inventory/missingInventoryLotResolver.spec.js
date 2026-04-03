@@ -6,6 +6,7 @@ const { knex } = require('../../src/db')
 const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 const { missingInventoryLotsResolver } = require('../../src/inventory/actions')
 const { insertSite } = require('../../src/site/common/db')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 
 const { assert } = chai
 
@@ -78,6 +79,20 @@ describe('Missing inventory lot resolver', () => {
       shortName: site.shortName,
     })
 
+    const { id: userId } = await knex('User').first('id')
+    const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
+      token: randomToken(),
+      revoked: 0,
+      partnerId: site.partnerId,
+      deviceId,
+      createdOn: now,
+      createdBy: userId,
+      updatedOn: now,
+      updatedBy: userId,
+    })
+
+    await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
+
     const resultData = {
       assayId,
       partnerId: site.partnerId,
@@ -105,7 +120,7 @@ describe('Missing inventory lot resolver', () => {
     const [resultId3] = await knex('Result').insert({ ...resultData, externalId: 'TEST_RESULT_MISSING_LOT_3' })
 
     const baseDeviceLog = {
-      deviceId,
+      deviceApiKeyId,
       source: '',
       createdOn: now,
       senderIp: '127.0.0.1',
@@ -135,7 +150,7 @@ describe('Missing inventory lot resolver', () => {
 
   const deleteTestData = async () => {
     await knex('DeviceLog')
-      .whereIn('deviceId', await knex('Device').whereIn('siteId', sitesToRemove).pluck('id'))
+      .whereIn('deviceApiKeyId', await knex('Device').whereIn('siteId', sitesToRemove).pluck('deviceApiKeyId'))
       .delete()
 
     await knex('FactInventoryConsumptionRate').whereIn('siteId', sitesToRemove).delete()
@@ -151,6 +166,10 @@ describe('Missing inventory lot resolver', () => {
     await knex('InventoryLog').whereIn('id', inventoryLogsToRemove).delete()
     await knex('InventoryItem').whereIn('id', inventoryItemsToRemove).delete()
     await knex('Result as r').whereIn('r.siteId', sitesToRemove).delete()
+    await knex('Device').whereIn('siteId', sitesToRemove).update({ deviceApiKeyId: null })
+    await knex('DeviceApiKey')
+      .whereIn('deviceId', await knex('Device').whereIn('siteId', sitesToRemove).pluck('id'))
+      .delete()
     await knex('Device as d').whereIn('d.siteId', sitesToRemove).delete()
     await knex('Site as s').where('id', sitesToRemove[0]).delete()
     await knex('Site as s').where('id', sitesToRemove[1]).delete()

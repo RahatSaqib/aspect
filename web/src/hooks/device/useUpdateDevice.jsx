@@ -19,7 +19,6 @@ const updateDeviceById = async (device, deviceId) => {
       moduleBayCapacity: device.moduleBayCapacity,
       notes: device.notes,
       siteId: device.siteId,
-      instrumentsConnected: device.instrumentsConnected,
       configurationData: device.configurationData,
       gx6cModulesCount: device?.gx6cModulesCount,
       gx10cModulesCount: device?.gx10cModulesCount,

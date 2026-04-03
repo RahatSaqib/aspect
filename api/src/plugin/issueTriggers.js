@@ -216,36 +216,38 @@ async function hardwareErrors(knex, deviceId, daysPeriod, errorCodes) {
   if (errorCodes.some(e => errorCodesToDeduplicateIfWithinTimeFrame.includes(e))) {
     // In this subquery, we're using the 'lag' function in MySQL to select the date of the previous row's log entry
     // We can then use that subquery to only select entries that are at least 60 minutes apart from the previous one
-    const subquery = knex('DeviceOperation')
-      .where('deviceId', deviceId)
-      .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+    const subquery = knex('DeviceOperation as do')
+      .join('Device as d', 'do.deviceApiKeyId', 'd.deviceApiKeyId')
+      .where('d.id', deviceId)
+      .where('occurredOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
       .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
       .whereRaw(`data->>'$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`)
       .select(
-        'id',
-        'startedOn',
-        knex.raw('lag(startedOn, 1) over (partition by deviceId order by startedOn) as previousStartedOn')
+        'do.id',
+        'occurredOn',
+        knex.raw('lag(occurredOn, 1) over (partition by deviceId order by occurredOn) as previousOccurredOn')
       )
       .as('logEntriesWithTimeSpan')
 
     return knex
       .count('id as totalErrors')
       .from(subquery)
-      .whereRaw('timestampdiff(minute, previousStartedOn, startedOn) > 60')
-      .orWhere('previousStartedOn', null)
+      .whereRaw('timestampdiff(minute, previousOccurredOn, occurredOn) > 60')
+      .orWhere('previousOccurredOn', null)
   }
 
-  return knex('DeviceOperation')
-    .where('deviceId', deviceId)
-    .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
-    .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
-    .whereRaw(`data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`)
+  return knex('DeviceOperation as do')
+    .join('Device as d', 'do.deviceApiKeyId', 'd.deviceApiKeyId')
+    .where('d.id', deviceId)
+    .where('do.occurredOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+    .whereRaw(`IFNULL(do.data ->> '$.type', '') = 'gx-log'`)
+    .whereRaw(`do.data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`)
     .where(qb => {
       qb.whereRaw(
-        `data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(',')})`
-      ).orWhereRaw(`IFNULL(data ->> '$.logLevel', '') = 'INFO'`)
+        `do.data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(',')})`
+      ).orWhereRaw(`IFNULL(do.data ->> '$.logLevel', '') = 'INFO'`)
     })
-    .count('id as totalErrors')
+    .count('do.id as totalErrors')
 }
 module.exports = {
   analyzeErrors,

@@ -43,7 +43,7 @@ function getUser(username, knex) {
     )
 }
 
-async function storeUser(knex, username, password, gxUser, partnerId, countryId, jobFunctionId, partnerPlugin) {
+async function storeUser(knex, username, password, gxUser, partnerId, countryId, jobFunctionId) {
   const now = new Date()
 
   // generate pw hash
@@ -91,11 +91,6 @@ async function storeUser(knex, username, password, gxUser, partnerId, countryId,
     await setJobContext(knex, personId, jobFunctionId, gxUser)
   }
 
-  // finally return User
-  const { loadPlugin } = require('../plugin/loadPlugin')
-  const onGxAlertAuthenticated = await loadPlugin(partnerPlugin, undefined, 'onGxAlertAuthenticated')
-  await onGxAlertAuthenticated({ gxUser, partnerId, personId, knex })
-
   aspectUser = await getUser(username, knex)
 
   return aspectUser
@@ -135,7 +130,7 @@ async function upsertUser(gxUser, username, password) {
     )
   }
 
-  const { id: partnerId, plugin: partnerPlugin } = partners[0]
+  const { id: partnerId } = partners[0]
   // -------------------------------------------
   // calculate jobFunctionId
   // -------------------------------------------
@@ -175,9 +170,7 @@ async function upsertUser(gxUser, username, password) {
   // - job function of the user, if any calculated
   // Store user profile in our database in a transaction
   // -------------------------------------------
-  return transact(async knex =>
-    storeUser(knex, username, password, gxUser, partnerId, countryId, jobFunctionId, partnerPlugin)
-  )
+  return transact(async knex => storeUser(knex, username, password, gxUser, partnerId, countryId, jobFunctionId))
 }
 
 /**

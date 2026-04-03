@@ -99,7 +99,7 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
   )
 }
 
-const getCustomFieldsBaseQuery = async (partnerId, deviceId, assayId = null, diseaseId = null) =>
+const getCustomFieldsBaseQuery = async (partnerId, deviceTypeId, assayId = null, diseaseId = null) =>
   getFormsBaseQuery(partnerId, {
     formType: 'gxConnectForm',
     assayId,
@@ -109,11 +109,10 @@ const getCustomFieldsBaseQuery = async (partnerId, deviceId, assayId = null, dis
     .leftJoin('AssayType as assayType', 'di.id', 'assayType.diseaseId')
     .leftJoin('Assay as a', 'assayType.id', 'a.assayTypeId')
     .leftJoin('DeviceType as dt', 'a.devicetypeid', 'dt.id')
-    .leftJoin('Device as d', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where(qb => {
-      if (deviceId) {
-        qb.where('d.id', deviceId)
+      if (deviceTypeId) {
+        qb.where('dt.id', deviceTypeId)
         qb.orWhereNull('fd.diseaseId')
       }
     })
@@ -158,8 +157,8 @@ const getCustomFieldPlaceholdersForNotifications = async partnerId => {
   return placeholders
 }
 
-const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, diseaseId = null) => {
-  const formQuery = await getCustomFieldsBaseQuery(partnerId, deviceId, assayId, diseaseId)
+const getCustomFields = async (partnerId, deviceTypeId, countryId, assayId = null, diseaseId = null) => {
+  const formQuery = await getCustomFieldsBaseQuery(partnerId, deviceTypeId, assayId, diseaseId)
 
   const formFields = []
   await Promise.each(formQuery, async form => {

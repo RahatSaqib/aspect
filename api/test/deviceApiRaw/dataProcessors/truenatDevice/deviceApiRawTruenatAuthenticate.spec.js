@@ -112,8 +112,8 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       .first('dak.deviceId', 'd.siteId')
     await knex('DeviceApprovalLog').where('deviceId', validDeviceId).delete()
     await knex('DeviceApprovalLog').where('deviceId', expiredDeviceId).delete()
-    await knex('DeviceLog').where('deviceId', validDeviceId).delete()
-    await knex('DeviceLog').where('deviceId', expiredDeviceId).delete()
+    await knex('DeviceLog').where('deviceApiKeyId', validApiKey.id).delete()
+    await knex('DeviceLog').where('deviceApiKeyId', expiredApiKey.id).delete()
 
     await knex('DeviceApiRaw').where('deviceApiKeyId', validApiKey.id).delete()
     await knex('DeviceApiRaw').where('deviceApiKeyId', expiredApiKey.id).delete()
@@ -132,7 +132,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       .where('dak.username', newTruenatDevice.username)
       .first('dak.id', 'dak.deviceId', 'dak.siteId')
     await knex('DeviceApiKey').where('id', newTruenatDeviceApiKeyId).delete()
-    await knex('DeviceLog').where('deviceId', newTruenatDeviceId).delete()
+    await knex('DeviceLog').where('deviceApiKeyId', newTruenatDeviceApiKeyId).delete()
     await knex('Device').where('id', newTruenatDeviceId).delete()
     await knex('Site').where('id', newTruenatDeviceSiteId).delete()
   })
@@ -192,7 +192,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       assert.equal(incorrectUsernameResponse.body.username, newTruenatDevice.username)
       assert.isTrue(incorrectUsernameResponse.body.success)
 
-      const unapprovedDeviceApprovalId = await deviceApprovalToId('assigned')
+      const unapprovedDeviceApprovalId = await deviceApprovalToId('pendingDeployment')
       const device = await knex('Device').where('name', newTruenatDevice.username).first()
       const site = await knex('Site').where('name', newTruenatDevice.username).first()
       assert.isDefined(device, 'new device should be created with username as device name')

@@ -90,11 +90,6 @@ const notificationTypeSection = (formatMessage, partner, isEdit) => ({
                     icon: 'AiOutlineExclamation',
                   },
                   {
-                    value: 'InstrumentReplaced',
-                    label: formatMessage(messages.notificationTypeInstrumentReplaced),
-                    icon: 'AiOutlineTool',
-                  },
-                  {
                     value: 'DeviceExpectedBackOnline',
                     label: formatMessage(messages.notificationTypeDeviceExpectedBackOnline),
                     icon: 'AiOutlineFieldTime',

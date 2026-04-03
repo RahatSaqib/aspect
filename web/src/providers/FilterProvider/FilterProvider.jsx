@@ -57,7 +57,7 @@ const dashboardV2DefaultFilters = {
 // TODO: remove pagination from URL
 export const defaultFilter = {
   '/browse/deviceApiKey': {},
-  '/browse/device/list': { connectorStatus: 'all' },
+  '/browse/device/list': { connectorStatus: 'all', deviceApprovalExternalId: ['pendingDeployment', 'approved'] },
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now) }, //
   '/browse/inventory/log': { minDate, maxDate }, //
   '/browse/inventory/supplies': { hasStock: true }, //

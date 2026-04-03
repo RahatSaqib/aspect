@@ -6,32 +6,6 @@ const errorPayload = Joi.object()
     code: Joi.string().allow('', null).description('Error code'),
     notes: Joi.string().allow('', null).description('Description of the error'),
   })
-const logItem = {
-  externalId: Joi.alternatives()
-    .try(Joi.string(), Joi.number())
-    .allow('', null)
-    .description('External unique id of the entry in remote system'),
-  occurredOn: Joi.date().required().iso().description('Date/time of when log entry happened'),
-  logFileName: Joi.string().required().description('Log file name'),
-  logLevel: Joi.string().required().description('Log Level (INFO, ERROR, etc)'),
-  details: Joi.alternatives()
-    .try(
-      Joi.object().description('Log details JSON - error code, content of the log entry, log file name, category'),
-      Joi.string().description('Log details stringified - to be parsed at run-time')
-    )
-    .required(),
-}
-const logPayload = {
-  source: Joi.string().allow('', null).description('The source of the log, determined by client'),
-  data: Joi.alternatives()
-    .allow(null)
-    .try(Joi.object().keys(logItem), Joi.array().items(Joi.object().keys(logItem))),
-}
-
-const logResponse = {
-  createdOn: Joi.date().iso().description('Date the log was created, in server time.'),
-  ...logPayload,
-}
 
 const devicePayload = {
   name: Joi.string().allow('', null).description('The device name'),
@@ -259,6 +233,27 @@ const testAggRequestQueryValidation = () => {
   }
 }
 
+const logItem = {
+  externalId: Joi.alternatives()
+    .try(Joi.string(), Joi.number())
+    .allow('', null)
+    .description('External unique id of the entry in remote system'),
+  occurredOn: Joi.date().required().iso().description('Date/time of when log entry happened'),
+  logFileName: Joi.string().required().description('Log file name'),
+  logLevel: Joi.string().required().description('Log Level (INFO, ERROR, etc)'),
+  details: Joi.alternatives()
+    .try(
+      Joi.object().description('Log details JSON - error code, content of the log entry, log file name, category'),
+      Joi.string().description('Log details stringified - to be parsed at run-time')
+    )
+    .required(),
+}
+
+const logPayload = {
+  source: Joi.string().allow('', null).description('The source of the log, determined by client'),
+  data: Joi.array().allow(null).items(Joi.object().keys(logItem)),
+}
+
 const devicePayloadValidation = Joi.object().keys({
   ...devicePayload,
   includeDeviceConfiguration: Joi.bool()
@@ -278,14 +273,8 @@ const devicePayloadValidation = Joi.object().keys({
 })
 
 module.exports = {
+  errorPayload,
   testAggResponseValidation,
   testAggRequestQueryValidation,
-  logResponse,
-  devicePayload,
-  configurationPayload,
-  operationPayload,
-  resultPayload,
-  logPayload,
-  errorPayload,
   devicePayloadValidation,
 }

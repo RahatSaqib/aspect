@@ -1,4 +1,4 @@
-const jobFunctions = require('../../fixtures/jobFunctions')
+const jobFunctions = require('./jobFunctions')
 
 module.exports = {
   partner: {

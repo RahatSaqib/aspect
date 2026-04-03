@@ -157,25 +157,27 @@ function DeviceApiKeyAssignerDialogForm({
           onChange={onSiteIdChange}
           error={meta.siteId.touched && meta.siteId.error}
         />
-        <DeviceSelectField
-          disabled={values.deviceApiKeyIds.length > 1}
-          name="deviceId"
-          floatingLabelText={formatMessage(messages.deviceId)}
-          countryId={values.countryId}
-          partnerId={values.partnerId}
-          siteId={values.siteId}
-          value={values.deviceId}
-          onDeviceChange={onDeviceIdChange}
-          errorStyle={{
-            float: 'left',
-            whiteSpace: 'nowrap',
-            textOverflow: 'visible',
-          }}
-          errorText={meta.deviceId.touched && meta.deviceId.error}
-          fullWidth
-          tabIndex="0"
-          aria-haspopup
-        />
+        {values.deviceApiKeyIds.length === 1 && (
+          <DeviceSelectField
+            disabled={!values.siteId}
+            name="deviceId"
+            floatingLabelText={formatMessage(messages.deviceId)}
+            countryId={values.countryId}
+            partnerId={values.partnerId}
+            siteId={values.siteId || ''}
+            value={values.deviceId}
+            onDeviceChange={onDeviceIdChange}
+            errorStyle={{
+              float: 'left',
+              whiteSpace: 'nowrap',
+              textOverflow: 'visible',
+            }}
+            errorText={meta.deviceId.touched && meta.deviceId.error}
+            fullWidth
+            tabIndex="0"
+            aria-haspopup
+          />
+        )}
       </form>
     </AspectDialog>
   )

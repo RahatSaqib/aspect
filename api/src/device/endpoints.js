@@ -4,14 +4,13 @@ const {
   showDevice,
   listApprovalTypes,
   listMaintenanceStatuses,
-  listDevicesForSelectList,
   updateDeviceMaintenance,
   setStatusForDateRange,
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
 } = require('./service')
 const { getDevicePerformance } = require('./getDevicePerformance')
-const mergeDevices = require('./mergeDevices')
+const { mergeDevices } = require('./deviceComposition/mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
 const { exportDeviceOperationLogReport, getDeviceCoverageReport } = require('./serviceReports')
@@ -26,10 +25,19 @@ const {
 const exportWorkload = require('./exportWorkload')
 const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
+const { updateDeviceApproval } = require('./updateDeviceApproval')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 const { deviceReport } = require('./serviceReports/deviceReport')
 const getMtbErrorGraph = require('./getErrorGraph')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
+
+const { getDeviceInstruments } = require('./getDeviceInstruments')
+const { getCandidateInstruments } = require('./getCandidateInstruments')
+
+const { transferInstruments } = require('./deviceComposition/transferInstruments')
+const { transferInstrumentToNewDevice } = require('./deviceComposition/transferInstrumentToNewDevice')
+
+const { listDevicesForSelectList } = require('./listDevicesForSelectList')
 
 const routes = [
   {
@@ -132,6 +140,103 @@ const routes = [
     },
   },
   {
+    method: 'GET',
+    path: '/device/{deviceId}/instruments',
+    handler: asyncHandler(getDeviceInstruments),
+    config: {
+      description: 'Device Instruments',
+      notes: 'Get instruments and modules for a device',
+      auth: { scope: ['device:view'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+        query: {
+          includeHistory: Joi.boolean()
+            .default(false)
+            .description('Include historical instruments and modules that have been removed'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.object()
+            .keys({
+              deviceId: Joi.number().required().description('Device ID'),
+              instruments: Joi.array()
+                .items(
+                  Joi.object().keys({
+                    instrumentId: Joi.number().required().description('Instrument ID'),
+                    active: Joi.bool().description('Whether the instrument is active'),
+                    instrumentSerial: Joi.string().allow(null).required().description('Instrument serial number'),
+                    modules: Joi.array()
+                      .items(
+                        Joi.object().keys({
+                          moduleName: Joi.string().allow(null).description('Module bay name (e.g., A1, A2, etc.)'),
+                          lastResultDate: Joi.date().allow(null).description('Date of last result for this module'),
+                        })
+                      )
+                      .description('List of modules in this instrument'),
+                  })
+                )
+                .description('List of instruments connected to the device')
+                .optional(),
+            })
+            .description('Device composition data'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/{deviceId}/candidate-instruments',
+    handler: asyncHandler(getCandidateInstruments),
+    config: {
+      description: 'Candidate Instruments',
+      notes: 'Get candidate instruments that can be joined with the device',
+      auth: { scope: ['device:view'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.object()
+            .keys({
+              deviceId: Joi.number().required().description('Device ID'),
+              instruments: Joi.array()
+                .items(
+                  Joi.object().keys({
+                    deviceId: Joi.number().required().description('Device ID'),
+                    deviceName: Joi.string().required().description('Device name'),
+                    instrumentId: Joi.number().required().description('Instrument ID'),
+                    instrumentSerial: Joi.string().allow(null).description('Instrument serial number'),
+                    modules: Joi.array()
+                      .items(
+                        Joi.object().keys({
+                          moduleName: Joi.string().allow(null).description('Module bay name (e.g., A1, A2, etc.)'),
+                          lastResultDate: Joi.date().allow(null).description('Date of last result for this module'),
+                        })
+                      )
+                      .description('List of modules in this instrument'),
+                  })
+                )
+                .description('List of candidate instruments'),
+            })
+            .required(),
+        }),
+      },
+    },
+  },
+  {
     method: 'PUT',
     path: '/device/{deviceId}',
     handler: asyncHandler(updateDevice),
@@ -155,7 +260,6 @@ const routes = [
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number(),
           implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
-          instrumentsConnected: Joi.number().min(1).description('Number of connected instruments'),
           gx6cModulesCount: Joi.number()
             .allow('', null)
             .min(0)
@@ -175,6 +279,33 @@ const routes = [
           softwareType: Joi.string().allow('', null).optional(),
           isDaisyChained: Joi.bool().allow('', null).optional(),
         },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/{deviceId}/approval',
+    handler: asyncHandler(updateDeviceApproval),
+    config: {
+      description: 'Update Device Approval Workflow',
+      notes: 'Executes approval workflow actions like decommission and reactivate',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+        payload: {
+          action: Joi.string().valid('decommission', 'reactivate').required(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: deviceDetailsResponseFields,
+        }),
       },
     },
   },
@@ -244,6 +375,7 @@ const routes = [
           countryId: Joi.number().allow('').description('Country ID'),
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
+          deviceTypeExternalId: Joi.string().allow('').description('Device Type External ID'),
           showUnapprovedDevices: Joi.bool().optional().default(false).description('Show unapproved devices'),
           showDecommissionedDevices: Joi.bool().optional().default(false).description('Show decommissioned devices'),
           onlyResultDevices: Joi.bool().optional().default(false).description('Show only devices that process results'),
@@ -577,6 +709,44 @@ const routes = [
           sourceDevicesIds: Joi.array().items(Joi.number()).description('Source devices Ids').required(),
           targetDeviceId: Joi.number().description('Target device Id').required(),
         },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/transfer-instruments',
+    handler: asyncHandler(transferInstruments),
+    config: {
+      auth: { scope: ['device:admin'] },
+      description: 'Transfer instruments to a target device',
+      notes: 'Moves instruments by instrumentId to the specified target device.',
+      validate: {
+        payload: {
+          sourceInstrumentsIds: Joi.array()
+            .items(Joi.number().integer().positive())
+            .description('Array of instrument IDs to transfer')
+            .required(),
+          targetDeviceId: Joi.number().description('Target device ID').required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/transfer-instrument-to-new-device',
+    handler: asyncHandler(transferInstrumentToNewDevice),
+    config: {
+      auth: { scope: ['device:edit'] },
+      description: 'Transfer instrument to a new device',
+      notes: 'Creates a new device and transfers the instrument to it',
+      tags: ['api', 'device'],
+      validate: {
+        payload: Joi.object({
+          instrumentId: Joi.number().integer().positive().required(),
+          name: Joi.string().required(),
+          shortName: Joi.string().required(),
+          siteId: Joi.number().required(),
+        }),
       },
     },
   },

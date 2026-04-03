@@ -17,9 +17,32 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const delay = 5000
 
 const deleteDevice = async deviceIds => {
-  await knex('DeviceLog').delete().whereIn('deviceId', deviceIds)
+  const deviceApiKeyIds = [
+    ...(await knex('Device').whereIn('id', deviceIds).pluck('deviceApiKeyId')),
+    ...(await knex('DeviceApiKey').whereIn('deviceId', deviceIds).pluck('id')),
+  ].filter(Boolean)
+  const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
+
+  if (resultIds.length > 0) {
+    await knex('InventoryLog').delete().whereIn('resultId', resultIds)
+  }
+
+  await knex('Result').delete().whereIn('deviceId', deviceIds)
+
+  if (deviceApiKeyIds.length > 0) {
+    await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).delete()
+  }
+
+  await knex('Instrument').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactDeviceModulesCount').delete().whereIn('deviceId', deviceIds)
+
+  await knex('Device').whereIn('id', deviceIds).update({ deviceApiKeyId: null })
+  await knex('DeviceApiKey').whereIn('deviceId', deviceIds).update({ deviceId: null })
+
+  if (deviceApiKeyIds.length > 0) {
+    await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
+  }
 
   await knex('Device').delete().whereIn('id', deviceIds)
 }
@@ -31,7 +54,7 @@ const deleteResults = async resultIds => {
   await knex('Result').delete().whereIn('id', resultIdsToBeDeleted)
 }
 
-const insertDevice = async (name, siteId, partnerId) => {
+const insertDevice = async (name, siteId, partnerId, instrumentSerial = null) => {
   const [deviceId] = await knex('Device').insert({
     partnerId,
     siteId,
@@ -41,6 +64,18 @@ const insertDevice = async (name, siteId, partnerId) => {
     shortName: name,
     lastSeenOn: now,
   })
+  if (instrumentSerial) {
+    await knex('Instrument').insert({
+      deviceId,
+      serial: instrumentSerial,
+      macAddress: null,
+      active: 1,
+      createdOn: now,
+      createdBy: 1,
+      updatedOn: now,
+      updatedBy: 1,
+    })
+  }
   return deviceId
 }
 
@@ -94,9 +129,6 @@ describe('Device result calculation test', function () {
   let deviceId
   let deviceId2
   let deviceId3
-  let deviceAPiKey
-  let deviceAPiKey2
-  let deviceAPiKey3
   const resultIds = []
   let resultPayload = {}
 
@@ -121,6 +153,8 @@ describe('Device result calculation test', function () {
   after(async () => {
     await deleteResults(resultIds)
     await deleteDevice([deviceId, deviceId2, deviceId3])
+
+    await knex('DeviceApiKey').delete().whereIn('siteId', [siteId, siteId2])
 
     await knex('InventoryItem').delete().whereIn('siteId', [siteId, siteId2])
 
@@ -228,23 +262,24 @@ describe('Device result calculation test', function () {
       geographyId,
     })
 
-    deviceId = await insertDevice('Test Device', siteId, partnerId)
-    deviceId2 = await insertDevice('Test Device 2', siteId, partnerId)
-    deviceId3 = await insertDevice('Test Device 3', siteId2, partnerId)
+    const instrumentSerial = resultPayload.result.instrument.serial
+    deviceId = await insertDevice('Test Device', siteId, partnerId, instrumentSerial)
+    deviceId2 = await insertDevice('Test Device 2', siteId, partnerId, instrumentSerial)
+    deviceId3 = await insertDevice('Test Device 3', siteId2, partnerId, instrumentSerial)
 
     token = randomToken()
     token2 = randomToken()
     token3 = randomToken()
 
-    deviceAPiKey = await insertDeviceApiKey(token, deviceId, siteId, geographyId, partnerId)
-    deviceAPiKey2 = await insertDeviceApiKey(token2, deviceId2, siteId, geographyId, partnerId)
-    deviceAPiKey3 = await insertDeviceApiKey(token3, deviceId3, siteId2, geographyId, partnerId)
+    await insertDeviceApiKey(token, deviceId, siteId, geographyId, partnerId)
+    await insertDeviceApiKey(token2, deviceId2, siteId, geographyId, partnerId)
+    await insertDeviceApiKey(token3, deviceId3, siteId2, geographyId, partnerId)
   })
 
   afterEach(async () => {
-    await knex('DeviceApiKey').delete().whereIn('id', [deviceAPiKey, deviceAPiKey2, deviceAPiKey3])
-
     await knex('FactResultsDeviceByTimeFrame').delete().whereIn('deviceId', [deviceId, deviceId2, deviceId3])
+
+    await deleteDevice([deviceId, deviceId2, deviceId3])
 
     await deleteResults(resultIds)
   })

@@ -1,7 +1,6 @@
 const _ = require('lodash')
 // ----------- Action Types ---------------------
 const types = {
-  RESULT_UPDATED: 'RESULT_UPDATED',
   RESULT_LOGGED: 'RESULT_LOGGED',
   RESULT_READY_FOR_NOTIFICATION: 'RESULT_READY_FOR_NOTIFICATION',
   RESULT_LOGGED_PROCESSED: 'RESULT_LOGGED_PROCESSED',
@@ -48,27 +47,6 @@ const types = {
 }
 
 // ----------- Action Creators -------------------
-
-/**
- * Creates an action to notify the result with given id
- * has been updated.
- *
- * resultId is required.
- * deviceLogId is optional, specified if update is already
- * associated with a device log entry (NOTE if not specified,
- * device API listener will create one)
- */
-function resultUpdated(resultId, deviceLogId, userId) {
-  if (!resultId) {
-    throw new Error('Must specify resultId for resultUpdated')
-  }
-  return {
-    type: types.RESULT_UPDATED,
-    resultId,
-    deviceLogId,
-    userId,
-  }
-}
 
 const obtainProperAction = (
   consumableLot,
@@ -432,7 +410,6 @@ function resultUnusedModules(deviceId) {
 
 module.exports = {
   types,
-  resultUpdated,
   resultLogged,
   resultLoggedProcessed,
   resultModuleTemperatureError,

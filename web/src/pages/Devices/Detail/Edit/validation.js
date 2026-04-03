@@ -23,11 +23,6 @@ export const getValidationSchema = formatMessage =>
       .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
       .min(1, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }))
       .max(256, formatMessage(validationErrorMessages.mustBeLessThan, { max: 256 })),
-    instrumentsConnected: Yup.number()
-      .nullable()
-      .transform((value, originalValue) => (originalValue === '' ? null : value))
-      .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
-      .min(1, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 })),
     gx6cModulesCount: Yup.number()
       .nullable()
       .transform((value, originalValue) => (originalValue === '' ? null : value))

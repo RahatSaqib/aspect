@@ -1,25 +1,15 @@
+import isUndefined from 'lodash/isUndefined'
+import omitBy from 'lodash/omitBy'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
-import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
-import { DEVICE_KEY, DEVICE_KEY_DEVICE_LIST_ENDPOINT } from './deviceKeys.js'
+import { DEVICE_KEY_DEVICE_LIST_ENDPOINT } from './deviceKeys.js'
 
-const getDeviceSelectList = async (countryId, partnerId, siteId, showUnapprovedDevices, onlyResultDevices) => {
+const getDeviceSelectList = async params => {
+  // Remove all attributes that are undefined
   return fetchWrapperForQueries({
-    endpoint: replaceRouteParams(DEVICE_KEY_DEVICE_LIST_ENDPOINT, {
-      countryId,
-      partnerId,
-      siteId,
-      showUnapprovedDevices,
-      onlyResultDevices,
-    }),
-  }).then(response =>
-    response.data.map(({ id, name, siteId, deviceTypeId }) => ({
-      key: id,
-      value: name,
-      siteId,
-      deviceTypeId,
-    }))
-  )
+    endpoint: DEVICE_KEY_DEVICE_LIST_ENDPOINT,
+    params: omitBy(params, isUndefined),
+  }).then(response => response.data)
 }
 
 const useDeviceForSelect = params => {
@@ -27,12 +17,30 @@ const useDeviceForSelect = params => {
     countryId = '',
     partnerId = '',
     siteId = '',
+    deviceTypeExternalId,
     showUnapprovedDevices = false,
     onlyResultDevices = false,
   } = params
-  return useQuery([DEVICE_KEY, 'list'], () =>
-    getDeviceSelectList(countryId, partnerId, siteId, showUnapprovedDevices, onlyResultDevices)
+  return useQuery(
+    [
+      DEVICE_KEY_DEVICE_LIST_ENDPOINT,
+      countryId,
+      partnerId,
+      siteId,
+      deviceTypeExternalId,
+      showUnapprovedDevices,
+      onlyResultDevices,
+    ],
+    () =>
+      getDeviceSelectList({
+        countryId,
+        partnerId,
+        siteId,
+        deviceTypeExternalId,
+        showUnapprovedDevices,
+        onlyResultDevices,
+      })
   )
 }
 
-export default useDeviceForSelect
+export { useDeviceForSelect }

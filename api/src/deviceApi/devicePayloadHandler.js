@@ -2,29 +2,55 @@ const _ = require('lodash')
 const { knex } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { removeAdditionalData } = require('../result/common/logic')
-const { deviceApiHandler } = require('./deviceApiHandler')
-const { addDeviceDataWithContext } = require('./service')
 const { normalizeToken } = require('./apiKey')
-const { asyncPayloadReceived } = require('./actions')
-const config = require('../config')
+const { handleResultPayload } = require('./payloadHandlers/handleResultPayload')
+const { handleLogPayload } = require('./payloadHandlers/handleLogPayload')
+const { handleDailyDetailsPayload } = require('./payloadHandlers/handleDailyDetailsPayload')
+const { handlePingPayload } = require('./payloadHandlers/handlePingPayload')
+const { handleInventoryOperationPayload } = require('./payloadHandlers/handleInventoryOperationPayload')
+
+const handlers = {
+  RESULT: handleResultPayload,
+  LOG: handleLogPayload,
+  DAILY_DETAILS: handleDailyDetailsPayload,
+  PING: handlePingPayload,
+  INVENTORY_OPERATION: handleInventoryOperationPayload,
+}
 
 const devicePayloadHandler = async request => {
-  const isResultPayload = !!request.payload?.result
+  const remoteAddress = getRemoteAddress(request)
+  const payloadType = detectPayloadType(request.payload)
 
-  if (!config.enableAsyncPayloadProcessing || !isResultPayload) {
-    const response = await deviceApiHandler(addDeviceDataWithContext)(request)
-    return response
+  const deviceLogId = await createDeviceLog(request, remoteAddress, payloadType)
+
+  const handler = handlers[payloadType]
+  if (!handler) {
+    throw new Error(`Unknown payload type: ${payloadType} deviceLogId: ${deviceLogId}`)
   }
 
-  // Async processing of payload
+  return handler(request, deviceLogId, remoteAddress)
+}
+
+function detectPayloadType(payload) {
+  if (payload.result) return 'RESULT'
+  if (payload.log) return 'LOG'
+  if (payload.includeDeviceConfiguration === true) return 'DAILY_DETAILS'
+  if (payload.includeDeviceConfiguration === false && payload.operation) return 'INVENTORY_OPERATION'
+  if (payload.includeDeviceConfiguration === false && !payload.result && !payload.log && !payload.operation)
+    return 'PING'
+  return 'UNKNOWN'
+}
+
+async function createDeviceLog(request, remoteAddress, payloadType) {
   const formattedResult = removeAdditionalData(request.plugins.rawPayload)
-  formattedResult.deviceApiKey = normalizeToken(request.auth.credentials.token)
+  const deviceApiKey = normalizeToken(request.auth.credentials.token)
+  formattedResult.deviceApiKey = deviceApiKey
   const deviceLogRawMessage = JSON.stringify(formattedResult)
-  const remoteAddress = getRemoteAddress(request)
   const now = new Date()
 
   const [deviceLogId] = await knex('DeviceLog').insert({
-    deviceId: null,
+    deviceApiKeyId: request.auth.credentials.deviceApiKeyId,
+    type: payloadType,
     source: _.get(request.payload, 'log.source', ''),
     createdOn: now,
     senderIp: remoteAddress,
@@ -32,13 +58,7 @@ const devicePayloadHandler = async request => {
     processed: false,
   })
 
-  // Add to queue for processing
-  const { messageContext } = request.plugins
-  messageContext.bindActionCreators({ asyncPayloadReceived })
-  messageContext.asyncPayloadReceived(deviceLogId)
-
-  const response = { deviceLogId }
-  return response
+  return deviceLogId
 }
 
 module.exports = {

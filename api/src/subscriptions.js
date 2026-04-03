@@ -16,7 +16,6 @@ const subscribers = {
   webhook: require('./webhook/endpoints').subscriptions,
   pushNotification: require('./pushNotification/endpoints').subscriptions,
   case: require('./case/endpoints').subscriptions,
-  patient: require('./patient/endpoints').subscriptions,
   inventory: require('./inventory/subscriptions').subscriptions,
 }
 async function addSubscriptions(queue) {

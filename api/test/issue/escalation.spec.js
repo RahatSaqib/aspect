@@ -191,7 +191,6 @@ describe('Issue Escalation', () => {
     await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
     await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
     await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
-    await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
     await knex('DeviceOperation').whereIn('deviceId', deviceIds).delete()
     await knex('Device').whereIn('id', deviceIds).delete()
   }

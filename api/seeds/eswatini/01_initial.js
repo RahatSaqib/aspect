@@ -12,8 +12,7 @@ const { addDefaultCustomFieldDefinitions } = require('../relativeObjectsSeeds')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()
 
-const { adminUserName, adminPassword, deviceApiToken, lowerLevelUserPassword, partnerAbbreviation, assays } =
-  partnerData
+const { adminUserName, adminPassword, lowerLevelUserPassword, partnerAbbreviation, assays } = partnerData
 
 async function seed(knex) {
   const partnerId = await upsertPartnerData(knex, {
@@ -36,7 +35,6 @@ async function seed(knex) {
     adminId,
     geography,
     partnerAbbreviation,
-    deviceApiToken,
     {
       password: lowerLevelUserPassword,
     },

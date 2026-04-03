@@ -38,25 +38,14 @@ const context = createTestContext(knex, server, {
   password: USER_LU,
   // We want to create a new device for this test, so use a type
   // that is not seeded
-  type: 'GenericRDT',
+  type: 'CepheidGeneXpert',
   partner: 'MoHS',
 })
 
 describe('Fact based issues', () => {
   const devicePath = '/device'
   const issuePath = '/api/issue'
-  let siteName
-
   const { runTest } = context
-  before(async () => {
-    const { siteId } = await knex('JobContext as jc')
-      .innerJoin('Person as p', 'jc.personId', 'p.id')
-      .innerJoin('User as u', 'p.userId', 'u.id')
-      .where('u.name', USER_LU)
-      .first('jc.siteId')
-    const site = await knex('Site').where({ id: siteId }).first('name')
-    siteName = site.name
-  })
   beforeEach(async () => {
     await context.createDeviceApiKey()
   })
@@ -81,8 +70,18 @@ describe('Fact based issues', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          type: { id: 'GenericRDT' },
-          site: { id: siteName },
+          includeDeviceConfiguration: false,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: new Date(),
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'GX-00001' },
+            sample: { id: '29347293' },
+          },
+          name: 'Fact Test Device',
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -467,8 +466,18 @@ describe('Fact based issues', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          type: { id: 'GenericRDT' },
-          site: { id: siteName },
+          includeDeviceConfiguration: false,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: subDays(now, 45),
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'GX-00001' },
+            sample: { id: '29347293' },
+          },
+          name: 'Fact Test Device',
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -499,10 +508,13 @@ describe('Fact based issues', () => {
       const deviceOfflineDate = subDays(now, maxDaysDeviceOffline - 2)
       let deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults - 2)
       const maintenanceDueOn = addDays(now, 30 + 2)
-      await knex('Device as d').where('d.id', newDevice.id).update({
-        createdOn: deviceNoResultsDate,
-        lastPingOn: deviceOfflineDate,
-      })
+      await knex('Device as d')
+        .where('d.id', newDevice.id)
+        .update({
+          siteId: knex('Site').where('partnerId', newDevice.partnerId).first('id'),
+          createdOn: deviceNoResultsDate,
+          lastPingOn: deviceOfflineDate,
+        })
 
       messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForIdle()
@@ -580,16 +592,21 @@ describe('Fact based issues', () => {
 
       const resultPayload = {
         startedOn: now,
-        data: { a: 'b' },
-        assay: { id: 'GenericRDT' },
-        instrument: { serial: '1234567' },
+        data: { assay: 'Xpert MTB-RIF', a: 'b' },
+        assay: { id: 'GxMtbRif' },
+        instrument: { serial: 'GX-00001' },
         sample: { id: '76543789' },
         endedOn: addDays(new Date(), 2),
       }
       await server
         .post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ result: resultPayload })
+        .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: resultPayload,
+        })
         .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
@@ -636,8 +653,18 @@ describe('Fact based issues', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          type: { id: 'GenericRDT' },
-          site: { id: siteName },
+          includeDeviceConfiguration: false,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: subDays(now, 45),
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'GX-00001' },
+            sample: { id: '29347293' },
+          },
+          name: 'Fact Test Device',
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -672,6 +699,7 @@ describe('Fact based issues', () => {
       await knex('Device as d')
         .where('d.id', newDevice.id)
         .update({
+          siteId: knex('Site').where('partnerId', newDevice.partnerId).first('id'),
           createdOn: format(deviceNoResultsDate, 'yyyy-MM-dd'),
           lastPingOn: format(deviceOfflineDate, 'yyyy-MM-dd'),
         })
@@ -763,8 +791,18 @@ describe('Fact based issues', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          type: { id: 'GenericRDT' },
-          site: { id: siteName },
+          includeDeviceConfiguration: false,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: {
+            startedOn: subDays(now, 45),
+            data: { assay: 'Xpert MTB-RIF', a: 'b' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'GX-00001' },
+            sample: { id: '29347293' },
+          },
+          name: 'Fact Test Device',
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -823,9 +861,12 @@ describe('Fact based issues', () => {
       assert.equal(issues.length, 0)
 
       deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults + 1)
-      await knex('Device as d').where('d.id', newDevice.id).update({
-        createdOn: deviceNoResultsDate,
-      })
+      await knex('Device as d')
+        .where('d.id', newDevice.id)
+        .update({
+          siteId: knex('Site').where('partnerId', newDevice.partnerId).first('id'),
+          createdOn: deviceNoResultsDate,
+        })
       messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
@@ -902,16 +943,21 @@ describe('Fact based issues', () => {
 
       const resultPayload = {
         startedOn: now,
-        data: { a: 'b' },
-        assay: { id: 'GenericRDT' },
-        instrument: { serial: '1234567' },
+        data: { assay: 'Xpert MTB-RIF', a: 'b' },
+        assay: { id: 'GxMtbRif' },
+        instrument: { serial: 'GX-00001' },
         sample: { id: '76543789' },
         endedOn: addDays(new Date(), 2),
       }
       await server
         .post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ result: resultPayload })
+        .send({
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          result: resultPayload,
+        })
         .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')

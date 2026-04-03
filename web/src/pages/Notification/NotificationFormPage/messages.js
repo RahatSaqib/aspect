@@ -500,10 +500,6 @@ export default defineMessages({
     id: 'pages.Notification.type.ModuleUnused',
     defaultMessage: 'Module Unused',
   },
-  notificationTypeInstrumentReplaced: {
-    id: 'pages.Notification.type.InstrumentReplaced',
-    defaultMessage: 'Instrument Replaced',
-  },
   notificationTypeReport: {
     id: 'pages.Notification.type.Report',
     defaultMessage: 'Report',

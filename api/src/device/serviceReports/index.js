@@ -171,6 +171,7 @@ async function getGeneXpertIssuesReport(auth, query, timezoneIANA) {
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
       deviceApprovalId: 'd.deviceApprovalId',
+      deviceApprovalExternalId: 'da.token',
       deviceTypeId: 'd.deviceTypeId',
       siteExternalId: 's.externalId',
       siteName: 's.name',

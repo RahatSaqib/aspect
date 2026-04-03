@@ -427,13 +427,6 @@
       }
     },
     {
-      "issueType": "InstrumentReplaced",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "DEVICE_INSTRUMENT_REPLACED"
-      }
-    },
-    {
       "issueType": "SignalLossDetectedInAmplificationCurveModule",
       "issueEventStatus": "Triggered",
       "triggerConditions": {

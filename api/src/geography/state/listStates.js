@@ -41,7 +41,6 @@ async function listStates({ auth, query }) {
       id: 's.id',
       name: 's.name',
       abbreviation: 's.abbreviation',
-      deviceConfigurationCount: getAssociatedDataCount('DeviceConfiguration'),
       siteCount: getAssociatedDataCount('Site').where('t.disabled', 0),
       issueCount: getAssociatedDataCount('Issue'),
       deviceApiKeyCount: getAssociatedDeviceApiKeyCount(dataConstraints),
@@ -55,7 +54,6 @@ async function listStates({ auth, query }) {
     })
 
   const isDeletionDisabled = i =>
-    i.deviceConfigurationCount > 0 ||
     i.siteCount > 0 ||
     i.issueCount > 0 ||
     i.deviceApiKeyCount > 0 ||

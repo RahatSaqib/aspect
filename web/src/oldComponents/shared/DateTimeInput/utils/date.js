@@ -74,6 +74,19 @@ export function getDateObject(value, defaultValue) {
   return defaultValue
 }
 
+/**
+ * Normalize a value (Date, string, etc.) to YYYY-MM-DD. Returns defaultValue if null or invalid.
+ * @param {Date|string|null|undefined} value
+ * @param {string|null} [defaultValue=null] - e.g. null for display, '' for form inputs
+ * @returns {string|null}
+ */
+export function toDateOnly(value, defaultValue = null) {
+  if (value == null) return defaultValue
+  if (isString(value) && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10)
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? defaultValue : d.toISOString().slice(0, 10)
+}
+
 function isValidDateRange(minDate, maxDate) {
   if (!isValid(maxDate) || !isValid(minDate) || differenceInSeconds(maxDate, minDate) < 0) {
     return false

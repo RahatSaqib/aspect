@@ -54,7 +54,6 @@ const SELECT_SHOW_FIELDS = [
   'd.hostId',
   'd.deviceTypeId',
   'd.deviceApprovalId',
-  'd.instrumentsConnected',
   'd.gx6cModulesCount',
   'd.gx10cModulesCount',
   'd.configurationData',
@@ -130,7 +129,6 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
   const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields, true, true)
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .leftJoin('FactResultsDevice as frd30', function () {
@@ -178,15 +176,6 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
-    .modify(
-      addConstraints,
-      dataConstraints,
-      {
-        device: 'd',
-        deviceType: 'dt',
-      },
-      { showUnapprovedDevices: true, showDecommissionedDevices: true }
-    )
 
   if (!device) {
     return null
@@ -219,6 +208,12 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
 
   device.isDaisyChained = !!device.isDaisyChained
 
+  const firstResultRow = await knex('Result as r')
+    .where('r.deviceId', deviceId)
+    .select(knex.raw('MIN(r.endedOn) as firstEndedOn'))
+    .first()
+  device.firstResultEndedOn = firstResultRow?.firstEndedOn ?? null
+
   return device
 }
 
@@ -231,8 +226,9 @@ function getDeviceByIdBaseQuery(
 ) {
   const query = knex('Device as d')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .modify(
       addConstraints,
       dataConstraints,
@@ -241,6 +237,7 @@ function getDeviceByIdBaseQuery(
         geography: 'g',
         site: 's',
         device: 'd',
+        deviceType: 'dt',
       },
       { showUnapprovedDevices, showDecommissionedDevices }
     )
@@ -303,6 +300,7 @@ function getDeviceBaseExtendedQuery(
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
       deviceApprovalId: 'd.deviceApprovalId',
+      deviceApprovalExternalId: 'da.token',
       deviceTypeId: 'd.deviceTypeId',
       deviceType: 'dt.externalId',
       hasConnectivity: 'dc.hasConnectivity',
@@ -354,14 +352,6 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
   }
 }
 
-async function getSourceDevices(sourceDevicesIds) {
-  return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId', 'deviceTypeId')
-}
-
-async function getTargetDevice(targetDeviceId) {
-  return knex('Device').where('id', targetDeviceId).first('id', 'siteId', 'deviceTypeId')
-}
-
 /**
  * Builds a knex query object including all 'join' and 'where' for managing constraints.
  * @param {object} dataConstraints
@@ -389,93 +379,6 @@ function getDeviceBaseQuery(dataConstraints, aliases, options = {}) {
 
 const getNotDecommissionedDevices = dataConstraints =>
   getDeviceBaseQuery(dataConstraints, {}, { showUnapprovedDevices: true })
-
-async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
-  const {
-    sourceDevice: { id: sourceDeviceId },
-    targetDevice: { id: targetDeviceId },
-  } = devicesToMerge
-
-  await trknex('Issue as i')
-    .update('i.deviceId', targetDeviceId)
-    .update('i.resultId', trknex.raw('pivot.targetResultId'))
-    .join(
-      knex('Result as sr')
-        .join('Result as tr', 'sr.externalId', 'tr.externalId')
-        .where('sr.deviceId', sourceDeviceId)
-        .where('tr.deviceId', targetDeviceId)
-        .select({ sourceResultId: 'sr.id', targetResultId: 'tr.id', externalId: 'sr.externalId' })
-        .as('pivot'),
-      'i.resultId',
-      'pivot.sourceResultId'
-    )
-    .where('i.id', '>', 0)
-}
-
-async function mergeDeviceLevelIssues(devicesToMerge, trknex) {
-  const {
-    sourceDevice: { id: sourceDeviceId },
-    targetDevice: { id: targetDeviceId },
-  } = devicesToMerge
-
-  await trknex('Issue').where('deviceId', sourceDeviceId).whereNull('resultId').update('deviceId', targetDeviceId)
-}
-
-async function mergeNonRepeatedResults(devicesToMerge, trknex) {
-  const {
-    sourceDevice: { id: sourceDeviceId },
-    targetDevice: { id: targetDeviceId },
-  } = devicesToMerge
-
-  const repeatedResultsQuery = trknex(
-    trknex('Result')
-      .where('deviceID', targetDeviceId)
-      .where('externalId', knex.raw(`sourceResults.externalId`))
-      .select('externalId')
-      .as('t')
-  ).select('t.externalId')
-
-  await trknex('Result as sourceResults')
-    .where({ deviceId: sourceDeviceId })
-    .whereNotIn('sourceResults.externalId', repeatedResultsQuery)
-    .update('deviceId', targetDeviceId)
-
-  await trknex('DeviceLog').where({ deviceId: sourceDeviceId }).update({ deviceId: targetDeviceId })
-}
-
-async function mergeMessages(devicesToMerge, trknex) {
-  const {
-    sourceDevice: { id: sourceDeviceId },
-    targetDevice: { id: targetDeviceId },
-  } = devicesToMerge
-
-  const messagesToMergeFilter = qb =>
-    qb
-      .where({ deviceId: sourceDeviceId })
-      .where(qb =>
-        qb
-          .whereIn('m.resultId', knex('Result as r').where('r.deviceId', targetDeviceId).select('id'))
-          .orWhereNull('m.resultId')
-      )
-
-  await trknex('AlertMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-
-  await trknex('EmailMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-
-  await trknex('PushNotificationMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-
-  await trknex('SmsMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-
-  await trknex('WebhookMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
-}
-
-async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) {
-  return knex('Device as d')
-    .whereIn('d.id', allDevicesIds)
-    .join('Site as s', 'd.siteId', 's.id')
-    .modify(addConstraints, dataConstraints, { site: 's' })
-    .select('d.id')
-}
 
 // Delete device
 async function deleteNotifications(deviceId, trknex) {
@@ -548,10 +451,6 @@ async function deleteResults(deviceId, trknex) {
   await trknex('Result').where('deviceId', deviceId).del()
 }
 
-async function deleteDeviceFromDeviceOperation(deviceId, trknex) {
-  await trknex('DeviceOperation').where('deviceId', deviceId).del()
-}
-
 async function deleteDeviceFromDeviceMaintenance(deviceId, trknex) {
   await trknex('DeviceMaintenance').where('deviceId', deviceId).del()
 }
@@ -566,14 +465,6 @@ async function deleteDeviceFromDeviceApiRaw(deviceId, trknex) {
     .del()
 }
 
-async function deleteDeviceFromDeviceApiKey(deviceId, trknex) {
-  await trknex('DeviceApiKey').where('deviceId', deviceId).del()
-}
-
-async function deleteDeviceFromDeviceSim(deviceId, trknex) {
-  await trknex('DeviceSim').where('deviceId', deviceId).del()
-}
-
 async function deleteDeviceFromDeviceTag(deviceId, trknex) {
   await trknex('DeviceTag').where('deviceId', deviceId).del()
 }
@@ -585,10 +476,6 @@ async function deleteDeviceFromFactTables(deviceId, trknex) {
   await trknex('FactResultsDeviceByAssay').where({ deviceId }).del()
   await trknex('FactResultsDeviceByCategory1').where({ deviceId }).del()
   await trknex('FactResultsDeviceByTimeFrame').where({ deviceId }).del()
-}
-
-async function deleteDeviceSiteHistory(deviceId, trknex) {
-  await trknex('DeviceSiteHistory').where('id', deviceId).del()
 }
 
 async function deleteDevice(deviceId, trknex) {
@@ -913,6 +800,14 @@ async function getUnusedModulesReportData(dataConstraints, query) {
     })
 }
 
+async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) {
+  return knex('Device as d')
+    .whereIn('d.id', allDevicesIds)
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .select('d.id')
+}
+
 module.exports = {
   getDeviceByDeviceId,
   getDeviceWorkload,
@@ -920,29 +815,18 @@ module.exports = {
   getDeviceBaseQuery,
   getDeviceBaseExtendedQuery,
   getBasicsForDevicesReport,
-  getSourceDevices,
-  getTargetDevice,
-  mergeIssuesFromDuplicatedResults,
-  mergeDeviceLevelIssues,
   deleteNotifications,
   deleteIssues,
-  mergeNonRepeatedResults,
-  mergeMessages,
-  getDevicesIdsCheckingConstraints,
   deleteResultDownloadLog,
   deleteInventoryLog,
   deleteMessages,
   deleteResults,
   deleteDeviceLog,
-  deleteDeviceFromDeviceOperation,
   deleteDeviceFromDeviceMaintenance,
   deleteDeviceFromDeviceApprovalLog,
   deleteDeviceFromDeviceApiRaw,
-  deleteDeviceFromDeviceApiKey,
-  deleteDeviceFromDeviceSim,
   deleteDeviceFromDeviceTag,
   deleteDeviceFromFactTables,
-  deleteDeviceSiteHistory,
   deleteDevice,
   getNotDecommissionedDevices,
   joinModuleAvailability,
@@ -953,4 +837,5 @@ module.exports = {
   getDeviceByIdBaseQuery,
   getUnusedModulesReportData,
   getDeviceInfo,
+  getDevicesIdsCheckingConstraints,
 }

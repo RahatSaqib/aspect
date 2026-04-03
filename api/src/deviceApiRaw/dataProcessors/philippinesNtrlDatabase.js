@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { getRemoteAddress } = require('../../shared/request')
-const { resultUpdated } = require('../../result/actions')
 const { SynchronousDataProcessor } = require('./_base')
 
 class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
@@ -124,15 +123,14 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     } else {
       await knex('Result').where('id', result.id).update(result)
     }
-    const deviceLogId = await this.appendDeviceLog(knex, result.deviceId, result.id, rawMessage, utcNow)
-    this.messageContext.dispatch(resultUpdated(result.id, deviceLogId))
+    await this.appendDeviceLog(knex, result.deviceId, result.id, rawMessage, utcNow)
     this.response.resultIds = [...this.response.resultIds, result.id]
   }
 
   async appendDeviceLog(knex, deviceId, resultId, rawMessage, utcNow) {
     const remoteAddress = getRemoteAddress(this.request)
     const [deviceLogId] = await knex('DeviceLog').insert({
-      deviceId,
+      deviceApiKeyId: knex('DeviceApiKey').where('id', deviceId).first('id'),
       resultId,
       source: 'Philippines NTRL DB Record Updated',
       createdOn: utcNow,

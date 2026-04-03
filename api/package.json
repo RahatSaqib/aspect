@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.71.0",
+  "version": "1.72.0",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
@@ -44,7 +44,7 @@
     "test:quiet": "npm-run-all test:unit test:contract:quiet",
     "test:contract": "TZ=UTC npm-run-all -c start:background mocha:contract stop:background",
     "test:contract:quiet": "TZ=UTC npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
-    "test:unit": "TZ=UTC npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage",
+    "test:unit": "TZ=UTC npm-run-all mocha:unit:clear:coverage mocha:unit:coverage",
     "test:unit:ci": "TZ=UTC npm-run-all mocha:unit:clear:coverage mocha:unit:coverage:ci",
     "test:reseed": "npm-run-all db:reseed test",
     "gx:importZip": "node ./migrations/utils/importZipFilesFromGxAlert",

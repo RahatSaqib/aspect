@@ -1,12 +1,20 @@
 const DEVICE_KEY = 'DEVICE'
 const DEVICE_KEY_BY_ID_ENDPOINT = '/device/:deviceId'
-const DEVICE_KEY_DEVICE_LIST_ENDPOINT =
-  '/device/select-list?countryId=:countryId&partnerId=:partnerId&siteId=:siteId&showUnapprovedDevices=:showUnapprovedDevices&onlyResultDevices=:onlyResultDevices'
+const DEVICE_KEY_DEVICE_LIST_ENDPOINT = '/device/select-list'
 const DEVICE_KEY_MERGE_DEVICES_ENDPOINT = '/device/mergedevices'
 const DEVICE_PERFORMANCE_KEY_BY_ID_ENDPOINT = '/device/performance/:deviceId'
 const DEVICE_TYPE_KEY_LIST_ENDPOINT = '/device-type/select-list'
 const DEVICE_RESULT_CATEGORY_GROUP_ENDPOINT = '/device/maintenance-statuses'
 const DEVICE_APPROVAL_TYPE_ENDPOINT = '/device/approval-types'
+const DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT = '/device/transfer-instruments'
+const DEVICE_KEY_TRANSFER_INSTRUMENT_TO_NEW_DEVICE_ENDPOINT = '/device/transfer-instrument-to-new-device'
+const DEVICE_INSTRUMENTS_KEY = 'device-instruments'
+const CANDIDATE_INSTRUMENTS_KEY = 'candidate-instruments'
+const DEVICE_DEPLOYMENTS_KEY = 'device-deployments'
+const DEVICE_DEPLOYMENTS_ENDPOINT = '/device/:deviceId/deployments'
+const DEVICE_DEPLOYMENTS_CHECK_RESULTS_ENDPOINT = '/device/:deviceId/deployments/check-results'
+const DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT = '/device/:deviceId/deployments/persist'
+const DEVICE_APPROVAL_ACTION_ENDPOINT = '/device/:deviceId/approval'
 
 export {
   DEVICE_KEY,
@@ -17,4 +25,13 @@ export {
   DEVICE_TYPE_KEY_LIST_ENDPOINT,
   DEVICE_RESULT_CATEGORY_GROUP_ENDPOINT,
   DEVICE_APPROVAL_TYPE_ENDPOINT,
+  DEVICE_KEY_TRANSFER_INSTRUMENTS_ENDPOINT,
+  DEVICE_KEY_TRANSFER_INSTRUMENT_TO_NEW_DEVICE_ENDPOINT,
+  DEVICE_INSTRUMENTS_KEY,
+  CANDIDATE_INSTRUMENTS_KEY,
+  DEVICE_DEPLOYMENTS_KEY,
+  DEVICE_DEPLOYMENTS_ENDPOINT,
+  DEVICE_DEPLOYMENTS_CHECK_RESULTS_ENDPOINT,
+  DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT,
+  DEVICE_APPROVAL_ACTION_ENDPOINT,
 }

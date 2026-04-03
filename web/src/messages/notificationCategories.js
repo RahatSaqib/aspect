@@ -49,8 +49,4 @@ export default defineMessages({
     id: 'notificationCategoryTypeSelect.notificationTypeModuleUnused',
     defaultMessage: 'Module Unused',
   },
-  notificationTypeInstrumentReplaced: {
-    id: 'notificationCategoryTypeSelect.notificationTypeInstrumentReplaced',
-    defaultMessage: 'Instrument Replaced',
-  },
 })

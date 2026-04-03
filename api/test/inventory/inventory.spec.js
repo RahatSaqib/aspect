@@ -513,6 +513,9 @@ describe('POST: /api/inventory/auto-reconcile', () => {
     await knex('Site')
       .whereIn('id', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
       .update({ parentWarehouseId: null })
+    await knex('DeviceApiKey')
+      .whereIn('siteId', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
+      .update({ siteId: null })
     await knex('Site')
       .whereIn('id', [testData.siteId, testData.stockProviderSiteId, testData.nationalWarehouseId])
       .delete()
@@ -941,6 +944,10 @@ describe('Reset Inventory', () => {
       endedOn: new Date(),
     })
     ;[resultId1] = resultIds
+  })
+
+  after(async () => {
+    await testContext.cleanUp()
   })
 
   afterEach(async () => {

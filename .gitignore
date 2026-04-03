@@ -4,6 +4,7 @@ node_modules/
 
 # IDE Generated Files
 .idea/
+.cursor/
 
 # Runtime data
 pids

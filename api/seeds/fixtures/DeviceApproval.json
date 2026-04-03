@@ -1,14 +1,9 @@
 {
   "data": [
     {
-      "name": "Provisioned",
-      "token": "provisioned",
-      "i18nKey": "deviceApprovalProvisioned"
-    },
-    {
-      "name": "Assigned",
-      "token": "assigned",
-      "i18nKey": "deviceApprovalAssigned"
+      "name": "PendingDeployment",
+      "token": "pendingDeployment",
+      "i18nKey": "deviceApprovalPendingDeployment"
     },
     {
       "name": "Approved",
