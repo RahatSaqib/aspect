@@ -89,10 +89,13 @@ function validateDeviceType(sourceDevices, targetDevice) {
 }
 
 async function validateInstruments(sourceDevices, targetDevice) {
-  const deviceIds = [...sourceDevices.map(sourceDevice => sourceDevice.id), targetDevice.id]
+  const deviceIds = [...sourceDevices.map(sourceDevice => sourceDevice.id)]
   const serials = await knex('Instrument').whereIn('deviceId', deviceIds).pluck('serial')
-  const [{ count: serialCounts }] = await knex('Instrument').whereIn('serial', serials).count('* as count')
-  const hasDuplicateSerials = serials.length !== serialCounts
+  const [{ count: duplicatedSerialCount }] = await knex('Instrument')
+    .where('deviceId', targetDevice.id)
+    .whereIn('serial', serials)
+    .count('* as count')
+  const hasDuplicateSerials = duplicatedSerialCount > 0
 
   if (hasDuplicateSerials) {
     throw Boom.badData('Cannot merge devices with duplicated instruments.', {
