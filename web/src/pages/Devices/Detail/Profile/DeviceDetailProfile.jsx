@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Button, Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
+import React, { Fragment } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
@@ -453,10 +453,11 @@ const DeviceDetailProfile = ({
         disabled={disabled}
       />
 
-      {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
-        <DeviceInstrumentsTable deviceId={device.get('id')} disabled={disabled} />
-      )}
-
+      <PermissionChecker permissions={['admin:edit']}>
+        {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
+          <DeviceInstrumentsTable deviceId={device.get('id')} disabled={disabled} />
+        )}
+      </PermissionChecker>
       <PerformanceReport
         performanceReport={devicePerformance}
         dailyCapacity={dailyCapacity || 0}
