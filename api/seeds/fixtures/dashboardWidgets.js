@@ -169,7 +169,7 @@ const instrumentsConnected = {
   `,
   link: '/browse/device/list',
   linkParams: {
-    deviceApprovalId: 3, // TODO: This should not be hardcoded. We should get the id of 'approved' status from the database
+    deviceApprovalExternalId: 'approved', // TODO: This should not be hardcoded. We should get the id of 'approved' status from the database
   },
   sortOrder: 2,
   externalId: 'instrumentsConnected',
