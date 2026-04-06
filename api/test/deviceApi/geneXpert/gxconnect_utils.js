@@ -300,7 +300,7 @@ class GxConnectApiTestContext {
     await knex('DeviceApiKey').where('id', deviceApiKeyRecord.id).update({ siteId, geographyId })
     await knex('Device').where('id', deviceId).update({ deviceApiKeyId: deviceApiKeyRecord.id })
     if (this.instrumentSerial) {
-      await knex('Instrument').insert({ deviceId, serial: this.instrumentSerial })
+      await knex('Instrument').insert({ deviceId, serial: this.instrumentSerial, active: true })
     }
 
     return deviceApiKey

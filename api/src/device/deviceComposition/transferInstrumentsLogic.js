@@ -1,5 +1,6 @@
 const { executeMergeDevices: mergeDevice } = require('./mergeDevicesLogic')
 const { knex } = require('../../db')
+const { convertTimezonetoIANA } = require('../../shared/date')
 
 // Handles merging and transferring instruments/devices in a transaction
 async function transferDeviceInstruments(trknex, { groupedInstruments, targetDeviceId }, userId) {
@@ -21,7 +22,7 @@ async function transferDeviceInstruments(trknex, { groupedInstruments, targetDev
       await updateTransferredResultsSiteIds(trknex, {
         targetDeviceId,
         partnerId: targetDeviceMeta.partnerId,
-        timezoneIANA: targetDeviceMeta.timezone,
+        timezone: targetDeviceMeta.timezone,
         deployments: targetDeployments,
         instrumentSerials,
       })
@@ -45,9 +46,6 @@ async function transferDeviceInstruments(trknex, { groupedInstruments, targetDev
       })
     })
   )
-
-  const deviceIdsToSync = [...new Set([...devicesToPartiallyTransfer, targetDeviceId])]
-  await syncInstrumentsConnectedFromInstruments(trknex, deviceIdsToSync)
 
   return { deletedDeviceIds: [...devicesToFullyMerge] }
 }
@@ -78,8 +76,10 @@ async function getInstrumentSerialsByDeviceId(trknex, deviceId) {
 
 async function updateTransferredResultsSiteIds(
   trknex,
-  { targetDeviceId, partnerId, timezoneIANA, deployments, instrumentSerials }
+  { targetDeviceId, partnerId, timezone, deployments, instrumentSerials }
 ) {
+  const timezoneIANA = convertTimezonetoIANA(timezone) || 'Etc/UTC'
+
   if (!instrumentSerials || instrumentSerials.length === 0) {
     return
   }
@@ -118,16 +118,6 @@ async function updateTransferredResultsSiteIds(
   )
 
   await Promise.all(updatePromises)
-}
-
-async function syncInstrumentsConnectedFromInstruments(trknex, deviceIds) {
-  await Promise.all(
-    deviceIds.map(async deviceId => {
-      const row = await trknex('Instrument').where('deviceId', deviceId).count({ cnt: '*' }).first()
-      const cnt = row ? Number(row.cnt) : 0
-      await trknex('Device').where('id', deviceId).update({ instrumentsConnected: cnt })
-    })
-  )
 }
 
 async function transferInstrumentIds(trknex, sourceInstrumentIds, targetDeviceId, userId) {

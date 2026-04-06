@@ -46,7 +46,7 @@ const DeviceApprovalSelect = ({ id, name, label, value, onChange, error, helperT
         }}
       >
         {options.map(o => (
-          <MenuItem key={o.id} value={o.id}>
+          <MenuItem key={o.id} value={o.token}>
             {formatMessage(deviceApprovalMessages[o.i18nKey])}
           </MenuItem>
         ))}
@@ -67,7 +67,7 @@ const DeviceApprovalSelect = ({ id, name, label, value, onChange, error, helperT
         onChange({ target: { name, value: [] } })
       } else {
         // Select all
-        onChange({ target: { name, value: options.map(o => o.id) } })
+        onChange({ target: { name, value: options.map(o => o.token) } })
       }
       return
     }
@@ -93,8 +93,8 @@ const DeviceApprovalSelect = ({ id, name, label, value, onChange, error, helperT
           if (!selected || selected.length === 0) return ''
           if (options.length > 0 && selected.length === options.length) return formatMessage(localMessages.all)
           return selected
-            .map(id => {
-              const item = options.find(o => o.id === id)
+            .map(value => {
+              const item = options.find(o => o.token === value || o.id === value)
               return item ? formatMessage(deviceApprovalMessages[item.i18nKey]) : ''
             })
             .filter(Boolean)
@@ -117,8 +117,8 @@ const DeviceApprovalSelect = ({ id, name, label, value, onChange, error, helperT
         <ListItemText primary={formatMessage(localMessages.all)} />
       </MenuItem>
       {options.map(o => (
-        <MenuItem key={o.id} value={o.id}>
-          <Checkbox checked={valueArray.includes(o.id)} />
+        <MenuItem key={o.id} value={o.token}>
+          <Checkbox checked={valueArray.includes(o.token) || valueArray.includes(o.id)} />
           <ListItemText primary={formatMessage(deviceApprovalMessages[o.i18nKey])} />
         </MenuItem>
       ))}

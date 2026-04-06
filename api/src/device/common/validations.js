@@ -98,10 +98,10 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           .single()
           .allow(null)
           .description('Filter for device maintenance status external id'),
-        deviceApprovalId: Joi.alternatives()
-          .try(Joi.array().items(Joi.number()).single(), Joi.number())
+        deviceApprovalExternalId: Joi.alternatives()
+          .try(Joi.array().items(Joi.string()).single(), Joi.string())
           .allow('', null)
-          .description('Filter for device approval ID(s)'),
+          .description('Filter for device approval external ID(s)'),
         deviceTypeId: Joi.number().allow('').description('Filter for device type ID'),
         deviceType: Joi.string().allow('').description('Filter for device type ExternalId'),
         category: Joi.string().description('Filter for device type category'),
@@ -263,7 +263,6 @@ const deviceDetailsResponseFields = Joi.object()
     siteId: Joi.number().allow('', null).description('The ID of the site where the device is located'),
     implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
     implementingPartnerName: Joi.string().allow('', null).description('Implementing partner name'),
-    instrumentsConnected: Joi.number().description('The number of instruments assigned to the device or connector'),
     gx6cModulesCount: Joi.number().allow('', null).description('Number of GX-6C modules on GenExpert device'),
     gx10cModulesCount: Joi.number().allow('', null).description('Number of GX-10C modules on GenExpert device'),
     siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),

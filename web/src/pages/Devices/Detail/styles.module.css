@@ -172,3 +172,7 @@
   display: flex;
   align-items: center;
 }
+
+.InactiveInstrumentWarningIcon {
+  vertical-align: middle;
+}

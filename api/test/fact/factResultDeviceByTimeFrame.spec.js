@@ -69,6 +69,7 @@ const insertDevice = async (name, siteId, partnerId, instrumentSerial = null) =>
       deviceId,
       serial: instrumentSerial,
       macAddress: null,
+      active: 1,
       createdOn: now,
       createdBy: 1,
       updatedOn: now,

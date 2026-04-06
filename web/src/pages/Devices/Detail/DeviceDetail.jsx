@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { DetailHeader, Loading } from '../../../cleanComponents'
-import AspectVertMenu from '../../../components/AspectVertMenu'
+// import AspectVertMenu from '../../../components/AspectVertMenu'
 import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDeviceApprovalAction from '../../../hooks/device/useDeviceApprovalAction'
@@ -117,7 +117,7 @@ export const DeviceDetail = props => {
     navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
   }
 
-  const approvalActions =
+  /*   const approvalActions =
     device && editable
       ? [
           {
@@ -130,7 +130,7 @@ export const DeviceDetail = props => {
               ),
           },
         ]
-      : null
+      : null */
 
   const handleConfirmApprovalAction = () => {
     if (!pendingApprovalAction) {
@@ -176,7 +176,7 @@ export const DeviceDetail = props => {
             {label}
           </AspectButton>
         ))}
-        {approvalActions ? <AspectVertMenu actions={approvalActions} /> : null}
+        {/* approvalActions ? <AspectVertMenu actions={approvalActions} /> : null */}
       </DetailHeader>
       <Box component="main" sx={{ flex: '1 1 auto' }}>
         {isLoading ? (

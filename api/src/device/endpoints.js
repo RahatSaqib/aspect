@@ -170,6 +170,7 @@ const routes = [
                 .items(
                   Joi.object().keys({
                     instrumentId: Joi.number().required().description('Instrument ID'),
+                    active: Joi.bool().description('Whether the instrument is active'),
                     instrumentSerial: Joi.string().allow(null).required().description('Instrument serial number'),
                     modules: Joi.array()
                       .items(
@@ -259,7 +260,6 @@ const routes = [
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number(),
           implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
-          instrumentsConnected: Joi.number().min(1).description('Number of connected instruments'),
           gx6cModulesCount: Joi.number()
             .allow('', null)
             .min(0)

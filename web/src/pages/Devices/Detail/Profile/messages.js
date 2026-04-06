@@ -182,6 +182,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.buttonChange',
       defaultMessage: 'Change',
     },
+    duplicatedInstrumentTooltip: {
+      id: 'pages.DeviceDetailProfile.duplicatedInstrumentTooltip',
+      defaultMessage: 'This instrument cannot be transferred because it is duplicated.',
+    },
     testHistory: {
       id: 'pages.DeviceDetailProfile.testHistory',
       defaultMessage: 'Test history',
@@ -205,10 +209,6 @@ const messages = {
     countryAverage: {
       id: 'pages.deviceDetail.countryAverage',
       defaultMessage: 'Country Average',
-    },
-    instrumentsConnected: {
-      id: 'pages.deviceDetail.instrumentsConnected',
-      defaultMessage: 'Instruments Connected',
     },
     gx6cModulesCount: { id: 'pages.deviceDetail.gx6cModulesCount', defaultMessage: 'Number of GX-6C modules' },
     gx10cModulesCount: { id: 'pages.deviceDetail.gx10cModulesCount', defaultMessage: 'Number of GX-10C modules' },
@@ -321,6 +321,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.targetDeviceIsSourceDevice',
       defaultMessage: 'Target device cannot be the same as the source device',
     },
+    transferInstrumentsDuplicatedSerials: {
+      id: 'pages.DeviceDetailProfile.transferInstrumentsDuplicatedSerials',
+      defaultMessage: 'Cannot transfer instruments with duplicated serials.',
+    },
     deploymentsTitle: {
       id: 'pages.DeviceDetailProfile.deploymentsTitle',
       defaultMessage: 'Deployments',
@@ -356,6 +360,11 @@ const messages = {
     deploymentSite: {
       id: 'pages.DeviceDetailProfile.deploymentSite',
       defaultMessage: 'Site',
+    },
+    deploymentSiteDeleted: {
+      id: 'pages.DeviceDetailProfile.deploymentSiteDeleted',
+      defaultMessage:
+        'This site has been deleted. If you change this deployment to another site, the related deleted results will be restored.',
     },
     deploymentActive: {
       id: 'pages.DeviceDetailProfile.deploymentActive',

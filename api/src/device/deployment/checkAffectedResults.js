@@ -41,7 +41,7 @@ async function checkAffectedResults(request) {
         // Last deployment (null end) covers all results to the present
         if (dep.end) qb.where(endedOnDateExpr, '<=', dep.end)
       })
-      .modify(addConstraints, dataConstraints, { result: 'r' })
+      .modify(addConstraints, dataConstraints, { result: 'r' }, { displayResult: 'all' })
       .andWhere(function () {
         if (dep.siteId) {
           this.where('r.siteId', '!=', dep.siteId).orWhereNull('r.siteId')

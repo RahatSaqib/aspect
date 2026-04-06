@@ -377,6 +377,7 @@ async function createDevice(
       deviceId,
       serial: instrumentSerial,
       macAddress: null,
+      active: true,
       createdOn: now,
       createdBy: null,
       updatedOn: now,

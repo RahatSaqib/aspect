@@ -45,6 +45,10 @@ const routes = [
               id: Joi.number().required(),
               siteId: Joi.number().allow(null).required(),
               siteName: Joi.string().allow(null).required(),
+              siteDisabled: Joi.alternatives()
+                .try(Joi.bool(), Joi.number().integer().min(0).max(1))
+                .allow(null)
+                .required(),
               start: Joi.date().allow(null).required(),
               end: Joi.date().allow(null).required(),
             })

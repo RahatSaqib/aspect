@@ -1236,29 +1236,6 @@ describe('Device API routes for GxConnect Devices', () => {
                 address: '123 Main Street',
                 phone: '856-7909',
               },
-              oemData: JSON.stringify({
-                maker: 'ABC',
-                model: '123A',
-                serial: '123-456-789',
-              }),
-              rawData: JSON.stringify({
-                startedOn: '2013-05-13',
-                endedOn: '2013-12-01T01:30',
-                patientData: {
-                  id: 'P-333',
-                  name: 'Bob',
-                  surname: 'Hope',
-                  gender: 'M',
-                  age: 72,
-                  dateOfBirth: '1903-05-29',
-                  address: '123 Main Street',
-                  phone: '856-7909',
-                },
-                location: {
-                  longitude: -87.581222,
-                  latitude: 30.419348,
-                },
-              }),
               sender: {
                 version: '99-1',
                 operator: 'Bob O',
@@ -1302,29 +1279,6 @@ describe('Device API routes for GxConnect Devices', () => {
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
           phone: '+18567909',
-        })
-        assert.deepEqual(JSON.parse(result2.oemData), {
-          maker: 'ABC',
-          model: '123A',
-          serial: '123-456-789',
-        })
-        assert.deepEqual(JSON.parse(result2.rawData), {
-          startedOn: '2013-05-13',
-          endedOn: '2013-12-01T01:30',
-          patientData: {
-            id: 'P-333',
-            name: 'Bob',
-            surname: 'Hope',
-            gender: 'M',
-            age: 72,
-            dateOfBirth: '1903-05-29',
-            address: '123 Main Street',
-            phone: '856-7909',
-          },
-          location: {
-            longitude: -87.581222,
-            latitude: 30.419348,
-          },
         })
         assert.equal(result2.senderVersion, '99-1')
         assert.equal(result2.senderOperator, 'Bob O')

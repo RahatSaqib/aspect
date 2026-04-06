@@ -19,7 +19,7 @@ async function updateDevice(request) {
 
   const configurationData = _.assign({}, device.configurationData, payload.configurationData)
 
-  if (Object.hasOwn(payload, 'approvalToken') && device.approvalToken !== payload.approvalToken) {
+  if (payload.approvalToken && device.approvalToken !== payload.approvalToken) {
     throw Boom.badRequest('Device approval must be changed using the device approval workflow')
   }
 
@@ -47,10 +47,6 @@ async function updateDevice(request) {
       updatedOn: now,
       updatedBy: currentlyLoggedInUserId,
     })
-
-  const row = await knex('Instrument').where('deviceId', params.deviceId).count({ cnt: '*' }).first()
-  const instrumentsConnected = row ? Number(row.cnt) : 0
-  await knex('Device').where('id', params.deviceId).update({ instrumentsConnected })
 
   if (prevDeviceApprovalId !== device.deviceApprovalId) {
     await knex('DeviceApprovalLog').insert({

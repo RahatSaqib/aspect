@@ -1,0 +1,14 @@
+{
+  "CustomFields_Chad_HivQual": {
+    "fileName": "CustomFields_Chad_HivQual.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Chad_HivQual",
+      "i18nKeyTitle": "CustomFields_Chad_HivQual_i18nkey",
+      "externalId": "CustomFields_Chad_HivQual",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "hiv",
+      "assayExternalId": "GxHiv1Qual"
+    }
+  }
+}

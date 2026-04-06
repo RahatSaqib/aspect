@@ -10,6 +10,9 @@ const LEFT_FADE_PCT_OF_TIMELINE = 3
 /** Min distance (as % of timeline width, 0–100) between two boundary labels before we displace one down to avoid overlap. */
 const MIN_LABEL_DISTANCE_PCT = 20
 
+/** Maximum number of stagger rows before cycling back to row 0. */
+const MAX_LABEL_ROWS = 3
+
 /** Sort deployments chronologically: null start (oldest/first) comes first. */
 function sortChronological(deps) {
   return [...deps].sort((a, b) => {
@@ -122,7 +125,7 @@ const DeploymentTimeline = ({ deployments, firstResultDate, palette, ariaLabel, 
     for (let i = 1; i < pcts.length; i++) {
       const tooClose = pcts[i] - pcts[i - 1] < MIN_LABEL_DISTANCE_PCT
       if (tooClose) {
-        const rowInRun = i - runStart
+        const rowInRun = (i - runStart) % MAX_LABEL_ROWS
         out[i] = rowInRun
       } else {
         runStart = i

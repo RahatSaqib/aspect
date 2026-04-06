@@ -41,7 +41,7 @@ async function getCandidateInstruments({ params, auth }) {
   }
 
   // Get candidate instruments data with constraints applied
-  const instrumentRows = await getCandidateInstrumentsData(deviceId, dataConstraints)
+  const instrumentRows = await getCandidateInstrumentsData(deviceId, baseDevice.siteId, dataConstraints)
 
   // For each instrument, use the name from the most recent module to build an array of 4 modules (e.g. if latest module = B2 => B1-B4),
   // filling in any missing modules with null for lastResultDate.
@@ -77,7 +77,7 @@ async function getCandidateInstruments({ params, auth }) {
   }
 }
 
-function getCandidateInstrumentsData(deviceId, dataConstraints) {
+function getCandidateInstrumentsData(deviceId, siteId, dataConstraints) {
   const query = knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -85,9 +85,6 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
       this.on('i.deviceId', 'd.id')
     })
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Deployment as baseDep', function () {
-      this.on('baseDep.deviceId', knex.raw('?', deviceId)).andOnNull('baseDep.end')
-    })
     .leftJoin(
       knex('Result as r')
         .whereNotNull('r.instrumentSerial')
@@ -103,21 +100,8 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
         this.on('m.deviceId', 'd.id').andOn('m.instrumentSerial', 'i.serial')
       }
     )
-    .leftJoin('Deployment as candidateDep', function () {
-      this.on('candidateDep.deviceId', 'd.id').andOnNull('candidateDep.end')
-    })
     .where('dt.externalId', 'CepheidGeneXpert')
-    .where(function () {
-      // If base device has active deployment, candidate must have active deployment with same Deployment.siteId
-      // If base device has no active deployment, candidate must also have no active deployment
-      this.where(function () {
-        // base device has active deployment - candidate must have same Deployment.siteId
-        this.whereNotNull('baseDep.id').andWhere('baseDep.siteId', knex.raw('candidateDep.siteId'))
-      }).orWhere(function () {
-        // base device has no active deployment - candidate must also have no active deployment
-        this.whereNull('baseDep.id').whereNull('candidateDep.id')
-      })
-    })
+    .where('d.siteId', siteId)
     .where(function () {
       // Same token as deviceApiKey as base device
       this.whereIn('d.deviceApiKeyId', function () {
@@ -126,6 +110,7 @@ function getCandidateInstrumentsData(deviceId, dataConstraints) {
     })
     .whereIn('da.token', ['approved', 'pendingDeployment'])
     .whereNot('d.id', deviceId) // Exclude the base device itself
+    .where('i.active', 1)
     .whereNotNull('i.serial') // Only include devices with instruments
     .groupBy('d.id', 'd.name', 'i.id', 'i.serial')
     .modify(

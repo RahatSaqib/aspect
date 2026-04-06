@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import {
   Alert,
   Box,
@@ -12,6 +13,7 @@ import {
   Table,
   TableBody,
   TableContainer,
+  Tooltip,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -505,6 +507,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled
                     const isPending = dep.status === 'pending'
                     const isActive = !dep.end
                     const isFirst = dep.start === null
+                    const isSiteDisabled = dep.siteDisabled
                     const siteKey = dep.siteId != null ? dep.siteId : `temp-${dep.id}`
                     const colorIndex = siteToColorIndex[siteKey]
                     const segmentColor =
@@ -530,7 +533,14 @@ const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled
                               : undefined
                           }
                         >
-                          {dep.siteName || '—'}
+                          <Box display="flex" alignItems="center" gap={0.5}>
+                            <span>{dep.siteName || '—'}</span>
+                            {!!isSiteDisabled && (
+                              <Tooltip title={formatMessage(messages.deploymentSiteDeleted)} placement="top">
+                                <WarningAmberIcon fontSize="small" sx={{ color: 'warning.main', fontSize: 16 }} />
+                              </Tooltip>
+                            )}
+                          </Box>
                         </TableCell>
                         <TableCell>
                           {isFirst ? formatMessage(messages.deploymentFromBeginning) : toDateOnly(dep.start)}

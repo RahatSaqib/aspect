@@ -24,6 +24,7 @@ async function identifyDevice(payload, partnerId) {
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Partner as p', 'p.id', 'd.partnerId')
     .where('i.serial', instrumentSerial)
+    .where('i.active', 1)
     .where('d.partnerId', partnerId)
     .first(
       'd.id',

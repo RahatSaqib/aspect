@@ -40,19 +40,6 @@ async function seed(knex) {
       // 5. Delete the old provisioned and assigned rows
       await trx('DeviceApproval').whereIn('id', oldIds).delete()
     }
-
-    // Keep Device.instrumentsConnected in sync with Instrument links
-    const instrumentCountsByDeviceQuery = trx('Instrument as i')
-      .select('i.deviceId')
-      .count({ cnt: '*' })
-      .groupBy('i.deviceId')
-      .as('ic')
-
-    await trx('Device as d')
-      .leftJoin(instrumentCountsByDeviceQuery, 'ic.deviceId', 'd.id')
-      .update({
-        instrumentsConnected: trx.raw('IFNULL(ic.cnt, 0)'),
-      })
   })
 }
 

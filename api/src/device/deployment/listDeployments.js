@@ -10,8 +10,8 @@ async function listDeployments(request) {
   const deployments = await knex('Deployment as dep')
     .leftJoin('Site as s', 'dep.siteId', 's.id')
     .where('dep.deviceId', deviceId)
-    .modify(addConstraints, dataConstraints, { site: 's' })
-    .select('dep.id', 'dep.siteId', 's.name as siteName', 'dep.start', 'dep.end')
+    .modify(addConstraints, dataConstraints, {})
+    .select('dep.id', 'dep.siteId', 's.name as siteName', 's.disabled as siteDisabled', 'dep.start', 'dep.end')
     .orderByRaw('dep.start IS NULL ASC, dep.start DESC')
 
   return { ok: true, data: deployments }
