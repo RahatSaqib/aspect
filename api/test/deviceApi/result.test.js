@@ -2,7 +2,7 @@ const chai = require('chai')
 
 const { assert } = chai
 
-const { getAllResultTags } = require('../../src/deviceApi/result')
+const { getAllResultTags } = require('../../src/deviceApi/result/result')
 
 const country1 = {
   tagRegexSampleId: '-([A-Z]){3}$',

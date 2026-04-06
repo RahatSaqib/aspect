@@ -90,8 +90,8 @@ class TruenatResult extends SynchronousDataProcessor {
           time,
         } = getDetailsFromRequest(request)
 
-        const assigned = await deviceApprovalToId('assigned')
-        if (deviceApprovalId === assigned && labName && deviceName === username && siteName === username) {
+        const pendingDeployment = await deviceApprovalToId('pendingDeployment')
+        if (deviceApprovalId === pendingDeployment && labName && deviceName === username && siteName === username) {
           const site = await knex('Site').where('name', labName).where('partnerId', partnerId).first()
           if (site) {
             await knex('Device').where('id', deviceId).update({ siteId: site.id })
@@ -115,7 +115,6 @@ class TruenatResult extends SynchronousDataProcessor {
               await knex('WebhookMessage').where('siteId', siteId).update({ siteId: null })
               await knex('DeviceApiKey').where('siteId', siteId).update({ siteId: null })
               await knex('Issue').where('siteId', siteId).update({ siteId: null })
-              await knex('DeviceSiteHistory').where('id', siteId).delete()
               await knex('FactInventoryConsumptionRate').where('id', siteId).delete()
               await knex('Site').where('id', siteId).delete()
             }
@@ -223,12 +222,13 @@ class TruenatResult extends SynchronousDataProcessor {
 
         await postPayloadFromDevice(
           {
-            deviceId,
+            deviceApiKeyId,
             source: 'Diagnostic Device POST',
             senderIp: getRemoteAddress(request),
             resultId: result.id,
             rawMessage: JSON.stringify(request.plugins.rawPayload),
           },
+          deviceId,
           knex
         )
 

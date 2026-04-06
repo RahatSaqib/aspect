@@ -42,7 +42,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
     implementingPartnerId: device.implementingPartnerId,
     dailyTestCapacity: device.dailyTestCapacity,
     moduleBayCapacity: device.moduleBayCapacity,
-    instrumentsConnected: device.instrumentsConnected,
     gx6cModulesCount: device.gx6cModulesCount,
     gx10cModulesCount: device.gx10cModulesCount,
     stickerInstrumentSerial: device.stickerInstrumentSerial,
@@ -65,7 +64,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
     const deviceData = {
       ...values,
       dailyTestCapacity: values.dailyTestCapacity === '' ? null : values.dailyTestCapacity,
-      instrumentsConnected: values.instrumentsConnected === '' ? null : values.instrumentsConnected,
       gx6cModulesCount: values.gx6cModulesCount === '' ? null : values.gx6cModulesCount,
       gx10cModulesCount: values.gx10cModulesCount === '' ? null : values.gx10cModulesCount,
     }
@@ -157,19 +155,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   helperText={errors.moduleBayCapacity}
                   value={values.moduleBayCapacity}
                   onChange={e => setFieldValue('moduleBayCapacity', e.target.value)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-
-                <TextField
-                  label={intl.formatMessage(messages.instrumentsConnected)}
-                  type="number"
-                  name="instrumentsConnected"
-                  error={Boolean(errors.instrumentsConnected)}
-                  helperText={errors.instrumentsConnected}
-                  value={values.instrumentsConnected}
-                  onChange={e => setFieldValue('instrumentsConnected', e.target.value)}
                   InputLabelProps={{
                     shrink: true,
                   }}

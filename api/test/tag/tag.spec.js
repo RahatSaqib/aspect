@@ -23,7 +23,7 @@ describe('Tag routes', () => {
 
   describe('GET', () => {
     beforeEach(async () => {
-      await context.createDeviceWithResult()
+      await context.createDeviceWithResult({})
       const { deviceId } = context
       const { id: resultId } = await knex('Result as r').where({ deviceId }).first('id')
       const res = await server

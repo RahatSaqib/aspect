@@ -10,12 +10,14 @@ const SiteSelect = ({
   label,
   value,
   onChange,
+  onBlur,
   error,
   helperText,
   disabled,
   stateId,
   lgaId,
   customFilter,
+  required,
 }) => {
   const { isLoading, data: sites } = useSiteList()
 
@@ -34,9 +36,11 @@ const SiteSelect = ({
       label={label}
       error={error}
       helperText={helperText}
+      required={required}
       select
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{

@@ -1,24 +1,18 @@
-const preProcessCreateDevice = require('../deviceType/CepheidGeneXpert/preProcessCreateDevice')
-const preProcessAddDeviceData = require('../deviceType/CepheidGeneXpert/preProcessAddDeviceData')
-const postProcessUpdateDeviceConfiguration = require('../deviceType/CepheidGeneXpert/postProcessUpdateDeviceConfiguration')
-const postProcessAddDeviceOperation = require('../deviceType/CepheidGeneXpert/postProcessAddDeviceOperation')
+const postProcessCreateDevice = require('../deviceType/CepheidGeneXpert/postProcessCreateDevice')
 const transformMergeResultPayload = require('../deviceType/CepheidGeneXpert/transformMergeResultPayload')
 const preProcessMergeResult = require('../deviceType/CepheidGeneXpert/preProcessMergeResult')
-const onResultLogged = require('../deviceType/AspectResultEntry/onResultLogged.js')
-const getCustomFields = require('../deviceType/GxConnect/customFields/customFields')
-const transformMergeResultResponse = require('../deviceType/CepheidGeneXpert/transformMergeResultResponse')
+const onResultLogged = require('../deviceType/CepheidGeneXpert/onResultLogged.js')
 const { extractCustomFieldsFromPayload } = require('../deviceType/GxConnect/extractCustomFieldsFromPayload')
+const { findResult } = require('../result/geneXpert/resultIdentification/findResult_v1')
+const { identifyDevice } = require('../deviceType/CepheidGeneXpert/identifyDevice')
 
 const gxconnectPlugin = {
-  preProcessCreateDevice,
-  preProcessAddDeviceData,
-  postProcessUpdateDeviceConfiguration,
-  postProcessAddDeviceOperation,
+  findResult,
+  identifyDevice,
+  postProcessCreateDevice,
   transformMergeResultPayload,
-  transformMergeResultResponse,
   preProcessMergeResult,
   onResultLogged,
-  getCustomFields,
   extractCustomFieldsFromPayload,
 }
 

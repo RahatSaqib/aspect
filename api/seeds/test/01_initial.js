@@ -990,14 +990,6 @@ async function seed(knex) {
     lastSeenOn: new Date(+now - (_.random(10) * millisInHour) / 3),
   })
 
-  await knex('DeviceSim').insert({
-    ...auditFields,
-    deviceId: routerId,
-    provider: 'Vodafone',
-    serial: `SRL-${routerId}`,
-    number: `+1 413 123 45${routerId}`,
-  })
-
   // insert Daktari devices
   const devicesDaktari = []
   await Promise.each(siteDatas, async (siteData, i) => {
@@ -1028,7 +1020,7 @@ async function seed(knex) {
     devicesDaktari.push(device)
 
     // Create API Keys
-    await knex('DeviceApiKey').insert({
+    const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
       token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
@@ -1037,6 +1029,8 @@ async function seed(knex) {
       deviceId: device.id,
       ...auditFields,
     })
+
+    await knex('Device').where('id', device.id).update({ deviceApiKeyId })
   })
 
   // Insert Inventory Items

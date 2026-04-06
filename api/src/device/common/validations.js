@@ -98,7 +98,10 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           .single()
           .allow(null)
           .description('Filter for device maintenance status external id'),
-        deviceApprovalId: Joi.number().allow('').description('Filter for device approval ID'),
+        deviceApprovalExternalId: Joi.alternatives()
+          .try(Joi.array().items(Joi.string()).single(), Joi.string())
+          .allow('', null)
+          .description('Filter for device approval external ID(s)'),
         deviceTypeId: Joi.number().allow('').description('Filter for device type ID'),
         deviceType: Joi.string().allow('').description('Filter for device type ExternalId'),
         category: Joi.string().description('Filter for device type category'),
@@ -260,7 +263,6 @@ const deviceDetailsResponseFields = Joi.object()
     siteId: Joi.number().allow('', null).description('The ID of the site where the device is located'),
     implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
     implementingPartnerName: Joi.string().allow('', null).description('Implementing partner name'),
-    instrumentsConnected: Joi.number().description('The number of instruments assigned to the device or connector'),
     gx6cModulesCount: Joi.number().allow('', null).description('Number of GX-6C modules on GenExpert device'),
     gx10cModulesCount: Joi.number().allow('', null).description('Number of GX-10C modules on GenExpert device'),
     siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
@@ -330,6 +332,9 @@ const deviceDetailsResponseFields = Joi.object()
     instrumentModel: Joi.string().allow('', null).description('Cepheid instrument model'),
     softwareType: Joi.string().allow('', null).description('Cepheid software type'),
     isDaisyChained: Joi.bool().allow('', null).description('Determines if the instrument is daisy chained'),
+    firstResultEndedOn: Joi.date()
+      .allow(null)
+      .description('Date of the device’s first result (for deployment timeline)'),
   })
 module.exports = {
   listWorkloadRequestSchema,

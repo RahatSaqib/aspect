@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import {
   Autocomplete,
-  CircularProgress,
+  // CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -22,12 +22,13 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { DetailHeader, DeviceListFilter, TableContainer } from '../../../cleanComponents'
 import ExportListButton from '../../../components/AspectExportListButton'
-import PermissionChecker from '../../../components/PermissionChecker/index'
+// import PermissionChecker from '../../../components/PermissionChecker/index'
 import { DEVICE_LIST } from '../../../components/QueryFetch/Device/index'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
-import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
+import { useDeviceForSelect } from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
@@ -115,7 +116,7 @@ const getAvailableTargetDevices = (deviceList, sourceDevicesIds, siteToMergeDevi
   return (
     deviceList?.filter(
       o =>
-        !sourceDevicesIds.includes(+o.key) &&
+        !sourceDevicesIds.includes(o.id) &&
         (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
         (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
     ) || []
@@ -143,11 +144,12 @@ const DeviceList = () => {
   const [total, setTotal] = useState()
   const [sourceDevicesIds, setSourceDevicesIds] = useState([])
   const [targetDevice, setTargetDevice] = useState(null)
-  const targetDeviceId = useMemo(() => +targetDevice?.key || null, [targetDevice])
+  const targetDeviceId = useMemo(() => +targetDevice?.id || null, [targetDevice])
   const filters = useFilterValues(location.pathname)
   const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
   const [isConfirmationVisible, setConfirmationVisible] = useState(false)
   const [siteToMergeDevices, setSiteToMergeDevices] = useState()
+  // eslint-disable-next-line no-unused-vars
   const [isProcessingMergeDevices, setProcessingMergeDevices] = useState(false)
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [pagination, setPagination] = useState({})
@@ -222,6 +224,16 @@ const DeviceList = () => {
       })
   }
 
+  const getMergeDevicesErrorMessage = useCallback(
+    mergeError => {
+      const errorKeyCode = mergeError?.data?.errorKeyCode
+      return errorKeyCode && messages[errorKeyCode]
+        ? formatMessage(messages[errorKeyCode])
+        : formatMessage(messages.devicesMergeFailed)
+    },
+    [formatMessage]
+  )
+
   if (isError) {
     throw new Error(error)
   }
@@ -229,7 +241,7 @@ const DeviceList = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.devicesTitle)} disableBack>
-        <PermissionChecker permissions={['device:admin']}>
+        {/* <PermissionChecker permissions={['device:admin']}>
           <AspectButton
             onClick={() => {
               setConfirmationVisible(false)
@@ -246,7 +258,7 @@ const DeviceList = () => {
               <CircularProgress size="16px" thickness={5} disableShrink sx={{ color: '#fff', marginLeft: '15px' }} />
             ) : null}
           </AspectButton>
-        </PermissionChecker>
+        </PermissionChecker> */}
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.devicesTitle)} />
@@ -317,9 +329,9 @@ const DeviceList = () => {
                 <Autocomplete
                   multiple
                   onChange={(_, values) => {
-                    const newSourceValues = values.map(v => +v.key)
-                    const newSourceSiteId = deviceList.find(o => o.key === values[0]?.key)?.siteId || null
-                    const newDeviceTypeToMergeId = deviceList.find(o => o.key === values[0]?.key)?.deviceTypeId || null
+                    const newSourceValues = values.map(v => v.id)
+                    const newSourceSiteId = deviceList.find(o => o.id === values[0]?.id)?.siteId || null
+                    const newDeviceTypeToMergeId = deviceList.find(o => o.id === values[0]?.id)?.deviceTypeId || null
 
                     /**
                      * get new list of available target devices after changing selected source devices
@@ -334,7 +346,7 @@ const DeviceList = () => {
                       /**
                        * target device selected but is not a member of new targetDevices list
                        */
-                      (targetDeviceId && !targetDevices.find(o => +o.key === targetDeviceId)) ||
+                      (targetDeviceId && !targetDevices.find(o => o.id === targetDeviceId)) ||
                       /**
                        * removed all from Source devices
                        */
@@ -350,15 +362,15 @@ const DeviceList = () => {
                   options={
                     deviceList?.filter(
                       o =>
-                        +o.key !== targetDeviceId &&
+                        o.id !== targetDeviceId &&
                         (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
                         (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
                     ) || []
                   }
-                  getOptionLabel={option => option.value}
+                  getOptionLabel={option => option.name}
                   renderOption={(props, option) => (
-                    <li {...props} key={option.key}>
-                      {option.value}
+                    <li {...props} key={option.id}>
+                      {option.name}
                     </li>
                   )}
                   renderInput={params => (
@@ -382,10 +394,10 @@ const DeviceList = () => {
                     deviceTypeToMerge
                   )}
                   disabled={isEmpty(sourceDevicesIds)}
-                  getOptionLabel={option => option.value}
+                  getOptionLabel={option => option.name}
                   renderOption={(props, option) => (
-                    <li {...props} key={option.key}>
-                      {option.value}
+                    <li {...props} key={option.id}>
+                      {option.name}
                     </li>
                   )}
                   renderInput={params => (
@@ -408,9 +420,8 @@ const DeviceList = () => {
                 >
                   {formatMessage(messages.button_Cancel)}
                 </AspectButton>
-
                 <AspectButton
-                  disabled={!sourceDevicesIds.length > 0 || !targetDeviceId}
+                  disabled={!(sourceDevicesIds.length > 0 && targetDeviceId)}
                   onClick={() => {
                     setConfirmationVisible(true)
                   }}
@@ -426,7 +437,7 @@ const DeviceList = () => {
                   {
                     <span
                       // eslint-disable-next-line react/no-danger
-                      dangerouslySetInnerHTML={{ __html: formatMessage(messages.mergeDevicesConfirmationTitle) }}
+                      dangerouslySetInnerHTML={{ __html: formatMessage(messages.mergeDevicesConfirmationDescription) }}
                     />
                   }
                 </Typography>
@@ -448,13 +459,12 @@ const DeviceList = () => {
                       {
                         onSuccess: () => {
                           refetch()
-                          /**
-                           * with setting state var `isProcessingMergeDevices` back to false
-                           * we explicitly re-render page to let `useQuery` to update `data`
-                           * which in turn updates other params on a page, including the list
-                           * of source/target devices when user clicks MergeDevices again
-                           */
                           setProcessingMergeDevices(false)
+                          toast.success(formatMessage(messages.devicesMergedSuccessfully))
+                        },
+                        onError: error => {
+                          setProcessingMergeDevices(false)
+                          toast.error(getMergeDevicesErrorMessage(error))
                         },
                       }
                     )

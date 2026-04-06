@@ -260,11 +260,6 @@ const issueBasedSection = formatMessage => {
                       label: formatMessage(messages.notificationTypeModuleUnused),
                       icon: 'AiOutlineExclamation',
                     },
-                    {
-                      value: 'InstrumentReplaced',
-                      label: formatMessage(messages.notificationTypeInstrumentReplaced),
-                      icon: 'AiOutlineTool',
-                    },
                   ],
                 },
               ],

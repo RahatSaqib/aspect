@@ -56,7 +56,6 @@ async function seed(knex) {
     adminId,
     geography,
     partnerAbbreviation,
-    deviceApiToken,
     {
       password: lowerLevelUserPassword,
     },

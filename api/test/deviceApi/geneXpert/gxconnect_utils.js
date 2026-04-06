@@ -17,24 +17,31 @@ const {
   resultTypeToId,
   sampleTypeToId,
 } = require('../../../src/shared/dictionary')
+const { insertSite } = require('../../../src/site/common/db')
 
 const { assert } = chai
 
 async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const tokens = apiKeys.map(key => key.token)
   const siteIds = await knex('DeviceApiKey as dak')
-    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+    .innerJoin('Device as d', 'dak.id', 'd.deviceApiKeyId')
     .whereIn('dak.token', tokens)
     .pluck('d.siteId')
     .union(function () {
       this.from('DeviceApiKey as dak').whereNotNull('dak.siteId').whereIn('dak.token', tokens).pluck('dak.siteId')
     })
-  const deviceIds = await knex('DeviceApiKey as dak')
+  const deviceIds = await knex('Device as d')
+    .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
     .whereIn('dak.token', tokens)
-    .pluck('dak.deviceId')
+    .pluck('d.id')
     .union(function () {
-      this.from('Device').whereIn('siteId', siteIds).pluck('id as deviceId')
+      this.from('Device').whereIn('siteId', siteIds).pluck('id')
     })
+
+  const gxConnectSiteIds = await knex('Site')
+    .whereIn('id', siteIds)
+    .where('externalId', 'like', 'gxconnect-%')
+    .pluck('id')
 
   const inventoryItemIds = await knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)
@@ -45,15 +52,18 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
-  await knex('DeviceApiKey')
-    .whereIn('token', tokens)
-    .orWhereIn('deviceId', deviceIds)
-    .orWhereIn('siteId', siteIds)
-    .delete()
+  const deviceApiKeyIds = await knex('DeviceApiKey as dak')
+    .whereIn('dak.token', tokens)
+    .orWhereIn('dak.siteId', siteIds)
+    .orWhereIn(
+      'dak.id',
+      knex('Device').whereIn('id', deviceIds).whereNotNull('deviceApiKeyId').select('deviceApiKeyId')
+    )
+    .pluck('dak.id')
 
   const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
-  const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
+  const opIds = await knex('DeviceOperation').whereIn('deviceApiKeyId', deviceApiKeyIds).pluck('id')
   await knex('EmailMessage').whereIn('resultId', resultIds).delete()
   await knex('ResultDownloadLog').whereIn('resultId', resultIds).delete()
   await knex('ResultStatusLog').whereIn('resultId', resultIds).delete()
@@ -62,22 +72,12 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('PushNotificationMessage').whereIn('resultId', resultIds).delete()
   await knex('WebhookMessage').whereIn('resultId', resultIds).delete()
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
-
-  await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
-
+  await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).delete()
   await knex('DeviceLog').whereIn('resultId', resultIds).delete()
-
-  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
-
-  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
   const issueIds = await knex('Issue').whereIn('deviceId', deviceIds).pluck('id')
 
@@ -98,7 +98,9 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('SiteTag').delete()
   await knex('Tag').delete()
 
-  const sitesAndDevices = await knex('Result').whereIn('id', resultIds).select('siteId', 'deviceId')
+  const resultsToDelete = await knex('Result').whereIn('id', resultIds).select('siteId', 'deviceId', 'sampleId')
+  const sitesAndDevices = resultsToDelete.map(({ siteId, deviceId }) => ({ siteId, deviceId }))
+  const sampleIds = [...new Set(resultsToDelete.map(({ sampleId }) => sampleId).filter(Boolean))]
   await knex('Result').whereIn('id', resultIds).delete()
 
   await knex('FactInventoryConsumptionRate')
@@ -108,6 +110,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
       _.map(sitesAndDevices, elem => elem.siteId)
     )
   await knex('DeviceOperation').whereIn('id', opIds).delete()
+  await knex('Device').whereIn('deviceApiKeyId', deviceApiKeyIds).update({ deviceApiKeyId: null })
+  await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
 
   await knex('Notification').whereIn('issueId', issueIds).delete()
   await knex('Issue').whereIn('id', issueIds).delete()
@@ -123,29 +127,38 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   const deviceIdsToRemove = _.map(devices, d => d.id)
 
+  await knex('Deployment').whereIn('deviceId', deviceIdsToRemove).delete()
   await knex('FactDeviceModulesCount').whereIn('deviceId', deviceIdsToRemove).delete()
-
+  await knex('Instrument').whereIn('deviceId', deviceIdsToRemove).delete()
   await knex('Device').whereIn('id', deviceIdsToRemove).delete()
 
-  await knex('Sample').whereIn('originSiteId', siteIds).delete()
+  await knex('Sample').whereIn('id', sampleIds).delete()
+  await knex('Sample')
+    .whereIn('originSiteId', gxConnectSiteIds)
+    .whereNotIn('id', knex('Result').whereNotNull('sampleId').select('sampleId'))
+    .delete()
 
   await knex('FactInventoryConsumptionRate', siteIds).delete()
   await knex('SiteTag').whereIn('siteId', siteIds).delete()
   await knex('InventoryLog').whereIn('siteId', siteIds).delete()
-  await knex('Site')
-    .whereIn('id', siteIds)
-    .orWhereIn(
-      'id',
-      _.map(sitesAndDevices, elem => elem.siteId)
-    )
-    .delete()
+
+  const siteIdsFromResults = _.uniq(_.map(sitesAndDevices, elem => elem.siteId))
+  const gxConnectSiteIdsFromResults = await knex('Site')
+    .whereIn('id', siteIdsFromResults)
+    .where('externalId', 'like', 'gxconnect-%')
+    .pluck('id')
+
+  const siteIdsToDelete = _.uniq([...gxConnectSiteIds, ...gxConnectSiteIdsFromResults])
+  await knex('AlertMessage').whereIn('siteId', siteIdsToDelete).delete()
+
+  await knex('Site').whereIn('id', siteIdsToDelete).delete()
 
   await knex('RefreshToken').where({ clientId }).delete()
 }
 
 function createGxConnectTestContext(
   server,
-  { countryCode, deviceName, hostId, macAddress, deviceSerialNumber, adminUsername, adminPassword }
+  { countryCode, deviceName, hostId, macAddress, deviceSerialNumber, adminUsername, adminPassword, instrumentSerial }
 ) {
   return new GxConnectApiTestContext(server, {
     countryCode,
@@ -155,13 +168,14 @@ function createGxConnectTestContext(
     deviceSerialNumber,
     adminUsername,
     adminPassword,
+    instrumentSerial,
   })
 }
 
 class GxConnectApiTestContext {
   constructor(
     server,
-    { countryCode, deviceName, hostId, macAddress, deviceSerialNumber, adminUsername, adminPassword }
+    { countryCode, deviceName, hostId, macAddress, deviceSerialNumber, adminUsername, adminPassword, instrumentSerial }
   ) {
     this.server = server
     this.countryCode = countryCode
@@ -171,6 +185,7 @@ class GxConnectApiTestContext {
     this.deviceSerialNumber = deviceSerialNumber
     this.adminUsername = adminUsername
     this.adminPassword = adminPassword
+    this.instrumentSerial = instrumentSerial
     this.clientId = `${Math.floor(Math.random() * 800000000) + 100000000}`
     this.apiKeys = []
     this.basicDevicePayload = {
@@ -182,6 +197,7 @@ class GxConnectApiTestContext {
       },
       site: null,
       log: null,
+      includeDeviceConfiguration: false,
       configuration: {
         data: { macAddress, hostId, deviceSerialNumber },
       },
@@ -238,9 +254,55 @@ class GxConnectApiTestContext {
   }
 
   async registerDevice() {
+    if (this.instrumentSerial) {
+      const existingDevice = await knex('Device as d')
+        .innerJoin('Instrument as i', 'i.deviceId', 'd.id')
+        .innerJoin('DeviceApiKey as dak', 'dak.id', 'd.deviceApiKeyId')
+        .where('i.serial', this.instrumentSerial)
+        .first('dak.token')
+      if (existingDevice) {
+        return existingDevice.token
+      }
+    }
     const clientAccessToken = await this.requestClientToken()
     const deviceApiKey = await this.requestNewDeviceApiKey(clientAccessToken)
-    await this.sendInitialDeviceConfiguration(deviceApiKey)
+
+    const deviceApiKeyRecord = await knex('DeviceApiKey').where({ token: deviceApiKey }).first()
+
+    const { id: geographyId } = await knex('Geography as g')
+      .join('JobContext as jc', 'g.id', 'jc.geographyId')
+      .join('Person as p', 'jc.personId', 'p.id')
+      .join('User as u', 'p.userId', 'u.id')
+      .where('p.lastPartnerId', deviceApiKeyRecord.partnerId)
+      .andWhere('u.name', this.adminUsername)
+      .first('g.id')
+
+    const [siteId] = await insertSite(knex, {
+      name: this.deviceName,
+      shortName: this.deviceName,
+      externalId: `gxconnect-${this.deviceName}-${Date.now()}`,
+      partnerId: deviceApiKeyRecord.partnerId,
+      geographyId,
+    })
+
+    const { id: deviceTypeId } = await knex('DeviceType').where('externalId', 'CepheidGeneXpert').first('id')
+    const [deviceId] = await knex('Device').insert({
+      partnerId: deviceApiKeyRecord.partnerId,
+      siteId,
+      name: this.deviceName,
+      shortName: this.deviceName,
+      deviceTypeId,
+      serial: this.deviceSerialNumber,
+      macAddress: this.macAddress,
+      hostId: this.hostId,
+      timezone: 'Eastern Standard Time',
+    })
+    await knex('DeviceApiKey').where('id', deviceApiKeyRecord.id).update({ siteId, geographyId })
+    await knex('Device').where('id', deviceId).update({ deviceApiKeyId: deviceApiKeyRecord.id })
+    if (this.instrumentSerial) {
+      await knex('Instrument').insert({ deviceId, serial: this.instrumentSerial, active: true })
+    }
+
     return deviceApiKey
   }
 
@@ -384,6 +446,7 @@ class GxConnectApiTestContext {
     return run(async knex => {
       const resultDetails = await knex('DeviceLog as dl')
         .join('Result as r', 'dl.resultId', 'r.id')
+        .join('Device as d', 'r.deviceId', 'd.id')
         .leftJoin('Site as si', 'r.siteId', 'si.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
@@ -392,7 +455,7 @@ class GxConnectApiTestContext {
         .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
         .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
         .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-        .where('dl.deviceId', this.device.id)
+        .where('d.id', this.device.id)
         .orderBy('dl.id', 'desc')
         .first(
           'r.id',

@@ -58,6 +58,19 @@ describe('Integration test for device status', () => {
        *
        */
 
+      /*
+       * This is needed to create the instrument and link it to the device,
+       * so when we send the result with the instrument serial number the device is identified correctly and we don't create another device
+       * TODO: we should move this logic to the device context setup
+       */
+      await knex('Instrument').insert({
+        deviceId: context.device.id,
+        serial: '123456',
+        active: 1,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+      })
+
       const { basicDevicePayload } = context
       const { deviceAuth } = context
 
@@ -85,7 +98,7 @@ describe('Integration test for device status', () => {
       const messageContext = await createMessageContext()
       messageContext.bindActionCreators({ deviceModuleDisabled })
       const waitForModuleDisabledIssue = waitForAction(
-        deviceModuleDisabled(response.body.device.id, '234', '2020-08-18T17:08:22.515Z')
+        deviceModuleDisabled(context.device.id, '234', '2020-08-18T17:08:22.515Z')
       )
       const responseDeviceWithDisabledModule = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -141,10 +154,7 @@ describe('Integration test for device status', () => {
       })
 
       await waitForIdle()
-      const issues = await knex('Issue')
-        .where({ deviceId: response.body.device.id })
-        .orderBy('createdOn', 'DESC')
-        .select()
+      const issues = await knex('Issue').where({ deviceId: context.device.id }).orderBy('createdOn', 'DESC').select()
 
       assert.equal(responseWithIssue.statusCode, 200)
       assert.equal(issues.length, 2)
@@ -196,7 +206,7 @@ describe('Integration test for device status', () => {
       const messageContext = await createMessageContext()
       messageContext.bindActionCreators({ deviceModuleDisabled })
       const waitForModuleDisabledIssue = waitForAction(
-        deviceModuleDisabled(response.body.device.id, '234', '2020-08-18T17:08:22.515Z')
+        deviceModuleDisabled(context.device.id, '234', '2020-08-18T17:08:22.515Z')
       )
       const responseDeviceWithDisabledModule = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -251,10 +261,7 @@ describe('Integration test for device status', () => {
         }),
       })
 
-      const issues = await knex('Issue')
-        .where({ deviceId: response.body.device.id })
-        .orderBy('createdOn', 'DESC')
-        .select()
+      const issues = await knex('Issue').where({ deviceId: context.device.id }).orderBy('createdOn', 'DESC').select()
 
       assert.equal(reactivationResultResponse.statusCode, 200)
       assert.equal(issues.length, 1)
@@ -299,7 +306,8 @@ describe('Integration test for device status', () => {
           },
         }),
       })
-      const deviceId = response.body.device.id
+      assert.equal(response.statusCode, 200)
+      const deviceId = context.device.id
       const device = await knex('Device').where({ id: deviceId }).first()
       await waitForModuleDisabledIssue
       await waitForIdle()
@@ -352,7 +360,7 @@ describe('Integration test for device status', () => {
       })
 
       assert.equal(response.statusCode, 200)
-      const deviceId = response.body.device.id
+      const deviceId = context.device.id
 
       await waitForModuleDisabledIssue1
       await waitForIdle()
@@ -379,10 +387,8 @@ describe('Integration test for device status', () => {
           },
         }),
       })
-      assert.equal(response.statusCode, 200)
+      assert.equal(response2.statusCode, 200)
 
-      // should be the same device
-      assert.equal(response.body.device.id, response2.body.device.id)
       await waitForModuleDisabledIssue1
       await waitForIdle()
 
@@ -431,9 +437,9 @@ describe('Integration test for device status', () => {
 
       await waitForModuleDisabledIssue1
       await waitForIdle()
-      const deviceId = response.body.device.id
+      const deviceId = context.device.id
       const deviceDisableEvent = waitForAction(
-        deviceModuleDisabled(response.body.device.id, '777', '2020-05-18T17:08:22.515Z')
+        deviceModuleDisabled(context.device.id, '777', '2020-05-18T17:08:22.515Z')
       )
       // Post to deviceApi to ensure the device in in Aspect
       const response2 = await postToDeviceApi({
@@ -462,13 +468,12 @@ describe('Integration test for device status', () => {
           },
         }),
       })
-      // should be the same device
-      assert.equal(response.body.device.id, response2.body.device.id)
+      assert.equal(response2.statusCode, 200)
       await deviceDisableEvent
       await waitForIdle()
       const device = await knex('Device')
         .where({
-          id: response.body.device.id,
+          id: context.device.id,
         })
         .first()
       const { qntIssue } = await knex('Issue')

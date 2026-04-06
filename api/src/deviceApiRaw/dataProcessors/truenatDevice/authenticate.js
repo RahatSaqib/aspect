@@ -51,12 +51,15 @@ class TruenatLogin extends SynchronousDataProcessor {
     const deviceApiKeyAuthResult = await lookupUsingCredentials(payload.Username, payload.Password)
     const deviceId = _.get(deviceApiKeyAuthResult, 'data.deviceId')
     if (deviceId) {
-      await postPayloadFromDevice({
-        deviceId,
-        source: 'Diagnostic Device POST',
-        senderIp: getRemoteAddress(request),
-        rawMessage: JSON.stringify(request.plugins.rawPayload),
-      })
+      await postPayloadFromDevice(
+        {
+          deviceApiKeyId: deviceApiKeyAuthResult.data.id,
+          source: 'Diagnostic Device POST',
+          senderIp: getRemoteAddress(request),
+          rawMessage: JSON.stringify(request.plugins.rawPayload),
+        },
+        deviceId
+      )
       this.messageContext.dispatch(deviceSeen(deviceId))
     }
     if (deviceApiKeyAuthResult.authenticated) {
@@ -110,7 +113,7 @@ class TruenatLogin extends SynchronousDataProcessor {
           site.id = siteId
         }
         const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
-        const deviceApprovalId = await deviceApprovalToId('assigned')
+        const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
         device = {
           name: payload.Username,
           shortName: payload.Username,

@@ -33,7 +33,6 @@ const {
   deviceApprovalToId,
   deviceTypeToId,
   allDeviceTypeCategoryToId,
-  deviceTypeCategoryToId,
   allAssayTypeToId,
   allResultSourceToId,
   resultCategoryToId,
@@ -102,7 +101,6 @@ async function commonUpserts(
   adminId,
   geography,
   countryAbbreviation,
-  deviceApiToken = null,
   usersInsertConfig = null,
   partnerData = {}
 ) {
@@ -153,10 +151,6 @@ async function commonUpserts(
     jobFunctionId: jobFunctionIdSuperAdmin,
     geographyId,
   })
-
-  if (deviceApiToken) {
-    await upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
-  }
 
   await ensureResultTreatmentStatuses(knex)
 
@@ -367,102 +361,6 @@ async function upsertJobFunctionPermission(knex, jobFunctionId, jobPermissions, 
     })
   )
   if (!_.isEmpty(JobFunctionPermission)) await knex('JobFunctionPermission').insert(JobFunctionPermission)
-}
-
-async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken) {
-  const { device, geographyId } = await ensureCountryLevelInformationSystemExists(
-    knex,
-    countryId,
-    partnerId,
-    {
-      externalId: 'GxAlert',
-      name: 'GxAlert',
-      manufacturer: 'SystemOne',
-      plugin: 'gxalert',
-    },
-    auditFields
-  )
-  const deviceApiKey = {
-    token: deviceApiToken,
-    revoked: 0,
-    partnerId,
-    geographyId,
-    deviceId: device.id,
-  }
-  const { id: gxAlertDeviceApiKeyId } = (await knex('DeviceApiKey').where('token', deviceApiToken).first('id')) || {}
-
-  if (!gxAlertDeviceApiKeyId) {
-    await knex('DeviceApiKey').insert({
-      ...deviceApiKey,
-      ...auditFields,
-    })
-  } else {
-    await knex('DeviceApiKey')
-      .where('id', gxAlertDeviceApiKeyId)
-      .update({
-        ...deviceApiKey,
-        updatedBy: auditFields.updatedBy,
-        updatedOn: auditFields.updatedOn,
-      })
-  }
-}
-
-async function ensureCountryLevelInformationSystemExists(knex, countryId, partnerId, deviceType, auditFields) {
-  const { externalId, name, manufacturer, plugin } = deviceType
-  let { id: deviceTypeId } = (await knex('DeviceType').where('externalId', externalId).first('id')) || {}
-  if (!deviceTypeId) {
-    const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId('Information System')
-    ;[deviceTypeId] = await knex('DeviceType').insert({
-      externalId,
-      name,
-      manufacturer,
-      plugin,
-      deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
-    })
-  }
-  const { countryGeographyId } = await knex('Geography')
-    .where({ countryId })
-    .whereNull('stateId', 'lgaId')
-    .first('id as countryGeographyId')
-  const device =
-    (await knex('Device as d')
-      .join('Site as s', 'd.siteId', 's.id')
-      .where('d.deviceTypeId', deviceTypeId)
-      .where('d.partnerId', partnerId)
-      .where('s.geographyId', countryGeographyId)
-      .first()) || {}
-
-  const site = (await knex('Site as s').where('s.externalId', externalId).first()) || {}
-
-  let { id: siteId } = site
-  if (!siteId) {
-    ;[siteId] = await insertSite(knex, {
-      ...auditFields,
-      name,
-      shortName: name.substr(0, 45),
-      externalId,
-      partnerId,
-      geographyId: countryGeographyId,
-      createdOn: new Date(),
-      updatedOn: new Date(),
-    })
-  }
-  if (!device.id) {
-    const [deviceId] = await knex('Device').insert({
-      ...auditFields,
-      name,
-      deviceApprovalId: await deviceApprovalToId('approved'),
-      partnerId,
-      siteId,
-      lastPingOn: new Date(),
-      lastPingFromIp: `31.41.30.${Math.floor(Math.random() * 255)}`,
-      putInService: subMonths(new Date(), 2),
-      lastSeenOn: new Date(),
-      deviceTypeId,
-    })
-    device.id = deviceId
-  }
-  return { device, geographyId: countryGeographyId }
 }
 
 async function upsertGeneXpertDeviceTypeAndAssays(
@@ -1024,16 +922,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
   // --------------------
   // Common general seeds
   // --------------------
-  await commonUpserts(
-    knex,
-    partnerId,
-    adminId,
-    geographyFromGxAlert,
-    countries[0].abbreviation,
-    gxAlertDevice.deviceApiKeyToken,
-    null,
-    partnerData
-  )
+  await commonUpserts(knex, partnerId, adminId, geographyFromGxAlert, countries[0].abbreviation, null, partnerData)
 
   // --------------------------------------------
   // Country, States & LGAs from GxAlert instance
@@ -1966,7 +1855,6 @@ async function getOrInsertGeography(knex, countryId) {
 
 module.exports = {
   commonUpserts,
-  upsertGxAlertDevice,
   upsertJobFunctionPermission,
   upsertGeneXpertDeviceTypeAndAssays,
   upsertSites,

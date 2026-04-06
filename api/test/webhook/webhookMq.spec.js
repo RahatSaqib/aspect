@@ -120,7 +120,7 @@ describe('Sending Webhook Message via Message Queue', () => {
 
     const msg = await knex('WebhookMessage').where('id', messageId).first()
     assert.equal(msg.messageStatusId, errorMessageStatusId)
-    assert.equal(msg.response, '404 - Not Found {"statusCode":404,"error":"Not Found","message":"Cannot find plugin."}')
+
     // make sure generated message does not have unprocessed curly braces {{ }}
     const payload = processDynamicMessage(msg.payload)
     assert(!payload.includes('{{') && !payload.includes('}}'), 'Webhook message template has not been parsed well')

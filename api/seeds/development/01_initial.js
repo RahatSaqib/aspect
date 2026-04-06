@@ -3,9 +3,8 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { addMilliseconds, addMinutes, addHours, subDays, addDays, subYears, subMonths } = require('date-fns')
-const uuid = require('node-uuid')
-
 const config = require('../../src/config')
+const helpers = require('./fixtures/helpers')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const countrySpecificReportFixture = require('./fixtures/reports')
 const {
@@ -3197,7 +3196,6 @@ async function seed(knex) {
   const countries = {}
   const geographies = []
   const preventRandomSitesForCountries = ['ZANHLS', 'MZ']
-  const modules = ['A', 'B', 'C', 'D']
   const siteTypeIds = await allSiteTypeToId()
   await Promise.all(
     _.map(geography.countries, async country => {
@@ -3406,19 +3404,6 @@ async function seed(knex) {
       routerIds.push(routerId)
     })
 
-    // ... and 1-3 sims for some routers
-    const sims = _.map(_.range(0, routerNumber, 2), i => {
-      const routerId = routerIds[i]
-      return {
-        ...auditFields,
-        deviceId: routerId,
-        provider: i % 3 === 0 ? 'Glo' : 'Vodafone',
-        serial: `SRL-${routerId}`,
-        number: `+1 413 123 45${routerId}`,
-      }
-    })
-    await knex('DeviceSim').insert(sims)
-
     // insert GeneXpert devices
     const devicesGeneXpert = []
     await Promise.each(_.range(deviceNumber), async i => {
@@ -3504,7 +3489,7 @@ async function seed(knex) {
       devicesGeneXpert.push(device)
 
       // Create API Keys
-      await knex('DeviceApiKey').insert({
+      ;[device.deviceApiKeyId] = await knex('DeviceApiKey').insert({
         token: randomToken(),
         revoked: 0,
         partnerId: siteData.partnerId,
@@ -3566,11 +3551,10 @@ async function seed(knex) {
         ])
 
         return {
-          deviceId: device.id,
+          deviceApiKeyId: device.deviceApiKeyId,
           data: JSON.stringify(data),
-          startedOn: addDays(now, -1 * _.random(1, 30, true)),
+          occurredOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
-          guid: uuid.v4(),
         }
       })
       await knex('DeviceOperation').insert(operations)
@@ -3764,9 +3748,9 @@ async function seed(knex) {
         const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
-
+        const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+        const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
         const rnd = _.random(0, 100)
-        const rndModule = _.random(0, 3)
         const result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
         resultData.resultText = result.resultText
         const [resultId] = await knex('Result').insert({
@@ -3795,9 +3779,9 @@ async function seed(knex) {
           consumableSerial: `${i}12`,
           consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
           consumableLot: `Lot ${i % 5}`,
-          instrumentSerial: `S-1234-${i % 3}`,
-          moduleName: `Module ${modules[rndModule]}`,
-          moduleSerial: `M-1234-${i % 4}`,
+          instrumentSerial,
+          moduleName: module.name,
+          moduleSerial: module.serial,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(getRandomGeneXpertPatientData(patientNumber, patients)),
           senderVersion: '4.6b',
@@ -3839,7 +3823,7 @@ async function seed(knex) {
             siteId: savedResult.siteId,
             ...transferData,
           })
-          resultWithLogInfo.reportableSiteId = anotherReportableSite.id
+          resultWithLogInfo.reportableSiteId = anotherReportableSite?.id || null
 
           transferLogData = transferData
 
@@ -3874,7 +3858,8 @@ async function seed(knex) {
           })
 
         await knex('DeviceLog').insert({
-          deviceId: device.id,
+          deviceApiKeyId: device.deviceApiKeyId,
+          type: 'RESULT',
           createdOn: addHours(randomDate, 1),
           senderIp: '0.0.0.0',
           source: 'seed data',
@@ -3909,9 +3894,9 @@ async function seed(knex) {
                   consumableSerial: `${i}12`,
                   consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
                   consumableLot: `Lot ${i % 5}`,
-                  instrumentSerial: `S-1234-${i % 3}`,
-                  moduleName: `Module ${modules[rndModule]}`,
-                  moduleSerial: `M-1234-${i % 4}`,
+                  instrumentSerial,
+                  moduleName: module.name,
+                  moduleSerial: module.serial,
                   researchId: `R-ID-${i}`,
                   patientData: JSON.stringify(getRandomGeneXpertPatientData(patientNumber, patients)),
                   senderVersion: '4.6b',
@@ -4033,9 +4018,9 @@ async function seed(knex) {
         const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultMtbUltraNumber, 6000)
-
+        const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+        const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
         const rnd = _.random(0, 100)
-        const rndModule = _.random(0, 3)
         const result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
         resultData.resultText = result.resultText
         const [resultId] = await knex('Result').insert({
@@ -4064,9 +4049,9 @@ async function seed(knex) {
           consumableSerial: `${i}12`,
           consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
           consumableLot: `Lot ${i % 5}`,
-          instrumentSerial: `S-1234-${i % 3}`,
-          moduleName: `Module ${modules[rndModule]}`,
-          moduleSerial: `M-1234-${i % 4}`,
+          instrumentSerial,
+          moduleName: module.name,
+          moduleSerial: module.serial,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(getRandomGeneXpertPatientData(patientNumber, patients)),
           senderVersion: '4.6b',
@@ -4077,7 +4062,8 @@ async function seed(knex) {
         })
 
         await knex('DeviceLog').insert({
-          deviceId: device.id,
+          deviceApiKeyId: device.deviceApiKeyId,
+          type: 'RESULT',
           createdOn: addHours(randomDate, 1),
           senderIp: '0.0.0.0',
           source: 'seed data',
@@ -4112,9 +4098,9 @@ async function seed(knex) {
                   consumableSerial: `${i}12`,
                   consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
                   consumableLot: `Lot ${i % 5}`,
-                  instrumentSerial: `S-1234-${i % 3}`,
-                  moduleName: `Module ${modules[rndModule]}`,
-                  moduleSerial: `M-1234-${i % 4}`,
+                  instrumentSerial,
+                  moduleName: module.name,
+                  moduleSerial: module.serial,
                   researchId: `R-ID-${i}`,
                   patientData: JSON.stringify(getRandomGeneXpertPatientData(patientNumber, patients)),
                   senderVersion: '4.6b',
@@ -4243,9 +4229,9 @@ async function seed(knex) {
         const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultMtbXdrNumber, 6000)
-
+        const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+        const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
         const rnd = _.random(0, 100)
-        const rndModule = _.random(0, 3)
         const result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
 
         resultData.resultText = result.resultText
@@ -4280,9 +4266,9 @@ async function seed(knex) {
           consumableSerial: `${i}12`,
           consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
           consumableLot: `Lot ${i % 5}`,
-          instrumentSerial: `S-1234-${i % 3}`,
-          moduleName: `Module ${modules[rndModule]}`,
-          moduleSerial: `M-1234-${i % 4}`,
+          instrumentSerial,
+          moduleName: module.name,
+          moduleSerial: module.serial,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(getRandomGeneXpertPatientData(patientNumber, patients)),
           senderVersion: '4.6b',
@@ -4293,7 +4279,8 @@ async function seed(knex) {
         })
 
         await knex('DeviceLog').insert({
-          deviceId: device.id,
+          deviceApiKeyId: device.deviceApiKeyId,
+          type: 'RESULT',
           createdOn: addHours(randomDate, 1),
           senderIp: '0.0.0.0',
           source: 'seed data',
@@ -4328,9 +4315,9 @@ async function seed(knex) {
                   consumableSerial: `${i}12`,
                   consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
                   consumableLot: `Lot ${i % 5}`,
-                  instrumentSerial: `S-1234-${i % 3}`,
-                  moduleName: `Module ${modules[rndModule]}`,
-                  moduleSerial: `M-1234-${i % 4}`,
+                  instrumentSerial,
+                  moduleName: module.name,
+                  moduleSerial: module.serial,
                   researchId: `R-ID-${i}`,
                   patientData: JSON.stringify(getRandomGeneXpertPatientData(patientNumber, patients)),
                   senderVersion: '4.6b',
@@ -4434,11 +4421,13 @@ async function seed(knex) {
         const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultEbolaNumber, 6000)
-        const rndModule = _.random(0, 3)
+        const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+        const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
 
         let j = 0
         await Promise.each(possibleResults, async result => {
           j += 1
+
           if (_.random(5) === 0) {
             resultData.resultText = result.resultText
             await knex('Result').insert({
@@ -4467,9 +4456,9 @@ async function seed(knex) {
               consumableSerial: `${i}12`,
               consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
               consumableLot: `Lot ${i % 5}`,
-              instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: `Module ${modules[rndModule]}`,
-              moduleSerial: `M-1234-${i % 4}`,
+              instrumentSerial,
+              moduleName: module.name,
+              moduleSerial: module.serial,
               researchId: `R-ID-${i}`,
               patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.7a',
@@ -4570,7 +4559,9 @@ async function seed(knex) {
         const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
         const rnd = _.random(0, 100)
-        const rndModule = _.random(0, 3)
+        const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+        const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
+
         const result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
 
         let copies = 0
@@ -4614,9 +4605,9 @@ async function seed(knex) {
           consumableSerial: `${i}12`,
           consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
           consumableLot: `Lot ${i % 5}`,
-          instrumentSerial: `S-1234-${i % 3}`,
-          moduleName: `Module ${modules[rndModule]}`,
-          moduleSerial: `M-1234-${i % 4}`,
+          instrumentSerial,
+          moduleName: module.name,
+          moduleSerial: module.serial,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(patients[_.random(patientNumber)]),
           senderVersion: '4.4',
@@ -4701,8 +4692,10 @@ async function seed(knex) {
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
+        const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+        const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
+
         const rnd = _.random(0, 100)
-        const rndModule = _.random(0, 3)
         const result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
 
         let copies = 0
@@ -4753,9 +4746,9 @@ async function seed(knex) {
                 consumableSerial: `${i}12`,
                 consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
                 consumableLot: `Lot ${i % 5}`,
-                instrumentSerial: `S-1234-${i % 3}`,
-                moduleName: `Module ${modules[rndModule]}`,
-                moduleSerial: `M-1234-${i % 4}`,
+                instrumentSerial,
+                moduleName: module.name,
+                moduleSerial: module.serial,
                 researchId: `R-ID-${i}`,
                 patientData: JSON.stringify(patients[_.random(patientNumber)]),
                 senderVersion: '4.7a',

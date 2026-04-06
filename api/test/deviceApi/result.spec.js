@@ -6,13 +6,7 @@ const { knex } = require('../../src/db')
 const { resultTypeToId } = require('../../src/shared/dictionary')
 const { resultReadyForNotification } = require('../../src/result/actions')
 
-const {
-  createTestContext,
-  getDeviceConfigurationData,
-  getLastDeviceOperationId,
-  getLastResultId,
-  createSite,
-} = require('./utils')
+const { createTestContext, getDeviceConfigurationData, getLastResultId, createSite } = require('./utils')
 
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 
@@ -21,7 +15,6 @@ const server = require('../utils/testUtils')
 const { assert, expect } = chai.use(chaiSubset)
 
 const devicePath = '/device'
-const devicePostResultPath = '/device/result'
 
 const baseConfig = {
   requirePrinter: 'yes',
@@ -43,7 +36,7 @@ describe('Device Result API routes', () => {
   describe('admin result updates', () => {
     const context = createTestContext(knex, server, {
       user: 'admin',
-      type: 'DaktariVirology',
+      type: 'CepheidGeneXpert',
       partner: 'Partner One',
       baseConfig,
     })
@@ -62,8 +55,9 @@ describe('Device Result API routes', () => {
     }
 
     beforeEach(async () => {
-      await context.createDeviceWithResult()
+      await context.createDeviceWithResult({ instrumentSerial: 'Aa123456' })
     })
+
     afterEach(context.afterEach)
 
     it('should add and return device results', () =>
@@ -90,15 +84,21 @@ describe('Device Result API routes', () => {
 
         const resultPayload = {
           startedOn: now,
-          data: { a: 'b' },
-          assay: { id: 'DaktariHivVL' },
-          instrument: { serial: '1234567' },
+          data: { assay: 'Xpert MTB-RIF', a: 'b' },
+          assay: { id: 'GxMtbRif' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '29347293' },
         }
-        const postNewResultResponse1 = await server.post(devicePath).set('Authorization', deviceAuth).send({
-          name: deviceChangedName,
-          result: resultPayload,
-        })
+        const postNewResultResponse1 = await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            name: deviceChangedName,
+            result: resultPayload,
+          })
         assert.equal(postNewResultResponse1.status, 200)
         assert.typeOf(postNewResultResponse1.body, 'Object')
 
@@ -128,7 +128,7 @@ describe('Device Result API routes', () => {
           .select('t.*')
 
         assert.equal(tagsResult1.length, 0)
-        assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
+        assert.deepEqual(JSON.parse(result1.resultData), { assay: 'Xpert MTB-RIF', a: 'b' })
 
         const result1Type = await knex('ResultType as rt').where({ id: result1.resultTypeId }).first('externalId')
 
@@ -150,8 +150,8 @@ describe('Device Result API routes', () => {
 
         const result1Assay = await knex('Assay as assay').where({ id: result1.assayId }).first('externalId', 'name')
 
-        assert.equal(result1Assay.externalId, 'DaktariHivVL')
-        assert.equal(result1Assay.name, 'Daktari HIV-VL')
+        assert.equal(result1Assay.externalId, 'GxMtbRif')
+        assert.equal(result1Assay.name, 'GeneXpert MTB/Rif')
 
         const [result1Category1, result1Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result1.resultCategory1, result1.resultCategory2])
@@ -166,67 +166,49 @@ describe('Device Result API routes', () => {
           .first()
 
         const postNewResultResponse2 = await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-            type: { id: 'Study' },
-            source: { id: 'EnteredByHand' },
-            category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-            assay: {
-              id: 'DaktariHivVL',
-              version: '1a.c1',
+            type: {
+              id: 'CepheidGeneXpert',
             },
-            sample: {
-              id: `Sample${now}`,
-              group: 'Sample Group X-1',
-              runNumber: '10z',
-              collectedOn: '2013-11-25',
-              type: {
-                id: 'DBS',
+            result: {
+              data: { assay: 'Xpert MTB-RIF', a: 'b', c: 2, d: false, e: { f: 'g' } },
+              type: { id: 'Study' },
+              source: { id: 'EnteredByHand' },
+              category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+              assay: {
+                id: 'GxMtbRif',
+                version: '1a.c1',
               },
-              originSite: {
-                id: result2SampleSite.externalId,
+              sample: {
+                id: `Sample${now}`,
+                group: 'Sample Group X-1',
+                runNumber: '10z',
+                collectedOn: '2013-11-25',
+                type: {
+                  id: 'DBS',
+                },
+                originSite: {
+                  id: result2SampleSite.externalId,
+                },
               },
-            },
-            location: {
-              longitude: -87.581222,
-              latitude: 30.419348,
-            },
-            startedOn: '2013-12-01',
-            endedOn: '2013-12-01T01:30:00.000Z',
-            consumable: {
-              serial: '132-44-222',
-              expirationDate: '2014-03-01',
-              lot: '331',
-            },
-            instrument: {
-              serial: '444-3',
-              module: {
-                name: 'ModA',
-                serial: '555-8',
-              },
-            },
-            research: { id: 'R123' },
-            patient: {
-              id: 'P-333',
-              name: 'Bob',
-              surname: 'Hope',
-              gender: 'M',
-              age: 72,
-              dateOfBirth: '1903-05-29',
-              address: '123 Main Street',
-              phone: '856-7909',
-            },
-            oemData: JSON.stringify({
-              maker: 'XYZ',
-              model: '876A',
-              serial: '123-456-789',
-            }),
-            rawData: JSON.stringify({
-              startedOn: '2013-05-13',
+              startedOn: '2013-12-01',
               endedOn: '2013-12-01T01:30:00.000Z',
-              patientData: {
+              consumable: {
+                serial: '132-44-222',
+                expirationDate: '2014-03-01',
+                lot: '331',
+              },
+              instrument: {
+                serial: 'Aa123456',
+                module: {
+                  name: 'ModA',
+                  serial: '555-8',
+                },
+              },
+              research: { id: 'R123' },
+              patient: {
                 id: 'P-333',
                 name: 'Bob',
                 surname: 'Hope',
@@ -236,19 +218,15 @@ describe('Device Result API routes', () => {
                 address: '123 Main Street',
                 phone: '856-7909',
               },
-              location: {
-                longitude: -87.581222,
-                latitude: 30.419348,
+              sender: {
+                version: '99-1',
+                operator: 'Bob O',
               },
-            }),
-            sender: {
-              version: '99-1',
-              operator: 'Bob O',
-            },
-            notes: 'My Awesome notes about this Awesome result!, 123-12',
-            error: {
-              code: '123',
-              notes: 'Oh NOZE!',
+              notes: 'My Awesome notes about this Awesome result!, 123-12',
+              error: {
+                code: '123',
+                notes: 'Oh NOZE!',
+              },
             },
           })
         assert.equal(postNewResultResponse2.status, 200)
@@ -278,14 +256,13 @@ describe('Device Result API routes', () => {
         assert.equal(tagsResult2[0].title, ', 123-12')
         assert.equal(tagsResult2[1].title, '-333')
         assert.deepEqual(JSON.parse(result2.resultData), {
+          assay: 'Xpert MTB-RIF',
           a: 'b',
           c: 2,
           d: false,
           e: { f: 'g' },
         })
         assert.equal(result2.assayVersion, '1a.c1')
-        assert.approximately(result2.latitude, 30.419348, 0.000001)
-        assert.approximately(result2.longitude, -87.581222, 0.000001)
         assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
         assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30:00.000Z'))
         assert.equal(result2.sampleGroup, 'Sample Group X-1')
@@ -293,7 +270,7 @@ describe('Device Result API routes', () => {
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
         assert.equal(result2.consumableLot, '331')
-        assert.equal(result2.instrumentSerial, '444-3')
+        assert.equal(result2.instrumentSerial, 'Aa123456')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
@@ -305,30 +282,7 @@ describe('Device Result API routes', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '856-7909',
-        })
-        assert.deepEqual(JSON.parse(result2.oemData), {
-          maker: 'XYZ',
-          model: '876A',
-          serial: '123-456-789',
-        })
-        assert.deepEqual(JSON.parse(result2.rawData), {
-          startedOn: '2013-05-13',
-          endedOn: '2013-12-01T01:30:00.000Z',
-          patientData: {
-            id: 'P-333',
-            name: 'Bob',
-            surname: 'Hope',
-            gender: 'M',
-            age: 72,
-            dateOfBirth: '1903-05-29',
-            address: '123 Main Street',
-            phone: '856-7909',
-          },
-          location: {
-            longitude: -87.581222,
-            latitude: 30.419348,
-          },
+          phone: '+18567909',
         })
         assert.equal(result2.senderVersion, '99-1')
         assert.equal(result2.senderOperator, 'Bob O')
@@ -343,8 +297,8 @@ describe('Device Result API routes', () => {
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Assay = await knex('Assay as assay').where({ id: result2.assayId }).first('externalId', 'name')
-        assert.equal(result2Assay.externalId, 'DaktariHivVL')
-        assert.equal(result2Assay.name, 'Daktari HIV-VL')
+        assert.equal(result2Assay.externalId, 'GxMtbRif')
+        assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
 
         const result2Sample = await knex('Sample as s').where({ id: result2.sampleId }).first()
         assert.notEqual(result2.siteId, result2Sample.originSiteId)
@@ -362,65 +316,50 @@ describe('Device Result API routes', () => {
           .where({ 'r.id': lastResultId })
           .select('rawMessage', 'resultId')
 
-        assert.deepEqual(JSON.parse(log2Raw), {
-          data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-          type: { id: 'Study' },
-          source: { id: 'EnteredByHand' },
-          category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-          assay: {
-            id: 'DaktariHivVL',
-            version: '1a.c1',
+        const deviceLogData = JSON.parse(log2Raw)
+
+        assert.deepEqual(deviceLogData, {
+          type: {
+            id: 'CepheidGeneXpert',
           },
-          sample: {
-            id: `Sample${now}`,
-            group: 'Sample Group X-1',
-            runNumber: '10z',
-            collectedOn: '2013-11-25',
-            type: {
-              id: 'DBS',
+          deviceApiKey: deviceLogData.deviceApiKey, // TODO: Get the real device api key
+          result: {
+            data: { assay: 'Xpert MTB-RIF', a: 'b', c: 2, d: false, e: { f: 'g' } },
+            type: { id: 'Study' },
+            source: { id: 'EnteredByHand' },
+            category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+            assay: {
+              id: 'GxMtbRif',
+              version: '1a.c1',
             },
-            originSite: {
-              id: result2SampleSite.externalId,
+            sample: {
+              id: `Sample${now}`,
+              group: 'Sample Group X-1',
+              runNumber: '10z',
+              collectedOn: '2013-11-25',
+              type: {
+                id: 'DBS',
+              },
+              originSite: {
+                id: result2SampleSite.externalId,
+              },
             },
-          },
-          location: {
-            longitude: -87.581222,
-            latitude: 30.419348,
-          },
-          startedOn: '2013-12-01',
-          endedOn: '2013-12-01T01:30:00.000Z',
-          consumable: {
-            serial: '132-44-222',
-            expirationDate: '2014-03-01',
-            lot: '331',
-          },
-          instrument: {
-            serial: '444-3',
-            module: {
-              name: 'ModA',
-              serial: '555-8',
-            },
-          },
-          research: { id: 'R123' },
-          patient: {
-            id: 'P-333',
-            name: 'Bob',
-            surname: 'Hope',
-            gender: 'M',
-            age: 72,
-            dateOfBirth: '1903-05-29',
-            address: '123 Main Street',
-            phone: '856-7909',
-          },
-          oemData: JSON.stringify({
-            maker: 'XYZ',
-            model: '876A',
-            serial: '123-456-789',
-          }),
-          rawData: JSON.stringify({
-            startedOn: '2013-05-13',
+            startedOn: '2013-12-01',
             endedOn: '2013-12-01T01:30:00.000Z',
-            patientData: {
+            consumable: {
+              serial: '132-44-222',
+              expirationDate: '2014-03-01',
+              lot: '331',
+            },
+            instrument: {
+              serial: 'Aa123456',
+              module: {
+                name: 'ModA',
+                serial: '555-8',
+              },
+            },
+            research: { id: 'R123' },
+            patient: {
               id: 'P-333',
               name: 'Bob',
               surname: 'Hope',
@@ -430,19 +369,15 @@ describe('Device Result API routes', () => {
               address: '123 Main Street',
               phone: '856-7909',
             },
-            location: {
-              longitude: -87.581222,
-              latitude: 30.419348,
+            sender: {
+              version: '99-1',
+              operator: 'Bob O',
             },
-          }),
-          sender: {
-            version: '99-1',
-            operator: 'Bob O',
-          },
-          notes: 'My Awesome notes about this Awesome result!, 123-12',
-          error: {
-            code: '123',
-            notes: 'Oh NOZE!',
+            notes: 'My Awesome notes about this Awesome result!, 123-12',
+            error: {
+              code: '123',
+              notes: 'Oh NOZE!',
+            },
           },
         })
         const getResultResponse4 = await server.get(clientSingleResultPath + resultId2).set('Authorization', clientAuth)
@@ -452,6 +387,7 @@ describe('Device Result API routes', () => {
         assert.typeOf(getResultResponse4.body.data, 'Object')
         assert.typeOf(getResultResponse4.body.data.resultData, 'Object')
         assert.deepEqual(getResultResponse4.body.data.resultData, {
+          assay: 'Xpert MTB-RIF',
           a: 'b',
           c: 2,
           d: false,
@@ -461,17 +397,20 @@ describe('Device Result API routes', () => {
         const postNewResultResponse4 = await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ name: deviceChangedName })
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            includeDeviceConfiguration: false,
+            name: deviceChangedName,
+          })
 
         assert.equal(postNewResultResponse4.status, 200)
         assert.typeOf(postNewResultResponse4.body, 'Object')
 
-        const getResultResponse5 = await server.get(`${devicePath}`).set('Authorization', deviceAuth)
-
-        assert.equal(getResultResponse5.status, 200)
-        assert.typeOf(getResultResponse5.body, 'Object')
-        // The device shouldn't change its name
-        assert.notEqual(getResultResponse5.body.name, deviceChangedName)
+        // Verify the device name hasn't changed (device name should not be updatable via device API)
+        const deviceAfterNameChange = await knex('Device').where({ id: deviceId }).first('name')
+        assert.notEqual(deviceAfterNameChange.name, deviceChangedName)
       }))
 
     it('should set the origin site details of the sample on insert', () =>
@@ -500,9 +439,9 @@ describe('Device Result API routes', () => {
 
         const resultPayload = {
           startedOn: now,
-          data: { a: 'b' },
-          assay: { id: 'DaktariHivVl' },
-          instrument: { serial: '9879879' },
+          data: { assay: 'Xpert MTB-RIF', a: 'b' },
+          assay: { id: 'GxMtbRif' },
+          instrument: { serial: 'Aa123456' },
           sample: {
             id: '493284729',
             originSite: {
@@ -510,10 +449,16 @@ describe('Device Result API routes', () => {
             },
           },
         }
-        const postNewResultResponse = await server.post(devicePath).set('Authorization', deviceAuth).send({
-          name: 'Device Name',
-          result: resultPayload,
-        })
+        const postNewResultResponse = await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            name: 'Device Name',
+            result: resultPayload,
+          })
         assert.equal(postNewResultResponse.status, 200)
         assert.typeOf(postNewResultResponse.body, 'Object')
 
@@ -559,18 +504,20 @@ describe('Device Result API routes', () => {
           street1: expectedSampleOriginSite.street1,
           street2: expectedSampleOriginSite.street2,
           zip: expectedSampleOriginSite.zip,
-          location: {
-            latitude: expectedSampleOriginSite.latitude,
-            longitude: expectedSampleOriginSite.longitude,
-          },
           timezoneId: expectedSampleOriginSite.timezoneid,
           hoursStart: expectedSampleOriginSite.hoursStart,
           hoursEnd: expectedSampleOriginSite.hoursEnd,
         }
-        await server.post(devicePath).set('Authorization', deviceAuth).send({
-          name: 'Device Name',
-          result: resultPayload,
-        })
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            name: 'Device Name',
+            result: resultPayload,
+          })
         assert.equal(postNewResultResponse.status, 200)
         assert.typeOf(postNewResultResponse.body, 'Object')
 
@@ -597,14 +544,19 @@ describe('Device Result API routes', () => {
         const resultPayload = {
           startedOn: now,
           data: { a: 'b' },
-          assay: { id: 'DaktariHivVL' },
-          instrument: { serial: '1234567' },
+          assay: { id: 'GxMtbRif' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '76543789' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultPayload)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -626,14 +578,19 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { a: 'c' },
           error: { code: '1' },
-          assay: { id: 'DaktariHivVL' },
-          instrument: { serial: '1234567' },
+          assay: { id: 'GxMtbRif' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '76543788' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultErrorPayload)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultErrorPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -655,14 +612,19 @@ describe('Device Result API routes', () => {
           data: { a: 'd' },
           category: { id: 'Invalid' },
           error: { code: '1' },
-          assay: { id: 'DaktariHivVL' },
-          instrument: { serial: '1234567' },
+          assay: { id: 'GxMtbRif' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '76543787' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultInvalidErrorPayload)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultInvalidErrorPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -682,14 +644,19 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { a: 'e' },
           category: [{ id: 'Detected' }, { id: 'NotDetected' }],
-          assay: { id: 'DaktariHivVL' },
-          instrument: { serial: '1234567' },
+          assay: { id: 'GxMtbRif' },
+          instrument: { serial: 'Aa123456' },
           sample: { id: '76543786' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultDetectedNotDetectedPayload)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultDetectedNotDetectedPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -715,8 +682,8 @@ describe('Device Result API routes', () => {
         const resultPayload = {
           startedOn: now,
           data: { a: 'b' },
-          assay: { id: 'DaktariHivVL' },
-          instrument: { serial: '1234567' },
+          assay: { id: 'GxMtbRif' },
+          instrument: { serial: 'Aa123456' },
           patient: {
             id: 'PAT-DFD-1234',
             name: 'Bob',
@@ -730,9 +697,14 @@ describe('Device Result API routes', () => {
           sample: { id: excludeSampleId },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultPayload)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -755,8 +727,8 @@ describe('Device Result API routes', () => {
         const resultPayload = {
           startedOn: now,
           data: { a: 'b', sampleId: excludeSampleId },
-          assay: { id: 'DaktariHivVL' },
-          instrument: { serial: '1234567' },
+          assay: { id: 'GxMtbRif' },
+          instrument: { serial: 'Aa123456' },
           patient: {
             name: 'Bob',
             surname: 'Hope',
@@ -769,9 +741,14 @@ describe('Device Result API routes', () => {
           sample: { id: '76543789' },
         }
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send(resultPayload)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: resultPayload,
+          })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -799,13 +776,19 @@ describe('Device Result API routes', () => {
         const initialCount = await countResults()
 
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[0],
-            startedOn: now,
-            data: { a: 'b' },
-            assay: { id: 'DaktariHivVL' },
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: {
+              id: resultExternalIds[0],
+              startedOn: now,
+              data: { assay: 'Xpert MTB-RIF', a: 'b' },
+              instrument: { serial: 'Aa123456' },
+              assay: { id: 'GxMtbRif' },
+            },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -814,7 +797,11 @@ describe('Device Result API routes', () => {
 
         let result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
         assert.equal(result1.externalId, resultExternalIds[0])
-        assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
+        assert.deepEqual(JSON.parse(result1.resultData), {
+          geneXpertTestId: resultExternalIds[0],
+          assay: 'Xpert MTB-RIF',
+          a: 'b',
+        })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults())
 
@@ -836,13 +823,19 @@ describe('Device Result API routes', () => {
           .send(samplePayload)
 
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[0],
-            startedOn: now.toISOString(),
-            data: { a: 'b', c: 'd' },
-            assay: { id: 'DaktariHivVL' },
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: {
+              id: resultExternalIds[0],
+              startedOn: now,
+              data: { assay: 'Xpert MTB-RIF', a: 'b', c: 'd' },
+              instrument: { serial: 'Aa123456' },
+              assay: { id: 'GxMtbRif' },
+            },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -853,20 +846,38 @@ describe('Device Result API routes', () => {
 
         result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
         assert.equal(result1.externalId, resultExternalIds[0])
-        assert.deepEqual(JSON.parse(result1.resultData), { a: 'b', c: 'd' })
+        assert.deepEqual(JSON.parse(result1.resultData), {
+          geneXpertTestId: resultExternalIds[0],
+          assay: 'Xpert MTB-RIF',
+          a: 'b',
+          c: 'd',
+        })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults(), 'Result count does not match')
-
+        const startedOnT3 = '2013-12-01T00:22:54.000Z'
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[1],
-            startedOn: now.toISOString(),
-            data: { a: 'b' },
-            assay: { id: 'DaktariHivVL' },
-            sample: {
-              id: mobileSampleExternalId,
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            result: {
+              id: resultExternalIds[1],
+              startedOn: startedOnT3,
+              data: { assay: 'Xpert MTB-RIF', a: 'b' },
+              assay: { id: 'GxMtbRif' },
+              sample: {
+                id: mobileSampleExternalId,
+              },
+              consumable: {
+                serial: '132-44-222',
+                expirationDate: '2014-03-01',
+                lot: '331',
+              },
+              instrument: {
+                serial: 'Aa123456',
+              },
             },
           })
           .then(res => {
@@ -878,7 +889,7 @@ describe('Device Result API routes', () => {
         resultIds.push(lastResultId)
 
         let result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
-        assert.equal(result2.externalId, resultExternalIds[1])
+        assert.notEqual(result2.externalId, resultExternalIds[1])
         assert.equal(initialCount + 2, await countResults())
 
         const result1SampleSite = await knex('Site as s').where({ id: result1.siteId }).first()
@@ -898,65 +909,47 @@ describe('Device Result API routes', () => {
           createdBy: 1,
         })
         await server
-          .post(devicePostResultPath)
+          .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[1],
-            data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-            type: { id: 'Study' },
-            source: { id: 'EnteredByHand' },
-            category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-            assay: {
-              id: 'DaktariHivVL',
-              version: '1a.c1',
+            type: {
+              id: 'CepheidGeneXpert',
             },
-            sample: {
-              id: `Sample${now}`,
-              type: {
-                id: 'Plasma',
+            result: {
+              id: resultExternalIds[1],
+              data: { assay: 'Xpert MTB-RIF', a: 'b', c: 2, d: false, e: { f: 'g' } },
+              type: { id: 'Study' },
+              source: { id: 'EnteredByHand' },
+              category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+              assay: {
+                id: 'GxMtbRif',
+                version: '1a.c1',
               },
-              originSite: {
-                id: result2SampleSite.externalId,
+              sample: {
+                id: mobileSampleExternalId,
+                type: {
+                  id: 'Plasma',
+                },
+                originSite: {
+                  id: result2SampleSite.externalId,
+                },
               },
-            },
-            location: {
-              longitude: -87.581222,
-              latitude: 30.419348,
-            },
-            startedOn: '2013-12-01',
-            endedOn: '2013-12-01T01:30:00.000Z',
-            consumable: {
-              serial: '132-44-222',
-              expirationDate: '2014-03-01',
-              lot: '331',
-            },
-            instrument: {
-              serial: '444-3',
-              module: {
-                name: 'ModA',
-                serial: '555-8',
-              },
-            },
-            research: { id: 'R123' },
-            patient: {
-              id: 'P-333',
-              name: 'Bob',
-              surname: 'Hope',
-              gender: 'M',
-              age: 72,
-              dateOfBirth: '1903-05-29',
-              address: '123 Main Street',
-              phone: '856-7909',
-            },
-            oemData: JSON.stringify({
-              maker: 'ABC',
-              model: '123A',
-              serial: '123-456-789',
-            }),
-            rawData: JSON.stringify({
-              startedOn: '2013-05-13',
+              startedOn: startedOnT3,
               endedOn: '2013-12-01T01:30:00.000Z',
-              patientData: {
+              consumable: {
+                serial: '132-44-222',
+                expirationDate: '2014-03-01',
+                lot: '331',
+              },
+              instrument: {
+                serial: 'Aa123456',
+                module: {
+                  name: 'ModA',
+                  serial: '555-8',
+                },
+              },
+              research: { id: 'R123' },
+              patient: {
                 id: 'P-333',
                 name: 'Bob',
                 surname: 'Hope',
@@ -966,19 +959,34 @@ describe('Device Result API routes', () => {
                 address: '123 Main Street',
                 phone: '856-7909',
               },
-              location: {
-                longitude: -87.581222,
-                latitude: 30.419348,
+              oemData: JSON.stringify({
+                maker: 'ABC',
+                model: '123A',
+                serial: '123-456-789',
+              }),
+              rawData: JSON.stringify({
+                startedOn: '2013-05-13',
+                endedOn: '2013-12-01T01:30:00.000Z',
+                patientData: {
+                  id: 'P-333',
+                  name: 'Bob',
+                  surname: 'Hope',
+                  gender: 'M',
+                  age: 72,
+                  dateOfBirth: '1903-05-29',
+                  address: '123 Main Street',
+                  phone: '856-7909',
+                },
+              }),
+              sender: {
+                version: '99-1',
+                operator: 'Bob O',
               },
-            }),
-            sender: {
-              version: '99-1',
-              operator: 'Bob O',
-            },
-            notes: 'My Awesome notes about this Awesome result!',
-            error: {
-              code: '123',
-              notes: 'Oh NOZE!',
+              notes: 'My Awesome notes about this Awesome result!',
+              error: {
+                code: '123',
+                notes: 'Oh NOZE!',
+              },
             },
           })
           .then(res => {
@@ -991,7 +999,7 @@ describe('Device Result API routes', () => {
 
         result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
         assert.equal(initialCount + 2, await countResults())
-        assert.equal(result2.externalId, resultExternalIds[1])
+        assert.notEqual(result2.externalId, resultExternalIds[1])
         expect(JSON.parse(result2.resultData)).to.containSubset({
           a: 'b',
           c: 2,
@@ -999,14 +1007,12 @@ describe('Device Result API routes', () => {
           e: { f: 'g' },
         })
         assert.equal(result2.assayVersion, '1a.c1')
-        assert.approximately(result2.latitude, 30.419348, 0.000001)
-        assert.approximately(result2.longitude, -87.581222, 0.000001)
-        assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
+        assert.deepEqual(result2.startedOn.toISOString(), startedOnT3)
         assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30:00.000Z'))
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
         assert.equal(result2.consumableLot, '331')
-        assert.equal(result2.instrumentSerial, '444-3')
+        assert.equal(result2.instrumentSerial, 'Aa123456')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
@@ -1018,30 +1024,7 @@ describe('Device Result API routes', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '856-7909',
-        })
-        assert.deepEqual(JSON.parse(result2.oemData), {
-          maker: 'ABC',
-          model: '123A',
-          serial: '123-456-789',
-        })
-        assert.deepEqual(JSON.parse(result2.rawData), {
-          startedOn: '2013-05-13',
-          endedOn: '2013-12-01T01:30:00.000Z',
-          patientData: {
-            id: 'P-333',
-            name: 'Bob',
-            surname: 'Hope',
-            gender: 'M',
-            age: 72,
-            dateOfBirth: '1903-05-29',
-            address: '123 Main Street',
-            phone: '856-7909',
-          },
-          location: {
-            longitude: -87.581222,
-            latitude: 30.419348,
-          },
+          phone: '+18567909',
         })
         assert.equal(result2.senderVersion, '99-1')
         assert.equal(result2.senderOperator, 'Bob O')
@@ -1056,15 +1039,15 @@ describe('Device Result API routes', () => {
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Assay = await knex('Assay as assay').where({ id: result2.assayId }).first('externalId', 'name')
-        assert.equal(result2Assay.externalId, 'DaktariHivVL')
-        assert.equal(result2Assay.name, 'Daktari HIV-VL')
+        assert.equal(result2Assay.externalId, 'GxMtbRif')
+        assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
 
         const result2Sample = await knex('Sample as s').where({ id: result2.sampleId }).first()
 
-        assert.notEqual(
+        assert.equal(
           result2.siteId,
           result2Sample.originSiteId,
-          'Sample origin site Id should change on result updates if the sample was not registered in the mobile app'
+          'Sample origin site Id should not change on result updates if the sample was created in another site'
         )
 
         assert.notEqual(
@@ -1078,7 +1061,7 @@ describe('Device Result API routes', () => {
           result2.reportableSiteId,
           'Result.reportableSiteId should not change on result updates if the result is transferred'
         )
-        assert.equal(result2Sample.externalId, `Sample${now}`)
+        assert.equal(result2Sample.externalId, mobileSampleExternalId)
 
         const [result2Category1, result2Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result2.resultCategory1, result2.resultCategory2])
@@ -1091,44 +1074,41 @@ describe('Device Result API routes', () => {
       runTest(async knex => {
         const { deviceId, deviceAuth, now } = context
         const resultIds = []
-        const opIds = []
-
         const [{ count: initialLogLength }] = await knex('DeviceLog').count('id as count')
-
-        await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200) // there isn't any for this device
-            assert.typeOf(res.body.result, 'undefined')
-          })
 
         const res = await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             configuration: { data: { a: 'b' } },
             operation: { data: { a: 'c' } },
             result: {
               startedOn: now,
               data: {
+                assay: 'Xpert MTB-RIF',
                 a: 'd',
               },
+              sample: { id: '123-456789-012' },
               instrument: {
-                serial: 'A NICE INSTRUMENT SERIAL',
+                serial: 'Aa123456',
               },
-              assay: { id: 'DaktariHivVL' },
+              assay: { id: 'GxMtbRif' },
             },
           })
+
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
         // The last reported instrument serial should be updated in the device table
-        const { lastInstrumentSerial } = await knex('Device').where({ id: deviceId }).first()
-        assert.equal(lastInstrumentSerial, 'A NICE INSTRUMENT SERIAL')
+        const { lastInstrumentSerial, deviceId: lastDeviceId } = await knex('Instrument')
+          .orderBy('id', 'desc')
+          .first('serial as lastInstrumentSerial', 'deviceId')
+        assert.equal(lastInstrumentSerial, 'Aa123456')
 
-        resultIds.push(await getLastResultId(knex, deviceId))
-        opIds.push(await getLastDeviceOperationId(knex, deviceId))
+        resultIds.push(await getLastResultId(knex, lastDeviceId))
 
         const [{ count: logLength2 }] = await knex('DeviceLog').count('id as count')
         assert.equal(logLength2, initialLogLength + 1) // I add new devicelog for the current device
@@ -1136,18 +1116,14 @@ describe('Device Result API routes', () => {
         const deviceLogResult2 = await knex('Result')
           .where({ id: resultIds[resultIds.length - 1] })
           .first()
-        const deviceLogConfig2 = await getDeviceConfigurationData(knex, deviceId)
-        const deviceLogOp2 = await knex('DeviceOperation')
-          .where({ id: opIds[opIds.length - 1] })
-          .first()
+        const deviceLogConfig2 = await getDeviceConfigurationData(knex, lastDeviceId)
+
         assert.deepEqual(deviceLogConfig2, _.assign({}, baseConfig, { a: 'b' }))
-        assert.property(deviceLogOp2, 'data')
-        assert.deepEqual(JSON.parse(deviceLogOp2.data), { a: 'c' })
         assert.property(deviceLogResult2, 'resultData')
-        assert.deepEqual(JSON.parse(deviceLogResult2.resultData), { a: 'd' })
+        assert.deepEqual(JSON.parse(deviceLogResult2.resultData), { a: 'd', assay: 'Xpert MTB-RIF' })
+
         const deviceLogUpdates2 = await knex('DeviceLog').where({
           deviceConfigurationUpdated: true,
-          deviceOperationId: deviceLogOp2.id,
         })
 
         assert.equal(deviceLogUpdates2.length, 1)
@@ -1158,12 +1134,19 @@ describe('Device Result API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
             configuration: { data: { a: 'c' } },
             operation: { data: { a: 'd' } },
             result: {
               startedOn: now,
-              data: { a: 'd' },
-              assay: { id: 'DaktariHivVL' },
+              data: { assay: 'Xpert MTB-RIF', a: 'd' },
+              sample: { id: '123-456789-012' },
+              instrument: {
+                serial: 'Aa123456',
+              },
+              assay: { id: 'GxMtbRif' },
             },
           })
           .then(res => {
@@ -1172,25 +1155,16 @@ describe('Device Result API routes', () => {
           })
 
         resultIds.push(await getLastResultId(knex, deviceId))
-        opIds.push(await getLastDeviceOperationId(knex, deviceId))
 
         const deviceLogConfig3 = await getDeviceConfigurationData(knex, deviceId)
-        const deviceLogOp3 = await knex('DeviceOperation')
-          .where({ id: opIds[opIds.length - 1] })
-          .first()
-
         assert.deepEqual(deviceLogConfig3, _.assign({}, baseConfig, { a: 'c' }))
-        assert.property(deviceLogOp3, 'data')
-        assert.deepEqual(JSON.parse(deviceLogOp3.data), { a: 'd' })
-
         const deviceLogUpdates3 = await knex('DeviceLog').where({
           deviceConfigurationUpdated: true,
-          deviceOperationId: deviceLogOp3.id,
         })
 
-        assert.equal(deviceLogUpdates3.length, 1)
-        assert.isOk(deviceLogUpdates3[0].id)
-        assert.isOk(deviceLogUpdates3[0].resultId)
+        assert.equal(deviceLogUpdates3.length, 2)
+        assert.isOk(deviceLogUpdates3[1].id)
+        assert.isOk(deviceLogUpdates3[1].resultId)
       }))
 
     describe.skip('the reportable site of a result', () => {
@@ -1215,8 +1189,8 @@ describe('Device Result API routes', () => {
           const resultPayload = {
             startedOn: now,
             data: { a: 'b' },
-            assay: { id: 'DaktariHivVl' },
-            instrument: { serial: '9879879' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'Aa123456' },
             sample: {
               id: '493284729-REPORTABLE',
             },
@@ -1225,6 +1199,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', `Bearer ${deviceWithNoDefaultReportableSiteId.token}`)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               name: 'Device Name',
               result: resultPayload,
             })
@@ -1261,8 +1238,8 @@ describe('Device Result API routes', () => {
           const resultPayload = {
             startedOn: now,
             data: { a: 'b' },
-            assay: { id: 'DaktariHivVl' },
-            instrument: { serial: '9879879' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'Aa123456' },
             sample: {
               id: '493284729-REPORTABLE',
               originSite: {
@@ -1274,6 +1251,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', `Bearer ${deviceWithNoDefaultReportableSiteId.token}`)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               name: 'Device Name',
               result: resultPayload,
             })
@@ -1311,8 +1291,8 @@ describe('Device Result API routes', () => {
           const resultPayload = {
             startedOn: now,
             data: { a: 'b' },
-            assay: { id: 'DaktariHivVl' },
-            instrument: { serial: '9879879' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'Aa123456' },
             sample: {
               id: '493284729-REPORTABLE',
               originSite: {
@@ -1324,6 +1304,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', `Bearer ${deviceWithDefaultReportableSiteId.token}`)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               name: 'Device Name',
               result: resultPayload,
             })
@@ -1353,8 +1336,8 @@ describe('Device Result API routes', () => {
           const resultPayload = {
             startedOn: now,
             data: { a: 'b' },
-            assay: { id: 'DaktariHivVl' },
-            instrument: { serial: '9879879' },
+            assay: { id: 'GxMtbRif' },
+            instrument: { serial: 'Aa123456' },
             sample: {
               id: '493284729-REPORTABLE',
             },
@@ -1363,6 +1346,9 @@ describe('Device Result API routes', () => {
             .post(devicePath)
             .set('Authorization', `Bearer ${deviceWithDefaultReportableSiteId.token}`)
             .send({
+              type: {
+                id: 'CepheidGeneXpert',
+              },
               name: 'Device Name',
               result: resultPayload,
             })
@@ -1384,22 +1370,29 @@ describe('Device Result API routes', () => {
       const getResult = async (knex, resultId) => knex('Result as r').where({ id: resultId }).first()
 
       const postResult = async resultPayload =>
-        server.post(devicePath).set('Authorization', context.deviceAuth).send({
-          name: 'Device Name',
-          result: resultPayload,
-        })
+        server
+          .post(devicePath)
+          .set('Authorization', context.deviceAuth)
+          .send({
+            type: {
+              id: 'CepheidGeneXpert',
+            },
+            name: 'Device Name',
+            result: resultPayload,
+          })
 
       it('should trigger event resultReadyForNotification', () =>
         runTest(async knex => {
-          const { now, deviceId } = context
+          const { now } = context
 
           const resultPayload = {
             startedOn: now,
             endedOn: addHours(now, 2),
             id: 'test-external-id', // this is `Result.externalId`
-            data: { a: 'b', b: 'c' },
-            assay: { id: 'DaktariHivVl' },
-            deviceId,
+            data: { assay: 'Xpert MTB-RIF', a: 'b', b: 'c' },
+            assay: { id: 'GxMtbRif' },
+            sample: { id: '123-456789-012' },
+            instrument: { serial: 'Aa123456' },
           }
 
           /**
@@ -1419,7 +1412,7 @@ describe('Device Result API routes', () => {
            * prepare MQ action to check it was triggered after updating
            * same result with new data
            */
-          let action = resultReadyForNotification(result.id)
+          let action = resultReadyForNotification(result.id, true)
           let waitForResultReadyForNotification = waitForAction(action)
           /**
            * update result
@@ -1489,7 +1482,7 @@ describe('Device Result API routes', () => {
       it('should update the result counts in the facts-tables when a new result is reported', () =>
         runTest(async knex => {
           const resultDetails = {
-            assayExternalId: 'DaktariHivVL',
+            assayExternalId: 'GxMtbRif',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'MoreThan1000',
             deviceId: context.deviceId,
@@ -1502,17 +1495,23 @@ describe('Device Result API routes', () => {
             .first('id')
 
           await server
-            .post(devicePostResultPath)
+            .post(devicePath)
             .set('Authorization', context.deviceAuth)
             .send({
-              id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
-              data: { a: 'b' },
-              assay: { id: resultDetails.assayExternalId },
-              category: [
-                { id: resultDetails.resultCategory1ExternalId },
-                { id: resultDetails.resultCategory2ExternalId },
-              ],
-              endedOn: new Date(),
+              type: {
+                id: 'CepheidGeneXpert',
+              },
+              result: {
+                id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
+                data: { a: 'b' },
+                assay: { id: resultDetails.assayExternalId },
+                category: [
+                  { id: resultDetails.resultCategory1ExternalId },
+                  { id: resultDetails.resultCategory2ExternalId },
+                ],
+                endedOn: new Date(),
+                instrument: { serial: 'Aa123456' },
+              },
             })
             .then(res => {
               assert.equal(res.status, 200)
@@ -1533,18 +1532,24 @@ describe('Device Result API routes', () => {
           assert.equal(factResultsDeviceBefore.length, 7, 'There should be one entry per day in the device count table')
 
           await server
-            .post(devicePostResultPath)
+            .post(devicePath)
             .set('Authorization', context.deviceAuth)
             .send({
-              id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
-              data: { a: 'b' },
-              assay: { id: resultDetails.assayExternalId },
-              category: [
-                { id: resultDetails.resultCategory1ExternalId },
-                { id: resultDetails.resultCategory2ExternalId },
-              ],
-              startedOn: new Date(),
-              endedOn: addHours(new Date(), 2),
+              type: {
+                id: 'CepheidGeneXpert',
+              },
+              result: {
+                id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
+                data: { a: 'b' },
+                assay: { id: resultDetails.assayExternalId },
+                category: [
+                  { id: resultDetails.resultCategory1ExternalId },
+                  { id: resultDetails.resultCategory2ExternalId },
+                ],
+                startedOn: new Date(),
+                endedOn: addHours(new Date(), 2),
+                instrument: { serial: 'Aa123456' },
+              },
             })
             .then(res => {
               assert.equal(res.status, 200)

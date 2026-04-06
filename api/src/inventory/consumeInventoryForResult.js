@@ -18,7 +18,6 @@ async function consumeInventoryForResult({
   partnerId,
   testStartedOn,
   messageContext,
-  userId,
 }) {
   const now = new Date()
   const dataConstraints = {
@@ -65,7 +64,6 @@ async function consumeInventoryForResult({
             expiresOn,
             lotNumber,
             partnerId,
-            userId,
             messageContext,
             dataConstraints,
             resultId,
@@ -97,7 +95,6 @@ async function consumeInventoryForResult({
           expiresOn,
           quantity,
           now,
-          userId,
           partnerId,
           inventoryAdjustment,
           partnerInventoryStrategy,

@@ -1,6 +1,5 @@
 const { expect, assert } = require('chai')
 const { addDays, subDays } = require('date-fns')
-const uuid = require('node-uuid')
 const { deviceMaintenanceTypeToId, resultCategoryToId, consumableReasonToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
@@ -16,6 +15,7 @@ let issueIdOnRepeatedSourceResult
 let repeatedSourceResultId
 let uniqueSourceResultId
 let repeatedTargetResultId
+let deviceApiKeyIds
 
 describe('Merge Devices', () => {
   before(async () => shared.checkToken(server, path))
@@ -66,6 +66,8 @@ describe('Merge Devices', () => {
       resultCategory1: resultCategoryDetected,
     }
 
+    deviceApiKeyIds = await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).pluck('deviceApiKeyId')
+
     repeatedSourceResultId = await sourceDeviceContext.createResultForThisDevice({
       resultDetails,
     })
@@ -94,17 +96,19 @@ describe('Merge Devices', () => {
       .whereIn('issueId', knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).select('id'))
       .del()
     await knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
-    await knex('DeviceApiKey')
-      .whereIn('siteId', [targetSiteId, sourceSiteId])
-      .orWhereIn('deviceId', [sourceDeviceId, targetDevice.id])
-      .del()
-    await knex('InventoryItem').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
+
+    await knex('DeviceOperation').whereIn('deviceApiKeyId', deviceApiKeyIds).del()
+    await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).update({ deviceApiKeyId: null })
+    await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).del()
+    await knex('InventoryLog').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
     await knex('Result').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('Sample').whereIn('originSiteId', [sourceSiteId, targetSiteId]).del()
-    await knex('DeviceLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('InventoryItem').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
+    await knex('Site').whereIn('id', [targetSiteId, sourceSiteId]).del()
+    await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).del()
     await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
-    await knex('DeviceOperation').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('Instrument').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
 
     // Delete fact tables sequentially to avoid deadlocks
     await knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
@@ -114,10 +118,10 @@ describe('Merge Devices', () => {
     await knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
 
     await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).del()
-    await knex('Site').whereIn('id', [targetSiteId, sourceSiteId]).del()
   })
 
   it('If source device pings in the last 24 hs should throw validation', async () => {
+    await knex('Device').where('id', sourceDeviceId).update({ lastPingOn: new Date() })
     await server
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
@@ -135,6 +139,25 @@ describe('Merge Devices', () => {
     const { quantityOnHand: quantityOnHandBefore, inventoryItemId } = await setInventoryItemAndInventoryLog(
       repeatedSourceResultId
     )
+    /**
+     * Add instruments to source and target device
+     */
+    await knex('Instrument').insert({
+      deviceId: sourceDeviceId,
+      serial: 'SRCINST1',
+      macAddress: 'SRCMAC1',
+      active: true,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+    await knex('Instrument').insert({
+      deviceId: targetDevice.id,
+      serial: 'TGTINST1',
+      macAddress: 'TGTMAC1',
+      active: true,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
     /**
      * do device merge
      */
@@ -165,6 +188,15 @@ describe('Merge Devices', () => {
       repeatedTargetResultId,
       'Issues on repeated source result should be in target repeated result'
     )
+
+    // Assert instruments are merged
+    const instrumentsOnTarget = await knex('Instrument').where('deviceId', targetDevice.id)
+    const instrumentSerials = instrumentsOnTarget.map(i => i.serial)
+    expect(instrumentSerials).to.include('SRCINST1')
+    expect(instrumentSerials).to.include('TGTINST1')
+    // Source device should have no instruments
+    const instrumentsOnSource = await knex('Instrument').where('deviceId', sourceDeviceId)
+    expect(instrumentsOnSource).to.have.lengthOf(0)
 
     await assertFactTables(sourceDeviceId)
     /**
@@ -198,10 +230,9 @@ async function assertFactTables(deviceId) {
 
 async function seedDeviceOperation() {
   await knex('DeviceOperation').insert({
-    deviceId: sourceDeviceId,
-    startedOn: new Date(),
+    deviceApiKeyId: knex('Device').where('id', sourceDeviceId).first('deviceApiKeyId'),
+    occurredOn: new Date(),
     data: '{"someJsonData": "someValue"}',
-    guid: uuid.v4(),
   })
 }
 

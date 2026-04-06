@@ -108,41 +108,72 @@ describe('Device API Raw routes', () => {
         .leftJoin('Device as d', 'dak.deviceId', 'd.id')
         .where('dak.token', validApiKeyToken)
         .first('dak.id', 'dak.deviceId', 'd.siteId')
-      const resultIds = await knex('Result').where('deviceId', deviceId).pluck('id')
 
-      const opIds = await knex('DeviceOperation').where('deviceId', deviceId).pluck('id')
-      const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
-      await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
-      await knex('DeviceLog').where('deviceId', deviceId).orWhereIn('resultId', resultIds).delete()
-      await knex('DeviceOperation').whereIn('id', opIds).delete()
-      await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
-      await knex('DeviceSiteHistory').where('deviceId', deviceId).delete()
-      await knex('FactResultsDevice').where('deviceId', deviceId).delete()
-      await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
-      await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
-      await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-      await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
-      await knex('Device').where('id', deviceId).delete()
-      const inventoryItemIds = await knex('InventoryItem as ii')
-        .where('ii.siteId', siteId)
-        .distinct('ii.id')
-        .pluck('ii.id')
-      await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
-      await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
-      await knex('IssueEvent')
-        .whereIn('issueId', issueIds)
-        .orWhere(function () {
-          if (resultIds != null && resultIds.length > 0) {
-            this.whereRaw(`JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`)
-          }
-        })
-        .delete()
-      await knex('InventoryLog').whereIn('resultId', resultIds).delete()
-      await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-      await knex('ResultTag').whereIn('sourceResultId', resultIds).delete()
-      await knex('Result').whereIn('id', resultIds).delete()
-      await knex('Sample').where('originSiteId', siteId).delete()
-      await knex('Site').where('id', siteId).delete()
+      const resultIds = deviceId ? await knex('Result').where('deviceId', deviceId).pluck('id') : []
+      const opIds = deviceApiKeyId
+        ? await knex('DeviceOperation').where('deviceApiKeyId', deviceApiKeyId).pluck('id')
+        : []
+      const issueIds = deviceId ? await knex('Issue').where('deviceId', deviceId).pluck('id') : []
+
+      if (deviceId) {
+        await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
+      }
+      if (deviceApiKeyId) {
+        await knex('DeviceLog').where('deviceApiKeyId', deviceApiKeyId).orWhereIn('resultId', resultIds).delete()
+      } else if (resultIds.length > 0) {
+        await knex('DeviceLog').whereIn('resultId', resultIds).delete()
+      }
+      if (opIds.length > 0) {
+        await knex('DeviceOperation').whereIn('id', opIds).delete()
+      }
+      if (deviceId) {
+        await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
+        await knex('FactResultsDevice').where('deviceId', deviceId).delete()
+        await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
+        await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
+      }
+      if (deviceApiKeyId) {
+        await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
+        await knex('Device').where('deviceApiKeyId', deviceApiKeyId).update({ deviceApiKeyId: null })
+      }
+
+      if (deviceApiKeyId) {
+        await knex('DeviceApiKey').where('id', deviceApiKeyId).delete()
+      } else {
+        await knex('DeviceApiKey').where('token', validApiKeyToken).delete()
+      }
+
+      if (deviceId) {
+        await knex('Device').where('id', deviceId).delete()
+      }
+
+      const inventoryItemIds = siteId
+        ? await knex('InventoryItem as ii').where('ii.siteId', siteId).distinct('ii.id').pluck('ii.id')
+        : []
+      if (inventoryItemIds.length > 0) {
+        await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
+        await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
+      }
+      if (issueIds.length > 0 || resultIds.length > 0) {
+        await knex('IssueEvent')
+          .whereIn('issueId', issueIds)
+          .orWhere(function () {
+            if (resultIds.length > 0) {
+              this.whereRaw(`JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`)
+            }
+          })
+          .delete()
+      }
+      if (resultIds.length > 0) {
+        await knex('InventoryLog').whereIn('resultId', resultIds).delete()
+        await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
+        await knex('ResultTag').whereIn('sourceResultId', resultIds).delete()
+        await knex('Result').whereIn('id', resultIds).delete()
+      }
+      if (siteId) {
+        await knex('Sample').where('originSiteId', siteId).delete()
+        await knex('Site').where('id', siteId).delete()
+      }
     })
 
     it('should save the request in DeviceApiRaw and respond with the record ID', async () => {

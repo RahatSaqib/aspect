@@ -87,7 +87,7 @@ describe('Device API Raw routes for cobas', () => {
         .where('dak.token', validApiKeyToken)
         .first('dak.id', 'dak.deviceId', 'd.siteId')
       await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
-      await knex('DeviceLog').where('deviceId', deviceId).delete()
+      await knex('DeviceLog').where('deviceApiKeyId', deviceApiKeyId).delete()
 
       await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
       await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()

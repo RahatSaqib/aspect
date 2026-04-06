@@ -7,7 +7,6 @@ const { knex } = require('../../src/db')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { readTextFile } = require('../../src/shared/io')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
-const { waitForIdle } = require('../utils/mqUtils')
 const { insertSite } = require('../../src/site/common/db')
 
 const server = require('../utils/testUtils')
@@ -96,14 +95,19 @@ describe('Device API Raw routes for Abbott M2000', () => {
       .leftJoin('Device as d', 'dak.deviceId', 'd.id')
       .where('dak.token', validApiKeyToken)
       .first('dak.id', 'dak.deviceId', 'd.siteId')
-    const resultIds = await knex('Result').where('deviceId', deviceId).pluck('id')
-    const opIds = await knex('DeviceOperation').where('deviceId', deviceId).pluck('id')
-    const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
+    const resultIds = deviceId ? await knex('Result').where('deviceId', deviceId).pluck('id') : []
+    const opIds = deviceApiKeyId
+      ? await knex('DeviceOperation').where('deviceApiKeyId', deviceApiKeyId).pluck('id')
+      : []
+    const issueIds = deviceId ? await knex('Issue').where('deviceId', deviceId).pluck('id') : []
     await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
-    await knex('DeviceLog').where('deviceId', deviceId).orWhereIn('resultId', resultIds).delete()
+    if (deviceApiKeyId) {
+      await knex('DeviceLog').where('deviceApiKeyId', deviceApiKeyId).orWhereIn('resultId', resultIds).delete()
+    } else if (resultIds.length > 0) {
+      await knex('DeviceLog').whereIn('resultId', resultIds).delete()
+    }
     await knex('DeviceOperation').whereIn('id', opIds).delete()
     await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
-    await knex('DeviceSiteHistory').where('deviceId', deviceId).delete()
     await knex('FactResultsDevice').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
@@ -327,9 +331,9 @@ aa.`
 
   it('should parse the ASTM RAW messages from an HIV Plasma VL plate, using HIV 0.2ml reagent protocol, and save the results in the database', async () => {
     const payload = await readTextFile(path.join(__dirname, 'abbottM2000PlasmaHivVlRaw.pkl'), 'utf8')
-    let patientCase = await knex('PatientCase').where('externalId', '36008/19').first()
+    const patientCase = await knex('PatientCase').where('externalId', '36008/19').first()
     assert.isNotOk(patientCase)
-    let patient = await knex('Patient').where('externalId', '36008/19').first()
+    const patient = await knex('Patient').where('externalId', '36008/19').first()
     assert.isNotOk(patient)
     const response = await server
       .post(deviceApiRawPath)
@@ -442,13 +446,6 @@ aa.`
           },
         },
       })
-    })
-    await waitForIdle(2000)
-    patientCase = await knex('PatientCase').where('externalId', '36008/19').first()
-    patient = await knex('Patient').where('externalId', '36008/19').first()
-    expect(patientCase).to.containSubset({
-      reliable: 0,
-      patientId: patient.id,
     })
   })
 

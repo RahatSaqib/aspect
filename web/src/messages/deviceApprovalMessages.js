@@ -2,13 +2,9 @@ import { defineMessages } from 'react-intl'
 
 export default defineMessages({
   // approval
-  deviceApprovalProvisioned: {
-    id: 'pages.shared.deviceApproval.provisioned',
-    defaultMessage: 'Provisioned',
-  },
-  deviceApprovalAssigned: {
-    id: 'pages.shared.deviceApproval.assigned',
-    defaultMessage: 'Assigned',
+  deviceApprovalPendingDeployment: {
+    id: 'pages.shared.deviceApproval.pendingDeployment',
+    defaultMessage: 'Pending Deployment',
   },
   deviceApprovalApproved: {
     id: 'pages.shared.deviceApproval.approved',
@@ -19,13 +15,9 @@ export default defineMessages({
     defaultMessage: 'Decommissioned',
   },
   // duplicates, have to be checked
-  deviceStatusProvisioned: {
-    id: 'pages.shared.deviceApproval.provisioned',
-    defaultMessage: 'Provisioned',
-  },
-  deviceStatusAssigned: {
-    id: 'pages.shared.deviceApproval.assigned',
-    defaultMessage: 'Assigned',
+  deviceStatusPendingDeployment: {
+    id: 'pages.shared.deviceApproval.pendingDeployment',
+    defaultMessage: 'Pending Deployment',
   },
   deviceStatusApproved: {
     id: 'pages.shared.deviceApproval.approved',

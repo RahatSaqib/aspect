@@ -10,7 +10,6 @@ module.exports = async (knex, partnerExternalId, fixture) => {
     'errorRate',
     'moduleSwaps',
     'unusedModules',
-    'instrumentsReplaced',
     'numberOfDevicesExperiencingServiceInterruption',
     'averageDurationServiceInterruption',
   ])

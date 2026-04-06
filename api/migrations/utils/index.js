@@ -15,6 +15,11 @@ function addAuditFields(table) {
   addUpdateFields(table)
 }
 
+function addAuditFieldsNullable(table) {
+  addCreateFieldsNullable(table)
+  addUpdateFieldsNullable(table)
+}
+
 function addCreateFieldsNullable(table) {
   table.dateTime('createdOn')
   table.integer('createdBy').unsigned().index().references('id').inTable('User')
@@ -82,4 +87,5 @@ module.exports = {
   addUpdateFieldsNullable,
   addTimestamps,
   addAuditFields,
+  addAuditFieldsNullable,
 }

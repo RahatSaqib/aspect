@@ -7,6 +7,7 @@ const { addMilliseconds, addMinutes, subDays, differenceInDays, subMonths } = re
 const { upsertJobFunctionFixture } = require('../common')
 const jobFunctionsFixtureMyanmar = require('./fixtures/jobFunctions_myanmar')
 const config = require('../../src/config')
+const helpers = require('./fixtures/helpers')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
@@ -349,6 +350,8 @@ async function seed(knex) {
               if (deviceId % 3 === 0 && Math.abs(differenceInDays(now, randomDate)) < maxDaysDeviceNoResults + 3) {
                 randomDate = subDays(randomDate, maxDaysDeviceNoResults + 3)
               }
+              const instrumentSerial = helpers.generateInstrumentSerial(device.id)
+              const module = helpers.generateModules(device.id, instrumentSerial)[i % 4]
 
               const rnd = _.random(0, 100)
               const result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
@@ -380,9 +383,9 @@ async function seed(knex) {
                 consumableSerial: `${i}12`,
                 consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
                 consumableLot: `Lot ${i % 5}`,
-                instrumentSerial: `S-1234-${i % 3}`,
-                moduleName: 'Module A',
-                moduleSerial: `M-1234-${i % 4}`,
+                instrumentSerial,
+                moduleName: module.name,
+                moduleSerial: module.serial,
                 researchId: `R-ID-${i}`,
                 patientData: JSON.stringify(patients[_.random(99)]),
                 senderVersion: '4.6b',
