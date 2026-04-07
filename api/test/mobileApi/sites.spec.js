@@ -1,5 +1,6 @@
 const chai = require('chai')
 const server = require('../utils/testUtils')
+const { clientTypes } = require('../../src/auth/service')
 
 const { expect, assert } = chai
 
@@ -81,6 +82,25 @@ describe('Mobile API sites', () => {
       const response = await server.get(path).set(authHeaders()).query({ modifiedSince: 'invalid' })
 
       expect(response.status).to.equal(400)
+    })
+
+    it('should return assigned-only sites for true_connect; onlyForTransfers is contract noise (always false, ignore semantically)', async () => {
+      const login = await server.post('/api/auth').send({
+        name: 'admin',
+        password: 'test07',
+        clientName: 'Mocha True Connect sites',
+        clientType: clientTypes.true_connect,
+      })
+      expect(login.status).to.equal(200)
+      const response = await server.get(path).set({
+        Authorization: `Bearer ${login.body.access}`,
+        'api-version': '4',
+      })
+      expect(response.status).to.equal(200)
+      // Same JSON shape as reporter_app; onlyForTransfers is not meaningful for true_connect—always false.
+      response.body.data.forEach(site => {
+        expect(site.onlyForTransfers).to.equal(false)
+      })
     })
   })
 })

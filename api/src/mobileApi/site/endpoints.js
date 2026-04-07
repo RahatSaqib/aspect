@@ -7,6 +7,7 @@ const { asyncHandler } = require('../../routes')
 // -----------------------------------------------------
 const routes = [
   {
+    // Use for sample registration from Aspect Mobile App, see handler description for more details
     method: 'GET',
     path: '/v4/sites',
     handler: asyncHandler(listSites),

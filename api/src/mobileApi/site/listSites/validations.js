@@ -53,7 +53,7 @@ const downloadSitesResponseValidationV4 = () => {
           onlyForTransfers: Joi.bool()
             .required()
             .description(
-              'Whether the user is allowed just to create transfers (true) or also to to register samples (false)'
+              'For reporter_app: false = job assignment, true = state-wide transfer-only site. Other clients: always false; field kept for same response shape as reporter_app—clients should ignore it.'
             ),
         })
       ),

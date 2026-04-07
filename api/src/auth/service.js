@@ -21,8 +21,19 @@ const { convertTimezonetoIANA } = require('../shared/date')
 const { sendEmail } = require('../email/emailUtil')
 
 const clientTypes = {
-  app: 'reporter_app',
+  reporter_app: 'reporter_app',
   web: 'web',
+  true_connect: 'true_connect',
+}
+
+const mobileClientTypes = [clientTypes.reporter_app, clientTypes.true_connect]
+
+function isMobileClientType(clientType) {
+  return mobileClientTypes.includes(clientType)
+}
+
+function isReporterAppClientType(clientType) {
+  return clientType === clientTypes.reporter_app
 }
 
 const personProps = [
@@ -123,7 +134,7 @@ function getUserId(username) {
 }
 
 function getTokenExpiry(clientType, currentTime) {
-  const expiresTime = clientType && clientType.includes(clientTypes.app) ? 30 * 86400000 : 7 * 86400000
+  const expiresTime = isMobileClientType(clientType) ? 30 * 86400000 : 7 * 86400000
   return new Date(currentTime.getTime() + expiresTime)
 }
 
@@ -330,9 +341,9 @@ async function authenticate(request, response) {
   const { clientType = clientTypes.web, clientName } = payload
   let { clientId } = payload
   clientId = clientId || uuid.v4()
-  // handle 'deviceTokenId' only for reporter app
+  // handle 'deviceTokenId' only for mobile apps (reporter_app, true_connect)
   let { deviceTokenId = null } = payload
-  if (clientType !== clientTypes.app) {
+  if (!isMobileClientType(clientType)) {
     deviceTokenId = null
   }
 
@@ -446,7 +457,7 @@ function setRefreshToken({
   userId,
 }) {
   const expires = getTokenExpiry(clientType, now)
-  deviceTokenId = clientType === clientTypes.app ? deviceTokenId : null
+  deviceTokenId = isMobileClientType(clientType) ? deviceTokenId : null
   // Create new refresh token for the user -
   // upsert refresh token
   return knex.raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
@@ -472,9 +483,9 @@ async function refreshToken(request) {
   // find the token in the db
   const { clientId, token, clientType = clientTypes.web } = request.payload
 
-  // handle 'deviceTokenId' only for reporter app
+  // handle 'deviceTokenId' only for mobile apps
   let { deviceTokenId = null } = request.payload
-  if (clientType !== clientTypes.app) {
+  if (!isMobileClientType(clientType)) {
     deviceTokenId = null
   }
 
@@ -526,7 +537,7 @@ async function refreshToken(request) {
     deviceTokenId,
   })
 
-  const accessToken = await getAccessToken(data)
+  const accessToken = await getAccessToken(data, data.clientType)
   const displayPreferences = await getDisplayPreferences(data)
   return {
     access: accessToken,
@@ -549,7 +560,8 @@ async function hasPermissions(auth, modules) {
 }
 
 // generate a new jwt for the given user data
-async function getAccessToken({ id, name, partnerId, personId, userName }, clientType = 'web') {
+async function getAccessToken({ id, name, partnerId, personId, userName }, clientType = clientTypes.web) {
+  const resolvedClientType = clientType || clientTypes.web
   const { permissions, jobFunctionNames } = await getUserPermissions(id, partnerId)
   const applicableLicense = await getApplicableLicense(personId, partnerId)
 
@@ -561,8 +573,9 @@ async function getAccessToken({ id, name, partnerId, personId, userName }, clien
       fullName: userName,
       jobFunctionNames,
       permissions,
+      clientType: resolvedClientType,
       hasToAcceptLicenseId:
-        clientType.includes(clientTypes.app) || !applicableLicense || applicableLicense.acceptedOn
+        isMobileClientType(resolvedClientType) || !applicableLicense || applicableLicense.acceptedOn
           ? null
           : applicableLicense.id,
     },
@@ -739,7 +752,7 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
     userId: loggedInUser.id,
   })
 
-  const accessToken = await getAccessToken(loggedInUser)
+  const accessToken = await getAccessToken(loggedInUser, clientType)
 
   return {
     ok: true,
@@ -881,6 +894,9 @@ module.exports = {
   updatePasswordWithResetPasswordToken,
   hasPermissions,
   clientTypes,
+  isMobileClientType,
+  isReporterAppClientType,
+  mobileClientTypes,
   getGeographyAccess,
   getPersonByPersonId,
   getDisplayPreferences,
