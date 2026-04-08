@@ -23,9 +23,16 @@ describe('Mobile API Custom Fields', () => {
       assert.equal(response.body.data.length, 1)
       assert.equal(response.body.data[0].formDefinitionExternalId, 'ClinicalResponse')
       assert.equal(response.body.data[0].fields.length, 6)
-      assert.containsAllKeys(response.body.data[0], ['formDefinitionExternalId', 'fields'])
+      assert.containsAllKeys(response.body.data[0], [
+        'formDefinitionExternalId',
+        'assayExternalId',
+        'diseaseExternalId',
+        'fields',
+      ])
+      assert.isNull(response.body.data[0].assayExternalId)
+      assert.isNull(response.body.data[0].diseaseExternalId)
+      // First field in ClinicalResponse.json (PatientAge) has no `id`; pick() only returns keys present on the field.
       assert.containsAllKeys(response.body.data[0].fields[0], [
-        'id',
         'name',
         'title',
         'fieldType',
@@ -37,10 +44,17 @@ describe('Mobile API Custom Fields', () => {
       ])
     })
 
-    it('should return 400 if externalIds parameter is missing', async () => {
+    it('should return all partner form definitions when externalIds is omitted', async () => {
       const response = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
-      assert.equal(response.status, 400)
+      assert.equal(response.status, 200)
+      assert.property(response.body, 'data')
+      assert.isArray(response.body.data)
+      assert.isAtLeast(response.body.data.length, 2)
+      const tbForm = response.body.data.find(f => f.formDefinitionExternalId === 'CustomFieldsTB')
+      assert.ok(tbForm)
+      assert.equal(tbForm.diseaseExternalId, 'tb')
+      assert.property(tbForm, 'assayExternalId')
     })
   })
 })

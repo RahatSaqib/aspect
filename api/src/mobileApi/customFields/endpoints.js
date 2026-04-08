@@ -67,8 +67,10 @@ const routes = [
           externalIds: Joi.array()
             .items(Joi.string())
             .single()
-            .description('The external ids of the custom fields to retrieve')
-            .required(),
+            .optional()
+            .description(
+              'Form definition external ids to retrieve. If omitted, all form definitions for the partner are returned.'
+            ),
         }),
       },
     },

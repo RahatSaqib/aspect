@@ -18,6 +18,8 @@ function createFormObject(formQuery) {
       diseaseId: form.diseaseId,
       formTypeId: form.formTypeId,
       formDefinitionExternalId: form.externalId,
+      assayExternalId: form.assayExternalId != null ? form.assayExternalId : null,
+      diseaseExternalId: form.diseaseExternalId != null ? form.diseaseExternalId : null,
     }
   })
   return forms
@@ -174,6 +176,8 @@ const getCustomFields = async (partnerId, deviceTypeId, countryId, assayId = nul
 function getFormsBaseQuery(partnerId, query) {
   const queryForm = knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
+    .leftJoin('Disease as mobDisease', 'mobDisease.id', 'fd.diseaseId')
+    .leftJoin('Assay as mobAssay', 'mobAssay.id', 'fd.assayId')
     .where('fd.partnerId', partnerId)
     .modify(filterParams, query, {
       externalsId: 'fd.externalId',
@@ -194,7 +198,9 @@ function getFormsBaseQuery(partnerId, query) {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
+      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName"),
+      knex.raw('mobDisease.externalId as diseaseExternalId'),
+      knex.raw('mobAssay.externalId as assayExternalId')
     )
   return queryForm
 }
