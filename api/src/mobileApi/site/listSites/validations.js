@@ -49,15 +49,40 @@ const downloadSitesResponseValidationV4 = () => {
           externalId: Joi.string().required().allow('', null).description('The text based natural ID of the site'),
           sampleRegistrationAllowed: Joi.bool()
             .required()
-            .description('Whether the user is allowed to regsiter samples from the site'),
+            .description('Whether the user is allowed to register samples from the site'),
           onlyForTransfers: Joi.bool()
             .required()
             .description(
-              'For reporter_app: false = job assignment, true = state-wide transfer-only site. Other clients: always false; field kept for same response shape as reporter_app—clients should ignore it.'
+              'false = job assignment site; true = state-wide site included for transfers only (Aspect Mobile / GET /v4/sites).'
             ),
         })
       ),
   })
 }
 
-module.exports = { downloadSitesRequestValidationV4, downloadSitesResponseValidationV4 }
+const downloadSitesAssignedSimpleResponseValidationV4 = () => {
+  return Joi.object().keys({
+    ok: Joi.bool().required().description('False if there was some sort of problem'),
+    data: Joi.array()
+      .required()
+      .items(
+        Joi.object().keys({
+          id: Joi.number().required().description('Numeric ID of the site'),
+          name: Joi.string().required().description('Name of the site'),
+          shortName: Joi.string().required().allow('', null).description('The short name of the site'),
+          state: Joi.string().required().allow('', null).description('The name of the state where the site is located'),
+          lga: Joi.string()
+            .required()
+            .allow('', null)
+            .description('The name of the local geographic location where the site is located'),
+          externalId: Joi.string().required().allow('', null).description('The text based natural ID of the site'),
+        })
+      ),
+  })
+}
+
+module.exports = {
+  downloadSitesRequestValidationV4,
+  downloadSitesResponseValidationV4,
+  downloadSitesAssignedSimpleResponseValidationV4,
+}

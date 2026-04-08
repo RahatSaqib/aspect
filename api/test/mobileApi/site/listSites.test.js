@@ -1,6 +1,5 @@
 const proxyquire = require('proxyquire').noCallThru()
 const sinon = require('sinon')
-const { clientTypes } = require('../../../src/auth/service')
 
 describe('mobileApi site listSites handler', () => {
   let getConstraintsStub
@@ -28,7 +27,7 @@ describe('mobileApi site listSites handler', () => {
       query: { type: ['clinic'] },
     })
 
-    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic'], 'name', {}, true)
+    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic'], 'name', {})
   })
 
   it('should pass nameContains and modifiedSince in filters when present', async () => {
@@ -38,17 +37,10 @@ describe('mobileApi site listSites handler', () => {
       query: { type: ['lab'], nameContains: 'Day', modifiedSince },
     })
 
-    sinon.assert.calledOnceWithExactly(
-      getSitesMobileViewStub,
-      sinon.match.object,
-      ['lab'],
-      'name',
-      {
-        nameContains: 'Day',
-        modifiedSince,
-      },
-      true
-    )
+    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['lab'], 'name', {
+      nameContains: 'Day',
+      modifiedSince,
+    })
   })
 
   it('should not pass nameContains when shorter than three characters (bypassing route validation)', async () => {
@@ -57,7 +49,7 @@ describe('mobileApi site listSites handler', () => {
       query: { nameContains: 'ab' },
     })
 
-    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic', 'lab'], 'name', {}, true)
+    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic', 'lab'], 'name', {})
   })
 
   it('should not pass nameContains when empty string', async () => {
@@ -66,7 +58,7 @@ describe('mobileApi site listSites handler', () => {
       query: { nameContains: '' },
     })
 
-    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic', 'lab'], 'name', {}, true)
+    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic', 'lab'], 'name', {})
   })
 
   it('should not pass modifiedSince when null or empty string', async () => {
@@ -74,7 +66,7 @@ describe('mobileApi site listSites handler', () => {
       auth: { credentials },
       query: { modifiedSince: null },
     })
-    sinon.assert.calledWithMatch(getSitesMobileViewStub, sinon.match.any, sinon.match.any, 'name', {}, true)
+    sinon.assert.calledWithMatch(getSitesMobileViewStub, sinon.match.any, sinon.match.any, 'name', {})
 
     getSitesMobileViewStub.resetHistory()
 
@@ -82,33 +74,6 @@ describe('mobileApi site listSites handler', () => {
       auth: { credentials },
       query: { modifiedSince: '' },
     })
-    sinon.assert.calledWithMatch(getSitesMobileViewStub, sinon.match.any, sinon.match.any, 'name', {}, true)
-  })
-
-  it('should pass includeStateWideSites false for true_connect (non-reporter; onlyForTransfers in API is shape-only)', async () => {
-    await listSites({
-      auth: { credentials: { ...credentials, clientType: clientTypes.true_connect } },
-      query: { type: ['clinic'] },
-    })
-
-    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic'], 'name', {}, false)
-  })
-
-  it('should pass includeStateWideSites false for web JWT (non-reporter; onlyForTransfers in API is shape-only)', async () => {
-    await listSites({
-      auth: { credentials: { ...credentials, clientType: clientTypes.web } },
-      query: {},
-    })
-
-    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic', 'lab'], 'name', {}, false)
-  })
-
-  it('should pass includeStateWideSites true when clientType is reporter_app (only client where onlyForTransfers is meaningful)', async () => {
-    await listSites({
-      auth: { credentials: { ...credentials, clientType: clientTypes.reporter_app } },
-      query: {},
-    })
-
-    sinon.assert.calledOnceWithExactly(getSitesMobileViewStub, sinon.match.object, ['clinic', 'lab'], 'name', {}, true)
+    sinon.assert.calledWithMatch(getSitesMobileViewStub, sinon.match.any, sinon.match.any, 'name', {})
   })
 })

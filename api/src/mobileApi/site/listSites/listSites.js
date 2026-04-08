@@ -1,5 +1,4 @@
 const { getConstraints } = require('../../../auth/constraints')
-const { clientTypes } = require('../../../auth/service')
 const { getSitesMobileView } = require('./db')
 
 async function listSites(request) {
@@ -16,17 +15,8 @@ async function listSites(request) {
     filters.modifiedSince = modifiedSince
   }
 
-  const effectiveClientType = credentials.clientType == null ? clientTypes.reporter_app : credentials.clientType
-  const includeStateWideSites = effectiveClientType === clientTypes.reporter_app
-
   const dataConstraints = await getConstraints(credentials)
-  const siteList = await getSitesMobileView(
-    dataConstraints,
-    type || ['clinic', 'lab'],
-    'name',
-    filters,
-    includeStateWideSites
-  )
+  const siteList = await getSitesMobileView(dataConstraints, type || ['clinic', 'lab'], 'name', filters)
 
   return { ok: true, data: siteList }
 }
