@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2026-04-06T18:43:25.794Z\n"
+"POT-Creation-Date: 2026-04-08T14:28:56.935Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9006,7 +9006,7 @@ msgstr "Ті, хто не звернувся до реколекцій"
 #. Non-reportable results
 #: extracted_strings.json
 msgid "Non-reportable results"
-msgstr "Непідзвітні результати"
+msgstr "Результати, про які не повідомляється"
 
 #. [filter.popover.none]
 #. defaultMessage is:
