@@ -27,10 +27,12 @@ describe('Mobile API Custom Fields', () => {
         'formDefinitionExternalId',
         'assayExternalId',
         'diseaseExternalId',
+        'deviceTypeExternalId',
         'fields',
       ])
       assert.isNull(response.body.data[0].assayExternalId)
       assert.isNull(response.body.data[0].diseaseExternalId)
+      assert.isNull(response.body.data[0].deviceTypeExternalId)
       // First field in ClinicalResponse.json (PatientAge) has no `id`; pick() only returns keys present on the field.
       assert.containsAllKeys(response.body.data[0].fields[0], [
         'name',
@@ -55,6 +57,70 @@ describe('Mobile API Custom Fields', () => {
       assert.ok(tbForm)
       assert.equal(tbForm.diseaseExternalId, 'tb')
       assert.property(tbForm, 'assayExternalId')
+    })
+
+    it('should filter by disease using diseaseExternalId', async () => {
+      const response = await server
+        .get(`${path}?disease=tb`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(response.status, 200)
+      assert.isArray(response.body.data)
+      assert.isAtLeast(response.body.data.length, 1)
+      response.body.data.forEach(form => {
+        assert.equal(form.diseaseExternalId, 'tb')
+      })
+      assert.ok(response.body.data.some(f => f.formDefinitionExternalId === 'CustomFieldsTB'))
+    })
+
+    it('should filter by assay: include general forms and forms matching the assay', async () => {
+      const response = await server
+        .get(`${path}?assay=GxHiv1Vl`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(response.status, 200)
+      assert.isArray(response.body.data)
+      assert.isAtLeast(response.body.data.length, 1)
+      response.body.data.forEach(form => {
+        const general = form.assayExternalId == null
+        const matchesAssay = form.assayExternalId === 'GxHiv1Vl'
+        assert.isTrue(
+          general || matchesAssay,
+          'each form is general (no assay) or matches the assay filter'
+        )
+      })
+      assert.ok(response.body.data.some(f => f.formDefinitionExternalId === 'CustomFieldsHIVVL'))
+    })
+
+    it('should filter by deviceType: include general forms and forms matching the device type', async () => {
+      const response = await server
+        .get(`${path}?deviceType=GeneXpert`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(response.status, 200)
+      assert.isArray(response.body.data)
+      assert.isAtLeast(response.body.data.length, 1)
+      response.body.data.forEach(form => {
+        const general = form.deviceTypeExternalId == null
+        const matchesDeviceType = form.deviceTypeExternalId === 'GeneXpert'
+        assert.isTrue(
+          general || matchesDeviceType,
+          'each form is general (no device type on assay) or matches the deviceType filter'
+        )
+      })
+      assert.ok(response.body.data.some(f => f.formDefinitionExternalId === 'CustomFieldsHIVVL'))
+    })
+
+    it('should combine externalIds with assay and disease filters', async () => {
+      const response = await server
+        .get(
+          `${path}?externalIds=ClinicalResponse&externalIds=CustomFieldsTB&externalIds=CustomFieldsHIVVL&disease=tb`
+        )
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(response.status, 200)
+      assert.equal(response.body.data.length, 1)
+      assert.equal(response.body.data[0].formDefinitionExternalId, 'CustomFieldsTB')
     })
   })
 })

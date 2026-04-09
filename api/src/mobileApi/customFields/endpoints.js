@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const customFieldsService = require('./service')
 const { upsertCustomFields } = require('./upsertCustomFields')
 const { listForms } = require('./listForms')
@@ -6,6 +6,13 @@ const { getFormDataByExternalId } = require('./getFormDataByExternalId')
 const { asyncHandler } = require('../../routes')
 
 const EXTERNAL_ID_MAX_LENGTH = 36
+
+const optionalQueryStringList = description =>
+  Joi.array().items(Joi.string()).single().optional().description(description)
+
+/** Single Assay.externalId / Disease.externalId / DeviceType.externalId filter; omit or empty = no filter. */
+const optionalSingleExternalFilter = description =>
+  Joi.string().trim().allow('').max(120).optional().description(description)
 
 const customFieldsPayloadValidation = Joi.object({
   externalId: Joi.string().allow(null, '').max(EXTERNAL_ID_MAX_LENGTH),
@@ -64,13 +71,18 @@ const routes = [
       auth: { scope: ['result:view'] },
       validate: {
         query: Joi.object({
-          externalIds: Joi.array()
-            .items(Joi.string())
-            .single()
-            .optional()
-            .description(
-              'Form definition external ids to retrieve. If omitted, all form definitions for the partner are returned.'
-            ),
+          externalIds: optionalQueryStringList(
+            'Form definition external ids. Omitted or empty: all partner form definitions. Multiple values: repeated keys (?externalIds=a&externalIds=b) or a single id (?externalIds=a).'
+          ),
+          assay: optionalSingleExternalFilter(
+            'Optional Assay.externalId: general forms (no assay) are always included; assay-scoped forms only if they match this value.'
+          ),
+          disease: optionalSingleExternalFilter(
+            'Optional Disease.externalId; only forms with this disease are included (omit for no disease filter).'
+          ),
+          deviceType: optionalSingleExternalFilter(
+            'Optional DeviceType.externalId: general forms (no device type on assay) are always included; otherwise only if they match this value.'
+          ),
         }),
       },
     },
