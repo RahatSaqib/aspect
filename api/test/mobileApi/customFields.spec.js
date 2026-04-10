@@ -60,9 +60,7 @@ describe('Mobile API Custom Fields', () => {
     })
 
     it('should filter by disease using diseaseExternalId', async () => {
-      const response = await server
-        .get(`${path}?disease=tb`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const response = await server.get(`${path}?disease=tb`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(response.status, 200)
       assert.isArray(response.body.data)
@@ -74,9 +72,7 @@ describe('Mobile API Custom Fields', () => {
     })
 
     it('should filter by assay: include general forms and forms matching the assay', async () => {
-      const response = await server
-        .get(`${path}?assay=GxHiv1Vl`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const response = await server.get(`${path}?assay=GxHiv1Vl`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(response.status, 200)
       assert.isArray(response.body.data)
@@ -84,18 +80,13 @@ describe('Mobile API Custom Fields', () => {
       response.body.data.forEach(form => {
         const general = form.assayExternalId == null
         const matchesAssay = form.assayExternalId === 'GxHiv1Vl'
-        assert.isTrue(
-          general || matchesAssay,
-          'each form is general (no assay) or matches the assay filter'
-        )
+        assert.isTrue(general || matchesAssay, 'each form is general (no assay) or matches the assay filter')
       })
       assert.ok(response.body.data.some(f => f.formDefinitionExternalId === 'CustomFieldsHIVVL'))
     })
 
     it('should filter by deviceType: include general forms and forms matching the device type', async () => {
-      const response = await server
-        .get(`${path}?deviceType=GeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const response = await server.get(`${path}?deviceType=GeneXpert`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(response.status, 200)
       assert.isArray(response.body.data)
@@ -113,9 +104,7 @@ describe('Mobile API Custom Fields', () => {
 
     it('should combine externalIds with assay and disease filters', async () => {
       const response = await server
-        .get(
-          `${path}?externalIds=ClinicalResponse&externalIds=CustomFieldsTB&externalIds=CustomFieldsHIVVL&disease=tb`
-        )
+        .get(`${path}?externalIds=ClinicalResponse&externalIds=CustomFieldsTB&externalIds=CustomFieldsHIVVL&disease=tb`)
         .set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(response.status, 200)
