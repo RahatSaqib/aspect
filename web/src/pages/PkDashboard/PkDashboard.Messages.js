@@ -283,11 +283,6 @@ const messages = {
     mtbRifRrtbDiagnosis: { id: 'p.PkDashboard.mtbRifRrtbDiagnosis', defaultMessage: 'RRTB Diagnosis' },
     CurrentTBTesting: { id: 'p.PkDashboard.CurrentTBTesting', defaultMessage: 'Current TB Testing' },
     TbNationalTrend: { id: 'p.PkDashboard.TbNationalTrend', defaultMessage: 'National TB Testing Trends' },
-    GXTbNationalTrend: { id: 'p.PkDashboard.GXTbNationalTrend', defaultMessage: 'National GX-10C Testing Trends' },
-    GXTbNationalDiagnosis: {
-      id: 'p.PkDashboard.GXTbNationalDiagnosis',
-      defaultMessage: 'National GX-10C Diagnosed Trends in',
-    },
     TBTestingTrend: {
       id: 'p.PkDashboard.TBTestingTrend',
       defaultMessage: 'TB Testing Trend',
