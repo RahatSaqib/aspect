@@ -17,6 +17,7 @@ const subscribers = {
   pushNotification: require('./pushNotification/endpoints').subscriptions,
   case: require('./case/endpoints').subscriptions,
   inventory: require('./inventory/subscriptions').subscriptions,
+  mobileApi: require('./mobileApi/subscriptions').subscriptions,
 }
 async function addSubscriptions(queue) {
   await Promise.each(_.keys(subscribers), async key => queue.subscribe(key, subscribers[key]))

@@ -12,12 +12,35 @@ const {
   insertFormData,
   updateFormData,
 } = require('./db')
+const { normalizeOptionalString } = require('./normalizeSampleExternalId')
 
 /**
- * Upsert custom fields into FormData.
+ * Picks a single Result id suitable for linking to FormData: same site, sample external id,
+ * not already referenced by any FormData row. Latest `endedOn` wins among ties.
+ */
+async function selectCandidateResultIdForSiteAndSample(trx, { siteId, sampleExternalId }) {
+  if (sampleExternalId == null || siteId == null) {
+    return null
+  }
+
+  const row = await trx('Result as r')
+    .join('Sample as s', 's.id', 'r.sampleId')
+    .where('r.siteId', siteId)
+    .where('s.externalId', sampleExternalId)
+    .whereNotNull('r.sampleId')
+    .whereNotNull('r.siteId')
+    .whereNotExists(trx('FormData as fd').select(trx.raw('1')).whereRaw('fd.resultId = r.id'))
+    .orderByRaw('(r.endedOn IS NULL) ASC, r.endedOn DESC, r.id DESC')
+    .first('r.id')
+
+  return row ? row.id : null
+}
+
+/**
+ * Upsert a FormData row (custom fields payload for a sample).
  * When externalId is present it is the primary match key, otherwise the row is matched by siteId + sampleExternalId.
  */
-async function upsertCustomFields(request) {
+async function upsertFormData(request) {
   const { payload, auth } = request
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
@@ -43,9 +66,17 @@ async function upsertCustomFields(request) {
       validateConflicts({ existingByExternalId, existingBySiteAndSample, siteId, sampleExternalId, externalId })
 
       const recordToUpdate = existingByExternalId || existingBySiteAndSample
+      validateSampleExternalIdImmutableWhenLinked(recordToUpdate, sampleExternalId)
+
+      const resolvedResultId = await resolveResultIdForUpsert(trx, {
+        siteId,
+        sampleExternalId,
+        recordToUpdate,
+      })
+
       const formDataToSave = {
         siteId,
-        resultId: null,
+        resultId: resolvedResultId,
         sampleExternalId,
         externalId: externalId || _.get(recordToUpdate, 'externalId', null),
         data: JSON.stringify({ customFieldsData: payload.customFieldsData }),
@@ -80,6 +111,29 @@ async function upsertCustomFields(request) {
   return { ok: true }
 }
 
+function validateSampleExternalIdImmutableWhenLinked(recordToUpdate, sampleExternalId) {
+  if (!recordToUpdate || recordToUpdate.resultId == null) {
+    return
+  }
+
+  const previous = normalizeOptionalString(recordToUpdate.sampleExternalId)
+  if (previous !== sampleExternalId) {
+    throw Boom.conflict('sampleExternalId cannot change while this form is linked to a result.')
+  }
+}
+
+async function resolveResultIdForUpsert(trx, { siteId, sampleExternalId, recordToUpdate }) {
+  if (recordToUpdate?.resultId != null) {
+    return recordToUpdate.resultId
+  }
+
+  if (sampleExternalId == null) {
+    return null
+  }
+
+  return selectCandidateResultIdForSiteAndSample(trx, { siteId, sampleExternalId })
+}
+
 function validateConflicts({ existingByExternalId, existingBySiteAndSample, externalId }) {
   if (existingByExternalId && existingBySiteAndSample && existingByExternalId.id !== existingBySiteAndSample.id) {
     throw Boom.conflict('The provided site and sample combination is already linked to a different externalId.')
@@ -97,17 +151,4 @@ function validateConflicts({ existingByExternalId, existingBySiteAndSample, exte
   }
 }
 
-function normalizeOptionalString(value) {
-  if (_.isNil(value)) {
-    return null
-  }
-
-  if (!_.isString(value)) {
-    return value
-  }
-
-  const trimmedValue = value.trim()
-  return trimmedValue === '' ? null : trimmedValue
-}
-
-module.exports = { upsertCustomFields }
+module.exports = { upsertFormData }

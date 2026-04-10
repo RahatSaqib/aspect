@@ -7,7 +7,7 @@ describe('mobileApi customFields endpoints', () => {
   function setupRoute(method, path, customFieldsServiceStub = {}, customFieldsHandlersStub = {}) {
     const endpoints = proxyquire('../../../src/mobileApi/customFields/endpoints', {
       './service': customFieldsServiceStub,
-      './upsertCustomFields': { upsertCustomFields: customFieldsHandlersStub.upsertCustomFields },
+      './upsertFormData': { upsertFormData: customFieldsHandlersStub.upsertFormData },
       './listForms': { listForms: customFieldsHandlersStub.listForms },
       './getFormDataByExternalId': { getFormDataByExternalId: customFieldsHandlersStub.getFormDataByExternalId },
     })

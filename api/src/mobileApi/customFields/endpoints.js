@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi')
 const customFieldsService = require('./service')
-const { upsertCustomFields } = require('./upsertCustomFields')
+const { upsertFormData } = require('./upsertFormData')
 const { listForms } = require('./listForms')
 const { getFormDataByExternalId } = require('./getFormDataByExternalId')
 const { asyncHandler } = require('../../routes')
@@ -90,9 +90,9 @@ const routes = [
   {
     method: 'POST',
     path: '/v4/custom-fields',
-    handler: asyncHandler(upsertCustomFields),
+    handler: asyncHandler(upsertFormData),
     config: {
-      description: 'Upsert custom fields for a sample into FormData',
+      description: 'Upsert FormData (custom fields) for a sample',
       notes: 'Creates or updates FormData rows by externalId when present, otherwise by siteId and sampleExternalId.',
       auth: { scope: ['result:edit'] },
       validate: {

@@ -4,7 +4,29 @@ const sinon = require('sinon')
 
 const { assert } = chai
 
-describe('mobileApi customFields upsertCustomFields', () => {
+/**
+ * trx stub so knex.transaction(cb) runs real selectCandidateResultIdForSiteAndSample logic against mocked builders.
+ */
+function buildTrxWithCandidateSelect({ candidateRow = null } = {}) {
+  const trx = sinon.stub()
+  trx.raw = sinon.stub().returns('__raw__')
+  trx.withArgs('FormData as fd').returns({
+    select: sinon.stub().returnsThis(),
+    whereRaw: sinon.stub().returnsThis(),
+  })
+  const first = sinon.stub().resolves(candidateRow)
+  trx.withArgs('Result as r').returns({
+    join: sinon.stub().returnsThis(),
+    where: sinon.stub().returnsThis(),
+    whereNotNull: sinon.stub().returnsThis(),
+    whereNotExists: sinon.stub().returnsThis(),
+    orderByRaw: sinon.stub().returnsThis(),
+    first,
+  })
+  return { trx, candidateResultFirst: first }
+}
+
+describe('mobileApi customFields upsertFormData', () => {
   let getUserStub
   let getConstraintsStub
   let getSiteStub
@@ -15,9 +37,10 @@ describe('mobileApi customFields upsertCustomFields', () => {
   let getFormDataBySiteAndSampleStub
   let insertFormDataStub
   let updateFormDataStub
-  let upsertCustomFields
+  let upsertFormData
+  let trx
+  let candidateResultFirstStub
 
-  const trx = { name: 'trx' }
   const request = {
     payload: {
       externalId: 'mobile-form-1',
@@ -37,6 +60,9 @@ describe('mobileApi customFields upsertCustomFields', () => {
     getUserStub = sinon.stub().resolves({ id: 44 })
     getConstraintsStub = sinon.stub().resolves({})
     getSiteStub = sinon.stub().resolves({ id: 15 })
+    const built = buildTrxWithCandidateSelect({ candidateRow: null })
+    trx = built.trx
+    candidateResultFirstStub = built.candidateResultFirst
     transactionStub = sinon.stub().callsFake(async callback => callback(trx))
     getSitePartnerIdStub = sinon.stub().resolves(91)
     lockPartnerSitesStub = sinon.stub().resolves()
@@ -44,7 +70,7 @@ describe('mobileApi customFields upsertCustomFields', () => {
     getFormDataBySiteAndSampleStub = sinon.stub().resolves(null)
     insertFormDataStub = sinon.stub().resolves()
     updateFormDataStub = sinon.stub().resolves()
-    ;({ upsertCustomFields } = proxyquire('../../../src/mobileApi/customFields/upsertCustomFields', {
+    ;({ upsertFormData } = proxyquire('../../../src/mobileApi/customFields/upsertFormData', {
       '../../auth/service': { getUser: getUserStub },
       '../../auth/constraints': { getConstraints: getConstraintsStub },
       '../../site/service': { getSite: getSiteStub },
@@ -72,7 +98,7 @@ describe('mobileApi customFields upsertCustomFields', () => {
       externalId: 'mobile-form-1',
     })
 
-    const response = await upsertCustomFields(request)
+    const response = await upsertFormData(request)
 
     assert.deepEqual(response, { ok: true })
     assert.isTrue(getSitePartnerIdStub.calledWith(trx, 15))
@@ -81,7 +107,9 @@ describe('mobileApi customFields upsertCustomFields', () => {
     assert.equal(updateFormDataStub.firstCall.args[1], 8)
     assert.equal(updateFormDataStub.firstCall.args[2].sampleExternalId, 'sample-1')
     assert.equal(updateFormDataStub.firstCall.args[2].externalId, 'mobile-form-1')
+    assert.equal(updateFormDataStub.firstCall.args[2].resultId, null)
     assert.equal(insertFormDataStub.callCount, 0)
+    assert.isTrue(candidateResultFirstStub.calledOnce)
   })
 
   it('should attach a new externalId to an existing site and sample record', async () => {
@@ -92,7 +120,7 @@ describe('mobileApi customFields upsertCustomFields', () => {
       externalId: null,
     })
 
-    await upsertCustomFields(request)
+    await upsertFormData(request)
 
     assert.isTrue(updateFormDataStub.calledOnce)
     assert.equal(updateFormDataStub.firstCall.args[1], 9)
@@ -108,7 +136,7 @@ describe('mobileApi customFields upsertCustomFields', () => {
       externalId: 'already-linked',
     })
 
-    await upsertCustomFields({
+    await upsertFormData({
       ...request,
       payload: {
         ...request.payload,
@@ -135,7 +163,7 @@ describe('mobileApi customFields upsertCustomFields', () => {
     })
 
     try {
-      await upsertCustomFields(request)
+      await upsertFormData(request)
       assert.fail('Expected conflict error')
     } catch (error) {
       assert.equal(error.output.statusCode, 409)
@@ -158,7 +186,7 @@ describe('mobileApi customFields upsertCustomFields', () => {
     })
 
     try {
-      await upsertCustomFields(request)
+      await upsertFormData(request)
       assert.fail('Expected conflict error')
     } catch (error) {
       assert.equal(error.output.statusCode, 409)
@@ -170,5 +198,63 @@ describe('mobileApi customFields upsertCustomFields', () => {
 
     assert.equal(updateFormDataStub.callCount, 0)
     assert.equal(insertFormDataStub.callCount, 0)
+  })
+
+  it('should set resultId from candidate Result when none is stored yet', async () => {
+    candidateResultFirstStub.resolves({ id: 999 })
+    getFormDataBySiteAndSampleStub.resolves({
+      id: 20,
+      siteId: 15,
+      sampleExternalId: 'sample-1',
+      externalId: 'mobile-form-1',
+      resultId: null,
+    })
+
+    await upsertFormData(request)
+
+    assert.equal(updateFormDataStub.firstCall.args[2].resultId, 999)
+    assert.isTrue(candidateResultFirstStub.calledOnce)
+  })
+
+  it('should preserve resultId and skip candidate lookup when already linked', async () => {
+    getFormDataByPartnerExternalIdStub.resolves({
+      id: 8,
+      siteId: 15,
+      sampleExternalId: 'sample-1',
+      externalId: 'mobile-form-1',
+      resultId: 55,
+    })
+
+    await upsertFormData(request)
+
+    assert.equal(updateFormDataStub.firstCall.args[2].resultId, 55)
+    assert.equal(candidateResultFirstStub.callCount, 0)
+  })
+
+  it('should reject changing sampleExternalId when linked to a result', async () => {
+    getFormDataByPartnerExternalIdStub.resolves({
+      id: 8,
+      siteId: 15,
+      sampleExternalId: 'sample-1',
+      externalId: 'mobile-form-1',
+      resultId: 55,
+    })
+
+    try {
+      await upsertFormData({
+        ...request,
+        payload: {
+          ...request.payload,
+          sampleExternalId: 'other-sample',
+        },
+      })
+      assert.fail('Expected conflict error')
+    } catch (error) {
+      assert.equal(error.output.statusCode, 409)
+      assert.include(error.message, 'sampleExternalId cannot change')
+    }
+
+    assert.equal(updateFormDataStub.callCount, 0)
+    assert.equal(candidateResultFirstStub.callCount, 0)
   })
 })
