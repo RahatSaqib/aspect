@@ -37,6 +37,9 @@ async function getForms(request) {
 }
 
 async function getFormsByFormDefinitionExternalIds(partnerId, formDefinitionExternalIds) {
+  if (!formDefinitionExternalIds || !formDefinitionExternalIds.length) {
+    return {}
+  }
   const formQuery = await getFormsBaseQuery(partnerId, {
     externalsId: formDefinitionExternalIds,
   })
@@ -108,14 +111,13 @@ const getCustomFieldsBaseQuery = async (partnerId, deviceTypeId, assayId = null,
     assayId,
     diseaseId,
   })
-    .leftJoin('Disease as di', 'di.id', 'fd.diseaseId')
-    .leftJoin('AssayType as assayType', 'di.id', 'assayType.diseaseId')
-    .leftJoin('Assay as a', 'assayType.id', 'a.assayTypeId')
-    .leftJoin('DeviceType as dt', 'a.devicetypeid', 'dt.id')
+    .leftJoin('AssayType as assayType', 'dis.id', 'assayType.diseaseId')
+    .leftJoin('Assay as diseaseAssay', 'assayType.id', 'diseaseAssay.assayTypeId')
+    .leftJoin('DeviceType as diseaseDt', 'diseaseAssay.devicetypeid', 'diseaseDt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where(qb => {
       if (deviceTypeId) {
-        qb.where('dt.id', deviceTypeId)
+        qb.where('diseaseDt.id', deviceTypeId)
         qb.orWhereNull('fd.diseaseId')
       }
     })
@@ -124,7 +126,7 @@ const getCustomFieldsBaseQuery = async (partnerId, deviceTypeId, assayId = null,
       // A form can be scoped to one specific assay
       knex.raw('formAssay.externalId AS assayExternalId'),
       // Or can be scoped to many assays, determined by the disease
-      knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
+      knex.raw('GROUP_CONCAT(DISTINCT diseaseAssay.externalId) AS assayExternalIdFromDisease'),
     ])
     .groupBy('fd.id')
 
@@ -211,7 +213,15 @@ function getFormsBaseQuery(partnerId, query) {
 /*
  * Create an object for merging with the result to save it directly in the database
  */
-const getCustomFieldsFromPayload = async (payload, countryAbbreviation, partnerId, assayId, diseaseId = null) => {
+const getCustomFieldsFromPayload = async (
+  payload,
+  countryAbbreviation,
+  partnerId,
+  assayId,
+  diseaseId = null,
+  options = {}
+) => {
+  const { includeZeroAndFalse = false } = options
   const forms = createFormObject(await getFormsBaseQuery(partnerId, { formType: 'gxConnectForm', assayId, diseaseId }))
   const fields = Object.values(forms).flatMap(form => form.fields)
 
@@ -222,7 +232,8 @@ const getCustomFieldsFromPayload = async (payload, countryAbbreviation, partnerI
     const oldPayloadOriginPath = `data.customFieldData.${migrateFromId}.value`
 
     const value = _.get(payload, payloadOriginPath) || _.get(payload, oldPayloadOriginPath)
-    if (value && source) {
+    const valuePresent = includeZeroAndFalse ? value != null && value !== '' : Boolean(value)
+    if (valuePresent && source) {
       if (_.includes(['patientCellphone', 'clinicianCellphone', 'phone'], fieldType))
         _.set(obj, source, normalizePhoneNumber(value, countryAbbreviation))
       else if (source === 'referringSiteId') {

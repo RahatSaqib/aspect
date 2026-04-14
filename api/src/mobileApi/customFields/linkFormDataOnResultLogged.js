@@ -1,17 +1,40 @@
+const logger = require('../../shared/logger')
 const { normalizeOptionalString } = require('./normalizeSampleExternalId')
+const { syncFormDataToResult } = require('./syncFormDataToResult')
 
 async function onFormDataResultLogged(action, { messageContext }) {
   const { resultId } = action
-  return messageContext.run(async knex => {
-    const siteSample = await loadSiteAndSampleExternalIdForResult(knex, resultId)
+  // messageContext.run uses db.run (no outer transaction); isolate writes in runKnex.transaction.
+  return messageContext.run(async runKnex => {
+    const siteSample = await loadSiteAndSampleExternalIdForResult(runKnex, resultId)
     if (!siteSample) {
       return
     }
     const { siteId, sampleExternalId } = siteSample
-    await assignFormDataResultIdForSiteAndSampleIfUnset(knex, {
-      siteId,
-      sampleExternalId,
-      resultId,
+
+    await runKnex.transaction(async trx => {
+      const formRow = await trx('FormData')
+        .where({ siteId, sampleExternalId })
+        .whereNull('resultId')
+        .forUpdate()
+        .first('id', 'data', 'siteId', 'sampleExternalId', 'externalId', 'resultId')
+
+      if (!formRow) {
+        return
+      }
+
+      const { synced, reason } = await syncFormDataToResult(
+        trx,
+        { formDataRow: formRow, resultId },
+        { isAlreadyLinked: false }
+      )
+
+      if (!synced) {
+        logger.warn({ resultId, siteId, sampleExternalId, reason }, { reLabel: 'mobileApi:linkFormDataOnResultLogged' })
+        return
+      }
+
+      await trx('FormData').where({ id: formRow.id }).update({ resultId })
     })
   })
 }

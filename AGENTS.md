@@ -215,3 +215,4 @@ See `ai-context/skills/api/database-migrations/SKILL.md` and `ai-context/skills/
 - **Web tests** use Jest 27 + Enzyme + React Testing Library
 - Never commit `.only` in tests — ESLint will catch it (`mocha/no-exclusive-tests`, `no-only-tests`)
 - Timezone must be set: API tests run with `TZ=UTC`, web tests with `TZ=Europe/Paris`
+

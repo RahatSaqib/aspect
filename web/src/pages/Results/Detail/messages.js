@@ -84,6 +84,10 @@ const messagesResult = defineMessages({
     id: 'pages.resultEdit.customFields',
     defaultMessage: 'Custom Fields',
   },
+  truenatCustomFieldsReadOnlyNote: {
+    id: 'pages.resultEdit.truenatCustomFieldsReadOnlyNote',
+    defaultMessage: 'Custom fields for TrueNat devices are managed in TrueConnect and cannot be edited here.',
+  },
   noCustomFieldsDefined: {
     id: 'pages.resultEdit.noCustomFieldsDefined',
     defaultMessage: 'No Custom Fields Defined',

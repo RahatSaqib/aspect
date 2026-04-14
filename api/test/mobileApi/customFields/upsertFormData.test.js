@@ -40,6 +40,7 @@ describe('mobileApi customFields upsertFormData', () => {
   let upsertFormData
   let trx
   let candidateResultFirstStub
+  let syncFormDataToResultStub
 
   const request = {
     payload: {
@@ -70,6 +71,7 @@ describe('mobileApi customFields upsertFormData', () => {
     getFormDataBySiteAndSampleStub = sinon.stub().resolves(null)
     insertFormDataStub = sinon.stub().resolves()
     updateFormDataStub = sinon.stub().resolves()
+    syncFormDataToResultStub = sinon.stub().resolves({ synced: true })
     ;({ upsertFormData } = proxyquire('../../../src/mobileApi/customFields/upsertFormData', {
       '../../auth/service': { getUser: getUserStub },
       '../../auth/constraints': { getConstraints: getConstraintsStub },
@@ -83,6 +85,7 @@ describe('mobileApi customFields upsertFormData', () => {
         insertFormData: insertFormDataStub,
         updateFormData: updateFormDataStub,
       },
+      './syncFormDataToResult': { syncFormDataToResult: syncFormDataToResultStub },
     }))
   })
 
@@ -110,6 +113,7 @@ describe('mobileApi customFields upsertFormData', () => {
     assert.equal(updateFormDataStub.firstCall.args[2].resultId, null)
     assert.equal(insertFormDataStub.callCount, 0)
     assert.isTrue(candidateResultFirstStub.calledOnce)
+    assert.equal(syncFormDataToResultStub.callCount, 0)
   })
 
   it('should attach a new externalId to an existing site and sample record', async () => {
@@ -214,6 +218,7 @@ describe('mobileApi customFields upsertFormData', () => {
 
     assert.equal(updateFormDataStub.firstCall.args[2].resultId, 999)
     assert.isTrue(candidateResultFirstStub.calledOnce)
+    assert.isTrue(syncFormDataToResultStub.calledOnce)
   })
 
   it('should preserve resultId and skip candidate lookup when already linked', async () => {
@@ -229,6 +234,45 @@ describe('mobileApi customFields upsertFormData', () => {
 
     assert.equal(updateFormDataStub.firstCall.args[2].resultId, 55)
     assert.equal(candidateResultFirstStub.callCount, 0)
+    assert.isTrue(syncFormDataToResultStub.calledOnce)
+  })
+
+  it('should omit resultId when candidate exists but sync does not apply', async () => {
+    syncFormDataToResultStub.resolves({ synced: false, reason: 'empty_fragment' })
+    candidateResultFirstStub.resolves({ id: 999 })
+    getFormDataBySiteAndSampleStub.resolves({
+      id: 20,
+      siteId: 15,
+      sampleExternalId: 'sample-1',
+      externalId: 'mobile-form-1',
+      resultId: null,
+    })
+
+    await upsertFormData(request)
+
+    assert.equal(updateFormDataStub.firstCall.args[2].resultId, null)
+    assert.isTrue(syncFormDataToResultStub.calledOnce)
+  })
+
+  it('should reject when already linked and sync fails', async () => {
+    syncFormDataToResultStub.resolves({ synced: false, reason: 'empty_fragment' })
+    getFormDataByPartnerExternalIdStub.resolves({
+      id: 8,
+      siteId: 15,
+      sampleExternalId: 'sample-1',
+      externalId: 'mobile-form-1',
+      resultId: 55,
+    })
+
+    try {
+      await upsertFormData(request)
+      assert.fail('Expected bad request')
+    } catch (error) {
+      assert.equal(error.output.statusCode, 400)
+      assert.include(error.message, 'Unable to sync custom fields')
+    }
+
+    assert.equal(updateFormDataStub.callCount, 0)
   })
 
   it('should reject changing sampleExternalId when linked to a result', async () => {

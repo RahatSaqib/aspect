@@ -13,6 +13,7 @@ const {
   updateFormData,
 } = require('./db')
 const { normalizeOptionalString } = require('./normalizeSampleExternalId')
+const { syncFormDataToResult } = require('./syncFormDataToResult')
 
 /**
  * Picks a single Result id suitable for linking to FormData: same site, sample external id,
@@ -74,9 +75,32 @@ async function upsertFormData(request) {
         recordToUpdate,
       })
 
+      const wasLinked = recordToUpdate && recordToUpdate.resultId != null
+      let finalResultId = resolvedResultId
+
+      if (resolvedResultId != null || wasLinked) {
+        const targetResultId = wasLinked ? recordToUpdate.resultId : resolvedResultId
+        const { synced } = await syncFormDataToResult(
+          trx,
+          {
+            formDataRow: {
+              id: recordToUpdate && recordToUpdate.id,
+              data: JSON.stringify({ customFieldsData: payload.customFieldsData }),
+            },
+            resultId: targetResultId,
+          },
+          { isAlreadyLinked: wasLinked }
+        )
+        if (!wasLinked && !synced) {
+          finalResultId = null
+        } else if (wasLinked && !synced) {
+          throw Boom.badRequest('Unable to sync custom fields to the linked result.')
+        }
+      }
+
       const formDataToSave = {
         siteId,
-        resultId: resolvedResultId,
+        resultId: finalResultId,
         sampleExternalId,
         externalId: externalId || _.get(recordToUpdate, 'externalId', null),
         data: JSON.stringify({ customFieldsData: payload.customFieldsData }),
