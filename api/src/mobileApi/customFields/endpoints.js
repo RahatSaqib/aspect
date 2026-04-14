@@ -37,11 +37,13 @@ const routes = [
     handler: asyncHandler(listForms),
     config: {
       description: 'List FormData records for the current user',
-      notes: 'Returns FormData rows where createdBy equals the logged-in user id. Supports optional siteId filter.',
+      notes:
+        'Returns FormData rows where createdBy equals the logged-in user id. Supports optional siteId and modifiedDays filters.',
       auth: { scope: ['result:view'] },
       validate: {
         query: Joi.object({
           siteId: Joi.number().integer().positive().optional(),
+          modifiedDays: Joi.number().integer().positive().optional(),
         }),
       },
     },

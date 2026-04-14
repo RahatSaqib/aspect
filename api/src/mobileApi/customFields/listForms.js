@@ -1,3 +1,4 @@
+const { subDays } = require('date-fns')
 const { getUser } = require('../../auth/service')
 const { knex } = require('../../db')
 
@@ -7,17 +8,24 @@ const { knex } = require('../../db')
  */
 async function listForms(request) {
   const { auth } = request
-  const { siteId } = request.query || {}
+  const { siteId, modifiedDays } = request.query || {}
   const user = await getUser(auth.credentials.name)
   if (!user) {
     return { ok: true, data: [] }
   }
+
+  const modifiedSinceDate = modifiedDays ? subDays(new Date(), modifiedDays) : null
 
   const rawRows = await knex('FormData as fd')
     .where('fd.createdBy', user.id)
     .modify(query => {
       if (siteId) {
         query.where('fd.siteId', siteId)
+      }
+      if (modifiedSinceDate) {
+        query.andWhere(dateQuery =>
+          dateQuery.where('fd.createdOn', '>=', modifiedSinceDate).orWhere('fd.updatedOn', '>=', modifiedSinceDate)
+        )
       }
     })
     .select('id', 'siteId', 'resultId', 'sampleExternalId', 'externalId', 'data', 'collectedOn')
