@@ -17,24 +17,78 @@ const { syncFormDataToResult } = require('./syncFormDataToResult')
 
 /**
  * Picks a single Result id suitable for linking to FormData: same site, sample external id,
- * not already referenced by any FormData row. Latest `endedOn` wins among ties.
+ * not already referenced by any FormData row. Chooses the result whose `startedOn` is closest to
+ * `collectedOn` (both are required in our model; Knex returns them as Date instances). Ties use
+ * `endedOn` then `id` (see `pickResultIdByEndedOnFallback`). If `collectedOn` is missing or
+ * invalid in the request, falls back to `endedOn` ordering only.
  */
-async function selectCandidateResultIdForSiteAndSample(trx, { siteId, sampleExternalId }) {
+async function selectCandidateResultIdForSiteAndSample(trx, { siteId, sampleExternalId, collectedOn }) {
   if (sampleExternalId == null || siteId == null) {
     return null
   }
 
-  const row = await trx('Result as r')
+  const rows = await trx('Result as r')
     .join('Sample as s', 's.id', 'r.sampleId')
     .where('r.siteId', siteId)
     .where('s.externalId', sampleExternalId)
     .whereNotNull('r.sampleId')
     .whereNotNull('r.siteId')
+    .whereNotNull('r.startedOn')
     .whereNotExists(trx('FormData as fd').select(trx.raw('1')).whereRaw('fd.resultId = r.id'))
-    .orderByRaw('(r.endedOn IS NULL) ASC, r.endedOn DESC, r.id DESC')
-    .first('r.id')
+    .select('r.id', 'r.startedOn', 'r.endedOn')
 
-  return row ? row.id : null
+  return pickCandidateResultId(rows, collectedOn)
+}
+
+/**
+ * Picks the result whose `startedOn` is closest to `collectedOn`.
+ */
+function pickCandidateResultId(rows, collectedOn) {
+  if (!rows.length) {
+    return null
+  }
+
+  const collectedMs = new Date(collectedOn).getTime()
+  if (Number.isNaN(collectedMs)) {
+    return pickResultIdByEndedOnFallback(rows).id
+  }
+
+  const startedMs = row => new Date(row.startedOn).getTime()
+
+  const closestMatchingResult = rows.reduce((closest, current) => {
+    const currentDiff = Math.abs(startedMs(current) - collectedMs)
+    const closestDiff = Math.abs(startedMs(closest) - collectedMs)
+    if (currentDiff < closestDiff) {
+      return current
+    }
+    if (currentDiff > closestDiff) {
+      return closest
+    }
+    return pickResultIdByEndedOnFallback([current, closest])
+  })
+
+  return closestMatchingResult.id
+}
+
+/** Matches SQL: (r.endedOn IS NULL) ASC, r.endedOn DESC, r.id DESC */
+function pickResultIdByEndedOnFallback(rows) {
+  return rows.slice().sort((a, b) => {
+    const aHasEnded = a.endedOn != null
+    const bHasEnded = b.endedOn != null
+    if (aHasEnded && !bHasEnded) {
+      return -1
+    }
+    if (!aHasEnded && bHasEnded) {
+      return 1
+    }
+    if (aHasEnded && bHasEnded) {
+      const diff = new Date(b.endedOn) - new Date(a.endedOn)
+      if (diff !== 0) {
+        return diff
+      }
+    }
+    return b.id - a.id
+  })[0]
 }
 
 /**
@@ -69,10 +123,15 @@ async function upsertFormData(request) {
       const recordToUpdate = existingByExternalId || existingBySiteAndSample
       validateSampleExternalIdImmutableWhenLinked(recordToUpdate, sampleExternalId)
 
+      const collectedOnForLink = _.has(payload, 'collectedOn')
+        ? payload.collectedOn
+        : _.get(recordToUpdate, 'collectedOn')
+
       const resolvedResultId = await resolveResultIdForUpsert(trx, {
         siteId,
         sampleExternalId,
         recordToUpdate,
+        collectedOn: collectedOnForLink,
       })
 
       const wasLinked = recordToUpdate && recordToUpdate.resultId != null
@@ -146,7 +205,7 @@ function validateSampleExternalIdImmutableWhenLinked(recordToUpdate, sampleExter
   }
 }
 
-async function resolveResultIdForUpsert(trx, { siteId, sampleExternalId, recordToUpdate }) {
+async function resolveResultIdForUpsert(trx, { siteId, sampleExternalId, recordToUpdate, collectedOn }) {
   if (recordToUpdate?.resultId != null) {
     return recordToUpdate.resultId
   }
@@ -155,7 +214,7 @@ async function resolveResultIdForUpsert(trx, { siteId, sampleExternalId, recordT
     return null
   }
 
-  return selectCandidateResultIdForSiteAndSample(trx, { siteId, sampleExternalId })
+  return selectCandidateResultIdForSiteAndSample(trx, { siteId, sampleExternalId, collectedOn })
 }
 
 function validateConflicts({ existingByExternalId, existingBySiteAndSample, externalId }) {

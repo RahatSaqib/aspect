@@ -7,23 +7,22 @@ const { assert } = chai
 /**
  * trx stub so knex.transaction(cb) runs real selectCandidateResultIdForSiteAndSample logic against mocked builders.
  */
-function buildTrxWithCandidateSelect({ candidateRow = null } = {}) {
+function buildTrxWithCandidateSelect({ candidateRows = [] } = {}) {
   const trx = sinon.stub()
   trx.raw = sinon.stub().returns('__raw__')
   trx.withArgs('FormData as fd').returns({
     select: sinon.stub().returnsThis(),
     whereRaw: sinon.stub().returnsThis(),
   })
-  const first = sinon.stub().resolves(candidateRow)
+  const select = sinon.stub().resolves(candidateRows)
   trx.withArgs('Result as r').returns({
     join: sinon.stub().returnsThis(),
     where: sinon.stub().returnsThis(),
     whereNotNull: sinon.stub().returnsThis(),
     whereNotExists: sinon.stub().returnsThis(),
-    orderByRaw: sinon.stub().returnsThis(),
-    first,
+    select,
   })
-  return { trx, candidateResultFirst: first }
+  return { trx, candidateResultSelect: select }
 }
 
 describe('mobileApi customFields upsertFormData', () => {
@@ -39,7 +38,7 @@ describe('mobileApi customFields upsertFormData', () => {
   let updateFormDataStub
   let upsertFormData
   let trx
-  let candidateResultFirstStub
+  let candidateResultSelectStub
   let syncFormDataToResultStub
 
   const request = {
@@ -61,9 +60,9 @@ describe('mobileApi customFields upsertFormData', () => {
     getUserStub = sinon.stub().resolves({ id: 44 })
     getConstraintsStub = sinon.stub().resolves({})
     getSiteStub = sinon.stub().resolves({ id: 15 })
-    const built = buildTrxWithCandidateSelect({ candidateRow: null })
+    const built = buildTrxWithCandidateSelect({ candidateRows: [] })
     trx = built.trx
-    candidateResultFirstStub = built.candidateResultFirst
+    candidateResultSelectStub = built.candidateResultSelect
     transactionStub = sinon.stub().callsFake(async callback => callback(trx))
     getSitePartnerIdStub = sinon.stub().resolves(91)
     lockPartnerSitesStub = sinon.stub().resolves()
@@ -112,7 +111,7 @@ describe('mobileApi customFields upsertFormData', () => {
     assert.equal(updateFormDataStub.firstCall.args[2].externalId, 'mobile-form-1')
     assert.equal(updateFormDataStub.firstCall.args[2].resultId, null)
     assert.equal(insertFormDataStub.callCount, 0)
-    assert.isTrue(candidateResultFirstStub.calledOnce)
+    assert.isTrue(candidateResultSelectStub.calledOnce)
     assert.equal(syncFormDataToResultStub.callCount, 0)
   })
 
@@ -204,8 +203,28 @@ describe('mobileApi customFields upsertFormData', () => {
     assert.equal(insertFormDataStub.callCount, 0)
   })
 
+  it('should pick the candidate Result whose startedOn is closest to collectedOn', async () => {
+    candidateResultSelectStub.resolves([
+      { id: 100, startedOn: '2026-01-30T09:00:00.000Z', endedOn: '2026-01-30T12:00:00.000Z' },
+      { id: 200, startedOn: '2026-01-30T10:30:00.000Z', endedOn: '2026-01-30T11:00:00.000Z' },
+    ])
+    getFormDataBySiteAndSampleStub.resolves({
+      id: 20,
+      siteId: 15,
+      sampleExternalId: 'sample-1',
+      externalId: 'mobile-form-1',
+      resultId: null,
+    })
+
+    await upsertFormData(request)
+
+    assert.equal(updateFormDataStub.firstCall.args[2].resultId, 200)
+  })
+
   it('should set resultId from candidate Result when none is stored yet', async () => {
-    candidateResultFirstStub.resolves({ id: 999 })
+    candidateResultSelectStub.resolves([
+      { id: 999, startedOn: '2026-01-30T10:00:00.000Z', endedOn: '2026-01-30T11:00:00.000Z' },
+    ])
     getFormDataBySiteAndSampleStub.resolves({
       id: 20,
       siteId: 15,
@@ -217,7 +236,7 @@ describe('mobileApi customFields upsertFormData', () => {
     await upsertFormData(request)
 
     assert.equal(updateFormDataStub.firstCall.args[2].resultId, 999)
-    assert.isTrue(candidateResultFirstStub.calledOnce)
+    assert.isTrue(candidateResultSelectStub.calledOnce)
     assert.isTrue(syncFormDataToResultStub.calledOnce)
   })
 
@@ -233,13 +252,15 @@ describe('mobileApi customFields upsertFormData', () => {
     await upsertFormData(request)
 
     assert.equal(updateFormDataStub.firstCall.args[2].resultId, 55)
-    assert.equal(candidateResultFirstStub.callCount, 0)
+    assert.equal(candidateResultSelectStub.callCount, 0)
     assert.isTrue(syncFormDataToResultStub.calledOnce)
   })
 
   it('should omit resultId when candidate exists but sync does not apply', async () => {
     syncFormDataToResultStub.resolves({ synced: false, reason: 'empty_fragment' })
-    candidateResultFirstStub.resolves({ id: 999 })
+    candidateResultSelectStub.resolves([
+      { id: 999, startedOn: '2026-01-30T10:00:00.000Z', endedOn: '2026-01-30T11:00:00.000Z' },
+    ])
     getFormDataBySiteAndSampleStub.resolves({
       id: 20,
       siteId: 15,
@@ -299,6 +320,6 @@ describe('mobileApi customFields upsertFormData', () => {
     }
 
     assert.equal(updateFormDataStub.callCount, 0)
-    assert.equal(candidateResultFirstStub.callCount, 0)
+    assert.equal(candidateResultSelectStub.callCount, 0)
   })
 })

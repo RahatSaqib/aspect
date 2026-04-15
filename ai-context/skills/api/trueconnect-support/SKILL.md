@@ -112,7 +112,7 @@ Related tables in workflows: **`Site`**, **`Sample`**, **`Result`**, **`Assay`**
 
 **How Aspect picks “the” result / form**
 
-- **Upsert** (`selectCandidateResultIdForSiteAndSample`): among results for the same **`siteId`** and **`Sample.externalId`**, prefer the **latest** by **`endedOn`** (see `api/src/mobileApi/customFields/db.js`), excluding results already tied to another **FormData** **`resultId`**.
+- **Upsert** (`selectCandidateResultIdForSiteAndSample` in `api/src/mobileApi/customFields/upsertFormData.js`): among results for the same **`siteId`** and **`Sample.externalId`**, excluding results already tied to another **FormData** **`resultId`**, load **all** such candidates and pick the one whose **`Result.startedOn`** is **closest in time** to this row’s **`FormData.collectedOn`** (from the upsert payload when present, otherwise the stored row). If **`collectedOn`** is missing/invalid, every candidate has **`startedOn` null**, or several tie on the same distance, selection falls back to the previous ordering: prefer rows with **`endedOn` set**, then **latest `endedOn`**, then **highest `id`**.
 - **`RESULT_LOGGED`**: links the oldest pending **FormData** (`resultId IS NULL`) for that **site + sampleExternalId** to the newly logged result, then **`syncFormDataToResult`**.
 
 Changing Truenat **`Sample.externalId`** generation without updating this contract breaks True Connect matching.
@@ -140,7 +140,7 @@ High-level steps:
    - Find existing row by **`externalId`** (partner-scoped) and/or **`siteId` + `sampleExternalId`** (`api/src/mobileApi/customFields/db.js`).
    - **`validateConflicts`**: cannot have one external id mapping to a different site+sample row, etc.
    - If row exists with **`resultId`**, **`sampleExternalId`** cannot change (**409** conflict).
-   - **`resolveResultIdForUpsert`**: if already linked, use that `resultId`; else **`selectCandidateResultIdForSiteAndSample`** — latest **`endedOn`** among results for that site + sample **not** already referenced by any FormData’s **`resultId`**.
+   - **`resolveResultIdForUpsert`**: if already linked, use that `resultId`; else **`selectCandidateResultIdForSiteAndSample`** — among results for that site + sample **not** already referenced by any FormData’s **`resultId`**, pick **`startedOn`** closest to **`collectedOn`** (with **`endedOn` / `id`** fallback as in the skill’s “How Aspect picks” bullet).
    - **`syncFormDataToResult`** when a target result exists (or when already linked — then sync is mandatory or **400**).
 3. Insert or update **FormData** with JSON **`{ customFieldsData }`**.
 
@@ -181,10 +181,10 @@ If sync fails, handler logs a **warn** and leaves **`resultId`** null (no link).
 4. **Match keys:** prefer **`externalId`** when provided; else **`siteId` + sampleExternalId`**.
 5. **`externalId`** max length **36**; conflicts return **409** (`Boom.conflict`) with explicit messages (duplicate site+sample vs external id mismatch).
 6. **Linking to Result:** either immediately when a suitable result row exists on upsert, or later via **`RESULT_LOGGED`** when FormData was stored with **`resultId` null**.
-7. **Candidate result** for linking: same site + sample external id, **`sampleId`/`siteId` not null**, **no other FormData** already pointing at that **`resultId`**, prefer latest **`endedOn`** (nulls ordered first per SQL).
+7. **Candidate result** for linking: same site + sample external id, **`sampleId`/`siteId` not null**, **no other FormData** already pointing at that **`resultId`**; choose **`startedOn`** nearest **`collectedOn`**, else same **`endedOn`/`id`** tie-break as before.
 8. **Sync:** uses same **`getCustomFieldsFromPayload`** pipeline as Gx device payloads for **`gxConnectForm`** definitions; phone fields normalized with country abbreviation.
 9. **Linked row:** changing **`sampleExternalId`** is forbidden; failed sync while linked is **400**; empty mapping when already linked is treated as **synced** (skip clearing existing columns).
-10. **Truenat ↔ True Connect:** **`PatientID`** (or **`PatientName`**) on the device payload = **`Sample.externalId`** = the **`sampleExternalId`** the user enters in True Connect for that site; latest-result selection applies when several results share that sample.
+10. **Truenat ↔ True Connect:** **`PatientID`** (or **`PatientName`**) on the device payload = **`Sample.externalId`** = the **`sampleExternalId`** the user enters in True Connect for that site; when several results share that sample, upsert links using **`startedOn`** vs **`collectedOn`** (see rule 7) instead of “latest **`endedOn`** only”.
 
 ---
 
