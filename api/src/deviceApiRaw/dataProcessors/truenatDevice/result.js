@@ -2,9 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
 const { formatDateOrDefault, parseDateOrDefault } = require('../../../shared/date')
-const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
-const { postPayloadFromDevice } = require('../../../device/service')
 const { deviceApprovalToId } = require('../../../shared/dictionary')
 const { deviceSeen } = require('../../../device/actions')
 const { transact } = require('../../../db')
@@ -22,9 +20,15 @@ class TruenatResult extends SynchronousDataProcessor {
     super(request, messageContext)
     this.encryptRawData = false
     this.timeoutMilliseconds = 60000
+    this.resultId = null
     this.processRequest = this.processRequest.bind(this)
     this.getResponse = this.getResponse.bind(this)
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(this)
     this.response = {}
+  }
+
+  async onDeviceRawMessageProcessed() {
+    await this.updateDeviceApiRawStatus('Processed', { resultId: this.resultId })
   }
 
   static async canProcessRequest(request) {
@@ -220,18 +224,8 @@ class TruenatResult extends SynchronousDataProcessor {
           await knex('Result').where('id', result.id).update(newResultDetails)
         }
 
-        await postPayloadFromDevice(
-          {
-            deviceApiKeyId,
-            source: 'Diagnostic Device POST',
-            senderIp: getRemoteAddress(request),
-            resultId: result.id,
-            rawMessage: JSON.stringify(request.plugins.rawPayload),
-          },
-          deviceId,
-          knex
-        )
-
+        this.resultId = result.id
+        await this.updateDeviceLastSeenOn(deviceId, utcNow, knex)
         this.messageContext.dispatch(deviceSeen(deviceId))
         this.response.resultExternalId = resultExternalId
       })
