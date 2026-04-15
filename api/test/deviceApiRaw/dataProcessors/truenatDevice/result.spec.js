@@ -334,15 +334,12 @@ describe('Truenat Result Upload Data Processor', () => {
         const TruenatResult = fluentMockTruenatResultUploadDataProcessor().build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
-        const { deviceTypeExternalId, siteExternalId, deviceDefaultReportableSiteId } = defaultDeviceApiKeyDetails
-        const { abbreviation } = defaultAssay
+        const { deviceDefaultReportableSiteId } = defaultDeviceApiKeyDetails
         const patientId = _.get(request, 'payload.PatientID')
         const patientName = _.get(request, 'payload.PatientName')
         const sampleTypeName = _.get(request, 'payload.SampleType')
         const sampleTypeMappings = { Sputum: 'Sputum' }
-        const sampleExternalId = `${deviceTypeExternalId}_${abbreviation}_${siteExternalId}_${
-          patientId || patientName
-        }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
+        const sampleExternalId = patientId || patientName
         const sampleTypeId = sampleTypeMappings[sampleTypeName]
           ? staticData.sampleType[sampleTypeMappings[sampleTypeName]]
           : null

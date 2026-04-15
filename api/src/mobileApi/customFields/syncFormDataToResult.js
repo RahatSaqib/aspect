@@ -141,7 +141,5 @@ async function syncFormDataToResult(trx, { formDataRow, resultId }, opts = {}) {
 
 module.exports = {
   syncFormDataToResult,
-  loadResultSyncContext,
-  parseFormDataContent,
   buildResultUpdateFromCustomFieldFragment,
 }

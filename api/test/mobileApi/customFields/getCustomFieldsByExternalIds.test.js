@@ -45,7 +45,7 @@ describe('mobileApi customFields getCustomFieldsByExternalIds', () => {
       assert.fail('Expected Boom.badRequest')
     } catch (err) {
       assert.equal(err.output.statusCode, 400)
-      assert.include(err.message, 'Unknown assay externalId')
+      assert.include(err.message, 'Unknown Assay externalId')
       assert.include(err.message, 'nonexistentAssayXyz')
     }
     assert.isTrue(getFormsStub.notCalled)
@@ -62,7 +62,7 @@ describe('mobileApi customFields getCustomFieldsByExternalIds', () => {
       assert.fail('Expected Boom.badRequest')
     } catch (err) {
       assert.equal(err.output.statusCode, 400)
-      assert.include(err.message, 'Unknown device type externalId')
+      assert.include(err.message, 'Unknown Device Type externalId')
       assert.include(err.message, 'nonexistentDeviceTypeXyz')
     }
     assert.isTrue(getFormsStub.notCalled)

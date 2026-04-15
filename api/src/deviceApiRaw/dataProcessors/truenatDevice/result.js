@@ -127,13 +127,7 @@ class TruenatResult extends SynchronousDataProcessor {
 
         const assay = await getAssay(knex, testName)
 
-        const sampleExternalId = generateSampleExternalId(
-          deviceTypeExternalId,
-          assay.abbreviation,
-          siteExternalId,
-          patientId || patientName,
-          sampleTypeName
-        )
+        const sampleExternalId = generateSampleExternalId(patientId || patientName)
         const sampleTypeId = await getSampleTypeId(sampleTypeName)
         const sampleId = await getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, deviceDefaultReportableSiteId)
 
@@ -325,16 +319,12 @@ async function getAssay(knex, testName) {
   return assay
 }
 
-function generateSampleExternalId(
-  deviceTypeExternalId,
-  assayAbbreviation,
-  siteExternalId,
-  patientIdOrName,
-  sampleTypeName
-) {
-  return `${deviceTypeExternalId}_${assayAbbreviation}_${siteExternalId}_${patientIdOrName}_${
-    sampleTypeMappings[sampleTypeName] || 'Unknown'
-  }`
+function generateSampleExternalId(patientIdOrName) {
+  if (patientIdOrName == null || patientIdOrName === '') {
+    return 'Unknown'
+  }
+  const trimmed = String(patientIdOrName).trim()
+  return trimmed || 'Unknown'
 }
 
 async function getSampleTypeId(sampleTypeName) {
