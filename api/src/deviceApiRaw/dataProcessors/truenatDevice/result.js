@@ -7,6 +7,7 @@ const { SynchronousDataProcessor } = require('../_base')
 const { postPayloadFromDevice } = require('../../../device/service')
 const { deviceApprovalToId } = require('../../../shared/dictionary')
 const { deviceSeen } = require('../../../device/actions')
+const { truenatResultLogged } = require('../../../result/actions')
 const { transact } = require('../../../db')
 const {
   resultSourceToId,
@@ -214,7 +215,7 @@ class TruenatResult extends SynchronousDataProcessor {
           await knex('Result').where('id', result.id).update(newResultDetails)
         }
 
-        await postPayloadFromDevice(
+        const deviceLogId = await postPayloadFromDevice(
           {
             deviceApiKeyId,
             source: 'Diagnostic Device POST',
@@ -226,6 +227,7 @@ class TruenatResult extends SynchronousDataProcessor {
           knex
         )
 
+        this.messageContext.dispatch(truenatResultLogged(result.id, deviceLogId))
         this.messageContext.dispatch(deviceSeen(deviceId))
         this.response.resultExternalId = resultExternalId
       })

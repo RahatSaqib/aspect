@@ -1,9 +1,11 @@
 const { onFormDataResultLogged } = require('./customFields/linkFormDataOnResultLogged')
+const { types: resultActionTypes } = require('../result/actions')
 
 const subscriptions = [
   {
     actions: {
-      RESULT_LOGGED: onFormDataResultLogged,
+      // Truenat-only trigger for now; re-add RESULT_LOGGED here when broader linking is required.
+      [resultActionTypes.TRUENAT_RESULT_LOGGED]: onFormDataResultLogged,
     },
   },
 ]

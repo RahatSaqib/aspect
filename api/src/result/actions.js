@@ -2,6 +2,7 @@ const _ = require('lodash')
 // ----------- Action Types ---------------------
 const types = {
   RESULT_LOGGED: 'RESULT_LOGGED',
+  TRUENAT_RESULT_LOGGED: 'TRUENAT_RESULT_LOGGED',
   RESULT_READY_FOR_NOTIFICATION: 'RESULT_READY_FOR_NOTIFICATION',
   RESULT_LOGGED_PROCESSED: 'RESULT_LOGGED_PROCESSED',
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
@@ -179,6 +180,29 @@ function resultLogged(resultId, deviceLogId, userId, options) {
   const { isResultUpdated = false } = options || {}
   return {
     type: types.RESULT_LOGGED,
+    resultId,
+    deviceLogId,
+    userId,
+    isResultUpdated,
+  }
+}
+
+/**
+ * Creates an action to notify a Truenat result with given id
+ * has been logged in the DeviceLog.
+ *
+ * resultId is required
+ * deviceLogId is required
+ * userId is not required
+ * options is not required, is an object containing additional props
+ */
+function truenatResultLogged(resultId, deviceLogId, userId, options) {
+  if (!resultId || !deviceLogId) {
+    throw new Error('Must specify resultId and deviceLogId for truenatResultLogged')
+  }
+  const { isResultUpdated = false } = options || {}
+  return {
+    type: types.TRUENAT_RESULT_LOGGED,
     resultId,
     deviceLogId,
     userId,
@@ -411,6 +435,7 @@ function resultUnusedModules(deviceId) {
 module.exports = {
   types,
   resultLogged,
+  truenatResultLogged,
   resultLoggedProcessed,
   resultModuleTemperatureError,
   resultModulePowerError,

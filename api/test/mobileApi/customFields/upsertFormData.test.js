@@ -31,7 +31,6 @@ describe('mobileApi customFields upsertFormData', () => {
   let getSiteStub
   let transactionStub
   let getSitePartnerIdStub
-  let lockPartnerSitesStub
   let getFormDataByPartnerExternalIdStub
   let getFormDataBySiteAndSampleStub
   let insertFormDataStub
@@ -65,7 +64,6 @@ describe('mobileApi customFields upsertFormData', () => {
     candidateResultSelectStub = built.candidateResultSelect
     transactionStub = sinon.stub().callsFake(async callback => callback(trx))
     getSitePartnerIdStub = sinon.stub().resolves(91)
-    lockPartnerSitesStub = sinon.stub().resolves()
     getFormDataByPartnerExternalIdStub = sinon.stub().resolves(null)
     getFormDataBySiteAndSampleStub = sinon.stub().resolves(null)
     insertFormDataStub = sinon.stub().resolves()
@@ -78,7 +76,6 @@ describe('mobileApi customFields upsertFormData', () => {
       '../../db': { knex: { transaction: transactionStub } },
       './db': {
         getSitePartnerId: getSitePartnerIdStub,
-        lockPartnerSites: lockPartnerSitesStub,
         getFormDataByPartnerExternalId: getFormDataByPartnerExternalIdStub,
         getFormDataBySiteAndSample: getFormDataBySiteAndSampleStub,
         insertFormData: insertFormDataStub,
@@ -104,7 +101,6 @@ describe('mobileApi customFields upsertFormData', () => {
 
     assert.deepEqual(response, { ok: true })
     assert.isTrue(getSitePartnerIdStub.calledWith(trx, 15))
-    assert.isTrue(lockPartnerSitesStub.calledWith(trx, 91))
     assert.isTrue(updateFormDataStub.calledOnce)
     assert.equal(updateFormDataStub.firstCall.args[1], 8)
     assert.equal(updateFormDataStub.firstCall.args[2].sampleExternalId, 'sample-1')

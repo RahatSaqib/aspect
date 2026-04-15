@@ -1,6 +1,6 @@
 ---
 name: trueconnect-support
-description: Use when implementing or debugging True Connect (TrueConnect) in the Aspect API — mobile auth, assigned sites, FormData / custom fields, RESULT_LOGGED linking, Result column sync, and Truenat sample-id alignment with the device PatientID field.
+description: Use when implementing or debugging True Connect (TrueConnect) in the Aspect API — mobile auth, assigned sites, FormData / custom fields, Truenat-result event linking, Result column sync, and Truenat sample-id alignment with the device PatientID field.
 ---
 
 # True Connect (TrueConnect) — Aspect API
@@ -113,7 +113,7 @@ Related tables in workflows: **`Site`**, **`Sample`**, **`Result`**, **`Assay`**
 **How Aspect picks “the” result / form**
 
 - **Upsert** (`selectCandidateResultIdForSiteAndSample` in `api/src/mobileApi/customFields/upsertFormData.js`): among results for the same **`siteId`** and **`Sample.externalId`**, excluding results already tied to another **FormData** **`resultId`**, load **all** such candidates and pick the one whose **`Result.startedOn`** is **closest in time** to this row’s **`FormData.collectedOn`** (from the upsert payload when present, otherwise the stored row). If **`collectedOn`** is missing/invalid, every candidate has **`startedOn` null**, or several tie on the same distance, selection falls back to the previous ordering: prefer rows with **`endedOn` set**, then **latest `endedOn`**, then **highest `id`**.
-- **`RESULT_LOGGED`**: links the oldest pending **FormData** (`resultId IS NULL`) for that **site + sampleExternalId** to the newly logged result, then **`syncFormDataToResult`**.
+- **`TRUENAT_RESULT_LOGGED`**: links the oldest pending **FormData** (`resultId IS NULL`) for that **site + sampleExternalId** to the newly logged Truenat result, then **`syncFormDataToResult`**.
 
 Changing Truenat **`Sample.externalId`** generation without updating this contract breaks True Connect matching.
 
@@ -136,7 +136,7 @@ High-level steps:
 
 1. Resolve user and **data constraints**; load **`originSiteId`** site with **`getSite`** — forbidden if not authorized.
 2. **`knex.transaction`**:
-   - **`getSitePartnerId`**, then **`lockPartnerSites`** (row lock on sites for partner) to avoid races.
+   - Resolve **`partnerId`** from site using **`getSitePartnerId`** for partner-scoped externalId conflict checks.
    - Find existing row by **`externalId`** (partner-scoped) and/or **`siteId` + `sampleExternalId`** (`api/src/mobileApi/customFields/db.js`).
    - **`validateConflicts`**: cannot have one external id mapping to a different site+sample row, etc.
    - If row exists with **`resultId`**, **`sampleExternalId`** cannot change (**409** conflict).
@@ -144,9 +144,9 @@ High-level steps:
    - **`syncFormDataToResult`** when a target result exists (or when already linked — then sync is mandatory or **400**).
 3. Insert or update **FormData** with JSON **`{ customFieldsData }`**.
 
-### 3) Device logs result after mobile saved form (`RESULT_LOGGED`)
+### 3) Truenat logs result after mobile saved form (`TRUENAT_RESULT_LOGGED`)
 
-Subscriber: **`onFormDataResultLogged`** (`api/src/mobileApi/customFields/linkFormDataOnResultLogged.js`), registered on **`mobileApi`** queue (`api/src/mobileApi/subscriptions.js` → `api/src/subscriptions.js`).
+Subscriber: **`onFormDataResultLogged`** (`api/src/mobileApi/customFields/linkFormDataOnResultLogged.js`), registered on **`mobileApi`** queue for **`TRUENAT_RESULT_LOGGED`** (`api/src/mobileApi/subscriptions.js` → `api/src/subscriptions.js`).
 
 When a result is logged:
 
@@ -177,10 +177,10 @@ If sync fails, handler logs a **warn** and leaves **`resultId`** null (no link).
 
 1. **True Connect site list** = **assigned sites only**; do not use **`/v4/sites`** for the default True Connect UX.
 2. **Auth** must use **`clientType: true_connect`** for this product; refresh with the same **`clientType`**.
-3. **FormData upsert** is **partner-locked** via site row locks during the transaction.
+3. **FormData upsert** uses transaction + row locks on matched **FormData** rows (when present); no partner-wide site lock.
 4. **Match keys:** prefer **`externalId`** when provided; else **`siteId` + sampleExternalId`**.
 5. **`externalId`** max length **36**; conflicts return **409** (`Boom.conflict`) with explicit messages (duplicate site+sample vs external id mismatch).
-6. **Linking to Result:** either immediately when a suitable result row exists on upsert, or later via **`RESULT_LOGGED`** when FormData was stored with **`resultId` null**.
+6. **Linking to Result:** either immediately when a suitable result row exists on upsert, or later via **`TRUENAT_RESULT_LOGGED`** when FormData was stored with **`resultId` null**.
 7. **Candidate result** for linking: same site + sample external id, **`sampleId`/`siteId` not null**, **no other FormData** already pointing at that **`resultId`**; choose **`startedOn`** nearest **`collectedOn`**, else same **`endedOn`/`id`** tie-break as before.
 8. **Sync:** uses same **`getCustomFieldsFromPayload`** pipeline as Gx device payloads for **`gxConnectForm`** definitions; phone fields normalized with country abbreviation.
 9. **Linked row:** changing **`sampleExternalId`** is forbidden; failed sync while linked is **400**; empty mapping when already linked is treated as **synced** (skip clearing existing columns).
@@ -200,7 +200,7 @@ If sync fails, handler logs a **warn** and leaves **`resultId`** null (no link).
 | DB helpers FormData | `api/src/mobileApi/customFields/db.js` |
 | Result sync | `api/src/mobileApi/customFields/syncFormDataToResult.js` |
 | TrueConnect → Gx payload | `api/src/mobileApi/customFields/trueConnectCustomFieldsMapping.js` |
-| RESULT_LOGGED | `api/src/mobileApi/customFields/linkFormDataOnResultLogged.js`, `api/src/mobileApi/subscriptions.js` |
+| TRUENAT_RESULT_LOGGED | `api/src/mobileApi/customFields/linkFormDataOnResultLogged.js`, `api/src/mobileApi/subscriptions.js`, `api/src/deviceApiRaw/dataProcessors/truenatDevice/result.js`, `api/src/result/actions.js` |
 | Form definitions / payload mapping | `api/src/forms/service.js` (`getCustomFieldsFromPayload`, `getFormsByFormDefinitionExternalIds`) |
 | Truenat result → **Sample.externalId** | `api/src/deviceApiRaw/dataProcessors/truenatDevice/result.js` (`generateSampleExternalId`) |
 
@@ -226,5 +226,5 @@ The React app may surface copy that **TrueNat** / device custom fields are manag
 1. Confirm whether the change affects **True Connect only**, **reporter only**, or **both** (shared handlers).
 2. Prefer **`/v4/sites/assigned`** for any True Connect–specific site list feature.
 3. Any new **FormData** or sync rule: re-read **`upsertFormData`**, **`syncFormDataToResult`**, and **`trueConnectCustomFieldsMapping`** together — they share transactions and idempotency expectations.
-4. Subscribers run asynchronously; **`RESULT_LOGGED`** handlers must stay **idempotent** and safe under retries.
+4. Subscribers run asynchronously; **`TRUENAT_RESULT_LOGGED`** handlers must stay **idempotent** and safe under retries.
 5. Follow **`api/docs/mobile-custom-fields-api.md`** for any contract-visible change and update that doc when behavior changes.

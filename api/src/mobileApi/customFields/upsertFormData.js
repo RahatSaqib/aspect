@@ -6,7 +6,6 @@ const { getSite } = require('../../site/service')
 const { knex } = require('../../db')
 const {
   getSitePartnerId,
-  lockPartnerSites,
   getFormDataByPartnerExternalId,
   getFormDataBySiteAndSample,
   insertFormData,
@@ -112,8 +111,6 @@ async function upsertFormData(request) {
   try {
     await knex.transaction(async trx => {
       const partnerId = await getSitePartnerId(trx, siteId)
-
-      await lockPartnerSites(trx, partnerId)
 
       const existingByExternalId = externalId ? await getFormDataByPartnerExternalId(trx, partnerId, externalId) : null
       const existingBySiteAndSample = await getFormDataBySiteAndSample(trx, siteId, sampleExternalId)

@@ -55,6 +55,7 @@ describe('Truenat Result Upload Data Processor', () => {
   }
   let mockDeviceService
   let mockSharedRequestService
+  let mockResultActions
   let mockDb
   let knexSpy
   let knexInsertSpies
@@ -76,6 +77,13 @@ describe('Truenat Result Upload Data Processor', () => {
       getRemoteAddress: () => '10.11.12.13',
     }
     sinon.spy(mockSharedRequestService, 'getRemoteAddress')
+    mockResultActions = {
+      truenatResultLogged: sinon.stub().callsFake((resultId, deviceLogId) => ({
+        type: 'TRUENAT_RESULT_LOGGED',
+        resultId,
+        deviceLogId,
+      })),
+    }
     knexSpy = sinon.spy()
     knexSpy.chainedCalls = {
       tables: [],
@@ -185,6 +193,7 @@ describe('Truenat Result Upload Data Processor', () => {
       '../../../shared/request': mockSharedRequestService,
       '../../../db': mockDb,
       '../../../device/service': mockDeviceService,
+      '../../../result/actions': mockResultActions,
       '../../../shared/dictionary': {
         resultSourceToId: async resultSourceExternalId =>
           Promise.resolve(staticData.resultSource[resultSourceExternalId]),
@@ -348,6 +357,13 @@ describe('Truenat Result Upload Data Processor', () => {
           externalId: sampleExternalId,
           sampleTypeId,
           originSiteId: deviceDefaultReportableSiteId,
+        })
+        assert.isTrue(mockResultActions.truenatResultLogged.calledOnce)
+        assert.isTrue(mockResultActions.truenatResultLogged.calledWith(defaultNewResultId, 987))
+        assert.deepInclude(messageContext.dispatch.firstCall.args[0], {
+          type: 'TRUENAT_RESULT_LOGGED',
+          resultId: defaultNewResultId,
+          deviceLogId: 987,
         })
       })
     })
