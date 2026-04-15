@@ -6,9 +6,7 @@ const config = require('../../../config')
 const { knex } = require('../../../db')
 const { randomToken } = require('../../../deviceApi/apiKey')
 const { lookupUsingCredentials } = require('../../../deviceApiKey/service')
-const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
-const { postPayloadFromDevice } = require('../../../device/service')
 const { deviceSeen } = require('../../../device/actions')
 const { deviceApprovalToId, deviceTypeToId } = require('../../../shared/dictionary')
 const { insertSite } = require('../../../site/common/db')
@@ -51,15 +49,7 @@ class TruenatLogin extends SynchronousDataProcessor {
     const deviceApiKeyAuthResult = await lookupUsingCredentials(payload.Username, payload.Password)
     const deviceId = _.get(deviceApiKeyAuthResult, 'data.deviceId')
     if (deviceId) {
-      await postPayloadFromDevice(
-        {
-          deviceApiKeyId: deviceApiKeyAuthResult.data.id,
-          source: 'Diagnostic Device POST',
-          senderIp: getRemoteAddress(request),
-          rawMessage: JSON.stringify(request.plugins.rawPayload),
-        },
-        deviceId
-      )
+      await this.updateDeviceLastSeenOn(deviceId, new Date())
       this.messageContext.dispatch(deviceSeen(deviceId))
     }
     if (deviceApiKeyAuthResult.authenticated) {

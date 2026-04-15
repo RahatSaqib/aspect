@@ -226,12 +226,19 @@ class DataProcessor {
       })
   }
 
-  async updateDeviceApiRawStatus(status) {
+  async updateDeviceLastSeenOn(deviceId, now, knexInstance = knex) {
+    return knexInstance('Device').where('id', deviceId).update({ lastSeenOn: now, updatedOn: now })
+  }
+
+  async updateDeviceApiRawStatus(status, extraFields = {}) {
     const deviceApiRawStatusId = await deviceApiRawStatusToId(status)
-    return knex('DeviceApiRaw').where('id', this.id).update({
-      deviceApiRawStatusId,
-      updatedOn: new Date(),
-    })
+    return knex('DeviceApiRaw')
+      .where('id', this.id)
+      .update({
+        deviceApiRawStatusId,
+        updatedOn: new Date(),
+        ...extraFields,
+      })
   }
 
   async getResponse() {
