@@ -218,7 +218,7 @@ class TruenatResult extends SynchronousDataProcessor {
           resultExternalId = existingResult.externalId
           await knex('Result').where('id', result.id).update(newResultDetails)
         }
-        this.messageContext.dispatch(truenatResultLogged(result.id, deviceLogId))
+        this.messageContext.dispatch(truenatResultLogged(result.id, this.id))
         this.resultId = result.id
         await this.updateDeviceLastSeenOn(deviceId, utcNow, knex)
 

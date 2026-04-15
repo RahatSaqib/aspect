@@ -78,10 +78,12 @@ describe('Truenat Result Upload Data Processor', () => {
     }
     sinon.spy(mockSharedRequestService, 'getRemoteAddress')
     mockResultActions = {
-      truenatResultLogged: sinon.stub().callsFake((resultId, deviceLogId) => ({
+      truenatResultLogged: sinon.stub().callsFake((resultId, deviceApiRawId, userId, options) => ({
         type: 'TRUENAT_RESULT_LOGGED',
         resultId,
-        deviceLogId,
+        deviceApiRawId,
+        userId,
+        isResultUpdated: (options && options.isResultUpdated) || false,
       })),
     }
     knexSpy = sinon.spy()
@@ -187,6 +189,10 @@ describe('Truenat Result Upload Data Processor', () => {
           constructor(request, messageContext) {
             this.request = request
             this.messageContext = messageContext
+          }
+
+          async updateDeviceLastSeenOn() {
+            return Promise.resolve()
           }
         },
       },
@@ -359,11 +365,11 @@ describe('Truenat Result Upload Data Processor', () => {
           originSiteId: deviceDefaultReportableSiteId,
         })
         assert.isTrue(mockResultActions.truenatResultLogged.calledOnce)
-        assert.isTrue(mockResultActions.truenatResultLogged.calledWith(defaultNewResultId, 987))
+        assert.isTrue(mockResultActions.truenatResultLogged.calledWith(defaultNewResultId, truenatResultInstance.id))
         assert.deepInclude(messageContext.dispatch.firstCall.args[0], {
           type: 'TRUENAT_RESULT_LOGGED',
           resultId: defaultNewResultId,
-          deviceLogId: 987,
+          deviceApiRawId: truenatResultInstance.id,
         })
       })
     })

@@ -188,23 +188,23 @@ function resultLogged(resultId, deviceLogId, userId, options) {
 }
 
 /**
- * Creates an action to notify a Truenat result with given id
- * has been logged in the DeviceLog.
+ * Creates an action to notify that a Truenat result row is ready for downstream hooks
+ * (e.g. TrueConnect FormData linking). Payload is tied to DeviceApiRaw, not DeviceLog.
  *
  * resultId is required
- * deviceLogId is required
+ * deviceApiRawId is optional (DeviceApiRaw row id when known)
  * userId is not required
- * options is not required, is an object containing additional props
+ * options may include isResultUpdated
  */
-function truenatResultLogged(resultId, deviceLogId, userId, options) {
-  if (!resultId || !deviceLogId) {
-    throw new Error('Must specify resultId and deviceLogId for truenatResultLogged')
+function truenatResultLogged(resultId, deviceApiRawId, userId, options) {
+  if (!resultId) {
+    throw new Error('Must specify resultId for truenatResultLogged')
   }
   const { isResultUpdated = false } = options || {}
   return {
     type: types.TRUENAT_RESULT_LOGGED,
     resultId,
-    deviceLogId,
+    deviceApiRawId: deviceApiRawId != null ? deviceApiRawId : null,
     userId,
     isResultUpdated,
   }

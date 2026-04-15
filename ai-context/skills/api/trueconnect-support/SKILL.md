@@ -148,6 +148,8 @@ High-level steps:
 
 Subscriber: **`onFormDataResultLogged`** (`api/src/mobileApi/customFields/linkFormDataOnResultLogged.js`), registered on **`mobileApi`** queue for **`TRUENAT_RESULT_LOGGED`** (`api/src/mobileApi/subscriptions.js` → `api/src/subscriptions.js`).
 
+**Producer:** Truenat raw result processor dispatches **`truenatResultLogged`** after **`Result`** insert/update. The action carries **`resultId`** and optional **`deviceApiRawId`** ( **`DeviceApiRaw`** row id). The subscriber only needs **`resultId`**.
+
 When a result is logged:
 
 1. Load **`siteId`** + **`sampleExternalId`** from **Result** + **Sample**.
