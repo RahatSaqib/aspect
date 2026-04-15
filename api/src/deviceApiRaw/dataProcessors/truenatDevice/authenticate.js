@@ -9,7 +9,16 @@ const { lookupUsingCredentials } = require('../../../deviceApiKey/service')
 const { SynchronousDataProcessor } = require('../_base')
 const { deviceSeen } = require('../../../device/actions')
 const { deviceApprovalToId, deviceTypeToId } = require('../../../shared/dictionary')
-const { insertSite } = require('../../../site/common/db')
+
+async function defaultCountryGeographyId(query) {
+  const { id: countryId } = await query('Country').orderBy('id').first('id')
+  const row = await query('Geography')
+    .where('countryId', countryId)
+    .where('stateId', null)
+    .where('lgaId', null)
+    .first('id')
+  return row ? row.id : null
+}
 
 class TruenatLogin extends SynchronousDataProcessor {
   static get AllowUnauthenticatedRequests() {
@@ -74,41 +83,19 @@ class TruenatLogin extends SynchronousDataProcessor {
         )
       }
       const now = new Date()
-      let site
       let device = await knex('Device')
         .where('name', payload.Username)
         .orWhere('shortName', payload.Username)
         .orWhere('hostId', payload.Username)
         .first()
       if (!device) {
-        site = await knex('Site').where('name', payload.Username).orWhere('shortName', payload.Username).first()
-        if (!site) {
-          const { id: countryId } = await knex('Country').orderBy('id').first('id')
-          const { id: geographyId } = await knex('Geography')
-            .where('countryId', countryId)
-            .where('stateId', null)
-            .where('lgaId', null)
-            .first('id')
-          site = {
-            name: payload.Username,
-            shortName: payload.Username,
-            partnerId: defaultPartner.id,
-            externalId: payload.Username,
-            geographyId,
-            notes: 'Created automatically by new Truelab device',
-            createdOn: now,
-            updatedOn: now,
-          }
-          const [siteId] = await insertSite(knex, site)
-          site.id = siteId
-        }
         const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
         const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
         device = {
           name: payload.Username,
           shortName: payload.Username,
-          partnerId: site.partnerId,
-          siteId: site.id,
+          partnerId: defaultPartner.id,
+          siteId: null,
           hostId: payload.Username,
           deviceTypeId: truenatDeviceTypeId,
           deviceApprovalId,
@@ -118,8 +105,12 @@ class TruenatLogin extends SynchronousDataProcessor {
         const [deviceId] = await knex('Device').insert(device)
         device.id = deviceId
       }
-      if (!site) {
-        site = await knex('Site').where('id', device.siteId).first()
+      let geographyIdForApiKey = null
+      if (device.siteId) {
+        const site = await knex('Site').where('id', device.siteId).first()
+        geographyIdForApiKey = site ? site.geographyId : null
+      } else {
+        geographyIdForApiKey = await defaultCountryGeographyId(knex)
       }
       const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
       const apiKey = { token: randomToken() }
@@ -128,8 +119,8 @@ class TruenatLogin extends SynchronousDataProcessor {
       const deviceApiKey = {
         deviceId: device.id,
         partnerId: device.partnerId,
-        geographyId: site.geographyId,
-        siteId: site.id,
+        geographyId: geographyIdForApiKey,
+        siteId: device.siteId,
         token: apiKey.token,
         username: payload.Username,
         password: passwordHash,

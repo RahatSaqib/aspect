@@ -11,6 +11,16 @@ const { insertSite } = require('../../../../src/site/common/db')
 
 const saltRounds = parseInt(passwordSaltRounds, 10)
 
+async function geographyIdForDefaultCountry() {
+  const { id: countryId } = await knex('Country').orderBy('id').first('id')
+  const { id } = await knex('Geography')
+    .where('countryId', countryId)
+    .where('stateId', null)
+    .where('lgaId', null)
+    .first('id')
+  return id
+}
+
 describe('Device API Raw routes for Truenat Authentication', () => {
   const deviceApiRawPath = '/device/raw/truelab/devices/login'
   const validApiKey = {
@@ -124,17 +134,17 @@ describe('Device API Raw routes for Truenat Authentication', () => {
     await knex('Site').where('id', validSiteId).delete()
     await knex('Site').where('id', expiredSiteId).delete()
 
-    const {
-      id: newTruenatDeviceApiKeyId,
-      deviceId: newTruenatDeviceId,
-      siteId: newTruenatDeviceSiteId,
-    } = await knex('DeviceApiKey as dak')
+    const row = await knex('DeviceApiKey as dak')
       .where('dak.username', newTruenatDevice.username)
       .first('dak.id', 'dak.deviceId', 'dak.siteId')
-    await knex('DeviceApiKey').where('id', newTruenatDeviceApiKeyId).delete()
-    await knex('DeviceLog').where('deviceApiKeyId', newTruenatDeviceApiKeyId).delete()
-    await knex('Device').where('id', newTruenatDeviceId).delete()
-    await knex('Site').where('id', newTruenatDeviceSiteId).delete()
+    if (row) {
+      await knex('DeviceApiKey').where('id', row.id).delete()
+      await knex('DeviceLog').where('deviceApiKeyId', row.id).delete()
+      await knex('Device').where('id', row.deviceId).delete()
+      if (row.siteId) {
+        await knex('Site').where('id', row.siteId).delete()
+      }
+    }
   })
 
   describe('with a valid API key', () => {
@@ -179,7 +189,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
   })
 
   describe('with unexisting username and no matching device/site', () => {
-    it('should create new device api key, device and site', async () => {
+    it('should create new device api key and pending device without a site', async () => {
       const incorrectUsernameResponse = await server
         .post(deviceApiRawPath)
         .set('Content-type', 'application/json')
@@ -193,12 +203,22 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       assert.isTrue(incorrectUsernameResponse.body.success)
 
       const unapprovedDeviceApprovalId = await deviceApprovalToId('pendingDeployment')
+      const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
+      const expectedGeographyId = await geographyIdForDefaultCountry()
       const device = await knex('Device').where('name', newTruenatDevice.username).first()
       const site = await knex('Site').where('name', newTruenatDevice.username).first()
+      const apiKeyRow = await knex('DeviceApiKey').where('username', newTruenatDevice.username).first()
       assert.isDefined(device, 'new device should be created with username as device name')
-      assert.isDefined(site, 'new site should be created with username as site name')
-      assert.equal(device.deviceApprovalId, unapprovedDeviceApprovalId, 'new device should be unapproved')
+      assert.isUndefined(site, 'no site should be created until deployment')
+      assert.equal(device.deviceApprovalId, unapprovedDeviceApprovalId, 'new device should be pending deployment')
+      assert.equal(device.partnerId, defaultPartner.id)
+      assert.isNull(device.siteId)
+      assert.isDefined(apiKeyRow)
+      assert.isNull(apiKeyRow.siteId)
+      assert.equal(apiKeyRow.geographyId, expectedGeographyId)
+    })
 
+    describe('after first login for auto-registered Truenat device', () => {
       it('should be able to login with the same username and password', async () => {
         const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
           Username: newTruenatDevice.username,
