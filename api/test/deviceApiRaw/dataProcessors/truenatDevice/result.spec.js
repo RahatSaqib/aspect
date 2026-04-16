@@ -106,6 +106,10 @@ describe('Truenat Result Upload Data Processor', () => {
       knexSpy.chainedCalls.join = [...knexSpy.chainedCalls.join, args]
       return knex
     }
+    knex.leftJoin = function (...args) {
+      knexSpy.chainedCalls.join = [...knexSpy.chainedCalls.join, args]
+      return knex
+    }
     knex.where = function (...args) {
       knexSpy.chainedCalls.where = [...knexSpy.chainedCalls.where, args]
       return knex
@@ -132,13 +136,11 @@ describe('Truenat Result Upload Data Processor', () => {
             'dak.id as deviceApiKeyId',
             'd.partnerId',
             'd.siteId',
-            'd.deviceApprovalId',
-            'd.name as deviceName',
+            'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
             's.geographyId',
             's.longitude',
             's.latitude',
             's.name as siteName',
-            'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
             's.externalId as siteExternalId',
             'dt.externalId as deviceTypeExternalId',
           ].join(',')
@@ -192,6 +194,10 @@ describe('Truenat Result Upload Data Processor', () => {
           }
 
           async updateDeviceLastSeenOn() {
+            return Promise.resolve()
+          }
+
+          async updateDeviceApiRawStatus() {
             return Promise.resolve()
           }
         },
@@ -551,17 +557,18 @@ describe('Truenat Result Upload Data Processor', () => {
     })
 
     describe('when the device does not have a default reportable site ID', () => {
-      it("will use the device site ID as a fallback for the result's reportable site ID", async () => {
+      it("will leave the result's reportable site ID null when there is no device site", async () => {
         const TruenatResult = fluentMockTruenatResultUploadDataProcessor()
           .withDeviceApiKeyDetails({
             ...defaultDeviceApiKeyDetails,
+            siteId: null,
             deviceDefaultReportableSiteId: null,
           })
           .build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
         expect(knexInsertSpies.Result.lastCall.args[0]).to.containSubset({
-          reportableSiteId: defaultDeviceApiKeyDetails.siteId,
+          reportableSiteId: null,
         })
       })
     })
