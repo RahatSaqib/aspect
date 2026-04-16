@@ -167,7 +167,6 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
         password: 'Password_123',
       }
       const fullLabName = 'Unapproved Device Full Lab Name'
-      let authHeaderValue
       let site
       before(async () => {
         const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
@@ -182,8 +181,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
         }
         const [siteId] = await insertSite(knex, site)
         site.id = siteId
-        const { body } = await authenticateWithTruelabApi(unapprovedDevice.username, unapprovedDevice.password)
-        authHeaderValue = body.token
+        await authenticateWithTruelabApi(unapprovedDevice.username, unapprovedDevice.password)
       })
 
       after(async () => {
