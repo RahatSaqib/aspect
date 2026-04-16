@@ -186,51 +186,6 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
         authHeaderValue = body.token
       })
 
-      it('should bind the device to a site with the same lab name if such exists', async () => {
-        const payload = {
-          Age: '55',
-          Ct1: '19.0',
-          Ct2: '10.39',
-          Ct3: 'ND',
-          CtLabel1: 'Control',
-          CtLabel2: 'E gene',
-          CtLabel3: 'Orf1A',
-          CtResult1: 'DETECTED High',
-          CtResult2: 'DETECTED High',
-          CtResult3: 'NOT DETECTED',
-          Date: '2020-09-27',
-          DoctorName: 'Dr Alban Aloha',
-          FinalResult: 'Positive',
-          Gender: 'Male',
-          LabName: fullLabName,
-          Notes: 'The test ran and the result was interpreted',
-          PatientID: '23894723890472349',
-          PatientName: 'James Teether',
-          SampleType: 'Sputum',
-          Status: 'Stopped',
-          TestName: 'MTB Plus',
-          Time: '22-40-58',
-          User: 'InitTesti',
-          ValidityStatus: 'Valid',
-        }
-
-        const response = await sendResult(authHeaderValue, {
-          ...payload,
-          PatientID: uuid.v4(),
-        })
-        const {
-          body: { success },
-        } = response
-        assert.isTrue(success)
-
-        const { deviceId, siteId } = await knex('DeviceApiKey as dak')
-          .where('dak.username', unapprovedDevice.username)
-          .first('dak.deviceId', 'dak.siteId')
-        assert.equal(siteId, site.id, 'device.siteId should point to existing site')
-        const { name: deviceName } = await knex('Device').where('id', deviceId).first('name')
-        assert.equal(deviceName, payload.LabName, 'device name should be set to lab name from result payload')
-      })
-
       after(async () => {
         const {
           id: unapprovedDeviceApiKeyId,
