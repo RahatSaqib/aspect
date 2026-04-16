@@ -86,14 +86,16 @@ describe('Mobile API Custom Fields', () => {
     })
 
     it('should filter by deviceType: include general forms and forms matching the device type', async () => {
-      const response = await server.get(`${path}?deviceType=GeneXpert`).set('Authorization', `Bearer ${shared.token}`)
+      const response = await server
+        .get(`${path}?deviceType=CepheidGeneXpert`)
+        .set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(response.status, 200)
       assert.isArray(response.body.data)
       assert.isAtLeast(response.body.data.length, 1)
       response.body.data.forEach(form => {
         const general = form.deviceTypeExternalId == null
-        const matchesDeviceType = form.deviceTypeExternalId === 'GeneXpert'
+        const matchesDeviceType = form.deviceTypeExternalId === 'CepheidGeneXpert'
         assert.isTrue(
           general || matchesDeviceType,
           'each form is general (no device type on assay) or matches the deviceType filter'
