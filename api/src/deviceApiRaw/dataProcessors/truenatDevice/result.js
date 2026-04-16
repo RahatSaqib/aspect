@@ -46,16 +46,7 @@ class TruenatResult extends SynchronousDataProcessor {
     try {
       await transact(async knex => {
         const deviceDetails = await getDeviceDetailsFromApiKey(knex, auth.credentials.token)
-        const {
-          deviceId,
-          partnerId,
-          longitude,
-          latitude,
-          deviceDefaultReportableSiteId,
-          siteExternalId,
-          deviceTypeExternalId,
-          siteId,
-        } = deviceDetails
+        const { deviceId, partnerId, longitude, latitude, deviceDefaultReportableSiteId, siteId } = deviceDetails
 
         if (!deviceId) {
           throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')

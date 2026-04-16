@@ -11,7 +11,9 @@ describe('mobileApi customFields syncFormDataToResult', () => {
 
   describe('buildResultUpdateFromCustomFieldFragment', () => {
     it('merges patientData and resultData JSON fragments with existing objects', () => {
-      const { buildResultUpdateFromCustomFieldFragment } = require('../../../src/mobileApi/customFields/syncFormDataToResult')
+      const {
+        buildResultUpdateFromCustomFieldFragment,
+      } = require('../../../src/mobileApi/customFields/syncFormDataToResult')
       const updates = buildResultUpdateFromCustomFieldFragment(
         { patientData: { name: 'Ann' }, resultData: { x: 1 } },
         { name: 'Bob', age: 40 },
