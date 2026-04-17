@@ -43,6 +43,8 @@ const ReportIndex = lazy(() => import('./pages/Reports/ReportIndex'))
 const SampleList = lazy(() => import('./pages/Sample/SampleList'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
 const ResultList = lazy(() => import('./oldPages/result/list/ResultList'))
+const TruenatCustomFieldsList = lazy(() => import('./pages/Forms/TruenatCustomFields'))
+const TruenatCustomFieldsDetail = lazy(() => import('./pages/Forms/TruenatCustomFields/Detail'))
 const SiteDetail = lazy(() => import('./pages/Site/Detail'))
 const SiteList = lazy(() => import('./pages/Site/List'))
 const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
@@ -234,6 +236,15 @@ const LogInApp = () => {
                 {a(['browse', 'reporter']) ? <Route path="/browse/samples" element={<SampleList />} /> : null}
 
                 {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
+                {a(['browse', 'result']) ? (
+                  <>
+                    <Route path={routePaths.FORMS_TRUENAT_CUSTOM_FIELDS} element={<TruenatCustomFieldsList />} />
+                    <Route
+                      path={routePaths.FORMS_TRUENAT_CUSTOM_FIELDS_DETAIL}
+                      element={<TruenatCustomFieldsDetail />}
+                    />
+                  </>
+                ) : null}
                 {a(['browse', 'result:edit']) ? (
                   <Route path={routePaths.RESULT_DETAILS} element={<ResultDetail />} />
                 ) : null}

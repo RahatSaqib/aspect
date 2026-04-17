@@ -1,0 +1,10 @@
+.Container {
+  padding: 10px;
+  width: 100%;
+}
+
+.DataTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
+}
