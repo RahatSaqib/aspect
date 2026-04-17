@@ -53,7 +53,6 @@ describe('Truenat Result Upload Data Processor', () => {
       Missing: 10,
     },
   }
-  let mockDeviceService
   let mockSharedRequestService
   let mockDb
   let knexSpy
@@ -68,10 +67,6 @@ describe('Truenat Result Upload Data Processor', () => {
     existingResult,
     newResultId
   ) {
-    mockDeviceService = {
-      postPayloadFromDevice: async () => Promise.resolve(987),
-    }
-    sinon.spy(mockDeviceService, 'postPayloadFromDevice')
     mockSharedRequestService = {
       getRemoteAddress: () => '10.11.12.13',
     }
@@ -194,7 +189,6 @@ describe('Truenat Result Upload Data Processor', () => {
       },
       '../../../shared/request': mockSharedRequestService,
       '../../../db': mockDb,
-      '../../../device/service': mockDeviceService,
       '../../../shared/dictionary': {
         resultSourceToId: async resultSourceExternalId =>
           Promise.resolve(staticData.resultSource[resultSourceExternalId]),
