@@ -17,6 +17,7 @@ async function listForms(request) {
   const modifiedSinceDate = modifiedDays ? subDays(new Date(), modifiedDays) : null
 
   const rawRows = await knex('FormData as fd')
+    .leftJoin('Result as r', 'fd.resultId', 'r.id')
     .where('fd.createdBy', user.id)
     .modify(query => {
       if (siteId) {
@@ -28,7 +29,16 @@ async function listForms(request) {
         )
       }
     })
-    .select('id', 'siteId', 'resultId', 'sampleExternalId', 'externalId', 'data', 'collectedOn')
+    .select(
+      'fd.id',
+      'fd.siteId',
+      'fd.resultId',
+      'r.endedOn as resultEndedOn',
+      'fd.sampleExternalId',
+      'fd.externalId',
+      'fd.data',
+      'fd.collectedOn'
+    )
 
   const rows = rawRows.map(({ data, ...row }) => ({ ...row, ...(typeof data === 'string' ? JSON.parse(data) : data) }))
 

@@ -30,6 +30,23 @@ const customFieldsPayloadValidation = Joi.object({
     .required(),
 })
 
+const listFormDataResponseValidation = Joi.object({
+  ok: Joi.boolean().valid(true).required(),
+  data: Joi.array()
+    .items(
+      Joi.object({
+        id: Joi.number().integer().required(),
+        siteId: Joi.number().integer().required(),
+        resultId: Joi.number().integer().allow(null).required(),
+        resultEndedOn: Joi.date().iso().allow(null),
+        sampleExternalId: Joi.string().allow(null, ''),
+        externalId: Joi.string().allow(null, '').max(EXTERNAL_ID_MAX_LENGTH),
+        collectedOn: Joi.date().iso().allow(null, ''),
+      }).unknown(true)
+    )
+    .required(),
+})
+
 const routes = [
   {
     method: 'GET',
@@ -45,6 +62,10 @@ const routes = [
           siteId: Joi.number().integer().positive().optional(),
           modifiedDays: Joi.number().integer().positive().optional(),
         }),
+      },
+      response: {
+        options: { allowUnknown: false },
+        schema: listFormDataResponseValidation,
       },
     },
   },
