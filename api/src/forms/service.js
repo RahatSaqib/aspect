@@ -105,19 +105,20 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
   )
 }
 
-const getCustomFieldsBaseQuery = async (partnerId, deviceTypeId, assayId = null, diseaseId = null) =>
+const getCustomFieldsBaseQuery = (partnerId, deviceTypeId, assayId = null, diseaseId = null) =>
   getFormsBaseQuery(partnerId, {
     formType: 'gxConnectForm',
     assayId,
     diseaseId,
   })
-    .leftJoin('AssayType as assayType', 'dis.id', 'assayType.diseaseId')
-    .leftJoin('Assay as diseaseAssay', 'assayType.id', 'diseaseAssay.assayTypeId')
-    .leftJoin('DeviceType as diseaseDt', 'diseaseAssay.devicetypeid', 'diseaseDt.id')
+    .leftJoin('Disease as di', 'di.id', 'fd.diseaseId')
+    .leftJoin('AssayType as assayType', 'di.id', 'assayType.diseaseId')
+    .leftJoin('Assay as a', 'assayType.id', 'a.assayTypeId')
+    .leftJoin('DeviceType as dt', 'a.devicetypeid', 'dt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where(qb => {
       if (deviceTypeId) {
-        qb.where('diseaseDt.id', deviceTypeId)
+        qb.where('dt.id', deviceTypeId)
         qb.orWhereNull('fd.diseaseId')
       }
     })
@@ -126,7 +127,7 @@ const getCustomFieldsBaseQuery = async (partnerId, deviceTypeId, assayId = null,
       // A form can be scoped to one specific assay
       knex.raw('formAssay.externalId AS assayExternalId'),
       // Or can be scoped to many assays, determined by the disease
-      knex.raw('GROUP_CONCAT(DISTINCT diseaseAssay.externalId) AS assayExternalIdFromDisease'),
+      knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
     ])
     .groupBy('fd.id')
 
@@ -163,8 +164,9 @@ const getCustomFieldPlaceholdersForNotifications = async partnerId => {
 }
 
 const getCustomFields = async (partnerId, deviceTypeId, countryId, assayId = null, diseaseId = null) => {
-  const formQuery = await getCustomFieldsBaseQuery(partnerId, deviceTypeId, assayId, diseaseId)
-
+  const formQueryQ = getCustomFieldsBaseQuery(partnerId, deviceTypeId, assayId, diseaseId)
+  console.log('\x1b[1;36m', '🚀 ➜ formQueryQ:', formQueryQ.toString())
+  const formQuery = await formQueryQ
   const formFields = []
   await Promise.each(formQuery, async form => {
     const fields = setFormAssayToCustomFields(form, formDictionary[form.jsonSchemaFileName].fields)
@@ -176,12 +178,10 @@ const getCustomFields = async (partnerId, deviceTypeId, countryId, assayId = nul
 
   return forms
 }
+
 function getFormsBaseQuery(partnerId, query) {
   const queryForm = knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .leftJoin('Disease as dis', 'dis.id', 'fd.diseaseId')
-    .leftJoin('Assay as a', 'a.id', 'fd.assayId')
-    .leftJoin('DeviceType as dt', 'dt.id', 'a.deviceTypeId')
     .where('fd.partnerId', partnerId)
     .modify(filterParams, query, {
       externalsId: 'fd.externalId',
@@ -202,10 +202,7 @@ function getFormsBaseQuery(partnerId, query) {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName"),
-      knex.raw('dis.externalId as diseaseExternalId'),
-      knex.raw('a.externalId as assayExternalId'),
-      knex.raw('dt.externalId as deviceTypeExternalId')
+      knex.raw("REPLACE(fd.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
   return queryForm
 }

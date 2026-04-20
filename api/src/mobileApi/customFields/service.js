@@ -1,21 +1,8 @@
 const Boom = require('@hapi/boom')
 const { pick, sortBy } = require('lodash')
 const { knex } = require('../../db')
-const { getForms } = require('../../forms/service')
-
-async function assertAssayExternalIdExists(externalId) {
-  const assay = await knex('Assay').where('externalId', externalId).first('id')
-  if (!assay) {
-    throw Boom.badRequest(`Unknown Assay externalId: ${externalId}`)
-  }
-}
-
-async function assertDeviceTypeExternalIdExists(externalId) {
-  const deviceType = await knex('DeviceType').where('externalId', externalId).first('id')
-  if (!deviceType) {
-    throw Boom.badRequest(`Unknown Device Type externalId: ${externalId}`)
-  }
-}
+const { getConstraints } = require('../../auth/constraints')
+const { getCustomFields } = require('../../forms/service')
 
 function mapFormToCustomFieldsPayload(form) {
   return {
@@ -51,57 +38,24 @@ function mapFormToCustomFieldsPayload(form) {
  *   Unknown DeviceType.externalId → 400 Bad Request.
  */
 async function getCustomFieldsByExternalIds(request) {
-  const { externalIds, assay, disease, deviceType } = request.query
+  const { deviceType } = request.query
 
-  const assayFilter = typeof assay === 'string' && assay.length > 0 ? assay : null
   const deviceTypeFilter = typeof deviceType === 'string' && deviceType.length > 0 ? deviceType : null
+  const { id: deviceTypeId } = deviceTypeFilter
+    ? await knex('DeviceType').where('externalId', deviceTypeFilter).first('id')
+    : null
 
-  if (assayFilter) {
-    await assertAssayExternalIdExists(assayFilter)
-  }
-  if (deviceTypeFilter) {
-    await assertDeviceTypeExternalIdExists(deviceTypeFilter)
-  }
+  const {
+    country: { id: countryId },
+    partner: { id: partnerId },
+  } = await getConstraints(request.auth.credentials)
+  const formDefinitions = await getCustomFields(partnerId, deviceTypeId, countryId)
 
-  if (Array.isArray(externalIds) && externalIds.length > 0) {
-    request.query.externalsId = externalIds
-  }
-
-  const formDefinitions = await getForms(request)
-
-  let formsToSerialize
-  if (Array.isArray(externalIds) && externalIds.length > 0) {
-    formsToSerialize = externalIds.map(id => formDefinitions[id]).filter(Boolean)
-  } else {
-    formsToSerialize = sortBy(Object.values(formDefinitions), f => f.formDefinitionExternalId)
-  }
-
-  const diseaseFilter = typeof disease === 'string' && disease.length > 0 ? disease : null
-
-  if (assayFilter || diseaseFilter || deviceTypeFilter) {
-    formsToSerialize = formsToSerialize.filter(form => {
-      if (assayFilter) {
-        const hasAssay = form.assayExternalId != null
-        if (hasAssay && form.assayExternalId !== assayFilter) {
-          return false
-        }
-      }
-      if (deviceTypeFilter) {
-        const hasDeviceType = form.deviceTypeExternalId != null
-        if (hasDeviceType && form.deviceTypeExternalId !== deviceTypeFilter) {
-          return false
-        }
-      }
-      if (diseaseFilter && form.diseaseExternalId !== diseaseFilter) {
-        return false
-      }
-      return true
-    })
-  }
+  // const formsToSerialize = s[...sortBy(Object.values(formDefinitions), f => f.formDefinitionExternalId)]
 
   return {
     ok: true,
-    data: formsToSerialize.map(mapFormToCustomFieldsPayload),
+    data: [formDefinitions],
   }
 }
 
