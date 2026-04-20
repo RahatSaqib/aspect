@@ -94,15 +94,6 @@ const routes = [
       auth: { scope: ['result:view'] },
       validate: {
         query: Joi.object({
-          externalIds: optionalQueryStringList(
-            'Form definition external ids. Omitted or empty: all partner form definitions. Multiple values: repeated keys (?externalIds=a&externalIds=b) or a single id (?externalIds=a).'
-          ),
-          assay: optionalSingleExternalFilter(
-            'Optional Assay.externalId: general forms (no assay) are always included; assay-scoped forms only if they match this value.'
-          ),
-          disease: optionalSingleExternalFilter(
-            'Optional Disease.externalId; only forms with this disease are included (omit for no disease filter).'
-          ),
           deviceType: optionalSingleExternalFilter(
             'Optional DeviceType.externalId: general forms (no device type on assay) are always included; otherwise only if they match this value.'
           ),

@@ -114,20 +114,26 @@ const getCustomFieldsBaseQuery = (partnerId, deviceTypeId, assayId = null, disea
     .leftJoin('Disease as di', 'di.id', 'fd.diseaseId')
     .leftJoin('AssayType as assayType', 'di.id', 'assayType.diseaseId')
     .leftJoin('Assay as a', 'assayType.id', 'a.assayTypeId')
-    .leftJoin('DeviceType as dt', 'a.devicetypeid', 'dt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where(qb => {
       if (deviceTypeId) {
-        qb.where('dt.id', deviceTypeId)
-        qb.orWhereNull('fd.diseaseId')
+        // Keep the form when its own assay is for the requested device type,
+        // or when it has no assay (general form scoped only by disease).
+        qb.where('formAssay.devicetypeid', deviceTypeId).orWhereNull('fd.assayId')
       }
     })
     .whereNotNull('fd.externalId')
     .select([
       // A form can be scoped to one specific assay
       knex.raw('formAssay.externalId AS assayExternalId'),
-      // Or can be scoped to many assays, determined by the disease
-      knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
+      // Or can be scoped to many assays, determined by the disease;
+      // when filtering by deviceType, restrict the advertised assays to that device type.
+      deviceTypeId
+        ? knex.raw(
+            'GROUP_CONCAT(DISTINCT CASE WHEN a.devicetypeid = ? THEN a.externalId END) AS assayExternalIdFromDisease',
+            [deviceTypeId]
+          )
+        : knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
     ])
     .groupBy('fd.id')
 
@@ -164,9 +170,7 @@ const getCustomFieldPlaceholdersForNotifications = async partnerId => {
 }
 
 const getCustomFields = async (partnerId, deviceTypeId, countryId, assayId = null, diseaseId = null) => {
-  const formQueryQ = getCustomFieldsBaseQuery(partnerId, deviceTypeId, assayId, diseaseId)
-  console.log('\x1b[1;36m', '🚀 ➜ formQueryQ:', formQueryQ.toString())
-  const formQuery = await formQueryQ
+  const formQuery = await getCustomFieldsBaseQuery(partnerId, deviceTypeId, assayId, diseaseId)
   const formFields = []
   await Promise.each(formQuery, async form => {
     const fields = setFormAssayToCustomFields(form, formDictionary[form.jsonSchemaFileName].fields)
