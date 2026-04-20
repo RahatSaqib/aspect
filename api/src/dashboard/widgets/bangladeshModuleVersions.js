@@ -25,9 +25,11 @@ function bangladeshModuleVersions(knex, constraints) {
     )
     .where('dt.externalId', 'CepheidGeneXpert')
     .first(
-      knex.raw(`CONCAT(
-  IFNULL(SUM(CASE WHEN r.deviceId IS  NULL THEN d.moduleBayCapacity ELSE 0 END), 0),' 6c / ',
-  IFNULL(SUM(CASE WHEN r.deviceId IS NOT NULL THEN d.moduleBayCapacity ELSE 0 END), 0),' 10c') AS cnt
+      knex.raw(`
+  IFNULL(SUM(CASE WHEN r.deviceId IS NULL THEN d.moduleBayCapacity ELSE 0 END), 0) AS cnt,
+  CAST(IFNULL(SUM(CASE WHEN r.deviceId IS NOT NULL THEN d.moduleBayCapacity ELSE 0 END), 0) AS CHAR) AS extra,
+  '6c' AS statStatus,
+  '10c' AS extraLabel
   `)
     )
 }

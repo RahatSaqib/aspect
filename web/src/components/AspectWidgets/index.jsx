@@ -22,7 +22,7 @@ const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
       {widgetGroups && widgetGroups.length ? <Group data={widgetGroups} /> : null}
       {nonGroupedWidgets && nonGroupedWidgets.length
         ? nonGroupedWidgets.map(widget => (
-            <Grid item sm={columns > 4 ? 4 : columns} key={widget.id} style={{ padding: 0 }}>
+            <Grid item sm={columns > 4 ? 4 : columns} key={widget.id} style={{ padding: 0, display: 'flex' }}>
               <AspectWidget data={widget} />
             </Grid>
           ))
