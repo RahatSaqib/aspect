@@ -1,31 +1,21 @@
 const Boom = require('@hapi/boom')
-const { pick, sortBy } = require('lodash')
+const { pick } = require('lodash')
 const { knex } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 const { getCustomFields } = require('../../forms/service')
 
-function mapFormToCustomFieldsPayload(form) {
-  return {
-    formDefinitionExternalId: form.formDefinitionExternalId,
-    assayExternalId: form.assayExternalId,
-    diseaseExternalId: form.diseaseExternalId,
-    deviceTypeExternalId: form.deviceTypeExternalId,
-    fields: form.fields.map(field =>
-      pick(field, [
-        'id',
-        'name',
-        'title',
-        'fieldType',
-        'order',
-        'controlType',
-        'mandatory',
-        'validation',
-        'condition',
-        'items',
-      ])
-    ),
-  }
-}
+const CUSTOM_FIELD_PUBLIC_PROPS = [
+  'id',
+  'name',
+  'title',
+  'fieldType',
+  'order',
+  'controlType',
+  'mandatory',
+  'validation',
+  'condition',
+  'items',
+]
 
 /**
  * Get custom field form definitions for the partner.
@@ -41,9 +31,14 @@ async function getCustomFieldsByExternalIds(request) {
   const { deviceType } = request.query
 
   const deviceTypeFilter = typeof deviceType === 'string' && deviceType.length > 0 ? deviceType : null
-  const { id: deviceTypeId } = deviceTypeFilter
-    ? await knex('DeviceType').where('externalId', deviceTypeFilter).first('id')
-    : null
+  let deviceTypeId = null
+  if (deviceTypeFilter) {
+    const deviceTypeRow = await knex('DeviceType').where('externalId', deviceTypeFilter).first('id')
+    if (!deviceTypeRow) {
+      throw Boom.badRequest(`Unknown DeviceType.externalId: ${deviceTypeFilter}`)
+    }
+    deviceTypeId = deviceTypeRow.id
+  }
 
   const {
     country: { id: countryId },
@@ -51,11 +46,16 @@ async function getCustomFieldsByExternalIds(request) {
   } = await getConstraints(request.auth.credentials)
   const formDefinitions = await getCustomFields(partnerId, deviceTypeId, countryId)
 
-  // const formsToSerialize = s[...sortBy(Object.values(formDefinitions), f => f.formDefinitionExternalId)]
+  const data = [
+    {
+      ...formDefinitions,
+      fields: formDefinitions.fields.map(field => pick(field, CUSTOM_FIELD_PUBLIC_PROPS)),
+    },
+  ]
 
   return {
     ok: true,
-    data: [formDefinitions],
+    data,
   }
 }
 
