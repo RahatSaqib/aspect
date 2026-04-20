@@ -15,14 +15,16 @@ const EmptyWidgets = () => (
 )
 
 const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
-  const columns = 12 / nonGroupedWidgets.length
+  const widgetCount = nonGroupedWidgets.length
+  const tilesPerRow = widgetCount > 4 ? Math.ceil(widgetCount / 2) : widgetCount
+  const columns = 12 / tilesPerRow
 
   return (
     <Grid container spacing={2}>
       {widgetGroups && widgetGroups.length ? <Group data={widgetGroups} /> : null}
       {nonGroupedWidgets && nonGroupedWidgets.length
         ? nonGroupedWidgets.map(widget => (
-            <Grid item sm={columns > 4 ? 4 : columns} key={widget.id} style={{ padding: 0, display: 'flex' }}>
+            <Grid item sm={columns} key={widget.id} style={{ padding: 0, display: 'flex' }}>
               <AspectWidget data={widget} />
             </Grid>
           ))
