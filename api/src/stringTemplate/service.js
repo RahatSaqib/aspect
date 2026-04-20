@@ -93,6 +93,12 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
       .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')
+      .leftJoin('ResultCategoryGroup as rcg', joinQuery => {
+        joinQuery
+          .on('rcg.assayId', 'a.id')
+          .andOn('rcg.resultCategory1Id', 'rc1.id')
+          .andOn(knex.raw('rcg.resultCategory2Id <=> rc2.id'))
+      })
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .leftJoin('Partner as pr', 'pr.id', 'r.partnerId')
       .leftJoin('TimeZone as devicetz', 'd.timezone', 'devicetz.id')
@@ -121,6 +127,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'c.name as countryName',
         knex.raw('coalesce(c.countryCode,rc.countryCode) as countryCode'),
         knex.raw('coalesce(c.abbreviation,rc.abbreviation) as countryAbbreviation'),
+        knex.raw('coalesce(rcg.abbreviation, rcg.name) as resultSummary'),
         'd.id as deviceId',
         'd.name as deviceName',
         'd.isDaisyChained as daisyChained',
@@ -515,6 +522,7 @@ async function getBaseDataSource(data, auth) {
           ? getMtbDetectedResistances(d.assayExternalId, d.resultCategory2ExternalId, resultData)
           : '',
       },
+      resultSummary: d.resultSummary,
       reportableSiteName: d.reportableSiteName,
     },
     person: {

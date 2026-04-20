@@ -74,6 +74,7 @@ async function getAllDeviceReportData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query, false)
   const { builder } = await getAllDeviceReportDataInternal(resultCategoryGroups, dataConstraints, query)
+
   const rows = await builder
 
   return {
