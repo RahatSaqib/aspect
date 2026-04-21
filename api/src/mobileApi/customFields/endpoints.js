@@ -7,9 +7,6 @@ const { asyncHandler } = require('../../routes')
 
 const EXTERNAL_ID_MAX_LENGTH = 36
 
-const optionalQueryStringList = description =>
-  Joi.array().items(Joi.string()).single().optional().description(description)
-
 /** Single Assay.externalId / Disease.externalId / DeviceType.externalId filter; omit or empty = no filter. */
 const optionalSingleExternalFilter = description =>
   Joi.string().trim().allow('').max(120).optional().description(description)

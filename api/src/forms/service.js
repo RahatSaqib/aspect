@@ -126,8 +126,14 @@ const getCustomFieldsBaseQuery = async (partnerId, deviceTypeId, assayId = null,
     .select([
       // A form can be scoped to one specific assay
       knex.raw('formAssay.externalId AS assayExternalId'),
-      // Or can be scoped to many assays, determined by the disease
-      knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
+      // Or can be scoped to many assays, determined by the disease;
+      // when filtering by deviceType, restrict the advertised assays to that device type.
+      deviceTypeId
+        ? knex.raw(
+            'GROUP_CONCAT(DISTINCT CASE WHEN a.devicetypeid = ? THEN a.externalId END) AS assayExternalIdFromDisease',
+            [deviceTypeId]
+          )
+        : knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
     ])
     .groupBy('fd.id')
 
