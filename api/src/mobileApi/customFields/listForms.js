@@ -14,7 +14,7 @@ async function listForms(request) {
     return { ok: true, data: [] }
   }
 
-  const modifiedSinceDate = modifiedDays ? subDays(new Date(), modifiedDays) : null
+  const collectedSinceDate = modifiedDays ? subDays(new Date(), modifiedDays) : null
 
   const rawRows = await knex('FormData as fd')
     .leftJoin('Result as r', 'fd.resultId', 'r.id')
@@ -23,10 +23,8 @@ async function listForms(request) {
       if (siteId) {
         query.where('fd.siteId', siteId)
       }
-      if (modifiedSinceDate) {
-        query.andWhere(dateQuery =>
-          dateQuery.where('fd.createdOn', '>=', modifiedSinceDate).orWhere('fd.updatedOn', '>=', modifiedSinceDate)
-        )
+      if (collectedSinceDate) {
+        query.andWhere(dateQuery => dateQuery.where('fd.collectedOn', '>=', collectedSinceDate))
       }
     })
     .select(
