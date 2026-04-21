@@ -4,6 +4,8 @@ const sinon = require('sinon')
 
 const { assert } = chai
 
+const SERVICE_PATH = '../../../src/mobileApi/customFields/service'
+
 function knexChain(firstResult) {
   const first = sinon.stub().resolves(firstResult)
   const where = sinon.stub().returns({ first })
@@ -11,22 +13,25 @@ function knexChain(firstResult) {
 }
 
 describe('mobileApi customFields getCustomFieldsByExternalIds', () => {
-  let getFormsStub
-  let assayChain
+  let getCustomFieldsStub
+  let getConstraintsStub
   let deviceTypeChain
   let knexStub
   let getCustomFieldsByExternalIds
 
   beforeEach(() => {
-    getFormsStub = sinon.stub()
-    assayChain = knexChain({ id: 1 })
+    getCustomFieldsStub = sinon.stub().resolves({ fields: [] })
+    getConstraintsStub = sinon.stub().resolves({
+      country: { id: 10 },
+      partner: { id: 20 },
+    })
     deviceTypeChain = knexChain({ id: 2 })
     knexStub = sinon.stub()
-    knexStub.withArgs('Assay').returns({ where: assayChain.where })
-    knexStub.withArgs('DeviceType').returns({ where: deviceTypeChain.where })
-    ;({ getCustomFieldsByExternalIds } = proxyquire('../../../src/mobileApi/customFields/service', {
+    knexStub.withArgs('DeviceType').returns(deviceTypeChain)
+    ;({ getCustomFieldsByExternalIds } = proxyquire(SERVICE_PATH, {
       '../../db': { knex: knexStub },
-      '../../forms/service': { getForms: getFormsStub },
+      '../../auth/constraints': { getConstraints: getConstraintsStub },
+      '../../forms/service': { getCustomFields: getCustomFieldsStub },
     }))
   })
 
@@ -34,62 +39,80 @@ describe('mobileApi customFields getCustomFieldsByExternalIds', () => {
     sinon.restore()
   })
 
-  it('throws badRequest when assay externalId is unknown', async () => {
-    assayChain.first.resolves(null)
-
-    try {
-      await getCustomFieldsByExternalIds({
-        query: { assay: 'nonexistentAssayXyz' },
-        auth: { credentials: {} },
-      })
-      assert.fail('Expected Boom.badRequest')
-    } catch (err) {
-      assert.equal(err.output.statusCode, 400)
-      assert.include(err.message, 'Unknown Assay externalId')
-      assert.include(err.message, 'nonexistentAssayXyz')
-    }
-    assert.isTrue(getFormsStub.notCalled)
-  })
-
   it('throws badRequest when deviceType externalId is unknown', async () => {
-    deviceTypeChain.first.resolves(null)
+    deviceTypeChain.first.resolves(undefined)
 
+    let thrown
     try {
       await getCustomFieldsByExternalIds({
         query: { deviceType: 'nonexistentDeviceTypeXyz' },
         auth: { credentials: {} },
       })
-      assert.fail('Expected Boom.badRequest')
     } catch (err) {
-      assert.equal(err.output.statusCode, 400)
-      assert.include(err.message, 'Unknown Device Type externalId')
-      assert.include(err.message, 'nonexistentDeviceTypeXyz')
+      thrown = err
     }
-    assert.isTrue(getFormsStub.notCalled)
+
+    assert.isOk(thrown, 'Expected Boom.badRequest to be thrown')
+    assert.equal(thrown.output.statusCode, 400)
+    assert.include(thrown.message, 'Unknown DeviceType.externalId')
+    assert.include(thrown.message, 'nonexistentDeviceTypeXyz')
+    assert.isTrue(getCustomFieldsStub.notCalled)
   })
 
-  it('loads forms when assay and deviceType exist', async () => {
-    getFormsStub.resolves({
-      A: {
-        formDefinitionExternalId: 'A',
-        assayExternalId: 'GxHiv1Vl',
-        diseaseExternalId: null,
-        deviceTypeExternalId: 'GeneXpert',
-        fields: [],
+  it('loads custom fields when deviceType exists and restricts field props', async () => {
+    const fields = [
+      {
+        id: 1,
+        name: 'foo',
+        title: 'Foo',
+        fieldType: 'text',
+        order: 1,
+        controlType: 'textBox',
+        mandatory: true,
+        validation: { required: true },
+        condition: null,
+        items: [],
+        i18nKey: 'leakedKey',
+        gxAlertDbColumn: 'leakedCol',
       },
-    })
+    ]
+    getCustomFieldsStub.resolves({ fields })
 
     const res = await getCustomFieldsByExternalIds({
-      query: { assay: 'GxHiv1Vl', deviceType: 'GeneXpert' },
-      auth: { credentials: {} },
+      query: { deviceType: 'molbioTruenat' },
+      auth: { credentials: { some: 'creds' } },
     })
 
     assert.equal(res.ok, true)
     assert.isArray(res.data)
     assert.equal(res.data.length, 1)
-    assert.equal(res.data[0].formDefinitionExternalId, 'A')
-    assert.isTrue(getFormsStub.calledOnce)
-    assert.isTrue(assayChain.where.calledWith('externalId', 'GxHiv1Vl'))
-    assert.isTrue(deviceTypeChain.where.calledWith('externalId', 'GeneXpert'))
+    assert.isArray(res.data[0].fields)
+    assert.equal(res.data[0].fields.length, 1)
+    assert.deepEqual(res.data[0].fields[0], {
+      id: 1,
+      name: 'foo',
+      title: 'Foo',
+      fieldType: 'text',
+      order: 1,
+      controlType: 'textBox',
+      mandatory: true,
+      validation: { required: true },
+      condition: null,
+      items: [],
+    })
+    assert.isTrue(deviceTypeChain.where.calledOnceWithExactly('externalId', 'molbioTruenat'))
+    assert.isTrue(getCustomFieldsStub.calledOnceWithExactly(20, 2, 10))
+  })
+
+  it('skips DeviceType lookup when deviceType query param is absent', async () => {
+    const res = await getCustomFieldsByExternalIds({
+      query: {},
+      auth: { credentials: {} },
+    })
+
+    assert.equal(res.ok, true)
+    assert.isArray(res.data)
+    assert.isTrue(knexStub.notCalled)
+    assert.isTrue(getCustomFieldsStub.calledOnceWithExactly(20, null, 10))
   })
 })
