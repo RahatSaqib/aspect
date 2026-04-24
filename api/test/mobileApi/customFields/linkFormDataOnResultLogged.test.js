@@ -200,6 +200,58 @@ describe('mobileApi customFields linkFormDataOnResultLogged', () => {
       assert.equal(formUpdate.callCount, 0)
     })
 
+    it('handles RESULT_SITE_ASSIGNED actions the same way as TRUENAT_RESULT_LOGGED', async () => {
+      const syncStub = sinon.stub().resolves({ synced: true })
+      const formUpdate = sinon.stub().resolves(1)
+      const formRow = {
+        id: 9,
+        data: JSON.stringify({ customFieldsData: [{ formDefinitionExternalId: 'ClinicalResponse', fields: {} }] }),
+      }
+
+      let formDataSelectReturned = false
+      const trxInner = sinon.stub()
+      trxInner.withArgs('FormData').callsFake(() => {
+        if (!formDataSelectReturned) {
+          formDataSelectReturned = true
+          const chain = {
+            whereNull: sinon.stub().returnsThis(),
+            forUpdate: sinon.stub().returnsThis(),
+            first: sinon.stub().resolves(formRow),
+          }
+          chain.where = sinon.stub().returns(chain)
+          return chain
+        }
+        return {
+          where: sinon.stub().returns({ update: formUpdate }),
+        }
+      })
+
+      const transactionStub = sinon.stub().callsFake(async cb => cb(trxInner))
+
+      const runKnex = sinon.stub()
+      runKnex.withArgs('Result as r').returns({
+        join: sinon.stub().returnsThis(),
+        where: sinon.stub().returnsThis(),
+        first: sinon.stub().resolves({ siteId: 3, sampleExternalId: 'S1' }),
+      })
+      runKnex.transaction = transactionStub
+
+      const loggerStub = { warn: sinon.stub(), debug: sinon.stub(), error: sinon.stub() }
+      const { onFormDataResultLogged } = proxyquire('../../../src/mobileApi/customFields/linkFormDataOnResultLogged', {
+        '../../shared/logger': loggerStub,
+        './syncFormDataToResult': { syncFormDataToResult: syncStub },
+      })
+
+      await onFormDataResultLogged(
+        { type: 'RESULT_SITE_ASSIGNED', resultId: 77 },
+        { messageContext: { run: async fn => fn(runKnex) } }
+      )
+
+      assert.isTrue(syncStub.calledOnce)
+      assert.isTrue(formUpdate.calledOnce)
+      assert.deepEqual(formUpdate.firstCall.args[0], { resultId: 77 })
+    })
+
     it('does not touch FormData when load returns null', async () => {
       const transactionStub = sinon.stub()
       const runKnex = sinon.stub()
