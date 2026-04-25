@@ -71,7 +71,7 @@ For endpoint-specific checks:
 
 ## Data Constraints
 
-Permission scopes answer “can this user call this endpoint?” Data constraints answer “which rows can this user see or mutate?”
+Permission scopes answer "can this user call this endpoint?" Data constraints answer "which rows can this user see or mutate?"
 
 Use `getConstraints` and `addConstraints` from `api/src/auth/constraints.js` for list/detail/report queries that must respect the user's job context.
 
@@ -161,10 +161,25 @@ Menu behavior:
 - Each link has `href`, `label`, `perm`, and optional `submenu`.
 - `NavigationMenu` wraps every top-level link in `PermissionChecker`.
 - `Submenu` wraps every submenu link in `PermissionChecker`.
-- `config.showFormsMenu` can hide the Forms menu independent of permissions.
+- The Forms menu is gated by `forms:view`; that permission is assigned only in the Bangladesh job-function fixture.
 - Active state is based on exact path for top-level links and `pathname.startsWith(`${href}/`)` for submenus.
 
 For a new menu item, use localized labels from `messages/allMessages.js` or the existing custom-message helper. Do not hard-code user-facing menu text.
+
+### Country-Specific Menu Items
+
+Do not hard-code a country check such as `user.isCountry('BD')` to show a feature menu. Prefer a dedicated permission that is seeded only for the target country's job functions.
+
+Pattern used for the Forms menu:
+
+1. Add a permission definition, e.g. `forms:view`, in `api/seeds/fixtures/PermissionsDefinition.json`.
+2. Add the permission only in the target country fixture, e.g. `api/seeds/bangladesh/fixtures/jobFunctions.js`.
+3. Add a country seed that runs `upsertPermissionFixture(knex)` before `upsertJobFunctionFixture(knex, jobFunctions, partnerId)`, because job-function upsert expects the permission row to exist.
+4. Gate the menu with required permissions, e.g. `perm: ['+browse', '+forms', '+result']`.
+5. Gate matching routes in `web/src/App.LogInApp.jsx`, e.g. `a(['browse', 'forms', 'result'])`.
+6. Remove any old env/config gate such as `showFormsMenu`; feature availability should come from auth permissions.
+
+When adding this pattern for another country, create or update that country's job-function fixture and seed file rather than adding web-side country logic.
 
 ## Country-Level Permission Check
 

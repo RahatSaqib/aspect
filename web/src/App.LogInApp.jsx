@@ -236,7 +236,7 @@ const LogInApp = () => {
                 {a(['browse', 'reporter']) ? <Route path="/browse/samples" element={<SampleList />} /> : null}
 
                 {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
-                {a(['browse', 'result']) ? (
+                {a(['browse', 'forms', 'result']) ? (
                   <>
                     <Route path={routePaths.FORMS_TRUENAT_CUSTOM_FIELDS} element={<TruenatCustomFieldsList />} />
                     <Route

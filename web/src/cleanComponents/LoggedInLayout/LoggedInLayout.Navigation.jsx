@@ -4,7 +4,6 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
 import { useIntl } from 'react-intl'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import PermissionChecker from '../../components/PermissionChecker'
-import config from '../../config'
 import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/allMessages'
@@ -133,22 +132,18 @@ const getRawLinks = (f, user) => [
       { href: '/browse/notification/logs', label: f(messages.notificationLogs), perm: ['notification'] },
     ],
   },
-  ...(config.showFormsMenu
-    ? [
-        {
-          href: '/browse/forms',
-          label: f(messages.forms),
-          perm: ['browse', '+result'],
-          submenu: [
-            {
-              href: routePaths.FORMS_TRUENAT_CUSTOM_FIELDS,
-              label: f(messages.truenatCustomFields),
-              perm: ['browse', 'result'],
-            },
-          ],
-        },
-      ]
-    : []),
+  {
+    href: '/browse/forms',
+    label: f(messages.forms),
+    perm: ['+browse', '+forms', '+result'],
+    submenu: [
+      {
+        href: routePaths.FORMS_TRUENAT_CUSTOM_FIELDS,
+        label: f(messages.truenatCustomFields),
+        perm: ['+browse', '+forms', '+result'],
+      },
+    ],
+  },
   { href: '/reports', label: f(messages.reportsTitle), perm: ['+report'] },
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },
   {
