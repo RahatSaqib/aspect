@@ -12,6 +12,7 @@ When working in these areas, consult the matching skill first:
 - API database work: `ai-context/skills/api/database-handling/SKILL.md`
 - API migrations: `ai-context/skills/api/database-migrations/SKILL.md`
 - API seeds: `ai-context/skills/api/database-seeding/SKILL.md`
+- Authentication, authorization, permissions, menus, and permission-gated UI: `ai-context/skills/authentication-authorization/SKILL.md`
 - Reports: `ai-context/skills/api/reports/SKILL.md`
 - True Connect (mobile API, FormData, sites assigned): `ai-context/skills/api/trueconnect-support/SKILL.md`
 
