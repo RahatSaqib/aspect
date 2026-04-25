@@ -114,6 +114,7 @@ Related tables in workflows: **`Site`**, **`Sample`**, **`Result`**, **`Assay`**
 
 - **Upsert** (`selectCandidateResultIdForSiteAndSample` in `api/src/mobileApi/customFields/upsertFormData.js`): among results for the same **`siteId`** and **`Sample.externalId`**, excluding results already tied to another **FormData** **`resultId`**, load **all** such candidates and pick the one whose **`Result.startedOn`** is **closest in time** to this row’s **`FormData.collectedOn`** (from the upsert payload when present, otherwise the stored row). If **`collectedOn`** is missing/invalid, every candidate has **`startedOn` null**, or several tie on the same distance, selection falls back to the previous ordering: prefer rows with **`endedOn` set**, then **latest `endedOn`**, then **highest `id`**.
 - **`TRUENAT_RESULT_LOGGED`**: links the oldest pending **FormData** (`resultId IS NULL`) for that **site + sampleExternalId** to the newly logged Truenat result, then **`syncFormDataToResult`**.
+- **`RESULT_SITE_ASSIGNED`**: when deployment persistence assigns or changes **`Result.siteId`**, only results whose site is changing and that already have a pending matching **FormData** (`siteId + sampleExternalId`, `resultId IS NULL`) emit this action after the deployment transaction commits. The same **`onFormDataResultLogged`** subscriber then links/syncs the row.
 
 Changing Truenat **`Sample.externalId`** generation without updating this contract breaks True Connect matching.
 
@@ -158,7 +159,31 @@ When a result is logged:
 
 If sync fails, handler logs a **warn** and leaves **`resultId`** null (no link).
 
-### 4) Mapping into **Result** columns
+### 4) Deployment assigns a site after the result was logged (`RESULT_SITE_ASSIGNED`)
+
+Handler: **`persistDeploymentChanges`** (`api/src/device/deployment/persistDeploymentChanges.js`).
+
+Problem this solves: if a Truenat result arrives before the device has a deployment, **`Result.siteId`** is null, so **`TRUENAT_RESULT_LOGGED`** cannot match the saved True Connect **FormData** even when **`Sample.externalId`** is correct. When a later deployment assigns the device/result to a site, the link must be retried.
+
+High-level steps:
+
+1. Inside the deployment transaction, compute the final deployment spans. Spans may have **`start = null`** (oldest), **`end = null`** (active), or both null (single all-time deployment).
+2. Before updating result sites, collect result ids for rows in those spans where:
+   - the result's current **`siteId`** is null or different from the deployment **`siteId`**;
+   - the result has a non-empty **`Sample.externalId`**;
+   - a pending **FormData** exists for the target **`siteId`** + normalized sample external id (`resultId IS NULL`).
+3. Apply deployment updates: **`Result.siteId`**, **`Sample.originSiteId`**, **`Device.siteId`**, and device approval state.
+4. After the transaction commits, dispatch **`RESULT_SITE_ASSIGNED`** once per collected result id.
+5. **`mobileApi/subscriptions.js`** routes **`RESULT_SITE_ASSIGNED`** to the same **`onFormDataResultLogged`** subscriber used by **`TRUENAT_RESULT_LOGGED`**.
+
+Important behavior:
+
+- The event is **post-commit only**; never emit from `deviceApprovalService` or any helper running inside the transaction.
+- The collector skips unchanged-site results to avoid iterating over large historical result sets.
+- The collector prefilters by matching pending **FormData**; **`FormData`** already has a unique index on **`(siteId, sampleExternalId)`**, so no duplicate index is needed.
+- The span filtering mirrors `updateResultSites`: null `start`/`end` means the corresponding lower/upper bound is omitted.
+
+### 5) Mapping into **Result** columns
 
 **`syncFormDataToResult`** (`api/src/mobileApi/customFields/syncFormDataToResult.js`):
 
@@ -180,9 +205,9 @@ If sync fails, handler logs a **warn** and leaves **`resultId`** null (no link).
 1. **True Connect site list** = **assigned sites only**; do not use **`/v4/sites`** for the default True Connect UX.
 2. **Auth** must use **`clientType: true_connect`** for this product; refresh with the same **`clientType`**.
 3. **FormData upsert** uses transaction + row locks on matched **FormData** rows (when present); no partner-wide site lock.
-4. **Match keys:** prefer **`externalId`** when provided; else **`siteId` + sampleExternalId`**.
+4. **Match keys:** prefer **`externalId`** when provided; else **`siteId` + `sampleExternalId`**.
 5. **`externalId`** max length **36**; conflicts return **409** (`Boom.conflict`) with explicit messages (duplicate site+sample vs external id mismatch).
-6. **Linking to Result:** either immediately when a suitable result row exists on upsert, or later via **`TRUENAT_RESULT_LOGGED`** when FormData was stored with **`resultId` null**.
+6. **Linking to Result:** either immediately when a suitable result row exists on upsert, later via **`TRUENAT_RESULT_LOGGED`** when FormData was stored with **`resultId` null**, or later via **`RESULT_SITE_ASSIGNED`** when deployment changes assign/change **`Result.siteId`** after the result was logged.
 7. **Candidate result** for linking: same site + sample external id, **`sampleId`/`siteId` not null**, **no other FormData** already pointing at that **`resultId`**; choose **`startedOn`** nearest **`collectedOn`**, else same **`endedOn`/`id`** tie-break as before.
 8. **Sync:** uses same **`getCustomFieldsFromPayload`** pipeline as Gx device payloads for **`gxConnectForm`** definitions; phone fields normalized with country abbreviation.
 9. **Linked row:** changing **`sampleExternalId`** is forbidden; failed sync while linked is **400**; empty mapping when already linked is treated as **synced** (skip clearing existing columns).
@@ -202,7 +227,7 @@ If sync fails, handler logs a **warn** and leaves **`resultId`** null (no link).
 | DB helpers FormData | `api/src/mobileApi/customFields/db.js` |
 | Result sync | `api/src/mobileApi/customFields/syncFormDataToResult.js` |
 | TrueConnect → Gx payload | `api/src/mobileApi/customFields/trueConnectCustomFieldsMapping.js` |
-| TRUENAT_RESULT_LOGGED | `api/src/mobileApi/customFields/linkFormDataOnResultLogged.js`, `api/src/mobileApi/subscriptions.js`, `api/src/deviceApiRaw/dataProcessors/truenatDevice/result.js`, `api/src/result/actions.js` |
+| Result/FormData linking events | `api/src/mobileApi/customFields/linkFormDataOnResultLogged.js`, `api/src/mobileApi/subscriptions.js`, `api/src/deviceApiRaw/dataProcessors/truenatDevice/result.js`, `api/src/device/deployment/persistDeploymentChanges.js`, `api/src/result/actions.js` |
 | Form definitions / payload mapping | `api/src/forms/service.js` (`getCustomFieldsFromPayload`, `getFormsByFormDefinitionExternalIds`) |
 | Truenat result → **Sample.externalId** | `api/src/deviceApiRaw/dataProcessors/truenatDevice/result.js` (`generateSampleExternalId`) |
 
@@ -213,6 +238,7 @@ If sync fails, handler logs a **warn** and leaves **`resultId`** null (no link).
 - Auth / refresh / JWT for **`true_connect`**: `api/test/auth/auth.spec.js`
 - Sites assigned: `api/test/mobileApi/sites.spec.js` (verify behavior vs `/sites` if present)
 - FormData linking: `api/test/mobileApi/customFields/linkFormDataOnResultLogged.test.js`
+- Deployment-triggered FormData linking: `api/test/device/deployment/persistDeploymentChanges.test.js`
 - Sync / upsert: `api/test/mobileApi/customFields/syncFormDataToResult.test.js`
 
 ---
@@ -228,5 +254,5 @@ The React app may surface copy that **TrueNat** / device custom fields are manag
 1. Confirm whether the change affects **True Connect only**, **reporter only**, or **both** (shared handlers).
 2. Prefer **`/v4/sites/assigned`** for any True Connect–specific site list feature.
 3. Any new **FormData** or sync rule: re-read **`upsertFormData`**, **`syncFormDataToResult`**, and **`trueConnectCustomFieldsMapping`** together — they share transactions and idempotency expectations.
-4. Subscribers run asynchronously; **`TRUENAT_RESULT_LOGGED`** handlers must stay **idempotent** and safe under retries.
+4. Subscribers run asynchronously; **`TRUENAT_RESULT_LOGGED`** and **`RESULT_SITE_ASSIGNED`** handlers must stay **idempotent** and safe under retries.
 5. Follow **`api/docs/mobile-custom-fields-api.md`** for any contract-visible change and update that doc when behavior changes.
