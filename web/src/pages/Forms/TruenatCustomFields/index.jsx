@@ -54,6 +54,7 @@ const TruenatCustomFieldsList = () => {
     { key: 'siteName', label: formatMessage(messages.siteName), sortable: false },
     { key: 'collectedOn', label: formatMessage(messages.dateOfTest), sortable: false },
     { key: 'resultId', label: formatMessage(messages.matchToResult), sortable: false },
+    { key: 'resultEndedOn', label: formatMessage(messages.resultEndedOn), sortable: false },
     { key: 'createdOn', label: formatMessage(messages.dateUploaded), sortable: false },
   ]
 
@@ -100,6 +101,7 @@ const TruenatCustomFieldsList = () => {
                           <Chip label={formatMessage(allMessages.noMatch)} color="error" size="small" />
                         )}
                       </DataTableCell>
+                      <DataTableCell>{row.resultEndedOn ? formatDate(row.resultEndedOn) : '-'}</DataTableCell>
                       <DataTableCell>{formatDate(row.createdOn)}</DataTableCell>
                     </TableRow>
                   ))}

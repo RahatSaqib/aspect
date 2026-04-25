@@ -13,6 +13,7 @@ export default defineMessages({
   dateOfTest: { id: 'pages.truenatCustomFields.dateOfTest', defaultMessage: 'Collected On' },
   sampleId: { id: 'pages.truenatCustomFields.sampleId', defaultMessage: 'Sample ID' },
   matchToResult: { id: 'pages.truenatCustomFields.matchToResult', defaultMessage: 'Match to Result' },
+  resultEndedOn: { id: 'pages.truenatCustomFields.resultEndedOn', defaultMessage: 'Result Ended On' },
   dateUploaded: { id: 'pages.truenatCustomFields.dateUploaded', defaultMessage: 'Date Uploaded' },
   uploadedBy: { id: 'pages.truenatCustomFields.uploadedBy', defaultMessage: 'Uploaded By' },
   filters: { id: 'pages.truenatCustomFields.filters', defaultMessage: 'Filters' },

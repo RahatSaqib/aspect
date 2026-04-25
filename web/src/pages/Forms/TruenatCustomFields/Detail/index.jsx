@@ -62,6 +62,9 @@ const TruenatCustomFieldsDetail = () => {
                       <Chip label={formatMessage(allMessages.noMatch)} color="error" size="small" />
                     )}
                   </LabeledField>
+                  <LabeledField label={formatMessage(messages.resultEndedOn)}>
+                    {entry?.resultEndedOn ? formatDate(entry.resultEndedOn) : '-'}
+                  </LabeledField>
                   <LabeledField label={formatMessage(messages.dateOfTest)}>
                     {formatDate(entry?.collectedOn)}
                   </LabeledField>

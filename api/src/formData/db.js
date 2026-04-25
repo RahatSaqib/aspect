@@ -67,6 +67,7 @@ function getFormDataEntryById(dataConstraints, id) {
       's.partnerId',
       's.name as siteName',
       'fd.resultId',
+      'r.endedOn as resultEndedOn',
       'fd.sampleExternalId',
       'fd.externalId',
       'fd.collectedOn',
