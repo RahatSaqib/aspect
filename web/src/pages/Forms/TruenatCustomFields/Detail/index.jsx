@@ -10,6 +10,7 @@ import { FORM_DATA_DETAIL } from '../../../../components/QueryFetch/FormData'
 import allMessages from '../../../../messages/allMessages'
 import { formatDate, formatDateTime } from '../../../../utils/utils/dateFormat'
 import messages from '../messages'
+import styles from '../TruenatCustomFields.module.css'
 
 const LabeledField = ({ label, children }) => (
   <Box sx={{ mb: 4 }}>
@@ -78,7 +79,7 @@ const TruenatCustomFieldsDetail = () => {
             {formFields.length > 0 && (
               <Card>
                 <CardContent>
-                  <Typography component="p" data-panel-title="true" sx={{ mb: 3 }}>
+                  <Typography component="p" className={styles.PanelTitle} sx={{ mb: 3 }}>
                     {formatMessage(messages.customFieldsSectionTitle)}
                   </Typography>
                   <Box

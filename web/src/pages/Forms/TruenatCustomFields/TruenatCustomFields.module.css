@@ -8,3 +8,8 @@
   border-spacing: 0;
   font-size: 14px;
 }
+
+.PanelTitle {
+  color: var(--aspect-color-grey-2);
+  font-size: 1.5rem;
+}

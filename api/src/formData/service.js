@@ -40,12 +40,19 @@ function getFieldEntryByFieldDef(fields, fieldDef) {
     )
   }
 
-  return fields[String(fieldDef.id)] || fields[fieldDef.name]
+  if (Object.prototype.hasOwnProperty.call(fields, String(fieldDef.id))) {
+    return fields[String(fieldDef.id)]
+  }
+
+  if (Object.prototype.hasOwnProperty.call(fields, fieldDef.name)) {
+    return fields[fieldDef.name]
+  }
+
+  return undefined
 }
 
 function resolveFieldEntry(fieldDef, fields) {
   const fieldEntry = getFieldEntryByFieldDef(fields, fieldDef)
-  if (!fieldEntry) return null
 
   // Stored payloads can keep field values either as primitives
   // (e.g. { "1101": "John" }) or wrapped objects ({ "1101": { value: "John" } }).
@@ -56,7 +63,6 @@ function resolveFieldEntry(fieldDef, fields) {
     Object.prototype.hasOwnProperty.call(fieldEntry, 'value')
       ? fieldEntry.value
       : fieldEntry
-  if (rawValue === null || rawValue === undefined || rawValue === '') return null
 
   let displayValue = rawValue
   if ((fieldDef.controlType === 'comboBox' || fieldDef.controlType === 'autoComplete') && fieldDef.items) {
