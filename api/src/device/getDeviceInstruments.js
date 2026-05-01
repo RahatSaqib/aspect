@@ -10,7 +10,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
       this.on('i.deviceId', 'd.id')
     })
     .leftJoin(
-      knex('Result as r')
+      knex('Result_READ as r')
         .groupBy('deviceId', 'instrumentSerial', knex.raw('TRIM(moduleName)'))
         .select(
           'deviceId',
