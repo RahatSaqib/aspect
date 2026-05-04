@@ -10,7 +10,7 @@ const routes = [
     config: {
       description: 'FormData list',
       notes: 'Lists custom field entries constrained by the user result access.',
-      auth: { scope: ['result:view'] },
+      auth: { scope: ['forms:view'] },
       validate: {
         query: Joi.object({
           siteId: Joi.number().integer().positive().optional(),
@@ -29,7 +29,7 @@ const routes = [
     config: {
       description: 'FormData detail',
       notes: 'Returns a single custom field entry constrained by user result access.',
-      auth: { scope: ['result:view'] },
+      auth: { scope: ['forms:view'] },
       validate: {
         params: Joi.object({
           id: Joi.number().integer().positive().required(),
