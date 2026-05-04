@@ -187,6 +187,12 @@ When adding this pattern for another country, create or update that country's jo
 
 Current API behavior in `api/src/person/hasPermission.js` and `api/src/shared/utilsPerson.js` checks whether the user's job context includes a country-level constraint and whether any associated job function has `person:edit`, `person:admin`, or `admin*` permission. The query parameter is accepted by the endpoint, but the utility currently does not apply arbitrary permission names. Verify the behavior before reusing this hook for non-person permissions.
 
+### Related: date filters and timezones (not auth logic)
+
+**Browse date ranges** (`minDate`/`maxDate`), **FormData** list behavior, and critique of **`api/src/shared/date.js`** belong in **`ai-context/skills/api/date-time-handling/SKILL.md`**.
+
+JWTs encode **permissions** and identity; **profile/country timezone** (used for UI offsets and some API lookups) is related to the **person** record, not to permission strings. Keeping date semantics out of this skill avoids mixing **who may access** a route with **how to parse** query dates.
+
 ## Common Pitfalls
 
 - Hiding a React component is not authorization. Always protect the API endpoint too.

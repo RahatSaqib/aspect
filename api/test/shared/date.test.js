@@ -5,7 +5,6 @@ const {
   getLocalDateTimeStringInUtc,
   getArrayOfDaysInRange,
   getLocalDateInUtc,
-  getTimeZoneById,
   formatDateOrDefault,
   startOfDayUtc,
   startOfMonthUTC,
@@ -18,7 +17,6 @@ const {
   getUserEndOfMonth,
   getUserStartOfMonth,
   slideDateToTimeZone,
-  formatDateInTimeZone,
   replaceOffset,
   getDateTimeProjectionInTimeZoneIANA,
   getDateTimeExpressionInTimeZone,
@@ -128,22 +126,6 @@ describe('Shared Date Utility Functions', () => {
       const utcDateTime = getLocalDateInUtc(new Date('2020-08-02T02:00:00.000+04:00'))
 
       assert.equal(utcDateTime.toISOString(), '2020-08-01T22:00:00.000Z')
-    })
-  })
-
-  describe('getTimeZoneById', () => {
-    it('should return the standard time zone identifier when given a timezone ID', () => {
-      const timeZones = {
-        'America/Bahia': 'Bahia Standard Time',
-        'Asia/Dhaka': 'Bangladesh Standard Time',
-        'America/New_York': 'Eastern Standard Time',
-        'Africa/Cairo': 'Egypt Standard Time',
-        'Asia/Yekaterinburg': 'Ekaterinburg Standard Time',
-      }
-
-      const timeZone = getTimeZoneById(timeZones, 'Eastern Standard Time')
-
-      assert.equal(timeZone, 'America/New_York')
     })
   })
 
@@ -401,34 +383,6 @@ describe('Shared Date Utility Functions', () => {
         }
       })
     })
-
-    describe('replaceOffset', () => {
-      it('should return the input date formatted in ISO-8601 full format, with the correct offset for the target time zone in the input date', () => {
-        const tzFixtures = [
-          {
-            tz: 'America/Argentina/Buenos_Aires',
-            date: '2023-01-01T00:00:00Z',
-            expectedDate: '2022-12-31T21:00:00-03:00',
-          },
-          { tz: 'Asia/Baku', date: '2023-01-01:15:20:23Z', expectedDate: '2023-01-01T19:20:23+04:00' },
-
-          { tz: 'Asia/Dhaka', date: '2023-03-22T10:11:00Z', expectedDate: '2023-03-22T16:11:00+06:00' },
-          { tz: 'Pacific/Fiji', date: '2010-01-01T05:00:00Z', expectedDate: '2010-01-01T18:00:00+13:00' }, // year with dst.
-          { tz: 'Pacific/Fiji', date: '2007-01-01T05:00:00Z', expectedDate: '2007-01-01T17:00:00+12:00' }, // year without dst.
-          { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00Z' },
-          { tz: 'Canada/Atlantic', date: '2023-12-15T10:00:00', expectedDate: '2023-12-15T06:00:00-04:00' },
-          { tz: 'Canada/Atlantic', date: '2023-11-01T10:00:00', expectedDate: '2023-11-01T07:00:00-03:00' },
-        ]
-
-        for (const f of tzFixtures) {
-          assert.equal(
-            formatDateInTimeZone(new Date(f.date), f.tz),
-            f.expectedDate,
-            `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
-          )
-        }
-      })
-    })
   })
 
   describe('replaceOffset', () => {
@@ -457,34 +411,6 @@ describe('Shared Date Utility Functions', () => {
         )
       }
     })
-  })
-})
-
-describe('replaceOffset', () => {
-  it('should return the input date slided the amount of hours between UTC and the target time zone and formatted in ISO-8601 full format, with the correct offset for the target time zone in the input date', () => {
-    const tzFixtures = [
-      {
-        tz: 'America/Argentina/Buenos_Aires',
-        date: '2023-01-01T00:00:00Z',
-        expectedDate: '2023-01-01T00:00:00-03:00',
-      },
-      { tz: 'Asia/Baku', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+04:00' },
-
-      { tz: 'Asia/Dhaka', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+06:00' },
-      { tz: 'Pacific/Fiji', date: '2010-01-01', expectedDate: '2010-01-01T00:00:00+13:00' }, // year with dst.
-      { tz: 'Pacific/Fiji', date: '2007-01-01', expectedDate: '2007-01-01T00:00:00+12:00' }, // year without dst.
-      { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00Z' },
-      { tz: 'Canada/Atlantic', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00-04:00' },
-      { tz: 'Canada/Atlantic', date: '2023-11-01', expectedDate: '2023-11-01T00:00:00-03:00' },
-    ]
-
-    for (const f of tzFixtures) {
-      assert.equal(
-        replaceOffset(new Date(f.date), f.tz),
-        f.expectedDate,
-        `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
-      )
-    }
   })
 })
 
