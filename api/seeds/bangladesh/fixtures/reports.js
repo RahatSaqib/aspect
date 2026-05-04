@@ -55,7 +55,7 @@ const resultsDrTb10A10BCovid = {
     {
       sortOrder: 60,
       moduleName: 'result/serviceReportBangladesh/10a10b/xdrDbListingReport',
-      functionName: 'getDataForReportXdrDb',
+      functionName: 'getDataForReportXdrBySite',
     },
   ],
 }
