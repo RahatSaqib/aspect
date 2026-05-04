@@ -2,87 +2,149 @@
   "modules": [
     {
       "name": "patient",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "assay",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "router",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "account",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "demo",
-      "activities": ["edit"]
+      "activities": [
+        "edit"
+      ]
     },
     {
       "name": "deviceApiKey",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "device",
-      "activities": ["view", "edit", "admin"]
+      "activities": [
+        "view",
+        "edit",
+        "admin"
+      ]
     },
     {
       "name": "inventory",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "person",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "result",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "treatmentStatus",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "site",
-      "activities": ["view", "edit", "admin"]
+      "activities": [
+        "view",
+        "edit",
+        "admin"
+      ]
     },
     {
       "name": "issue",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "notification",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "task",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "taskMenu",
-      "activities": ["view"]
+      "activities": [
+        "view"
+      ]
     },
     {
       "name": "report",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "case",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "browse",
-      "activities": ["view"]
+      "activities": [
+        "view"
+      ]
     },
     {
       "name": "account",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "reporter",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "dashboard",
@@ -101,23 +163,40 @@
     },
     {
       "name": "manage",
-      "activities": ["view"]
+      "activities": [
+        "view"
+      ]
     },
     {
       "name": "clinicalIndicators",
-      "activities": ["view"]
+      "activities": [
+        "view"
+      ]
     },
     {
       "name": "operationalData",
-      "activities": ["view", "edit"]
+      "activities": [
+        "view",
+        "edit"
+      ]
     },
     {
       "name": "dashboard-v2",
-      "activities": ["view"]
+      "activities": [
+        "view"
+      ]
     },
     {
       "name": "admin",
-      "activities": ["edit"]
+      "activities": [
+        "edit"
+      ]
+    },
+    {
+      "name": "forms",
+      "activities": [
+        "view"
+      ]
     }
   ]
 }
