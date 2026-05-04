@@ -43,4 +43,6 @@ module.exports = [
   withFormsPermission(withNoReporterPermissions(clinician)),
   withNoReporterPermissions(remoteHealthWorker),
   withNoReporterPermissions(technician),
+  aspectBeta,
+  inventoryManager,
 ]
