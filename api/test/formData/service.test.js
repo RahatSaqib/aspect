@@ -13,8 +13,13 @@ describe('formData service', () => {
   let formsFileDictionaryStub
   let service
 
+  const DEFAULT_LIST_DATES = {
+    minDate: '2026-01-01T00:00:00.000Z',
+    maxDate: '2026-12-31T23:59:59.999Z',
+  }
+
   const buildRequest = ({ query = {}, params = {} } = {}) => ({
-    query,
+    query: { ...DEFAULT_LIST_DATES, ...query },
     params,
     auth: { credentials: { name: 'client-user' } },
   })
@@ -107,31 +112,17 @@ describe('formData service', () => {
       ])
     })
 
-    it('uses a 30-day default window when dateFrom and dateTo are not provided', async () => {
-      const clock = sinon.useFakeTimers(new Date('2026-04-10T12:00:00.000Z').getTime())
-      try {
-        await service.listFormDataEntries(buildRequest())
-      } finally {
-        clock.restore()
-      }
-
-      sinon.assert.calledOnce(getFormDataEntriesStub)
-      const filtersArg = getFormDataEntriesStub.firstCall.args[1]
-      assert.equal(new Date(filtersArg.dateFrom).toISOString(), '2026-03-11T12:00:00.000Z')
-      assert.equal(new Date(filtersArg.dateTo).toISOString(), '2026-04-10T12:00:00.000Z')
-    })
-
-    it('passes through explicit dateFrom, dateTo, siteId and sampleExternalId filters', async () => {
-      const dateFrom = '2026-02-01T00:00:00.000Z'
-      const dateTo = '2026-02-28T23:59:59.000Z'
+    it('passes through explicit minDate, maxDate, siteId and sampleExternalId filters', async () => {
+      const minDate = '2026-02-01T00:00:00.000Z'
+      const maxDate = '2026-02-28T23:59:59.000Z'
 
       await service.listFormDataEntries(
-        buildRequest({ query: { dateFrom, dateTo, siteId: 42, sampleExternalId: 'sample-xyz' } })
+        buildRequest({ query: { minDate, maxDate, siteId: 42, sampleExternalId: 'sample-xyz' } })
       )
 
       const filters = getFormDataEntriesStub.firstCall.args[1]
-      assert.equal(filters.dateFrom, dateFrom)
-      assert.equal(filters.dateTo, dateTo)
+      assert.equal(filters.minDate.toISOString(), '2026-02-01T00:00:00.000Z')
+      assert.equal(filters.maxDate.toISOString(), '2026-02-28T23:59:59.000Z')
       assert.equal(filters.siteId, 42)
       assert.equal(filters.sampleExternalId, 'sample-xyz')
     })

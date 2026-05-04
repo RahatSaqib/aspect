@@ -8,17 +8,18 @@ function buildBaseQuery(dataConstraints) {
     .modify(addConstraints, dataConstraints, { site: 's' })
 }
 
-function applyListFilters(query, { siteId, dateFrom, dateTo, sampleExternalId, matched }) {
+function applyListFilters(query, { siteId, minDate, maxDate, sampleExternalId, matched }) {
   if (siteId) {
     query.where('fd.siteId', siteId)
   }
 
-  if (dateFrom) {
-    query.where('fd.createdOn', '>=', dateFrom)
+  // minDate / maxDate: UTC instants from the client (required on GET /form-data)
+  if (minDate) {
+    query.where('fd.createdOn', '>=', minDate)
   }
 
-  if (dateTo) {
-    query.where('fd.createdOn', '<=', dateTo)
+  if (maxDate) {
+    query.where('fd.createdOn', '<=', maxDate)
   }
 
   if (sampleExternalId) {

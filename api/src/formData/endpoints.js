@@ -14,8 +14,8 @@ const routes = [
       validate: {
         query: Joi.object({
           siteId: Joi.number().integer().positive().optional(),
-          dateFrom: Joi.date().iso().optional(),
-          dateTo: Joi.date().iso().optional(),
+          minDate: Joi.date().iso().required(),
+          maxDate: Joi.date().iso().required(),
           sampleExternalId: Joi.string().trim().optional(),
           matched: Joi.boolean().truthy('true').falsy('false').optional(),
         }),

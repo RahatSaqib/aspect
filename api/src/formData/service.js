@@ -1,5 +1,4 @@
 const Boom = require('@hapi/boom')
-const { subDays } = require('date-fns')
 const { getConstraints } = require('../auth/constraints')
 const { getFormsByFormDefinitionExternalIds } = require('../forms/service')
 const formsFileDictionary = require('../forms/formsFileDictionary')
@@ -122,17 +121,22 @@ async function enrichWithFormFields(parsedRow, partnerId) {
   return { ...parsedRow, formFields }
 }
 
+function coerceQueryDate(value) {
+  return value instanceof Date ? value : new Date(value)
+}
+
 async function listFormDataEntries(request) {
   const dataConstraints = await getConstraints(request.auth.credentials)
-  const now = new Date()
-  const defaultDateFrom = subDays(now, 30)
-  const { siteId, dateFrom, dateTo, sampleExternalId } = request.query
+  const { siteId, minDate, maxDate, sampleExternalId } = request.query
   const partnerId = dataConstraints.partner.id
 
+  /**
+   * Same shape as result list (ISO with offset). Joi guarantees both are present.
+   */
   const filters = {
     siteId,
-    dateFrom: dateFrom || defaultDateFrom,
-    dateTo: dateTo || now,
+    minDate: coerceQueryDate(minDate),
+    maxDate: coerceQueryDate(maxDate),
     sampleExternalId,
     matched: parseMatchedFilter(request.query.matched),
   }

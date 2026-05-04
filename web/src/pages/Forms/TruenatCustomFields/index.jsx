@@ -1,7 +1,7 @@
-import React from 'react'
 import { Chip, LinearProgress, Link, Table, TableBody, TableRow } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
+import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -9,7 +9,7 @@ import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import { DetailHeader, TruenatCustomFieldsFilter } from '../../../cleanComponents'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { FORM_DATA_LIST } from '../../../components/QueryFetch/FormData'
-import useFilterValues from '../../../hooks/useFilterValues'
+import { usePathFilter } from '../../../hooks/usePathFilter'
 import allMessages from '../../../messages/allMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -26,19 +26,33 @@ const TruenatCustomFieldsList = () => {
   const { formatMessage } = useIntl()
   const location = useLocation()
   const navigate = useNavigate()
-  const filters = useFilterValues(location.pathname)
+  const [filters] = usePathFilter()
 
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'createdOn', sortDir: 'desc' })({
     location,
   })
+
+  /**
+   * Send nominal calendar days at fixed UTC wall times (same pattern as result list query strings):
+   * yyyy-MM-dd from the user's profile timezone, then T00:00:00.000Z / T23:59:59.999Z so the backend can apply
+   * IANA conversion without local-midnight drift from `Date#toISOString()`.
+   */
+  // const dateFrom =
+  //   filters.minDate != null
+  //     ? `${formatInTimeZone(filters.minDate, userTimeZone, 'yyyy-MM-dd')}T00:00:00.000Z`
+  //     : undefined
+  // const dateTo =
+  //   filters.maxDate != null
+  //     ? `${formatInTimeZone(filters.maxDate, userTimeZone, 'yyyy-MM-dd')}T23:59:59.999Z`
+  //     : undefined
 
   const params = omitBy(
     {
       siteId: filters.siteId,
       sampleExternalId: filters.sampleExternalId,
       matched: filters.matched,
-      dateFrom: filters.minDate ? new Date(filters.minDate).toISOString() : undefined,
-      dateTo: filters.maxDate ? new Date(filters.maxDate).toISOString() : undefined,
+      minDate: filters.minDate,
+      maxDate: filters.maxDate,
     },
     isNil
   )
