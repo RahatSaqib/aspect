@@ -2,10 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
 const { formatDateOrDefault, parseDateOrDefault } = require('../../../shared/date')
-const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
-const { postPayloadFromDevice } = require('../../../device/service')
-const { deviceApprovalToId } = require('../../../shared/dictionary')
 const { deviceSeen } = require('../../../device/actions')
 const { transact } = require('../../../db')
 const {
@@ -22,9 +19,15 @@ class TruenatResult extends SynchronousDataProcessor {
     super(request, messageContext)
     this.encryptRawData = false
     this.timeoutMilliseconds = 60000
+    this.resultId = null
     this.processRequest = this.processRequest.bind(this)
     this.getResponse = this.getResponse.bind(this)
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(this)
     this.response = {}
+  }
+
+  async onDeviceRawMessageProcessed() {
+    await this.updateDeviceApiRawStatus('Processed', { resultId: this.resultId })
   }
 
   static async canProcessRequest(request) {
@@ -44,19 +47,14 @@ class TruenatResult extends SynchronousDataProcessor {
         const deviceDetails = await getDeviceDetailsFromApiKey(knex, auth.credentials.token)
         const {
           deviceId,
-          username,
-          deviceApiKeyId,
           partnerId,
-          deviceApprovalId,
-          deviceName,
           longitude,
           latitude,
-          siteName,
           deviceDefaultReportableSiteId,
           siteExternalId,
           deviceTypeExternalId,
+          siteId,
         } = deviceDetails
-        let { siteId } = deviceDetails
 
         if (!deviceId) {
           throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
@@ -89,41 +87,6 @@ class TruenatResult extends SynchronousDataProcessor {
           date,
           time,
         } = getDetailsFromRequest(request)
-
-        const pendingDeployment = await deviceApprovalToId('pendingDeployment')
-        if (deviceApprovalId === pendingDeployment && labName && deviceName === username && siteName === username) {
-          const site = await knex('Site').where('name', labName).where('partnerId', partnerId).first()
-          if (site) {
-            await knex('Device').where('id', deviceId).update({ siteId: site.id })
-            await knex('DeviceApiKey').where('id', deviceApiKeyId).update({ siteId: site.id })
-            // attempt to delete automatically created site if there are no related records
-            const devicesCount = await knex('Device').where('siteId', siteId).count('id')
-            const resultsCount = await knex('Result').where('siteId', siteId).count('id')
-            const inventoryItemsCount = await knex('InventoryItem').where('siteId', siteId).count('id')
-            const inventoryLogsCount = await knex('InventoryLog').where('siteId', siteId).count('id')
-            const jobContextsCount = await knex('JobContext').where('siteId', siteId).count('id')
-            if (
-              devicesCount === 0 &&
-              resultsCount === 0 &&
-              inventoryItemsCount === 0 &&
-              inventoryLogsCount === 0 &&
-              jobContextsCount === 0
-            ) {
-              await knex('AlertMessage').where('siteId', siteId).update({ siteId: null })
-              await knex('EmailMessage').where('siteId', siteId).update({ siteId: null })
-              await knex('SmsMessage').where('siteId', siteId).update({ siteId: null })
-              await knex('WebhookMessage').where('siteId', siteId).update({ siteId: null })
-              await knex('DeviceApiKey').where('siteId', siteId).update({ siteId: null })
-              await knex('Issue').where('siteId', siteId).update({ siteId: null })
-              await knex('FactInventoryConsumptionRate').where('id', siteId).delete()
-              await knex('Site').where('id', siteId).delete()
-            }
-            siteId = site.id
-          } else {
-            await knex('Site').where('id', siteId).update({ name: labName })
-          }
-          await knex('Device').where('id', deviceId).update({ name: labName })
-        }
 
         const assay = await getAssay(knex, testName)
 
@@ -220,18 +183,8 @@ class TruenatResult extends SynchronousDataProcessor {
           await knex('Result').where('id', result.id).update(newResultDetails)
         }
 
-        await postPayloadFromDevice(
-          {
-            deviceApiKeyId,
-            source: 'Diagnostic Device POST',
-            senderIp: getRemoteAddress(request),
-            resultId: result.id,
-            rawMessage: JSON.stringify(request.plugins.rawPayload),
-          },
-          deviceId,
-          knex
-        )
-
+        this.resultId = result.id
+        await this.updateDeviceLastSeenOn(deviceId, utcNow, knex)
         this.messageContext.dispatch(deviceSeen(deviceId))
         this.response.resultExternalId = resultExternalId
       })
@@ -253,7 +206,7 @@ async function getDeviceDetailsFromApiKey(knex, deviceApiToken) {
   const deviceDetails = await knex('DeviceApiKey as dak')
     .join('Device as d', 'dak.deviceId', 'd.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .join('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .where('dak.token', deviceApiToken)
     .first(
       'dak.deviceId',
@@ -261,13 +214,11 @@ async function getDeviceDetailsFromApiKey(knex, deviceApiToken) {
       'dak.id as deviceApiKeyId',
       'd.partnerId',
       'd.siteId',
-      'd.deviceApprovalId',
-      'd.name as deviceName',
+      'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
       's.geographyId',
       's.longitude',
       's.latitude',
       's.name as siteName',
-      'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
       's.externalId as siteExternalId',
       'dt.externalId as deviceTypeExternalId'
     )

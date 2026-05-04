@@ -3,7 +3,7 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const { addDays, startOfMonth, endOfMonth, format, parseJSON } = require('date-fns')
 const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
-const { knex, filterParams, filterDateRangeParams, sortParams, transact } = require('../db')
+const { knex, filterParams, filterDateRangeParams, sortParams } = require('../db')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const { allResultCategoryToId, allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
@@ -1179,26 +1179,6 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
   })
 }
 
-// Reusable method to create a device log and update lastSeenOn for a device
-// This method will sometimes be called in a context of a database transaction.
-//  In this case the transaction's knex instance can be passed as the optionalKnex
-//  parameter below.
-async function postPayloadFromDevice(deviceLogDetails, deviceId, optionalKnex) {
-  const now = new Date()
-  const databaseTransaction = async inlineKnex => {
-    const [deviceLogId] = await inlineKnex('DeviceLog').insert({
-      createdOn: now,
-      ...deviceLogDetails,
-    })
-    await inlineKnex('Device').where({ id: deviceId }).update({ lastSeenOn: now, updatedOn: now })
-    return deviceLogId
-  }
-  if (!optionalKnex) {
-    return transact(databaseTransaction)
-  }
-  return databaseTransaction(optionalKnex)
-}
-
 async function onDeviceUpdateModuleSerials(action, { messageContext }) {
   return messageContext.run(async knex => {
     const items = await knex('Device as d')
@@ -1260,6 +1240,5 @@ module.exports = {
   onDeviceMaintenanceStatusLogScheduled,
   getDeviceBaseExtendedQuery,
   setStatusForDateRange,
-  postPayloadFromDevice,
   onDeviceUpdateModuleSerials,
 }

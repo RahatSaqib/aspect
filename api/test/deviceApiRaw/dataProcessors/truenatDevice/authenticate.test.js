@@ -8,7 +8,6 @@ const { deviceSeen } = require('../../../../src/device/actions')
 const { assert, expect } = chai
 
 describe('Truenat Authenticate Data Processor', () => {
-  let mockDeviceService
   let mockSharedRequestService
   let mockDeviceApiKeyService
   function mockTruenatLoginDataProcessor(
@@ -32,10 +31,6 @@ describe('Truenat Authenticate Data Processor', () => {
       },
     }
   ) {
-    mockDeviceService = {
-      postPayloadFromDevice: async () => Promise.resolve(),
-    }
-    sinon.spy(mockDeviceService, 'postPayloadFromDevice')
     mockSharedRequestService = {
       getRemoteAddress: () => '10.11.12.13',
     }
@@ -51,11 +46,14 @@ describe('Truenat Authenticate Data Processor', () => {
             this.request = request
             this.messageContext = messageContext
           }
+
+          async updateDeviceLastSeenOn() {
+            return Promise.resolve()
+          }
         },
       },
       '../../../shared/request': mockSharedRequestService,
       '../../../deviceApiKey/service': mockDeviceApiKeyService,
-      '../../../device/service': mockDeviceService,
     })
   }
 
@@ -104,13 +102,6 @@ describe('Truenat Authenticate Data Processor', () => {
     })
 
     describe('when credentials match a device API key', () => {
-      it('will post the payload in the device log', async () => {
-        const TruenatLogin = mockTruenatLoginDataProcessor()
-        const truenatLoginInstance = new TruenatLogin(request, messageContext)
-        await truenatLoginInstance.processRequest()
-        assert.isOk(mockDeviceService.postPayloadFromDevice.calledOnce)
-      })
-
       it('will dispatch the device seen action', async () => {
         const TruenatLogin = mockTruenatLoginDataProcessor()
         const truenatLoginInstance = new TruenatLogin(request, messageContext)
@@ -167,7 +158,7 @@ describe('Truenat Authenticate Data Processor', () => {
         }
       })
 
-      it('will NOT post the payload in the device log', async () => {
+      it('will reject without side effects on failed auth', async () => {
         const TruenatLogin = mockTruenatLoginDataProcessor({
           authenticated: false,
           reason: 'invalid',
@@ -177,7 +168,6 @@ describe('Truenat Authenticate Data Processor', () => {
         await expect(truenatLoginInstance.processRequest()).to.be.rejectedWith(
           `{"username":"${request.payload.Username}","success":false}`
         )
-        assert.isNotOk(mockDeviceService.postPayloadFromDevice.called)
       })
 
       it('will NOT dispatch the device seen action', async () => {
