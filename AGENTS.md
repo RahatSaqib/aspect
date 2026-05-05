@@ -10,8 +10,10 @@ When working in these areas, consult the matching skill first:
 
 - API use cases: `ai-context/skills/api/use-case-development/SKILL.md`
 - API database work: `ai-context/skills/api/database-handling/SKILL.md`
+- API date filters, timezones, `shared/date.js`: `ai-context/skills/api/date-time-handling/SKILL.md`
 - API migrations: `ai-context/skills/api/database-migrations/SKILL.md`
 - API seeds: `ai-context/skills/api/database-seeding/SKILL.md`
+- Authentication, authorization, permissions, menus, and permission-gated UI: `ai-context/skills/authentication-authorization/SKILL.md`
 - Reports: `ai-context/skills/api/reports/SKILL.md`
 - True Connect (mobile API, FormData, sites assigned): `ai-context/skills/api/trueconnect-support/SKILL.md`
 

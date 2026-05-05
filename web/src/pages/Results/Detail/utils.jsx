@@ -242,7 +242,11 @@ const enableItemAndFilter = (item, data, formik, keepInvalidSelection) => {
   if (itemBase) {
     // ASP-5626: 2. condition: based on comparatives with other custom fields, enables and disables the custom field
     if (itemBase.condition) {
-      item.disabledIf = () => !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
+      const existingDisabledIf = item.disabledIf
+      item.disabledIf = (values, isEditMode) => {
+        const isAlreadyDisabled = existingDisabledIf ? existingDisabledIf(values, isEditMode) : false
+        return isAlreadyDisabled || !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
+      }
       item.controlType.hideIfNoOptions = false
     }
 

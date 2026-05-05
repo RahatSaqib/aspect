@@ -132,7 +132,18 @@ const getRawLinks = (f, user) => [
       { href: '/browse/notification/logs', label: f(messages.notificationLogs), perm: ['notification'] },
     ],
   },
-  { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', '+deviceApiKey'] },
+  {
+    href: '/browse/forms',
+    label: f(messages.forms),
+    perm: ['+browse', '+forms', '+result'],
+    submenu: [
+      {
+        href: routePaths.FORMS_TRUENAT_CUSTOM_FIELDS,
+        label: f(messages.truenatCustomFields),
+        perm: ['+browse', '+forms', '+result'],
+      },
+    ],
+  },
   { href: '/reports', label: f(messages.reportsTitle), perm: ['+report'] },
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },
   {
@@ -152,6 +163,7 @@ const getRawLinks = (f, user) => [
         label: getCustomMessage(f, messages, 'inventoryManagementConfiguration', user),
         perm: ['admin', 'edit'],
       },
+      { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', '+deviceApiKey'] },
     ],
   },
 ]

@@ -32,6 +32,7 @@ function addClientRoutes(server) {
   server.route(require('./server/endpoints').routes.map(decorateClientAPI('server')))
   server.route(require('./disease/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./forms/endpoints').routes.map(decorateClientAPI('case')))
+  server.route(require('./formData/endpoints').routes.map(decorateClientAPI('result')))
   server.route(require('./case/endpoints').routes.map(decorateClientAPI('case')))
   server.route(require('./resultCategoryGroup/endpoints').routes.map(decorateClientAPI()))
   server.route(require('./sample/endpoints').routes.map(decorateClientAPI('sample')))

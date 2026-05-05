@@ -53,6 +53,8 @@ const filtersOrdering = {
   maxDate: 220,
   notificationName: 230,
   treatmentStatus: 240,
+  sampleExternalId: 125,
+  matched: 127,
   revoked: 250,
   onlyReportableResults: 260,
   reportName: 270,
@@ -81,6 +83,11 @@ const buttonMapping = {
     <LgaId stateId={stateId} lgaId={lgaId} remove={remove} blocked={blocked} />
   ),
   siteName: ({ siteName, remove, blocked }) => <SiteName siteName={siteName} remove={remove} blocked={blocked} />,
+  siteId: ({ siteId, remove, blocked }) => <SiteId siteId={siteId} remove={remove} blocked={blocked} />,
+  sampleExternalId: ({ sampleExternalId, remove, blocked }) => (
+    <SampleExternalId sampleExternalId={sampleExternalId} remove={remove} blocked={blocked} />
+  ),
+  matched: ({ matched, remove, blocked }) => <MatchedFilter matched={matched} remove={remove} blocked={blocked} />,
   parentWarehouseId: ({ parentWarehouseId, remove, blocked }) => (
     <ParentWarehouseId parentWarehouseId={parentWarehouseId} remove={remove} blocked={blocked} />
   ),
@@ -963,6 +970,42 @@ const NotificationType = ({ notificationTypeCategoryId, notificationTypeId, remo
     )
   }
   return null
+}
+
+const SiteId = ({ siteId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const { data } = useSiteList()
+  const site = data?.find(s => s.id === siteId)
+
+  return site ? (
+    <Btn
+      lbl={formatMessage(messages.whereSiteIs, { siteName: site.name })}
+      del={blocked.includes('siteId') ? undefined : () => remove(['siteId'])}
+    />
+  ) : null
+}
+
+const SampleExternalId = ({ sampleExternalId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return sampleExternalId ? (
+    <Btn
+      lbl={formatMessage(messages.sampleExternalIdFilter, { sampleExternalId })}
+      del={blocked.includes('sampleExternalId') ? undefined : () => remove(['sampleExternalId'])}
+    />
+  ) : null
+}
+
+const MatchedFilter = ({ matched, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const lbl =
+    matched === 'true' || matched === true
+      ? formatMessage(messages.matchedFilter)
+      : formatMessage(messages.notMatchedFilter)
+
+  return matched !== null && matched !== undefined && matched !== '' ? (
+    <Btn lbl={lbl} del={blocked.includes('matched') ? undefined : () => remove(['matched'])} />
+  ) : null
 }
 
 const Revoked = ({ revoked, remove, blocked }) => {

@@ -67,6 +67,7 @@ export const defaultFilter = {
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate }, //
   '/browse/result': { minDate, maxDate }, //
+  '/browse/forms/truenat-custom-fields': { minDate, maxDate },
   '/browse/samples': { minDate, maxDate }, //
   '/browse/site': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate }, //

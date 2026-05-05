@@ -29,6 +29,43 @@ function resolveTrueConnectFieldValue(field, fieldsBag) {
   return undefined
 }
 
+function valuesMatch(a, b) {
+  if (a === b) {
+    return true
+  }
+  if (a == null || b == null) {
+    return false
+  }
+  return String(a) === String(b)
+}
+
+function resolveFieldItem(field, rawValue) {
+  if (!Array.isArray(field.items)) {
+    return null
+  }
+  return _.find(field.items, item => valuesMatch(item.key, rawValue) || valuesMatch(item.value, rawValue)) || null
+}
+
+function normalizeTrueConnectFieldValue(field, raw) {
+  if (_.isPlainObject(raw) && ('value' in raw || 'key' in raw)) {
+    const item = resolveFieldItem(field, raw.key)
+    if (item) {
+      return { ...raw, key: item.key, value: item.value }
+    }
+    const itemFromValue = resolveFieldItem(field, raw.value)
+    if (itemFromValue) {
+      return { ...raw, key: itemFromValue.key, value: itemFromValue.value }
+    }
+    return raw
+  }
+
+  const item = resolveFieldItem(field, raw)
+  if (item) {
+    return { key: item.key, value: item.value }
+  }
+  return { value: raw }
+}
+
 /**
  * Shape TrueConnect `customFieldsData` into a GxConnect-style payload for `getCustomFieldsFromPayload`.
  */
@@ -47,11 +84,7 @@ function buildGxPayloadFromTrueConnectCustomFieldsData(customFieldsData, formsBy
           if (raw !== undefined) {
             const payloadKey = field.id != null && field.id !== '' ? field.id : field.name
             if (payloadKey != null && payloadKey !== '') {
-              if (_.isPlainObject(raw) && ('value' in raw || 'key' in raw)) {
-                customFieldData[payloadKey] = raw
-              } else {
-                customFieldData[payloadKey] = { value: raw }
-              }
+              customFieldData[payloadKey] = normalizeTrueConnectFieldValue(field, raw)
             }
           }
         }

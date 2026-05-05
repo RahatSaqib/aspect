@@ -293,6 +293,84 @@ Never throw `new Error(...)` from route handlers or service functions.
 
 ---
 
+---
+
+## 8. Listing records with `addConstraints` (read-only use case)
+
+Use this pattern when you need a **pageable, filterable list** of records that are access-controlled by the user's site/result constraints. The canonical example is `api/src/formData/` (TDC-21).
+
+### Structure
+
+```
+src/formData/
+  db.js          ← Knex queries; buildBaseQuery + filter modifier
+  service.js     ← Handler + serialization
+  endpoints.js   ← Route definitions (GET /form-data, GET /form-data/{id})
+```
+
+### Key patterns
+
+**`db.js` — base query with constraints**
+
+```js
+const { knex } = require('../db')
+const { addConstraints } = require('../auth/constraints')
+
+function buildBaseQuery(dataConstraints) {
+  return knex('FormData as fd')
+    .join('Site as s', 's.id', 'fd.siteId')
+    // other optional joins ...
+    .modify(addConstraints, dataConstraints, { site: 's' })
+}
+
+function applyListFilters(query, { siteId, dateFrom, dateTo }) {
+  if (siteId) query.where('fd.siteId', siteId)
+  if (dateFrom) query.where('fd.createdOn', '>=', dateFrom)
+  if (dateTo)   query.where('fd.createdOn', '<=', dateTo)
+}
+
+function getRecords(dataConstraints, filters) {
+  return buildBaseQuery(dataConstraints)
+    .modify(applyListFilters, filters)
+    .select('fd.id', 's.name as siteName', ...)
+    .orderBy('fd.createdOn', 'desc')
+}
+
+function countRecords(dataConstraints, filters) {
+  return buildBaseQuery(dataConstraints).modify(applyListFilters, filters).countDistinct('fd.id as total').first()
+}
+```
+
+**`service.js` — handler with default date range**
+
+```js
+async function listRecords(request) {
+  const dataConstraints = await getConstraints(request.auth.credentials)
+  const now = new Date()
+  const filters = {
+    siteId: request.query.siteId,
+    dateFrom: request.query.dateFrom || subDays(now, 30),
+    dateTo:   request.query.dateTo   || now,
+  }
+  const [rows, totalRow] = await Promise.all([
+    getRecords(dataConstraints, filters),
+    countRecords(dataConstraints, filters),
+  ])
+  return { ok: true, total: Number(totalRow.total || 0), length: rows.length, data: rows }
+}
+```
+
+**`endpoints.js` — register with `decorateClientAPI('result')`**
+
+```js
+// In routes.js:
+server.route(require('./formData/endpoints').routes.map(decorateClientAPI('result')))
+```
+
+**Access-control alias rule**: pass `{ site: 's' }` to `addConstraints` when the table being listed has a `siteId` FK, exactly like `getAccessibleFormDataByExternalId` in `api/src/mobileApi/customFields/db.js`. This hooks into job-context OR-constraints and country/partner filtering automatically.
+
+---
+
 ## Complete Example Reference
 
 See `api/src/device/deviceComposition/` for the canonical multi-file use case:

@@ -6,6 +6,8 @@ const _ = require('lodash')
 
 const { assert, expect } = chai
 
+const realResultActions = require('../../../../src/result/actions')
+
 describe('Truenat Result Upload Data Processor', () => {
   const defaultPayload = {
     Age: '55',
@@ -53,7 +55,6 @@ describe('Truenat Result Upload Data Processor', () => {
       Missing: 10,
     },
   }
-  let mockDeviceService
   let mockSharedRequestService
   let mockResultActions
   let mockDb
@@ -69,10 +70,6 @@ describe('Truenat Result Upload Data Processor', () => {
     existingResult,
     newResultId
   ) {
-    mockDeviceService = {
-      postPayloadFromDevice: async () => Promise.resolve(987),
-    }
-    sinon.spy(mockDeviceService, 'postPayloadFromDevice')
     mockSharedRequestService = {
       getRemoteAddress: () => '10.11.12.13',
     }
@@ -204,14 +201,16 @@ describe('Truenat Result Upload Data Processor', () => {
       },
       '../../../shared/request': mockSharedRequestService,
       '../../../db': mockDb,
-      '../../../device/service': mockDeviceService,
-      '../../../result/actions': mockResultActions,
       '../../../shared/dictionary': {
         resultSourceToId: async resultSourceExternalId =>
           Promise.resolve(staticData.resultSource[resultSourceExternalId]),
         resultTypeToId: async resultTypeExternalId => Promise.resolve(staticData.resultType[resultTypeExternalId]),
         allSampleTypeToId: async () => Promise.resolve(staticData.sampleType),
         allResultCategoryToId: async () => Promise.resolve(staticData.resultCategory),
+      },
+      '../../../result/actions': {
+        ...realResultActions,
+        truenatResultLogged: mockResultActions.truenatResultLogged,
       },
     })
   }
