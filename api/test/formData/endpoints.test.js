@@ -18,7 +18,7 @@ describe('formData endpoints', () => {
       listFormDataEntries: async () => expectedResponse,
     })
 
-    assert.equal(endpoint.config.auth.scope[0], 'result:view')
+    assert.equal(endpoint.config.auth.scope[0], 'forms:view')
 
     endpointUtils
       .callHandlerOn(endpoint)
@@ -36,7 +36,7 @@ describe('formData endpoints', () => {
       showFormDataEntry: async () => expectedResponse,
     })
 
-    assert.equal(endpoint.config.auth.scope[0], 'result:view')
+    assert.equal(endpoint.config.auth.scope[0], 'forms:view')
 
     endpointUtils
       .callHandlerOn(endpoint)
