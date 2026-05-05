@@ -6,6 +6,8 @@ const _ = require('lodash')
 
 const { assert, expect } = chai
 
+const realResultActions = require('../../../../src/result/actions')
+
 describe('Truenat Result Upload Data Processor', () => {
   const defaultPayload = {
     Age: '55',
@@ -205,6 +207,10 @@ describe('Truenat Result Upload Data Processor', () => {
         resultTypeToId: async resultTypeExternalId => Promise.resolve(staticData.resultType[resultTypeExternalId]),
         allSampleTypeToId: async () => Promise.resolve(staticData.sampleType),
         allResultCategoryToId: async () => Promise.resolve(staticData.resultCategory),
+      },
+      '../../../result/actions': {
+        ...realResultActions,
+        truenatResultLogged: mockResultActions.truenatResultLogged,
       },
     })
   }
