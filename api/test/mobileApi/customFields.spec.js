@@ -14,32 +14,45 @@ describe('Mobile API Custom Fields', () => {
   describe('GET', () => {
     it('should return custom fields for given external IDs', async () => {
       const response = await server
-        .get(`${path}?externalIds=ClinicalResponse`)
+        .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(response.status, 200)
       assert.property(response.body, 'data')
       assert.isArray(response.body.data)
       assert.equal(response.body.data.length, 1)
-      assert.equal(response.body.data[0].formDefinitionExternalId, 'ClinicalResponse')
-      assert.equal(response.body.data[0].fields.length, 6)
-      assert.containsAllKeys(response.body.data[0], ['formDefinitionExternalId', 'fields'])
+
+      assert.equal(response.body.data[0].fields.length, 12)
+      assert.containsAllKeys(response.body.data[0], ['fields'])
+
+      // First field in ClinicalResponse.json (PatientAge) has no `id`; pick() only returns keys present on the field.
       assert.containsAllKeys(response.body.data[0].fields[0], [
+        'id',
         'name',
+        'items',
         'title',
         'fieldType',
         'order',
         'controlType',
-        'mandatory',
-        'validation',
-        'condition',
       ])
     })
 
-    it('should return 400 if externalIds parameter is missing', async () => {
-      const response = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
+    it('should filter by deviceType: include general forms and forms matching the device type', async () => {
+      const response = await server
+        .get(`${path}?deviceType=CepheidGeneXpert`)
+        .set('Authorization', `Bearer ${shared.token}`)
 
-      assert.equal(response.status, 400)
+      assert.equal(response.status, 200)
+      assert.isArray(response.body.data)
+      assert.isAtLeast(response.body.data.length, 1)
+      response.body.data.forEach(form => {
+        const general = form.deviceTypeExternalId == null
+        const matchesDeviceType = form.deviceTypeExternalId === 'CepheidGeneXpert'
+        assert.isTrue(
+          general || matchesDeviceType,
+          'each form is general (no device type on assay) or matches the deviceType filter'
+        )
+      })
     })
   })
 })

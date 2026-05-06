@@ -382,6 +382,17 @@ const messages = {
     reportWithName: { id: 'filter.popover.reportWithName', defaultMessage: 'Report Name' },
     cancel: { id: 'filter.popover.cancel', defaultMessage: 'Cancel' },
     apply: { id: 'filter.popover.apply', defaultMessage: 'Apply Filters' },
+    sampleExternalId: { id: 'filter.popover.sampleExternalId', defaultMessage: 'Sample ID' },
+    matchStatus: { id: 'filter.popover.matchStatus', defaultMessage: 'Match Status' },
+    matched: { id: 'filter.popover.matched', defaultMessage: 'Matched' },
+    noMatch: { id: 'filter.popover.noMatch', defaultMessage: 'No Match' },
+    whereSiteIs: { id: 'filter.whereSiteIs', defaultMessage: 'Site: {siteName}' },
+    sampleExternalIdFilter: {
+      id: 'filter.sampleExternalIdFilter',
+      defaultMessage: 'Sample ID includes: {sampleExternalId}',
+    },
+    matchedFilter: { id: 'filter.matchedFilter', defaultMessage: 'Matched' },
+    notMatchedFilter: { id: 'filter.notMatchedFilter', defaultMessage: 'Not Matched' },
   }),
 }
 

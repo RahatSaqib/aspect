@@ -1,6 +1,6 @@
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { clientTypes } = require('../auth/service')
+const { mobileClientTypes } = require('../auth/service')
 
 async function listRefreshTokens(request) {
   const { query, auth } = request
@@ -10,7 +10,7 @@ async function listRefreshTokens(request) {
     .innerJoin('Person as p', 'r.userId', 'p.userId')
     .leftJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
-    .where({ clientType: clientTypes.app })
+    .whereIn('r.clientType', mobileClientTypes)
     .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
   const getCount = knex

@@ -21,32 +21,35 @@ const AspectForm = ({ config: { sections, classNames, messages: customMessages }
     <Grid container className={classes}>
       <Form noValidate autoComplete="off" className={styles.form__parent}>
         {sections &&
-          sections.map(({ id, label, labelI18nKey, rows, hideHeader, classNames = {}, visibleIf }) => {
-            if (visibleIf && !visibleIf(formik.values, toggleEdit)) {
-              return null
-            }
-            return (
-              <Grid key={id} item xs={12} className={styles.form__sectionContainer}>
-                <Grid container>
-                  {hideHeader ? null : (
-                    <FormSectionHeader
+          sections.map(
+            ({ id, label, labelI18nKey, headerNoteI18nKey, rows, hideHeader, classNames = {}, visibleIf }) => {
+              if (visibleIf && !visibleIf(formik.values, toggleEdit)) {
+                return null
+              }
+              return (
+                <Grid key={id} item xs={12} className={styles.form__sectionContainer}>
+                  <Grid container>
+                    {hideHeader ? null : (
+                      <FormSectionHeader
+                        classNames={classNames}
+                        header={label}
+                        headerI18nKey={labelI18nKey}
+                        headerNoteI18nKey={headerNoteI18nKey}
+                        messages={messages}
+                      />
+                    )}
+                    <FormSection
                       classNames={classNames}
-                      header={label}
-                      headerI18nKey={labelI18nKey}
+                      fullWidth={hideHeader === true}
                       messages={messages}
+                      rows={rows}
+                      parentKey={id}
                     />
-                  )}
-                  <FormSection
-                    classNames={classNames}
-                    fullWidth={hideHeader === true}
-                    messages={messages}
-                    rows={rows}
-                    parentKey={id}
-                  />
+                  </Grid>
                 </Grid>
-              </Grid>
-            )
-          })}
+              )
+            }
+          )}
       </Form>
     </Grid>
   )

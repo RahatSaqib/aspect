@@ -6,6 +6,8 @@ const _ = require('lodash')
 
 const { assert, expect } = chai
 
+const realResultActions = require('../../../../src/result/actions')
+
 describe('Truenat Result Upload Data Processor', () => {
   const defaultPayload = {
     Age: '55',
@@ -54,6 +56,7 @@ describe('Truenat Result Upload Data Processor', () => {
     },
   }
   let mockSharedRequestService
+  let mockResultActions
   let mockDb
   let knexSpy
   let knexInsertSpies
@@ -71,6 +74,15 @@ describe('Truenat Result Upload Data Processor', () => {
       getRemoteAddress: () => '10.11.12.13',
     }
     sinon.spy(mockSharedRequestService, 'getRemoteAddress')
+    mockResultActions = {
+      truenatResultLogged: sinon.stub().callsFake((resultId, deviceApiRawId, userId, options) => ({
+        type: 'TRUENAT_RESULT_LOGGED',
+        resultId,
+        deviceApiRawId,
+        userId,
+        isResultUpdated: (options && options.isResultUpdated) || false,
+      })),
+    }
     knexSpy = sinon.spy()
     knexSpy.chainedCalls = {
       tables: [],
@@ -195,6 +207,10 @@ describe('Truenat Result Upload Data Processor', () => {
         resultTypeToId: async resultTypeExternalId => Promise.resolve(staticData.resultType[resultTypeExternalId]),
         allSampleTypeToId: async () => Promise.resolve(staticData.sampleType),
         allResultCategoryToId: async () => Promise.resolve(staticData.resultCategory),
+      },
+      '../../../result/actions': {
+        ...realResultActions,
+        truenatResultLogged: mockResultActions.truenatResultLogged,
       },
     })
   }
@@ -338,15 +354,12 @@ describe('Truenat Result Upload Data Processor', () => {
         const TruenatResult = fluentMockTruenatResultUploadDataProcessor().build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
-        const { deviceTypeExternalId, siteExternalId, deviceDefaultReportableSiteId } = defaultDeviceApiKeyDetails
-        const { abbreviation } = defaultAssay
+        const { deviceDefaultReportableSiteId } = defaultDeviceApiKeyDetails
         const patientId = _.get(request, 'payload.PatientID')
         const patientName = _.get(request, 'payload.PatientName')
         const sampleTypeName = _.get(request, 'payload.SampleType')
         const sampleTypeMappings = { Sputum: 'Sputum' }
-        const sampleExternalId = `${deviceTypeExternalId}_${abbreviation}_${siteExternalId}_${
-          patientId || patientName
-        }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
+        const sampleExternalId = patientId || patientName
         const sampleTypeId = sampleTypeMappings[sampleTypeName]
           ? staticData.sampleType[sampleTypeMappings[sampleTypeName]]
           : null
@@ -355,6 +368,13 @@ describe('Truenat Result Upload Data Processor', () => {
           externalId: sampleExternalId,
           sampleTypeId,
           originSiteId: deviceDefaultReportableSiteId,
+        })
+        assert.isTrue(mockResultActions.truenatResultLogged.calledOnce)
+        assert.isTrue(mockResultActions.truenatResultLogged.calledWith(defaultNewResultId, truenatResultInstance.id))
+        assert.deepInclude(messageContext.dispatch.firstCall.args[0], {
+          type: 'TRUENAT_RESULT_LOGGED',
+          resultId: defaultNewResultId,
+          deviceApiRawId: truenatResultInstance.id,
         })
       })
     })

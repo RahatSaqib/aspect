@@ -135,6 +135,11 @@
         "description": "Can view, edit, create and remove cases"
     },
     {
+        "module": "forms",
+        "activity": "view",
+        "description": "Can view the Forms menu and form configuration pages"
+    },
+    {
         "module": "browse",
         "activity": "view",
         "description": "Can view the Browse menu"

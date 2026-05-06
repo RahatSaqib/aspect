@@ -4,6 +4,7 @@ const Boom = require('@hapi/boom')
 const { formatDateOrDefault, parseDateOrDefault } = require('../../../shared/date')
 const { SynchronousDataProcessor } = require('../_base')
 const { deviceSeen } = require('../../../device/actions')
+const { truenatResultLogged } = require('../../../result/actions')
 const { transact } = require('../../../db')
 const {
   resultSourceToId,
@@ -45,16 +46,7 @@ class TruenatResult extends SynchronousDataProcessor {
     try {
       await transact(async knex => {
         const deviceDetails = await getDeviceDetailsFromApiKey(knex, auth.credentials.token)
-        const {
-          deviceId,
-          partnerId,
-          longitude,
-          latitude,
-          deviceDefaultReportableSiteId,
-          siteExternalId,
-          deviceTypeExternalId,
-          siteId,
-        } = deviceDetails
+        const { deviceId, partnerId, longitude, latitude, deviceDefaultReportableSiteId, siteId } = deviceDetails
 
         if (!deviceId) {
           throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
@@ -90,13 +82,7 @@ class TruenatResult extends SynchronousDataProcessor {
 
         const assay = await getAssay(knex, testName)
 
-        const sampleExternalId = generateSampleExternalId(
-          deviceTypeExternalId,
-          assay.abbreviation,
-          siteExternalId,
-          patientId || patientName,
-          sampleTypeName
-        )
+        const sampleExternalId = generateSampleExternalId(patientId || patientName)
         const sampleTypeId = await getSampleTypeId(sampleTypeName)
         const sampleId = await getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, deviceDefaultReportableSiteId)
 
@@ -182,9 +168,10 @@ class TruenatResult extends SynchronousDataProcessor {
           resultExternalId = existingResult.externalId
           await knex('Result').where('id', result.id).update(newResultDetails)
         }
-
+        this.messageContext.dispatch(truenatResultLogged(result.id, this.id))
         this.resultId = result.id
         await this.updateDeviceLastSeenOn(deviceId, utcNow, knex)
+
         this.messageContext.dispatch(deviceSeen(deviceId))
         this.response.resultExternalId = resultExternalId
       })
@@ -276,16 +263,12 @@ async function getAssay(knex, testName) {
   return assay
 }
 
-function generateSampleExternalId(
-  deviceTypeExternalId,
-  assayAbbreviation,
-  siteExternalId,
-  patientIdOrName,
-  sampleTypeName
-) {
-  return `${deviceTypeExternalId}_${assayAbbreviation}_${siteExternalId}_${patientIdOrName}_${
-    sampleTypeMappings[sampleTypeName] || 'Unknown'
-  }`
+function generateSampleExternalId(patientIdOrName) {
+  if (patientIdOrName == null || patientIdOrName === '') {
+    return 'Unknown'
+  }
+  const trimmed = String(patientIdOrName).trim()
+  return trimmed || 'Unknown'
 }
 
 async function getSampleTypeId(sampleTypeName) {

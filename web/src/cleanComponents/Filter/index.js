@@ -16,6 +16,7 @@ import ResultFilter from './FilterContainer.Result'
 import SampleFilter from './FilterContainer.Sample'
 import SiteFilter from './FilterContainer.Site'
 import StatesFilter from './FilterContainer.States'
+import TruenatCustomFieldsFilter from './FilterContainer.TruenatCustomFields'
 import XDRByDeviceFilter from './FilterContainer.XDRByDevice'
 
 export {
@@ -38,4 +39,5 @@ export {
   NotificationLogFilter,
   LgasFilter,
   StatesFilter,
+  TruenatCustomFieldsFilter,
 }

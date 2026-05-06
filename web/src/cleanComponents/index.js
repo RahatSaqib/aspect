@@ -42,6 +42,7 @@ import {
   SampleFilter,
   SiteFilter,
   StatesFilter,
+  TruenatCustomFieldsFilter,
   XDRByDeviceFilter,
 } from './Filter'
 import {
@@ -189,6 +190,7 @@ export {
   StateSelect,
   StateSelector,
   StatesFilter,
+  TruenatCustomFieldsFilter,
   TableContainer,
   ContactTagSelect,
   TagSingleSelect,

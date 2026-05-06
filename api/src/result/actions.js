@@ -2,6 +2,8 @@ const _ = require('lodash')
 // ----------- Action Types ---------------------
 const types = {
   RESULT_LOGGED: 'RESULT_LOGGED',
+  TRUENAT_RESULT_LOGGED: 'TRUENAT_RESULT_LOGGED',
+  RESULT_SITE_ASSIGNED: 'RESULT_SITE_ASSIGNED',
   RESULT_READY_FOR_NOTIFICATION: 'RESULT_READY_FOR_NOTIFICATION',
   RESULT_LOGGED_PROCESSED: 'RESULT_LOGGED_PROCESSED',
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
@@ -183,6 +185,46 @@ function resultLogged(resultId, deviceLogId, userId, options) {
     deviceLogId,
     userId,
     isResultUpdated,
+  }
+}
+
+/**
+ * Creates an action to notify that a Truenat result row is ready for downstream hooks
+ * (e.g. TrueConnect FormData linking). Payload is tied to DeviceApiRaw, not DeviceLog.
+ *
+ * resultId is required
+ * deviceApiRawId is optional (DeviceApiRaw row id when known)
+ * userId is not required
+ * options may include isResultUpdated
+ */
+function truenatResultLogged(resultId, deviceApiRawId, userId, options) {
+  if (!resultId) {
+    throw new Error('Must specify resultId for truenatResultLogged')
+  }
+  const { isResultUpdated = false } = options || {}
+  return {
+    type: types.TRUENAT_RESULT_LOGGED,
+    resultId,
+    deviceApiRawId: deviceApiRawId != null ? deviceApiRawId : null,
+    userId,
+    isResultUpdated,
+  }
+}
+
+/**
+ * Dispatched after a deployment change backfills Result.siteId (NULL -> set) for a
+ * result, so downstream consumers (e.g. TrueConnect FormData linking) can retry
+ * linking that was previously skipped due to the missing site.
+ *
+ * resultId is required
+ */
+function resultSiteAssigned(resultId) {
+  if (!resultId) {
+    throw new Error('Must specify resultId for resultSiteAssigned')
+  }
+  return {
+    type: types.RESULT_SITE_ASSIGNED,
+    resultId,
   }
 }
 
@@ -411,6 +453,8 @@ function resultUnusedModules(deviceId) {
 module.exports = {
   types,
   resultLogged,
+  truenatResultLogged,
+  resultSiteAssigned,
   resultLoggedProcessed,
   resultModuleTemperatureError,
   resultModulePowerError,

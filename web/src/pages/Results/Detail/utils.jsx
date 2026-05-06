@@ -10,6 +10,8 @@ import getFormConfig from './Forms/editConfig'
 import getValidationSchema from './Forms/validation'
 import messages from './messages'
 
+const TRUENAT_DEVICE_TYPE_EXTERNAL_ID = 'molbioTruenat'
+
 const toCamelCase = str => {
   return str
     .toLowerCase()
@@ -19,8 +21,14 @@ const toCamelCase = str => {
 
 export const getFormConfigWithData = (intl, isNew, values) => {
   const formSchema = getFormConfig(intl.formatMessage, isNew, values.assay)
+  const customFieldsSectionIndex = formSchema.sections.findIndex(({ id }) => id === 'CustomFields')
+  const isTrueNatDevice = values.assay?.deviceTypeExternalId === TRUENAT_DEVICE_TYPE_EXTERNAL_ID
 
-  const customFields = formSchema.sections.find(({ id }) => id === 'CustomFields')
+  const customFields = { ...formSchema.sections[customFieldsSectionIndex] }
+  if (isTrueNatDevice) {
+    customFields.headerNoteI18nKey = 'truenatCustomFieldsReadOnlyNote'
+  }
+
   let validationSchema = getValidationSchema(intl.formatMessage)
 
   const totalCustomFields = values.customFields?.length || 0
@@ -31,21 +39,26 @@ export const getFormConfigWithData = (intl, isNew, values) => {
     ]
   } else {
     // generate custom rows
-    customFields.rows = getRowsForCustomFields(values)
+    customFields.rows = getRowsForCustomFields(values, isTrueNatDevice)
     // generate validations
     validationSchema = validationSchema.shape(getValidationsForCustomFields(values, intl.formatMessage))
   }
 
-  const initialValues = getInitialValuesFromFormConfig(formSchema, values)
+  const formSchemaOut = {
+    ...formSchema,
+    sections: formSchema.sections.map((section, i) => (i === customFieldsSectionIndex ? customFields : section)),
+  }
+
+  const initialValues = getInitialValuesFromFormConfig(formSchemaOut, values)
 
   return {
-    ...mergeFormConfigWithData(initialValues, formSchema, messages),
+    ...mergeFormConfigWithData(initialValues, formSchemaOut, messages),
     validationSchema,
     values: initialValues,
   }
 }
 
-function getRowsForCustomFields(values) {
+function getRowsForCustomFields(values, isTrueNatDevice) {
   const id = 9000
   let rows = []
   // show 2 cells per row
@@ -61,7 +74,7 @@ function getRowsForCustomFields(values) {
     const baseItem = {
       id: customField.source,
       label: customField.title,
-      disabledIf: () => !customField.source,
+      disabledIf: () => !customField.source || isTrueNatDevice,
     }
     // Hack ASP-7604 Custom Fields Translations are broken: I18Key from the custom field
     // is not received from the backend, so we try to build it from the title and check if
@@ -229,7 +242,11 @@ const enableItemAndFilter = (item, data, formik, keepInvalidSelection) => {
   if (itemBase) {
     // ASP-5626: 2. condition: based on comparatives with other custom fields, enables and disables the custom field
     if (itemBase.condition) {
-      item.disabledIf = () => !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
+      const existingDisabledIf = item.disabledIf
+      item.disabledIf = (values, isEditMode) => {
+        const isAlreadyDisabled = existingDisabledIf ? existingDisabledIf(values, isEditMode) : false
+        return isAlreadyDisabled || !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
+      }
       item.controlType.hideIfNoOptions = false
     }
 
