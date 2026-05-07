@@ -217,7 +217,5 @@ async function getAggregatedRows(dataConstraints, dateFrom, dateTo, query, assay
 }
 
 module.exports = {
-  getDataForReportXdrDb: getDataForReportXdrBySite,
   getDataForReportXdrBySite,
-  xdrBySiteCounters,
 }
