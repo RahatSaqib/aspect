@@ -151,10 +151,26 @@ describe('Merge Devices', () => {
       updatedOn: new Date(),
     })
     await knex('Instrument').insert({
+      deviceId: sourceDeviceId,
+      serial: 'DUPLICATEINST',
+      macAddress: 'SRCMAC2',
+      active: true,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+    await knex('Instrument').insert({
       deviceId: targetDevice.id,
       serial: 'TGTINST1',
       macAddress: 'TGTMAC1',
       active: true,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+    await knex('Instrument').insert({
+      deviceId: targetDevice.id,
+      serial: 'DUPLICATEINST',
+      macAddress: 'TGTMAC2',
+      active: false,
       createdOn: new Date(),
       updatedOn: new Date(),
     })
@@ -194,6 +210,10 @@ describe('Merge Devices', () => {
     const instrumentSerials = instrumentsOnTarget.map(i => i.serial)
     expect(instrumentSerials).to.include('SRCINST1')
     expect(instrumentSerials).to.include('TGTINST1')
+    expect(instrumentSerials.filter(serial => serial === 'DUPLICATEINST')).to.have.lengthOf(1)
+    const mergedDuplicateInstrument = instrumentsOnTarget.find(i => i.serial === 'DUPLICATEINST')
+    assert.exists(mergedDuplicateInstrument)
+    expect(Boolean(mergedDuplicateInstrument.active)).to.equal(true)
     // Source device should have no instruments
     const instrumentsOnSource = await knex('Instrument').where('deviceId', sourceDeviceId)
     expect(instrumentsOnSource).to.have.lengthOf(0)
