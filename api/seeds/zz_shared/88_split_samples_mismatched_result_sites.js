@@ -4,115 +4,128 @@
  * on the existing row; create a new `Sample` per remaining result with `originSiteId = Result.siteId`
  * and repoint `Result.sampleId`.
  *
+ * Set-based implementation per batch: staging temp table → INSERT Sample SELECT → bulk UPDATE Result.
+ * Each batch runs in its own transaction (shorter locks than one mega-transaction).
+ *
  * One-time seed; tracked in `AspectSeed`. Runs in shared seed environments only (not develop/test).
+ *
+ * Relies on MySQL behaviour: for a single multi-row INSERT into `Sample`, `insertId` is the first
+ * auto-increment value and new ids are consecutive in the same order as `ORDER BY j.seq` (no other
+ * inserts on this connection in between).
  */
-const omit = require('lodash/omit')
 const logger = require('../../src/shared/logger')
 
 module.exports = require('../utils').seed(seed, __filename)
 
-const BATCH_SIZE = 250
-
-function nullSafeSitesDiffer(sampleOriginSiteId, resultSiteId) {
-  if (sampleOriginSiteId == null && resultSiteId == null) {
-    return false
-  }
-  if (sampleOriginSiteId == null || resultSiteId == null) {
-    return true
-  }
-  return sampleOriginSiteId !== resultSiteId
-}
-
-function buildSampleClone(sample, originSiteId, now) {
-  return {
-    ...omit(sample, ['id', 'createdOn', 'updatedOn', 'createdBy', 'updatedBy']),
-    originSiteId,
-    registeredInMobile: false,
-    createdOn: now,
-    updatedOn: now,
-  }
-}
-
-/**
- * @returns {number} number of results repointed
- */
-async function processOneSample(trx, sampleId) {
-  const sample = await trx('Sample').where({ id: sampleId }).first()
-  if (!sample || sample.registeredInMobile) {
-    return 0
-  }
-
-  const results = await trx('Result').where({ sampleId }).orderBy('id', 'asc').select('id', 'siteId')
-
-  if (results.length <= 1) {
-    return 0
-  }
-
-  const hasMismatch = results.some(r => nullSafeSitesDiffer(sample.originSiteId, r.siteId))
-  if (!hasMismatch) {
-    return 0
-  }
-
-  const now = new Date()
-  let repointed = 0
-  const [, ...rest] = results
-
-  /* eslint-disable no-await-in-loop -- each insert/update must complete before the next */
-  for (const r of rest) {
-    const insertPayload = buildSampleClone(sample, r.siteId, now)
-    const [newSampleId] = await trx('Sample').insert(insertPayload)
-    await trx('Result').where({ id: r.id }).update({ sampleId: newSampleId })
-    repointed += 1
-  }
-  /* eslint-enable no-await-in-loop */
-
-  return repointed
-}
+const BATCH_SIZE = 8000
 
 async function seed(knex) {
-  let lastId = 0
-  let samplesTouched = 0
-  let resultsRepointed = 0
-  let hasMore = true
+  let totalJobs = 0
+  let batches = 0
 
-  /* eslint-disable no-await-in-loop -- paginated scan and one transaction per sample */
-  while (hasMore) {
-    const rows = await knex('Sample as s')
-      .select('s.id')
-      .where('s.registeredInMobile', 0)
-      .whereRaw('(SELECT COUNT(*) FROM Result r WHERE r.sampleId = s.id) > 1')
-      .whereExists(function () {
-        this.select(1)
-          .from('Result as r2')
-          .whereRaw('r2.sampleId = s.id')
-          .whereRaw('NOT (s.originSiteId <=> r2.siteId)')
-      })
-      .andWhere('s.id', '>', lastId)
-      .orderBy('s.id', 'asc')
-      .limit(BATCH_SIZE)
+  let more = true
+  while (more) {
+    let jobCount = 0
+    /* eslint-disable no-await-in-loop -- one transaction per batch */
+    await knex.transaction(async trx => {
+      await trx.raw('DROP TEMPORARY TABLE IF EXISTS _asp7978_split_job')
+      await trx.raw(`
+        CREATE TEMPORARY TABLE _asp7978_split_job (
+          seq INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          resultId INT UNSIGNED NOT NULL,
+          oldSampleId INT UNSIGNED NOT NULL,
+          targetSiteId INT UNSIGNED NULL,
+          newSampleId INT UNSIGNED NULL,
+          UNIQUE KEY uq_asp7978_resultId (resultId)
+        )
+      `)
 
-    const batchIds = rows.map(r => r.id)
-    if (batchIds.length === 0) {
-      hasMore = false
-      break
-    }
+      const insertJobRes = await trx.raw(
+        `
+        INSERT INTO _asp7978_split_job (resultId, oldSampleId, targetSiteId)
+        SELECT r.id, r.sampleId, r.siteId
+        FROM Result r
+        INNER JOIN Sample s ON s.id = r.sampleId AND s.registeredInMobile = 0
+        WHERE (SELECT COUNT(*) FROM Result rc WHERE rc.sampleId = s.id) > 1
+          AND EXISTS (
+            SELECT 1 FROM Result rm
+            WHERE rm.sampleId = s.id AND NOT (s.originSiteId <=> rm.siteId)
+          )
+          AND r.id > (SELECT MIN(r2.id) FROM Result r2 WHERE r2.sampleId = r.sampleId)
+        ORDER BY r.id
+        LIMIT ${Number(BATCH_SIZE)}
+      `
+      )
 
-    for (const sampleId of batchIds) {
-      const n = await knex.transaction(trx => processOneSample(trx, sampleId))
-      if (n > 0) {
-        samplesTouched += 1
-        resultsRepointed += n
+      const insertJobPacket = insertJobRes[0]
+      jobCount = insertJobPacket.affectedRows || 0
+      if (jobCount === 0) {
+        await trx.raw('DROP TEMPORARY TABLE IF EXISTS _asp7978_split_job')
+        return
       }
+
+      const insertSampleRes = await trx.raw(`
+        INSERT INTO Sample (
+          externalId,
+          collectedOn,
+          sampleTypeId,
+          originSiteId,
+          registeredInMobile,
+          sampleData,
+          sampleStatus,
+          patientId,
+          collectedBy,
+          updatedBy,
+          createdOn,
+          updatedOn
+        )
+        SELECT
+          s.externalId,
+          s.collectedOn,
+          s.sampleTypeId,
+          j.targetSiteId,
+          0,
+          s.sampleData,
+          s.sampleStatus,
+          s.patientId,
+          s.collectedBy,
+          s.updatedBy,
+          NOW(6),
+          NOW(6)
+        FROM _asp7978_split_job j
+        INNER JOIN Sample s ON s.id = j.oldSampleId
+        ORDER BY j.seq
+      `)
+
+      const insertSamplePacket = insertSampleRes[0]
+      const firstNewId = insertSamplePacket.insertId
+      const insertedSamples = insertSamplePacket.affectedRows || 0
+      if (insertedSamples !== jobCount) {
+        throw new Error(
+          `ASP-7978 seed: job rows (${jobCount}) != inserted Sample rows (${insertedSamples}); aborting batch`
+        )
+      }
+
+      await trx.raw('UPDATE _asp7978_split_job j SET j.newSampleId = ? + j.seq - 1', [firstNewId])
+
+      await trx.raw(`
+        UPDATE Result r
+        INNER JOIN _asp7978_split_job j ON j.resultId = r.id
+        SET r.sampleId = j.newSampleId
+      `)
+
+      await trx.raw('DROP TEMPORARY TABLE IF EXISTS _asp7978_split_job')
+    })
+    /* eslint-enable no-await-in-loop */
+
+    if (jobCount === 0) {
+      more = false
+    } else {
+      batches += 1
+      totalJobs += jobCount
+      logger.info(`88_split_samples_mismatched_result_sites: batch=${batches} rows=${jobCount} cumulative=${totalJobs}`)
     }
-
-    lastId = batchIds[batchIds.length - 1]
-    logger.info(
-      `88_split_samples_mismatched_result_sites: cursor=${lastId} samplesTouched=${samplesTouched} resultsRepointed=${resultsRepointed}`
-    )
   }
-  /* eslint-enable no-await-in-loop */
 
-  logger.info(
-    `88_split_samples_mismatched_result_sites: done samplesTouched=${samplesTouched} resultsRepointed=${resultsRepointed}`
-  )
+  logger.info(`88_split_samples_mismatched_result_sites: done batches=${batches} resultsRepointed=${totalJobs}`)
 }
