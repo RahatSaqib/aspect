@@ -7,6 +7,12 @@ description: Use when implementing or debugging date filters, timezones, ISO que
 
 This skill covers **filter date ranges**, **`api/src/shared/date.js`**, and alignment with the **web** (`date-fns-tz`, user timezone from profile). It is **not** about authentication: JWTs carry permissions and person identity; **timezone** for the logged-in user comes from **Person/Country/TimeZone** in the API and is mirrored in Redux for the web. Putting date-range contracts here keeps **`authentication-authorization/SKILL.md`** focused on **who may call** an endpoint, not **how to parse** `minDate`.
 
+## Datetime precision
+
+- In this codebase, **datetime persistence and comparisons are effectively at second resolution**: MySQL **`DATETIME`** / **`TIMESTAMP`** columns and typical **`Date`** usage round or ignore sub-second parts for stored values and equality checks.
+- Do not rely on millisecond or microsecond differences across the API boundary or after a DB round-trip; if ordering or uniqueness depends on time, use a **separate monotonic key** (e.g. `id`) or explicit fractional-second column design, not `Date` ms alone.
+- When writing raw SQL (e.g. seeds), **`NOW(6)`** vs **`NOW()`** does not change the practical contract above unless the **column** definition stores fractional seconds — assume **seconds-level** semantics unless a migration explicitly widens precision.
+
 ## FormData list (`GET /form-data`) — reference implementation
 
 - Route: `api/src/formData/endpoints.js`, scope **`forms:view`**.

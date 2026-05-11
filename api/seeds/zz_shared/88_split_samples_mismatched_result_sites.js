@@ -2,9 +2,13 @@
  * ASP-7978 backfill: samples shared across results where `Sample.originSiteId` does not match at least
  * one `Result.siteId` (non–mobile samples). For each such sample, keep the first result (by `Result.id`)
  * on the existing row; create a new `Sample` per remaining result with `originSiteId = Result.siteId`
- * and repoint `Result.sampleId`.
+ * and repoint `Result.sampleId`. New samples use `createdOn` / `updatedOn` from the matching `Result`
+ * (falling back to `startedOn` / `endedOn` when needed). Retained samples are then aligned to the first
+ * result still on that row: `originSiteId` and audit timestamps are set from that result (correcting
+ * the old bug that had overwritten `originSiteId` with the last result's site).
  *
- * Set-based implementation per batch: staging temp table → INSERT Sample SELECT → bulk UPDATE Result.
+ * Set-based implementation per batch: job temp (includes per-row timestamps from `Result`) →
+ * INSERT Sample SELECT (no `Result` join) → bulk UPDATE Result → first-result temp → UPDATE retained `Sample`.
  * Each batch runs in its own transaction (shorter locks than one mega-transaction).
  *
  * One-time seed; tracked in `AspectSeed`. Runs in shared seed environments only (not develop/test).
@@ -36,14 +40,27 @@ async function seed(knex) {
           oldSampleId INT UNSIGNED NOT NULL,
           targetSiteId INT UNSIGNED NULL,
           newSampleId INT UNSIGNED NULL,
+          newSampleCreatedOn DATETIME NULL,
+          newSampleUpdatedOn DATETIME NULL,
           UNIQUE KEY uq_asp7978_resultId (resultId)
         )
       `)
 
       const insertJobRes = await trx.raw(
         `
-        INSERT INTO _asp7978_split_job (resultId, oldSampleId, targetSiteId)
-        SELECT r.id, r.sampleId, r.siteId
+        INSERT INTO _asp7978_split_job (
+          resultId,
+          oldSampleId,
+          targetSiteId,
+          newSampleCreatedOn,
+          newSampleUpdatedOn
+        )
+        SELECT
+          r.id,
+          r.sampleId,
+          r.siteId,
+          COALESCE(r.createdOn, r.startedOn, r.endedOn),
+          COALESCE(r.updatedOn, r.createdOn, r.endedOn)
         FROM Result r
         INNER JOIN Sample s ON s.id = r.sampleId AND s.registeredInMobile = 0
         WHERE (SELECT COUNT(*) FROM Result rc WHERE rc.sampleId = s.id) > 1
@@ -63,6 +80,28 @@ async function seed(knex) {
         await trx.raw('DROP TEMPORARY TABLE IF EXISTS _asp7978_split_job')
         return
       }
+
+      await trx.raw('DROP TEMPORARY TABLE IF EXISTS _asp7978_first_sample')
+      await trx.raw(`
+        CREATE TEMPORARY TABLE _asp7978_first_sample (
+          oldSampleId INT UNSIGNED NOT NULL PRIMARY KEY,
+          originSiteId INT UNSIGNED NULL,
+          retainedCreatedOn DATETIME NULL,
+          retainedUpdatedOn DATETIME NULL
+        )
+      `)
+      await trx.raw(`
+        INSERT INTO _asp7978_first_sample (oldSampleId, originSiteId, retainedCreatedOn, retainedUpdatedOn)
+        SELECT
+          s.id,
+          r.siteId,
+          COALESCE(r.createdOn, r.startedOn, r.endedOn),
+          COALESCE(r.updatedOn, r.createdOn, r.endedOn)
+        FROM (SELECT DISTINCT oldSampleId FROM _asp7978_split_job) d
+        INNER JOIN Sample s ON s.id = d.oldSampleId
+        INNER JOIN Result r ON r.sampleId = s.id
+        WHERE r.id = (SELECT MIN(r2.id) FROM Result r2 WHERE r2.sampleId = s.id)
+      `)
 
       const insertSampleRes = await trx.raw(`
         INSERT INTO Sample (
@@ -90,8 +129,8 @@ async function seed(knex) {
           s.patientId,
           s.collectedBy,
           s.updatedBy,
-          NOW(6),
-          NOW(6)
+          j.newSampleCreatedOn,
+          j.newSampleUpdatedOn
         FROM _asp7978_split_job j
         INNER JOIN Sample s ON s.id = j.oldSampleId
         ORDER BY j.seq
@@ -114,6 +153,16 @@ async function seed(knex) {
         SET r.sampleId = j.newSampleId
       `)
 
+      await trx.raw(`
+        UPDATE Sample s
+        INNER JOIN _asp7978_first_sample f ON f.oldSampleId = s.id
+        SET
+          s.originSiteId = f.originSiteId,
+          s.createdOn = f.retainedCreatedOn,
+          s.updatedOn = f.retainedUpdatedOn
+      `)
+
+      await trx.raw('DROP TEMPORARY TABLE IF EXISTS _asp7978_first_sample')
       await trx.raw('DROP TEMPORARY TABLE IF EXISTS _asp7978_split_job')
     })
     /* eslint-enable no-await-in-loop */
