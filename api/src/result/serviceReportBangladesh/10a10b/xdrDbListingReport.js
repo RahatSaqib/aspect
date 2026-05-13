@@ -42,6 +42,7 @@ async function getDataForReportXdrBySite(auth, query) {
 function buildXdrBySiteRows(aggRows) {
   const bySite = new Map()
   const allowedDimensionKeys = new Set(getXdrBySiteDimensionKeys())
+  const dimensionKeys = getXdrBySiteDimensionKeys()
 
   for (const row of aggRows) {
     const siteKey = [row.division ?? '', row.district ?? '', row.siteName ?? ''].join('\t')
@@ -54,14 +55,38 @@ function buildXdrBySiteRows(aggRows) {
       })
     }
 
+    const siteRow = bySite.get(siteKey)
+    siteRow.NEW_INVALID += Number(row.NEW_INVALID) || 0
+    siteRow.NEW_NORESULT += Number(row.NEW_NORESULT) || 0
+    siteRow.NEW_ERROR += Number(row.NEW_ERROR) || 0
+    siteRow.PREV_INVALID += Number(row.PREV_INVALID) || 0
+    siteRow.PREV_NORESULT += Number(row.PREV_NORESULT) || 0
+    siteRow.PREV_ERROR += Number(row.PREV_ERROR) || 0
+
     const dimensionKey = `${row.RRDET}-${row.MtbRifUltraAt}-${row.patientHistory}-${row.sampleType}`
     if (allowedDimensionKeys.has(dimensionKey)) {
-      const siteRow = bySite.get(siteKey)
       for (const counter of xdrBySiteCounters) {
         const value = counter.getValue ? counter.getValue(row) : row[counter.key]
         siteRow[`${counter.key}-${dimensionKey}`] = Number(value) || 0
       }
     }
+  }
+
+  for (const siteRow of bySite.values()) {
+    for (const counter of xdrBySiteCounters) {
+      let sectionTotal = 0
+      for (const dim of dimensionKeys) {
+        sectionTotal += Number(siteRow[`${counter.key}-${dim}`]) || 0
+      }
+      siteRow[`${counter.key}_TOTAL`] = sectionTotal
+    }
+    siteRow.ERRORS_TOTAL =
+      siteRow.NEW_INVALID +
+      siteRow.NEW_NORESULT +
+      siteRow.NEW_ERROR +
+      siteRow.PREV_INVALID +
+      siteRow.PREV_NORESULT +
+      siteRow.PREV_ERROR
   }
 
   return [...bySite.values()].sort((a, b) =>
@@ -76,12 +101,19 @@ function getXdrBySiteDimensionKeys() {
 }
 
 function getEmptyXdrBySiteMetricValues() {
-  return xdrBySiteCounters.reduce((acc, counter) => {
+  const acc = xdrBySiteCounters.reduce((memo, counter) => {
     for (const dimensionKey of getXdrBySiteDimensionKeys()) {
-      acc[`${counter.key}-${dimensionKey}`] = 0
+      memo[`${counter.key}-${dimensionKey}`] = 0
     }
-    return acc
+    return memo
   }, {})
+  acc.NEW_INVALID = 0
+  acc.NEW_NORESULT = 0
+  acc.NEW_ERROR = 0
+  acc.PREV_INVALID = 0
+  acc.PREV_NORESULT = 0
+  acc.PREV_ERROR = 0
+  return acc
 }
 
 async function getAggregatedRows(dataConstraints, dateFrom, dateTo, query, assayIds) {
@@ -218,4 +250,5 @@ async function getAggregatedRows(dataConstraints, dateFrom, dateTo, query, assay
 
 module.exports = {
   getDataForReportXdrBySite,
+  getDataForReportXdrDb: getDataForReportXdrBySite,
 }
