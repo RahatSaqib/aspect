@@ -62,7 +62,7 @@ async function seed(knex) {
           COALESCE(r.createdOn, r.startedOn, r.endedOn),
           COALESCE(r.updatedOn, r.createdOn, r.endedOn)
         FROM Result r
-        INNER JOIN Sample s ON s.id = r.sampleId AND s.registeredInMobile = 0
+        INNER JOIN Sample s ON s.id = r.sampleId AND ifnull(s.registeredInMobile, 0) = 0
         WHERE (SELECT COUNT(*) FROM Result rc WHERE rc.sampleId = s.id) > 1
           AND EXISTS (
             SELECT 1 FROM Result rm
