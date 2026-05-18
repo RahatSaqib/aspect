@@ -1,5 +1,5 @@
 import flowRight from 'lodash/flowRight'
-import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../../oldComponents/shared/requirePermissions'
+import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../../components/shared/requirePermissions'
 import useAuthState from '../useAuthState'
 
 export default function usePermissions() {

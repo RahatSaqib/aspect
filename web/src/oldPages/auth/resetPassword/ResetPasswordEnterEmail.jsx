@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, TextField } from '@mui/material'
 import { compose, withState, pure } from 'recompose'
-import recomposeForm from '../../../oldComponents/recomposeForm'
+import recomposeForm from '../../../components/recomposeForm'
 import validateEmailAddress from '../../../utils/utils/validate'
 import messages from './messages'
 import styles from './ResetPassword.module.css'

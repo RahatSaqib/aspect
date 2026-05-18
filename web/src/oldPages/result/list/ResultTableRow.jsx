@@ -8,8 +8,8 @@ import isNumber from 'lodash/isNumber'
 import partial from 'lodash/partial'
 import { useIntl } from 'react-intl'
 import PermissionChecker from '../../../components/PermissionChecker'
-import styles from '../../../oldComponents/shared/DataTableRow.module.css'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import styles from '../../../components/shared/DataTableRow.module.css'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../components/shared/tableBody'
 import formatters from '../formatters'
 
 const ResultTableRow = ({ extraColumns, result, messages, timeZone, ...restProps }) => {

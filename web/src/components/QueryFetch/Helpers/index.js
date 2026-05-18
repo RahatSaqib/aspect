@@ -2,7 +2,7 @@ import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isPlainObject from 'lodash/isPlainObject'
 import map from 'lodash/map'
-import { checkIfParamsIsDate } from '../../../oldComponents/shared/DateTimeInput/utils/date'
+import { checkIfParamsIsDate } from '../../../components/shared/DateTimeInput/utils/date'
 
 const buildEndpointAndQueryString = (endpoint, params) => {
   if ((!isEmpty(params) && isPlainObject(params)) || isArray(params)) {

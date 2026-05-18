@@ -3,7 +3,7 @@ import { Box, Table, TableBody, TableCell, CircularProgress, TableRow } from '@m
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { useConsumableAssay } from '../../../../hooks/inventory/useConsumable'
-import DataTableHead from '../../../../oldComponents/shared/tableHead'
+import DataTableHead from '../../../../components/shared/tableHead'
 import styles from './InventoryTabs.module.css'
 import messages from './messages'
 

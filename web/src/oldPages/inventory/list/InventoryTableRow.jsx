@@ -14,8 +14,8 @@ import AspectVertMenu from '../../../components/AspectVertMenu'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
-import styles from '../../../oldComponents/shared/DataTableRow.module.css'
-import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
+import styles from '../../../components/shared/DataTableRow.module.css'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../components/shared/tableBody'
 import {
   modifyInventoryOnHand,
   showAddInventoryDialog,

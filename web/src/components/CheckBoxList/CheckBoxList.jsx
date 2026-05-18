@@ -4,7 +4,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import FormGroup from '@mui/material/FormGroup'
 import { useIntl } from 'react-intl'
 import messages from '../../messages/allMessages'
-import Summary from '../../oldComponents/Summary'
+import Summary from '../../components/Summary'
 
 const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSelect, isLoading, listData = [] }) => {
   const [selectAll, setSelectAll] = useState(false)

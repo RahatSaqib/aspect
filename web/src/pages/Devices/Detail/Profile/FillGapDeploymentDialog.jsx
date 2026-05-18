@@ -7,8 +7,8 @@ import * as Yup from 'yup'
 import SiteSelect from '../../../../components/SiteSelect/SiteSelect'
 import useSiteList from '../../../../hooks/site/useSiteList'
 import validationErrorMessages from '../../../../messages/validationErrorMessages'
-import AspectButton from '../../../../oldComponents/shared/AspectButton'
-import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import AspectButton from '../../../../components/shared/AspectButton'
+import AspectDialog from '../../../../components/shared/AspectDialog'
 import messages from './messages'
 
 const FillGapDeploymentDialog = ({ open, onClose, onConfirm, gap }) => {

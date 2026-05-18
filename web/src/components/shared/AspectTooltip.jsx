@@ -1,7 +1,7 @@
 import React from 'react'
 import { Tooltip } from '@mui/material'
 import PropTypes from 'prop-types'
-import IconProvider from '../../components/IconProvider'
+import IconProvider from '../IconProvider'
 import styles from './AspectTooltip.module.css'
 
 const AspectTooltip = ({

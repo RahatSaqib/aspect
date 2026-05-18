@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material'
 import PropTypes from 'prop-types'
-import IconProvider from '../../components/IconProvider'
+import IconProvider from '../IconProvider'
 import styles from './AspectDialog.module.css'
 
 const AspectDialog = ({

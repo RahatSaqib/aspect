@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import { CheckBoxList } from '../../../components'
 import { useConsumable } from '../../../hooks/inventory/useConsumable'
 import { useUpdateConsumablesBatch } from '../../../hooks/site/useUpdateConsumable'
-import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 import messages from './messages'
 
 const ConsumablesBySite = ({ consumableIds, siteId, fixedConsumables = [] }) => {

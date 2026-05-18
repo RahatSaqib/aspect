@@ -9,7 +9,7 @@ import { useLocation } from 'react-router'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useAuthState from '../../hooks/useAuthState'
-import { getTimePeriod } from '../../oldComponents/shared/DateTimeInput/utils/date'
+import { getTimePeriod } from '../../components/shared/DateTimeInput/utils/date'
 import FilterContext from './FilterProvider.Context'
 
 const now = new Date()

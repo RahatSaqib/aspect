@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import messages from '../../../../messages/allMessages'
-import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
+import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { filterColour } from '../../../index'
 import styles from './PieRowGraph.module.css'
 

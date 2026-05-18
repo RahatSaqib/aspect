@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { Box, Tooltip, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
-import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
+import { toDateOnly } from '../../../../components/shared/DateTimeInput/utils/date'
 
 /** Share of total timeline width used for the left fade on the first segment (estimated start). Fixed so it looks the same regardless of segment duration. */
 const LEFT_FADE_PCT_OF_TIMELINE = 3

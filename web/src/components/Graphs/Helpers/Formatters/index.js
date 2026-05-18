@@ -23,7 +23,7 @@ import {
   getTimePeriod,
   getPreviousPeriod,
   negateTimeZoneOffset,
-} from '../../../../oldComponents/shared/DateTimeInput/utils/date'
+} from '../../../../components/shared/DateTimeInput/utils/date'
 import { calcPercentageSplitBar, calcPercentageForGraphs, roundIfNumber } from './calcs'
 import {
   groupByKey,

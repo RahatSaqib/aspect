@@ -5,9 +5,9 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import * as Yup from 'yup'
 import validationErrorMessages from '../../../../messages/validationErrorMessages'
-import AspectButton from '../../../../oldComponents/shared/AspectButton'
-import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
-import { toDateOnly } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
+import AspectButton from '../../../../components/shared/AspectButton'
+import AspectDialog from '../../../../components/shared/AspectDialog'
+import { toDateOnly } from '../../../../components/shared/DateTimeInput/utils/date'
 import messages from './messages'
 
 const FinishDeploymentDialog = ({ open, onClose, onConfirm, startDate }) => {

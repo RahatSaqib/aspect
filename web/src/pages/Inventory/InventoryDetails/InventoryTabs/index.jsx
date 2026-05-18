@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Tab, Tabs, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
-import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
+import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { ConsumptionRate } from './ConsumptionRate.jsx'
 import messages from './messages'
 import { SitesByConsumable } from './SitesByConsumable'

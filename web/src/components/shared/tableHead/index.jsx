@@ -5,7 +5,7 @@ import { withStyles } from '@mui/styles'
 import classNames from 'classnames'
 import isFunction from 'lodash/isFunction'
 import { useSearchParams } from 'react-router-dom'
-import PermissionChecker from '../../../components/PermissionChecker'
+import PermissionChecker from '../../PermissionChecker'
 import AspectTooltip from '../AspectTooltip'
 
 const styles = theme => {

@@ -5,11 +5,11 @@ import PropTypes from 'prop-types'
 import { defineMessages, injectIntl } from 'react-intl'
 import { compose, pure, setPropTypes } from 'recompose'
 import { SiteSelect } from '../../../components'
-import CountrySelectField from '../../../oldComponents/geography/CountrySelectField'
-import PartnerSelectField from '../../../oldComponents/partner/PartnerSelectField'
-import recomposeForm from '../../../oldComponents/recomposeForm'
-import DeviceSelectField from '../../../oldComponents/resource/DeviceSelectField'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import CountrySelectFieldOld from '../../../components/geography/CountrySelectFieldOld'
+import PartnerSelectField from '../../../components/partner/PartnerSelectField'
+import recomposeForm from '../../../components/recomposeForm'
+import DeviceSelectField from '../../../components/resource/DeviceSelectField'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import PropTypeOf from '../../../utils/types'
 
 const messages = defineMessages({
@@ -116,7 +116,7 @@ function DeviceApiKeyAssignerDialogForm({
       autoScrollBodyContent
     >
       <form>
-        <CountrySelectField
+        <CountrySelectFieldOld
           name="countryId"
           floatingLabelText={formatMessage(messages.countryId)}
           allItemText=""

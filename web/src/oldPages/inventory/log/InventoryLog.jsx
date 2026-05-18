@@ -7,19 +7,19 @@ import { useQuery } from 'react-query'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryLogFilter } from '../../../components'
+import BrowseEmptyList from '../../../components/BrowseEmptyList'
+import BrowseTablePaginator from '../../../components/BrowseTablePaginator'
 import {
   HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
 } from '../../../components/HierarchicalSiteView'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
+import DataTableCard from '../../../components/shared/DataTableCard'
 import { INVENTORY_KEY, INVENTORY_KEY_TYPE_LOG_ENDPOINT } from '../../../hooks/inventory/inventoryKeys'
 import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
-import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { getTimezoneById } from '../../../utils/utils/timezone'
 import { strategyRequireExpirationDate, strategyRequireLot } from '../strategyHelper'

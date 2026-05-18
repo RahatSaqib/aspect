@@ -7,7 +7,7 @@ import { useDeleteState } from '../../../hooks/admin/useDeleteState'
 import { STATE_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import messages from '../messages'
 
 export function RemoveStateDialog({ open, state, onOpenChange }) {

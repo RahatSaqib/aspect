@@ -9,7 +9,7 @@ import { useEditLga } from '../../../hooks/admin/useEditLga'
 import { LGA_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import { lgaFormValidation } from '../consts'
 import messages from '../messages'
 

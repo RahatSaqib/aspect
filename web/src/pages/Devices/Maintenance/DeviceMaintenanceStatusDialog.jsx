@@ -4,9 +4,9 @@ import { DesktopDatePicker } from '@mui/x-date-pickers'
 import format from 'date-fns/format'
 import flowRight from 'lodash/flowRight'
 import { defineMessages, useIntl } from 'react-intl'
-import recomposeForm from '../../../oldComponents/recomposeForm'
-import DeviceMaintenanceStatusSelectField from '../../../oldComponents/resource/DeviceMaintenanceStatusSelectField'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import recomposeForm from '../../../components/recomposeForm'
+import DeviceMaintenanceStatusSelectField from '../../../components/resource/DeviceMaintenanceStatusSelectField'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import styles from './BaseDialog.module.css'
 
 const messages = defineMessages({

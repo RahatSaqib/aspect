@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { Stack, Typography, Divider } from '@mui/material'
-import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 import styles from './DataRow.module.css'
 
 const DataRow = ({ label, value, info, valueTooltip, ...props }) => {

@@ -8,7 +8,7 @@ import { useCreateState } from '../../../hooks/admin/useCreateState'
 import { STATE_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import { stateFormValidation } from '../consts'
 import messages from '../messages'
 

@@ -16,7 +16,7 @@ import {
 } from '../../../../components'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
-import AspectButton from '../../../../oldComponents/shared/AspectButton'
+import AspectButton from '../../../../components/shared/AspectButton'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import styles from '../styles.module.css'
 import messages from './messages'

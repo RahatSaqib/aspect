@@ -1,7 +1,7 @@
 import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
-import { getFilters } from '../../oldComponents/utils'
+import { getFilters } from '../../components/utils'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,

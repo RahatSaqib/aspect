@@ -3,7 +3,7 @@ import get from 'lodash/get'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import remove from 'lodash/remove'
-import { getAllDaysInCurrentMonth, getTimePeriod } from '../../../oldComponents/shared/DateTimeInput/utils/date'
+import { getAllDaysInCurrentMonth, getTimePeriod } from '../../../components/shared/DateTimeInput/utils/date'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 
 /**

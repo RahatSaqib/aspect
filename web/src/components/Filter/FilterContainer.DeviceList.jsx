@@ -6,8 +6,8 @@ import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
-import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
+import AspectTooltip from '../../components/shared/AspectTooltip'
+import { isPermittedUser } from '../../components/shared/requirePermissions'
 import CONSTS from '../../utils/consts/Devices/CONSTS'
 import {
   StateSelect,

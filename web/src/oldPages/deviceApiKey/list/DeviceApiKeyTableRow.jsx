@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaCheck, FaRegCopy } from 'react-icons/fa'
-import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
-import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
+import AspectCheckbox from '../../../components/shared/AspectCheckbox'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../components/shared/tableBody'
 import { formatDate } from '../../../utils/utils/dateFormat'
 import styles from './DeviceApiKeyTableRow.module.css'
 

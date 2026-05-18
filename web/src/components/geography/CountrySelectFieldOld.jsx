@@ -10,7 +10,7 @@ import SelectField from '../shared/SelectField'
 /**
  * @deprecated
  */
-class CountrySelectField extends PureComponent {
+class CountrySelectFieldOld extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     countries: PropTypes.objectOf(LazyLoadItems).isRequired,
@@ -74,4 +74,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(CountrySelectField)
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(CountrySelectFieldOld)

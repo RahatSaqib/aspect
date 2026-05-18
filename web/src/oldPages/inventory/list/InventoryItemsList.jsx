@@ -21,10 +21,10 @@ import useInventoryList from '../../../hooks/inventory/useInventoryList'
 import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
-import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import BrowseEmptyList from '../../../components/BrowseEmptyList'
+import BrowseTablePaginator from '../../../components/BrowseTablePaginator'
+import AspectButton from '../../../components/shared/AspectButton'
+import DataTableCard from '../../../components/shared/DataTableCard'
 import {
   addInventory,
   hideAdjustInventoryDialog,

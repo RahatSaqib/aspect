@@ -16,7 +16,7 @@ import subtractQuarters from 'date-fns/subQuarters'
 import subtractWeeks from 'date-fns/subWeeks'
 import subtractYears from 'date-fns/subYears'
 import messages from '../../messages/allMessages'
-import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
+import { getAspectDisplayPreferences } from '../../components/LocalStorage'
 
 const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
 

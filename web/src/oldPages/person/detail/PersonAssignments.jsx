@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, LinearProgress } from '@mui/material'
 import { useIntl } from 'react-intl'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import messages from './messages'
 import PersonAssignmentItem from './PersonAssignmentItem'
 import styles from './PersonDetail.module.css'

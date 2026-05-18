@@ -3,7 +3,7 @@ import identity from 'lodash/identity'
 import map from 'lodash/map'
 import partial from 'lodash/partial'
 import without from 'lodash/without'
-import { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/shared/TablePaginator'
+import { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../components/shared/TablePaginator'
 import messages from './messages'
 
 const messageByI18nKey = partial(

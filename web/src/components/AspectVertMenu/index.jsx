@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { Divider, ListItemIcon, ListItemText, MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
-import IconMenu from '../../oldComponents/shared/IconMenu'
+import IconMenu from '../../components/shared/IconMenu'
 import IconProvider from '../IconProvider'
 import styles from './AspectVertMenu.module.css'
 

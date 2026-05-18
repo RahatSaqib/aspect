@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { useMutation } from 'react-query'
 import fetchWrapperForQueries from '../../../../components/QueryFetch/index'
 import { NOTIFICATION_DETAIL } from '../../../../components/QueryFetch/Notification/index'
-import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import AspectDialog from '../../../../components/shared/AspectDialog'
 import messages from './messages'
 
 const ToggleStatusConfirmationModal = ({

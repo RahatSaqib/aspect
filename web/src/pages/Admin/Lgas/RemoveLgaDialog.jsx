@@ -7,7 +7,7 @@ import { useDeleteLga } from '../../../hooks/admin/useDeleteLga'
 import { LGA_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import messages from '../messages'
 
 export function RemoveLgaDialog({ open, lga, onOpenChange }) {

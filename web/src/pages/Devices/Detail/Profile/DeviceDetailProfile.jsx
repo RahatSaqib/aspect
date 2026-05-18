@@ -12,10 +12,10 @@ import PermissionChecker from '../../../../components/PermissionChecker'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../../hooks/useFilterValues'
-import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
-import Summary from '../../../../oldComponents/Summary'
-import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
+import AspectTooltip from '../../../../components/shared/AspectTooltip'
+import ColoredNumber from '../../../../components/shared/ColoredNumber'
+import Summary from '../../../../components/Summary'
+import { sanitizeFiltersStringBy } from '../../../../components/utils'
 import {
   exportDeviceLogs,
   hideDialog,

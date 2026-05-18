@@ -6,7 +6,7 @@ import { useQuery } from 'react-query'
 import EmptyGraph from '../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../QueryFetch'
 import { graphMessages } from '../../../messages'
-import { dateRangeOptions } from '../../../oldComponents/shared/DateTimeInput/utils/date'
+import { dateRangeOptions } from '../../../components/shared/DateTimeInput/utils/date'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import {
   getTimePeriod,

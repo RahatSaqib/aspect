@@ -1,6 +1,6 @@
 import React from 'react'
 import { Table, TableRow, TableCell } from '@mui/material'
-import DataTableHead from '../../oldComponents/shared/tableHead'
+import DataTableHead from '../../components/shared/tableHead'
 
 export { Table as SampleDataTable, DataTableHead as SampleDataTableHead }
 

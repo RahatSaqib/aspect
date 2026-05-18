@@ -34,7 +34,7 @@ import messages from '../../../PkDashboard.Messages'
  * ------------------------
  * We fetch data via web/src/components/QueryFetch/index.js and then helper func
  * buildEndpointAndQueryString() calls checkIfParamsIsDate() and getISOFromString() in
- * web/src/oldComponents/shared/DateTimeInput/utils/date.js
+ * web/src/components/shared/DateTimeInput/utils/date.js
  * where we add to the ISO datetime a current country timezone from localStorage.
  * In which case, when logged in user is in TZ +03:00 but country is in TZ +06:00,
  * then produced time would be like '2024-01-01T03:00:00.000+06:00'.

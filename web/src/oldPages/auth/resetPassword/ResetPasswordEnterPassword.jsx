@@ -1,8 +1,8 @@
 import React from 'react'
 import { Button, TextField } from '@mui/material'
 import { compose, withState, pure } from 'recompose'
-import recomposeForm from '../../../oldComponents/recomposeForm'
-import StrongPasswordInput from '../../../oldComponents/shared/StrongPasswordInput'
+import recomposeForm from '../../../components/recomposeForm'
+import StrongPasswordInput from '../../../components/shared/StrongPasswordInput'
 import messages from './messages'
 import styles from './ResetPassword.module.css'
 

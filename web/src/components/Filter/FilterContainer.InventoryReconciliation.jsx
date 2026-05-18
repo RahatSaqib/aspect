@@ -6,7 +6,7 @@ import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
+import { isPermittedUser } from '../../components/shared/requirePermissions'
 import { ConsumableSelect, LgaSelect, PeriodSelector, StateSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
