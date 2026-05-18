@@ -1026,15 +1026,15 @@ async function getTruenatDataFor10AReport(auth, query) {
     dateFrom = subMonths(dateTo, 1)
   }
 
-  return knex('Result as r')
+  const row = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
+    .innerJoin('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
     .leftJoin('Site as s', 's.id', 'r.siteId')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .where('dt.externalId', 'molbioTruenat')
-    .where('ds.externalId', 'approved')
+    .where('da.token', 'approved')
     .whereIn('a.externalId', ['assayTruenatMtb', 'assayTruenatMtbPlus', 'assayTruenatRif', 'assayTruenatUnknown'])
     .modify(addConstraints, dataConstraints, { result: 'r', site: 's', geography: 'g', assay: 'a', device: 'd' })
     .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
@@ -1056,6 +1056,16 @@ async function getTruenatDataFor10AReport(auth, query) {
       knex.raw(`SUM(CASE WHEN a.externalId = 'assayTruenatRif' THEN 1 ELSE 0 END) as cntTruenatRifDxChipUsed`)
     )
     .first()
+
+  return {
+    cntTruenatDevice: Number(row?.cntTruenatDevice) || 0,
+    cntTruenatDeviceFunctional: Number(row?.cntTruenatDeviceFunctional) || 0,
+    cntTruenatChipPortsTotal: Number(row?.cntTruenatChipPortsTotal) || 0,
+    cntTruenatChipPortsFunctional: Number(row?.cntTruenatChipPortsFunctional) || 0,
+    cntTruenatCartridgeUsed: Number(row?.cntTruenatCartridgeUsed) || 0,
+    cntTruenatMtbChipUsed: Number(row?.cntTruenatMtbChipUsed) || 0,
+    cntTruenatRifDxChipUsed: Number(row?.cntTruenatRifDxChipUsed) || 0,
+  }
 }
 
 // ---------------------------------------------------------------------------
