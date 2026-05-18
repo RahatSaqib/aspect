@@ -15,7 +15,7 @@ import {
   StateSelect,
   ContactTagSelect,
   TimezoneSelect,
-} from '../../cleanComponents'
+} from '../../components'
 import useAddPerson from '../../hooks/person/useAddPerson'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePerson from '../../hooks/person/useUpdatePerson'

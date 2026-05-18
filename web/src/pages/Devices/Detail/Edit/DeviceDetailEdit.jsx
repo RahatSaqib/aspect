@@ -13,10 +13,10 @@ import {
   CepheidInstrumentModelSelect,
   CepheidSoftwareTypeSelect,
   TagInput,
-} from '../../../../cleanComponents'
+} from '../../../../components'
+import AspectButton from '../../../../components/shared/AspectButton'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
-import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import styles from '../styles.module.css'
 import messages from './messages'

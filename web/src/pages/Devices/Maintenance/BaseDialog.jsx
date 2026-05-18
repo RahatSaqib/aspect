@@ -3,8 +3,8 @@ import { Button, InputLabel, TextField } from '@mui/material'
 import has from 'lodash/has'
 import identity from 'lodash/identity'
 import { defineMessages, useIntl } from 'react-intl'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
+import AspectDialog from '../../../components/shared/AspectDialog'
+import DateTimeInput from '../../../components/shared/DateTimeInput'
 import styles from './BaseDialog.module.css'
 
 const sharedMessages = defineMessages({

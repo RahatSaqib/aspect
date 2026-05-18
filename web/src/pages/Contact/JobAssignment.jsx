@@ -16,14 +16,14 @@ import {
   SiteSelect,
   StateSelect,
   TagSingleSelect,
-} from '../../cleanComponents'
+} from '../../components'
 import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
 import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
 import usePersonAssignment from '../../hooks/person/usePersonAssignment'
 import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages'
-import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
 import { gotoReturnUrl } from '../../utils/utils/browser'
+import PersonAssignments from '../Person/detail/PersonAssignments'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'

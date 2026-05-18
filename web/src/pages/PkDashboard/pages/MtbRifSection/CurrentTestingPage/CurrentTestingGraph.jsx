@@ -15,9 +15,9 @@ import {
   ColumnGraph,
   Loading,
   formatDataByGraphType,
-} from '../../../../../cleanComponents'
-import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
-import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Graphs/graphUtils'
+} from '../../../../../components'
+import intlMessages from '../../../../../components/Graphs/graphMessages'
+import { getMinMaxDateFromMonthString } from '../../../../../components/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useAuthState from '../../../../../hooks/useAuthState'
@@ -34,7 +34,7 @@ import messages from '../../../PkDashboard.Messages'
  * ------------------------
  * We fetch data via web/src/components/QueryFetch/index.js and then helper func
  * buildEndpointAndQueryString() calls checkIfParamsIsDate() and getISOFromString() in
- * web/src/oldComponents/shared/DateTimeInput/utils/date.js
+ * web/src/components/shared/DateTimeInput/utils/date.js
  * where we add to the ISO datetime a current country timezone from localStorage.
  * In which case, when logged in user is in TZ +03:00 but country is in TZ +06:00,
  * then produced time would be like '2024-01-01T03:00:00.000+06:00'.
@@ -79,7 +79,7 @@ const defaultFilters = [
   { maxDate },
   /**
    * we may use below range when now is January, let's leave it here
-   * `getTimePeriod` is in `/cleanComponents/Graphs/graphUtils`
+   * `getTimePeriod` is in `/components/Graphs/graphUtils`
    */
   // { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   // { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },

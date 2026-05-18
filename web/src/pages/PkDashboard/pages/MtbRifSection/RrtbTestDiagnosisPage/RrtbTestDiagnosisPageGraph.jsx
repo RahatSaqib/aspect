@@ -9,8 +9,8 @@ import {
   Loading,
   getTimePeriod,
   objectToArray,
-} from '../../../../../cleanComponents'
-import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
+} from '../../../../../components'
+import intlMessages from '../../../../../components/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'

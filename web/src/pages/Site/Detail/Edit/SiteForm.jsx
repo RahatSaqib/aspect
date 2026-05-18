@@ -7,20 +7,14 @@ import times from 'lodash/times'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  ConsumableSelect,
-  LocationSelector,
-  SiteListSelect,
-  TagInput,
-  TimezoneSelect,
-} from '../../../../cleanComponents'
+import { ConsumableSelect, LocationSelector, SiteListSelect, TagInput, TimezoneSelect } from '../../../../components'
 import PermissionChecker from '../../../../components/PermissionChecker'
+import AspectDialog from '../../../../components/shared/AspectDialog'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
 import useDeleteSite from '../../../../hooks/site/useDeleteSite'
 import useSiteType from '../../../../hooks/site/useSiteType'
 import useUpdateSite from '../../../../hooks/site/useUpdateSite'
 import useAuthState from '../../../../hooks/useAuthState'
-import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { gotoReturnUrl } from '../../../../utils/utils/browser'
 import { SITE_TYPE_EXTERNAL_IDS } from '../../siteTypes'
 import messages from '../messages'

@@ -11,7 +11,7 @@ import isEmpty from 'lodash/isEmpty'
 import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
-import { Cron, getCronHumanValue } from '../../../cleanComponents'
+import { Cron, getCronHumanValue } from '../..'
 import { getFieldErrorProps } from '../Formik/Helpers'
 import messages from '../messages'
 

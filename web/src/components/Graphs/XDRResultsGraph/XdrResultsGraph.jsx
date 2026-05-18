@@ -1,0 +1,238 @@
+import React, { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
+import filter from 'lodash/filter'
+import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
+import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
+import { graphMessages } from '../../../messages'
+import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
+import { formatDataByGraphType, Loading } from '../../index'
+import fetchWrapperForQueries from '../../QueryFetch'
+import EmptyGraph from '../EmptyData'
+import messages from '../graphMessages'
+import styles from '../graphStyles.module.css'
+import {
+  getTimePeriod,
+  genLabel,
+  calcPercentageForGraphs,
+  negateTimeZoneOffset,
+  getMinMaxDateFromMonthString,
+  getResultCategoryGroupsForResultList,
+} from '../graphUtils'
+import { DonutGraph, ColumnGraph } from '../index'
+
+const endPointParams = [
+  { assay: 'GxMtbXdr' },
+  { groupBy: 'month' },
+  { groupBy: 'resultCategory2' },
+  { groupBy: 'resultCategory1' },
+  { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true) },
+  { flags: 'GET_TOTAL_RESULTS' },
+]
+
+const resultCategoryGroupIds = [
+  'GxMtbXdrMtbDetectedXdrDetected',
+  'GxMtbXdrMtbDetectedXdrNotDetected',
+  'GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
+  'GxMtbXdrMtbDetectedXdrIndeterminate',
+]
+
+for (const resultCategoryGroupId of resultCategoryGroupIds) {
+  endPointParams.push({ resultCategoryGroupId })
+}
+
+const XdrResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromState: resultCategoryGroups }) => {
+  const { formatMessage, format } = useIntl()
+  const [showLabel, setShowLabel] = useState(false)
+  const navigate = useNavigate()
+  const [addFilter] = useFilterUpdate()
+
+  const { data } = useQuery(
+    ['xdrByCategory1Monthly', { endPointParams }],
+    async ({ queryKey: [, { endPointParams }] }) =>
+      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams }),
+    { ...GRAPHS_QUERY_OPTIONS }
+  )
+
+  const [donutData, setDonutData] = useState({})
+  const [barData, setBarData] = useState({})
+  useEffect(() => {
+    if (data && data.data) {
+      const keyToConsume = 'resultCategory2'
+      const info = data.data.filter(i => !!i[keyToConsume])
+      const i18nKeys = reduce(
+        info,
+        (acc, curr) => {
+          acc[curr.resultCategory2] = curr.resultCategory2I18nKey
+          return acc
+        },
+        {}
+      )
+      // code for donut
+      const pieData = formatDataByGraphType(
+        info,
+        'percentage',
+        { resultCategory1: { values: ['Detected'] } },
+        'MMM yy',
+        'cnt',
+        keyToConsume,
+        i18nKeys,
+        'pie',
+        endPointParams,
+        formatMessage,
+        messages
+      )
+      const numberOfMonthsInAYear = 12
+
+      const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
+      const detected = pieData.find(elem => elem.id === 'Detected') || {}
+
+      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(1)
+
+      const pie = pieData.map(d => ({
+        ...d,
+        label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+      }))
+      // code for column
+      const groupedForBar = formatDataByGraphType(
+        info,
+        'percentage',
+        { resultCategory1: { values: ['Detected'] } },
+        'MMM',
+        'month',
+        keyToConsume,
+        i18nKeys,
+        'bar',
+        endPointParams,
+        formatMessage,
+        messages
+      )
+      const expandedBarData = []
+      groupedForBar.map(result => {
+        const allKeysButMonth = Object.keys(result).filter(key => key !== 'month' && key !== 'totalCnt')
+        allKeysButMonth.map(key =>
+          expandedBarData.push({
+            id: key,
+            month:
+              formatMessage(messages[format(negateTimeZoneOffset(new Date(result.month)), 'MMM').toLowerCase()]) +
+              format(negateTimeZoneOffset(new Date(result.month)), '-yyyy'),
+            value: +result[key].toFixed(3).slice(0, -1),
+            type: genLabel(key, assays, formatMessage, messages, i18nKeys),
+            originalMonth: result.month,
+          })
+        )
+        return result
+      })
+      setBarData({ data: expandedBarData })
+      setDonutData({ data: pie, total: `${pieAvg}%` })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, filter])
+
+  return !data || !assays || !resultCategoryGroups ? (
+    <Loading />
+  ) : (
+    <Grid container className={styles.Graph_Container}>
+      <Grid item xs={12}>
+        <Card>
+          <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsXdrTitle)} />
+          <CardContent>
+            <Grid container spacing={1} className={styles.Graph_Content}>
+              <Grid item xs={12} md={12} lg={2}>
+                <Grid container spacing={2} className={styles.Graph_Content_Container}>
+                  <Grid item xs={12} md={4} lg={12} className={styles.Graph_Content_ShowLabel}>
+                    <FormControlLabel
+                      label={formatMessage(graphMessages.showValuesLabel)}
+                      control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12} md={12} lg={10}>
+                <Grid container>
+                  <Grid item xs={12} md={8}>
+                    {barData.data && barData.data.length ? (
+                      <ColumnGraph
+                        data={barData.data}
+                        graphId="xdrByCategory1Monthly"
+                        xField="month"
+                        yField="value"
+                        seriesField="type"
+                        legend={false}
+                        showLabel={showLabel}
+                        isPercentage
+                        onReady={plot => {
+                          plot.on('plot:click', evt => {
+                            const assayIds = assays.filter(it => ['GxMtbXdr'].includes(it.externalId)).map(it => it.id)
+                            const resultCategoryGroupId = getResultCategoryGroupsForResultList(
+                              resultCategoryGroups,
+                              assayIds,
+                              [],
+                              [evt.data.data.id]
+                            )
+                            const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
+
+                            const params = {
+                              assayId: assayIds,
+                              minDate,
+                              maxDate,
+                              resultCategoryGroupId,
+                              displayResult: 'actual',
+                            }
+                            addFilter({ ...params }, '/browse/result')
+                            navigate('/browse/result')
+                          })
+                        }}
+                      />
+                    ) : (
+                      <EmptyGraph type="bar" />
+                    )}
+                  </Grid>
+
+                  <Grid item xs={12} md={4} lg={4}>
+                    {donutData.data && donutData.data.length ? (
+                      <DonutGraph
+                        data={donutData.data}
+                        total={donutData.total}
+                        graphId="xdrByCategory1Aggregate"
+                        graphTitle={[
+                          formatMessage(graphMessages.clinicalIndicatorsXdrPieLegend)
+                            .split(' ')
+                            .splice(
+                              0,
+                              Math.ceil(
+                                formatMessage(graphMessages.clinicalIndicatorsXdrPieLegend).split(' ').length / 2
+                              )
+                            )
+                            .join(' '),
+                          formatMessage(graphMessages.clinicalIndicatorsXdrPieLegend)
+                            .split(' ')
+                            .splice(
+                              Math.ceil(
+                                formatMessage(graphMessages.clinicalIndicatorsXdrPieLegend).split(' ').length / 2
+                              )
+                            )
+                            .join(' '),
+                        ].join('<br/>')} // "Average Monthly<br/>Test Performed"
+                        showLabel={showLabel}
+                        legend={false}
+                      />
+                    ) : (
+                      <EmptyGraph type="pie" />
+                    )}
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
+  )
+}
+
+export default XdrResultsGraph

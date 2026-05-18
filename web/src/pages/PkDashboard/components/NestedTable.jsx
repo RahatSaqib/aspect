@@ -13,7 +13,7 @@ import {
   TableRow,
   TableSortLabel,
 } from '@mui/material'
-import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 
 function addDepth(items) {
   const tree = { children: items }

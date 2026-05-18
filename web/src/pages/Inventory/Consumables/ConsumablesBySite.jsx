@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
-import { CheckBoxList } from '../../../cleanComponents'
+import { CheckBoxList } from '../../../components'
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 import { useConsumable } from '../../../hooks/inventory/useConsumable'
 import { useUpdateConsumablesBatch } from '../../../hooks/site/useUpdateConsumable'
-import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
 import messages from './messages'
 
 const ConsumablesBySite = ({ consumableIds, siteId, fixedConsumables = [] }) => {
