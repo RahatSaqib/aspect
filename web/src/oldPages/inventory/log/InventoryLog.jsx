@@ -6,12 +6,12 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
-import { DetailHeader, InventoryLogFilter } from '../../../cleanComponents'
+import { DetailHeader, InventoryLogFilter } from '../../../components'
 import {
   HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
-} from '../../../cleanComponents/HierarchicalSiteView'
+} from '../../../components/HierarchicalSiteView'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_KEY, INVENTORY_KEY_TYPE_LOG_ENDPOINT } from '../../../hooks/inventory/inventoryKeys'
 import usePartner from '../../../hooks/partner/usePartner'

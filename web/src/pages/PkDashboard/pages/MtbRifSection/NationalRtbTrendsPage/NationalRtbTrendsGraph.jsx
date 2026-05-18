@@ -10,7 +10,7 @@ import {
   objectToArray,
   ColumnGraph,
   LineGraph,
-} from '../../../../../cleanComponents'
+} from '../../../../../components'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'

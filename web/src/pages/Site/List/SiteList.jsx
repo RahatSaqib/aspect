@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Box, LinearProgress, Switch, TableBody, Typography } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
+import { DetailHeader, SiteFilter, TableContainer } from '../../../components'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import {
   useHierarchicalSwitch,
   hierarchicalToggleSettingsLocalStorageKey,
   HierarchicalView,
-} from '../../../cleanComponents/HierarchicalSiteView'
-import AspectExportListButton from '../../../components/AspectExportListButton/index'
+} from '../../../components/HierarchicalSiteView'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'

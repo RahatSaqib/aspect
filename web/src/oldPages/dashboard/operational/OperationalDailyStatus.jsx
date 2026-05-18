@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { ErrorBoundary } from '../../../cleanComponents'
+import { ErrorBoundary } from '../../../components'
 import DailyStatus from '../../../components/Graphs/DailyStatus'
 import DailyStatusMap from '../../../components/Maps/DailyStatus'
 import PermissionChecker from '../../../components/PermissionChecker'

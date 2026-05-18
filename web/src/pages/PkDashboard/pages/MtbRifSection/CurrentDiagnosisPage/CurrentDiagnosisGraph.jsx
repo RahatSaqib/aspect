@@ -14,12 +14,12 @@ import {
   negateTimeZoneOffset,
   objectToArray,
   StateSelect,
-} from '../../../../../cleanComponents'
-import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
+} from '../../../../../components'
+import intlMessages from '../../../../../components/Graphs/graphMessages'
 import {
   getMinMaxDateFromMonthString,
   getResultCategoryGroupsForResultList,
-} from '../../../../../cleanComponents/Graphs/graphUtils'
+} from '../../../../../components/Graphs/graphUtils'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'

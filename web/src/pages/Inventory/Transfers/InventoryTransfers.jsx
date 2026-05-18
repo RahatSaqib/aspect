@@ -14,13 +14,13 @@ import {
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
-import { DetailHeader, InventoryTransferFilter } from '../../../cleanComponents'
+import { DetailHeader, InventoryTransferFilter } from '../../../components'
+import AspectExportListButton from '../../../components/AspectExportListButton'
 import {
   HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
-} from '../../../cleanComponents/HierarchicalSiteView'
-import AspectExportListButton from '../../../components/AspectExportListButton'
+} from '../../../components/HierarchicalSiteView'
 import useInventoryTransferDownload from '../../../hooks/inventory/useInventoryTransferDownload'
 import useInventoryTransferList from '../../../hooks/inventory/useInventoryTransferList'
 import usePartner from '../../../hooks/partner/usePartner'

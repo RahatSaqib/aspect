@@ -5,7 +5,7 @@ import {
   DeviceStatusGraph,
   ResultTransmittedGraph,
   InventoryStatusGraph,
-} from '../../../cleanComponents'
+} from '../../../components'
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'

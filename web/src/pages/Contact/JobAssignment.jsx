@@ -16,7 +16,7 @@ import {
   SiteSelect,
   StateSelect,
   TagSingleSelect,
-} from '../../cleanComponents'
+} from '../../components'
 import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
 import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
 import usePersonAssignment from '../../hooks/person/usePersonAssignment'

@@ -13,7 +13,7 @@ import {
   CepheidInstrumentModelSelect,
   CepheidSoftwareTypeSelect,
   TagInput,
-} from '../../../../cleanComponents'
+} from '../../../../components'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'

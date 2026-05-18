@@ -6,13 +6,13 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { useSearchParams } from 'react-router-dom'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import { InventoryReconciliationFilter } from '../../../cleanComponents/Filter'
+import DetailHeader from '../../../components/DetailHeader'
+import { InventoryReconciliationFilter } from '../../../components/Filter'
 import {
   HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
-} from '../../../cleanComponents/HierarchicalSiteView'
+} from '../../../components/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import useAutoReconciliation from '../../../hooks/inventory/useAutoReconciliation'
 import useInventoryReconciliation from '../../../hooks/inventory/useInventoryReconciliation'

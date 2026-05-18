@@ -9,7 +9,7 @@ import {
   LineGraph,
   fillData,
   AspectSelect,
-} from '../../../../../cleanComponents'
+} from '../../../../../components'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'

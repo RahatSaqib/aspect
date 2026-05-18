@@ -15,7 +15,7 @@ import {
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
-import { DetailHeader } from '../../../../cleanComponents'
+import { DetailHeader } from '../../../../components'
 import usePartner from '../../../../hooks/partner/usePartner'
 import { useUpdatePartnerInventory } from '../../../../hooks/partner/useUpdatePartnerInventory'
 import messages from '../messages'

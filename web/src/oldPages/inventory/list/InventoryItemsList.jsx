@@ -9,13 +9,13 @@ import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
-import { DetailHeader, InventoryItemsFilter } from '../../../cleanComponents'
+import { DetailHeader, InventoryItemsFilter } from '../../../components'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import {
   HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
-} from '../../../cleanComponents/HierarchicalSiteView'
-import AspectExportListButton from '../../../components/AspectExportListButton/index'
+} from '../../../components/HierarchicalSiteView'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useInventoryList from '../../../hooks/inventory/useInventoryList'
 import usePartner from '../../../hooks/partner/usePartner'

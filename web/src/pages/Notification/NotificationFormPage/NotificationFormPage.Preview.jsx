@@ -1,7 +1,7 @@
 import React from 'react'
 import isString from 'lodash/isString'
 import { useIntl } from 'react-intl'
-import { getCronHumanValue } from '../../../cleanComponents'
+import { getCronHumanValue } from '../../../components'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import usePersonList from '../../../hooks/person/usePersonList'
 import jobFunctionsMessages from '../../../messages/jobFunctionMessages'

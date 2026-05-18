@@ -12,7 +12,7 @@ import {
   TestsOverTimeGraph,
   TreatmentStatusGraph,
   XDRFLQResistanceGraph,
-} from '../../../cleanComponents'
+} from '../../../components'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useAssayList from '../../../hooks/assay/useAssayList'
 import useResultCategoryGroup from '../../../hooks/result/useResultCategoryGroup'

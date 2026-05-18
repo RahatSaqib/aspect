@@ -13,7 +13,7 @@ import {
   SiteListSelect,
   TagInput,
   TimezoneSelect,
-} from '../../../../cleanComponents'
+} from '../../../../components'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
 import useDeleteSite from '../../../../hooks/site/useDeleteSite'
