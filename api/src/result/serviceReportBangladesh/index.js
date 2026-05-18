@@ -1016,6 +1016,49 @@ const reportDrTb10ABaseQuery = async (auth, query, groupBySite = false) => {
 }
 
 // ---------------------------------------------------------------------------
+async function getTruenatDataFor10AReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const dates = getDatesFromQuery(query)
+  let { dateFrom } = dates
+  const { dateTo } = dates
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+
+  return knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
+    .leftJoin('Site as s', 's.id', 'r.siteId')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .where('dt.externalId', 'molbioTruenat')
+    .where('ds.externalId', 'approved')
+    .whereIn('a.externalId', ['assayTruenatMtb', 'assayTruenatMtbPlus', 'assayTruenatRif', 'assayTruenatUnknown'])
+    .modify(addConstraints, dataConstraints, { result: 'r', site: 's', geography: 'g', assay: 'a', device: 'd' })
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .select(
+      knex.raw('COUNT(DISTINCT r.deviceId) as cntTruenatDevice'),
+      knex.raw('COUNT(DISTINCT r.deviceId) as cntTruenatDeviceFunctional'),
+      knex.raw('COUNT(DISTINCT r.deviceId) * 2 as cntTruenatChipPortsTotal'),
+      knex.raw(`COUNT(DISTINCT CONCAT(r.deviceId, '-', r.resultData->>'$.bayNo')) as cntTruenatChipPortsFunctional`),
+      knex.raw('COUNT(*) as cntTruenatCartridgeUsed'),
+      knex.raw(
+        `SUM(CASE WHEN a.externalId IN ('assayTruenatMtb','assayTruenatMtbPlus') THEN 1 ELSE 0 END) as cntTruenatMtbChipUsed`
+      ),
+      knex.raw(`SUM(CASE WHEN a.externalId = 'assayTruenatRif' THEN 1 ELSE 0 END) as cntTruenatRifDxChipUsed`)
+    )
+    .first()
+}
+
+// ---------------------------------------------------------------------------
 /**
  * getDataForReportDrTb10A
  */
@@ -1048,7 +1091,8 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
-  data = { ...data, ...deviceInfo[0] }
+  const truenatData = await getTruenatDataFor10AReport(auth, query)
+  data = { ...data, ...deviceInfo[0], ...truenatData }
 
   return {
     ok: true,
@@ -1206,7 +1250,8 @@ async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
-  data = { ...data, ...deviceInfo[0] }
+  const truenatData = await getTruenatDataFor10AReport(auth, query)
+  data = { ...data, ...deviceInfo[0], ...truenatData }
   return {
     ok: true,
     data,
