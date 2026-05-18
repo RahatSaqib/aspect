@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import resultMessages from '../../oldPages/result/list/messages'
+import resultMessages from '../../pages/Result/list/messages'
 
 const messages = {
   ...resultMessages,
