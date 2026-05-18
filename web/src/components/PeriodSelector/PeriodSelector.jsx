@@ -6,7 +6,7 @@ import { TextField, Box, ClickAwayListener, Grow, Paper, Popper, Typography } fr
 import { DesktopDatePicker } from '@mui/x-date-pickers'
 import { useIntl } from 'react-intl'
 import messages from '../../messages/allMessages'
-import { getAspectDisplayPreferences } from '../../components/LocalStorage'
+import { getAspectDisplayPreferences } from '../LocalStorage'
 import { dayOptions, weekOptions, monthOptions, quarterOptions, yearOptions, customYearOptions } from './periodOptions'
 
 const { dayMonthFormat } = getAspectDisplayPreferences().toJS()

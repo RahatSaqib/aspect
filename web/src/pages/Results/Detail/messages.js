@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 import { commonDefinitions, resultCategory, resultCategoryType, sampleType } from '../../../messages'
-import resultCategoryAssayMessages from '../../../pages/Result/list/messages'
+import resultCategoryAssayMessages from '../../Result/list/messages'
 
 const messagesResult = defineMessages({
   site: {

@@ -16,23 +16,23 @@ import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryTransferFilter } from '../../../components'
 import AspectExportListButton from '../../../components/AspectExportListButton'
+import BrowseEmptyList from '../../../components/BrowseEmptyList'
+import BrowseTablePaginator from '../../../components/BrowseTablePaginator'
 import {
   HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
 } from '../../../components/HierarchicalSiteView'
+import DataTableHead from '../../../components/shared/tableHead'
 import useInventoryTransferDownload from '../../../hooks/inventory/useInventoryTransferDownload'
 import useInventoryTransferList from '../../../hooks/inventory/useInventoryTransferList'
 import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
 import consumables from '../../../messages/consumableMessages'
-import BrowseEmptyList from '../../../components/BrowseEmptyList'
-import BrowseTablePaginator from '../../../components/BrowseTablePaginator'
-import DataTableHead from '../../../components/shared/tableHead'
-import { strategyRequireExpirationDate, strategyRequireLot } from '../../../pages/Inventory/strategyHelper'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
+import { strategyRequireExpirationDate, strategyRequireLot } from '../strategyHelper'
 import messages from './messages'
 import styles from './styles.module.css'
 

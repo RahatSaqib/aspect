@@ -1,13 +1,13 @@
 import React from 'react'
 import { Grid, TextField, FormControlLabel, Checkbox } from '@mui/material'
 import { useIntl } from 'react-intl'
-import SiteAutoCompleteField from '../SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { isPermittedUser } from '../../components/shared/requirePermissions'
 import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector, DaysStockLeftSelect } from '../index'
+import { isPermittedUser } from '../shared/requirePermissions'
+import SiteAutoCompleteField from '../SiteAutocompleteField'
 import FilterContainer from './FilterContainer'
 
 const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, requireLotNumber }) => {

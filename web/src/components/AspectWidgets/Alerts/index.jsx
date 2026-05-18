@@ -1,8 +1,8 @@
 import React from 'react'
 import { PropTypes } from 'prop-types'
 import { useIntl } from 'react-intl'
-import AspectTooltip from '../../../components/shared/AspectTooltip'
 import IconProvider from '../../IconProvider'
+import AspectTooltip from '../../shared/AspectTooltip'
 import styles from './alerts.module.css'
 import format from './messages'
 

@@ -5,8 +5,8 @@ import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { isPermittedUser } from '../../components/shared/requirePermissions'
 import { StateSelect, LgaSelect, AssaySelect, PeriodSelector } from '../index'
+import { isPermittedUser } from '../shared/requirePermissions'
 import FilterContainer from './FilterContainer'
 
 const DeviceWorkloadFilter = () => {

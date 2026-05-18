@@ -2,12 +2,12 @@ import React from 'react'
 import { Button, CircularProgress } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import { ADMIN_LGAS_KEYS } from '../../../hooks/admin/adminKeys'
 import { useDeleteLga } from '../../../hooks/admin/useDeleteLga'
 import { LGA_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
-import AspectDialog from '../../../components/shared/AspectDialog'
 import messages from '../messages'
 
 export function RemoveLgaDialog({ open, lga, onOpenChange }) {

@@ -16,7 +16,7 @@ import sumBy from 'lodash/sumBy'
 import times from 'lodash/times'
 import uniqBy from 'lodash/uniqBy'
 import values from 'lodash/values'
-import { dateRangeOptions } from '../../components/shared/DateTimeInput/utils/date'
+import { dateRangeOptions } from '../shared/DateTimeInput/utils/date'
 import { calcPercentageForGraphs, negateTimeZoneOffset } from './graphUtils'
 import graphColorMap from './Variables'
 

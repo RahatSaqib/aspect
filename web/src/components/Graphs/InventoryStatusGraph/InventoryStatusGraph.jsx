@@ -3,12 +3,12 @@ import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router'
-import fetchWrapperForQueries from '../../QueryFetch'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
 import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import ConsumableSelector from '../../ConsumableSelector'
 import { Loading, ColumnGraph, genLabel } from '../../index'
+import fetchWrapperForQueries from '../../QueryFetch'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
 

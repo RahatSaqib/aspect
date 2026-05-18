@@ -12,10 +12,10 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import AspectVertMenu from '../../../components/AspectVertMenu'
 import PermissionChecker from '../../../components/PermissionChecker'
-import useAuthState from '../../../hooks/useAuthState'
-import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../components/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../components/shared/tableBody'
+import useAuthState from '../../../hooks/useAuthState'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import {
   modifyInventoryOnHand,
   showAddInventoryDialog,

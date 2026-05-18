@@ -4,9 +4,9 @@ import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { ContactTagInput } from '../../../../components'
-import useContactBySite from '../../../../hooks/person/useContactBySite'
 import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
 import styles from '../../../../components/Summary.module.css'
+import useContactBySite from '../../../../hooks/person/useContactBySite'
 import messages from '../messages'
 
 const Contacts = ({ id, title, formatMessage, disabled }) => {

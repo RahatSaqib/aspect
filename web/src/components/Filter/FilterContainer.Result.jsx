@@ -6,7 +6,6 @@ import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { isPermittedUser } from '../../components/shared/requirePermissions'
 import {
   AssayMultiSelect,
   DeviceTypeSelect,
@@ -17,6 +16,7 @@ import {
   ResultTreatmentStatusSelect,
   StateSelect,
 } from '../index'
+import { isPermittedUser } from '../shared/requirePermissions'
 import SiteAutoCompleteField from '../SiteAutocompleteField'
 import FilterContainer from './FilterContainer'
 

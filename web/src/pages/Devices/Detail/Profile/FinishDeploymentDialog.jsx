@@ -4,10 +4,10 @@ import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import * as Yup from 'yup'
-import validationErrorMessages from '../../../../messages/validationErrorMessages'
 import AspectButton from '../../../../components/shared/AspectButton'
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import { toDateOnly } from '../../../../components/shared/DateTimeInput/utils/date'
+import validationErrorMessages from '../../../../messages/validationErrorMessages'
 import messages from './messages'
 
 const FinishDeploymentDialog = ({ open, onClose, onConfirm, startDate }) => {

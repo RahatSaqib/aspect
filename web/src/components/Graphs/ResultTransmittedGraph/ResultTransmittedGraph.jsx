@@ -3,10 +3,7 @@ import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@
 import isEmpty from 'lodash/isEmpty'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import EmptyGraph from '../../../components/Graphs/EmptyData'
-import fetchWrapperForQueries from '../../QueryFetch'
 import { graphMessages } from '../../../messages'
-import { dateRangeOptions } from '../../../components/shared/DateTimeInput/utils/date'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import {
   getTimePeriod,
@@ -16,6 +13,9 @@ import {
   Loading,
   PieRowGraph,
 } from '../../index'
+import fetchWrapperForQueries from '../../QueryFetch'
+import { dateRangeOptions } from '../../shared/DateTimeInput/utils/date'
+import EmptyGraph from '../EmptyData'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
 

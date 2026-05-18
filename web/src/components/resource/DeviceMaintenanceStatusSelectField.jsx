@@ -3,10 +3,10 @@ import { MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import fetchWrapperForQueries from '../QueryFetch'
-import { DEVICE_STATUS } from '../QueryFetch/Device/index'
 import { deviceStatusMessages } from '../../messages'
 import formatI18nMessage from '../../utils/i18n/formatterWeb'
+import fetchWrapperForQueries from '../QueryFetch'
+import { DEVICE_STATUS } from '../QueryFetch/Device/index'
 import SelectField from '../shared/SelectField'
 
 // TODO: move to HOOKS folder

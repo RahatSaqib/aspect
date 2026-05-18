@@ -1,11 +1,6 @@
 import React, { Fragment } from 'react'
 import { useQuery } from 'react-query'
-import {
-  ErrorBoundary,
-  DeviceStatusGraph,
-  ResultTransmittedGraph,
-  InventoryStatusGraph,
-} from '../../../components'
+import { ErrorBoundary, DeviceStatusGraph, ResultTransmittedGraph, InventoryStatusGraph } from '../../../components'
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'

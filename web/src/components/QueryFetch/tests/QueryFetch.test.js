@@ -1,4 +1,4 @@
-import { checkIfParamsIsDate } from '../../../components/shared/DateTimeInput/utils/date'
+import { checkIfParamsIsDate } from '../../shared/DateTimeInput/utils/date'
 
 describe('QueryFetch Tests', () => {
   describe('Query Params', () => {

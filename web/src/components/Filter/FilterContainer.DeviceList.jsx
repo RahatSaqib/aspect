@@ -1,13 +1,10 @@
 import React from 'react'
 import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
-import SiteAutoCompleteField from '../SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import AspectTooltip from '../../components/shared/AspectTooltip'
-import { isPermittedUser } from '../../components/shared/requirePermissions'
 import CONSTS from '../../utils/consts/Devices/CONSTS'
 import {
   StateSelect,
@@ -20,6 +17,9 @@ import {
   DeviceMaintenanceStatusSelect,
   CepheidModulesSelect,
 } from '../index'
+import AspectTooltip from '../shared/AspectTooltip'
+import { isPermittedUser } from '../shared/requirePermissions'
+import SiteAutoCompleteField from '../SiteAutocompleteField'
 import FilterContainer from './FilterContainer'
 
 const DeviceListFilter = () => {

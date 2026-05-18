@@ -11,20 +11,20 @@ import { useLocation, useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
 import { DetailHeader, InventoryItemsFilter } from '../../../components'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import BrowseEmptyList from '../../../components/BrowseEmptyList'
+import BrowseTablePaginator from '../../../components/BrowseTablePaginator'
 import {
   HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
 } from '../../../components/HierarchicalSiteView'
 import PermissionChecker from '../../../components/PermissionChecker'
+import AspectButton from '../../../components/shared/AspectButton'
+import DataTableCard from '../../../components/shared/DataTableCard'
 import useInventoryList from '../../../hooks/inventory/useInventoryList'
 import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
-import BrowseEmptyList from '../../../components/BrowseEmptyList'
-import BrowseTablePaginator from '../../../components/BrowseTablePaginator'
-import AspectButton from '../../../components/shared/AspectButton'
-import DataTableCard from '../../../components/shared/DataTableCard'
 import {
   addInventory,
   hideAdjustInventoryDialog,

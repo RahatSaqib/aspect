@@ -9,13 +9,13 @@ import { connect } from 'react-redux'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import DeviceResultHistory from '../../../../components/DeviceResultHistory/DeviceResultHistory'
 import PermissionChecker from '../../../../components/PermissionChecker'
-import useAuthState from '../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../hooks/useFilterUpdate'
-import useFilterValues from '../../../../hooks/useFilterValues'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import ColoredNumber from '../../../../components/shared/ColoredNumber'
 import Summary from '../../../../components/Summary'
 import { sanitizeFiltersStringBy } from '../../../../components/utils'
+import useAuthState from '../../../../hooks/useAuthState'
+import useFilterUpdate from '../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../hooks/useFilterValues'
 import {
   exportDeviceLogs,
   hideDialog,

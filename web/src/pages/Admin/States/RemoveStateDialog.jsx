@@ -2,12 +2,12 @@ import React from 'react'
 import { Button, CircularProgress } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
+import AspectDialog from '../../../components/shared/AspectDialog'
 import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useDeleteState } from '../../../hooks/admin/useDeleteState'
 import { STATE_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
-import AspectDialog from '../../../components/shared/AspectDialog'
 import messages from '../messages'
 
 export function RemoveStateDialog({ open, state, onOpenChange }) {
