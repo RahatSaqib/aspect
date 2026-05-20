@@ -60,19 +60,30 @@ async function mergeResult(context) {
     }
   }
   let existingSample = null
+  let resolvedNonMobileSampleOriginSiteId = null
   const payloadSampleExternalId = payload.sample?.id
   if (payloadSampleExternalId) {
-    existingSample = isValidSampleExternalIdMobileFormat(payloadSampleExternalId)
-      ? await getMobileSampleByExternalId(knex, payloadSampleExternalId)
-      : await getMatchingSample(knex, payloadSampleExternalId, testStartedOn)
+    if (isValidSampleExternalIdMobileFormat(payloadSampleExternalId)) {
+      existingSample = await getMobileSampleByExternalId(knex, payloadSampleExternalId)
+    } else {
+      resolvedNonMobileSampleOriginSiteId = await resolveNonMobileSampleOriginSiteId(knex, payload, deviceSite)
+      existingSample = await getMatchingSample(
+        knex,
+        payloadSampleExternalId,
+        testStartedOn,
+        resolvedNonMobileSampleOriginSiteId
+      )
+    }
   }
-  const { sampleOriginSiteId, reportableSiteId } = await resolveSiteAssignments(
-    knex,
-    payload,
+  if (!existingSample?.registeredInMobile && resolvedNonMobileSampleOriginSiteId == null) {
+    resolvedNonMobileSampleOriginSiteId = await resolveNonMobileSampleOriginSiteId(knex, payload, deviceSite)
+  }
+  const { sampleOriginSiteId, reportableSiteId } = resolveSiteAssignments(
     deviceSite,
     existingResult,
     existingSample,
-    isTransferred
+    isTransferred,
+    resolvedNonMobileSampleOriginSiteId
   )
 
   const opts = {
@@ -242,18 +253,31 @@ async function getResultSourceId(payload, existingResult, assay) {
   return resultSourceId
 }
 
-async function resolveSiteAssignments(knex, payload, deviceSite, existingResult, existingSample, isTransferred) {
-  // Sample.originSiteId
-  let payloadSampleOriginSiteId = null
+/**
+ * Intended `Sample.originSiteId` for non–mobile samples: payload `sample.originSite` when present and
+ * found in `Site`, otherwise the device site.
+ */
+async function resolveNonMobileSampleOriginSiteId(knex, payload, deviceSite) {
   const payloadSampleOriginSiteExternalId = payload.sample?.originSite?.id || false
   if (payloadSampleOriginSiteExternalId) {
     const sampleSiteRow = await knex('Site').where('externalId', payloadSampleOriginSiteExternalId).first('id')
-    payloadSampleOriginSiteId = sampleSiteRow?.id || null
+    if (sampleSiteRow?.id) {
+      return sampleSiteRow.id
+    }
   }
+  return deviceSite?.id ?? null
+}
 
+function resolveSiteAssignments(
+  deviceSite,
+  existingResult,
+  existingSample,
+  isTransferred,
+  resolvedNonMobileSampleOriginSiteId
+) {
   const sampleOriginSiteId = existingSample?.registeredInMobile
     ? existingSample.originSiteId
-    : payloadSampleOriginSiteId || deviceSite?.id
+    : resolvedNonMobileSampleOriginSiteId
 
   // Result.reportableSiteId
   let reportableSiteId = deviceSite?.id
