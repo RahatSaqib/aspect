@@ -6,6 +6,8 @@ Important: This project runs on node 14.19.0, AI agents are more likely running 
 
 Additional project-specific guidance lives in `ai-context/skills/`.
 
+**Autonomous multi-role delivery** (PM → architecture → backend/frontend → security → QA): start with `ai-context/skills/agents/agent-orchestrator/SKILL.md`; role skills live under `ai-context/skills/agents/agent-*/` (`.cursor/` is gitignored in this repo).
+
 When working in these areas, consult the matching skill first:
 
 - API use cases: `ai-context/skills/api/use-case-development/SKILL.md`
