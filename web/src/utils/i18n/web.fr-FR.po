@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-03T18:53:52.664Z\n"
+"POT-Creation-Date: 2026-05-21T10:10:52.895Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,7 +20,7 @@ msgstr ""
 #. "Do Not Use" Modules
 #: extracted_strings.json
 msgid "\"Do Not Use\" Modules"
-msgstr "Modules marqués comme non utilisables"
+msgstr "Modules « Ne pas utiliser »"
 
 #. [pages.ReportIndex.no_stock]
 #. defaultMessage is:
@@ -157,15 +157,6 @@ msgstr ""
 #. defaultMessage is:
 #. <p>This process will perform the following actions:</P> <p><br/> <ul> <li>Results not repeated between devices will moved to target device.</li> <li>Issues and Notifications from duplicated results will be moved to target results.</li> <li>Device issues not related to results, like Device Offline, will be moved to target device.</li> <li>Source devices will be deleted from Aspect.</li> <ul> </p> <br/> <p style="color: red;"> **IMPORTANT:** This action is unreversible! </p>
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "<p>This process will perform the following actions:</P> <p><br/> <ul> "
-#| "<li>• Results not repeated between devices will moved to target device.</"
-#| "li> <li>• Issues and Notifications from duplicated results will be moved "
-#| "to target results.</li> <li>• Device issues not related to results, like "
-#| "Device Offline, will be moved to target device.</li> <li>• Source devices "
-#| "will be deleted from Aspect.</li> <ul> </p> <br/> <p style=\"color: red;"
-#| "\"> **IMPORTANT:** This action is unreversible! </p>"
 msgid ""
 "<p>This process will perform the following actions:</P> <p><br/> <ul> "
 "<li>Results not repeated between devices will moved to target device.</li> "
@@ -175,14 +166,14 @@ msgid ""
 "Aspect.</li> <ul> </p> <br/> <p style=\"color: red;\"> **IMPORTANT:** This "
 "action is unreversible! </p>"
 msgstr ""
-"<p>Ce processus effectuera les actions suivantes :</P> <p><br/> <ul> "
-"<li>• Les résultats non répétés entre les appareils seront déplacés vers "
-"l’appareil cible.</li> <li>• Problèmes et Les notifications des résultats en "
-"double seront déplacées vers les résultats cibles.</li> <li>• Les problèmes "
-"d’appareil non liés aux résultats, tels que les problèmes d’inventaire, "
-"seront déplacés vers l’appareil cible.</li> <li>• Les appareils sources "
-"seront supprimés d’Aspect.</li> <ul> </p> <br/> <p style=“color: red;”> "
-"**IMPORTANT :** Cette action est irréversible ! </p>"
+"<p>Ce processus effectuera les actions suivantes :</p> <p><br/> <ul> <li>Les "
+"résultats non dupliqués entre les appareils seront déplacés vers l'appareil "
+"cible.</li> <li>Les problèmes et notifications liés aux résultats dupliqués "
+"seront déplacés vers les résultats cibles.</li> <li>Les problèmes d'appareil "
+"non liés aux résultats, comme un appareil hors ligne, seront déplacés vers "
+"l'appareil cible.</li> <li>Les appareils sources seront supprimés d'Aspect.</"
+"li> <ul> </p> <br/> <p style=\"color: red;\"> **IMPORTANT :** Cette action "
+"est irréversible ! </p>"
 
 #. [filter.btnGroup.daysStockLeft.moreThan180]
 #. defaultMessage is:
@@ -476,10 +467,8 @@ msgstr "Ajouter une affectation"
 #. defaultMessage is:
 #. Add Deployment
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Deployment Name"
 msgid "Add Deployment"
-msgstr "Nom de déploiement"
+msgstr "Ajouter un déploiement"
 
 #. [pages.DeviceDetailProfile.fillGapDeploymentTitle]
 #. defaultMessage is:
@@ -513,10 +502,8 @@ msgstr "Ajouter une rangée"
 #. defaultMessage is:
 #. Add to this device
 #: extracted_strings.json
-#, fuzzy
-#| msgid "From this device"
 msgid "Add to this device"
-msgstr "A partir de ce dispositif"
+msgstr "Ajouter à cet appareil"
 
 #. [errorResponseMessages.addInventory.PUT.default.title]
 #. defaultMessage is:
@@ -670,6 +657,9 @@ msgstr "Les alertes"
 #. defaultMessage is:
 #. All
 #. [pages.PersonDetails.all]
+#. defaultMessage is:
+#. All
+#. [pages.truenatCustomFields.all]
 #. defaultMessage is:
 #. All
 #: extracted_strings.json
@@ -908,6 +898,13 @@ msgstr "Stratégie appliquée de traitement par lots des cartouches"
 msgid "Applied Consumption strategy"
 msgstr "Stratégie de consommation appliquée"
 
+#. [pages.truenatCustomFields.apply]
+#. defaultMessage is:
+#. Apply
+#: extracted_strings.json
+msgid "Apply"
+msgstr "Appliquer"
+
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
 #. Apply Filters
@@ -981,19 +978,15 @@ msgstr "Etes-vous sûr de vouloir changer le statut de la notification ?"
 #. defaultMessage is:
 #. Are you sure you want to decommission this device?
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Are you sure to delete this {entity}?"
 msgid "Are you sure you want to decommission this device?"
-msgstr "Êtes-vous sûr de vouloir supprimer ce {entity} ?"
+msgstr "Êtes-vous sûr de vouloir mettre cet appareil hors service ?"
 
 #. [pages.DeviceDetailProfile.confirmDeleteDeployment]
 #. defaultMessage is:
 #. Are you sure you want to delete this deployment?
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Are you sure to delete this {entity}?"
 msgid "Are you sure you want to delete this deployment?"
-msgstr "Êtes-vous sûr de vouloir supprimer ce {entity} ?"
+msgstr "Êtes-vous sûr de vouloir supprimer ce déploiement ?"
 
 #. [pages.SiteDetail.disable.confirmation.message]
 #. defaultMessage is:
@@ -1010,10 +1003,8 @@ msgstr ""
 #. defaultMessage is:
 #. Are you sure you want to reactivate this device?
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Are you sure to delete this {entity}?"
 msgid "Are you sure you want to reactivate this device?"
-msgstr "Êtes-vous sûr de vouloir supprimer ce {entity} ?"
+msgstr "Êtes-vous sûr de vouloir réactiver cet appareil ?"
 
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
@@ -1051,13 +1042,13 @@ msgstr "Aspect a rencontré un problème."
 #. [pages.JobAssignments.assay]
 #. defaultMessage is:
 #. Assay
+#. [pages.NotificationDetail.assayTitle]
+#. defaultMessage is:
+#. Assay
 #. [pages.ResultList.assayName]
 #. defaultMessage is:
 #. Assay
 #. [pages.ResultList.assayId]
-#. defaultMessage is:
-#. Assay
-#. [pages.NotificationDetail.assayTitle]
 #. defaultMessage is:
 #. Assay
 #. [pages.InventoryTabs.New.assay]
@@ -1413,10 +1404,8 @@ msgstr ""
 #. defaultMessage is:
 #. Bay Names
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Assay Name"
 msgid "Bay Names"
-msgstr "Nom de l'essai"
+msgstr "Noms des baies"
 
 #. [pages.DeviceDetailProfile.bays]
 #. defaultMessage is:
@@ -1460,10 +1449,10 @@ msgstr "Répartition par lot"
 #. [pages.filter.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
-#. [pages.InventoryItemsList.breakOutByLot]
+#. [pages.inventoryReconciliation.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
-#. [pages.inventoryReconciliation.breakOutByLot]
+#. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
 #: extracted_strings.json
@@ -1800,9 +1789,6 @@ msgstr "Ne peut pas être modifié"
 #. [pages.DeviceApiKeyList.cancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.InventoryAdjustmentDialogForm.cancel]
-#. defaultMessage is:
-#. Cancel
 #. [pages.DeviceDetail.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1810,6 +1796,9 @@ msgstr "Ne peut pas être modifié"
 #. defaultMessage is:
 #. Cancel
 #. [pages.MaintenanceStatusDialog.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.InventoryAdjustmentDialogForm.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.transferResult.buttonCancel]
@@ -1846,10 +1835,10 @@ msgstr ""
 "Il est impossible de transférer des instruments dont les numéros de série "
 "sont identiques."
 
-#. [pages.InventoryLog.withLotStrategy]
+#. [pages.Consumable.New.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot Number
-#. [pages.Consumable.New.cartridgeLotNumber]
+#. [pages.InventoryLog.withLotStrategy]
 #. defaultMessage is:
 #. Cartridge Lot Number
 #: extracted_strings.json
@@ -1884,10 +1873,10 @@ msgstr "ID de cas"
 msgid "Cases"
 msgstr "Cas"
 
-#. [pages.ResultList.resultCategory1Name]
+#. [pages.Notifications.table.categoryHeader]
 #. defaultMessage is:
 #. Category
-#. [pages.Notifications.table.categoryHeader]
+#. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
 #. Category
 #: extracted_strings.json
@@ -2093,6 +2082,9 @@ msgstr "Collecté par"
 #. [forms.formItem.collectedOn]
 #. defaultMessage is:
 #. Collected On
+#. [pages.truenatCustomFields.dateOfTest]
+#. defaultMessage is:
+#. Collected On
 #: extracted_strings.json
 msgid "Collected On"
 msgstr "Collecté le"
@@ -2246,6 +2238,12 @@ msgstr "Version du connecteur"
 #. [consumable.consumable]
 #. defaultMessage is:
 #. Consumable
+#. [pages.inventoryReconciliation.consumable]
+#. defaultMessage is:
+#. Consumable
+#. [pages.InventoryTransfer.consumableName]
+#. defaultMessage is:
+#. Consumable
 #. [pages.InventoryAdjustmentDialogForm.consumable]
 #. defaultMessage is:
 #. Consumable
@@ -2253,12 +2251,6 @@ msgstr "Version du connecteur"
 #. defaultMessage is:
 #. Consumable
 #. [pages.InventoryLog.consumableName]
-#. defaultMessage is:
-#. Consumable
-#. [pages.inventoryReconciliation.consumable]
-#. defaultMessage is:
-#. Consumable
-#. [pages.InventoryTransfer.consumableName]
 #. defaultMessage is:
 #. Consumable
 #: extracted_strings.json
@@ -2599,7 +2591,17 @@ msgstr "Créer une notification"
 msgid "Create Site"
 msgstr "Créer le site"
 
+#. [pages.truenatCustomFields.createdBy]
+#. defaultMessage is:
+#. Created By
+#: extracted_strings.json
+msgid "Created By"
+msgstr "Créé par"
+
 #. [pages.DeviceApiKeyList.createdOn]
+#. defaultMessage is:
+#. Created On
+#. [pages.truenatCustomFields.createdOn]
 #. defaultMessage is:
 #. Created On
 #. [pages.Notifications.table.createButton.group.createdOn]
@@ -2874,6 +2876,9 @@ msgstr "Douane"
 #. [placeholder.result.placeholderCustomFields]
 #. defaultMessage is:
 #. Custom Fields
+#. [pages.truenatCustomFields.customFieldsSectionTitle]
+#. defaultMessage is:
+#. Custom Fields
 #. [pages.resultEdit.customFields]
 #. defaultMessage is:
 #. Custom Fields
@@ -2887,6 +2892,17 @@ msgstr "Champs personnalisés"
 #: extracted_strings.json
 msgid "Custom Fields Average Completion"
 msgstr "Champs personnalisés Achèvement moyen"
+
+#. [pages.resultEdit.truenatCustomFieldsReadOnlyNote]
+#. defaultMessage is:
+#. Custom fields for TrueNat devices are managed in TrueConnect and cannot be edited here.
+#: extracted_strings.json
+msgid ""
+"Custom fields for TrueNat devices are managed in TrueConnect and cannot be "
+"edited here."
+msgstr ""
+"Les champs personnalisés des appareils TrueNat sont gérés dans TrueConnect "
+"et ne peuvent pas être modifiés ici."
 
 #. [filter.sampleType.sampleTypeDBS]
 #. defaultMessage is:
@@ -3128,6 +3144,13 @@ msgstr "Date de réception du spécimen"
 msgid "Date Transferred"
 msgstr "Date de transfert"
 
+#. [pages.truenatCustomFields.dateUploaded]
+#. defaultMessage is:
+#. Date Uploaded
+#: extracted_strings.json
+msgid "Date Uploaded"
+msgstr "Date de téléchargement"
+
 #. [samples.dateUploadedToAspect]
 #. defaultMessage is:
 #. Date Uploaded to Aspect
@@ -3274,10 +3297,8 @@ msgstr "Décembre"
 #. defaultMessage is:
 #. Decommission device
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Decommissioned"
 msgid "Decommission device"
-msgstr "Déclassé"
+msgstr "Appareil hors service"
 
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
@@ -3349,10 +3370,8 @@ msgstr "Fièvre de la dengue"
 #. defaultMessage is:
 #. Deployment changes saved successfully
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Details Changed Successfully"
 msgid "Deployment changes saved successfully"
-msgstr "Détails modifiés avec succès"
+msgstr "Les modifications de déploiement ont été enregistrées avec succès."
 
 #. [pages.DeviceDetailProfile.deploymentOverlap]
 #. defaultMessage is:
@@ -3370,32 +3389,24 @@ msgstr ""
 #. defaultMessage is:
 #. Deployment timeline by site
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Deployment Name"
 msgid "Deployment timeline by site"
-msgstr "Nom de déploiement"
+msgstr "Calendrier de déploiement par site"
 
 #. [pages.DeviceDetailProfile.deploymentsTitle]
 #. defaultMessage is:
 #. Deployments
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Deployment Name"
 msgid "Deployments"
-msgstr "Nom de déploiement"
+msgstr "Déploiements"
 
 #. [pages.DeviceDetailProfile.deploymentReadOnlyDecommissioned]
 #. defaultMessage is:
 #. Deployments cannot be edited while this device is decommissioned.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "You cannot change the status of a device in days when it was "
-#| "decommissioned"
 msgid "Deployments cannot be edited while this device is decommissioned."
 msgstr ""
-"Vous ne pouvez pas changer le statut d'un appareil en jours lorsqu'il a été "
-"déclassé"
+"Les déploiements ne peuvent pas être modifiés lorsque cet appareil est hors "
+"service."
 
 #. [pages.DeviceDetailProfile.deploymentNotConsecutive]
 #. defaultMessage is:
@@ -3451,13 +3462,13 @@ msgstr "Détecté"
 #. [pages.DeviceApiKeyList.device]
 #. defaultMessage is:
 #. Device
-#. [pages.ResultList.deviceName]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.deviceHealth]
+#. defaultMessage is:
+#. Device
+#. [pages.ResultList.deviceName]
 #. defaultMessage is:
 #. Device
 #. [pages.DailyStatusDialog.deviceLabel]
@@ -3566,10 +3577,8 @@ msgstr "Dispositif inactif"
 #. defaultMessage is:
 #. Device Instruments
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Instruments"
 msgid "Device Instruments"
-msgstr "Instruments"
+msgstr "Instruments de l'appareil"
 
 #. [filter.btnGroup.deviceIssueType]
 #. defaultMessage is:
@@ -3715,10 +3724,8 @@ msgstr "Journaux des dispositifs"
 #. defaultMessage is:
 #. Device not found.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Device Country"
 msgid "Device not found."
-msgstr "Pays du dispositif"
+msgstr "Appareil introuvable."
 
 #. [pages.DeviceDetailProfile.deviceType]
 #. defaultMessage is:
@@ -3818,10 +3825,8 @@ msgstr "Appareils du laboratoire"
 #. defaultMessage is:
 #. Devices merged successfully.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Device updated successfully"
 msgid "Devices merged successfully."
-msgstr "Appareil mis à jour avec succès"
+msgstr "Les appareils ont été fusionnés avec succès."
 
 #. [component.Widget.unusedModulesTitle]
 #. defaultMessage is:
@@ -4105,10 +4110,8 @@ msgstr "Modifier"
 #. defaultMessage is:
 #. Edit Deployment
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Deployment Name"
 msgid "Edit Deployment"
-msgstr "Nom de déploiement"
+msgstr "Modifier le déploiement"
 
 #. [pages.NotificationDetail.New.editNotification]
 #. defaultMessage is:
@@ -4505,10 +4508,8 @@ msgstr "Erreur d'envoi Réinitialiser mot de passe Email"
 #. defaultMessage is:
 #. Error transferring instrument.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Transferring Result"
 msgid "Error transferring instrument."
-msgstr "Erreur de transfert du résultat"
+msgstr "Erreur lors du transfert de l'instrument."
 
 #. [pages.consumables.errorUpdatingConsumables]
 #. defaultMessage is:
@@ -4721,26 +4722,26 @@ msgstr "Expire le"
 msgid "Expiring in days"
 msgstr "Expirant dans les jours"
 
-#. [pages.InventoryAdjustmentDialogForm.expiryDate]
-#. defaultMessage is:
-#. Expiry Date
-#. [pages.InventoryLog.withExpirationDateStrategy]
-#. defaultMessage is:
-#. Expiry Date
 #. [pages.Consumable.New.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
 #. [pages.inventoryReconciliation.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.InventoryAdjustmentDialogForm.expiryDate]
+#. defaultMessage is:
+#. Expiry Date
+#. [pages.InventoryLog.withExpirationDateStrategy]
+#. defaultMessage is:
+#. Expiry Date
 #: extracted_strings.json
 msgid "Expiry Date"
 msgstr "Date d'expiration"
 
-#. [pages.InventoryLog.withLotAndExpirationDateStrategy]
+#. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
 #. defaultMessage is:
 #. Expiry Date and Cartridge Lot Number
-#. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
+#. [pages.InventoryLog.withLotAndExpirationDateStrategy]
 #. defaultMessage is:
 #. Expiry Date and Cartridge Lot Number
 #: extracted_strings.json
@@ -4959,10 +4960,8 @@ msgstr "Échec de l'enregistrement des modifications de déploiement"
 #. defaultMessage is:
 #. Failed to transfer instruments
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Linked to treatment"
 msgid "Failed to transfer instruments"
-msgstr "Lié au traitement"
+msgstr "Échec du transfert des instruments"
 
 #. [pages.InventoryReconciliationForm.ErrorMessage]
 #. defaultMessage is:
@@ -5018,6 +5017,13 @@ msgstr "Février"
 msgid "Female"
 msgstr "Femme"
 
+#. [pages.truenatCustomFields.filters]
+#. defaultMessage is:
+#. Filters
+#: extracted_strings.json
+msgid "Filters"
+msgstr "Filtres"
+
 #. [pages.ResultList.resultCategoryFinalResult]
 #. defaultMessage is:
 #. Final Result
@@ -5046,10 +5052,8 @@ msgstr "Ferminer"
 #. defaultMessage is:
 #. Finish Deployment
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Deployment Name"
 msgid "Finish Deployment"
-msgstr "Nom de déploiement"
+msgstr "Terminer le déploiement"
 
 #. [pages.TablePaginator.first]
 #. defaultMessage is:
@@ -5121,6 +5125,20 @@ msgstr "Pour {period}"
 msgid "Forgot Password?"
 msgstr "Mot de passe oublié?"
 
+#. [pages.truenatCustomFields.detailsPreview]
+#. defaultMessage is:
+#. Form Details
+#: extracted_strings.json
+msgid "Form Details"
+msgstr "Détails du formulaire"
+
+#. [browsePage.browseDropdown.forms]
+#. defaultMessage is:
+#. Forms
+#: extracted_strings.json
+msgid "Forms"
+msgstr "Formulaires"
+
 #. [components.shared.friday]
 #. defaultMessage is:
 #. Friday
@@ -5137,6 +5155,13 @@ msgstr "Vendredi"
 #: extracted_strings.json
 msgid "From"
 msgstr "De"
+
+#. [pages.truenatCustomFields.fromDate]
+#. defaultMessage is:
+#. From Date
+#: extracted_strings.json
+msgid "From Date"
+msgstr "À partir de la date"
 
 #. [pages.InventoryAdjustmentDialogForm.fromSiteName]
 #. defaultMessage is:
@@ -5368,10 +5393,10 @@ msgstr "Appareils GeneXpert"
 #. [filter.AssaySelectField.assayGeneXpertEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
-#. [pages.ResultList.assayGeneXpertEbola]
+#. [pages.ResultList.GxEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
-#. [pages.ResultList.GxEbola]
+#. [pages.ResultList.assayGeneXpertEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
 #: extracted_strings.json
@@ -5391,10 +5416,10 @@ msgstr "Cartouche GeneXpert Ebola"
 #. [filter.AssaySelectField.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
-#. [pages.ResultList.assayGeneXpertHcv]
+#. [pages.ResultList.GxHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
-#. [pages.ResultList.GxHcv]
+#. [pages.ResultList.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
 #: extracted_strings.json
@@ -5407,10 +5432,10 @@ msgstr "GeneXpert HCV"
 #. [filter.AssaySelectField.assayGeneXpertHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
-#. [pages.ResultList.assayGeneXpertHiv1Qual]
+#. [pages.ResultList.GxHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
-#. [pages.ResultList.GxHiv1Qual]
+#. [pages.ResultList.assayGeneXpertHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
 #: extracted_strings.json
@@ -5423,10 +5448,10 @@ msgstr "GeneXpert HIV-1 Qual"
 #. [filter.AssaySelectField.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
-#. [pages.ResultList.assayGeneXpertHiv1Vl]
+#. [pages.ResultList.GxHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
-#. [pages.ResultList.GxHiv1Vl]
+#. [pages.ResultList.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
 #: extracted_strings.json
@@ -5456,10 +5481,10 @@ msgstr "Erreurs du dispositif GeneXpert MTB-RIF/Ultra"
 #. [filter.AssaySelectField.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
-#. [pages.ResultList.assayGeneXpertMtbRif]
+#. [pages.ResultList.GxMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
-#. [pages.ResultList.GxMtbRif]
+#. [pages.ResultList.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
 #: extracted_strings.json
@@ -5472,10 +5497,10 @@ msgstr "GeneXpert MTB/Rif"
 #. [filter.AssaySelectField.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
-#. [pages.ResultList.assayGeneXpertMtbRifUltra]
+#. [pages.ResultList.GxMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
-#. [pages.ResultList.GxMtbRifUltra]
+#. [pages.ResultList.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
 #: extracted_strings.json
@@ -5488,10 +5513,10 @@ msgstr "GeneXpert MTB/Rif Ultra"
 #. [filter.AssaySelectField.assayGeneXpertMtbXdr]
 #. defaultMessage is:
 #. GeneXpert MTB/XDR
-#. [pages.ResultList.assayGeneXpertMtbXdr]
+#. [pages.ResultList.GxMtbXdr]
 #. defaultMessage is:
 #. GeneXpert MTB/XDR
-#. [pages.ResultList.GxMtbXdr]
+#. [pages.ResultList.assayGeneXpertMtbXdr]
 #. defaultMessage is:
 #. GeneXpert MTB/XDR
 #: extracted_strings.json
@@ -5549,10 +5574,10 @@ msgstr "Le type de GeneXpert est {geneXpertType}"
 #. [filter.AssaySelectField.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
-#. [pages.ResultList.assayGeneXpertUnknown]
+#. [pages.ResultList.GxUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
-#. [pages.ResultList.GxUnknown]
+#. [pages.ResultList.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
 #: extracted_strings.json
@@ -6406,10 +6431,8 @@ msgstr "Numéro de série"
 #. defaultMessage is:
 #. Instrument transferred successfully!
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Consumables updated successfully"
 msgid "Instrument transferred successfully!"
-msgstr "Consommables mis à jour avec succès"
+msgstr "Instrument transféré avec succès !"
 
 #. [component.Widget.instrumentsConnectedTitle]
 #. defaultMessage is:
@@ -6422,10 +6445,8 @@ msgstr "Instruments"
 #. defaultMessage is:
 #. Instruments transferred successfully
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Consumables updated successfully"
 msgid "Instruments transferred successfully"
-msgstr "Consommables mis à jour avec succès"
+msgstr "Instrument transféré avec succès !"
 
 #. [errorResponseMessages.exportSites.GET.403.title]
 #. defaultMessage is:
@@ -6858,10 +6879,8 @@ msgstr "Fonctions de travail"
 #. defaultMessage is:
 #. Join Devices
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Devices"
 msgid "Join Devices"
-msgstr "Dispositifs"
+msgstr "Rejoindre des appareils"
 
 #. [months.jul]
 #. defaultMessage is:
@@ -7122,10 +7141,8 @@ msgstr "Dernier résultat obtenu le"
 #. defaultMessage is:
 #. Last Result Date: {date}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Last calibrated {date}"
 msgid "Last Result Date: {date}"
-msgstr "Dernier calage {date}"
+msgstr "Date du dernier résultat : {date}"
 
 #. [pages.DeviceList.lastSeen]
 #. defaultMessage is:
@@ -7416,6 +7433,12 @@ msgstr "Lot"
 #. [filter.popover.lotNumber]
 #. defaultMessage is:
 #. Lot Number
+#. [pages.inventoryReconciliation.lotNumber]
+#. defaultMessage is:
+#. Lot Number
+#. [pages.InventoryTransfer.lotNumber]
+#. defaultMessage is:
+#. Lot Number
 #. [pages.InventoryAdjustmentDialogForm.lotNumber]
 #. defaultMessage is:
 #. Lot Number
@@ -7423,12 +7446,6 @@ msgstr "Lot"
 #. defaultMessage is:
 #. Lot Number
 #. [pages.InventoryLog.lotNumber]
-#. defaultMessage is:
-#. Lot Number
-#. [pages.inventoryReconciliation.lotNumber]
-#. defaultMessage is:
-#. Lot Number
-#. [pages.InventoryTransfer.lotNumber]
 #. defaultMessage is:
 #. Lot Number
 #: extracted_strings.json
@@ -8142,6 +8159,39 @@ msgstr "Mar"
 msgid "March"
 msgstr "Mars"
 
+#. [filter.popover.matchStatus]
+#. defaultMessage is:
+#. Match Status
+#. [pages.truenatCustomFields.matchStatus]
+#. defaultMessage is:
+#. Match Status
+#: extracted_strings.json
+msgid "Match Status"
+msgstr "Statut de correspondance"
+
+#. [pages.truenatCustomFields.matchToResult]
+#. defaultMessage is:
+#. Match to Result
+#: extracted_strings.json
+msgid "Match to Result"
+msgstr "Correspondre au résultat"
+
+#. [filter.popover.matched]
+#. defaultMessage is:
+#. Matched
+#. [filter.matchedFilter]
+#. defaultMessage is:
+#. Matched
+#. [pages.truenatCustomFields.matched]
+#. defaultMessage is:
+#. Matched
+#. [pages.truenatCustomFields.matched.label]
+#. defaultMessage is:
+#. Matched
+#: extracted_strings.json
+msgid "Matched"
+msgstr "Correspondant"
+
 #. [months.may]
 #. defaultMessage is:
 #. May
@@ -8435,19 +8485,15 @@ msgstr "Transférer vers un appareil existant"
 #. defaultMessage is:
 #. Move to New Device
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Merge Devices"
 msgid "Move to New Device"
-msgstr "Fusionner les appareils"
+msgstr "Déplacer vers un nouvel appareil"
 
 #. [pages.DeviceDetailProfile.moveToNewDevice]
 #. defaultMessage is:
 #. Move to a new Device
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Merge Devices"
 msgid "Move to a new Device"
-msgstr "Fusionner les appareils"
+msgstr "Passer à un nouvel appareil"
 
 #. [pages.DeviceDetailProfile.moveToExistingDevice]
 #. defaultMessage is:
@@ -8634,20 +8680,6 @@ msgstr "Tendance nationale à la résistance de la FQ"
 #: extracted_strings.json
 msgid "National FQ-R Resistance Trend"
 msgstr "Tendance nationale à la résistance FQ-R"
-
-#. [p.PkDashboard.GXTbNationalDiagnosis]
-#. defaultMessage is:
-#. National GX-10C Diagnosed Trends in
-#: extracted_strings.json
-msgid "National GX-10C Diagnosed Trends in"
-msgstr "GX-10C Tendances National du Diagnostiqué en"
-
-#. [p.PkDashboard.GXTbNationalTrend]
-#. defaultMessage is:
-#. National GX-10C Testing Trends
-#: extracted_strings.json
-msgid "National GX-10C Testing Trends"
-msgstr "Tendances nationales des tests GX-10C"
 
 #. [p.PkDashboard.nationalInvalidRates]
 #. defaultMessage is:
@@ -8889,6 +8921,19 @@ msgstr "Aucune donnée disponible"
 msgid "No Filters Applied"
 msgstr "Aucun filtre appliqué"
 
+#. [filter.popover.noMatch]
+#. defaultMessage is:
+#. No Match
+#. [pages.truenatCustomFields.noMatch]
+#. defaultMessage is:
+#. No Match
+#. [pages.truenatCustomFields.noMatch.label]
+#. defaultMessage is:
+#. No Match
+#: extracted_strings.json
+msgid "No Match"
+msgstr "Aucune correspondance"
+
 #. [pages.shared.deviceStatus.inactiveNoPower]
 #. defaultMessage is:
 #. No Power
@@ -8954,23 +8999,26 @@ msgstr "Aucun test effectué"
 msgid "No contacts assigned to site"
 msgstr "Aucun contact n'est assigné au site"
 
+#. [pages.truenatCustomFields.noData]
+#. defaultMessage is:
+#. No custom field entries found
+#: extracted_strings.json
+msgid "No custom field entries found"
+msgstr "Aucune entrée de champ personnalisé trouvée"
+
 #. [pages.DeviceDetailProfile.noDeployments]
 #. defaultMessage is:
 #. No deployments
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Deployment Name"
 msgid "No deployments"
-msgstr "Nom de déploiement"
+msgstr "Aucun déploiement"
 
 #. [device.instrumentList.noInstruments]
 #. defaultMessage is:
 #. No instruments
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Instruments"
 msgid "No instruments"
-msgstr "Instruments"
+msgstr "Aucun instrument"
 
 #. [pages.NewInventoryDialogForm.quantityMissingToRemove]
 #. defaultMessage is:
@@ -9025,10 +9073,8 @@ msgstr "Pas de résultat"
 #. defaultMessage is:
 #. No results
 #: extracted_strings.json
-#, fuzzy
-#| msgid "No result"
 msgid "No results"
-msgstr "Pas de résultat"
+msgstr "Aucun résultat"
 
 #. [shared.EmptyList.noResultsTitle]
 #. defaultMessage is:
@@ -9103,6 +9149,13 @@ msgstr "Non-détecté"
 msgid "Not Found"
 msgstr "Pas trouvé"
 
+#. [filter.notMatchedFilter]
+#. defaultMessage is:
+#. Not Matched
+#: extracted_strings.json
+msgid "Not Matched"
+msgstr "Ne correspond pas"
+
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
 #. defaultMessage is:
 #. Not Possible
@@ -9113,13 +9166,13 @@ msgstr "Pas possible"
 #. [filter.btnGroup.daysStockLeft.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
+#. [pages.DeviceList.notRecorded]
+#. defaultMessage is:
+#. Not Recorded
 #. [pages.InventoryItemsList.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #. [pages.InventoryLog.notRecorded]
-#. defaultMessage is:
-#. Not Recorded
-#. [pages.DeviceList.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #: extracted_strings.json
@@ -9166,16 +9219,16 @@ msgstr "Remarquer"
 #. [pages.ContactDetails.notes]
 #. defaultMessage is:
 #. Notes
-#. [pages.InventoryAdjustmentDialogForm.notes]
-#. defaultMessage is:
-#. Notes
-#. [pages.InventoryLog.notes]
-#. defaultMessage is:
-#. Notes
 #. [pages.BaseDialog.notes]
 #. defaultMessage is:
 #. Notes
 #. [pages.MaintenanceStatusDialog.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.InventoryAdjustmentDialogForm.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.InventoryLog.notes]
 #. defaultMessage is:
 #. Notes
 #. [pages.SiteDetail.fieldNotes]
@@ -9803,10 +9856,10 @@ msgstr "ID patient"
 #. [samples.patientId]
 #. defaultMessage is:
 #. Patient ID
-#. [pages.ResultList.patientId]
+#. [pages.Notifications.table.patientId]
 #. defaultMessage is:
 #. Patient ID
-#. [pages.Notifications.table.patientId]
+#. [pages.ResultList.patientId]
 #. defaultMessage is:
 #. Patient ID
 #. [pages.DeviceDetailProfile.patientId]
@@ -9858,10 +9911,8 @@ msgstr "Identification du patient/cas"
 #. defaultMessage is:
 #. Pending Deployment
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Deployment Name"
 msgid "Pending Deployment"
-msgstr "Nom de déploiement"
+msgstr "Déploiement en attente"
 
 #. [page.contacts.person.pendingChanges]
 #. defaultMessage is:
@@ -10831,10 +10882,8 @@ msgstr "Tendances du diagnostic de la tuberculose réfractaire aux repas"
 #. defaultMessage is:
 #. Reactivate device
 #: extracted_strings.json
-#, fuzzy
-#| msgid "operational devices"
 msgid "Reactivate device"
-msgstr "dispositifs opérationnels"
+msgstr "Réactiver l'appareil"
 
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
@@ -11314,6 +11363,13 @@ msgstr "Demander un nouveau mot de passe à Aspect"
 msgid "Required"
 msgstr "Obligatoire"
 
+#. [pages.truenatCustomFields.reset]
+#. defaultMessage is:
+#. Reset
+#: extracted_strings.json
+msgid "Reset"
+msgstr "Réinitialiser"
+
 #. [pages.ResetPassword.title]
 #. defaultMessage is:
 #. Reset Password
@@ -11354,13 +11410,13 @@ msgstr "Limiter aux sites avec balise"
 #. [samples.result]
 #. defaultMessage is:
 #. Result
+#. [pages.NotificationDetail.resultTitle]
+#. defaultMessage is:
+#. Result
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
 #. [pages.ResultList.resultCategoryResult]
-#. defaultMessage is:
-#. Result
-#. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
 #. [pages.DeviceDetailProfile.resultText]
@@ -11441,6 +11497,13 @@ msgstr "Résultat détecté"
 #: extracted_strings.json
 msgid "Result Detected Resistances"
 msgstr "Résultat Résistances détectées"
+
+#. [pages.truenatCustomFields.resultEndedOn]
+#. defaultMessage is:
+#. Result Ended On
+#: extracted_strings.json
+msgid "Result Ended On"
+msgstr "Résultat terminé le"
 
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
 #. defaultMessage is:
@@ -11570,6 +11633,13 @@ msgstr "Résultat maigre (1-9/100)"
 #: extracted_strings.json
 msgid "Result Success"
 msgstr "Résultat Succès"
+
+#. [placeholder.result.summary]
+#. defaultMessage is:
+#. Result Summary
+#: extracted_strings.json
+msgid "Result Summary"
+msgstr "Résumé des résultats"
 
 #. [resultCategoryGroup.assayBdMgitAstresultCategorySusceptible]
 #. defaultMessage is:
@@ -11889,16 +11959,22 @@ msgstr "Lieu de prélèvement des échantillons"
 #. [filter.popover.sampleId]
 #. defaultMessage is:
 #. Sample ID
+#. [filter.popover.sampleExternalId]
+#. defaultMessage is:
+#. Sample ID
 #. [forms.formItem.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [samples.sampleId]
 #. defaultMessage is:
 #. Sample ID
-#. [pages.ResultList.sampleId]
+#. [pages.truenatCustomFields.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.Notifications.table.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [pages.ResultList.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.DeviceDetailProfile.sampleId]
@@ -11907,6 +11983,13 @@ msgstr "Lieu de prélèvement des échantillons"
 #: extracted_strings.json
 msgid "Sample ID"
 msgstr "ID échantillon"
+
+#. [filter.sampleExternalIdFilter]
+#. defaultMessage is:
+#. Sample ID includes: {sampleExternalId}
+#: extracted_strings.json
+msgid "Sample ID includes: {sampleExternalId}"
+msgstr "L'identifiant de l'exemple comprend : {sampleExternalId}"
 
 #. [placeholder.result.sample.id]
 #. defaultMessage is:
@@ -12276,10 +12359,10 @@ msgstr "Sélectionnable"
 #. [filter.AssaySelectField.assaySenaiteLIMSSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
-#. [pages.ResultList.assaySenaiteLIMSSmearMicroscopy]
+#. [filter.AssaySelectField.senaiteSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
-#. [filter.AssaySelectField.senaiteSmearMicroscopy]
+#. [pages.ResultList.assaySenaiteLIMSSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
 #: extracted_strings.json
@@ -12292,10 +12375,10 @@ msgstr "Microscopie à frottis Senaite LIMS"
 #. [filter.AssaySelectField.assaySenaiteLIMSTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
-#. [pages.ResultList.assaySenaiteLIMSTbCulture]
+#. [filter.AssaySelectField.senaiteTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
-#. [filter.AssaySelectField.senaiteTbCulture]
+#. [pages.ResultList.assaySenaiteLIMSTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
 #: extracted_strings.json
@@ -12308,10 +12391,10 @@ msgstr "Senaite LIMS TB Culture"
 #. [filter.AssaySelectField.assaySenaiteLIMSUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
-#. [pages.ResultList.assaySenaiteLIMSUnknown]
+#. [filter.AssaySelectField.senaiteUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
-#. [filter.AssaySelectField.senaiteUnknown]
+#. [pages.ResultList.assaySenaiteLIMSUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
 #: extracted_strings.json
@@ -12687,6 +12770,17 @@ msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
 "{# dispositif} other {# dispositifs}}"
 
+#. [pages.truenatCustomFields.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# entry} other {# entries} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"entry} other {# entries} }"
+msgstr ""
+"Affichage de {firstItemIndex} à {lastItemIndex} sur {itemCount, pluriel, un "
+"{# entrée} autres {# entrées} }"
+
 #. [pages.Notification.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# notification} other {# notifications} }
@@ -12832,6 +12926,9 @@ msgstr "Se déconnecter"
 #. [pages.DeviceList.site]
 #. defaultMessage is:
 #. Site
+#. [pages.truenatCustomFields.site]
+#. defaultMessage is:
+#. Site
 #. [pages.NotificationDetail.siteTitle]
 #. defaultMessage is:
 #. Site
@@ -12914,13 +13011,16 @@ msgstr "L'identifiant du site est déjà utilisé"
 #. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
+#. [pages.truenatCustomFields.siteName]
+#. defaultMessage is:
+#. Site Name
+#. [pages.inventoryReconciliation.siteName]
+#. defaultMessage is:
+#. Site Name
 #. [pages.InventoryItemsList.siteName]
 #. defaultMessage is:
 #. Site Name
 #. [pages.InventoryLog.siteName]
-#. defaultMessage is:
-#. Site Name
-#. [pages.inventoryReconciliation.siteName]
 #. defaultMessage is:
 #. Site Name
 #: extracted_strings.json
@@ -12953,6 +13053,13 @@ msgstr "Heures de travail du site"
 #: extracted_strings.json
 msgid "Site name is already in use"
 msgstr "Le nom du site est déjà utilisé"
+
+#. [filter.whereSiteIs]
+#. defaultMessage is:
+#. Site: {siteName}
+#: extracted_strings.json
+msgid "Site: {siteName}"
+msgstr "Site : {siteName}"
 
 #. [browsePage.browseDropdown.sites]
 #. defaultMessage is:
@@ -13226,13 +13333,13 @@ msgstr "Statistiques sur les notifications SMS envoyées."
 #. [pages.Status.title]
 #. defaultMessage is:
 #. Status
-#. [pages.ResultList.resultCategoryStatus]
-#. defaultMessage is:
-#. Status
 #. [pages.workload.deviceStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.Notification.status]
+#. defaultMessage is:
+#. Status
+#. [pages.ResultList.resultCategoryStatus]
 #. defaultMessage is:
 #. Status
 #: extracted_strings.json
@@ -13307,13 +13414,13 @@ msgstr "Étude/Recherche"
 #. [pages.UpdateLoginDetails.submitCurrentPassword]
 #. defaultMessage is:
 #. Submit
-#. [pages.InventoryAdjustmentDialogForm.submit]
-#. defaultMessage is:
-#. Submit
 #. [pages.BaseDialog.submit]
 #. defaultMessage is:
 #. Submit
 #. [pages.MaintenanceStatusDialog.submit]
+#. defaultMessage is:
+#. Submit
+#. [pages.InventoryAdjustmentDialogForm.submit]
 #. defaultMessage is:
 #. Submit
 #. [pages.DailyStatusDialog.submit]
@@ -14855,6 +14962,13 @@ msgstr "Titre"
 msgid "To"
 msgstr "À"
 
+#. [pages.truenatCustomFields.toDate]
+#. defaultMessage is:
+#. To Date
+#: extracted_strings.json
+msgid "To Date"
+msgstr "À ce jour"
+
 #. [pages.InventoryAdjustmentDialogForm.toSiteName]
 #. defaultMessage is:
 #. To Site
@@ -15168,10 +15282,8 @@ msgstr "Échec du transfert de l'inventaire"
 #. defaultMessage is:
 #. Transferring...
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Transfer"
 msgid "Transferring..."
-msgstr "Transfert"
+msgstr "Transfert..."
 
 #. [browsePage.browseDropdown.inventoryTransfers]
 #. defaultMessage is:
@@ -15210,6 +15322,25 @@ msgstr "Déclenchez cette notification lorsque..."
 #: extracted_strings.json
 msgid "True"
 msgstr "Vrai"
+
+#. [browsePage.browseDropdown.truenatCustomFields]
+#. defaultMessage is:
+#. Truenat Custom Fields
+#. [pages.truenatCustomFields.title]
+#. defaultMessage is:
+#. Truenat Custom Fields
+#: extracted_strings.json
+msgid "Truenat Custom Fields"
+msgstr "Champs personnalisés Truenat"
+
+#. [pages.truenatCustomFields.detailTitle]
+#. defaultMessage is:
+#. Truenat Form Detail
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Inventory Detail"
+msgid "Truenat Form Detail"
+msgstr "Détail de l'inventaire"
 
 #. [consumable.truenatMTBPlusTestKit]
 #. defaultMessage is:
@@ -15473,6 +15604,27 @@ msgstr "Haut"
 #: extracted_strings.json
 msgid "Update"
 msgstr "Mettre à jour"
+
+#. [pages.truenatCustomFields.updatedBy]
+#. defaultMessage is:
+#. Updated By
+#: extracted_strings.json
+msgid "Updated By"
+msgstr "Mis à jour par"
+
+#. [pages.truenatCustomFields.updatedOn]
+#. defaultMessage is:
+#. Updated On
+#: extracted_strings.json
+msgid "Updated On"
+msgstr "Mis à jour le"
+
+#. [pages.truenatCustomFields.uploadedBy]
+#. defaultMessage is:
+#. Uploaded By
+#: extracted_strings.json
+msgid "Uploaded By"
+msgstr "Téléchargé par"
 
 #. [component.InputPassword.mixCase]
 #. defaultMessage is:
@@ -16959,6 +17111,12 @@ msgstr "{unit} total des étalonnages"
 msgid "—"
 msgstr "—"
 
+#~ msgid "National GX-10C Diagnosed Trends in"
+#~ msgstr "GX-10C Tendances National du Diagnostiqué en"
+
+#~ msgid "National GX-10C Testing Trends"
+#~ msgstr "Tendances nationales des tests GX-10C"
+
 #~ msgid "Assigned"
 #~ msgstr "Assigné"
 
@@ -17276,9 +17434,6 @@ msgstr "—"
 
 #~ msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
 #~ msgstr "Tendances de test et de diagnostic à l'aide du test MTB/XDR"
-
-#~ msgid "XDR Assay Results Summary"
-#~ msgstr "Résumé des résultats de l'essai XDR"
 
 #~ msgid "Days Offline"
 #~ msgstr "Jours hors ligne"
@@ -17850,9 +18005,6 @@ msgstr "—"
 #~ msgid "Router"
 #~ msgstr "Routeur"
 
-#~ msgid "Router Detail"
-#~ msgstr "Détail du routeur"
-
 #~ msgid "Saving Contact Details Failed"
 #~ msgstr "L'enregistrement des détails du contact a échoué"
 
@@ -18306,13 +18458,6 @@ msgstr "—"
 
 #~ msgid "Select area..."
 #~ msgstr "Sélectionnez une zone ..."
-
-#~ msgid ""
-#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#~ "event} other {# events}}"
-#~ msgstr ""
-#~ "Affichage de {firstItemIndex} - {lastItemIndex} de {itemCount, plural, "
-#~ "one {# événement} other {# événements}}"
 
 #~ msgid ""
 #~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
