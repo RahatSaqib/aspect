@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import {
   Autocomplete,
-  // CircularProgress,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -23,20 +23,20 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { DetailHeader, DeviceListFilter, TableContainer } from '../../../cleanComponents'
+import { DetailHeader, DeviceListFilter, TableContainer } from '../../../components'
 import ExportListButton from '../../../components/AspectExportListButton'
-// import PermissionChecker from '../../../components/PermissionChecker/index'
+import BrowseEmptyList from '../../../components/BrowseEmptyList'
+import BrowseTablePaginator from '../../../components/BrowseTablePaginator'
+import { getAspectDisplayPreferences } from '../../../components/LocalStorage'
+import PermissionChecker from '../../../components/PermissionChecker'
 import { DEVICE_LIST } from '../../../components/QueryFetch/Device/index'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
+import AspectButton from '../../../components/shared/AspectButton'
+import DataTableCard from '../../../components/shared/DataTableCard'
 import { useDeviceForSelect } from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
-import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
@@ -149,7 +149,6 @@ const DeviceList = () => {
   const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
   const [isConfirmationVisible, setConfirmationVisible] = useState(false)
   const [siteToMergeDevices, setSiteToMergeDevices] = useState()
-  // eslint-disable-next-line no-unused-vars
   const [isProcessingMergeDevices, setProcessingMergeDevices] = useState(false)
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [pagination, setPagination] = useState({})
@@ -241,7 +240,7 @@ const DeviceList = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.devicesTitle)} disableBack>
-        {/* <PermissionChecker permissions={['device:admin']}>
+        <PermissionChecker permissions={['device:admin']}>
           <AspectButton
             onClick={() => {
               setConfirmationVisible(false)
@@ -258,7 +257,7 @@ const DeviceList = () => {
               <CircularProgress size="16px" thickness={5} disableShrink sx={{ color: '#fff', marginLeft: '15px' }} />
             ) : null}
           </AspectButton>
-        </PermissionChecker> */}
+        </PermissionChecker>
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.devicesTitle)} />

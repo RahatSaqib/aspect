@@ -3,7 +3,7 @@ import { FormControl, FormHelperText } from '@mui/material'
 import { useFormikContext } from 'formik'
 import get from 'lodash/get'
 import PropTypes from 'prop-types'
-import CheckboxField from '../../../oldComponents/shared/CheckboxField'
+import CheckboxField from '../../shared/CheckboxField'
 import { getFieldErrorProps } from '../Formik/Helpers'
 
 const Checkbox = props => {

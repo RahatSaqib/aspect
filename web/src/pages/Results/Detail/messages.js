@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 import { commonDefinitions, resultCategory, resultCategoryType, sampleType } from '../../../messages'
-import resultCategoryAssayMessages from '../../../oldPages/result/list/messages'
+import resultCategoryAssayMessages from '../../Result/list/messages'
 
 const messagesResult = defineMessages({
   site: {
@@ -83,6 +83,10 @@ const messagesResult = defineMessages({
   customFields: {
     id: 'pages.resultEdit.customFields',
     defaultMessage: 'Custom Fields',
+  },
+  truenatCustomFieldsReadOnlyNote: {
+    id: 'pages.resultEdit.truenatCustomFieldsReadOnlyNote',
+    defaultMessage: 'Custom fields for TrueNat devices are managed in TrueConnect and cannot be edited here.',
   },
   noCustomFieldsDefined: {
     id: 'pages.resultEdit.noCustomFieldsDefined',

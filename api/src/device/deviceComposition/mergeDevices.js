@@ -31,7 +31,6 @@ const validate = async (sourceDevices, targetDevice, credentials) => {
   validateDeviceIsNotActive(sourceDevices)
   validateSameSite(sourceDevices, targetDevice)
   validateDeviceType(sourceDevices, targetDevice)
-  await validateInstruments(sourceDevices, targetDevice)
   await validatePersmissions(sourceDevices, targetDevice, credentials)
 }
 
@@ -84,22 +83,6 @@ function validateDeviceType(sourceDevices, targetDevice) {
   if (sourceDevices.some(sourceDevice => sourceDevice.deviceTypeId !== targetDevice.deviceTypeId)) {
     throw Boom.badData('Cannot merge different type of devices.', {
       errorKeyCode: 'mergeDevicesDifferentDeviceTypes',
-    })
-  }
-}
-
-async function validateInstruments(sourceDevices, targetDevice) {
-  const deviceIds = [...sourceDevices.map(sourceDevice => sourceDevice.id)]
-  const serials = await knex('Instrument').whereIn('deviceId', deviceIds).pluck('serial')
-  const [{ count: duplicatedSerialCount }] = await knex('Instrument')
-    .where('deviceId', targetDevice.id)
-    .whereIn('serial', serials)
-    .count('* as count')
-  const hasDuplicateSerials = duplicatedSerialCount > 0
-
-  if (hasDuplicateSerials) {
-    throw Boom.badData('Cannot merge devices with duplicated instruments.', {
-      errorKeyCode: 'mergeDevicesDuplicatedInstruments',
     })
   }
 }

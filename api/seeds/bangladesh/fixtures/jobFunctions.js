@@ -25,12 +25,22 @@ const withNoReporterPermissions = jf => ({
   ...jf,
   permissions: _.filter(jf.permissions, permission => permission.module !== 'reporter'),
 })
+const withFormsPermission = jf => {
+  const hasResultPermission = _.some(jf.permissions, permission => permission.module === 'result')
+  if (!hasResultPermission) return jf
+
+  return {
+    ...jf,
+    permissions: _.uniqWith([...jf.permissions, { module: 'forms', activity: 'view' }], _.isEqual),
+  }
+}
+
 module.exports = [
-  withNoReporterPermissions(withNewReports(superAdmin)),
-  withNoReporterPermissions(withNewReports(regionalAdmin)),
-  withNoReporterPermissions(withNewReports(regionalOfficer)),
-  withNoReporterPermissions(labUser),
-  withNoReporterPermissions(clinician),
+  withFormsPermission(withNoReporterPermissions(withNewReports(superAdmin))),
+  withFormsPermission(withNoReporterPermissions(withNewReports(regionalAdmin))),
+  withFormsPermission(withNoReporterPermissions(withNewReports(regionalOfficer))),
+  withFormsPermission(withNoReporterPermissions(labUser)),
+  withFormsPermission(withNoReporterPermissions(clinician)),
   withNoReporterPermissions(remoteHealthWorker),
   withNoReporterPermissions(technician),
   aspectBeta,

@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
-import { getISOFromString } from '../../oldComponents/shared/DateTimeInput/utils/date'
+import { getISOFromString } from '../../components/shared/DateTimeInput/utils/date'
 import {
   errorForbidden,
   errorPleaseTryAgainInAFewMinutes,

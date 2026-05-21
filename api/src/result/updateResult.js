@@ -1,4 +1,4 @@
-const { Boom } = require('@hapi/boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { getUser } = require('../auth/service')
 const { getResultByResultId } = require('./common/db')
@@ -39,6 +39,24 @@ async function updateResult(request) {
   const { id: userId } = user
   const now = new Date()
   const { customFields, deviceId, resultDataHash } = result.data
+
+  const deviceTypeExternalId = _.get(result.data, 'assay.deviceTypeExternalId')
+  if (deviceTypeExternalId === 'molbioTruenat') {
+    const attemptedCustomEdit = customFields.some(customField => {
+      if (!customField.source) {
+        return false
+      }
+      if (!_.has(payload, customField.source)) {
+        return false
+      }
+      const nextVal = _.get(payload, customField.source)
+      const prevVal = _.get(result.data, customField.source)
+      return !_.isEqual(nextVal, prevVal)
+    })
+    if (attemptedCustomEdit) {
+      return Boom.forbidden('Custom fields for TrueNat devices cannot be edited in Aspect.')
+    }
+  }
 
   let fieldsToUpdate = {}
   if (payload?.excluded === false) {

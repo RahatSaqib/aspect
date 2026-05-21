@@ -16,7 +16,7 @@ import {
 import { parseISO } from 'date-fns'
 import { format } from 'date-fns-tz'
 import { MdClose, MdExpandMore } from 'react-icons/md'
-import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
+import { getAspectDisplayPreferences } from '../../components/LocalStorage'
 
 const { dateFormat } = getAspectDisplayPreferences().toJS()
 

@@ -37,9 +37,9 @@ src/{module}/common/{subject}Service.js
 **Rules:**
 
 - Colocate DB queries with the use case. Only promote to `common/db.js` when ≥2 use cases need the same query.
-- `common/logic.js` is for short-to-medium helper functions shared across use cases. If the shared logic is complex, give it its own `common/{subject}Service.js` file.
-- A use-case-scoped `{subject}Service.js` (next to the handler) is fine for complex sub-tasks that belong exclusively to that use case — see `mergeDevicesLogic.js` and `transferInstrumentsLogic.js`.
-- Do not create a `db.js` or `service.js` for single-use code that will never be shared.
+- `common/logic.js` is for short-to-medium helper functions shared across use cases. If the shared logic is complex or tied to a domain concept, give it its own `common/{subject}Service.js` file.
+- **`{subject}Service.js` in the tree (common or next to a use case)** is where **non-entrypoint** work lives: mapping between persisted shapes, transforms, heavy validation—anything that is **not** the route handler or subscription callback itself. The handler (or a thin orchestrator only called from handlers/subscribers) keeps auth, transaction boundaries, and I/O order; it calls into this module. **Filename** can be `{subject}Service.js` or another single descriptive name when that reads better (e.g. `trueConnectCustomFieldsMapping.js`); either way, **every export should match that file’s subject**, and related helpers stay together—no scattering across tiny files or unrelated `service.js` entrypoints.
+- Do not add `db.js` or a dedicated `{subject}` module for trivial one-off snippets that will never gain a second caller or a coherent name.
 
 ---
 
@@ -123,7 +123,7 @@ async function myUseCaseHandler({
 
   // 3. Mutate (wrap in transaction when touching multiple tables)
   await transact(async (trknex) =>
-    executeMyAction(trknex, source.id, target.id, userId),
+    executeMyAction(trknex, source.id, target.id, userId)
   );
 
   // 4. Side effects
@@ -149,7 +149,7 @@ async function validatePermissions(deviceIds, credentials) {
   const dataConstraints = await getConstraints(credentials);
   const accessible = await getDevicesIdsCheckingConstraints(
     deviceIds,
-    dataConstraints,
+    dataConstraints
   );
   if (accessible.length !== deviceIds.length) {
     throw Boom.forbidden(`You don't have permission to perform this action.`);
@@ -245,6 +245,7 @@ Promote a function to `common/` only when it is genuinely needed by two or more 
 | `common/db.js`               | DB query reused across ≥2 use cases               |
 | `common/logic.js`            | Short-to-medium helper reused across ≥2 use cases |
 | `common/{subject}Service.js` | Complex shared logic that deserves its own file   |
+| `common/{subject}Logic.js`   | Same as above, old naming convention              |
 
 Example from the codebase: `getDevicesIdsCheckingConstraints` lives in `device/common/db.js` because both `mergeDevices.js` and `transferInstruments.js` call it. `recalculateDeviceFactTables` and `deleteDevice` live in `device/common/logic.js` for the same reason.
 
@@ -289,6 +290,84 @@ throw Boom.badRequest('Descriptive message', { errorKeyCode: 'camelCaseKey' });
 ```
 
 Never throw `new Error(...)` from route handlers or service functions.
+
+---
+
+---
+
+## 8. Listing records with `addConstraints` (read-only use case)
+
+Use this pattern when you need a **pageable, filterable list** of records that are access-controlled by the user's site/result constraints. The canonical example is `api/src/formData/` (TDC-21).
+
+### Structure
+
+```
+src/formData/
+  db.js          ← Knex queries; buildBaseQuery + filter modifier
+  service.js     ← Handler + serialization
+  endpoints.js   ← Route definitions (GET /form-data, GET /form-data/{id})
+```
+
+### Key patterns
+
+**`db.js` — base query with constraints**
+
+```js
+const { knex } = require('../db')
+const { addConstraints } = require('../auth/constraints')
+
+function buildBaseQuery(dataConstraints) {
+  return knex('FormData as fd')
+    .join('Site as s', 's.id', 'fd.siteId')
+    // other optional joins ...
+    .modify(addConstraints, dataConstraints, { site: 's' })
+}
+
+function applyListFilters(query, { siteId, dateFrom, dateTo }) {
+  if (siteId) query.where('fd.siteId', siteId)
+  if (dateFrom) query.where('fd.createdOn', '>=', dateFrom)
+  if (dateTo)   query.where('fd.createdOn', '<=', dateTo)
+}
+
+function getRecords(dataConstraints, filters) {
+  return buildBaseQuery(dataConstraints)
+    .modify(applyListFilters, filters)
+    .select('fd.id', 's.name as siteName', ...)
+    .orderBy('fd.createdOn', 'desc')
+}
+
+function countRecords(dataConstraints, filters) {
+  return buildBaseQuery(dataConstraints).modify(applyListFilters, filters).countDistinct('fd.id as total').first()
+}
+```
+
+**`service.js` — handler with default date range**
+
+```js
+async function listRecords(request) {
+  const dataConstraints = await getConstraints(request.auth.credentials)
+  const now = new Date()
+  const filters = {
+    siteId: request.query.siteId,
+    dateFrom: request.query.dateFrom || subDays(now, 30),
+    dateTo:   request.query.dateTo   || now,
+  }
+  const [rows, totalRow] = await Promise.all([
+    getRecords(dataConstraints, filters),
+    countRecords(dataConstraints, filters),
+  ])
+  return { ok: true, total: Number(totalRow.total || 0), length: rows.length, data: rows }
+}
+```
+
+**`endpoints.js` — register with `decorateClientAPI('result')`**
+
+```js
+// In routes.js:
+server.route(require('./formData/endpoints').routes.map(decorateClientAPI('result')))
+```
+
+**Access-control alias rule**: pass `{ site: 's' }` to `addConstraints` when the table being listed has a `siteId` FK, exactly like `getAccessibleFormDataByExternalId` in `api/src/mobileApi/customFields/db.js`. This hooks into job-context OR-constraints and country/partner filtering automatically.
 
 ---
 

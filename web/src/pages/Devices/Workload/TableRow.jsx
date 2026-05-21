@@ -2,8 +2,8 @@ import React from 'react'
 import isNil from 'lodash/isNil'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
-import styles from '../../../oldComponents/shared/DataTableRow.module.css'
-import { DataTableRow as Tr, DataTableCell as Td } from '../../../oldComponents/shared/tableBody'
+import styles from '../../../components/shared/DataTableRow.module.css'
+import { DataTableRow as Tr, DataTableCell as Td } from '../../../components/shared/tableBody'
 import messages from './messages'
 
 const TableRow = ({ item, extraColumns, onColumnClick }) => {

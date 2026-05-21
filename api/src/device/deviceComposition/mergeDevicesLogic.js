@@ -22,10 +22,54 @@ async function deleteDeployments(trknex, sourceDeviceId) {
 
 // Merge instruments from source to target device
 async function mergeInstruments(trknex, sourceDeviceId, targetDeviceId, userId) {
-  // Move all instruments from the source device to the target device
-  await trknex('Instrument')
+  const now = new Date()
+  const sourceInstruments = await trknex('Instrument')
     .where('deviceId', sourceDeviceId)
-    .update({ deviceId: targetDeviceId, updatedOn: new Date(), updatedBy: userId })
+    .select('id', 'serial', 'active')
+
+  if (sourceInstruments.length === 0) {
+    return
+  }
+
+  const sourceInstrumentIds = sourceInstruments.map(instrument => instrument.id)
+  const sourceSerials = sourceInstruments.map(instrument => instrument.serial)
+  const duplicateTargetInstruments = sourceSerials.length
+    ? await trknex('Instrument')
+        .where('deviceId', targetDeviceId)
+        .whereIn('serial', sourceSerials)
+        .select('id', 'serial')
+    : []
+
+  const duplicateSerials = new Set(duplicateTargetInstruments.map(instrument => instrument.serial))
+  const duplicateSourceInstrumentIds = sourceInstruments
+    .filter(instrument => duplicateSerials.has(instrument.serial))
+    .map(instrument => instrument.id)
+  const sourceActiveDuplicateSerials = [
+    ...new Set(
+      sourceInstruments
+        .filter(instrument => instrument.active && duplicateSerials.has(instrument.serial))
+        .map(instrument => instrument.serial)
+    ),
+  ]
+
+  if (sourceActiveDuplicateSerials.length > 0) {
+    await trknex('Instrument')
+      .where('deviceId', targetDeviceId)
+      .whereIn('serial', sourceActiveDuplicateSerials)
+      .update({ active: true, updatedOn: now, updatedBy: userId })
+  }
+
+  const sourceInstrumentIdsToMove = sourceInstrumentIds.filter(id => !duplicateSourceInstrumentIds.includes(id))
+
+  if (sourceInstrumentIdsToMove.length > 0) {
+    await trknex('Instrument')
+      .whereIn('id', sourceInstrumentIdsToMove)
+      .update({ deviceId: targetDeviceId, updatedOn: now, updatedBy: userId })
+  }
+
+  if (duplicateSourceInstrumentIds.length > 0) {
+    await trknex('Instrument').whereIn('id', duplicateSourceInstrumentIds).delete()
+  }
 }
 
 async function mergeIssuesFromDuplicatedResults(trknex, sourceDeviceId, targetDeviceId) {

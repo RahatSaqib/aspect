@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
-import { Loading } from '../../cleanComponents'
+import { Loading } from '../../components'
 import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages'
 import COUNTRY_ISO_MAPPING from '../../utils/consts/Countries/CONSTS'

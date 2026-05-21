@@ -7,7 +7,7 @@ import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
 import { withProps } from 'recompose'
-import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
+import { getAspectDisplayPreferences } from '../../components/LocalStorage'
 import getLocale from './locale'
 
 export function getDateObject(date, defaultValue) {

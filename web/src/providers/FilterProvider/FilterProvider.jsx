@@ -6,10 +6,10 @@ import startOfMonth from 'date-fns/startOfMonth'
 import startOfYear from 'date-fns/startOfYear'
 import subtractDays from 'date-fns/subDays'
 import { useLocation } from 'react-router'
+import { getTimePeriod } from '../../components/shared/DateTimeInput/utils/date'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useAuthState from '../../hooks/useAuthState'
-import { getTimePeriod } from '../../oldComponents/shared/DateTimeInput/utils/date'
 import FilterContext from './FilterProvider.Context'
 
 const now = new Date()
@@ -67,6 +67,7 @@ export const defaultFilter = {
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate }, //
   '/browse/result': { minDate, maxDate }, //
+  '/browse/forms/truenat-custom-fields': { minDate, maxDate },
   '/browse/samples': { minDate, maxDate }, //
   '/browse/site': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate }, //

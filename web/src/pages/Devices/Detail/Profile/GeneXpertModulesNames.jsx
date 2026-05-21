@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
-import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
+import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { formatDateTime } from '../../../../utils/utils/dateFormat'
 import styles from '../styles.module.css'
 import messages from './messages'

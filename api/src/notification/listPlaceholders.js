@@ -133,6 +133,11 @@ module.exports = async function (request) {
           name: 'Result Text',
         },
         {
+          id: 'result.resultSummary',
+          nameI18nKey: 'placeholderResultSummary',
+          name: 'Result Summary',
+        },
+        {
           id: 'result.patient.id',
           nameI18nKey: 'placeholderResultPatientId',
           name: 'Patient ID',

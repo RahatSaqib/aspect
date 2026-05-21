@@ -6,6 +6,8 @@ const _ = require('lodash')
 
 const { assert, expect } = chai
 
+const realResultActions = require('../../../../src/result/actions')
+
 describe('Truenat Result Upload Data Processor', () => {
   const defaultPayload = {
     Age: '55',
@@ -53,8 +55,8 @@ describe('Truenat Result Upload Data Processor', () => {
       Missing: 10,
     },
   }
-  let mockDeviceService
   let mockSharedRequestService
+  let mockResultActions
   let mockDb
   let knexSpy
   let knexInsertSpies
@@ -68,14 +70,19 @@ describe('Truenat Result Upload Data Processor', () => {
     existingResult,
     newResultId
   ) {
-    mockDeviceService = {
-      postPayloadFromDevice: async () => Promise.resolve(987),
-    }
-    sinon.spy(mockDeviceService, 'postPayloadFromDevice')
     mockSharedRequestService = {
       getRemoteAddress: () => '10.11.12.13',
     }
     sinon.spy(mockSharedRequestService, 'getRemoteAddress')
+    mockResultActions = {
+      truenatResultLogged: sinon.stub().callsFake((resultId, deviceApiRawId, userId, options) => ({
+        type: 'TRUENAT_RESULT_LOGGED',
+        resultId,
+        deviceApiRawId,
+        userId,
+        isResultUpdated: (options && options.isResultUpdated) || false,
+      })),
+    }
     knexSpy = sinon.spy()
     knexSpy.chainedCalls = {
       tables: [],
@@ -93,6 +100,10 @@ describe('Truenat Result Upload Data Processor', () => {
       return knex
     }
     knex.join = function (...args) {
+      knexSpy.chainedCalls.join = [...knexSpy.chainedCalls.join, args]
+      return knex
+    }
+    knex.leftJoin = function (...args) {
       knexSpy.chainedCalls.join = [...knexSpy.chainedCalls.join, args]
       return knex
     }
@@ -122,13 +133,11 @@ describe('Truenat Result Upload Data Processor', () => {
             'dak.id as deviceApiKeyId',
             'd.partnerId',
             'd.siteId',
-            'd.deviceApprovalId',
-            'd.name as deviceName',
+            'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
             's.geographyId',
             's.longitude',
             's.latitude',
             's.name as siteName',
-            'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
             's.externalId as siteExternalId',
             'dt.externalId as deviceTypeExternalId',
           ].join(',')
@@ -180,17 +189,28 @@ describe('Truenat Result Upload Data Processor', () => {
             this.request = request
             this.messageContext = messageContext
           }
+
+          async updateDeviceLastSeenOn() {
+            return Promise.resolve()
+          }
+
+          async updateDeviceApiRawStatus() {
+            return Promise.resolve()
+          }
         },
       },
       '../../../shared/request': mockSharedRequestService,
       '../../../db': mockDb,
-      '../../../device/service': mockDeviceService,
       '../../../shared/dictionary': {
         resultSourceToId: async resultSourceExternalId =>
           Promise.resolve(staticData.resultSource[resultSourceExternalId]),
         resultTypeToId: async resultTypeExternalId => Promise.resolve(staticData.resultType[resultTypeExternalId]),
         allSampleTypeToId: async () => Promise.resolve(staticData.sampleType),
         allResultCategoryToId: async () => Promise.resolve(staticData.resultCategory),
+      },
+      '../../../result/actions': {
+        ...realResultActions,
+        truenatResultLogged: mockResultActions.truenatResultLogged,
       },
     })
   }
@@ -334,15 +354,12 @@ describe('Truenat Result Upload Data Processor', () => {
         const TruenatResult = fluentMockTruenatResultUploadDataProcessor().build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
-        const { deviceTypeExternalId, siteExternalId, deviceDefaultReportableSiteId } = defaultDeviceApiKeyDetails
-        const { abbreviation } = defaultAssay
+        const { deviceDefaultReportableSiteId } = defaultDeviceApiKeyDetails
         const patientId = _.get(request, 'payload.PatientID')
         const patientName = _.get(request, 'payload.PatientName')
         const sampleTypeName = _.get(request, 'payload.SampleType')
         const sampleTypeMappings = { Sputum: 'Sputum' }
-        const sampleExternalId = `${deviceTypeExternalId}_${abbreviation}_${siteExternalId}_${
-          patientId || patientName
-        }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
+        const sampleExternalId = patientId || patientName
         const sampleTypeId = sampleTypeMappings[sampleTypeName]
           ? staticData.sampleType[sampleTypeMappings[sampleTypeName]]
           : null
@@ -351,6 +368,13 @@ describe('Truenat Result Upload Data Processor', () => {
           externalId: sampleExternalId,
           sampleTypeId,
           originSiteId: deviceDefaultReportableSiteId,
+        })
+        assert.isTrue(mockResultActions.truenatResultLogged.calledOnce)
+        assert.isTrue(mockResultActions.truenatResultLogged.calledWith(defaultNewResultId, truenatResultInstance.id))
+        assert.deepInclude(messageContext.dispatch.firstCall.args[0], {
+          type: 'TRUENAT_RESULT_LOGGED',
+          resultId: defaultNewResultId,
+          deviceApiRawId: truenatResultInstance.id,
         })
       })
     })
@@ -532,17 +556,18 @@ describe('Truenat Result Upload Data Processor', () => {
     })
 
     describe('when the device does not have a default reportable site ID', () => {
-      it("will use the device site ID as a fallback for the result's reportable site ID", async () => {
+      it("will leave the result's reportable site ID null when there is no device site", async () => {
         const TruenatResult = fluentMockTruenatResultUploadDataProcessor()
           .withDeviceApiKeyDetails({
             ...defaultDeviceApiKeyDetails,
+            siteId: null,
             deviceDefaultReportableSiteId: null,
           })
           .build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
         expect(knexInsertSpies.Result.lastCall.args[0]).to.containSubset({
-          reportableSiteId: defaultDeviceApiKeyDetails.siteId,
+          reportableSiteId: null,
         })
       })
     })

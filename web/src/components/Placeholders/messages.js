@@ -67,6 +67,10 @@ const messages = defineMessages({
     id: 'placeholder.result.text',
     defaultMessage: `Result Text`,
   },
+  placeholderResultSummary: {
+    id: 'placeholder.result.summary',
+    defaultMessage: `Result Summary`,
+  },
   placeholderResultPatientId: {
     id: 'placeholder.result.patient.id',
     defaultMessage: `Patient Id`,

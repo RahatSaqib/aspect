@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, memo } from 'react'
 import { bool, string, oneOfType } from 'prop-types'
 import { FaSquare } from 'react-icons/fa'
-import { ErrorBoundary } from '../../cleanComponents'
+import { ErrorBoundary } from '..'
 import styles from './Icons.module.css'
 
 async function loadIconModule(icon) {

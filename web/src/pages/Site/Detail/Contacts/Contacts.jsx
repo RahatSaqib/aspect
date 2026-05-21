@@ -3,10 +3,10 @@ import { Button } from '@mui/material'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
-import { ContactTagInput } from '../../../../cleanComponents'
+import { ContactTagInput } from '../../../../components'
+import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
+import styles from '../../../../components/Summary.module.css'
 import useContactBySite from '../../../../hooks/person/useContactBySite'
-import { ReadOnlyField } from '../../../../oldComponents/shared/ReadOnlyFields'
-import styles from '../../../../oldComponents/Summary.module.css'
 import messages from '../messages'
 
 const Contacts = ({ id, title, formatMessage, disabled }) => {

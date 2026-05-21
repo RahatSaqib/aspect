@@ -3,28 +3,28 @@ import { IdleTimerProvider } from 'react-idle-timer'
 import { useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { Loading, ErrorBoundary, LoggedInLayout } from './cleanComponents'
+import { Loading, ErrorBoundary, LoggedInLayout } from './components'
+import AspectDialog from './components/shared/AspectDialog'
+import { isPermittedUser } from './components/shared/requirePermissions'
 import config from './config'
 import useAuthState from './hooks/useAuthState'
 import useHashAndScroll from './hooks/useHashAndScroll'
 import messages from './messages/allMessages'
-import AspectDialog from './oldComponents/shared/AspectDialog'
-import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import RecordPageViewProvider from './providers/RecordPageViewProvider'
 import { routePaths } from './routes/constants'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
 const ContactPage = lazy(() => import('./pages/Contact'))
-const DeviceApiKeyList = lazy(() => import('./oldPages/deviceApiKey/list/DeviceApiKeyList'))
+const DeviceApiKeyList = lazy(() => import('./pages/DeviceApiKey/list/DeviceApiKeyList'))
 
 const Devices = lazy(() => import('./pages/Devices/Status/DeviceList'))
 const DevicesWorkload = lazy(() => import('./pages/Devices/Workload'))
 const DeviceDetail = lazy(() => import('./pages/Devices/Detail/DeviceDetail'))
 const EditSite = lazy(() => import('./pages/Site/Detail/Edit'))
-const InventoryItemsList = lazy(() => import('./oldPages/inventory/list/InventoryItemsList'))
+const InventoryItemsList = lazy(() => import('./pages/Inventory/list/InventoryItemsList'))
 const InventoryReconciliation = lazy(() => import('./pages/Inventory/Reconciliation'))
-const InventoryLog = lazy(() => import('./oldPages/inventory/log/InventoryLog'))
+const InventoryLog = lazy(() => import('./pages/Inventory/log/InventoryLog'))
 const InventoryTransfers = lazy(() => import('./pages/Inventory/Transfers'))
 const InventoryList = lazy(() => import('./pages/Inventory/InventoryList'))
 const InventoryReconciliationForm = lazy(() =>
@@ -35,17 +35,19 @@ const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
 const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
 const NotificationLogs = lazy(() => import('./pages/Notification/NotificationLogsPage'))
-const OperationalData = lazy(() => import('./oldPages/dashboard/operational/OperationalData'))
+const OperationalData = lazy(() => import('./pages/Dashboard/operational/OperationalData'))
 const PersonList = lazy(() => import('./pages/Person/List/PersonList'))
 const PkDashboard = lazy(() => import('./pages/PkDashboard'))
-const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
+const ReporterList = lazy(() => import('./pages/Reporter/list/ReporterList'))
 const ReportIndex = lazy(() => import('./pages/Reports/ReportIndex'))
 const SampleList = lazy(() => import('./pages/Sample/SampleList'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
-const ResultList = lazy(() => import('./oldPages/result/list/ResultList'))
+const ResultList = lazy(() => import('./pages/Result/list/ResultList'))
+const TruenatCustomFieldsList = lazy(() => import('./pages/Forms/TruenatCustomFields'))
+const TruenatCustomFieldsDetail = lazy(() => import('./pages/Forms/TruenatCustomFields/Detail'))
 const SiteDetail = lazy(() => import('./pages/Site/Detail'))
 const SiteList = lazy(() => import('./pages/Site/List'))
-const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
+const Status = lazy(() => import('./pages/Dashboard/status/Status'))
 const Welcome = lazy(() => import('./pages/Welcome'))
 const AdminLgas = lazy(() => import('./pages/Admin/Lgas/LgasPage'))
 const AdminStates = lazy(() => import('./pages/Admin/States/StatesPage'))
@@ -234,6 +236,15 @@ const LogInApp = () => {
                 {a(['browse', 'reporter']) ? <Route path="/browse/samples" element={<SampleList />} /> : null}
 
                 {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
+                {a(['browse', 'forms', 'result']) ? (
+                  <>
+                    <Route path={routePaths.FORMS_TRUENAT_CUSTOM_FIELDS} element={<TruenatCustomFieldsList />} />
+                    <Route
+                      path={routePaths.FORMS_TRUENAT_CUSTOM_FIELDS_DETAIL}
+                      element={<TruenatCustomFieldsDetail />}
+                    />
+                  </>
+                ) : null}
                 {a(['browse', 'result:edit']) ? (
                   <Route path={routePaths.RESULT_DETAILS} element={<ResultDetail />} />
                 ) : null}

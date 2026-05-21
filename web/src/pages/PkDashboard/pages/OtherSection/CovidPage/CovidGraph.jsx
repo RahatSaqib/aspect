@@ -14,9 +14,9 @@ import {
   negateTimeZoneOffset,
   objectToArray,
   StateSelect,
-} from '../../../../../cleanComponents'
-import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
-import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Graphs/graphUtils'
+} from '../../../../../components'
+import intlMessages from '../../../../../components/Graphs/graphMessages'
+import { getMinMaxDateFromMonthString } from '../../../../../components/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useAuthState from '../../../../../hooks/useAuthState'
@@ -59,7 +59,7 @@ const defaultFilters = [
   { maxDate },
   /**
    * we may use below range when now is January, let's leave it here
-   * `getTimePeriod` is in `/cleanComponents/Graphs/graphUtils`
+   * `getTimePeriod` is in `/components/Graphs/graphUtils`
    */
   // { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   // { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },

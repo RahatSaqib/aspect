@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import styles from '../../../oldComponents/shared/DataTableRow.module.css'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import styles from '../../../components/shared/DataTableRow.module.css'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../components/shared/tableBody'
 import { formatRelative } from '../../../utils/utils/dateFormat'
 
 const SiteTableRow = ({ site, onAlertClick, ...restProps }) => {

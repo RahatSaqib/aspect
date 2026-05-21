@@ -8,6 +8,7 @@ const {
   syncDeviceApprovalFromDeployments,
 } = require('../common/deviceApprovalService')
 const { toDateOnly } = require('../../shared/date')
+const { resultSiteAssigned } = require('../../result/actions')
 
 function normalizeDeploymentDates(change) {
   const start = change.start != null ? toDateOnly(change.start) : null
@@ -37,6 +38,8 @@ async function persistDeploymentChanges(request) {
 
     return normalizeDeploymentDates(change).end === null
   })
+
+  let resultIdsToRelink = []
 
   await transact(async trx => {
     await assertDeviceIsNotDecommissioned(trx, deviceId)
@@ -124,6 +127,11 @@ async function persistDeploymentChanges(request) {
       }
     }
 
+    // Capture only results whose site is actually changing, and only when a
+    // pending FormData row already exists for the target site+sample pair.
+    // This avoids dispatching events for unchanged rows or rows that cannot link.
+    resultIdsToRelink = await collectUnassignedResultIdsInSpans(trx, deviceId, resultingDeployments, timezoneIANA)
+
     // Update Sample.originSiteId to deployment site only when no result from another device points to the same sample
     await updateSampleOriginSiteId(resultingDeployments, trx, deviceId, timezoneIANA)
     // Update Result.siteId for each deployment span (result date in user timezone)
@@ -154,6 +162,14 @@ async function persistDeploymentChanges(request) {
   })
 
   await recalculateDeviceFactTables(messageContext, [parseInt(deviceId, 10)])
+
+  if (resultIdsToRelink.length > 0) {
+    const ctx = messageContext.bindActionCreators({ resultSiteAssigned })
+    for (const rid of resultIdsToRelink) {
+      ctx.resultSiteAssigned(rid)
+    }
+  }
+
   return { ok: true }
 }
 
@@ -188,6 +204,50 @@ async function updateResultSites(trx, timezoneIANA, resultingDeployments, device
   })
 
   await Promise.all(resultUpdatePromises)
+}
+
+async function collectUnassignedResultIdsInSpans(trx, deviceId, resultingDeployments, timezoneIANA) {
+  const perSpanQueries = resultingDeployments.map(dep => {
+    if (!dep.siteId) {
+      return Promise.resolve([])
+    }
+    return trx('Result as r')
+      .join('Sample as s', 's.id', 'r.sampleId')
+      .where('r.deviceId', deviceId)
+      .where(qb => {
+        qb.whereNull('r.siteId').orWhere('r.siteId', '!=', dep.siteId)
+      })
+      .whereNotNull('s.externalId')
+      .whereRaw('TRIM(s.externalId) != ""')
+      .whereExists(
+        trx('FormData as fd')
+          .select(trx.raw('1'))
+          .where('fd.siteId', dep.siteId)
+          .whereNull('fd.resultId')
+          .whereRaw('fd.sampleExternalId = TRIM(s.externalId)')
+      )
+      .modify(qb => {
+        if (dep.start !== null) {
+          qb.whereRaw('DATE(CONVERT_TZ(r.endedOn, "+00:00", ?)) >= ?', [timezoneIANA, dep.start])
+        }
+        if (dep.end !== null) {
+          qb.whereRaw('DATE(CONVERT_TZ(r.endedOn, "+00:00", ?)) <= ?', [timezoneIANA, dep.end])
+        }
+      })
+      .pluck('r.id')
+  })
+  const idsPerSpan = await Promise.all(perSpanQueries)
+  const seen = new Set()
+  const result = []
+  for (const ids of idsPerSpan) {
+    for (const id of ids) {
+      if (!seen.has(id)) {
+        seen.add(id)
+        result.push(id)
+      }
+    }
+  }
+  return result
 }
 
 async function updateSampleOriginSiteId(resultingDeployments, trx, deviceId, timezoneIANA) {

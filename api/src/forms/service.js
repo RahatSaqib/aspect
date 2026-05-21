@@ -18,6 +18,9 @@ function createFormObject(formQuery) {
       diseaseId: form.diseaseId,
       formTypeId: form.formTypeId,
       formDefinitionExternalId: form.externalId,
+      assayExternalId: form.assayExternalId != null ? form.assayExternalId : null,
+      diseaseExternalId: form.diseaseExternalId != null ? form.diseaseExternalId : null,
+      deviceTypeExternalId: form.deviceTypeExternalId != null ? form.deviceTypeExternalId : null,
     }
   })
   return forms
@@ -34,6 +37,9 @@ async function getForms(request) {
 }
 
 async function getFormsByFormDefinitionExternalIds(partnerId, formDefinitionExternalIds) {
+  if (!formDefinitionExternalIds || !formDefinitionExternalIds.length) {
+    return {}
+  }
   const formQuery = await getFormsBaseQuery(partnerId, {
     externalsId: formDefinitionExternalIds,
   })
@@ -108,20 +114,26 @@ const getCustomFieldsBaseQuery = async (partnerId, deviceTypeId, assayId = null,
     .leftJoin('Disease as di', 'di.id', 'fd.diseaseId')
     .leftJoin('AssayType as assayType', 'di.id', 'assayType.diseaseId')
     .leftJoin('Assay as a', 'assayType.id', 'a.assayTypeId')
-    .leftJoin('DeviceType as dt', 'a.devicetypeid', 'dt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where(qb => {
       if (deviceTypeId) {
-        qb.where('dt.id', deviceTypeId)
-        qb.orWhereNull('fd.diseaseId')
+        // Keep the form when its own assay is for the requested device type,
+        // or when it has no assay (general form scoped only by disease).
+        qb.where('formAssay.devicetypeid', deviceTypeId).orWhereNull('fd.assayId')
       }
     })
     .whereNotNull('fd.externalId')
     .select([
       // A form can be scoped to one specific assay
       knex.raw('formAssay.externalId AS assayExternalId'),
-      // Or can be scoped to many assays, determined by the disease
-      knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
+      // Or can be scoped to many assays, determined by the disease;
+      // when filtering by deviceType, restrict the advertised assays to that device type.
+      deviceTypeId
+        ? knex.raw(
+            'GROUP_CONCAT(DISTINCT CASE WHEN a.devicetypeid = ? THEN a.externalId END) AS assayExternalIdFromDisease',
+            [deviceTypeId]
+          )
+        : knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
     ])
     .groupBy('fd.id')
 
@@ -159,7 +171,6 @@ const getCustomFieldPlaceholdersForNotifications = async partnerId => {
 
 const getCustomFields = async (partnerId, deviceTypeId, countryId, assayId = null, diseaseId = null) => {
   const formQuery = await getCustomFieldsBaseQuery(partnerId, deviceTypeId, assayId, diseaseId)
-
   const formFields = []
   await Promise.each(formQuery, async form => {
     const fields = setFormAssayToCustomFields(form, formDictionary[form.jsonSchemaFileName].fields)
@@ -171,6 +182,7 @@ const getCustomFields = async (partnerId, deviceTypeId, countryId, assayId = nul
 
   return forms
 }
+
 function getFormsBaseQuery(partnerId, query) {
   const queryForm = knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
@@ -202,7 +214,15 @@ function getFormsBaseQuery(partnerId, query) {
 /*
  * Create an object for merging with the result to save it directly in the database
  */
-const getCustomFieldsFromPayload = async (payload, countryAbbreviation, partnerId, assayId, diseaseId = null) => {
+const getCustomFieldsFromPayload = async (
+  payload,
+  countryAbbreviation,
+  partnerId,
+  assayId,
+  diseaseId = null,
+  options = {}
+) => {
+  const { includeZeroAndFalse = false } = options
   const forms = createFormObject(await getFormsBaseQuery(partnerId, { formType: 'gxConnectForm', assayId, diseaseId }))
   const fields = Object.values(forms).flatMap(form => form.fields)
 
@@ -213,7 +233,8 @@ const getCustomFieldsFromPayload = async (payload, countryAbbreviation, partnerI
     const oldPayloadOriginPath = `data.customFieldData.${migrateFromId}.value`
 
     const value = _.get(payload, payloadOriginPath) || _.get(payload, oldPayloadOriginPath)
-    if (value && source) {
+    const valuePresent = includeZeroAndFalse ? value != null && value !== '' : Boolean(value)
+    if (valuePresent && source) {
       if (_.includes(['patientCellphone', 'clinicianCellphone', 'phone'], fieldType))
         _.set(obj, source, normalizePhoneNumber(value, countryAbbreviation))
       else if (source === 'referringSiteId') {

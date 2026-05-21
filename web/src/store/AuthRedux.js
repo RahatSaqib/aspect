@@ -6,7 +6,7 @@ import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
 import { SubmissionError } from 'redux-form/immutable'
 import config from '../config'
-import { reasonTypes } from '../oldPages/auth/loggedOutReasons'
+import { reasonTypes } from '../pages/Auth/loggedOutReasons'
 import {
   errorPleaseTryAgainInAFewMinutes,
   inlineErrorPleaseTryAgainInAFewMinutes,

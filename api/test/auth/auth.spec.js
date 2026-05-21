@@ -25,7 +25,9 @@ describe('Authentication routes', () => {
   const webClientName = 'Mocha web'
   const webClientType = clientTypes.web
   const appClientName = 'Mocha app'
-  const appClientType = clientTypes.app
+  const appClientType = clientTypes.reporter_app
+  const trueConnectClientName = 'Mocha true connect'
+  const trueConnectClientType = clientTypes.true_connect
 
   let jwToken
   let webToken
@@ -60,7 +62,7 @@ describe('Authentication routes', () => {
   afterEach(() =>
     runTestWithKnex(async knex => {
       await knex('LoginHistory').where('userId', '>', 0).del()
-      await knex('RefreshToken').whereIn('clientName', [webClientName, appClientName]).delete()
+      await knex('RefreshToken').whereIn('clientName', [webClientName, appClientName, trueConnectClientName]).delete()
       await knex('LoginHistory').where('userId', '>', 0).del()
     })
   )
@@ -163,6 +165,8 @@ describe('Authentication routes', () => {
               assert.isNotOk(err) // isNotOk = is falsy
               assert.property(decoded, 'name')
               assert.property(decoded, 'permissions')
+              assert.property(decoded, 'clientType')
+              assert.equal(decoded.clientType, webClientType)
               assert.property(decoded, 'iat')
               assert.property(decoded, 'exp')
               assert.property(decoded, 'iss')
@@ -229,6 +233,8 @@ describe('Authentication routes', () => {
               const jwtdecoded = jwtDecode(res.body.access)
               assert.property(jwtdecoded, 'hasToAcceptLicenseId')
               assert.isNull(jwtdecoded.hasToAcceptLicenseId)
+              assert.property(jwtdecoded, 'clientType')
+              assert.equal(jwtdecoded.clientType, webClientType)
             })
         }))
       it('should return 417 and error message if user has no permissions defined', () =>
@@ -262,6 +268,22 @@ describe('Authentication routes', () => {
           assert.equal(rt.clientName, webClientName)
           assert.equal(rt.clientType, webClientType)
           assert.closeTo(daysToExpire(rt), 7, 0.00001, 'Expiration days for web')
+        }))
+
+      it('should treat true_connect like mobile for refresh token expiry and embed clientType in JWT', () =>
+        runTestWithKnex(async knex => {
+          const res = await server.post(authPath).send({
+            name: adminUsername,
+            password: adminPassword,
+            clientName: trueConnectClientName,
+            clientType: trueConnectClientType,
+          })
+          assert.equal(res.status, 200)
+          const rt = await knex('RefreshToken').where('token', res.body.refresh).first()
+          assert.equal(rt.clientType, trueConnectClientType)
+          assert.closeTo(daysToExpire(rt), 30, 0.00001, 'Expiration days for true_connect')
+          const jwtdecoded = jwtDecode(res.body.access)
+          assert.equal(jwtdecoded.clientType, trueConnectClientType)
         }))
       it('should return 400 and error message if no user name is provided', async () => {
         await server
@@ -363,6 +385,8 @@ describe('Authentication routes', () => {
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
             assert.property(decoded, 'iss')
+            assert.property(decoded, 'clientType')
+            assert.equal(decoded.clientType, webClientType)
           })
         })
     })
@@ -424,6 +448,24 @@ describe('Authentication routes', () => {
         const rt = await knex('RefreshToken').where('token', newAppToken).first()
         assert.equal(rt.deviceTokenId, deviceTokenId)
       }))
+
+    it('should store deviceTokenId for true_connect on refresh', () =>
+      runTestWithKnex(async knex => {
+        const login = await getToken(trueConnectClientName, trueConnectClientType)
+        const deviceTokenId = 'TRUE_CONNECT_DEVICE_TOKEN'
+        const res = await server.post(`${authPath}/refresh`).send({
+          clientId: login.clientId,
+          token: login.refresh,
+          clientType: trueConnectClientType,
+          deviceTokenId,
+        })
+        assert.equal(res.status, 200)
+        const rt = await knex('RefreshToken').where('token', res.body.refresh).first()
+        assert.equal(rt.deviceTokenId, deviceTokenId)
+        const decoded = jwtDecode(res.body.access)
+        assert.equal(decoded.clientType, trueConnectClientType)
+      }))
+
     it('should not store deviceTokenId for web app and return a JSON message with deviceTokenId = null for web app', () =>
       runTestWithKnex(async knex => {
         const deviceTokenId = 'DEVICE_TOKEN_ID'

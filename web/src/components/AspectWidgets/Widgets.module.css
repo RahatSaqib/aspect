@@ -68,7 +68,9 @@
 
 .Summary {
   padding: 3px;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   color: inherit;
   cursor: pointer;
 }
@@ -89,6 +91,9 @@
 .Summary__Card {
   padding: 5px 15px;
   line-height: 36px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .Summary__Card__Title {
@@ -123,19 +128,23 @@
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  flex: 1;
+  align-items: center;
 }
 
 .Summary__Card__Item {
   padding: 10px 0;
   display: flex;
   flex-flow: row nowrap;
-  overflow: hidden;
+  overflow: visible;
+  min-width: 0;
 }
 
 .Summary__Card__Item__Count {
   padding-right: 10px;
   line-height: 0.8;
   font-size: 30px;
+  flex-shrink: 0;
 }
 
 .Summary__Card__Item__Count__Small {
@@ -152,14 +161,14 @@
 @media (max-width: 1200px) {
   .Summary__Card__Item__Count,
   .Summary__Card__Item__Count__Small {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
 @media (max-width: 900px) {
   .Summary__Card__Item__Count,
   .Summary__Card__Item__Count__Small {
-    font-size: 9px;
+    font-size: 14px;
   }
 }
 
@@ -194,8 +203,37 @@
   padding: 10px 0;
   display: flex;
   flex-flow: row nowrap;
-  overflow: hidden;
+  overflow: visible;
+  min-width: 0;
   text-align: right;
+}
+
+.Summary__Card__Badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.Summary__Card__Badge {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  background-color: var(--wild-sand);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+.Summary__Card__Badge__value {
+  font-size: 16px;
+  font-weight: var(--lato-font-weight-bold);
+  line-height: 1.2;
+}
+
+.Summary__Card__Badge__label {
+  font-size: 12px;
+  color: var(--aspect-color-grey-4);
+  font-weight: var(--lato-font-weight-bold);
 }
 
 .empty__widget {

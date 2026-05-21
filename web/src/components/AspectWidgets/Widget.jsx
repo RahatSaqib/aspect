@@ -5,8 +5,8 @@ import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import useFilterUpdate from '../../hooks/useFilterUpdate'
 import useFilterValues from '../../hooks/useFilterValues'
-import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
+import AspectTooltip from '../shared/AspectTooltip'
 import WidgetAlert from './Alerts'
 import { buildWidgetParams, translate } from './Helpers'
 import messages from './messages'
@@ -72,23 +72,41 @@ const AspectWidget = ({
           ) : null}
         </div>
         <div className={styles.Summary__Card__Content}>
-          <div className={styles.Summary__Card__Item}>
-            <div className={styles.Summary__Card__Item__Count}>
-              <span className={countClass}>{count}</span> {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
-            </div>
-            <div className={styles.Summary__Card__Item__Messages}>
-              <div className={styles.Summary__Card__Item__Messages__main}>
-                {statUnitI18nKey !== null && formatMessage(messages[statUnitI18nKey], { unit })}
+          {statStatus && extra && extraLabel ? (
+            <div className={styles.Summary__Card__Badges}>
+              <div className={styles.Summary__Card__Badge}>
+                <span className={styles.Summary__Card__Badge__value}>{count}</span>
+                <span className={styles.Summary__Card__Badge__label}>{statStatus}</span>
               </div>
-              <div className={styles.Summary__Card__Item__Messages__sub}>{statStatus}</div>
+              <div className={styles.Summary__Card__Badge}>
+                <span className={styles.Summary__Card__Badge__value}>{extra}</span>
+                <span className={styles.Summary__Card__Badge__label}>{extraLabel}</span>
+              </div>
             </div>
-          </div>
-          <div className={styles.Summary__Card__Item__right}>
-            <div className={styles.Summary__Card__Item__Messages}>
-              <div className={styles.Summary__Card__Item__Messages__main}>{extra}</div>
-              <div className={styles.Summary__Card__Item__Messages__sub}>{extraLabel}</div>
-            </div>
-          </div>
+          ) : (
+            <>
+              <div className={styles.Summary__Card__Item}>
+                <div className={styles.Summary__Card__Item__Count}>
+                  <span className={countClass}>{count}</span>{' '}
+                  {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
+                </div>
+                <div className={styles.Summary__Card__Item__Messages}>
+                  <div className={styles.Summary__Card__Item__Messages__main}>
+                    {statUnitI18nKey !== null && formatMessage(messages[statUnitI18nKey], { unit })}
+                  </div>
+                  <div className={styles.Summary__Card__Item__Messages__sub}>{statStatus}</div>
+                </div>
+              </div>
+              <div className={styles.Summary__Card__Item__right}>
+                <div className={styles.Summary__Card__Item__Count}>
+                  <span>{extra}</span>
+                </div>
+                <div className={styles.Summary__Card__Item__Messages}>
+                  <div className={styles.Summary__Card__Item__Messages__sub}>{extraLabel}</div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </Card>
     </span>

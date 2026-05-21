@@ -2,8 +2,8 @@ import React, { Fragment } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { Divider, ListItemIcon, ListItemText, MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
-import IconMenu from '../../oldComponents/shared/IconMenu'
 import IconProvider from '../IconProvider'
+import IconMenu from '../shared/IconMenu'
 import styles from './AspectVertMenu.module.css'
 
 const AspectVertMenuItem = ({ icon, color, disabled = false, text, action, params, separator = false, onClick }) => (

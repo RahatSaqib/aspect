@@ -12,7 +12,7 @@ const SAMPLE_PROJECTION = [
 ]
 
 /**
- * Retrieves a mobile sample by its external ID and country, if it exists.
+ * Retrieves a mobile sample by its external ID, if it exists.
  *
  * @param {Object} knex - The Knex database instance.
  * @param {string} externalId - The external ID of the sample to search for.
@@ -30,21 +30,22 @@ const getMobileSampleByExternalId = (knex, externalId) => {
 }
 
 /**
- * Finds an existing unique sample ID in a specific country.
+ * Finds an existing sample by external ID for non–mobile-format IDs, optionally scoped to an origin site.
  * @param {Object} knex - The Knex database instance
  * @param {string} sampleExternalId - The external ID of the sample to search for
  * @param {Date} testStartedOn - The timestamp to filter samples by collection date
+ * @param {number|null|undefined} originSiteId - When set, only samples with this `Sample.originSiteId` are considered (device site or payload `sample.originSite`). When null/undefined, no site filter is applied (legacy edge cases).
  * @returns {Promise<Object|null>} The only matching sample if found, null otherwise
  *
  * @description
- * This function searches for an existing unique sample in the database that matches the given criteria:
- * 1. Has the specified external ID
- * 2. Belongs to the specified country
+ * Searches for samples that match the external ID and `collectedOn` constraint. When `originSiteId`
+ * is provided, candidates are restricted to that origin site so the same barcode at different sites
+ * does not collapse onto one sample.
  *
- * - Returns a single match if only one exists
- * - Return null if the match is not a single match (zero or multiple samples found)
+ * - Returns a single match if only one exists among candidates
+ * - Returns null if zero or multiple candidates
  */
-async function getMatchingSample(knex, sampleExternalId, testStartedOn) {
+async function getMatchingSample(knex, sampleExternalId, testStartedOn, originSiteId) {
   const MINIMUM_SAMPLEID_LENGTH_FOR_CONSIDER_IT_AS_NOT_DUMMY = 7
   if (!sampleExternalId || sampleExternalId.length < MINIMUM_SAMPLEID_LENGTH_FOR_CONSIDER_IT_AS_NOT_DUMMY) {
     return Promise.resolve(null)
@@ -55,6 +56,12 @@ async function getMatchingSample(knex, sampleExternalId, testStartedOn) {
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .where('s.externalId', sampleExternalId)
+
+  if (originSiteId != null) {
+    query.where('s.originSiteId', originSiteId)
+  }
+
+  query
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
 

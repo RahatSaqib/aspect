@@ -3,8 +3,8 @@ import get from 'lodash/get'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import remove from 'lodash/remove'
-import { getTimePeriod, getAllDaysInCurrentMonth } from '../../../oldComponents/shared/DateTimeInput/utils/date'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
+import { getAllDaysInCurrentMonth, getTimePeriod } from '../../shared/DateTimeInput/utils/date'
 
 /**
  * Order of widget groups - values must correspond to

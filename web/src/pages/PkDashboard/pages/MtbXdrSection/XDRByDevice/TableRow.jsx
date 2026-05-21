@@ -1,6 +1,6 @@
 import React from 'react'
-import styles from '../../../../../oldComponents/shared/DataTableRow.module.css'
-import { DataTableRow as Tr, DataTableCell as Td } from '../../../../../oldComponents/shared/tableBody'
+import styles from '../../../../../components/shared/DataTableRow.module.css'
+import { DataTableRow as Tr, DataTableCell as Td } from '../../../../../components/shared/tableBody'
 
 const TableRow = ({ item, isDistrict }) => {
   return (

@@ -292,6 +292,95 @@ describe('Result Notifications triggers', () => {
     })
   })
 
+  describe('Result notification Summary placeholder test', () => {
+    const inserted = null
+    let smsTemplateId = null
+    let messageTypeId = null
+    let backupResult = null
+    let backupSample = null
+    before(async () => {
+      await createTestContext({
+        ...filterConditionWithJf,
+        result: [
+          {
+            assayId: 'GxMtbRifUltra',
+            resultCategoryId: [
+              {
+                label: 'MTB Detected Drug Resistance Detected',
+                scope: 'ResultCategoryGroups',
+                value: 'GxMtbRifUltraMtbDetectedRifDetected',
+              },
+            ],
+          },
+        ],
+        sendSms: true,
+      })
+      ;[smsTemplateId] = await knex('SmsTemplate').insert({
+        message: 'A new {{result.resultSummary}} test case',
+        createdBy: 1,
+        updatedBy: 1,
+        phoneNumber: '{{ person.cell }}',
+      })
+      ;[messageTypeId] = await knex('MessageType').insert({
+        messageSeverityId: 2,
+        alertTemplateId: null,
+        smsTemplateId,
+        webhookTemplateId: null,
+        pushNotificationTemplateId: null,
+      })
+      backupResult = await knex('Result').where('id', insertedResultDetected).first()
+      backupSample = await knex('Sample').where('id', backupResult.sampleId).first()
+      await knex('Result')
+        .where('id', insertedResultDetected)
+        .update({
+          assayId: knex('Assay').where('externalId', 'GxMtbRifUltra').select('id'),
+          resultCategory1: knex('ResultCategory').where('externalId', 'Detected').select('id'),
+          resultCategory2: knex('ResultCategory').where('externalId', 'Detected').select('id'),
+          startedOn: '2021-09-10 12:21:25.000',
+          endedOn: '2099-09-14 20:58:17.000',
+        })
+      await knex('Sample').where('id', backupResult.sampleId).update({
+        collectedOn: '2021-08-25 14:24:01.000',
+      })
+      await knex('NotificationType').where('id', ntId).update({ messageTypeId })
+    })
+    after(async () => {
+      await removeTestContext()
+      await knex('PersonTag').where('TagId', '>=', inserted).delete()
+      await knex('Tag').whereIn('title', ['oneTag', 'secondTag', 'thirdTag']).delete()
+      await knex('MessageType').where('id', messageTypeId).delete()
+      await knex('SmsMessage').where('smsTemplateId', smsTemplateId).delete()
+      await knex('SmsTemplate').where('id', smsTemplateId).delete()
+      await knex('Result').where('id', insertedResultDetected).update(backupResult)
+      await knex('Sample').where('id', backupResult.sampleId).update(backupSample)
+    })
+
+    afterEach(async () =>
+      knex('Notification')
+        .whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneLgaResultId])
+        .delete()
+    )
+    it('should create a result based notification for particular jobFunctions', async () => {
+      const resultId = insertedResultDetected
+      assert.isNotNull(resultId)
+      const notificationsBefore = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntId })
+        .distinct('resultId', 'notificationTypeId', 'personId')
+      assert.equal(notificationsBefore.length, 0)
+      await dispatchAndWaitForAction(resultReadyForNotification(resultId, false))
+      await waitForIdle(3000)
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
+      const smsMessages = await knex('SmsMessage').where({ smsTemplateId }).select()
+      assert.equal(notifications.length, 1, 'Only one notification should exists')
+      assert.equal(smsMessages.length, 1, 'Only one sms message should exists')
+      assert.equal(
+        smsMessages[0].message,
+        'A new MTB+ Rif+ test case',
+        'The resultSummary placeholder should be the correct one'
+      )
+    })
+  })
+
   describe('SMS notification timezone test', () => {
     const inserted = null
     let smsTemplateId = null

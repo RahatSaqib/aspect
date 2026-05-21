@@ -1,16 +1,23 @@
 # Aspect IoT — Agent Instructions
 
+Important: This project runs on node 14.19.0, AI agents are more likely running in node 22+, never try to update or reinstall bcrypt or other libraries due to version issues. Instead open a terminal and switch to node 14.19.0 to execute whatever you need.
+
 ## Skill Discovery
 
 Additional project-specific guidance lives in `ai-context/skills/`.
+
+**Autonomous multi-role delivery** (PM → architecture → backend/frontend → security → QA): start with `ai-context/skills/agents/agent-orchestrator/SKILL.md`; role skills live under `ai-context/skills/agents/agent-*/` (`.cursor/` is gitignored in this repo).
 
 When working in these areas, consult the matching skill first:
 
 - API use cases: `ai-context/skills/api/use-case-development/SKILL.md`
 - API database work: `ai-context/skills/api/database-handling/SKILL.md`
+- API date filters, timezones, `shared/date.js`: `ai-context/skills/api/date-time-handling/SKILL.md`
 - API migrations: `ai-context/skills/api/database-migrations/SKILL.md`
 - API seeds: `ai-context/skills/api/database-seeding/SKILL.md`
+- Authentication, authorization, permissions, menus, and permission-gated UI: `ai-context/skills/authentication-authorization/SKILL.md`
 - Reports: `ai-context/skills/api/reports/SKILL.md`
+- True Connect (mobile API, FormData, sites assigned): `ai-context/skills/api/trueconnect-support/SKILL.md`
 
 ## Project Overview
 
@@ -109,6 +116,12 @@ import { DetailHeader } from '../../../cleanComponents'; // Internal, alphabetiz
 - Lodash must be imported per-method in web: `import get from 'lodash/get'` (ESLint rule enforced)
 - `date-fns` `format` is banned — use `date-fns-tz` instead
 - No duplicate imports (`import/no-duplicates` is an error)
+
+### Module exports and testability (API)
+
+- Do **not** keep symbols on `module.exports` if nothing in the codebase imports them—remove dead exports instead of growing a misleading public API.
+- **Exports that exist only so tests can import a helper** are a design smell: treat them as technical debt to **remove**. Prefer a **contract test** (HTTP-level behavior) or refactor so the module has a **small, intentional surface** that follows **SRP**, and unit-test through those entry points with **`proxyquire`** / test doubles for collaborators—not through leaked internals.
+- When the problem is **integration** (e.g. Knex calls inlined in a handler), extract queries into a **`db.js`** file **next to the use case** and keep the handler thin, rather than exporting private functions for tests. Use a shared `db.js` only when the same queries are reused across multiple use cases (see `ai-context/skills/api/use-case-development/SKILL.md`).
 
 ---
 
@@ -213,3 +226,4 @@ See `ai-context/skills/api/database-migrations/SKILL.md` and `ai-context/skills/
 - **Web tests** use Jest 27 + Enzyme + React Testing Library
 - Never commit `.only` in tests — ESLint will catch it (`mocha/no-exclusive-tests`, `no-only-tests`)
 - Timezone must be set: API tests run with `TZ=UTC`, web tests with `TZ=Europe/Paris`
+
