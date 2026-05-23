@@ -1026,28 +1026,32 @@ async function getTruenatDataFor10AReport(auth, query) {
     dateFrom = subMonths(dateTo, 1)
   }
 
-  const row = await knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+  const truenatDevicesQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
-    .leftJoin('Site as s', 's.id', 'r.siteId')
+    .leftJoin('Site as s', 's.id', 'd.siteId')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .where('dt.externalId', 'molbioTruenat')
     .where('da.token', 'approved')
-    .whereIn('a.externalId', ['assayTruenatMtb', 'assayTruenatMtbPlus', 'assayTruenatRif', 'assayTruenatUnknown'])
-    .modify(addConstraints, dataConstraints, { result: 'r', site: 's', geography: 'g', assay: 'a', device: 'd' })
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g', device: 'd', deviceType: 'dt' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+
+  const activeDevicesQuery = truenatDevicesQuery.clone().countDistinct('d.id as cntTruenatDevice').first()
+
+  const truenatResultActivityQuery = truenatDevicesQuery
+    .clone()
+    .innerJoin('Result as r', 'r.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .whereIn('a.externalId', ['assayTruenatMtb', 'assayTruenatMtbPlus', 'assayTruenatRif', 'assayTruenatUnknown'])
+    .modify(addConstraints, dataConstraints, { result: 'r', assay: 'a' })
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .select(
-      knex.raw('COUNT(DISTINCT r.deviceId) as cntTruenatDevice'),
       knex.raw('COUNT(DISTINCT r.deviceId) as cntTruenatDeviceFunctional'),
-      knex.raw('COUNT(DISTINCT r.deviceId) * 2 as cntTruenatChipPortsTotal'),
       knex.raw(`COUNT(DISTINCT CONCAT(r.deviceId, '-', r.resultData->>'$.bayNo')) as cntTruenatChipPortsFunctional`),
       knex.raw('COUNT(*) as cntTruenatCartridgeUsed'),
       knex.raw(
@@ -1057,14 +1061,20 @@ async function getTruenatDataFor10AReport(auth, query) {
     )
     .first()
 
+  const [activeDevicesRow, truenatResultActivityRow] = await Promise.all([
+    activeDevicesQuery,
+    truenatResultActivityQuery,
+  ])
+  const cntTruenatDevice = Number(activeDevicesRow?.cntTruenatDevice) || 0
+
   return {
-    cntTruenatDevice: Number(row?.cntTruenatDevice) || 0,
-    cntTruenatDeviceFunctional: Number(row?.cntTruenatDeviceFunctional) || 0,
-    cntTruenatChipPortsTotal: Number(row?.cntTruenatChipPortsTotal) || 0,
-    cntTruenatChipPortsFunctional: Number(row?.cntTruenatChipPortsFunctional) || 0,
-    cntTruenatCartridgeUsed: Number(row?.cntTruenatCartridgeUsed) || 0,
-    cntTruenatMtbChipUsed: Number(row?.cntTruenatMtbChipUsed) || 0,
-    cntTruenatRifDxChipUsed: Number(row?.cntTruenatRifDxChipUsed) || 0,
+    cntTruenatDevice,
+    cntTruenatDeviceFunctional: Number(truenatResultActivityRow?.cntTruenatDeviceFunctional) || 0,
+    cntTruenatChipPortsTotal: cntTruenatDevice * 2,
+    cntTruenatChipPortsFunctional: Number(truenatResultActivityRow?.cntTruenatChipPortsFunctional) || 0,
+    cntTruenatCartridgeUsed: Number(truenatResultActivityRow?.cntTruenatCartridgeUsed) || 0,
+    cntTruenatMtbChipUsed: Number(truenatResultActivityRow?.cntTruenatMtbChipUsed) || 0,
+    cntTruenatRifDxChipUsed: Number(truenatResultActivityRow?.cntTruenatRifDxChipUsed) || 0,
   }
 }
 
