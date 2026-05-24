@@ -74,7 +74,6 @@ const getColumns = formatMessage => [
     tooltip: formatMessage(messages.lastSeenDescription),
   },
   { key: 'connectorVersion', sortable: true, label: formatMessage(messages.connectorVersion), hiddenOn: 'lg' },
-  { key: 'issueCategory', label: formatMessage(messages.issueCategory) },
   {
     key: 'availabilityRate',
     label: formatMessage(messages.availabilityRate),
@@ -162,19 +161,6 @@ const DeviceList = () => {
         dataset: { deviceId },
       },
     }) => gotoWithReturnUrl(`/browse/device/list/${deviceId}`, navigate, location),
-    [navigate, location]
-  )
-
-  const onAlertClick = useCallback(
-    event => {
-      event.stopPropagation()
-      const {
-        currentTarget: {
-          dataset: { deviceId },
-        },
-      } = event
-      gotoWithReturnUrl(`/browse/device/list/${deviceId}/alerts`, navigate, location)
-    },
     [navigate, location]
   )
 
@@ -291,7 +277,6 @@ const DeviceList = () => {
                               key={device.get('id')}
                               device={device}
                               onClick={onRowClick}
-                              onAlertClick={onAlertClick}
                               displayPreferences={displayPreferences}
                               data-device-id={device.get('id')}
                             />
