@@ -11,7 +11,7 @@ const { getUser } = require('../auth/service')
 async function getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  const { personId, timezoneIANA, personTimezoneIANA } = await getUser(auth.credentials.name)
+  const { timezoneIANA, personTimezoneIANA } = await getUser(auth.credentials.name)
   const resultCategoryErrorId = await resultCategoryToId('Error')
   const { assayId, geneXpertType } = query
   /**
@@ -160,18 +160,18 @@ async function getListDevices(query, auth) {
         .where('resDevice.endedOn', '>=', minPreviousDate)
         .select({
           deviceId: 'deviceId',
-          totalCurrentMonth: knex.raw(
-            `SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
-            [minCurrentDate, maxCurrentDate]
-          ),
-          totalPreviousMonth: knex.raw(
-            `SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
-            [minPreviousDate, maxPreviousDate]
-          ),
-          totalCurrentDay: knex.raw(
-            `SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
-            [currentDayStart, currentDayEnd]
-          ),
+          totalCurrentMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            minCurrentDate,
+            maxCurrentDate,
+          ]),
+          totalPreviousMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            minPreviousDate,
+            maxPreviousDate,
+          ]),
+          totalCurrentDay: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            currentDayStart,
+            currentDayEnd,
+          ]),
         })
         .groupBy('deviceId')
         .as('deviceResult'),
@@ -202,26 +202,6 @@ async function getListDevices(query, auth) {
         .groupBy('deviceId', 'day')
         .as('dmslActivity'),
       'dmslActivity.deviceId',
-      'd.id'
-    )
-    .leftJoin(
-      knex('Issue as i')
-        .select('i.deviceId', knex.raw('GROUP_CONCAT(DISTINCT ic.i18nKey) as categories'))
-        .innerJoin('Notification as n', 'n.issueId', 'i.id')
-        .leftJoin('AlertMessage as a', 'a.id', 'n.alertMessageId')
-        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-        .innerJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
-        .leftOuterJoin('IssueCategory as ic', leftBuilder =>
-          leftBuilder.on('it.issueCategoryId', 'ic.id').andOn('it.hasTag', knex.raw('1'))
-        )
-        .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
-        .modify(queryBuilder => {
-          if (query.issueTypeId) queryBuilder.whereIn('it.externalId', query.issueTypeId)
-        })
-        .where('a.personId', personId)
-        .groupBy('i.deviceId')
-        .as('issues'),
-      'issues.deviceId',
       'd.id'
     )
     .modify(queryBuilder => {
@@ -264,7 +244,6 @@ async function getListDevices(query, auth) {
       'frd30Errors.resultCount as thisMonthErrors',
       knex.raw('count(distinct dmslActivity.day) as totalDays'),
       knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
-      'issues.categories as issueCategories',
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
       // Connector is considered online if it did a connection since the start of the previous day
@@ -310,8 +289,6 @@ async function getListDevices(query, auth) {
       rate: it.resultCountThisMonth ? it.thisMonthErrors / it.resultCountThisMonth : 0,
     }
     delete it.thisMonthErrors
-
-    it.issueCategories = it.issueCategories ? it.issueCategories.split(',').map(key => ({ key })) : []
 
     it.timezoneIANA = timezoneIANA
     delete it.dmslDay
