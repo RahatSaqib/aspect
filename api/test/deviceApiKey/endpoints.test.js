@@ -12,28 +12,6 @@ describe('deviceApiKey endpoints', () => {
   }
 
   describe('PUT', () => {
-    describe('/deviceApiKey/assign', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('PUT', '/deviceApiKey/assign', {
-          async assignDeviceApiKeys() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-
     describe('/deviceApiKey/{deviceApiKeyId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }

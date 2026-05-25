@@ -5,7 +5,7 @@ import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../c
 import { formatDate } from '../../../utils/utils/dateFormat'
 import styles from './DeviceApiKeyTableRow.module.css'
 
-const DeviceApiKeyTableRow = ({ deviceApiKey, disabled, checked, onSelectedChange, onRevokedChange, ...restProps }) => {
+const DeviceApiKeyTableRow = ({ deviceApiKey, onRevokedChange, ...restProps }) => {
   const [copied, setCopied] = useState(false)
 
   const copyToClipboard = value => {
@@ -24,18 +24,6 @@ const DeviceApiKeyTableRow = ({ deviceApiKey, disabled, checked, onSelectedChang
 
   return (
     <TableRow {...restProps} className={styles[restProps.className]}>
-      <TableCell>
-        <AspectCheckbox
-          name="selected"
-          className={styles.Checkbox__field}
-          inputProps={{
-            'data-device-api-key-id': deviceApiKey.id,
-          }}
-          disabled={disabled}
-          checked={checked}
-          onChange={onSelectedChange}
-        />
-      </TableCell>
       <TableCell>{formatDate(deviceApiKey.createdOn)}</TableCell>
       <TableCell>
         {deviceApiKey.token}{' '}

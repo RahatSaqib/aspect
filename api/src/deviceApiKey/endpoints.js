@@ -1,12 +1,6 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const {
-  listDeviceApiKeys,
-  generateDeviceApiKeys,
-  assignDeviceApiKeys,
-  revokeDeviceApiKey,
-  createDeviceApiKey,
-} = require('./service')
+const { listDeviceApiKeys, generateDeviceApiKeys, revokeDeviceApiKey, createDeviceApiKey } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { exportDeviceApiKeys } = require('./serviceReports')
 
@@ -78,25 +72,6 @@ const routes = [
       validate: {
         payload: {
           count: Joi.number().description('Number of deviceApiKeys should be generated').required(),
-          countryId: Joi.number().allow('').description('Country ID'),
-          partnerId: Joi.number().allow('').description('Partner ID'),
-          siteId: Joi.number().allow('').description('Site ID'),
-        },
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/deviceApiKey/assign',
-    handler: asyncHandler(assignDeviceApiKeys),
-    config: {
-      description: 'Assign DeviceApiKey List',
-      notes: 'Bulk assign for DeviceApiKey List to the given Device',
-      auth: { scope: ['deviceApiKey:edit'] },
-      validate: {
-        payload: {
-          deviceApiKeyIds: Joi.array().items(Joi.number()).description('DeviceApiKey IDs'),
-          deviceId: Joi.number().allow('').description('Device ID'),
           countryId: Joi.number().allow('').description('Country ID'),
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),

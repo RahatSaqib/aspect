@@ -10,10 +10,6 @@ const messages = defineMessages({
     id: 'pages.DeviceApiKeyList.generate',
     defaultMessage: 'Generate',
   },
-  assign: {
-    id: 'pages.DeviceApiKeyList.assign',
-    defaultMessage: 'Assign',
-  },
   /* ---------------- Table ----------------- */
   createdOn: {
     id: 'pages.DeviceApiKeyList.createdOn',

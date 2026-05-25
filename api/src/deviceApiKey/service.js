@@ -197,69 +197,6 @@ async function generateDeviceApiKeys(request) {
   return result
 }
 
-async function assignDeviceApiKeys(request) {
-  const { auth, payload } = request
-
-  let geographyId
-  if (payload.countryId) {
-    ;({ id: geographyId } = await knex('Geography as g')
-      .where({
-        'g.countryId': payload.countryId,
-        'g.stateId': null,
-        'g.lgaId': null,
-      })
-      .first('id'))
-  }
-
-  const now = new Date()
-  const currentlyLoggedInUser = await getUser(auth.credentials.name)
-  const assignableDeviceApiKeyIds = await knex('DeviceApiKey as dak')
-    .whereIn('dak.id', payload.deviceApiKeyIds)
-    .modify(qb => {
-      if (payload.deviceId) {
-        qb.whereNotIn(
-          'dak.id',
-          knex('Device as d')
-            .whereNot('d.id', payload.deviceId)
-            .whereNotNull('d.deviceApiKeyId')
-            .select('d.deviceApiKeyId')
-        )
-      }
-    })
-    .pluck('dak.id')
-
-  if (payload.deviceId) {
-    // If deviceId is set, we need to ensure that only one key is assigned to the device
-    if (payload.deviceApiKeyIds.length > 1) throw new Error('When deviceId is set, only one key can be assigned')
-
-    const [selectedDeviceApiKeyId] = assignableDeviceApiKeyIds
-    if (selectedDeviceApiKeyId) {
-      const device = await knex('Device').where('id', payload.deviceId).first('deviceApiKeyId')
-      if (device?.deviceApiKeyId && device.deviceApiKeyId !== selectedDeviceApiKeyId) {
-        await knex('DeviceApiKey')
-          .where('id', device.deviceApiKeyId)
-          .update({ revoked: true, updatedOn: now, updatedBy: currentlyLoggedInUser.id })
-      }
-
-      await knex('Device')
-        .where('id', payload.deviceId)
-        .update({ deviceApiKeyId: selectedDeviceApiKeyId, updatedOn: now, updatedBy: currentlyLoggedInUser.id })
-    }
-  }
-
-  await knex('DeviceApiKey as dak').whereIn('dak.id', assignableDeviceApiKeyIds).update({
-    geographyId,
-    siteId: payload.siteId,
-    partnerId: payload.partnerId,
-    updatedOn: now,
-    updatedBy: currentlyLoggedInUser.id,
-  })
-
-  const result = { ok: true }
-
-  return result
-}
-
 async function revokeDeviceApiKey(request) {
   const { params, payload } = request
 
@@ -324,7 +261,6 @@ module.exports = {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
   createDeviceApiKey,
-  assignDeviceApiKeys,
   revokeDeviceApiKey,
   lookupUsingCredentials,
 }
