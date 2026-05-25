@@ -78,6 +78,8 @@ class TruenatResult extends SynchronousDataProcessor {
           notes,
           date,
           time,
+          bayNo,
+          trueLabId,
         } = getDetailsFromRequest(request)
 
         const assay = await getAssay(knex, testName)
@@ -140,6 +142,8 @@ class TruenatResult extends SynchronousDataProcessor {
             labName,
             testName,
             resultText,
+            bayNo,
+            trueLabId,
           }),
           rawData: rawMessage,
           updatedOn: utcNow,
@@ -249,6 +253,8 @@ function getDetailsFromRequest(request) {
     notes: _.get(payload, 'Notes')?.trim(),
     date: _.get(payload, 'Date')?.trim(),
     time: _.get(payload, 'Time')?.trim(),
+    bayNo: _.get(payload, 'BayNo')?.toString()?.trim(),
+    trueLabId: _.get(payload, 'TrueLabId')?.toString()?.trim(),
   }
 }
 
