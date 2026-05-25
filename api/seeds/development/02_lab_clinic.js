@@ -306,7 +306,7 @@ async function seed(knex) {
           ...auditFields,
         })
 
-        await knex('DeviceApiKey').insert({
+        const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
           token:
             clinic.name === 'Mponela Rural Hospital' // this is the reporter demo site - keep API key  static
               ? 'g39ypz0725x1cubf0vq3'
@@ -315,9 +315,10 @@ async function seed(knex) {
           partnerId,
           geographyId,
           siteId,
-          deviceId,
           ...auditFields,
         })
+
+        await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
 
         // Router
         await knex('Device').insert({
@@ -385,7 +386,7 @@ async function seed(knex) {
             const deviceApiKeyToken = device.deviceApiKey || randomToken()
             const deviceData =
               (await knex('DeviceApiKey as dak')
-                .join('Device as d', 'dak.deviceId', 'd.id')
+                .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
                 .where('dak.token', deviceApiKeyToken)
                 .first('d.*')) || {}
             if (_.isEmpty(deviceData)) {
@@ -413,15 +414,15 @@ async function seed(knex) {
                 ...auditFields,
               })
               deviceData.id = deviceId
-              await knex('DeviceApiKey').insert({
+              const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
                 token: deviceApiKeyToken,
                 revoked: 0,
                 partnerId,
                 geographyId,
                 siteId,
-                deviceId,
                 ...auditFields,
               })
+              await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
             }
           })
         )

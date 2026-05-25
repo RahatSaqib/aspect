@@ -37,5 +37,6 @@ module.exports = require('../utils').seed(async knex => {
     ...auditFields,
   })
 
-  await knex('DeviceApiKey').where('token', statsQueryDeviceApiToken).update({ deviceId })
+  const deviceApiKey = await knex('DeviceApiKey').where('token', statsQueryDeviceApiToken).first('id')
+  await knex('Device').where('id', deviceId).update({ deviceApiKeyId: deviceApiKey.id })
 }, __filename)

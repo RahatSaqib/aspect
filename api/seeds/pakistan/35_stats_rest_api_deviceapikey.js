@@ -25,7 +25,6 @@ module.exports = require('../utils').seed(async knex => {
     revoked: 0,
     partnerId,
     geographyId,
-    deviceId: null,
     ...auditFields,
   })
 }, __filename)

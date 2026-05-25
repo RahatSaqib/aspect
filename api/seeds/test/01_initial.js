@@ -1026,7 +1026,6 @@ async function seed(knex) {
       partnerId: siteData.partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
-      deviceId: device.id,
       ...auditFields,
     })
 

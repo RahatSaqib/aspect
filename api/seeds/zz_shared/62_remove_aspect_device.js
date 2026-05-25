@@ -3,9 +3,13 @@ module.exports = require('../utils').seed(async knex => {
   if (aspectDeviceType) {
     const aspectDeviceTypeId = aspectDeviceType.id
     const aspectDeviceIds = await knex('Device').where({ deviceTypeId: aspectDeviceTypeId }).pluck('id')
+    const aspectDeviceApiKeyIds = await knex('Device')
+      .whereIn('id', aspectDeviceIds)
+      .whereNotNull('deviceApiKeyId')
+      .pluck('deviceApiKeyId')
     const opIds = await knex('DeviceOperation').whereIn('deviceId', aspectDeviceIds).pluck('id')
     await knex('DeviceApprovalLog').whereIn('deviceId', aspectDeviceIds).delete()
-    await knex('DeviceApiKey').whereIn('deviceId', aspectDeviceIds).delete()
+    await knex('DeviceApiKey').whereIn('id', aspectDeviceApiKeyIds).delete()
     await knex('Device').whereIn('id', aspectDeviceIds).update({ deviceMaintenanceStatusLogId: null })
     await knex('DeviceMaintenanceStatusLog').whereIn('deviceId', aspectDeviceIds).delete()
     await knex('DeviceLog').whereIn('deviceId', aspectDeviceIds).delete()

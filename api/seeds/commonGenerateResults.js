@@ -126,16 +126,16 @@ async function createDevicesForAllMissingTypes(
         const [deviceId] = await knex('Device').insert(deviceToInsert)
         if (deviceType.requiresApiCredentials) {
           const password = await bcryptHash(siteData.shortName, parseInt(passwordSaltRounds, 10))
-          await knex('DeviceApiKey').insert({
+          const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
             token: randomToken(),
             revoked: 0,
             partnerId: siteData.partnerId,
-            deviceId,
             username: `device-${deviceId}`,
             password,
             expiresOn: addMinutes(new Date(), 15),
             ...auditFields,
           })
+          await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
         }
         i += 1
       })
