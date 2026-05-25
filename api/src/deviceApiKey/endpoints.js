@@ -10,6 +10,7 @@ function listDeviceApiKeysBaseConfig() {
     validate: {
       query: {
         partnerId: Joi.number().allow('').description('Filter for partner ID'),
+        deviceApiKeyToken: Joi.string().allow('').description('Filter for device API key token'),
         siteName: Joi.string().allow('').description('Filter for site name'),
         deviceName: Joi.string().allow('').description('Filter for device name'),
         revoked: Joi.number().integer().optional().description('Filter by revoked'),

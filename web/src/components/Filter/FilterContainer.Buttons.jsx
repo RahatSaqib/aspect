@@ -39,6 +39,7 @@ const filtersOrdering = {
   consumableId: 70,
   sampleId: 80,
   patientOrResearchId: 90,
+  deviceApiKeyToken: 95,
   deviceName: 100,
   siteName: 110,
   siteId: 120,
@@ -148,6 +149,9 @@ const buttonMapping = {
   ),
   externalId: ({ externalId, remove, blocked }) => (
     <ExternalId externalId={externalId} remove={remove} blocked={blocked} />
+  ),
+  deviceApiKeyToken: ({ deviceApiKeyToken, remove, blocked }) => (
+    <DeviceApiKeyToken deviceApiKeyToken={deviceApiKeyToken} remove={remove} blocked={blocked} />
   ),
   deviceName: ({ deviceName, remove, blocked }) => (
     <DeviceName deviceName={deviceName} remove={remove} blocked={blocked} />
@@ -557,6 +561,17 @@ const ExternalId = ({ externalId, remove, blocked }) => {
     <Btn
       lbl={formatMessage(messages.whereExternalIdIncludes, { externalId })}
       del={blocked.includes('externalId') ? undefined : () => remove(['externalId'])}
+    />
+  )
+}
+
+const DeviceApiKeyToken = ({ deviceApiKeyToken, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereDeviceApiKeyIncludes, { deviceApiKeyToken })}
+      del={blocked.includes('deviceApiKeyToken') ? undefined : () => remove(['deviceApiKeyToken'])}
     />
   )
 }

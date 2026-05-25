@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { TableBody, Table } from '@mui/material'
+import { LinearProgress, TableBody, Table } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
@@ -24,11 +24,25 @@ import messages from './messages'
 
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
 
+const normalizeDeviceApiKeyFilters = filters => {
+  const normalizedFilters = { ...filters }
+
+  delete normalizedFilters.countryId
+
+  if (!normalizedFilters.deviceApiKeyToken) return normalizedFilters
+
+  return {
+    ...normalizedFilters,
+    deviceApiKeyToken: normalizedFilters.deviceApiKeyToken.replace(/-/g, ''),
+  }
+}
+
 export const DeviceApiKeyList = () => {
   const intl = useIntl()
   const navigate = useNavigate()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
+  const normalizedFilters = normalizeDeviceApiKeyFilters(filters)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
 
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'createdOn', sortDir: 'desc' })({
@@ -36,13 +50,13 @@ export const DeviceApiKeyList = () => {
   })
 
   const { isLoading, data, refetch } = useDeviceApiKey(
-    { sortCol, sortDir, page: pageAt, size: pageSize, ...filters },
+    { sortCol, sortDir, page: pageAt, size: pageSize, ...normalizedFilters },
     { enabled: !!sortCol }
   )
   const { mutateAsync: generate } = useDeviceApiKeyGenerate()
   const { mutate: update } = useDeviceApiKeyUpdate()
 
-  useExportDeviceApiKey({ filters, sortCol, sortDir, page: pageAt, pageSize, ...download })
+  useExportDeviceApiKey({ filters: normalizedFilters, sortCol, sortDir, page: pageAt, pageSize, ...download })
 
   const [dialogState, onChangeDialogState] = useState({
     generatorValues: DEFAULT_GENERATOR_VALUES,
@@ -75,7 +89,7 @@ export const DeviceApiKeyList = () => {
     update(revokeValues)
   }
 
-  return isLoading ? null : (
+  return (
     <>
       <DetailHeader name={intl.formatMessage(messages.title)} disableBack>
         <PermissionChecker permissions={['deviceApiKey:edit', 'deviceApiKey:admin']}>
@@ -105,7 +119,9 @@ export const DeviceApiKeyList = () => {
               reportName="DeviceApiKey"
             />
           </div>
-          {(data?.data || []).length === 0 ? (
+          {isLoading ? (
+            <LinearProgress />
+          ) : (data?.data || []).length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
@@ -120,8 +136,7 @@ export const DeviceApiKeyList = () => {
                     { key: 'token', label: intl.formatMessage(messages.token), sortable: true },
                     { key: 'partner', label: intl.formatMessage(messages.partner), sortable: true },
                     { key: 'country', label: intl.formatMessage(messages.country), sortable: true },
-                    { key: 'site', label: intl.formatMessage(messages.site), sortable: true },
-                    { key: 'device', label: intl.formatMessage(messages.device), sortable: true },
+                    { key: 'site', label: intl.formatMessage(messages.siteDevicePairs), sortable: true },
                     { key: 'revoked', label: intl.formatMessage(messages.revoked), sortable: true },
                   ]}
                 />

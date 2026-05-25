@@ -31,6 +31,10 @@ const messages = defineMessages({
     id: 'pages.DeviceApiKeyList.site',
     defaultMessage: 'Site',
   },
+  siteDevicePairs: {
+    id: 'pages.DeviceApiKeyList.siteDevicePairs',
+    defaultMessage: 'Site / Device',
+  },
   device: {
     id: 'pages.DeviceApiKeyList.device',
     defaultMessage: 'Device',

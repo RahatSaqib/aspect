@@ -55,6 +55,10 @@ const messages = {
       id: 'filter.btnGroup.whereDeviceNameIncludes',
       defaultMessage: 'device name includes "{deviceName}"',
     },
+    whereDeviceApiKeyIncludes: {
+      id: 'filter.btnGroup.whereDeviceApiKeyIncludes',
+      defaultMessage: 'device API key includes "{deviceApiKeyToken}"',
+    },
     withResultCategory: {
       id: 'filter.btnGroup.withResultCategory',
       defaultMessage: 'with result {resultCategoryName}',

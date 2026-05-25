@@ -88,6 +88,10 @@ const messages = {
       id: 'filter.popover.deviceName',
       defaultMessage: 'Device',
     },
+    deviceApiKey: {
+      id: 'filter.popover.deviceApiKey',
+      defaultMessage: 'Device API Key',
+    },
     enterDeviceName: {
       id: 'filter.popover.enterDeviceName',
       defaultMessage: 'Enter device name...',

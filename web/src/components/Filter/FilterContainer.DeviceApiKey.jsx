@@ -3,9 +3,8 @@ import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
-import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { RevokeSelect, StateSelect } from '../index'
+import { RevokeSelect } from '../index'
 import { isPermittedUser } from '../shared/requirePermissions'
 import SiteAutoCompleteField from '../SiteAutocompleteField'
 import FilterContainer from './FilterContainer'
@@ -21,11 +20,10 @@ const DeviceApiKeyFilter = () => {
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
-          <StateSelect
-            label={getCustomMessage(formatMessage, messages, 'state', user)}
-            value={state.stateId}
-            onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
-            countryId={state.countryId}
+          <TextField
+            label={formatMessage(messages.deviceApiKey)}
+            value={state.deviceApiKeyToken || ''}
+            onChange={e => setState({ ...state, deviceApiKeyToken: e.target.value || null })}
           />
         </Grid>
         <Grid item xs={3}>
@@ -40,11 +38,9 @@ const DeviceApiKeyFilter = () => {
             <SiteAutoCompleteField
               name="siteName"
               value={state.siteName || ''}
-              onChange={site => setState({ ...state, siteName: site.name })}
+              onChange={site => setState({ ...state, siteName: site?.name || null })}
               floatingLabelFixed
               floatingLabelText={formatMessage(messages.site)}
-              stateId={state.stateId}
-              lgaId={state.lgaId}
               width="100%"
             />
           </Grid>

@@ -13,6 +13,65 @@ const { getDateTimeProjectionInTimeZoneIANA } = require('../shared/date')
 
 const bcryptCompare = promisify(bcrypt.compare)
 
+function getDeviceApiKeySortColumnMapping() {
+  return {
+    createdOn: 'dak.createdOn',
+    token: 'dak.token',
+    partner: 'p.name',
+    country: 'c.name',
+    site: knex.raw('MIN(COALESCE(deviceSite.name, dakSite.name))'),
+    device: knex.raw('MIN(d.name)'),
+    revoked: 'dak.revoked',
+  }
+}
+
+function joinNames(items) {
+  return items
+    .map(item => item.name)
+    .filter(Boolean)
+    .join(', ')
+}
+
+function mapDeviceApiKeyAssociations(deviceApiKey, associations) {
+  const devices = _.uniqBy(
+    associations
+      .filter(association => association.deviceId != null)
+      .map(association => ({
+        id: association.deviceId,
+        name: association.device,
+        siteId: association.siteId,
+        siteName: association.site,
+      })),
+    'id'
+  )
+
+  const sites = _.uniqBy(
+    associations
+      .filter(association => association.siteId != null)
+      .map(association => ({
+        id: association.siteId,
+        name: association.site,
+      })),
+    'id'
+  )
+
+  const resolvedSites =
+    sites.length > 0
+      ? sites
+      : deviceApiKey.siteId != null && deviceApiKey.site
+      ? [{ id: deviceApiKey.siteId, name: deviceApiKey.site }]
+      : []
+
+  return {
+    ...deviceApiKey,
+    token: groupToken(deviceApiKey.token),
+    sites: resolvedSites,
+    devices,
+    site: joinNames(resolvedSites),
+    device: joinNames(devices),
+  }
+}
+
 async function listDeviceApiKeys(request) {
   const { query, auth } = request
   const { timezoneIANA } = await getUser(auth.credentials.name)
@@ -22,31 +81,50 @@ async function listDeviceApiKeys(request) {
     .leftJoin('Partner as p', 'dak.partnerId', 'p.id')
     .leftJoin('Geography as g', 'dak.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('Site as dakSite', 'dak.siteId', 'dakSite.id')
     .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
-    .leftJoin('Site as s', 'dak.siteId', 's.id')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      partnerId: 'dak.partnerId',
-      siteName: 's.name',
-      deviceName: 'd.name',
-      revoked: 'dak.revoked',
+    .leftJoin('Site as deviceSite', 'd.siteId', 'deviceSite.id')
+    .modify(queryBuilder => {
+      filterParams(queryBuilder, query, {
+        countryId: 'g.countryId',
+        stateId: 'g.stateId',
+        partnerId: 'dak.partnerId',
+        deviceApiKeyToken: 'dak.token',
+        siteName: ['dakSite.name', 'deviceSite.name'],
+        deviceName: 'd.name',
+        revoked: 'dak.revoked',
+      })
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       geography: 'g',
       partner: 'p',
-      site: 's',
+      site: 'dakSite',
     })
 
   // get total count for paging
-  const getCount = dakQuery.clone().count('dak.id as count').first()
+  const getCount = dakQuery.clone().countDistinct('dak.id as count').first()
 
-  // get rows
-  const getItems = dakQuery
+  const getDeviceApiKeyIds = dakQuery
     .clone()
-    .modify(sortPageParams, query, 'createdOn')
+    .groupBy('dak.id')
+    .modify(sortPageParams, query, 'createdOn', getDeviceApiKeySortColumnMapping())
     .orderBy('dak.id', 'desc') // second sort param to make the query deterministic
+    .pluck('dak.id')
+
+  // return result when both queries are finished
+  const [{ count: total }, deviceApiKeyIds] = await Promise.all([getCount, getDeviceApiKeyIds])
+
+  if (deviceApiKeyIds.length === 0) {
+    return { ok: true, total, length: 0, data: [] }
+  }
+
+  const getItems = knex('DeviceApiKey as dak')
+    .leftJoin('Partner as p', 'dak.partnerId', 'p.id')
+    .leftJoin('Geography as g', 'dak.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('Site as dakSite', 'dak.siteId', 'dakSite.id')
+    .whereIn('dak.id', deviceApiKeyIds)
     .select([
       'dak.id',
       getDateTimeProjectionInTimeZoneIANA(knex, 'dak.createdOn', timezoneIANA, 'createdOn'),
@@ -56,15 +134,24 @@ async function listDeviceApiKeys(request) {
       'p.id as partnerId',
       'c.name as country',
       'c.id as countryId',
-      's.name as site',
-      's.id as siteId',
-      'd.name as device',
-      'd.id as deviceId',
+      'dakSite.name as site',
+      'dakSite.id as siteId',
     ])
-    .then(items => items.map(item => ({ ...item, token: groupToken(item.token) })))
 
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const getAssociations = knex('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .whereIn('d.deviceApiKeyId', deviceApiKeyIds)
+    .select(['d.deviceApiKeyId', 'd.id as deviceId', 'd.name as device', 's.id as siteId', 's.name as site'])
+    .orderBy('s.name', 'asc')
+    .orderBy('d.name', 'asc')
+
+  const [items, associations] = await Promise.all([getItems, getAssociations])
+
+  const itemsById = _.keyBy(items, 'id')
+  const associationsByDeviceApiKeyId = _.groupBy(associations, 'deviceApiKeyId')
+  const data = deviceApiKeyIds.map(deviceApiKeyId =>
+    mapDeviceApiKeyAssociations(itemsById[deviceApiKeyId], associationsByDeviceApiKeyId[deviceApiKeyId] || [])
+  )
 
   const result = { ok: true, total, length: data.length, data }
 
