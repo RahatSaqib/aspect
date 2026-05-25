@@ -84,7 +84,6 @@ describe('Missing inventory lot resolver', () => {
       token: randomToken(),
       revoked: 0,
       partnerId: site.partnerId,
-      deviceId,
       createdOn: now,
       createdBy: userId,
       updatedOn: now,
@@ -166,10 +165,12 @@ describe('Missing inventory lot resolver', () => {
     await knex('InventoryLog').whereIn('id', inventoryLogsToRemove).delete()
     await knex('InventoryItem').whereIn('id', inventoryItemsToRemove).delete()
     await knex('Result as r').whereIn('r.siteId', sitesToRemove).delete()
+    const deviceApiKeyIds = await knex('Device')
+      .whereIn('siteId', sitesToRemove)
+      .whereNotNull('deviceApiKeyId')
+      .pluck('deviceApiKeyId')
     await knex('Device').whereIn('siteId', sitesToRemove).update({ deviceApiKeyId: null })
-    await knex('DeviceApiKey')
-      .whereIn('deviceId', await knex('Device').whereIn('siteId', sitesToRemove).pluck('id'))
-      .delete()
+    await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
     await knex('Device as d').whereIn('d.siteId', sitesToRemove).delete()
     await knex('Site as s').where('id', sitesToRemove[0]).delete()
     await knex('Site as s').where('id', sitesToRemove[1]).delete()

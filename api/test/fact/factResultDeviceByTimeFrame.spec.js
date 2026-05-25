@@ -17,10 +17,7 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const delay = 5000
 
 const deleteDevice = async deviceIds => {
-  const deviceApiKeyIds = [
-    ...(await knex('Device').whereIn('id', deviceIds).pluck('deviceApiKeyId')),
-    ...(await knex('DeviceApiKey').whereIn('deviceId', deviceIds).pluck('id')),
-  ].filter(Boolean)
+  const deviceApiKeyIds = [...(await knex('Device').whereIn('id', deviceIds).pluck('deviceApiKeyId'))].filter(Boolean)
   const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
   if (resultIds.length > 0) {
@@ -38,7 +35,6 @@ const deleteDevice = async deviceIds => {
   await knex('FactDeviceModulesCount').delete().whereIn('deviceId', deviceIds)
 
   await knex('Device').whereIn('id', deviceIds).update({ deviceApiKeyId: null })
-  await knex('DeviceApiKey').whereIn('deviceId', deviceIds).update({ deviceId: null })
 
   if (deviceApiKeyIds.length > 0) {
     await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
@@ -90,8 +86,9 @@ const insertDeviceApiKey = async (token, deviceId, siteId, geographyId, partnerI
     createdBy: 1,
     updatedOn: now,
     updatedBy: 1,
-    deviceId,
   })
+
+  await knex('Device').where({ id: deviceId }).update({ deviceApiKeyId: deviceApiId })
 
   return deviceApiId
 }

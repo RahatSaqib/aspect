@@ -49,7 +49,6 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('Result').whereIn('id', resultIds).delete()
   await knex('Sample').whereIn('id', sampleIds).delete()
   await knex('DeviceOperation').whereIn('id', opIds).delete()
-  await knex('Device').whereIn('deviceApiKeyId', deviceApiKeyIds).update({ deviceApiKeyId: null })
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('Deployment').whereIn('deviceId', deviceIds).delete()
   await knex('Instrument')
@@ -686,7 +685,7 @@ class DeviceApiTestContext {
     }
 
     const apiKey = { token: randomToken() }
-    await knex('DeviceApiKey').insert({
+    ;[apiKey.id] = await knex('DeviceApiKey').insert({
       token: apiKey.token,
       revoked: 0,
       partnerId,
