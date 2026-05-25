@@ -22,7 +22,7 @@ async function listDeviceApiKeys(request) {
     .leftJoin('Partner as p', 'dak.partnerId', 'p.id')
     .leftJoin('Geography as g', 'dak.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+    .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
     .leftJoin('Site as s', 'dak.siteId', 's.id')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -213,35 +213,47 @@ async function assignDeviceApiKeys(request) {
 
   const now = new Date()
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
+  const assignableDeviceApiKeyIds = await knex('DeviceApiKey as dak')
+    .whereIn('dak.id', payload.deviceApiKeyIds)
+    .modify(qb => {
+      if (payload.deviceId) {
+        qb.whereNotIn(
+          'dak.id',
+          knex('Device as d')
+            .whereNot('d.id', payload.deviceId)
+            .whereNotNull('d.deviceApiKeyId')
+            .select('d.deviceApiKeyId')
+        )
+      }
+    })
+    .pluck('dak.id')
 
   if (payload.deviceId) {
     // If deviceId is set, we need to ensure that only one key is assigned to the device
     if (payload.deviceApiKeyIds.length > 1) throw new Error('When deviceId is set, only one key can be assigned')
 
-    // Revoke the other keys assigned to it
-    await knex('DeviceApiKey')
-      .where({
-        geographyId,
-        siteId: payload.siteId,
-        partnerId: payload.partnerId,
-        deviceId: payload.deviceId,
-      })
-      .update({
-        revoked: true,
-      })
+    const [selectedDeviceApiKeyId] = assignableDeviceApiKeyIds
+    if (selectedDeviceApiKeyId) {
+      const device = await knex('Device').where('id', payload.deviceId).first('deviceApiKeyId')
+      if (device?.deviceApiKeyId && device.deviceApiKeyId !== selectedDeviceApiKeyId) {
+        await knex('DeviceApiKey')
+          .where('id', device.deviceApiKeyId)
+          .update({ revoked: true, updatedOn: now, updatedBy: currentlyLoggedInUser.id })
+      }
+
+      await knex('Device')
+        .where('id', payload.deviceId)
+        .update({ deviceApiKeyId: selectedDeviceApiKeyId, updatedOn: now, updatedBy: currentlyLoggedInUser.id })
+    }
   }
 
-  await knex('DeviceApiKey as dak')
-    .whereIn('dak.id', payload.deviceApiKeyIds)
-    .whereNull('dak.deviceId') // Ensure only assign to a device ONCE
-    .update({
-      geographyId,
-      siteId: payload.siteId,
-      partnerId: payload.partnerId,
-      deviceId: payload.deviceId,
-      updatedOn: now,
-      updatedBy: currentlyLoggedInUser.id,
-    })
+  await knex('DeviceApiKey as dak').whereIn('dak.id', assignableDeviceApiKeyIds).update({
+    geographyId,
+    siteId: payload.siteId,
+    partnerId: payload.partnerId,
+    updatedOn: now,
+    updatedBy: currentlyLoggedInUser.id,
+  })
 
   const result = { ok: true }
 
@@ -270,7 +282,10 @@ async function revokeDeviceApiKey(request) {
 
 async function lookupUsingCredentials(username, password) {
   const nowTime = new Date().getTime()
-  const deviceApiKey = await knex('DeviceApiKey').where('username', username).first()
+  const deviceApiKey = await knex('DeviceApiKey as dak')
+    .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
+    .where('dak.username', username)
+    .first('dak.*', 'd.id as deviceId')
   const pwResult = deviceApiKey
     ? await bcryptCompare(password, _.get(deviceApiKey, 'password')).catch(() => false)
     : false

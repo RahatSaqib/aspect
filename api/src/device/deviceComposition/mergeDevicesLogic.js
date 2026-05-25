@@ -8,8 +8,6 @@ async function executeMergeDevices(trknex, sourceDeviceId, targetDeviceId, userI
   await mergeNonRepeatedResults(trknex, sourceDeviceId, targetDeviceId)
   await mergeMessages(trknex, sourceDeviceId, targetDeviceId)
   await mergeInstruments(trknex, sourceDeviceId, targetDeviceId, userId)
-  // TODO: Remove this when DeviceApiKey.deviceId column is removed
-  await trknex('DeviceApiKey').where('deviceId', sourceDeviceId).update({ deviceId: null })
 
   await deleteDeployments(trknex, sourceDeviceId)
 

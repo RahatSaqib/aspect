@@ -117,7 +117,6 @@ class TruenatLogin extends SynchronousDataProcessor {
       const saltRounds = parseInt(config.passwordSaltRounds, 10)
       const passwordHash = bcrypt.hashSync(payload.Password, saltRounds)
       const deviceApiKey = {
-        deviceId: device.id,
         partnerId: device.partnerId,
         geographyId: geographyIdForApiKey,
         siteId: device.siteId,
@@ -130,7 +129,15 @@ class TruenatLogin extends SynchronousDataProcessor {
         updatedOn: now,
         updatedBy: adminId,
       }
-      await knex('DeviceApiKey').insert(deviceApiKey)
+      const [deviceApiKeyId] = await knex('DeviceApiKey').insert(deviceApiKey)
+      if (device.deviceApiKeyId && device.deviceApiKeyId !== deviceApiKeyId) {
+        await knex('DeviceApiKey').where('id', device.deviceApiKeyId).update({
+          revoked: true,
+          updatedOn: now,
+          updatedBy: adminId,
+        })
+      }
+      await knex('Device').where('id', device.id).update({ deviceApiKeyId, updatedOn: now })
       this.response.username = payload.Username
       this.response.token = `Bearer ${apiKey.token}`
       this.response.success = true

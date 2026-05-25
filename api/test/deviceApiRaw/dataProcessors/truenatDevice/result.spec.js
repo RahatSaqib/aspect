@@ -128,7 +128,7 @@ describe('Truenat Result Upload Data Processor', () => {
         if (
           args.join(',') ===
           [
-            'dak.deviceId',
+            'd.id as deviceId',
             'dak.username',
             'dak.id as deviceApiKeyId',
             'd.partnerId',
