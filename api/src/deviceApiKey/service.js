@@ -13,23 +13,35 @@ const { getDateTimeProjectionInTimeZoneIANA } = require('../shared/date')
 
 const bcryptCompare = promisify(bcrypt.compare)
 
-function getDeviceApiKeySortColumnMapping() {
-  return {
-    createdOn: 'dak.createdOn',
-    token: 'dak.token',
-    partner: 'p.name',
-    country: 'c.name',
-    site: knex.raw('MIN(COALESCE(deviceSite.name, dakSite.name))'),
-    device: knex.raw('MIN(d.name)'),
-    revoked: 'dak.revoked',
+function getSiteDevicePairs(deviceApiKey, devices, sites) {
+  if (devices.length > 0) {
+    return devices.map(device => ({
+      siteName: device.siteName,
+      deviceName: device.name,
+    }))
   }
+
+  if (sites.length > 0) {
+    return sites.map(site => ({
+      siteName: site.name,
+      deviceName: '',
+    }))
+  }
+
+  return [
+    {
+      siteName: deviceApiKey.site,
+      deviceName: deviceApiKey.device,
+    },
+  ]
 }
 
-function joinNames(items) {
-  return items
-    .map(item => item.name)
+function formatSiteDevicePairs(siteDevicePairs) {
+  const displayPairs = siteDevicePairs
+    .map(({ siteName, deviceName }) => [siteName, deviceName].filter(Boolean).join(' / '))
     .filter(Boolean)
-    .join(', ')
+
+  return displayPairs.length > 0 ? displayPairs.join('\n') : '—'
 }
 
 function mapDeviceApiKeyAssociations(deviceApiKey, associations) {
@@ -62,13 +74,14 @@ function mapDeviceApiKeyAssociations(deviceApiKey, associations) {
       ? [{ id: deviceApiKey.siteId, name: deviceApiKey.site }]
       : []
 
+  const siteDevicePairs = getSiteDevicePairs(deviceApiKey, devices, resolvedSites)
+
   return {
     ...deviceApiKey,
     token: groupToken(deviceApiKey.token),
     sites: resolvedSites,
     devices,
-    site: joinNames(resolvedSites),
-    device: joinNames(devices),
+    siteDevicePairsDisplay: formatSiteDevicePairs(siteDevicePairs),
   }
 }
 
@@ -108,7 +121,15 @@ async function listDeviceApiKeys(request) {
   const getDeviceApiKeyIds = dakQuery
     .clone()
     .groupBy('dak.id')
-    .modify(sortPageParams, query, 'createdOn', getDeviceApiKeySortColumnMapping())
+    .modify(sortPageParams, query, 'createdOn', {
+      createdOn: 'dak.createdOn',
+      token: 'dak.token',
+      partner: 'p.name',
+      country: 'c.name',
+      site: knex.raw('MIN(COALESCE(deviceSite.name, dakSite.name))'),
+      device: knex.raw('MIN(d.name)'),
+      revoked: 'dak.revoked',
+    })
     .orderBy('dak.id', 'desc') // second sort param to make the query deterministic
     .pluck('dak.id')
 
@@ -223,8 +244,7 @@ async function exportDeviceApiKeys(request) {
           dak.token,
           dak.partner,
           dak.country,
-          dak.site,
-          dak.device,
+          dak.siteDevicePairsDisplay,
           dak.revoked,
         ])
 
@@ -240,8 +260,8 @@ async function exportDeviceApiKeys(request) {
     })
   } else if (query.format === 'csv') {
     const items = devices.data
-    const columnNames = ['Created On', 'Key', 'Partner', 'Country', 'Site', 'Device', 'Revoked']
-    const fieldNames = ['createdOn', 'token', 'partner', 'country', 'site', 'device', 'revoked']
+    const columnNames = ['Created On', 'Key', 'Partner', 'Country', 'Site / Device', 'Revoked']
+    const fieldNames = ['createdOn', 'token', 'partner', 'country', 'siteDevicePairsDisplay', 'revoked']
     result = await generateCsvFile('deviceApiKeys.csv', items, columnNames, fieldNames)
   }
 
