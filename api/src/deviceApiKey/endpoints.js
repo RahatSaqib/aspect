@@ -1,8 +1,11 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listDeviceApiKeys, generateDeviceApiKeys, revokeDeviceApiKey, createDeviceApiKey } = require('./service')
+const { listDeviceApiKeys } = require('./listDeviceApiKeys')
+const { generateDeviceApiKeys } = require('./generateDeviceApiKeys')
+const { revokeDeviceApiKey } = require('./revokeDeviceApiKey')
+const { createDeviceApiKey } = require('./createDeviceApiKey')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
-const { exportDeviceApiKeys } = require('./serviceReports')
+const { exportDeviceApiKeys } = require('./exportDeviceApiKeys')
 
 function listDeviceApiKeysBaseConfig() {
   return {
