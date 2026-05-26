@@ -6,7 +6,11 @@ const endpointUtils = require('../utils/endpointUtils')
 describe('deviceApiKey endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/deviceApiKey/endpoints', {
-      './service': serviceStub,
+      './listDeviceApiKeys': serviceStub,
+      './generateDeviceApiKeys': serviceStub,
+      './revokeDeviceApiKey': serviceStub,
+      './createDeviceApiKey': serviceStub,
+      './exportDeviceApiKeys': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }

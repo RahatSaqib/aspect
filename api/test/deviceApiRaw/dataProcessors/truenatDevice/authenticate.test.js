@@ -53,7 +53,7 @@ describe('Truenat Authenticate Data Processor', () => {
         },
       },
       '../../../shared/request': mockSharedRequestService,
-      '../../../deviceApiKey/service': mockDeviceApiKeyService,
+      '../../../deviceApiKey/lookupUsingCredentials': mockDeviceApiKeyService,
     })
   }
 
