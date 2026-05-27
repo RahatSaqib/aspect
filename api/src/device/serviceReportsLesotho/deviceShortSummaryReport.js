@@ -1,40 +1,45 @@
-const _ = require('lodash')
 const { knex, sortPageParams, filterDateRangeParams, filterParams } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
-const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
-const { getBasicsForDevicesReport, getResultCategoryGroupColumns } = require('../common/db')
+const {
+  getBaseQuery: getResultBaseQuery,
+  modifiers,
+  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
+} = require('../../result/query')
+const { getBasicsForDevicesReport } = require('../common/db')
+
+const {
+  mtbDetected,
+  mtbNotDetected,
+  mtbTraceDetected,
+  mtbDetectedRifNotDetected,
+  mtbDetectedRifDetected,
+  mtbDetectedRifIndeterminate,
+  mtbInvalid,
+  mtbNoResult,
+  mtbError,
+} = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
 
 // --------------------------------------------------------------------------
-const { getResultCategoryGroupSumSelector } = require('../../result/query/querySelectors')
 
 // --------------------------------------------------------------------------
-async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstraints, query) {
+async function getAllDeviceReportDataInternal(dataConstraints, query) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
-
-  const resultCategoryGroupsColumns = Object.fromEntries(
-    resultCategoryGroups.map(ac => {
-      if (!_.isNil(ac.resultCategory1Id) || !_.isNil(ac.resultCategory2Id))
-        // Counts a result category group
-        return [ac.columnKey, getResultCategoryGroupSumSelector(ac.assayId, ac.resultCategory1Id, ac.resultCategory2Id)]
-
-      // Counts an xdr resistance result
-      return [ac.columnKey] // , getResultXdrResistanceSumSelector(ac.xdrResistance)]
-    })
-  )
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.resultCategory1)
     .modify(modifiers.join.resultCategory2)
-    .leftJoin('ResultCategoryGroup as rcg', joinQuery => {
-      joinQuery
-        .on('rcg.assayId', 'a.id')
-        .andOn('rcg.resultCategory1Id', 'rc1.id')
-        .andOn(knex.raw('rcg.resultCategory2Id <=> rc2.id'))
-    })
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .select({
       deviceId: 'deviceId',
-      totalXpertTests: knex.raw('count(*)'),
-      ...resultCategoryGroupsColumns,
+      mtbDetected,
+      mtbNotDetected,
+      mtbTraceDetected,
+      mtbDetectedRifNotDetected,
+      mtbDetectedRifDetected,
+      mtbDetectedRifIndeterminate,
+      mtbInvalid,
+      mtbNoResult,
+      mtbError,
     })
     .groupBy('r.deviceId')
     .modify(filterParams, query, {
@@ -55,7 +60,7 @@ async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstrai
        * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
        * in `api/src/auth/constraints.js` where user permitted deviceType is used
        */
-      .whereNot('dt.externalId', 'GxAlert')
+      .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
       .groupBy('d.id')
       .modify(sortPageParams, query, 'name')
       .select([
@@ -63,8 +68,15 @@ async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstrai
         's.name AS siteName',
         's.id AS siteId',
         'st.name AS stateName',
-        ...resultCategoryGroups.map(a => knex.raw(`IFNULL(resultsCount.${a.columnKey}, 0) AS ${a.columnKey}`)),
-        knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertTests'),
+        knex.raw('IFNULL(resultsCount.mtbDetected, 0) AS mtbDetected'),
+        knex.raw('IFNULL(resultsCount.mtbNotDetected, 0) AS mtbNotDetected'),
+        knex.raw('IFNULL(resultsCount.mtbTraceDetected, 0) AS mtbTraceDetected'),
+        knex.raw('IFNULL(resultsCount.mtbDetectedRifNotDetected, 0) AS mtbDetectedRifNotDetected'),
+        knex.raw('IFNULL(resultsCount.mtbDetectedRifDetected, 0) AS mtbDetectedRifDetected'),
+        knex.raw('IFNULL(resultsCount.mtbDetectedRifIndeterminate, 0) AS mtbDetectedRifIndeterminate'),
+        knex.raw('IFNULL(resultsCount.mtbInvalid, 0) AS mtbInvalid'),
+        knex.raw('IFNULL(resultsCount.mtbNoResult, 0) AS mtbNoResult'),
+        knex.raw('IFNULL(resultsCount.mtbError, 0) AS mtbError'),
       ]),
   }
 }
@@ -72,8 +84,7 @@ async function getAllDeviceReportDataInternal(resultCategoryGroups, dataConstrai
 // --------------------------------------------------------------------------
 async function getAllDeviceReportData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query, false)
-  const { builder } = await getAllDeviceReportDataInternal(resultCategoryGroups, dataConstraints, query)
+  const { builder } = await getAllDeviceReportDataInternal(dataConstraints, query)
 
   const rows = await builder
 
@@ -81,10 +92,6 @@ async function getAllDeviceReportData(auth, query) {
     ok: true,
     data: rows,
     total: rows.length,
-    dynamicColumns: resultCategoryGroups.map(a => ({
-      key: a.columnKey,
-      header: a.columnAbbreviation || a.columnName,
-    })),
   }
 }
 
