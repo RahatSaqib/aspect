@@ -10,6 +10,7 @@ const {
   toDate,
   isEqual,
   startOfDay,
+  endOfDay,
   startOfToday,
   startOfMonth,
   endOfMonth,
@@ -23,7 +24,7 @@ const {
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
-const { formatInTimeZone, zonedTimeToUtc } = require('date-fns-tz')
+const { formatInTimeZone, zonedTimeToUtc, utcToZonedTime } = require('date-fns-tz')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -546,6 +547,55 @@ const getWorkingDays = (minDate, maxDate, clientConfig) => {
 const convertMysqlDayOfWeekToDateFns = day => day - 1
 
 /**
+ * Returns the UTC equivalents of the start and end of the month containing `date`,
+ * where "month" is defined in the given IANA timezone.
+ *
+ * Use this instead of CONVERT_TZ in SQL when filtering by local-calendar months —
+ * shifting the boundaries to UTC lets the DB compare the raw column directly and use indexes.
+ *
+ * @param {Date} date - A UTC Date (e.g. new Date() or subMonths(new Date(), 1))
+ * @param {string} timezoneIANA - IANA timezone (e.g. 'Asia/Dhaka')
+ * @returns {{ start: Date, end: Date }} UTC start and end of the local calendar month
+ *
+ * @example
+ * // Asia/Dhaka is UTC+6. "May 2026" in Dhaka spans:
+ * // start: 2026-04-30T18:00:00.000Z  (midnight May 1 Dhaka  = 6pm Apr 30 UTC)
+ * // end:   2026-05-31T17:59:59.999Z  (end of May 31 Dhaka   = 6pm May 31 UTC)
+ * getUtcMonthBoundariesInTimezone(new Date('2026-05-15T00:00:00Z'), 'Asia/Dhaka')
+ */
+function getUtcMonthBoundariesInTimezone(date, timezoneIANA) {
+  const localDate = utcToZonedTime(date, timezoneIANA)
+  return {
+    start: zonedTimeToUtc(startOfMonth(localDate), timezoneIANA),
+    end: zonedTimeToUtc(endOfMonth(localDate), timezoneIANA),
+  }
+}
+
+/**
+ * Returns the UTC equivalents of the start and end of the day containing `date`,
+ * where "day" is defined in the given IANA timezone.
+ *
+ * Use this instead of CONVERT_TZ in SQL when filtering by local calendar days.
+ *
+ * @param {Date} date - A UTC Date (e.g. new Date())
+ * @param {string} timezoneIANA - IANA timezone (e.g. 'Asia/Dhaka')
+ * @returns {{ start: Date, end: Date }} UTC start and end of the local calendar day
+ *
+ * @example
+ * // Asia/Dhaka is UTC+6. "May 17 2026" in Dhaka spans:
+ * // start: 2026-05-16T18:00:00.000Z
+ * // end:   2026-05-17T17:59:59.999Z
+ * getUtcDayBoundariesInTimezone(new Date('2026-05-17T10:00:00Z'), 'Asia/Dhaka')
+ */
+function getUtcDayBoundariesInTimezone(date, timezoneIANA) {
+  const localDate = utcToZonedTime(date, timezoneIANA)
+  return {
+    start: zonedTimeToUtc(startOfDay(localDate), timezoneIANA),
+    end: zonedTimeToUtc(endOfDay(localDate), timezoneIANA),
+  }
+}
+
+/**
  * Checks if a given date is a weekend based on partner configuration
  * @param {Date} date - The date to check
  * @param {Object} customWorkingDaysConfig - Partner working days configuration
@@ -598,4 +648,6 @@ module.exports = {
   getDateTimeProjectionInTimeZoneIANA,
   getMonthYearExpressionFromFieldInTimeZone,
   isWeekend,
+  getUtcMonthBoundariesInTimezone,
+  getUtcDayBoundariesInTimezone,
 }

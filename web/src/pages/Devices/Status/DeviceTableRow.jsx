@@ -2,12 +2,9 @@ import React from 'react'
 import { Tooltip } from '@mui/material'
 import { useIntl } from 'react-intl'
 import ColoredNumber from '../../../components/shared/ColoredNumber'
-import stylesShared from '../../../components/shared/DataTableRow.module.css'
 import StatusIcon from '../../../components/shared/StatusIcon'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../components/shared/tableBody'
-import ColoredButton from '../../../components/themedReactToolbox/ColoredButton'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../components/shared/tableBody'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-import styles from './DeviceTableRow.module.css'
 import messages from './messages'
 
 const Rate = ({ it, messageId, threshold }) => {
@@ -28,7 +25,7 @@ const Rate = ({ it, messageId, threshold }) => {
   )
 }
 
-const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateThreshold }, ...restProps }) => {
+const DeviceTableRow = ({ device, displayPreferences: { errorRateThreshold }, ...restProps }) => {
   const { formatMessage, formatNumber, formatRelativeTime } = useIntl()
   return (
     <TableRow {...restProps} className={`TableRow ${restProps.className}`}>
@@ -74,21 +71,6 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
       </TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
-      </TableCell>
-      <TableCell className={styles.TableCell__alerts}>
-        {device.get('issueCategories').map(it => (
-          <ColoredButton
-            key={it.get('key')}
-            className={stylesShared.ColoredButton__micro}
-            shipCove={it.get('key') === 'issueCategoryDeviceHealth'}
-            shakespeare={it.get('key') === 'issueCategoryReagentHealth'}
-            mountain={it.get('key') === 'issueCategoryDataHealth'}
-            brink={it.get('key') === 'issueCategoryConnectivityHealth'}
-            label={formatMessage(messages[it.get('key')])}
-            onClick={onAlertClick}
-            data-device-id={device.get('id')}
-          />
-        ))}
       </TableCell>
       <TableCell hiddenOn="lg">
         <Rate it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />

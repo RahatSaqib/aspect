@@ -140,14 +140,6 @@ const messages = {
       defaultMessage:
         'Based on the last 30 days, represents the percentage of results with errors compared to the total number of performed results',
     },
-    issues: {
-      id: 'pages.DeviceList.issues',
-      defaultMessage: 'Issues',
-    },
-    issueCategory: {
-      id: 'pages.DeviceList.issueCategory',
-      defaultMessage: 'Issues',
-    },
     reportingFor: {
       id: 'pages.DeviceList.reportingFor',
       defaultMessage: 'Reporting Since',
@@ -218,22 +210,6 @@ const messages = {
     notAvailable: {
       id: 'pages.DeviceList.notAvailable',
       defaultMessage: 'N/A',
-    },
-    issueCategoryDeviceHealth: {
-      id: 'pages.DeviceList.deviceHealth',
-      defaultMessage: 'Device',
-    },
-    issueCategoryReagentHealth: {
-      id: 'pages.DeviceList.reagentHealth',
-      defaultMessage: 'Reagent',
-    },
-    issueCategoryDataHealth: {
-      id: 'pages.DeviceList.dataHealth',
-      defaultMessage: 'Data',
-    },
-    issueCategoryConnectivityHealth: {
-      id: 'pages.DeviceList.connectivityHealth',
-      defaultMessage: 'Connectivity',
     },
     connectorStatus: {
       id: 'pages.DeviceList.connectorStatus',
