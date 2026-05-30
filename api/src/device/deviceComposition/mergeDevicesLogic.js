@@ -66,8 +66,54 @@ async function mergeInstruments(trknex, sourceDeviceId, targetDeviceId, userId) 
   }
 
   if (duplicateSourceInstrumentIds.length > 0) {
+    await mergeAndDeleteInstrumentModules(
+      trknex,
+      duplicateSourceInstrumentIds,
+      sourceInstruments,
+      duplicateTargetInstruments
+    )
     await trknex('Instrument').whereIn('id', duplicateSourceInstrumentIds).delete()
   }
+}
+
+// Before deleting duplicate source instruments, merge their InstrumentModules rows into the
+// surviving target instruments (same serial, different id) using the same GREATEST/IF logic
+// as the incremental subscriber, then delete the source rows to satisfy the FK constraint.
+async function mergeAndDeleteInstrumentModules(
+  trknex,
+  duplicateSourceInstrumentIds,
+  sourceInstruments,
+  duplicateTargetInstruments
+) {
+  const serialToTargetId = new Map(duplicateTargetInstruments.map(i => [i.serial, i.id]))
+  const sourceIdToTargetId = new Map(
+    duplicateSourceInstrumentIds.map(sourceId => {
+      const serial = sourceInstruments.find(i => i.id === sourceId)?.serial
+      return [sourceId, serialToTargetId.get(serial)]
+    })
+  )
+
+  const allSourceModules = await trknex('InstrumentModules')
+    .whereIn('instrumentId', duplicateSourceInstrumentIds)
+    .select('instrumentId', 'moduleName', 'moduleSerial', 'lastResultDate')
+
+  const rowsToUpsert = allSourceModules
+    .map(m => ({ ...m, instrumentId: sourceIdToTargetId.get(m.instrumentId) }))
+    .filter(m => m.instrumentId != null)
+
+  if (rowsToUpsert.length > 0) {
+    await trknex('InstrumentModules')
+      .insert(rowsToUpsert)
+      .onConflict(['instrumentId', 'moduleName'])
+      .merge({
+        moduleSerial: trknex.raw(
+          'IF(VALUES(lastResultDate) >= InstrumentModules.lastResultDate, VALUES(moduleSerial), InstrumentModules.moduleSerial)'
+        ),
+        lastResultDate: trknex.raw('GREATEST(InstrumentModules.lastResultDate, VALUES(lastResultDate))'),
+      })
+  }
+
+  await trknex('InstrumentModules').whereIn('instrumentId', duplicateSourceInstrumentIds).delete()
 }
 
 async function mergeIssuesFromDuplicatedResults(trknex, sourceDeviceId, targetDeviceId) {
