@@ -20,7 +20,12 @@ const TABLE = 'InstrumentModules'
  * @param {string} [row.moduleSerial]
  * @param {string|Date} row.endedOn
  */
-async function recordResultModule(knex, { instrumentId, moduleName, moduleSerial = null, endedOn }) {
+async function recordResultModule(knex, { instrumentId, moduleName: rawModuleName, moduleSerial = null, endedOn }) {
+  // Trim defensively — Result.moduleName can carry leading/trailing whitespace in the DB,
+  // and the seed always inserts trimmed names. A mismatch produces duplicate rows for the
+  // same logical module (e.g. "A1" vs "A1 ") and breaks the letter-change cleanup.
+  const moduleName = rawModuleName?.trim() || null
+
   // Only GeneXpert-style results carry a module name; everything else is a no-op.
   if (!instrumentId || !moduleName || !endedOn) {
     return

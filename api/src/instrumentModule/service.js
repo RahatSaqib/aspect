@@ -23,7 +23,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           this.on('i.deviceId', 'r.deviceId').andOn('i.serial', 'r.instrumentSerial')
         })
         .where('r.id', resultId)
-        .first('i.id as instrumentId', 'r.moduleName', 'r.moduleSerial', 'r.endedOn')
+        .first('i.id as instrumentId', knex.raw('TRIM(r.moduleName) as moduleName'), 'r.moduleSerial', 'r.endedOn')
 
       if (!result) {
         return
