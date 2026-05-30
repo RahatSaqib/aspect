@@ -1,4 +1,6 @@
-const TABLE = 'InstrumentModules'
+// _READ suffix signals this table must not be written inside application transactions —
+// it is a cache maintained exclusively by post-commit event subscribers.
+const TABLE = 'InstrumentModule_READ'
 
 /**
  * Records the last-result-date for a single instrument module, as projected from one

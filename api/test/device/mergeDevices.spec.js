@@ -108,6 +108,9 @@ describe('Merge Devices', () => {
     await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).del()
     await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('InstrumentModule_READ')
+      .whereIn('instrumentId', knex('Instrument').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).select('id'))
+      .del()
     await knex('Instrument').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
 
     // Delete fact tables sequentially to avoid deadlocks

@@ -76,7 +76,7 @@ async function mergeInstruments(trknex, sourceDeviceId, targetDeviceId, userId) 
   }
 }
 
-// Before deleting duplicate source instruments, merge their InstrumentModules rows into the
+// Before deleting duplicate source instruments, merge their InstrumentModule_READ rows into the
 // surviving target instruments (same serial, different id) using the same GREATEST/IF logic
 // as the incremental subscriber, then delete the source rows to satisfy the FK constraint.
 async function mergeAndDeleteInstrumentModules(
@@ -93,7 +93,7 @@ async function mergeAndDeleteInstrumentModules(
     })
   )
 
-  const allSourceModules = await trknex('InstrumentModules')
+  const allSourceModules = await trknex('InstrumentModule_READ')
     .whereIn('instrumentId', duplicateSourceInstrumentIds)
     .select('instrumentId', 'moduleName', 'moduleSerial', 'lastResultDate')
 
@@ -102,18 +102,18 @@ async function mergeAndDeleteInstrumentModules(
     .filter(m => m.instrumentId != null)
 
   if (rowsToUpsert.length > 0) {
-    await trknex('InstrumentModules')
+    await trknex('InstrumentModule_READ')
       .insert(rowsToUpsert)
       .onConflict(['instrumentId', 'moduleName'])
       .merge({
         moduleSerial: trknex.raw(
-          'IF(VALUES(lastResultDate) >= InstrumentModules.lastResultDate, VALUES(moduleSerial), InstrumentModules.moduleSerial)'
+          'IF(VALUES(lastResultDate) >= InstrumentModule_READ.lastResultDate, VALUES(moduleSerial), InstrumentModule_READ.moduleSerial)'
         ),
-        lastResultDate: trknex.raw('GREATEST(InstrumentModules.lastResultDate, VALUES(lastResultDate))'),
+        lastResultDate: trknex.raw('GREATEST(InstrumentModule_READ.lastResultDate, VALUES(lastResultDate))'),
       })
   }
 
-  await trknex('InstrumentModules').whereIn('instrumentId', duplicateSourceInstrumentIds).delete()
+  await trknex('InstrumentModule_READ').whereIn('instrumentId', duplicateSourceInstrumentIds).delete()
 }
 
 async function mergeIssuesFromDuplicatedResults(trknex, sourceDeviceId, targetDeviceId) {
