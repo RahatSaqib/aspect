@@ -78,28 +78,12 @@ async function getCandidateInstruments({ params, auth }) {
 }
 
 function getCandidateInstrumentsData(deviceId, siteId, dataConstraints) {
-  const query = knex('Device as d')
+  return knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-    .join('Instrument as i', function () {
-      this.on('i.deviceId', 'd.id')
-    })
+    .join('Instrument as i', 'i.deviceId', 'd.id')
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin(
-      knex('Result as r')
-        .whereNotNull('r.instrumentSerial')
-        .groupBy('r.deviceId', 'r.instrumentSerial', 'r.moduleName')
-        .select(
-          'r.deviceId',
-          'r.instrumentSerial',
-          'r.moduleName',
-          knex.raw(`json_object('moduleName', r.moduleName, 'lastResultDate', date(max(r.endedOn))) as modules`)
-        )
-        .as('m'),
-      function () {
-        this.on('m.deviceId', 'd.id').andOn('m.instrumentSerial', 'i.serial')
-      }
-    )
+    .leftJoin('InstrumentModules as m', 'm.instrumentId', 'i.id')
     .where('dt.externalId', 'CepheidGeneXpert')
     .where('d.siteId', siteId)
     .where(function () {
@@ -127,9 +111,11 @@ function getCandidateInstrumentsData(deviceId, siteId, dataConstraints) {
       'd.name as deviceName',
       'i.id as instrumentId',
       'i.serial as instrumentSerial',
-      knex.raw('json_arrayagg(m.modules) as modules')
+      knex.raw(
+        `json_arrayagg(IF(m.moduleName IS NULL, NULL,
+          json_object('moduleName', m.moduleName, 'lastResultDate', m.lastResultDate))) as modules`
+      )
     )
-  return query
 }
 
 module.exports = {

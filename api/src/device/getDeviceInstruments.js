@@ -3,27 +3,12 @@ const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 function getDeviceInstrumentsData(deviceId, dataConstraints) {
-  const query = knex('Device as d')
+  return knex('Device as d')
     .where('d.id', deviceId)
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .join('Instrument as i', function () {
-      this.on('i.deviceId', 'd.id')
-    })
-    .leftJoin(
-      knex('Result_READ as r')
-        .groupBy('deviceId', 'instrumentSerial', knex.raw('TRIM(moduleName)'))
-        .select(
-          'deviceId',
-          'instrumentSerial',
-          knex.raw('TRIM(moduleName) as moduleName'),
-          knex.raw(`json_object('moduleName', TRIM(moduleName), 'lastResultDate', date(max(endedOn))) as modules`)
-        )
-        .as('m'),
-      function () {
-        this.on('m.deviceId', 'd.id').andOn('m.instrumentSerial', 'i.serial')
-      }
-    )
-    .groupBy('d.id', 'i.serial')
+    .join('Instrument as i', 'i.deviceId', 'd.id')
+    .leftJoin('InstrumentModules as m', 'm.instrumentId', 'i.id')
+    .groupBy('d.id', 'i.id', 'i.active', 'i.serial')
     .modify(
       addConstraints,
       dataConstraints,
@@ -38,10 +23,11 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
       'i.id as instrumentId',
       'i.active as active',
       'i.serial as instrumentSerial',
-      knex.raw('json_arrayagg(modules) as modules')
+      knex.raw(
+        `json_arrayagg(IF(m.moduleName IS NULL, NULL,
+          json_object('moduleName', m.moduleName, 'lastResultDate', m.lastResultDate))) as modules`
+      )
     )
-
-  return query
 }
 
 async function getDeviceInstruments({ params, auth }) {
