@@ -1,7 +1,5 @@
-const _ = require('lodash')
 const { format } = require('date-fns')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
-const { issueCategoryIntlToShortname } = require('../../shared/dictionary')
 const { listDevices } = require('../listDevices')
 const { knex, filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
@@ -13,13 +11,11 @@ async function deviceReport(request, reply) {
   const [devicesData] = dataSet
   const scope = devicesData.category !== 'Router' ? 'devices' : 'routers'
 
-  const issueCategories = await issueCategoryIntlToShortname()
   // calculated and normalized props
   const data =
     scope === 'devices'
       ? dataSet.map(item => ({
           ...item,
-          issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
           availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
           errorRate: item.error.rate, // Excel column formatted as 'Percentage'
         }))

@@ -219,9 +219,6 @@ function listDevicesBaseResponse() {
                 .allow(null)
                 .description('Number of results delivered in the last 30 days'),
               timezoneIANA: Joi.string().allow(null).description('IANA timezone of the country'),
-              issueCategories: Joi.array()
-                .required()
-                .description('The categories of issues currently active for this device.'),
               availability: Joi.object()
                 .required()
                 .description('Stats on the availability of the device in the last 30 days.')
