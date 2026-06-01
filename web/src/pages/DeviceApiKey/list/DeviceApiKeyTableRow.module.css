@@ -1,3 +1,32 @@
 .Checkbox__field {
   margin-bottom: 0;
 }
+
+.PairList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.PairRow {
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.PairText {
+  color: var(--aspect-color-grey-2);
+}
+
+.PairLinkIcon {
+  margin: 0 5px;
+  cursor: pointer;
+  color: var(--aspect-color-blue-1);
+}
+
+.PairSeparator {
+  color: inherit;
+}
+
+.PairEmpty {
+  color: rgba(0, 0, 0, 0.54);
+}

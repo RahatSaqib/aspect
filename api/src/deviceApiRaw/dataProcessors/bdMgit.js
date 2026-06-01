@@ -26,7 +26,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
     }
     const { externalId: deviceTypeId } =
       (await knex('DeviceApiKey as dak')
-        .join('Device as d', 'dak.deviceId', 'd.id')
+        .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
         .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
         .where('dak.token', auth.credentials.token)
         .first('dt.externalId')) || {}
@@ -39,9 +39,10 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
     this.response = { deviceApiRawId: this.id }
     await transact(async knex => {
-      const { id: deviceApiKeyId, deviceId } = await knex('DeviceApiKey')
-        .where('token', auth.credentials.token)
-        .first('id', 'deviceId')
+      const { id: deviceApiKeyId, deviceId } = await knex('DeviceApiKey as dak')
+        .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
+        .where('dak.token', auth.credentials.token)
+        .first('dak.id as id', 'd.id as deviceId')
       const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
         throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')

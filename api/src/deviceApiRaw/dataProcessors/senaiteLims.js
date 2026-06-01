@@ -32,7 +32,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
     }
     const { externalId: deviceTypeId } =
       (await knex('DeviceApiKey as dak')
-        .join('Device as d', 'dak.deviceId', 'd.id')
+        .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
         .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
         .where('dak.token', auth.credentials.token)
         .first('dt.externalId')) || {}
@@ -52,32 +52,32 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
     }
     const now = new Date()
     await transact(async knex => {
-      const { deviceId, partnerId, siteId, longitude, latitude, countryId, defaultReportableSiteId } = await knex(
-        'DeviceApiKey as dak'
-      )
-        .leftJoin('Site as s1', 'dak.siteId', 's1.id')
-        .leftJoin('Device as d', 'dak.deviceId', 'd.id')
-        .leftJoin('Site as s2', 'd.siteId', 's2.id')
-        .leftJoin('Geography as g1', 's2.geographyId', 'g1.id')
-        .leftJoin('Geography as g2', 's1.geographyId', 'g2.id')
-        .leftJoin('Geography as g3', 'dak.geographyId', 'g3.id')
-        .where('dak.token', auth.credentials.token)
-        .first(
-          'dak.deviceId',
-          'dak.partnerId',
-          knex.raw('COALESCE(d.siteId, dak.siteId) as siteId'),
-          knex.raw('COALESCE(s2.longitude, s1.longitude) as longitude'),
-          knex.raw('COALESCE(s2.latitude, s1.latitude) as latitude'),
-          knex.raw('COALESCE(s2.geographyId, s1.geographyId, dak.geographyId) as geographyId'),
-          knex.raw('COALESCE(g1.countryId, g2.countryId, g3.countryId) as countryId'),
-          'd.defaultReportableSiteId'
-        )
+      const { deviceApiKeyId, deviceId, partnerId, siteId, longitude, latitude, countryId, defaultReportableSiteId } =
+        await knex('DeviceApiKey as dak')
+          .leftJoin('Site as s1', 'dak.siteId', 's1.id')
+          .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
+          .leftJoin('Site as s2', 'd.siteId', 's2.id')
+          .leftJoin('Geography as g1', 's2.geographyId', 'g1.id')
+          .leftJoin('Geography as g2', 's1.geographyId', 'g2.id')
+          .leftJoin('Geography as g3', 'dak.geographyId', 'g3.id')
+          .where('dak.token', auth.credentials.token)
+          .first(
+            'dak.id as deviceApiKeyId',
+            'd.id as deviceId',
+            'dak.partnerId',
+            knex.raw('COALESCE(d.siteId, dak.siteId) as siteId'),
+            knex.raw('COALESCE(s2.longitude, s1.longitude) as longitude'),
+            knex.raw('COALESCE(s2.latitude, s1.latitude) as latitude'),
+            knex.raw('COALESCE(s2.geographyId, s1.geographyId, dak.geographyId) as geographyId'),
+            knex.raw('COALESCE(g1.countryId, g2.countryId, g3.countryId) as countryId'),
+            'd.defaultReportableSiteId'
+          )
       const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
         throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
       }
       await knex('DeviceLog').insert({
-        deviceApiKeyId: knex('DeviceApiKey').where('id', deviceId).first('id'),
+        deviceApiKeyId,
         source: _.get(payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,

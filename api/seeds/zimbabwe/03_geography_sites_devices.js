@@ -183,7 +183,7 @@ async function seed(knex) {
             const deviceApiKeyToken = device.deviceApiKey || randomToken()
             const deviceData =
               (await knex('DeviceApiKey as dak')
-                .join('Device as d', 'dak.deviceId', 'd.id')
+                .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
                 .where('dak.token', deviceApiKeyToken)
                 .first('d.*')) || {}
             if (_.isEmpty(deviceData)) {
@@ -205,15 +205,15 @@ async function seed(knex) {
                 ...auditFields,
               })
               deviceData.id = deviceId
-              await knex('DeviceApiKey').insert({
+              const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
                 token: deviceApiKeyToken,
                 revoked: 0,
                 partnerId,
                 geographyId: siteData.geographyId,
                 siteId: siteData.id,
-                deviceId,
                 ...auditFields,
               })
+              await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
             }
           })
         )

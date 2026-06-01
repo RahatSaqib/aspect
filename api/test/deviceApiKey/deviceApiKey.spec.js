@@ -11,6 +11,7 @@ const { assert } = chai
 describe('Device API Key routes', () => {
   const path = '/api/deviceApiKey'
   const deviceApiKeyIds = []
+  const deviceAssignments = []
 
   before(async () => {
     shared.checkToken(server, path)
@@ -41,13 +42,36 @@ describe('Device API Key routes', () => {
         deviceApiKeyIds.push(deviceApiKeyId)
       })
     )
+
+    const devices = await knex('Device as d')
+      .leftJoin('Site as s', 'd.siteId', 's.id')
+      .whereNotNull('d.siteId')
+      .limit(2)
+      .select('d.id', 'd.deviceApiKeyId', 'd.name', 's.id as siteId', 's.name as siteName')
+
+    if (devices.length === 2) {
+      deviceAssignments.push(...devices)
+      await knex('Device')
+        .whereIn(
+          'id',
+          devices.map(device => device.id)
+        )
+        .update({ deviceApiKeyId: deviceApiKeyIds[0] })
+    }
   })
 
-  after(async () => knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete())
+  after(async () => {
+    await Promise.all(
+      deviceAssignments.map(device =>
+        knex('Device').where('id', device.id).update({ deviceApiKeyId: device.deviceApiKeyId })
+      )
+    )
+    await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
+  })
 
   describe('GET', () => {
     it('should return a list of deviceApiKeys when using valid token', async () => {
-      const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}?size=all&sortDir=desc`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -60,9 +84,17 @@ describe('Device API Key routes', () => {
       assert.property(res.body.data[0], 'partner')
       assert.property(res.body.data[0], 'country')
       assert.property(res.body.data[0], 'site')
-      assert.property(res.body.data[0], 'device')
+      assert.property(res.body.data[0], 'sites')
+      assert.property(res.body.data[0], 'devices')
       assert.property(res.body.data[0], 'revoked')
       assert.property(res.body, 'total')
+
+      const multiDeviceApiKey = res.body.data.find(item => Number(item.id) === Number(deviceApiKeyIds[0]))
+      assert.exists(multiDeviceApiKey)
+      assert.isArray(multiDeviceApiKey.sites)
+      assert.isArray(multiDeviceApiKey.devices)
+      assert.isAtLeast(multiDeviceApiKey.devices.length, 2)
+      assert.containsAllKeys(multiDeviceApiKey.devices[0], ['id', 'name', 'siteId', 'siteName'])
     })
   })
   describe('POST', () => {

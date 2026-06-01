@@ -60,9 +60,8 @@ describe('Device API Raw routes for BD MGIT', () => {
       createdOn: now,
       updatedOn: now,
     })
-    await knex('DeviceApiKey').insert({
+    const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
       token: validApiKeyToken,
-      deviceId: bdMgitDeviceId,
       siteId: bdMgitSiteId,
       revoked: false,
       createdOn: now,
@@ -71,6 +70,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       updatedBy: userId,
       partnerId: partner.id,
     })
+    await knex('Device').where('id', bdMgitDeviceId).update({ deviceApiKeyId })
   })
 
   after(async () => {
@@ -80,9 +80,9 @@ describe('Device API Raw routes for BD MGIT', () => {
       deviceId,
       siteId,
     } = await knex('DeviceApiKey as dak')
-      .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+      .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
       .where('dak.token', validApiKeyToken)
-      .first('dak.id', 'dak.deviceId', 'd.siteId')
+      .first('dak.id', 'd.id as deviceId', 'd.siteId')
     const resultIds = await knex('Result').where('deviceId', deviceId).pluck('id')
 
     const opIds = await knex('DeviceOperation').where('deviceApiKeyId', deviceApiKeyId).pluck('id')
@@ -102,7 +102,8 @@ describe('Device API Raw routes for BD MGIT', () => {
     await knex('Sample').whereIn('id', sampleIds).delete()
     await knex('Sample').where('originSiteId', siteId).delete()
     await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-    await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
+    await knex('Device').where('id', deviceId).update({ deviceApiKeyId: null })
+    await knex('DeviceApiKey').where('token', validApiKeyToken).delete()
     await knex('Device').where('id', deviceId).delete()
     await knex('Site').where('id', siteId).delete()
     const inventoryItemIds = await knex('InventoryItem as ii')

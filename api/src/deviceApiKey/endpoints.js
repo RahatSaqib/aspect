@@ -1,14 +1,11 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const {
-  listDeviceApiKeys,
-  generateDeviceApiKeys,
-  assignDeviceApiKeys,
-  revokeDeviceApiKey,
-  createDeviceApiKey,
-} = require('./service')
+const { listDeviceApiKeys } = require('./listDeviceApiKeys')
+const { generateDeviceApiKeys } = require('./generateDeviceApiKeys')
+const { revokeDeviceApiKey } = require('./revokeDeviceApiKey')
+const { createDeviceApiKey } = require('./createDeviceApiKey')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
-const { exportDeviceApiKeys } = require('./serviceReports')
+const { exportDeviceApiKeys } = require('./exportDeviceApiKeys')
 
 function listDeviceApiKeysBaseConfig() {
   return {
@@ -16,6 +13,7 @@ function listDeviceApiKeysBaseConfig() {
     validate: {
       query: {
         partnerId: Joi.number().allow('').description('Filter for partner ID'),
+        deviceApiKeyToken: Joi.string().allow('').description('Filter for device API key token'),
         siteName: Joi.string().allow('').description('Filter for site name'),
         deviceName: Joi.string().allow('').description('Filter for device name'),
         revoked: Joi.number().integer().optional().description('Filter by revoked'),
@@ -78,25 +76,6 @@ const routes = [
       validate: {
         payload: {
           count: Joi.number().description('Number of deviceApiKeys should be generated').required(),
-          countryId: Joi.number().allow('').description('Country ID'),
-          partnerId: Joi.number().allow('').description('Partner ID'),
-          siteId: Joi.number().allow('').description('Site ID'),
-        },
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/deviceApiKey/assign',
-    handler: asyncHandler(assignDeviceApiKeys),
-    config: {
-      description: 'Assign DeviceApiKey List',
-      notes: 'Bulk assign for DeviceApiKey List to the given Device',
-      auth: { scope: ['deviceApiKey:edit'] },
-      validate: {
-        payload: {
-          deviceApiKeyIds: Joi.array().items(Joi.number()).description('DeviceApiKey IDs'),
-          deviceId: Joi.number().allow('').description('Device ID'),
           countryId: Joi.number().allow('').description('Country ID'),
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),

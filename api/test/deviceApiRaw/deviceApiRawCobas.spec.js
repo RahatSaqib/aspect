@@ -62,9 +62,8 @@ describe('Device API Raw routes for cobas', () => {
         createdOn: now,
         updatedOn: now,
       })
-      await knex('DeviceApiKey').insert({
+      const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
         token: validApiKeyToken,
-        deviceId,
         siteId,
         revoked: false,
         createdOn: now,
@@ -73,6 +72,7 @@ describe('Device API Raw routes for cobas', () => {
         updatedBy: userId,
         partnerId: partner.id,
       })
+      await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
     })
   )
   after(() =>
@@ -83,14 +83,15 @@ describe('Device API Raw routes for cobas', () => {
         deviceId,
         siteId,
       } = await knex('DeviceApiKey as dak')
-        .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+        .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
         .where('dak.token', validApiKeyToken)
-        .first('dak.id', 'dak.deviceId', 'd.siteId')
+        .first('dak.id', 'd.id as deviceId', 'd.siteId')
       await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
       await knex('DeviceLog').where('deviceApiKeyId', deviceApiKeyId).delete()
 
       await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-      await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
+      await knex('Device').where('id', deviceId).update({ deviceApiKeyId: null })
+      await knex('DeviceApiKey').where('token', validApiKeyToken).delete()
       await knex('Device').where('id', deviceId).delete()
       await knex('Site').where('id', siteId).delete()
     })

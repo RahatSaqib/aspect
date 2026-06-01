@@ -57,9 +57,8 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       createdOn: now,
       updatedOn: now,
     })
-    await knex('DeviceApiKey').insert({
+    const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
       token: validApiKeyToken,
-      deviceId: senaiteLimsDeviceId,
       siteId: senaiteLimsSiteId,
       revoked: false,
       createdOn: now,
@@ -68,6 +67,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       updatedBy: userId,
       partnerId: partner.id,
     })
+    await knex('Device').where('id', senaiteLimsDeviceId).update({ deviceApiKeyId })
   })
 
   after(async () => {
@@ -77,9 +77,9 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       deviceId,
       siteId,
     } = await knex('DeviceApiKey as dak')
-      .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+      .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
       .where('dak.token', validApiKeyToken)
-      .first('dak.id', 'dak.deviceId', 'd.siteId')
+      .first('dak.id', 'd.id as deviceId', 'd.siteId')
     const results = await knex('Result as r')
       .leftJoin('Sample as s', 'r.sampleId', 's.id')
       .where('r.deviceId', deviceId)
@@ -106,14 +106,15 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     const opIds = await knex('DeviceOperation').where('deviceId', deviceId).pluck('id')
     const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
     await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
-    await knex('DeviceLog').where('deviceId', deviceId).orWhereIn('resultId', resultIds).delete()
+    await knex('DeviceLog').where('deviceApiKeyId', deviceApiKeyId).orWhereIn('resultId', resultIds).delete()
     await knex('DeviceOperation').whereIn('id', opIds).delete()
     await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
     await knex('FactResultsDevice').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
     await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-    await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
+    await knex('Device').where('id', deviceId).update({ deviceApiKeyId: null })
+    await knex('DeviceApiKey').where('token', validApiKeyToken).delete()
     const inventoryItemIds = await knex('InventoryItem as ii')
       .where('ii.siteId', siteId)
       .distinct('ii.id')

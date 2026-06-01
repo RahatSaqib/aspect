@@ -457,7 +457,10 @@ async function deleteDeviceFromDeviceApprovalLog(deviceId, trknex) {
 
 async function deleteDeviceFromDeviceApiRaw(deviceId, trknex) {
   await trknex('DeviceApiRaw as dar')
-    .whereIn('dar.deviceApiKeyId', trknex('DeviceApiKey as dak').where('dak.deviceId', deviceId).select('id'))
+    .whereIn(
+      'dar.deviceApiKeyId',
+      trknex('Device').where('id', deviceId).whereNotNull('deviceApiKeyId').select('deviceApiKeyId')
+    )
     .del()
 }
 

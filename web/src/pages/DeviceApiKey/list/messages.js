@@ -10,10 +10,6 @@ const messages = defineMessages({
     id: 'pages.DeviceApiKeyList.generate',
     defaultMessage: 'Generate',
   },
-  assign: {
-    id: 'pages.DeviceApiKeyList.assign',
-    defaultMessage: 'Assign',
-  },
   /* ---------------- Table ----------------- */
   createdOn: {
     id: 'pages.DeviceApiKeyList.createdOn',
@@ -34,6 +30,10 @@ const messages = defineMessages({
   site: {
     id: 'pages.DeviceApiKeyList.site',
     defaultMessage: 'Site',
+  },
+  siteDevicePairs: {
+    id: 'pages.DeviceApiKeyList.siteDevicePairs',
+    defaultMessage: 'Site / Device',
   },
   device: {
     id: 'pages.DeviceApiKeyList.device',

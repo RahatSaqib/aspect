@@ -195,12 +195,12 @@ class TruenatResult extends SynchronousDataProcessor {
 
 async function getDeviceDetailsFromApiKey(knex, deviceApiToken) {
   const deviceDetails = await knex('DeviceApiKey as dak')
-    .join('Device as d', 'dak.deviceId', 'd.id')
+    .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Site as s', 'd.siteId', 's.id')
     .where('dak.token', deviceApiToken)
     .first(
-      'dak.deviceId',
+      'd.id as deviceId',
       'dak.username',
       'dak.id as deviceApiKeyId',
       'd.partnerId',

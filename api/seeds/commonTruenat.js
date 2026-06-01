@@ -243,37 +243,36 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
       }
     }
     const truenatDeviceApiKey = await knex('DeviceApiKey')
-      .where('deviceId', existingTruenatDevice.id)
+      .where('id', existingTruenatDevice.deviceApiKeyId)
       .whereNotNull('username')
       .whereNotNull('password')
       .andWhere('revoked', 0)
       .first()
     const password = await bcryptHash(truenatDevice.password, parseInt(passwordSaltRounds, 10))
     if (!truenatDeviceApiKey) {
-      await knex('DeviceApiKey').insert({
+      const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
         token: randomToken(),
         revoked: 0,
         partnerId,
         geographyId,
         siteId: truenatLab.id,
-        deviceId: existingTruenatDevice.id,
         username: truenatDevice.username,
         password,
         expiresOn: addMinutes(new Date(), 15),
         ...auditFields,
       })
+
+      await knex('Device').where('id', existingTruenatDevice.id).update({ deviceApiKeyId })
     } else {
       const deviceApiKeyFixtureChanged =
         truenatDeviceApiKey.geographyId !== geographyId ||
         truenatDeviceApiKey.siteId !== truenatLab.id ||
-        truenatDeviceApiKey.deviceId !== existingTruenatDevice.id ||
         truenatDeviceApiKey.username !== truenatDevice.username ||
         truenatDeviceApiKey.password !== password
       if (deviceApiKeyFixtureChanged) {
         await knex('DeviceApiKey').where('id', truenatDeviceApiKey.id).update({
           geographyId,
           siteId: truenatLab.id,
-          deviceId: existingTruenatDevice.id,
           username: truenatDevice.username,
           password,
           updatedOn: auditFields.updatedOn,

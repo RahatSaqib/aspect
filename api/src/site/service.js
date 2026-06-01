@@ -225,10 +225,13 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     .select('c.name as countryName', 's.name as stateName')
     .first()
 
+  const countryName = countryState?.countryName ?? null
+  const stateName = countryState?.stateName ?? null
+
   return {
     ok: true,
-    countryName: countryState.countryName,
-    stateName: countryState.stateName,
+    countryName,
+    stateName,
     mode,
     data,
   }

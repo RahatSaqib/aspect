@@ -130,7 +130,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
   async appendDeviceLog(knex, deviceId, resultId, rawMessage, utcNow) {
     const remoteAddress = getRemoteAddress(this.request)
     const [deviceLogId] = await knex('DeviceLog').insert({
-      deviceApiKeyId: knex('DeviceApiKey').where('id', deviceId).first('id'),
+      deviceApiKeyId: knex('Device').where('id', deviceId).first('deviceApiKeyId'),
       resultId,
       source: 'Philippines NTRL DB Record Updated',
       createdOn: utcNow,

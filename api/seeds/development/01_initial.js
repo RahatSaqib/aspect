@@ -3495,9 +3495,10 @@ async function seed(knex) {
         partnerId: siteData.partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
-        deviceId: device.id,
         ...auditFields,
       })
+
+      await knex('Device').where('id', device.id).update({ deviceApiKeyId: device.deviceApiKeyId })
 
       // Create Status Log
       await knex('DeviceApprovalLog').insert({
