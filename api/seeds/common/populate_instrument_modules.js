@@ -53,13 +53,13 @@ async function insertActiveModulesForRange(knex, lo, hi) {
     .whereNotNull('r.endedOn')
 
   // Keep only the latest row per module, restricted to the instrument's active letter.
-  const activeModules = knex
-    .from(ranked.as('ranked'))
-    .where('ranked.rnModule', 1)
-    .whereRaw('ranked.letter = ranked.activeLetter')
-    .select('instrumentId', 'moduleName', 'moduleSerial', 'lastResultDate')
-
-  return knex('InstrumentModule_READ').insert(activeModules)
+  // null for `id` lets MySQL generate the auto-increment value.
+  return knex('InstrumentModule_READ').insert(function () {
+    this.from(ranked.as('ranked'))
+      .where('ranked.rnModule', 1)
+      .whereRaw('ranked.letter = ranked.activeLetter')
+      .select(knex.raw('null as id'), 'instrumentId', 'moduleName', 'moduleSerial', 'lastResultDate')
+  })
 }
 
 async function populateInstrumentModules(knex) {
