@@ -7,7 +7,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
     .where('d.id', deviceId)
     .leftJoin('Site as s', 'd.siteId', 's.id')
     .join('Instrument as i', 'i.deviceId', 'd.id')
-    .leftJoin('InstrumentModule_READ as m', 'm.instrumentId', 'i.id')
+    .leftJoin('InstrumentModule as m', 'm.instrumentId', 'i.id')
     .groupBy('d.id', 'i.id', 'i.active', 'i.serial')
     .modify(
       addConstraints,

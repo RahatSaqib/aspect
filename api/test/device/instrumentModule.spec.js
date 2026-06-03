@@ -1,5 +1,5 @@
 /**
- * Tests for the InstrumentModule_READ projection.
+ * Tests for the InstrumentModule projection.
  *
  * Two suites:
  *  1. recordResultModule — unit-level: call the function directly against the test DB.
@@ -18,12 +18,12 @@ const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect
 const { basicResultPayload } = require('../deviceApi/geneXpert/geneXpertConstants')
 const { postToDeviceApi } = require('../deviceApi/utils')
 const { waitForIdle } = require('../utils/mqUtils')
-const { recordResultModule, TABLE } = require('../../src/instrumentModule/recordResultModule')
+const { recordResultModule } = require('../../src/instrumentModule/recordResultModule')
 
 // ─── shared helpers ────────────────────────────────────────────────────────────
 
 async function getModules(instrumentId) {
-  return knex(TABLE)
+  return knex('InstrumentModule')
     .where({ instrumentId })
     .orderBy('moduleName')
     .select('moduleName', 'moduleSerial', 'lastResultDate')
@@ -31,7 +31,7 @@ async function getModules(instrumentId) {
 
 // ─── Suite 1: recordResultModule (direct) ──────────────────────────────────────
 
-describe('InstrumentModule_READ — recordResultModule unit tests', () => {
+describe('InstrumentModule — recordResultModule unit tests', () => {
   // One GxConnect device+instrument shared across all tests in this suite.
   // (GxConnect context is the simplest way to get a FK-valid instrument row.)
   const INST_SERIAL = 'IM_UNIT_INST_001'
@@ -53,7 +53,7 @@ describe('InstrumentModule_READ — recordResultModule unit tests', () => {
   // Clean the projection rows between tests so each test starts fresh.
   afterEach(async () => {
     const inst = await knex('Instrument').where({ serial: INST_SERIAL, deviceId: ctx.device.id }).first('id')
-    if (inst) await knex(TABLE).where({ instrumentId: inst.id }).delete()
+    if (inst) await knex('InstrumentModule').where({ instrumentId: inst.id }).delete()
   })
 
   async function instrumentId() {
@@ -189,7 +189,7 @@ describe('InstrumentModule_READ — recordResultModule unit tests', () => {
 
 // ─── Suite 2: RESULT_LOGGED subscriber (end-to-end) ───────────────────────────
 
-describe('InstrumentModule_READ — RESULT_LOGGED subscriber end-to-end', () => {
+describe('InstrumentModule — RESULT_LOGGED subscriber end-to-end', () => {
   const INST_SERIAL = 'IM_E2E_INST_001'
 
   const ctx = createGxConnectTestContext(server, {
@@ -232,7 +232,7 @@ describe('InstrumentModule_READ — RESULT_LOGGED subscriber end-to-end', () => 
     })
   }
 
-  it('creates an InstrumentModule_READ row when a result with module data is logged', async () => {
+  it('creates an InstrumentModule row when a result with module data is logged', async () => {
     await postResult({ resultId: 'IM-E2E-R1', moduleSerial: 'MODSER001' })
     await waitForIdle()
 

@@ -51,7 +51,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('DeviceOperation').whereIn('id', opIds).delete()
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('Deployment').whereIn('deviceId', deviceIds).delete()
-  await knex('InstrumentModule_READ')
+  await knex('InstrumentModule')
     .whereIn(
       'instrumentId',
       knex('Instrument')

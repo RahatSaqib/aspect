@@ -1,7 +1,7 @@
 /**
- * Rebuilds the InstrumentModule_READ projection table from scratch.
+ * Rebuilds the InstrumentModule projection table from scratch.
  *
- * InstrumentModule_READ is a denormalized cache of the last result date (and last module
+ * InstrumentModule is a denormalized cache of the last result date (and last module
  * serial) per instrument module. It is normally kept up to date incrementally via the
  * RESULT_LOGGED event subscriber (api/src/instrumentModule/). This rebuild is used
  * during seeding and can also serve as an idempotent repair script when drift is
@@ -54,7 +54,7 @@ async function insertActiveModulesForRange(knex, lo, hi) {
 
   // Keep only the latest row per module, restricted to the instrument's active letter.
   // null for `id` lets MySQL generate the auto-increment value.
-  return knex('InstrumentModule_READ').insert(function () {
+  return knex('InstrumentModule').insert(function () {
     this.from(ranked.as('ranked'))
       .where('ranked.rnModule', 1)
       .whereRaw('ranked.letter = ranked.activeLetter')
@@ -66,8 +66,8 @@ async function populateInstrumentModules(knex) {
   const start = new Date()
 
   // eslint-disable-next-line no-console
-  console.log('\x1b[33mTruncating InstrumentModule_READ table...\x1b[0m')
-  await knex('InstrumentModule_READ').truncate()
+  console.log('\x1b[33mTruncating InstrumentModule table...\x1b[0m')
+  await knex('InstrumentModule').truncate()
 
   const { id: maxId } = await knex('Instrument').max('id as id').first()
   if (!maxId) {
@@ -78,7 +78,7 @@ async function populateInstrumentModules(knex) {
 
   const batches = Math.ceil(maxId / INSTRUMENT_BATCH_SIZE)
   // eslint-disable-next-line no-console
-  console.log(`\x1b[33mPopulating InstrumentModule_READ from ${maxId} instruments in ${batches} batches...\x1b[0m`)
+  console.log(`\x1b[33mPopulating InstrumentModule from ${maxId} instruments in ${batches} batches...\x1b[0m`)
 
   for (let i = 0; i < batches; i++) {
     const lo = i * INSTRUMENT_BATCH_SIZE + 1

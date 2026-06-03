@@ -6,8 +6,8 @@
  * the Device Instruments and Candidate Instruments tables, which scanned the entire
  * results history on every page load.
  *
- * Named with the _READ suffix to signal that this table must not be written inside
- * application transactions — it is a cache maintained by post-commit event subscribers.
+ * Must not be written inside application transactions — it is a cache maintained by
+ * post-commit event subscribers.
  *
  * Natural key: (instrumentId, moduleName). instrumentId is a FK to Instrument.id.
  * moduleName never changes for a given result, so rows are only ever inserted or have
@@ -25,7 +25,7 @@
  * Initial data is populated by the seeding scripts (seeds/common/populate_instrument_modules.js).
  */
 exports.up = function (knex) {
-  return knex.schema.createTable('InstrumentModule_READ', function (table) {
+  return knex.schema.createTable('InstrumentModule', function (table) {
     table.increments('id')
     table.integer('instrumentId').unsigned().notNullable()
     table.string('moduleName', 15).notNullable()
@@ -38,5 +38,5 @@ exports.up = function (knex) {
 }
 
 exports.down = function (knex) {
-  return knex.schema.dropTable('InstrumentModule_READ')
+  return knex.schema.dropTable('InstrumentModule')
 }

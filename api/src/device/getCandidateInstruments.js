@@ -83,7 +83,7 @@ function getCandidateInstrumentsData(deviceId, siteId, dataConstraints) {
     .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .join('Instrument as i', 'i.deviceId', 'd.id')
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('InstrumentModule_READ as m', 'm.instrumentId', 'i.id')
+    .leftJoin('InstrumentModule as m', 'm.instrumentId', 'i.id')
     .where('dt.externalId', 'CepheidGeneXpert')
     .where('d.siteId', siteId)
     .where(function () {

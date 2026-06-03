@@ -2,7 +2,7 @@ const logger = require('../shared/logger')
 const { recordResultModule } = require('./recordResultModule')
 
 /**
- * RESULT_LOGGED subscriber that maintains the InstrumentModule_READ projection.
+ * RESULT_LOGGED subscriber that maintains the InstrumentModule projection.
  *
  * Runs post-commit in its own connection (messageContext.run), so the Result row is
  * already visible and a failure here cannot roll back result ingestion. All result

@@ -1,7 +1,3 @@
-// _READ suffix signals this table must not be written inside application transactions —
-// it is a cache maintained exclusively by post-commit event subscribers.
-const TABLE = 'InstrumentModule_READ'
-
 /**
  * Records the last-result-date for a single instrument module, as projected from one
  * result. Designed to run post-commit (its own connection), idempotent, and safe under
@@ -39,22 +35,22 @@ async function recordResultModule(knex, { instrumentId, moduleName: rawModuleNam
   //    order via re-sync / transfer / backfill, so never blindly overwrite). moduleSerial
   //    is taken from the latest result only — note it is updated BEFORE lastResultDate so
   //    the comparison reads the previously-stored date, not the freshly-GREATEST'd one.
-  await knex(TABLE)
+  await knex('InstrumentModule')
     .insert({ instrumentId, moduleName, moduleSerial, lastResultDate })
     .onConflict(['instrumentId', 'moduleName'])
     .merge({
       moduleSerial: knex.raw(
-        `IF(VALUES(lastResultDate) >= ${TABLE}.lastResultDate, VALUES(moduleSerial), ${TABLE}.moduleSerial)`
+        'IF(VALUES(lastResultDate) >= InstrumentModule.lastResultDate, VALUES(moduleSerial), InstrumentModule.moduleSerial)'
       ),
-      lastResultDate: knex.raw(`GREATEST(${TABLE}.lastResultDate, VALUES(lastResultDate))`),
+      lastResultDate: knex.raw('GREATEST(InstrumentModule.lastResultDate, VALUES(lastResultDate))'),
     })
 
   // 2) Best-effort cleanup of superseded letters for this instrument.
-  await knex(TABLE)
+  await knex('InstrumentModule')
     .where({ instrumentId })
     .andWhereRaw('LEFT(moduleName, 1) <> LEFT(?, 1)', [moduleName])
     .andWhere('lastResultDate', '<', knex.raw('DATE(?)', [endedOn]))
     .del()
 }
 
-module.exports = { recordResultModule, TABLE }
+module.exports = { recordResultModule }
