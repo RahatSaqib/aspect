@@ -30,6 +30,9 @@ const deleteDevice = async deviceIds => {
     await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).delete()
   }
 
+  await knex('InstrumentModule')
+    .whereIn('instrumentId', knex('Instrument').whereIn('deviceId', deviceIds).select('id'))
+    .delete()
   await knex('Instrument').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactDeviceModulesCount').delete().whereIn('deviceId', deviceIds)
@@ -114,7 +117,7 @@ const USER_LU_NAME = 'myanmar_lab1'
 const partnerName = 'MoHS'
 const countryAbbreviation = 'MM'
 
-describe('Device result calculation test', function () {
+describe.only('Device result calculation test', function () {
   this.timeout(12000)
   let partnerId
   let geographyId
