@@ -113,7 +113,7 @@ function getCandidateInstrumentsData(deviceId, siteId, dataConstraints) {
       'i.serial as instrumentSerial',
       knex.raw(
         `json_arrayagg(IF(m.moduleName IS NULL, NULL,
-          json_object('moduleName', m.moduleName, 'lastResultDate', m.lastResultDate))) as modules`
+          json_object('moduleName', TRIM(m.moduleName), 'lastResultDate', m.lastResultDate))) as modules`
       )
     )
 }

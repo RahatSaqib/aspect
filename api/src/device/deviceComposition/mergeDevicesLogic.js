@@ -95,7 +95,7 @@ async function mergeAndDeleteInstrumentModules(
 
   const allSourceModules = await trknex('InstrumentModule')
     .whereIn('instrumentId', duplicateSourceInstrumentIds)
-    .select('instrumentId', 'moduleName', 'moduleSerial', 'lastResultDate')
+    .select('instrumentId', trknex.raw('TRIM(moduleName) as moduleName'), 'moduleSerial', 'lastResultDate')
 
   const rowsToUpsert = allSourceModules
     .map(m => ({ ...m, instrumentId: sourceIdToTargetId.get(m.instrumentId) }))
