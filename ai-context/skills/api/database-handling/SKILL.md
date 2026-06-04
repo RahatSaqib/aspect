@@ -171,6 +171,10 @@ await transact(async (trx) => {
    .orderBy(['i.serial', { column: 'm.startedOn', order: 'desc' }])
 ```
 
+5. **No cascade actions**: Never use `ON DELETE CASCADE`, `ON UPDATE CASCADE`, or any other cascade behavior on foreign keys or in migrations. Do not rely on the database to propagate deletes or updates—handle related rows explicitly in application code (e.g. within `transact()`). Do not propose or add cascade defaults.
+
+6. **No triggers unless requested**: Do not propose or add database triggers unless the developer explicitly asks for them. Prefer application-layer logic in the API for consistency with existing patterns.
+
 ## Complete Example
 
 ```javascript
