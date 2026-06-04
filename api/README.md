@@ -91,9 +91,8 @@ yarn start
 
 ### Windows Development Setup (native, no Docker)
 
-Run **all** `yarn`/`npm`/`node` commands from **PowerShell — never Git Bash or WSL**. A Unix-shell
-`yarn install` writes Linux native binaries (`bcrypt`) and POSIX `node_modules/.bin` symlinks that
-Windows `node.exe` can't load (`is not a valid Win32 application` / `'nodemon' is not recognized`).
+Run **all** `yarn`/`npm`/`node` commands from **Windows PowerShell or cmd.exe** (not WSL). Installing dependencies in WSL can produce Linux native binaries (`bcrypt`) and POSIX `node_modules/.bin` links
+that Windows `node.exe` can't load (`is not a valid Win32 application` / `'nodemon' is not recognized`).
 
 Commands below assume the MySQL `bin` is on your `PATH`; otherwise use the full path to
 `"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"`.
