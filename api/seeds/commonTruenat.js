@@ -12,6 +12,7 @@ const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
 const upsertConsumables = require('./common/upsert_consumables')
 const { insertSite } = require('../src/site/common/db')
+const { insertDeviceWithGeneratedName } = require('./common/insertDeviceWithGeneratedName')
 
 async function upsertTruenatDeviceTypeAndAssays(
   knex,
@@ -195,10 +196,8 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
       .andWhere('deviceTypeId', truenatDeviceTypeId)
       .first()
     if (!existingTruenatDevice) {
-      const [newTruenatDeviceId] = await knex('Device').insert({
+      const { id: newTruenatDeviceId } = await insertDeviceWithGeneratedName(knex, {
         ...auditFields,
-        name: truenatDevice.deviceName,
-        shortName: truenatDevice.deviceShortName,
         deviceTypeId: truenatDeviceTypeId,
         deviceApprovalId: deviceApprovalApprovedId,
         partnerId,

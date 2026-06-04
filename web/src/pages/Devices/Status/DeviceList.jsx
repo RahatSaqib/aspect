@@ -50,6 +50,7 @@ const { dateFormat } = getAspectDisplayPreferences().toJS()
 
 const getColumns = formatMessage => [
   { key: 'name', label: formatMessage(messages.device), sortable: true },
+  { key: 'type', label: formatMessage(messages.deviceType), sortable: true },
   { key: 'siteName', label: formatMessage(messages.site), sortable: true, hiddenOn: 'lg' },
   { key: 'approvalStatusI18nKey', label: formatMessage(messages.approvalStatus), sortable: true },
   {

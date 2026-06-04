@@ -1,6 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
+const Promise = require('bluebird')
 
 const { subMonths } = require('date-fns')
 const { addCovidResults } = require('../commonGenerateResults')
@@ -8,6 +9,7 @@ const { addCovidResults } = require('../commonGenerateResults')
 const { getPartnerByExternalId } = require('../utils')
 
 const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 
 const resultMultiplier = process.env['seeds.resultMultiplier'] / 4 || 50
 const now = new Date()
@@ -36,11 +38,9 @@ async function seed(knex) {
     .select('s.*', 'c.a3')
 
   // Add an M2000DeviceForCovid to every 3rd lab in US and Nigeria
-  const devicesToInsert = sites
-    .filter((site, i) => site.name.indexOf('Lab') >= 0 && i % 3 === 0)
-    .map(site => ({
-      name: `${site.name} M2000`.substr(0, 255),
-      shortName: `${site.externalId}_AbbottM2000`.substr(0, 45),
+  const labSites = sites.filter((site, i) => site.name.indexOf('Lab') >= 0 && i % 3 === 0)
+  await Promise.each(labSites, site =>
+    insertDeviceWithGeneratedName(knex, {
       deviceTypeId: m2000DeviceTypeId,
       deviceApprovalId,
       partnerId: site.partnerId,
@@ -53,8 +53,8 @@ async function seed(knex) {
       putInService: subMonths(now, 2),
       hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
       serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-    }))
-  await knex('Device').insert(devicesToInsert)
+    })
+  )
 
   // get all devices that can process COVID (including GeneXperts)
   const devices = await knex('Device as d')

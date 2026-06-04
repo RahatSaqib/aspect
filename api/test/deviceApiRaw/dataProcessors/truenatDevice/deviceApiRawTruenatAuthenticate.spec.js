@@ -207,10 +207,13 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       const unapprovedDeviceApprovalId = await deviceApprovalToId('pendingDeployment')
       const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
       const expectedGeographyId = await geographyIdForDefaultCountry()
-      const device = await knex('Device').where('name', newTruenatDevice.username).first()
+      // The device is now matched by hostId (the username); its display name is
+      // auto-generated from the device type acronym + id (e.g. "MT5").
+      const device = await knex('Device').where('hostId', newTruenatDevice.username).first()
       const site = await knex('Site').where('name', newTruenatDevice.username).first()
       const apiKeyRow = await knex('DeviceApiKey').where('username', newTruenatDevice.username).first()
-      assert.isDefined(device, 'new device should be created with username as device name')
+      assert.isDefined(device, 'new device should be created with username as hostId')
+      assert.equal(device.name, `MT${device.id}`, 'device name should follow the acronym + id scheme')
       assert.isUndefined(site, 'no site should be created until deployment')
       assert.equal(device.deviceApprovalId, unapprovedDeviceApprovalId, 'new device should be pending deployment')
       assert.equal(device.partnerId, defaultPartner.id)

@@ -7,6 +7,7 @@ const { addMilliseconds, addMinutes, subMinutes, subDays } = require('date-fns')
 const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
 const { upsertJobFunctionFixture, upsertPermissionFixture, upsertGeneXpertDeviceTypeAndAssays } = require('../common')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
@@ -976,10 +977,8 @@ async function seed(knex) {
 
   // insert router with sims
   const site = siteDatas[0]
-  const [routerId] = await knex('Device').insert({
+  const { id: routerId } = await insertDeviceWithGeneratedName(knex, {
     ...auditFields,
-    name: `Router at ${site.shortName}`,
-    shortName: `Router ${site.shortName}`,
     deviceTypeId: deviceTypeIdRouter,
     deviceApprovalId: deviceApprovalApproved,
     partnerId: site.partnerId,
@@ -995,8 +994,6 @@ async function seed(knex) {
   await Promise.each(siteDatas, async (siteData, i) => {
     const device = {
       ...auditFields,
-      name: `Daktari ${siteData.shortName}`,
-      shortName: `Daktari ${siteData.shortName}`,
       deviceTypeId: deviceTypeDaktariVirologyId,
       deviceApprovalId: deviceApprovalApproved,
       configurationData: JSON.stringify({
@@ -1016,7 +1013,10 @@ async function seed(knex) {
       serial: _.times(24, () => String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))).join(''),
     }
 
-    ;[device.id] = await knex('Device').insert(device)
+    const { id, name, shortName } = await insertDeviceWithGeneratedName(knex, device)
+    device.id = id
+    device.name = name
+    device.shortName = shortName
     devicesDaktari.push(device)
 
     // Create API Keys

@@ -2,6 +2,7 @@
   {
     "externalId": "molbioTruenat",
     "name": "Molbio Truenat",
+    "acronym": "MT",
     "manufacturer": "Molbio",
     "deviceTypeCategoryId": "Lab",
     "requiresApiCredentials": true

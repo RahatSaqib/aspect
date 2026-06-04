@@ -5,6 +5,7 @@ const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
 const { recalculateDeviceFactTables } = require('../common/logic')
 const { syncDeviceApprovalFromDeployments } = require('../common/deviceApprovalService')
+const { assignGeneratedDeviceName } = require('../common/deviceNaming')
 
 async function transferInstrumentToNewDevice({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
@@ -110,8 +111,10 @@ async function createNewDevice(trknex, sourceDevice, instrumentId, { name, short
     deviceTypeId: sourceDevice.deviceTypeId,
     moduleBayCapacity: 4, // Initial Module Bay Capacity is 4 because it's just one instrument.
     deviceApprovalId: sourceDevice.deviceApprovalId,
-    name,
-    shortName,
+    // Temporary non-null placeholders; the real name is generated from the
+    // device type acronym + id below (it depends on the auto-increment id).
+    name: name || 'device',
+    shortName: shortName || 'device',
     culture: sourceDevice.culture,
     timezone: sourceDevice.timezone,
     deviceApiKeyId,
@@ -119,6 +122,13 @@ async function createNewDevice(trknex, sourceDevice, instrumentId, { name, short
     createdBy: userId,
     updatedOn: now,
     updatedBy: userId,
+  })
+
+  await assignGeneratedDeviceName(trknex, {
+    deviceId,
+    deviceTypeId: sourceDevice.deviceTypeId,
+    partnerPluginName: null,
+    deviceTypePluginName: null,
   })
 
   await trknex('Deployment').insert({

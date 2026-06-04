@@ -9,6 +9,7 @@ const { lookupUsingCredentials } = require('../../../deviceApiKey/lookupUsingCre
 const { SynchronousDataProcessor } = require('../_base')
 const { deviceSeen } = require('../../../device/actions')
 const { deviceApprovalToId, deviceTypeToId } = require('../../../shared/dictionary')
+const { assignGeneratedDeviceName } = require('../../../device/common/deviceNaming')
 
 async function defaultCountryGeographyId(query) {
   const { id: countryId } = await query('Country').orderBy('id').first('id')
@@ -106,6 +107,17 @@ class TruenatLogin extends SynchronousDataProcessor {
           }
           const [newDeviceId] = await trx('Device').insert(device)
           device.id = newDeviceId
+
+          // hostId stays the Username (used above for dedup); the display name
+          // is generated from the device type acronym + id (e.g. "MT567").
+          const { name, shortName } = await assignGeneratedDeviceName(trx, {
+            deviceId: newDeviceId,
+            deviceTypeId: truenatDeviceTypeId,
+            partnerPluginName: null,
+            deviceTypePluginName: null,
+          })
+          device.name = name
+          device.shortName = shortName
         }
         let geographyIdForApiKey = null
         if (device.siteId) {
