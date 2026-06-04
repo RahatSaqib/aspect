@@ -91,24 +91,21 @@ yarn start
 
 ### Windows Development Setup (native, no Docker)
 
-Run **all** `yarn`/`npm`/`node` commands from **PowerShell — never Git Bash or WSL**. A Unix-shell
-`yarn install` writes Linux native binaries (`bcrypt`) and POSIX `node_modules/.bin` symlinks that
-Windows `node.exe` can't load (`is not a valid Win32 application` / `'nodemon' is not recognized`).
+Run **all** `yarn`/`npm`/`node` commands from **Windows PowerShell or cmd.exe** (not WSL). Installing dependencies in WSL can produce Linux native binaries (`bcrypt`) and POSIX `node_modules/.bin` links
+that Windows `node.exe` can't load (`is not a valid Win32 application` / `'nodemon' is not recognized`).
 
 Commands below assume the MySQL `bin` is on your `PATH`; otherwise use the full path to
 `"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"`.
 
-**1. Node 14** (via [nvm-windows](https://github.com/coreybutler/nvm-windows); newer Node fails native builds with `spawn EINVAL`)
+**1. Node 14** (via [nvm-windows](https://github.com/coreybutler/nvm-windows); use the version in `api/.nvmrc`)
 
-```powershell
-nvm install 14.19.3
-nvm use 14.19.3
-npm install -g yarn          # yarn is per-Node-version in nvm-windows
-```
+    nvm install 14.17.0
+    nvm use 14.17.0
+    npm install -g yarn          # yarn is per-Node-version in nvm-windows
 
 If `nvm install` fails during npm-zip extraction (known nvm-windows bug): download
-`node-v14.19.3-win-x64.zip` from <https://nodejs.org/dist/v14.19.3/>, extract into
-`C:\Users\<you>\AppData\Local\nvm\v14.19.3`, then `nvm use 14.19.3`.
+`node-v14.17.0-win-x64.zip` from <https://nodejs.org/dist/v14.17.0/>, extract into
+`C:\Users\<you>\AppData\Local\nvm\v14.17.0`, then `nvm use 14.17.0`.
 
 **2. Install dependencies**
 
