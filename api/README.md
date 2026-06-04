@@ -123,11 +123,14 @@ yarn install
 mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '<your_password>';"
 ```
 
-**4. MySQL — sql_mode** (without this: `ER_WRONG_FIELD_WITH_GROUP` / `only_full_group_by` errors).
+**4. MySQL — sql_mode + server time zone.** `sql-mode` avoids `ER_WRONG_FIELD_WITH_GROUP` /
+`only_full_group_by` errors; `default-time-zone` makes the server run in UTC (matching production
+and the Docker setup, since the app stores/expects UTC datetimes).
 Edit `C:\ProgramData\MySQL\MySQL Server 8.0\my.ini` **as Administrator**; under `[mysqld]` set:
 
 ```ini
 sql-mode="NO_ENGINE_SUBSTITUTION"
+default-time-zone='+00:00'
 ```
 
 then restart the service:
@@ -165,15 +168,17 @@ docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 yarn run db:reseed
 ```
 
-**9. Start the server** (the default `start` uses a Unix `TZ=UTC` prefix that cmd.exe can't parse)
+**9. Start the server**
 
 ```powershell
-yarn start:win
+yarn start
 ```
 
-> **Time-zone note:** Node on Windows **ignores the `TZ` env var**, so `start:win` runs in your
-> Windows system time zone, not UTC (DB-side `CONVERT_TZ` is unaffected). To match the UTC
-> production servers, set the Windows system time zone to **"(UTC) Coordinated Universal Time"**.
+> **Time-zone note:** the `start` script sets `TZ=UTC` via `cross-env` (works on Windows and
+> Linux), **but Node on Windows ignores the `TZ` env var**, so locally the process still runs in
+> your Windows system time zone, not UTC (DB-side `CONVERT_TZ` is unaffected; it takes effect on
+> Linux/Docker). To make the Node process itself run in UTC like production, set the Windows system
+> time zone to **"(UTC) Coordinated Universal Time"**.
 
 ### Update development environment
 
