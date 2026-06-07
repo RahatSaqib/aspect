@@ -1,26 +1,16 @@
 /**
  * ASP-7977 Device Name Redesign.
  *
- * Populates DeviceType.acronym for every device type that does not already have
- * one, using the curated map (keyed by externalId) with a capital-letters
- * fallback derived from the name (e.g. GeneXpert -> "GX", Molbio Truenat -> "MT").
+ * Fills DeviceType.acronym for every row that still has a NULL or empty value.
+ * Covers device types inserted by partner-specific seeds that run after the
+ * migration, as well as the initial population for this environment.
  *
- * Must run before 90_backfill_device_name_to_notes_and_rename.js, which uses the
- * acronym to build the new device names.
+ * Must run before 90_backfill_device_name_to_notes_and_rename.js.
  */
-const Promise = require('bluebird')
-const { acronymForDeviceType } = require('../../src/device/common/deviceAcronym')
+const { populateDeviceTypeAcronyms } = require('../common/populate_device_type_acronym')
 
 async function seed(knex) {
-  const deviceTypes = await knex('DeviceType')
-    .where(builder => builder.whereNull('acronym').orWhere('acronym', ''))
-    .select('id', 'externalId', 'name', 'acronym')
-
-  await Promise.each(deviceTypes, deviceType =>
-    knex('DeviceType')
-      .where('id', deviceType.id)
-      .update({ acronym: acronymForDeviceType(deviceType) })
-  )
+  await populateDeviceTypeAcronyms(knex)
 }
 
 module.exports = require('../utils').seed(seed, __filename)
