@@ -195,6 +195,15 @@ const DeviceDetailProfile = ({
         <Card className={styles.Section__Content}>
           <div className={styles.summaryGrid}>
             <Summary
+              title={formatMessage(messages.site)}
+              description={device.get('siteName') ? device.get('siteName') : formatMessage(messages.undeployed)}
+              to={
+                device.get('siteName') && device.get('siteId')
+                  ? () => navigate(`/browse/site/${device.get('siteId')}`)
+                  : undefined
+              }
+            />
+            <Summary
               title={formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
               to={() => {
@@ -214,7 +223,11 @@ const DeviceDetailProfile = ({
                 </Fragment>
               }
             />
-            <Summary title={formatMessage(messages.shortName)} description={device.get('shortName')} />
+            {/* Approval Status Summary */}
+            <Summary
+              title={formatMessage(messages.approval)}
+              description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
+            />
 
             <Summary
               title={
@@ -272,15 +285,6 @@ const DeviceDetailProfile = ({
                 <Button variant="contained" color="success" onClick={onShowCalibrationDialog} disabled={disabled}>
                   {formatMessage(messages.buttonAddRecord)}
                 </Button>
-              }
-            />
-            <Summary
-              title={formatMessage(messages.site)}
-              description={device.get('siteName') ? device.get('siteName') : formatMessage(messages.undeployed)}
-              to={
-                device.get('siteName') && device.get('siteId')
-                  ? () => navigate(`/browse/site/${device.get('siteId')}`)
-                  : undefined
               }
             />
             <Summary
@@ -390,11 +394,6 @@ const DeviceDetailProfile = ({
                   formatMessage(messages.undefinedValue)
                 )
               }
-            />
-            {/* Approval Status Summary */}
-            <Summary
-              title={formatMessage(messages.approval)}
-              description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
             />
             <Summary title={formatMessage(messages.dailyCapacity)} description={device.get('dailyTestCapacity')} />
             <Summary title={formatMessage(messages.moduleBayCapacity)} description={device.get('moduleBayCapacity')} />

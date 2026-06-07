@@ -51,6 +51,7 @@ const messages = {
     cancel: { id: 'pages.DeviceDetail.cancel', defaultMessage: 'Cancel' },
     confirm: { id: 'pages.DeviceDetail.confirm', defaultMessage: 'Confirm' },
     deviceNotFound: { id: 'pages.DeviceDetail.deviceNotFound', defaultMessage: 'Device not found.' },
+    undeployed: { id: 'pages.DeviceDetail.undeployed', defaultMessage: 'Undeployed' },
   }),
 }
 
@@ -157,7 +158,13 @@ export const DeviceDetail = props => {
   return (
     <>
       <DetailHeader
-        name={device ? device.name : 'Devices'}
+        name={
+          device
+            ? device.siteName
+              ? `${device.name} at ${device.siteName}`
+              : `${device.name} (${intl.formatMessage(messages.undeployed)})`
+            : 'Devices'
+        }
         back={location.state?.previousLocationPathname ?? getReturnUrl(location, '/browse/device/list')}
       >
         {[
