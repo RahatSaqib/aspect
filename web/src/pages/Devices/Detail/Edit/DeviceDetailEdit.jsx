@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import { Button, Checkbox, Card, FormControlLabel, TextField, Stack } from '@mui/material'
-import { Formik, Form } from 'formik'
+import { Button, Card, Checkbox, FormControlLabel, Stack, TextField } from '@mui/material'
+import { Form, Formik } from 'formik'
 import get from 'lodash/get'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
-  ImplementingPartnerSelect,
-  SiteSelect,
   CepheidInstrumentModelSelect,
   CepheidSoftwareTypeSelect,
+  ImplementingPartnerSelect,
+  SiteSelect,
   TagInput,
 } from '../../../../components'
 import AspectButton from '../../../../components/shared/AspectButton'
@@ -117,7 +117,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
             validateOnMount
             validateOnChange
           >
-            {({ values, errors, setFieldValue, resetForm, dirty, isValid }) => (
+            {({ values, errors, setFieldValue, dirty, isValid }) => (
               <Form>
                 <div className={styles.formGrid}>
                   {/* ── Identity band (no section title) ── */}
@@ -335,8 +335,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   >
                     <AspectButton
                       type="button"
-                      disabled={!dirty}
-                      onClick={() => resetForm()}
+                      onClick={() => navigate(`/browse/device/list/${device.id}${location.search}`)}
                       color="primary"
                       variant="contained"
                     >
