@@ -28,4 +28,18 @@ export default defineMessages({
   save: { id: 'pages.DeviceDetailEdit.save', defaultMessage: 'Save' },
   deviceUpdateError: { id: 'pages.DeviceDetailEdit.deviceUpdateError', defaultMessage: 'Error updating device' },
   deviceUpdated: { id: 'pages.DeviceDetailEdit.deviceUpdated', defaultMessage: 'Device updated successfully' },
+  sectionCapacityModules: {
+    id: 'pages.DeviceDetailEdit.sectionCapacityModules',
+    defaultMessage: 'Capacity & Modules',
+  },
+  sectionMaintenance: { id: 'pages.DeviceDetailEdit.sectionMaintenance', defaultMessage: 'Maintenance' },
+  sectionUsage: { id: 'pages.DeviceDetailEdit.sectionUsage', defaultMessage: 'Usage' },
+  sectionTechnicalDetails: {
+    id: 'pages.DeviceDetailEdit.sectionTechnicalDetails',
+    defaultMessage: 'Technical Details',
+  },
+  sectionAdditionalInfo: {
+    id: 'pages.DeviceDetailEdit.sectionAdditionalInfo',
+    defaultMessage: 'Additional Information',
+  },
 })

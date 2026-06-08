@@ -181,6 +181,36 @@
   grid-column: 1 / -1;
 }
 
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 32px;
+  align-items: start;
+  padding-left: 16px;
+}
+
+.formGrid__fullWidth {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1600px) {
+  .formGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .formGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .fieldAction {
   background: none;
   border: none;
