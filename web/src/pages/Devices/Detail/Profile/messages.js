@@ -64,7 +64,27 @@ const messages = {
     },
     approval: {
       id: 'pages.DeviceDetailProfile.approval',
-      defaultMessage: 'Approval',
+      defaultMessage: 'Approval Status',
+    },
+    sectionCapacityModules: {
+      id: 'pages.DeviceDetailProfile.sectionCapacityModules',
+      defaultMessage: 'Capacity & Modules',
+    },
+    sectionMaintenance: {
+      id: 'pages.DeviceDetailProfile.sectionMaintenance',
+      defaultMessage: 'Maintenance',
+    },
+    sectionUsage: {
+      id: 'pages.DeviceDetailProfile.sectionUsage',
+      defaultMessage: 'Usage',
+    },
+    sectionTechnicalDetails: {
+      id: 'pages.DeviceDetailProfile.sectionTechnicalDetails',
+      defaultMessage: 'Technical Details',
+    },
+    sectionAdditionalInfo: {
+      id: 'pages.DeviceDetailProfile.sectionAdditionalInfo',
+      defaultMessage: 'Additional Information',
     },
     calibration: {
       id: 'pages.DeviceDetailProfile.calibration',
