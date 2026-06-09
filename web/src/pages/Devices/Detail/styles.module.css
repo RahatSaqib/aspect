@@ -28,6 +28,13 @@
 
 .Section {
   padding: 10px var(--aspect-detail-horizontal-padding);
+  overflow-x: hidden;
+}
+
+@media (max-width: 700px) {
+  .Section {
+    padding: 8px 8px;
+  }
 }
 
 .Section__first {
@@ -36,6 +43,12 @@
 
 .Section__Content {
   padding: 16px 20px;
+}
+
+@media (max-width: 700px) {
+  .Section__Content {
+    padding: 12px 12px;
+  }
 }
 
 [data-graph-container] {
