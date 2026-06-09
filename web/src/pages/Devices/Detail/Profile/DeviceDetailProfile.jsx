@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
+import React, { Fragment } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
@@ -201,7 +201,8 @@ const DeviceDetailProfile = ({
       <section className={`${styles.Section} ${styles.Section__first}`}>
         <Card className={styles.Section__Content}>
           <div className={styles.summaryGrid}>
-            {/* ── Identity band (no section title) ── */}
+            {/* ── Overview ── */}
+            <SectionDivider label={formatMessage(messages.sectionOverview)} />
             <Summary
               title={formatMessage(messages.site)}
               description={device.get('siteName') ? device.get('siteName') : formatMessage(messages.undeployed)}
@@ -234,7 +235,7 @@ const DeviceDetailProfile = ({
               }}
             />
             <Summary
-              title={formatMessage(messages.approval)}
+              title={formatMessage(messages.approvalStatus)}
               description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
             />
             <Summary

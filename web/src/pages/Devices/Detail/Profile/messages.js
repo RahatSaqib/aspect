@@ -62,9 +62,13 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deviceStatusChangeDisabledTooltip',
       defaultMessage: "Active status can't be edited",
     },
-    approval: {
-      id: 'pages.DeviceDetailProfile.approval',
+    approvalStatus: {
+      id: 'pages.DeviceDetailProfile.approvalStatus',
       defaultMessage: 'Approval Status',
+    },
+    sectionOverview: {
+      id: 'pages.DeviceDetailProfile.sectionOverview',
+      defaultMessage: 'Overview',
     },
     sectionCapacityModules: {
       id: 'pages.DeviceDetailProfile.sectionCapacityModules',

@@ -15,12 +15,9 @@ import {
   TagInput,
 } from '../../../../components'
 import AspectButton from '../../../../components/shared/AspectButton'
-import Summary from '../../../../components/Summary'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
-import { formatRelative } from '../../../../utils/utils/dateFormat'
-import profileMessages from '../Profile/messages'
 import styles from '../styles.module.css'
 import messages from './messages'
 import { getValidationSchema } from './validation'
@@ -43,19 +40,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
 
   const isGeneXpert = get(device, 'deviceType.externalId') === CONSTS.GENEXPERT_EXTERNAL_ID
 
-  // Read-only display helpers
-  const na = intl.formatMessage(profileMessages.undefinedValue)
-  const maintenanceStatusText = device.maintenanceStatusI18nKey
-    ? intl.formatMessage(profileMessages[device.maintenanceStatusI18nKey])
-    : na
-  const formatMaintenanceDate = date => (date ? intl.formatDate(date) : na)
-  const formatRate = value =>
-    value !== null && value !== undefined ? intl.formatNumber(value, { style: 'percent' }) : na
-
-  // Create validation schema using imported function
   const validationSchema = getValidationSchema(intl.formatMessage)
 
-  // Create initial values for Formik
   // name and shortName are kept so they are included in the API payload but are not rendered as inputs
   const initialValues = {
     name: device.name,
@@ -82,7 +68,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const handleSubmit = async values => {
     setSubmitting(true)
 
-    // Convert empty strings to null for numeric fields
     const deviceData = {
       ...values,
       dailyTestCapacity: values.dailyTestCapacity === '' ? null : values.dailyTestCapacity,
@@ -120,7 +105,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
             {({ values, errors, setFieldValue, dirty, isValid }) => (
               <Form>
                 <div className={styles.formGrid}>
-                  {/* ── Identity band (no section title) ── */}
+                  {/* ── Overview ── */}
+                  <SectionDivider label={intl.formatMessage(messages.sectionOverview)} />
                   <SiteSelect
                     id="siteId"
                     name="siteId"
@@ -128,24 +114,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                     value={values.siteId || ''}
                     onChange={e => setFieldValue('siteId', e.target.value)}
                     disabled={!editable}
-                  />
-                  <Summary
-                    title={intl.formatMessage(profileMessages.deviceType)}
-                    description={get(device, 'deviceType.name')}
-                  />
-                  <Summary
-                    title={intl.formatMessage(profileMessages.approval)}
-                    description={
-                      device.approvalStatusI18nKey
-                        ? intl.formatMessage(profileMessages[device.approvalStatusI18nKey])
-                        : na
-                    }
-                  />
-                  <Summary
-                    title={intl.formatMessage(profileMessages.connectivity)}
-                    description={intl.formatMessage(profileMessages.lastSeen, {
-                      lastSeen: formatRelative(device.lastPingOn, intl.formatRelativeTime),
-                    })}
                   />
 
                   {/* ── Capacity & Modules — GeneXpert only ── */}
@@ -188,51 +156,26 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                     </>
                   )}
 
-                  {/* ── Maintenance ── */}
-                  <SectionDivider label={intl.formatMessage(messages.sectionMaintenance)} />
-                  <Summary
-                    title={intl.formatMessage(profileMessages.maintenance)}
-                    description={maintenanceStatusText}
-                  />
-                  <Summary
-                    title={intl.formatMessage(profileMessages.calibration)}
-                    description={formatMaintenanceDate(device.calibrationDate)}
-                  />
-                  <Summary
-                    title={intl.formatMessage(profileMessages.warranty)}
-                    description={formatMaintenanceDate(device.warrantyDueDate)}
-                  />
-                  {isGeneXpert ? (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          type="checkbox"
-                          name="isDaisyChained"
-                          onChange={e => setFieldValue('isDaisyChained', e.target.checked)}
-                          checked={[true, 'true'].includes(values.isDaisyChained)}
-                        />
-                      }
-                      label={intl.formatMessage(messages.isDaisyChained)}
-                    />
-                  ) : (
-                    <Summary
-                      title={intl.formatMessage(profileMessages.isDaisyChained)}
-                      description={device.isDaisyChained ? 'True' : 'False'}
-                    />
+                  {/* ── Maintenance — GeneXpert only (isDaisyChained is the only editable field) ── */}
+                  {isGeneXpert && (
+                    <>
+                      <SectionDivider label={intl.formatMessage(messages.sectionMaintenance)} />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            type="checkbox"
+                            name="isDaisyChained"
+                            onChange={e => setFieldValue('isDaisyChained', e.target.checked)}
+                            checked={[true, 'true'].includes(values.isDaisyChained)}
+                          />
+                        }
+                        label={intl.formatMessage(messages.isDaisyChained)}
+                      />
+                    </>
                   )}
 
                   {/* ── Usage ── */}
                   <SectionDivider label={intl.formatMessage(messages.sectionUsage)} />
-                  {device.utilizationRateThisMonth !== null && (
-                    <Summary
-                      title={intl.formatMessage(profileMessages.utilizationRate)}
-                      description={formatRate(device.utilizationRateThisMonth)}
-                    />
-                  )}
-                  <Summary
-                    title={intl.formatMessage(profileMessages.errorRate)}
-                    description={formatRate(device.errorRateThisMonth)}
-                  />
                   <TextField
                     label={intl.formatMessage(messages.dailyTestCapacity)}
                     type="number"
@@ -245,58 +188,35 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                     InputLabelProps={{ shrink: true }}
                   />
 
-                  {/* ── Technical Details ── */}
-                  <SectionDivider label={intl.formatMessage(messages.sectionTechnicalDetails)} />
-                  <Summary title={intl.formatMessage(messages.serial)} description={device.serial} />
-                  <Summary title={intl.formatMessage(messages.hostId)} description={device.hostId} />
-                  {isGeneXpert ? (
-                    <CepheidInstrumentModelSelect
-                      valueBy="value"
-                      label={intl.formatMessage(messages.instrumentModel)}
-                      value={values.instrumentModel}
-                      onChange={instrumentModel => setFieldValue('instrumentModel', instrumentModel)}
-                    />
-                  ) : (
-                    <Summary
-                      title={intl.formatMessage(messages.instrumentModel)}
-                      description={device.instrumentModel ?? na}
-                    />
-                  )}
-                  {isGeneXpert ? (
-                    <CepheidSoftwareTypeSelect
-                      valueBy="value"
-                      label={intl.formatMessage(messages.softwareType)}
-                      value={values.softwareType}
-                      onChange={softwareType => setFieldValue('softwareType', softwareType)}
-                    />
-                  ) : (
-                    <Summary
-                      title={intl.formatMessage(messages.softwareType)}
-                      description={device.softwareType ?? na}
-                    />
-                  )}
-                  {isGeneXpert ? (
-                    <TextField
-                      id="stickerInstrumentSerial"
-                      name="stickerInstrumentSerial"
-                      margin="none"
-                      label={intl.formatMessage(messages.stickerInstrumentSerial)}
-                      value={values.stickerInstrumentSerial}
-                      onChange={e => setFieldValue('stickerInstrumentSerial', e.target.value)}
-                    />
-                  ) : (
-                    <Summary
-                      title={intl.formatMessage(messages.stickerInstrumentSerial)}
-                      description={device.stickerInstrumentSerial ?? na}
-                    />
+                  {/* ── Technical Details — GeneXpert only ── */}
+                  {isGeneXpert && (
+                    <>
+                      <SectionDivider label={intl.formatMessage(messages.sectionTechnicalDetails)} />
+                      <CepheidInstrumentModelSelect
+                        valueBy="value"
+                        label={intl.formatMessage(messages.instrumentModel)}
+                        value={values.instrumentModel}
+                        onChange={instrumentModel => setFieldValue('instrumentModel', instrumentModel)}
+                      />
+                      <CepheidSoftwareTypeSelect
+                        valueBy="value"
+                        label={intl.formatMessage(messages.softwareType)}
+                        value={values.softwareType}
+                        onChange={softwareType => setFieldValue('softwareType', softwareType)}
+                      />
+                      <TextField
+                        id="stickerInstrumentSerial"
+                        name="stickerInstrumentSerial"
+                        margin="none"
+                        label={intl.formatMessage(messages.stickerInstrumentSerial)}
+                        value={values.stickerInstrumentSerial}
+                        onChange={e => setFieldValue('stickerInstrumentSerial', e.target.value)}
+                      />
+                    </>
                   )}
 
                   {/* ── Additional Information ── */}
                   <SectionDivider label={intl.formatMessage(messages.sectionAdditionalInfo)} />
-                  <Summary
-                    title={intl.formatMessage(messages.createdOn)}
-                    description={formatRelative(device.createdOn, intl.formatRelativeTime)}
-                  />
                   <div className={styles.formGrid__fullWidth}>
                     <TextField
                       fullWidth

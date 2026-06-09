@@ -174,7 +174,7 @@
 .sectionDivider__line {
   flex: 1;
   height: 1px;
-  background-color: var(--aspect-color-grey-5, #e5e7eb);
+  background-color: var(--aspect-color-grey-7, #eef1f8);
 }
 
 .fullWidth {
@@ -192,6 +192,7 @@
 .formGrid__fullWidth {
   grid-column: 1 / -1;
 }
+
 
 @media (max-width: 1600px) {
   .formGrid {
