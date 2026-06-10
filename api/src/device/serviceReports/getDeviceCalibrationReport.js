@@ -25,6 +25,7 @@ async function getDeviceCalibrationReport(auth, query, timezoneIANA) {
     .modify(sortPageParams, query, 'name')
     .select([
       'd.name',
+      's.name as siteName',
       'd.serial',
       getDateTimeProjectionInTimeZoneIANA(knex, 'dm.contextDate', timezoneIANA, 'calibratedOn'),
       getDateTimeProjectionInTimeZoneIANA(

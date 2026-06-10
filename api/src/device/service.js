@@ -357,7 +357,10 @@ async function getDevicesForRifResistanceReport(auth, query) {
       `),
     })
 
-  const allDevices = await deviceQuery.clone().select(baseFields).orderBy('d.name')
+  const allDevices = await deviceQuery
+    .clone()
+    .select([...baseFields, 's.name as siteName'])
+    .orderBy('d.name')
   const data = _.map(allDevices, d => {
     const item = allCounts.find(it => it.deviceId === d.deviceId)
     return {

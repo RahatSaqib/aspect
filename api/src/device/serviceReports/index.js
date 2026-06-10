@@ -85,6 +85,7 @@ async function getDeviceActivityReport(auth, query, timezoneIANA) {
     .distinct(
       'd.id',
       'd.name',
+      's.name as siteName',
       'd.serial',
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
@@ -344,6 +345,7 @@ async function getModuleStatusReport(auth, query) {
     .select([
       'd.id as deviceId',
       'd.name as deviceName',
+      's.name as siteName',
       'd.serial as deviceSerial',
       'd.moduleBayCapacity as moduleBayCapacity',
       'state.name as State',
