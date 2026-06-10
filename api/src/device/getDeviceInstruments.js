@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const { knex } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 
-function getDeviceInstrumentsData(deviceId, dataConstraints) {
+function getDeviceInstrumentsData(deviceId, dataConstraints, timezoneIANA) {
   return knex('Device as d')
     .where('d.id', deviceId)
     .leftJoin('Site as s', 'd.siteId', 's.id')
@@ -25,7 +25,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
       'i.serial as instrumentSerial',
       knex.raw(
         `json_arrayagg(IF(m.moduleName IS NULL, NULL,
-          json_object('moduleName', TRIM(m.moduleName), 'lastResultDate', m.lastResultDate))) as modules`
+          json_object('moduleName', TRIM(m.moduleName), 'lastResultDate', CONVERT_TZ(m.lastResultDate, '+00:00', '${timezoneIANA}')))) as modules`
       )
     )
 }
@@ -33,11 +33,13 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
 async function getDeviceInstruments({ params, auth }) {
   const { deviceId } = params
 
-  // Get user constraints
+  // Get user constraints and timezone
   const dataConstraints = await getConstraints(auth.credentials)
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA } = user
 
   // Get instruments data with constraints applied
-  const instrumentRows = await getDeviceInstrumentsData(deviceId, dataConstraints)
+  const instrumentRows = await getDeviceInstrumentsData(deviceId, dataConstraints, timezoneIANA)
 
   // For each instrument, use the prefix from the most recent module to build an array of 4 modules (e.g. B1-B4),
   // filling in any missing modules with null for lastResultDate.

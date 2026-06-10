@@ -1,13 +1,14 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { knex } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 
 async function getCandidateInstruments({ params, auth }) {
   const { deviceId } = params
 
-  // Get user constraints
+  // Get user constraints and timezone
   const dataConstraints = await getConstraints(auth.credentials)
+  const { timezoneIANA } = await getUserFromCredentials(auth.credentials)
 
   // Verify base device exists and get its info
   const baseDevice = await knex('Device as d')
@@ -41,7 +42,7 @@ async function getCandidateInstruments({ params, auth }) {
   }
 
   // Get candidate instruments data with constraints applied
-  const instrumentRows = await getCandidateInstrumentsData(deviceId, baseDevice.siteId, dataConstraints)
+  const instrumentRows = await getCandidateInstrumentsData(deviceId, baseDevice.siteId, dataConstraints, timezoneIANA)
 
   // For each instrument, use the name from the most recent module to build an array of 4 modules (e.g. if latest module = B2 => B1-B4),
   // filling in any missing modules with null for lastResultDate.
@@ -77,7 +78,7 @@ async function getCandidateInstruments({ params, auth }) {
   }
 }
 
-function getCandidateInstrumentsData(deviceId, siteId, dataConstraints) {
+function getCandidateInstrumentsData(deviceId, siteId, dataConstraints, timezoneIANA) {
   return knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -113,7 +114,7 @@ function getCandidateInstrumentsData(deviceId, siteId, dataConstraints) {
       'i.serial as instrumentSerial',
       knex.raw(
         `json_arrayagg(IF(m.moduleName IS NULL, NULL,
-          json_object('moduleName', TRIM(m.moduleName), 'lastResultDate', m.lastResultDate))) as modules`
+          json_object('moduleName', TRIM(m.moduleName), 'lastResultDate', CONVERT_TZ(m.lastResultDate, '+00:00', '${timezoneIANA}')))) as modules`
       )
     )
 }

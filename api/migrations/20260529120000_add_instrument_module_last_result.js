@@ -30,7 +30,7 @@ exports.up = function (knex) {
     table.integer('instrumentId').unsigned().notNullable()
     table.string('moduleName', 15).notNullable()
     table.string('moduleSerial', 15).nullable()
-    table.date('lastResultDate').notNullable()
+    table.datetime('lastResultDate').notNullable()
 
     table.unique(['instrumentId', 'moduleName'])
     table.foreign('instrumentId').references('Instrument.id')

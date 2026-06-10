@@ -117,6 +117,26 @@ describe('InstrumentModule — recordResultModule unit tests', () => {
     assert.equal(new Date(row.lastResultDate).toISOString().slice(0, 10), '2024-01-20')
   })
 
+  it('keeps datetime precision when two results are on the same day', async () => {
+    const id = await instrumentId()
+    await recordResultModule(knex, {
+      instrumentId: id,
+      moduleName: 'A1',
+      moduleSerial: 'EARLY',
+      endedOn: new Date('2024-01-20T08:00:00.000Z'),
+    })
+    await recordResultModule(knex, {
+      instrumentId: id,
+      moduleName: 'A1',
+      moduleSerial: 'LATE',
+      endedOn: new Date('2024-01-20T19:30:00.000Z'),
+    })
+
+    const [row] = await getModules(id)
+    assert.equal(row.moduleSerial, 'LATE', 'later result on the same day must win the serial')
+    assert.equal(new Date(row.lastResultDate).toISOString(), '2024-01-20T19:30:00.000Z')
+  })
+
   it('removes stale-letter rows when a result with a new active letter arrives', async () => {
     const id = await instrumentId()
     // Seed all four A-letter modules concurrently (no ordering dependency between them)

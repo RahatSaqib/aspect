@@ -1,5 +1,5 @@
 /**
- * Records the last-result-date for a single instrument module, as projected from one
+ * Records the last-result-datetime for a single instrument module, as projected from one
  * result. Designed to run post-commit (its own connection), idempotent, and safe under
  * concurrency: the common path is a single atomic upsert, so two results for the same
  * instrument arriving in parallel cannot lose each other's update.
@@ -29,9 +29,9 @@ async function recordResultModule(knex, { instrumentId, moduleName: rawModuleNam
     return
   }
 
-  const lastResultDate = knex.raw('DATE(?)', [endedOn])
+  const lastResultDate = endedOn
 
-  // 1) Atomic per-module upsert; keep the most recent date (results can arrive out of
+  // 1) Atomic per-module upsert; keep the most recent datetime (results can arrive out of
   //    order via re-sync / transfer / backfill, so never blindly overwrite). moduleSerial
   //    is taken from the latest result only — note it is updated BEFORE lastResultDate so
   //    the comparison reads the previously-stored date, not the freshly-GREATEST'd one.
@@ -49,7 +49,7 @@ async function recordResultModule(knex, { instrumentId, moduleName: rawModuleNam
   await knex('InstrumentModule')
     .where({ instrumentId })
     .andWhereRaw('LEFT(moduleName, 1) <> LEFT(?, 1)', [moduleName])
-    .andWhere('lastResultDate', '<', knex.raw('DATE(?)', [endedOn]))
+    .andWhere('lastResultDate', '<', endedOn)
     .del()
 }
 

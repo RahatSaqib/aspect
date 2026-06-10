@@ -31,7 +31,7 @@ async function insertActiveModulesForRange(knex, lo, hi) {
       'i.id as instrumentId',
       knex.raw('TRIM(r.moduleName) as moduleName'),
       'r.moduleSerial as moduleSerial',
-      knex.raw('DATE(r.endedOn) as lastResultDate'),
+      knex.raw('r.endedOn as lastResultDate'),
       knex.raw(
         'ROW_NUMBER() OVER (PARTITION BY i.id, TRIM(r.moduleName) ORDER BY r.endedOn DESC, r.id DESC) as rnModule'
       ),
