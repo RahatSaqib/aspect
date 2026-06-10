@@ -1,12 +1,9 @@
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const addMinutes = require('date-fns/addMinutes')
-const { promisify } = require('util')
 
 const { knex } = require('../db')
 const { randomToken } = require('../deviceApi/apiKey')
-
-const bcryptCompare = promisify(bcrypt.compare)
 
 async function lookupUsingCredentials(username, password) {
   const nowTime = new Date().getTime()
@@ -16,7 +13,7 @@ async function lookupUsingCredentials(username, password) {
     .first('dak.*', 'd.id as deviceId')
 
   const pwResult = deviceApiKey
-    ? await bcryptCompare(password, _.get(deviceApiKey, 'password')).catch(() => false)
+    ? await bcrypt.compare(password, _.get(deviceApiKey, 'password')).catch(() => false)
     : false
 
   if (!deviceApiKey || !pwResult) {

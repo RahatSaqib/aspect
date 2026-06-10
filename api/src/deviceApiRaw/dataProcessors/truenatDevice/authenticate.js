@@ -116,7 +116,7 @@ class TruenatLogin extends SynchronousDataProcessor {
         }
         const { id: adminId } = await trx('User').where({ name: 'admin' }).first('id')
         const saltRounds = parseInt(config.passwordSaltRounds, 10)
-        const passwordHash = bcrypt.hashSync(payload.Password, saltRounds)
+        const passwordHash = await bcrypt.hash(payload.Password, saltRounds)
         const deviceApiKey = {
           partnerId: device.partnerId,
           geographyId: geographyIdForApiKey,
