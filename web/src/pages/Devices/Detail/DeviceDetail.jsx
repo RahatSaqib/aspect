@@ -86,6 +86,7 @@ export const DeviceDetail = props => {
   return (
     <>
       <DetailHeader
+        responsive
         name={
           device
             ? device.siteName

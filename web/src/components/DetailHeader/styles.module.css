@@ -1,15 +1,13 @@
 .AppBar {
   z-index: 1000;
-  overflow-x: hidden;
 }
 
 .Name {
-  min-width: 0;
   padding-right: 8px;
-  word-break: break-word;
 }
 
 .Content {
+  flex-grow: 1;
   display: flex;
   justify-content: flex-end;
 }
