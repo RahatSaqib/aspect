@@ -30,7 +30,6 @@ const DeviceTableRow = ({ device, displayPreferences: { errorRateThreshold }, ..
   return (
     <TableRow {...restProps} className={`TableRow ${restProps.className}`}>
       <TableCell>{device.get('name')}</TableCell>
-      <TableCell>{device.get('type')}</TableCell>
       <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
       <TableCell>
         {device.get('approvalStatusI18nKey')
