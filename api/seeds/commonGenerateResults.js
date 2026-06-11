@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { promisify } = require('util')
 const bcrypt = require('bcrypt')
 
 const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
@@ -51,8 +50,6 @@ const truenatMtbPlusResultData = require('./development/generateResultsSeed/true
 const truenatMtbRifDxResultData = require('./development/generateResultsSeed/truenatMtbRifDxResultData.json')
 const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
-
-const bcryptHash = promisify(bcrypt.hash)
 
 function calculateDateForResultForCovid(currentResult, totalResults, randomMillisToAdd) {
   const resultTimeFrameInDays = 360
@@ -125,7 +122,7 @@ async function createDevicesForAllMissingTypes(
         }
         const [deviceId] = await knex('Device').insert(deviceToInsert)
         if (deviceType.requiresApiCredentials) {
-          const password = await bcryptHash(siteData.shortName, parseInt(passwordSaltRounds, 10))
+          const password = await bcrypt.hash(siteData.shortName, parseInt(passwordSaltRounds, 10))
           const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
             token: randomToken(),
             revoked: 0,

@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
-const { promisify } = require('util')
 const { addMinutes, subMonths } = require('date-fns')
 const truenatDeviceTypes = require('./fixtures/truenatDevice/DeviceType.json')
 const truenatAssays = require('./fixtures/truenatDevice/Assays.json')
@@ -13,8 +12,6 @@ const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
 const upsertConsumables = require('./common/upsert_consumables')
 const { insertSite } = require('../src/site/common/db')
-
-const bcryptHash = promisify(bcrypt.hash)
 
 async function upsertTruenatDeviceTypeAndAssays(
   knex,
@@ -248,7 +245,7 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
       .whereNotNull('password')
       .andWhere('revoked', 0)
       .first()
-    const password = await bcryptHash(truenatDevice.password, parseInt(passwordSaltRounds, 10))
+    const password = await bcrypt.hash(truenatDevice.password, parseInt(passwordSaltRounds, 10))
     if (!truenatDeviceApiKey) {
       const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
         token: randomToken(),
