@@ -11,7 +11,6 @@ import {
   CepheidInstrumentModelSelect,
   CepheidSoftwareTypeSelect,
   ImplementingPartnerSelect,
-  SiteSelect,
   TagInput,
 } from '../../../../components'
 import AspectButton from '../../../../components/shared/AspectButton'
@@ -29,7 +28,7 @@ const SectionDivider = ({ label }) => (
   </div>
 )
 
-const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
+const DeviceDetailEdit = ({ device, deviceTags }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const intl = useIntl()
@@ -42,7 +41,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
 
   const validationSchema = getValidationSchema(intl.formatMessage)
 
-  // name and shortName are kept so they are included in the API payload but are not rendered as inputs
+  // name, shortName and siteId are kept so they are included in the API payload but are not rendered as inputs
+  // (siteId is not editable here — the device's site is managed via deployments)
   const initialValues = {
     name: device.name,
     shortName: device.shortName,
@@ -105,17 +105,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
             {({ values, errors, setFieldValue, dirty, isValid }) => (
               <Form>
                 <div className={styles.formGrid}>
-                  {/* ── Overview ── */}
-                  <SectionDivider label={intl.formatMessage(messages.sectionOverview)} />
-                  <SiteSelect
-                    id="siteId"
-                    name="siteId"
-                    label={intl.formatMessage(messages.location)}
-                    value={values.siteId || ''}
-                    onChange={e => setFieldValue('siteId', e.target.value)}
-                    disabled={!editable}
-                  />
-
                   {/* ── Capacity & Modules — GeneXpert only ── */}
                   {isGeneXpert && (
                     <>
@@ -283,7 +272,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
 DeviceDetailEdit.propTypes = {
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   deviceTags: PropTypes.arrayOf(PropTypes.object).isRequired,
-  editable: PropTypes.bool.isRequired,
 }
 
 export default DeviceDetailEdit
