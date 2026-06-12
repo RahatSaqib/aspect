@@ -35,9 +35,13 @@ const DetailHeader = ({ name, children, back, disableBack = false, responsive = 
           <Button
             onClick={() => navigate(back || -1)}
             color="primary"
-            sx={responsive ? { minWidth: 0, px: 1, flexShrink: 0 } : undefined}
+            sx={
+              responsive
+                ? { minWidth: { xs: 0, sm: 64 }, px: 1, flexShrink: 0, fontSize: { xs: 32, sm: 48 } }
+                : undefined
+            }
           >
-            <MdKeyboardArrowLeft size={responsive ? 32 : 48} />
+            <MdKeyboardArrowLeft size={responsive ? '1em' : 48} />
           </Button>
         ) : null}
         {/* Responsive row 1: back + title. On mobile, actions drop to row 2 (full width, right-aligned). */}
@@ -52,8 +56,8 @@ const DetailHeader = ({ name, children, back, disableBack = false, responsive = 
                   flex: '1 1 auto',
                   minWidth: 0,
                   wordBreak: 'break-word',
-                  fontSize: { xs: '0.95rem', sm: '1.25rem', md: '1.5rem' },
-                  lineHeight: 1.3,
+                  fontSize: { xs: '0.95rem', sm: '1.5rem' },
+                  lineHeight: { xs: 1.3, sm: 1.334 },
                 }
               : undefined
           }
