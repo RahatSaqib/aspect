@@ -8,6 +8,7 @@ const subscribers = {
   deviceApi: require('./deviceApi/subscriptions').subscriptions,
   deviceApiRaw: require('./deviceApiRaw/endpoints').subscriptions,
   fact: require('./fact/subscriptions').subscriptions,
+  instrumentModule: require('./instrumentModule/subscriptions').subscriptions,
   issue: require('./issue/endpoints').subscriptions,
   notification: require('./notification/endpoints').subscriptions,
   alert: require('./alert/endpoints').subscriptions,

@@ -30,6 +30,9 @@ const deleteDevice = async deviceIds => {
     await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).delete()
   }
 
+  await knex('InstrumentModule')
+    .whereIn('instrumentId', knex('Instrument').whereIn('deviceId', deviceIds).select('id'))
+    .delete()
   await knex('Instrument').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactDeviceModulesCount').delete().whereIn('deviceId', deviceIds)

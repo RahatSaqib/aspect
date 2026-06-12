@@ -1,29 +1,14 @@
 const _ = require('lodash')
 const { knex } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 
-function getDeviceInstrumentsData(deviceId, dataConstraints) {
-  const query = knex('Device as d')
+function getDeviceInstrumentsData(deviceId, dataConstraints, timezoneIANA) {
+  return knex('Device as d')
     .where('d.id', deviceId)
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .join('Instrument as i', function () {
-      this.on('i.deviceId', 'd.id')
-    })
-    .leftJoin(
-      knex('Result_READ as r')
-        .groupBy('deviceId', 'instrumentSerial', knex.raw('TRIM(moduleName)'))
-        .select(
-          'deviceId',
-          'instrumentSerial',
-          knex.raw('TRIM(moduleName) as moduleName'),
-          knex.raw(`json_object('moduleName', TRIM(moduleName), 'lastResultDate', date(max(endedOn))) as modules`)
-        )
-        .as('m'),
-      function () {
-        this.on('m.deviceId', 'd.id').andOn('m.instrumentSerial', 'i.serial')
-      }
-    )
-    .groupBy('d.id', 'i.serial')
+    .join('Instrument as i', 'i.deviceId', 'd.id')
+    .leftJoin('InstrumentModule as m', 'm.instrumentId', 'i.id')
+    .groupBy('d.id', 'i.id', 'i.active', 'i.serial')
     .modify(
       addConstraints,
       dataConstraints,
@@ -38,20 +23,23 @@ function getDeviceInstrumentsData(deviceId, dataConstraints) {
       'i.id as instrumentId',
       'i.active as active',
       'i.serial as instrumentSerial',
-      knex.raw('json_arrayagg(modules) as modules')
+      knex.raw(
+        `json_arrayagg(IF(m.moduleName IS NULL, NULL,
+          json_object('moduleName', TRIM(m.moduleName), 'lastResultDate', CONVERT_TZ(m.lastResultDate, '+00:00', '${timezoneIANA}')))) as modules`
+      )
     )
-
-  return query
 }
 
 async function getDeviceInstruments({ params, auth }) {
   const { deviceId } = params
 
-  // Get user constraints
+  // Get user constraints and timezone
   const dataConstraints = await getConstraints(auth.credentials)
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA } = user
 
   // Get instruments data with constraints applied
-  const instrumentRows = await getDeviceInstrumentsData(deviceId, dataConstraints)
+  const instrumentRows = await getDeviceInstrumentsData(deviceId, dataConstraints, timezoneIANA)
 
   // For each instrument, use the prefix from the most recent module to build an array of 4 modules (e.g. B1-B4),
   // filling in any missing modules with null for lastResultDate.
