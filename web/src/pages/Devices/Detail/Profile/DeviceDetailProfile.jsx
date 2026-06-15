@@ -13,6 +13,7 @@ import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import ColoredNumber from '../../../../components/shared/ColoredNumber'
 import Summary from '../../../../components/Summary'
 import { sanitizeFiltersStringBy } from '../../../../components/utils'
+import usePermissions from '../../../../hooks/person/usePermissions'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../../hooks/useFilterValues'
@@ -166,6 +167,8 @@ const DeviceDetailProfile = ({
 }) => {
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
+  const { checkPermission } = usePermissions()
+  const canViewDakList = checkPermission(['browse', '+deviceApiKey'])
   const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
   const {
     culture,
@@ -450,6 +453,21 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.partner)}
               description={device.get('implementingPartnerName') ?? 'n/a'}
+            />
+            <Summary
+              title={formatMessage(messages.deviceApiKey)}
+              description={device.get('maskedDeviceApiKey') ?? 'n/a'}
+              to={
+                canViewDakList && device.get('maskedDeviceApiKey')
+                  ? () => {
+                      addFilter(
+                        { deviceApiKeyToken: device.get('maskedDeviceApiKey').slice(-4) },
+                        '/browse/deviceApiKey'
+                      )
+                      navigate('/browse/deviceApiKey')
+                    }
+                  : undefined
+              }
             />
           </div>
         </Card>

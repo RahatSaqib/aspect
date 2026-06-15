@@ -11,6 +11,13 @@ const { XDR_RESISTANCES } = require('../../shared/constants')
 const { getUser } = require('../../auth/service')
 const { transformUTCDateTimeToZoned } = require('../../plugin/deviceType/transformPayload')
 
+function maskApiKeyToken(token) {
+  if (!token) return null
+  // Token is stored as a raw 20-char base32 string (no dashes).
+  // Show only the last 4 chars in the grouped display format.
+  return `xxxx-xxxx-xxxx-xxxx-${token.slice(-4)}`
+}
+
 const SELECT_SHOW_FIELDS = [
   'd.id',
   'd.name',
@@ -172,6 +179,8 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
+    .leftJoin('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
+    .column('dak.token as rawDeviceApiKeyToken')
 
   if (!device) {
     return null
@@ -203,6 +212,9 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     : null
 
   device.isDaisyChained = !!device.isDaisyChained
+
+  device.maskedDeviceApiKey = maskApiKeyToken(device.rawDeviceApiKeyToken)
+  delete device.rawDeviceApiKeyToken
 
   const firstResultRow = await knex('Result as r')
     .where('r.deviceId', deviceId)

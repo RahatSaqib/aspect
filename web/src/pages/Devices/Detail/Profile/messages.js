@@ -86,6 +86,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.sectionAdditionalInfo',
       defaultMessage: 'Additional Information',
     },
+    deviceApiKey: {
+      id: 'pages.DeviceDetailProfile.deviceApiKey',
+      defaultMessage: 'Device API Key',
+    },
     calibration: {
       id: 'pages.DeviceDetailProfile.calibration',
       defaultMessage: 'Calibration',
