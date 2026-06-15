@@ -168,7 +168,8 @@ const DeviceDetailProfile = ({
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
   const { checkPermission } = usePermissions()
-  const canViewDakList = checkPermission(['browse', '+deviceApiKey'])
+  const isGeneXpertDevice = device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID
+  const canViewDakList = isGeneXpertDevice && checkPermission(['browse', '+deviceApiKey'])
   const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
   const {
     culture,
@@ -454,21 +455,23 @@ const DeviceDetailProfile = ({
               title={formatMessage(messages.partner)}
               description={device.get('implementingPartnerName') ?? 'n/a'}
             />
-            <Summary
-              title={formatMessage(messages.deviceApiKey)}
-              description={device.get('maskedDeviceApiKey') ?? 'n/a'}
-              to={
-                canViewDakList && device.get('maskedDeviceApiKey')
-                  ? () => {
-                      addFilter(
-                        { deviceApiKeyToken: device.get('maskedDeviceApiKey').slice(-4) },
-                        '/browse/deviceApiKey'
-                      )
-                      navigate('/browse/deviceApiKey')
-                    }
-                  : undefined
-              }
-            />
+            {canViewDakList && (
+              <Summary
+                title={formatMessage(messages.deviceApiKey)}
+                description={device.get('maskedDeviceApiKey') ?? 'n/a'}
+                to={
+                  device.get('maskedDeviceApiKey')
+                    ? () => {
+                        addFilter(
+                          { deviceApiKeyToken: device.get('maskedDeviceApiKey').slice(-9) },
+                          '/browse/deviceApiKey'
+                        )
+                        navigate('/browse/deviceApiKey')
+                      }
+                    : undefined
+                }
+              />
+            )}
           </div>
         </Card>
         <CalibrationDialog
