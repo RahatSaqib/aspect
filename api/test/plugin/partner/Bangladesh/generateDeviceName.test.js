@@ -1,37 +1,31 @@
 const { assert } = require('chai')
-const proxyquire = require('proxyquire').noCallThru()
 const sinon = require('sinon')
 
 describe('generateDeviceName - Bangladesh', () => {
   let generateDeviceName
-  let defaultGenerateDeviceName
 
   beforeEach(() => {
-    defaultGenerateDeviceName = sinon.stub().resolves('GX100')
-    generateDeviceName = proxyquire('../../../../src/plugin/partner/Bangladesh/generateDeviceName', {
-      '../../../device/common/deviceAcronym': { defaultGenerateDeviceName },
-    })
+    generateDeviceName = require('../../../../src/plugin/partner/Bangladesh/generateDeviceName')
   })
 
   it('returns the default name for non-GeneXpert device types', async () => {
     const knex = sinon.stub()
     knex.withArgs('DeviceType').returns({
       where: () => ({
-        first: async () => ({ externalId: 'molbioTruenat' }),
+        first: async () => ({ externalId: 'molbioTruenat', name: 'Molbio Truenat' }),
       }),
     })
 
     const name = await generateDeviceName({ knex, deviceId: 100, deviceTypeId: 2 })
 
-    assert.equal(name, 'GX100')
-    assert.isTrue(defaultGenerateDeviceName.calledOnce)
+    assert.equal(name, 'MT100')
   })
 
   it('appends the GeneXpert module suffix for GeneXpert devices', async () => {
     const knex = sinon.stub()
     knex.withArgs('DeviceType').returns({
       where: () => ({
-        first: async () => ({ externalId: 'CepheidGeneXpert' }),
+        first: async () => ({ externalId: 'CepheidGeneXpert', name: 'GeneXpert' }),
       }),
     })
     knex.withArgs('Device').returns({
@@ -53,7 +47,7 @@ describe('generateDeviceName - Bangladesh', () => {
     const knex = sinon.stub()
     knex.withArgs('DeviceType').returns({
       where: () => ({
-        first: async () => ({ externalId: 'CepheidGeneXpert' }),
+        first: async () => ({ externalId: 'CepheidGeneXpert', name: 'GeneXpert' }),
       }),
     })
     knex.withArgs('Device').returns({

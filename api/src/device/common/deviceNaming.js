@@ -27,6 +27,26 @@ async function assignGeneratedDeviceName(knex, { deviceId, deviceTypeId, partner
   return { name, shortName }
 }
 
+/**
+ * Delegates device-name resolution on edit to the partner/device-type plugin.
+ * Returns null when the plugin has no override (caller should use payload name).
+ *
+ * @param {Object} params - { partnerPluginName, deviceTypePluginName, deviceId, currentName, deviceType, editedDevice }
+ * @returns {Promise<string|null>}
+ */
+async function resolveDeviceNameOnEdit({
+  partnerPluginName,
+  deviceTypePluginName,
+  deviceId,
+  currentName,
+  deviceType,
+  editedDevice,
+}) {
+  const resolveAction = await loadPlugin(partnerPluginName, deviceTypePluginName, 'resolveDeviceNameOnEdit')
+  return resolveAction({ deviceId, currentName, deviceType, editedDevice })
+}
+
 module.exports = {
   assignGeneratedDeviceName,
+  resolveDeviceNameOnEdit,
 }

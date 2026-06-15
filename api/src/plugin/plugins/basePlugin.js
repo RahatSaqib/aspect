@@ -35,6 +35,7 @@ const basePlugin = {
   preProcessCreateDevice,
   postProcessCreateDevice,
   generateDeviceName,
+  resolveDeviceNameOnEdit,
   postProcessGetResult,
   preProcessMergeResult,
   excludeResult,
@@ -84,6 +85,18 @@ async function postProcessCreateDevice(/* context */) {
  */
 async function generateDeviceName(context) {
   return defaultGenerateDeviceName(context)
+}
+
+/**
+ * Called when a device is edited via the client API. Partners may override
+ * to derive Device.name from the edited payload. Return null to keep the
+ * submitted name/shortName values.
+ *
+ * @param {Object} context - { deviceId, currentName, deviceType, editedDevice }
+ * @returns {Promise<string|null>}
+ */
+async function resolveDeviceNameOnEdit(/* context */) {
+  return null
 }
 
 /**
