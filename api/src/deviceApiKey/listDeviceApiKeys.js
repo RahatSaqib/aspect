@@ -77,7 +77,7 @@ async function listDeviceApiKeys(request) {
       geography: 'g',
       partner: 'p',
       site: 'dakSite',
-    })
+    }, { showUnapprovedDevices: true })
 
   const getCount = dakQuery.clone().countDistinct('dak.id as count').first()
 
