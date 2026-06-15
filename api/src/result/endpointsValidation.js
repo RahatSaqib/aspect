@@ -400,6 +400,9 @@ function listResultsBaseConfig() {
         showDecommissionedDevices: Joi.boolean()
           .default(false)
           .description('If true, will include results from decommissioned devices'),
+        showResultsFromUndeployedDevices: Joi.boolean()
+          .default(false)
+          .description('If true, will include results from undeployed devices'),
         displayResult: Joi.string()
           .allow(null, '')
           .optional()
