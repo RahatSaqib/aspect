@@ -270,7 +270,7 @@ const messages = {
     },
     onlyUnreconciled: {
       id: 'filter.popover.onlyUnreconciled',
-      defaultMessage: 'Only Results with unreconciled inventories',
+      defaultMessage: 'Only Results With Unreconciled Inventories',
     },
     deviceMaintenanceStatus: {
       id: 'filter.popover.deviceMaintenanceStatus',
