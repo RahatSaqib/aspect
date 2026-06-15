@@ -743,8 +743,6 @@ const routes = [
       validate: {
         payload: Joi.object({
           instrumentId: Joi.number().integer().positive().required(),
-          name: Joi.string().required(),
-          shortName: Joi.string().required(),
           siteId: Joi.number().required(),
         }),
       },

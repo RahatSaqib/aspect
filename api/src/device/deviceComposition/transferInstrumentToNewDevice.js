@@ -9,13 +9,13 @@ const { assignGeneratedDeviceName } = require('../common/deviceNaming')
 
 async function transferInstrumentToNewDevice({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
-  const { instrumentId, name, shortName, siteId } = payload
+  const { instrumentId, siteId } = payload
   const { sourceDevice } = await getSourceDevice(instrumentId)
 
-  await validate(instrumentId, name, shortName, siteId, auth.credentials)
+  await validate(instrumentId, siteId, auth.credentials)
 
   const { deletedDeviceIds, newDeviceId } = await transact(async trknex => {
-    const newDeviceId = await createNewDevice(trknex, sourceDevice, instrumentId, { name, shortName, siteId }, userId)
+    const newDeviceId = await createNewDevice(trknex, sourceDevice, instrumentId, { siteId }, userId)
 
     const { deletedDeviceIds } = await transferDeviceInstruments(
       trknex,
@@ -34,31 +34,13 @@ async function transferInstrumentToNewDevice({ payload, plugins: { messageContex
   return { ok: true, deletedDeviceIds, newDeviceId }
 }
 
-async function validate(instrumentId, name, shortName, siteId, credentials) {
+async function validate(instrumentId, siteId, credentials) {
   await validatePermissions(instrumentId, credentials)
-  await validateExistingDeviceNames(name, shortName)
   await validateSitePermissions(siteId, credentials)
 }
 
 async function validatePermissions() {
   // TODO: Implement this
-}
-
-async function validateExistingDeviceNames(name, shortName) {
-  const existingDevice = await knex('Device')
-    .where('name', name)
-    .orWhere('shortName', shortName)
-    .first('name', 'shortName')
-  if (existingDevice) {
-    if (existingDevice.name === name) {
-      throw Boom.badRequest('Device with this name already exists', { errorKeyCode: 'deviceNameAlreadyExists' })
-    }
-    if (existingDevice.shortName === shortName) {
-      throw Boom.badRequest('Device with this short name already exists', {
-        errorKeyCode: 'deviceShortNameAlreadyExists',
-      })
-    }
-  }
 }
 
 async function validateSitePermissions(siteId, credentials) {
@@ -98,7 +80,7 @@ async function getSourceDevice(instrumentId) {
   }
 }
 
-async function createNewDevice(trknex, sourceDevice, instrumentId, { name, shortName, siteId }, userId) {
+async function createNewDevice(trknex, sourceDevice, instrumentId, { siteId }, userId) {
   const now = new Date()
 
   // Get last used deviceApiKeyId for this instrument, or use sourceDevice's deviceApiKeyId
@@ -111,10 +93,8 @@ async function createNewDevice(trknex, sourceDevice, instrumentId, { name, short
     deviceTypeId: sourceDevice.deviceTypeId,
     moduleBayCapacity: 4, // Initial Module Bay Capacity is 4 because it's just one instrument.
     deviceApprovalId: sourceDevice.deviceApprovalId,
-    // Temporary non-null placeholders; the real name is generated from the
-    // device type acronym + id below (it depends on the auto-increment id).
-    name: name || 'device',
-    shortName: shortName || 'device',
+    name: 'device',
+    shortName: 'device',
     culture: sourceDevice.culture,
     timezone: sourceDevice.timezone,
     deviceApiKeyId,

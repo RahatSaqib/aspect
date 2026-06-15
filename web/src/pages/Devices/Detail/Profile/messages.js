@@ -5,10 +5,6 @@ const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...defineMessages({
-    shortName: {
-      id: 'pages.DeviceDetailProfile.shortName',
-      defaultMessage: 'Short Name',
-    },
     serial: {
       id: 'pages.DeviceDetailProfile.serial',
       defaultMessage: 'Serial No',
@@ -264,10 +260,6 @@ const messages = {
       id: 'pages.DeviceDetailProfile.joinDevicesButton',
       defaultMessage: 'Join Devices',
     },
-    deviceName: {
-      id: 'pages.DeviceDetailProfile.deviceName',
-      defaultMessage: 'Device Name',
-    },
     otherInstrumentsDetected: {
       id: 'pages.DeviceDetailProfile.otherInstrumentsDetected',
       defaultMessage: 'Other instruments detected ({count})',
@@ -320,14 +312,6 @@ const messages = {
     cancel: {
       id: 'pages.DeviceDetailProfile.cancel',
       defaultMessage: 'Cancel',
-    },
-    deviceNameAlreadyExists: {
-      id: 'pages.DeviceDetailProfile.deviceNameAlreadyExists',
-      defaultMessage: 'Device with this name already exists',
-    },
-    deviceShortNameAlreadyExists: {
-      id: 'pages.DeviceDetailProfile.deviceShortNameAlreadyExists',
-      defaultMessage: 'Device with this short name already exists',
     },
     sitePermissionDenied: {
       id: 'pages.DeviceDetailProfile.sitePermissionDenied',

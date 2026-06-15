@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { DialogActions, TextField } from '@mui/material'
+import { DialogActions } from '@mui/material'
 import { Form, Formik } from 'formik'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
@@ -21,14 +21,10 @@ const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
   const [submitError, setSubmitError] = useState(false)
 
   const validationSchema = Yup.object({
-    deviceName: Yup.string().required(formatMessage(validationErrorMessages.required)),
-    deviceShortname: Yup.string().required(formatMessage(validationErrorMessages.required)),
     siteId: Yup.string().nullable(true).required(formatMessage(validationErrorMessages.required)),
   })
 
   const initialValues = {
-    deviceName: '',
-    deviceShortname: '',
     siteId: '',
   }
 
@@ -45,8 +41,6 @@ const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
         onSubmit={(values, { resetForm, setFieldError }) => {
           mutate(
             {
-              name: values.deviceName,
-              shortName: values.deviceShortname,
               siteId: values.siteId,
               instrumentId,
             },
@@ -65,11 +59,7 @@ const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
               },
               onError: error => {
                 setSubmitError(true)
-                if (error?.data?.errorKeyCode === 'deviceNameAlreadyExists') {
-                  setFieldError('deviceName', formatMessage(messages.deviceNameAlreadyExists))
-                } else if (error?.data?.errorKeyCode === 'deviceShortNameAlreadyExists') {
-                  setFieldError('deviceShortname', formatMessage(messages.deviceShortNameAlreadyExists))
-                } else if (error?.data?.errorKeyCode === 'sitePermissionDenied') {
+                if (error?.data?.errorKeyCode === 'sitePermissionDenied') {
                   setFieldError('siteId', formatMessage(messages.sitePermissionDenied))
                 }
                 toast.error(formatMessage(messages.transferError))
@@ -79,40 +69,12 @@ const MoveToNewDeviceModal = ({ open, onClose, onConfirm, instrumentId }) => {
         }}
       >
         {({ values, errors, touched, handleChange, handleBlur, handleSubmit, resetForm, isValid, dirty }) => {
-          // Wrap handleChange to reset submitError on any change
-          const handleAnyChange = e => {
-            if (submitError) setSubmitError(false)
-            handleChange(e)
-          }
-          // For SiteSelect, which uses a custom onChange
           const handleSiteChange = e => {
             if (submitError) setSubmitError(false)
             handleChange({ target: { name: 'siteId', value: e.target.value } })
           }
           return (
             <Form onSubmit={handleSubmit}>
-              <TextField
-                label={formatMessage(messages.deviceName)}
-                name="deviceName"
-                value={values.deviceName}
-                onChange={handleAnyChange}
-                onBlur={handleBlur}
-                required
-                fullWidth
-                error={touched.deviceName && !!errors.deviceName}
-                helperText={touched.deviceName && errors.deviceName}
-              />
-              <TextField
-                label={formatMessage(messages.shortName)}
-                name="deviceShortname"
-                value={values.deviceShortname}
-                onChange={handleAnyChange}
-                onBlur={handleBlur}
-                required
-                fullWidth
-                error={touched.deviceShortname && !!errors.deviceShortname}
-                helperText={touched.deviceShortname && errors.deviceShortname}
-              />
               <SiteSelect
                 id="siteId"
                 name="siteId"
