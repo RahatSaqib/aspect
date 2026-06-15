@@ -30,7 +30,7 @@ module.exports = {
     jobFunctions,
     webhookServers,
   },
-  plugin: '',
+  plugin: 'bangladesh',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,
