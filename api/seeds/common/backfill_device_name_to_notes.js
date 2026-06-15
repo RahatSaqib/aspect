@@ -46,4 +46,4 @@ async function backfillDeviceNameToNotes(knex) {
   })
 }
 
-module.exports = { backfillDeviceNameToNotes, ORIGINAL_NAME_PREFIX }
+module.exports = { backfillDeviceNameToNotes }
