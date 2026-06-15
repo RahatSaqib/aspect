@@ -39,7 +39,7 @@ const DeviceDetailEdit = ({ device, deviceTags }) => {
 
   const isGeneXpert = get(device, 'deviceType.externalId') === CONSTS.GENEXPERT_EXTERNAL_ID
 
-  const validationSchema = getValidationSchema(intl.formatMessage)
+  const validationSchema = getValidationSchema(intl.formatMessage, isGeneXpert)
 
   // name, shortName and siteId are kept so they are included in the API payload but are not rendered as inputs
   // (siteId is not editable here — the device's site is managed via deployments)

@@ -6,7 +6,7 @@ const onlyWholeNumbersCallback = value => {
   return Number.isInteger(value)
 }
 
-export const getValidationSchema = formatMessage =>
+export const getValidationSchema = (formatMessage, isGeneXpert) =>
   Yup.object({
     name: Yup.string().required(formatMessage(validationErrorMessages.required)),
     shortName: Yup.string().required(formatMessage(validationErrorMessages.required)),
@@ -18,11 +18,13 @@ export const getValidationSchema = formatMessage =>
       .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
       .min(1, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }))
       .max(9999, formatMessage(validationErrorMessages.mustBeLessThan, { max: 9999 })),
-    moduleBayCapacity: Yup.number()
-      .required(formatMessage(validationErrorMessages.required))
-      .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
-      .min(1, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }))
-      .max(256, formatMessage(validationErrorMessages.mustBeLessThan, { max: 256 })),
+    moduleBayCapacity: isGeneXpert
+      ? Yup.number()
+          .required(formatMessage(validationErrorMessages.required))
+          .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
+          .min(1, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }))
+          .max(256, formatMessage(validationErrorMessages.mustBeLessThan, { max: 256 }))
+      : Yup.number().nullable(),
     gx6cModulesCount: Yup.number()
       .nullable()
       .transform((value, originalValue) => (originalValue === '' ? null : value))
