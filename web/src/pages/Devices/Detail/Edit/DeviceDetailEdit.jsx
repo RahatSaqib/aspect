@@ -44,9 +44,9 @@ const DeviceDetailEdit = ({ device, deviceTags }) => {
   // name, shortName and siteId are kept so they are included in the API payload but are not rendered as inputs
   // (siteId is not editable here — the device's site is managed via deployments)
   const initialValues = {
-    name: device.name,
-    shortName: device.shortName,
-    siteId: device.siteId,
+    name: device.name || '',
+    shortName: device.shortName || device.name || '',
+    siteId: device.siteId ?? null,
     implementingPartnerId: device.implementingPartnerId,
     dailyTestCapacity: device.dailyTestCapacity,
     moduleBayCapacity: device.moduleBayCapacity,
