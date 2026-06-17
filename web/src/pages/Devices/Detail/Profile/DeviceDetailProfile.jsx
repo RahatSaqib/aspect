@@ -90,11 +90,9 @@ const enhance = compose(
     onExportDeviceLogsClick:
       ({ device, location, exportDeviceLogs }) =>
       () => {
-        const { sanitized, value: filtersParams } = filtersFromLocation(location)
-        if (!sanitized) {
-          filtersParams.set('deviceId', device.get('id'))
-          exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
-        }
+        const { value: filtersParams } = filtersFromLocation(location)
+        filtersParams.set('deviceId', device.get('id'))
+        exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
       },
     onShowCalibrationDialog:
       ({ showDialog, device }) =>

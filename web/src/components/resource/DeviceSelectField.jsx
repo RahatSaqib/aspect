@@ -34,7 +34,7 @@ function DeviceSelectField({
       {data.length > 0 &&
         data.map(s => (
           <MenuItem key={s.id} value={s.id}>
-            {s.name}
+            {s.siteName ? `${s.name} at ${s.siteName}` : s.name}
           </MenuItem>
         ))}
     </SelectField>
