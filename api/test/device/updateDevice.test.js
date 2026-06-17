@@ -101,7 +101,7 @@ describe('updateDevice', () => {
           gx6cModulesCount: 4,
           gx10cModulesCount: 12,
         },
-      }),
+      })
     )
   })
 

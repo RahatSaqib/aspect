@@ -73,9 +73,12 @@ describe('undeployedDevicesFilter', () => {
 
   describe('withUndeployedAwareGeographyFilters', () => {
     it('wraps geography filters when undeployed results are requested', () => {
-      const filters = withUndeployedAwareGeographyFilters({ countryId: 'g.countryId', deviceId: 'd.id' }, {
-        showResultsFromUndeployedDevices: true,
-      })
+      const filters = withUndeployedAwareGeographyFilters(
+        { countryId: 'g.countryId', deviceId: 'd.id' },
+        {
+          showResultsFromUndeployedDevices: true,
+        }
+      )
 
       expect(typeof filters.countryId).to.equal('function')
       expect(filters.deviceId).to.equal('d.id')

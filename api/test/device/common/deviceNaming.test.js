@@ -37,7 +37,7 @@ describe('resolveDeviceNameOnEdit - deviceNaming', () => {
         currentName: 'GX100',
         deviceType: { externalId: 'CepheidGeneXpert' },
         editedDevice: { moduleBayCapacity: 4, gx6cModulesCount: 4, gx10cModulesCount: null },
-      }),
+      })
     )
   })
 })

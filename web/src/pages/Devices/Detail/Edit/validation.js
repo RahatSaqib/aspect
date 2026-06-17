@@ -30,7 +30,7 @@ export const getValidationSchema = (formatMessage, isGeneXpert) =>
       .test(
         'min-when-set',
         formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }),
-        value => value == null || value >= 1,
+        value => value == null || value >= 1
       )
       .max(9999, formatMessage(validationErrorMessages.mustBeLessThan, { max: 9999 })),
     moduleBayCapacity: isGeneXpert
