@@ -239,27 +239,28 @@ async function getGeneXpertOperationLogsReport(auth, query) {
     minDateFormatted = minDate ? parseISO(minDate) : subMonths(new Date(), 12),
     maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
   } = query
-  // get rows
+  const dateRange = { minDate: minDateFormatted, maxDate: maxDateFormatted }
+  const deviceFilter = { deviceId: 'd.id' }
+  const constraintAliases = { device: 'd', geography: 'g', site: 's' }
 
   const deviceData = await knex('Device as d')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .where('d.id', query.deviceId)
     .first('d.name as deviceName', 's.name as siteName')
-  const data = await knex('Device as d')
-    .join('DeviceOperation as dl', 'dl.deviceId', 'd.id')
-    .join('Site as s', 'd.siteId', 's.id')
-    .join('Geography as g', 's.geographyId', 'g.id')
-    .modify(filterDateRangeParams, { minDate: minDateFormatted, maxDate: maxDateFormatted }, 'dl.startedOn')
-    .modify(filterParams, query, {
-      deviceId: 'd.id',
-    })
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      geography: 'g',
-      site: 's',
-    })
+
+  const deviceLogBaseQuery = () =>
+    knex('Device as d')
+      .leftJoin('Site as s', 'd.siteId', 's.id')
+      .leftJoin('Geography as g', 's.geographyId', 'g.id')
+      .modify(filterParams, query, deviceFilter)
+      .modify(addConstraints, dataConstraints, constraintAliases)
+
+  const operationLogsQuery = deviceLogBaseQuery()
+    .join('DeviceOperation as dl', 'dl.deviceApiKeyId', 'd.deviceApiKeyId')
+    .whereNotNull('d.deviceApiKeyId')
+    .modify(filterDateRangeParams, dateRange, 'dl.occurredOn')
     .select(
-      'dl.startedOn as createdOn',
+      'dl.occurredOn as createdOn',
       's.name as siteName',
       'd.name as deviceName',
       knex.raw("dl.data ->> '$.details' as logDetails"),
@@ -269,6 +270,50 @@ async function getGeneXpertOperationLogsReport(auth, query) {
       knex.raw("dl.data ->> '$.type' as logType"),
       knex.raw("dl.data ->> '$.details.Calibrations' as calibrations")
     )
+
+  const maintenanceLogsQuery = deviceLogBaseQuery()
+    .join('DeviceMaintenance as dm', 'dm.deviceId', 'd.id')
+    .join('DeviceMaintenanceType as dmt', 'dmt.id', 'dm.deviceMaintenanceTypeId')
+    .modify(filterDateRangeParams, { minDate: minDateFormatted }, 'dm.contextDate')
+    .select(
+      'dm.contextDate as createdOn',
+      's.name as siteName',
+      'd.name as deviceName',
+      knex.raw('dm.notes as logDetails'),
+      knex.raw("'INFO' as logLevel"),
+      knex.raw("CONCAT(dmt.name, IF(dm.notes IS NULL OR dm.notes = '', '', CONCAT(': ', dm.notes))) as message"),
+      knex.raw('NULL as errors'),
+      'dmt.externalId as logType',
+      knex.raw('NULL as calibrations')
+    )
+
+  const maintenanceStatusLogsQuery = deviceLogBaseQuery()
+    .join('DeviceMaintenanceStatusLog as dmsl', 'dmsl.deviceId', 'd.id')
+    .join('DeviceMaintenanceStatus as dms', 'dms.id', 'dmsl.deviceMaintenanceStatusId')
+    .modify(filterDateRangeParams, dateRange, 'dmsl.day')
+    .select(
+      'dmsl.day as createdOn',
+      's.name as siteName',
+      'd.name as deviceName',
+      'dmsl.data as logDetails',
+      knex.raw("'INFO' as logLevel"),
+      knex.raw("CONCAT(dms.name, IFNULL(CONCAT(': ', dmsl.data ->> '$.notes'), '')) as message"),
+      knex.raw('NULL as errors'),
+      'dms.externalId as logType',
+      knex.raw('NULL as calibrations')
+    )
+
+  const [operationLogs, maintenanceLogs, maintenanceStatusLogs] = await Promise.all([
+    operationLogsQuery,
+    maintenanceLogsQuery,
+    maintenanceStatusLogsQuery,
+  ])
+
+  const data = _.orderBy(
+    [...operationLogs, ...maintenanceLogs, ...maintenanceStatusLogs],
+    row => new Date(row.createdOn),
+    'asc'
+  )
 
   const dataset = {
     ok: true,
@@ -282,11 +327,11 @@ async function getGeneXpertOperationLogsReport(auth, query) {
       },
       {
         placeholder: '<deviceName>',
-        value: deviceData.deviceName,
+        value: deviceData?.deviceName ?? '',
       },
       {
         placeholder: '<siteName>',
-        value: deviceData.siteName,
+        value: deviceData?.siteName ?? '',
       },
     ],
   }

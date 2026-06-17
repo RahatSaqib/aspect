@@ -38,7 +38,15 @@ async function listDevicesForSelectList(request) {
       }
     })
     .orderBy(['d.name'], 'asc')
-    .select('d.id', 'd.name', 'd.serial as deviceSerial', 'd.siteId', 'd.deviceTypeId', 'dt.name as deviceType')
+    .select(
+      'd.id',
+      'd.name',
+      'd.serial as deviceSerial',
+      'd.siteId',
+      'd.deviceTypeId',
+      'dt.name as deviceType',
+      's.name as siteName'
+    )
   if (onlyResultDevices) {
     devicesQuery.where('dtc.hasResults', 1)
   }
