@@ -13,6 +13,7 @@ import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useAuthState from '../../../hooks/useAuthState'
+import deviceMessages from '../../../messages/deviceMessages'
 import { updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
 import { getReturnUrl } from '../../../utils/utils/browser'
@@ -90,7 +91,10 @@ export const DeviceDetail = props => {
         name={
           device
             ? device.siteName
-              ? `${device.name} at ${device.siteName}`
+              ? intl.formatMessage(deviceMessages.nameAtSite, {
+                  deviceName: device.name,
+                  siteName: device.siteName,
+                })
               : `${device.name} (${intl.formatMessage(messages.undeployed)})`
             : 'Devices'
         }

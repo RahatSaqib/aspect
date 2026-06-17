@@ -5,6 +5,7 @@ import cronMessages from './cronMessages'
 import { commonDefinitions, getCustomMessage } from './customMessages'
 import { months } from './dateMessages'
 import deviceApprovalMessages from './deviceApprovalMessages'
+import deviceMessages from './deviceMessages'
 import deviceStatusMessages from './deviceStatusMessages'
 import diseases from './diseaseMessages'
 import graphMessages from './graphMessages'
@@ -24,6 +25,7 @@ export {
   commonDefinitions,
   getCustomMessage,
   deviceApprovalMessages,
+  deviceMessages,
   deviceStatusMessages,
   diseases,
   months,
