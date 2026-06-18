@@ -11,6 +11,7 @@ const { rowsAsObject, getPermissionModules, seedNotificationTypes, seedIssues } 
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
 const { insertSite } = require('../../src/site/common/db')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -317,8 +318,6 @@ async function seed(knex) {
         defaultReportableSiteId: siteId,
         deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
         deviceApprovalId: await deviceApprovalToId('approved'),
-        name: deviceSeed.name,
-        shortName: deviceSeed.shortName,
         macAddress: deviceSeed.macAddress,
         serial: deviceSeed.serial,
         hostId: deviceSeed.hostId,
@@ -327,7 +326,8 @@ async function seed(knex) {
         notes: deviceSeed.notes,
         lastSeenOn: now,
       }
-      await knex('Device').insert(device)
+      const { id: deviceId } = await insertDeviceWithGeneratedName(knex, device)
+      device.id = deviceId
     })
   })
 

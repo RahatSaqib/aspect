@@ -3,6 +3,7 @@ const Boom = require('@hapi/boom')
 const { knex } = require('../../db')
 const { deviceApprovalToId } = require('../../shared/dictionary')
 const { syncDeviceApprovalFromDeployments } = require('../../device/common/deviceApprovalService')
+const { assignGeneratedDeviceName } = require('../../device/common/deviceNaming')
 const { deviceSeen } = require('../../device/actions')
 const { loadPlugin } = require('../../plugin/loadPlugin')
 const { resultReadyForNotification, resultLogged } = require('../../result/actions')
@@ -220,25 +221,6 @@ async function getPartnerAndDeviceTypePlugins({ token, deviceTypeExternalId, cou
   )
 }
 
-async function generateDeviceName(context, serial) {
-  const { payload, partnerId, deviceTypeId, deviceTypeExternalId } = context
-  const { name, hostId } = payload
-
-  const candidateName = name ?? hostId ?? serial ?? deviceTypeExternalId
-
-  const [existingDevicesWithSameName] = await knex('Device')
-    .where({
-      partnerId,
-      deviceTypeId,
-    })
-    .whereLike('name', `${candidateName}%`)
-    .count('id as cnt')
-
-  return existingDevicesWithSameName.cnt === 0
-    ? candidateName
-    : `${candidateName} #${existingDevicesWithSameName.cnt + 1}`
-}
-
 /**
  * Creates a new device from the request payload.
  */
@@ -248,9 +230,9 @@ async function createDevice(context) {
   const serial = _.get(payload, 'configuration.data.deviceSerialNumber') || payload.serial
   const macAddress = _.get(payload, 'configuration.data.macAddress') || payload.macAddress
 
-  // Use or generate device name
-  const name = await generateDeviceName(context, serial)
-  const shortName = name.substr(0, 45)
+  // Temporary non-null placeholder; the real name is generated after insert
+  // (it depends on the auto-increment Device.id) via the device-naming plugin.
+  const placeholderName = (serial || hostId || deviceTypeExternalId || 'device').substr(0, 45)
 
   const deviceApprovalId = await deviceApprovalToId('pendingDeployment')
   const deviceApiKey = await knex('DeviceApiKey')
@@ -266,9 +248,9 @@ async function createDevice(context) {
     dailyTestCapacity: deviceTypeExternalId === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are using module=4
     moduleBayCapacity: deviceTypeExternalId === 'CepheidGeneXpert' ? 4 : 0,
     deviceApprovalId,
-    name,
+    name: placeholderName,
     serial,
-    shortName,
+    shortName: placeholderName,
     macAddress,
     hostId,
     timezone: defaultTimeZone, // For now we ignore this _.get(payload, 'configuration.data.timezone', null)
@@ -279,6 +261,13 @@ async function createDevice(context) {
     lastPingOn: now,
     createdOn: now,
     updatedOn: now,
+  })
+
+  await assignGeneratedDeviceName(knex, {
+    deviceId,
+    deviceTypeId,
+    partnerPluginName: context.partnerPluginName,
+    deviceTypePluginName: context.deviceTypePluginName,
   })
 
   await knex('DeviceApprovalLog').insert({

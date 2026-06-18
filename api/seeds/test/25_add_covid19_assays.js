@@ -4,10 +4,11 @@ const Promise = require('bluebird')
 
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 
 const now = new Date()
 async function seed(knex) {
-  const { partnerId, labSiteId, labName, labExternalId } = await knex('Partner as p')
+  const { partnerId, labSiteId } = await knex('Partner as p')
     .join('Device as d', 'p.id', 'd.partnerId')
     .join('Site as s', 's.id', 'd.siteId')
     .join('Geography as g', 's.geographyId', 's.geographyId')
@@ -46,16 +47,13 @@ async function seed(knex) {
       })
       .first('id')
     if (!device) {
-      await knex('Device').insert({
+      await insertDeviceWithGeneratedName(knex, {
         ...auditFields,
-        name: `${labName} ${covidDeviceType.name}`.substr(0, 255),
-        shortName: `${labExternalId}_${covidDeviceType.externalId}`.substr(0, 45),
         deviceTypeId: covidDeviceType.id,
         deviceApprovalId: deviceApprovalApprovedId,
         partnerId,
         siteId: labSiteId,
         defaultReportableSiteId: labSiteId,
-        ...auditFields,
         lastPingOn: new Date(+now),
         lastSeenOn: new Date(+now),
         hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),

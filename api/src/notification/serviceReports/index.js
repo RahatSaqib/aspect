@@ -4,7 +4,7 @@ const getEmailUse = require('./resultNotificationReport/getEmailUse')
 
 async function getResultSmsNotificationData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getSmsUse(query, dataConstraints)
+  const rows = await getSmsUse(dataConstraints, query)
 
   return {
     ok: true,
@@ -15,7 +15,7 @@ async function getResultSmsNotificationData(auth, query) {
 
 async function getResultEmailNotificationData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getEmailUse(query, dataConstraints)
+  const rows = await getEmailUse(dataConstraints, query)
 
   return {
     ok: true,

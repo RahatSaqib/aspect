@@ -13,6 +13,7 @@ const { partnerTypeToId, deviceApprovalToId } = require('../../src/shared/dictio
 const utils = require('../utils')
 const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
 const { insertSite } = require('../../src/site/common/db')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
@@ -142,8 +143,6 @@ async function seed(knex) {
             // add device to the lab
             const deviceType = covidDeviceTypes[state.lgas.indexOf(lga) % covidDeviceTypes.length]
             const device = {
-              name: `${labData.name} ${deviceType.name}`.substr(0, 255),
-              shortName: `${labData.externalId}_${deviceType.externalId}`.substr(0, 45),
               deviceTypeId: deviceType.id,
               deviceApprovalId: deviceApprovalApprovedId,
               partnerId: labData.partnerId,
@@ -158,7 +157,10 @@ async function seed(knex) {
               serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
             }
 
-            ;[device.id] = await knex('Device').insert(device)
+            const { id, name, shortName } = await insertDeviceWithGeneratedName(knex, device)
+            device.id = id
+            device.name = name
+            device.shortName = shortName
             countryData.devices.push({ ...device, geographyId })
 
             // add clinics in the LGA

@@ -174,6 +174,10 @@ const messages = {
       id: 'filter.btnGroup.showDecommissionedDevices',
       defaultMessage: 'Show Results From Decommissioned Devices',
     },
+    showResultsFromUndeployedDevices: {
+      id: 'filter.btnGroup.showResultsFromUndeployedDevices',
+      defaultMessage: 'Show Results From Undeployed Devices',
+    },
     deviceIssueType: { id: 'filter.btnGroup.deviceIssueType', defaultMessage: 'Device Issue: {issueTypeId}' },
     hasStock: { id: 'filter.btnGroup.hasStock', defaultMessage: 'Only lots with stock' },
     // outOfStock: { id: 'filter.btnGroup.daysStockLeft.outOfStock', defaultMessage: 'Out of Stock' },

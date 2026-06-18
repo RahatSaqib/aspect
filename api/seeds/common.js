@@ -383,6 +383,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     ;[deviceTypeGeneXpertId] = await knex('DeviceType').insert({
       externalId: 'CepheidGeneXpert',
       name: 'GeneXpert',
+      acronym: 'GX',
       manufacturer: 'Cepheid',
       plugin: 'gxconnect',
       deviceTypeCategoryId: deviceTypeCategoryLab,

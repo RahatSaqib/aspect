@@ -29,6 +29,7 @@ async function getDeviceActivityPercentReport(auth, query) {
     .distinct(
       'd.id',
       'd.name',
+      's.name as siteName',
       'd.serial',
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
@@ -174,7 +175,7 @@ async function getDeviceUtilizationPerDayReport(auth, query) {
   })
 
   data = data.map(device => {
-    const { deviceCapacity = 12, name, maintenanceStatusHistory } = device
+    const { deviceCapacity = 12, name, siteName, maintenanceStatusHistory } = device
     let totals = 0
 
     // Calculate working days for the entire period using getWorkingDays function
@@ -213,6 +214,7 @@ async function getDeviceUtilizationPerDayReport(auth, query) {
     const utilizationRate = workingDays > 0 && deviceCapacity > 0 ? totals / (deviceCapacity * workingDays) : 0
     return {
       name,
+      siteName,
       totalResults: totals,
       deviceCapacity,
       utilizationRate,

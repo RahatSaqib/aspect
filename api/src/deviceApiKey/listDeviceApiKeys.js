@@ -72,12 +72,17 @@ async function listDeviceApiKeys(request) {
         revoked: 'dak.revoked',
       })
     })
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      geography: 'g',
-      partner: 'p',
-      site: 'dakSite',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        geography: 'g',
+        partner: 'p',
+        site: 'dakSite',
+      },
+      { showUnapprovedDevices: true }
+    )
 
   const getCount = dakQuery.clone().countDistinct('dak.id as count').first()
 

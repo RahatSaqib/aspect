@@ -2,8 +2,9 @@
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px 32px;
+  gap: 16px 32px;
   align-items: start;
+  padding-left: 16px;
 }
 
 @media (max-width: 1600px) {
@@ -27,6 +28,13 @@
 
 .Section {
   padding: 10px var(--aspect-detail-horizontal-padding);
+  overflow-x: hidden;
+}
+
+@media (max-width: 700px) {
+  .Section {
+    padding: 8px 8px;
+  }
 }
 
 .Section__first {
@@ -34,7 +42,13 @@
 }
 
 .Section__Content {
-  padding: 20px;
+  padding: 16px 20px;
+}
+
+@media (max-width: 700px) {
+  .Section__Content {
+    padding: 12px 12px;
+  }
 }
 
 [data-graph-container] {
@@ -150,6 +164,87 @@
   top: 50%;
   left: 50%;
   padding-left: -50%;
+}
+
+.sectionDivider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0 2px 0;
+  margin-left: -16px;
+}
+
+.sectionDivider__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--aspect-color-grey-3, #b0b3bb);
+  white-space: nowrap;
+}
+
+.sectionDivider__line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--aspect-color-grey-7, #eef1f8);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 32px;
+  align-items: start;
+  padding-left: 16px;
+}
+
+.formGrid__fullWidth {
+  grid-column: 1 / -1;
+}
+
+
+@media (max-width: 1600px) {
+  .formGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .formGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fieldAction {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 4px;
+  color: var(--aspect-color-blue-1);
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: normal;
+}
+
+.fieldAction:hover {
+  text-decoration: underline;
+}
+
+.fieldAction:disabled {
+  color: var(--aspect-color-grey-4, #91949d);
+  cursor: default;
+  text-decoration: none;
 }
 
 .deviceSummary__container {

@@ -258,7 +258,7 @@ const routes = [
             .when('approvalToken', { is: Joi.any().valid(null, ''), then: Joi.required() }),
           notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
           shortName: Joi.string().allow('', null).description('The short name of the device'),
-          siteId: Joi.number(),
+          siteId: Joi.number().allow(null).description('The site id of the device'),
           implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
           gx6cModulesCount: Joi.number()
             .allow('', null)
@@ -743,8 +743,6 @@ const routes = [
       validate: {
         payload: Joi.object({
           instrumentId: Joi.number().integer().positive().required(),
-          name: Joi.string().required(),
-          shortName: Joi.string().required(),
           siteId: Joi.number().required(),
         }),
       },

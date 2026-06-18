@@ -14,6 +14,7 @@ const joiSingleDeviceStatusOverTime = Joi.object().keys({
   totalResults: Joi.number().description('The number of results performed by the device in the date range'),
   deviceCapacity: Joi.number().allow(null).description('Daily capacity of the device'),
   siteId: Joi.number().description('The siteId of the device'),
+  siteName: Joi.string().allow('', null).description('The name of the site where the device is deployed'),
   hoursStart: Joi.number().allow(null).description('The site starting hour'),
   hoursEnd: Joi.number().allow(null).description('The site end hour'),
   maintenanceStatusHistory: Joi.array()

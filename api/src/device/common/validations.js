@@ -329,9 +329,10 @@ const deviceDetailsResponseFields = Joi.object()
     instrumentModel: Joi.string().allow('', null).description('Cepheid instrument model'),
     softwareType: Joi.string().allow('', null).description('Cepheid software type'),
     isDaisyChained: Joi.bool().allow('', null).description('Determines if the instrument is daisy chained'),
-    firstResultEndedOn: Joi.date()
+    firstResultEndedOn: Joi.date().allow(null).description('Date of the device first result (for deployment timeline)'),
+    maskedDeviceApiKey: Joi.string()
       .allow(null)
-      .description('Date of the device’s first result (for deployment timeline)'),
+      .description('Masked Device API key — only the last segment is visible, e.g. xxxx-xxxx-xxxx-xxxx-9kd0'),
   })
 module.exports = {
   listWorkloadRequestSchema,

@@ -26,6 +26,7 @@
     "postupdatemessages:end": "fsys --task=remove --fileFolder=extracted_strings.json && fsys --task=remove --fileFolder=./src/utils/i18n/diff.pot",
     "prettier": "prettier \"./src/**/*.{js,jsx,css}\" --write",
     "lint": "eslint . --report-unused-disable-directives --ext .js --ext .jsx",
+    "lint:changes": "eslint $(git diff --name-only --diff-filter=ACM | grep -E '\\.(js|ts|jsx|tsx)$' | sed 's|^|../|') --fix",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags"

@@ -276,11 +276,9 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
           .first('d.id as deviceId', 'dak.siteId')
         assert.notEqual(siteId, site.id, 'device.siteId should not point to site with full lab name')
         const { name: deviceName } = await knex('Device').where('id', deviceId).first('name')
-        assert.equal(
-          deviceName,
-          approvedDevice.username,
-          'device name should remain unchanged and equal to device username'
-        )
+        // Device names are now generated as ${acronym}${id} (ASP-7977); the original
+        // intent of this assertion is that the Truenat LabName field must not rename the device.
+        assert.notEqual(deviceName, fullLabName, 'device name should not be overwritten by the result LabName')
       })
 
       after(async () => {

@@ -264,9 +264,13 @@ const messages = {
       id: 'filter.popover.showDecommissionedDevices',
       defaultMessage: 'Show Results From Decommissioned Devices',
     },
+    showResultsFromUndeployedDevices: {
+      id: 'filter.popover.showResultsFromUndeployedDevices',
+      defaultMessage: 'Show Results From Undeployed Devices',
+    },
     onlyUnreconciled: {
       id: 'filter.popover.onlyUnreconciled',
-      defaultMessage: 'Only Results with unreconciled inventories',
+      defaultMessage: 'Only Results With Unreconciled Inventories',
     },
     deviceMaintenanceStatus: {
       id: 'filter.popover.deviceMaintenanceStatus',
