@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { AppBar, IconButton, MenuItem, Toolbar } from '@mui/material'
+import { AppBar, Box, Drawer, IconButton, MenuItem, Toolbar, useMediaQuery, useTheme } from '@mui/material'
 import { FaUser } from 'react-icons/fa'
+import { MdMenu } from 'react-icons/md'
 import { useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -17,6 +18,9 @@ const Header = () => {
   const dispatch = useDispatch()
   const intl = useIntl()
   const navigate = useNavigate()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [version, setVersion] = useState({ fetched: false, v: '' })
 
   useEffect(() => {
@@ -32,12 +36,22 @@ const Header = () => {
   return (
     <AppBar color="inherit" position="sticky">
       <Toolbar>
+        {isMobile && (
+          <IconButton
+            className={styles.AppBar__leftIcon}
+            aria-label={intl.formatMessage(messages.openNavigation)}
+            onClick={() => setDrawerOpen(true)}
+          >
+            <MdMenu />
+          </IconButton>
+        )}
+
         <IconButton className={styles.AppBar__leftIcon} aria-label="Logo" onClick={() => navigate('/')}>
           <img className={styles.ConfluenceIcon} src={Logo} alt="" />
           {!!version?.v && <span className={styles.version}>v{version.v}</span>}
         </IconButton>
 
-        <LayoutNavigation />
+        {isMobile ? <Box sx={{ flexGrow: 1 }} /> : <LayoutNavigation />}
 
         <IconMenu icon={<FaUser className={styles.IconMenu__icon} />}>
           <PermissionChecker permissions={['account:edit']}>
@@ -48,6 +62,12 @@ const Header = () => {
           <MenuItem onClick={() => dispatch(userRequestedLogout())}>{intl.formatMessage(messages.signOut)}</MenuItem>
         </IconMenu>
       </Toolbar>
+
+      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <Box className={styles.Drawer} role="presentation">
+          <LayoutNavigation variant="vertical" onNavigate={() => setDrawerOpen(false)} />
+        </Box>
+      </Drawer>
     </AppBar>
   )
 }

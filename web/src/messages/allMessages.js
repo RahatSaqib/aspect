@@ -453,6 +453,7 @@ const messages = {
     isRequired: { id: 'pages.LocationSelector.isRequired', defaultMessage: '{entity} is required' },
     accountDetails: { id: 'pages.HorizontalAppBar.accountDetails', defaultMessage: 'Account Details' },
     signOut: { id: 'pages.HorizontalAppBar.signOut', defaultMessage: 'Sign Out' },
+    openNavigation: { id: 'pages.HorizontalAppBar.openNavigation', defaultMessage: 'Open navigation menu' },
     homeTitle: { id: 'header.link.home.title', defaultMessage: 'Home' },
     dashboardV2Title: { id: 'header.link.dashboardv2.title', defaultMessage: 'Dashboard' },
     taskListTitle: { id: 'header.link.taskList.title', defaultMessage: 'Task List' },

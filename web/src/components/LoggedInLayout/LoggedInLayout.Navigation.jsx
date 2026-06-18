@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, Menu } from '@mui/material'
+import { Collapse, Link, List, Menu } from '@mui/material'
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
 import { useIntl } from 'react-intl'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
@@ -13,12 +13,12 @@ import styles from './styles.module.css'
 const submenuSelected = (href, location) => location.pathname.startsWith(`${href}/`)
 const itemSelected = (href, location) => location.pathname === href
 
-const MainLink = ({ link }) => {
+const MainLink = ({ link, onNavigate }) => {
   const location = useLocation()
   const classes = `${styles.Link} ${itemSelected(link.href, location) ? styles.Link__active : ''}`
 
   return (
-    <RouterLink className={classes} to={link.href} key={link.href}>
+    <RouterLink className={classes} to={link.href} key={link.href} onClick={onNavigate}>
       <abbr>{link.label}</abbr>
     </RouterLink>
   )
@@ -81,6 +81,46 @@ const Submenu = ({ link, level, setParentAnchorEl }) => {
           </PermissionChecker>
         ))}
       </Menu>
+    </>
+  )
+}
+
+const VerticalSubmenu = ({ link, level, onNavigate }) => {
+  const location = useLocation()
+  const [open, setOpen] = useState(submenuSelected(link.href, location))
+
+  const ArrowIcon = className =>
+    open ? <MdKeyboardArrowUp className={className} /> : <MdKeyboardArrowDown className={className} />
+
+  const classes = `${styles.Link} ${level !== 0 ? styles.SubLink : ''} ${
+    submenuSelected(link.href, location) ? styles.Link__active : ''
+  }`
+
+  return (
+    <>
+      <Link
+        className={classes}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={() => setOpen(prev => !prev)}
+      >
+        <abbr>
+          {link.label} <ArrowIcon className={styles.Caret} />
+        </abbr>
+      </Link>
+      <Collapse in={open} unmountOnExit>
+        <List disablePadding className={styles.VerticalSubmenu}>
+          {link.submenu.map(sl => (
+            <PermissionChecker permissions={sl.perm} key={sl.href}>
+              {sl.submenu ? (
+                <VerticalSubmenu link={sl} level={level + 1} onNavigate={onNavigate} />
+              ) : (
+                <SubmenuLink link={sl} closeSubmenu={onNavigate} />
+              )}
+            </PermissionChecker>
+          ))}
+        </List>
+      </Collapse>
     </>
   )
 }
@@ -168,16 +208,25 @@ const getRawLinks = (f, user) => [
   },
 ]
 
-const NavigationMenu = () => {
+const NavigationMenu = ({ variant = 'horizontal', onNavigate }) => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const rawLinks = getRawLinks(formatMessage, user)
+  const isVertical = variant === 'vertical'
 
   return (
-    <nav className={`${styles.Navigation} ${styles.Navigation__horizontal}`}>
+    <nav className={`${styles.Navigation} ${isVertical ? styles.Navigation__vertical : styles.Navigation__horizontal}`}>
       {rawLinks.map(link => (
         <PermissionChecker permissions={link.perm} key={link.href}>
-          {link.submenu ? <Submenu link={link} level={0} /> : <MainLink link={link} />}
+          {link.submenu ? (
+            isVertical ? (
+              <VerticalSubmenu link={link} level={0} onNavigate={onNavigate} />
+            ) : (
+              <Submenu link={link} level={0} />
+            )
+          ) : (
+            <MainLink link={link} onNavigate={isVertical ? onNavigate : undefined} />
+          )}
         </PermissionChecker>
       ))}
     </nav>
