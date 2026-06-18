@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box } from '@mui/material'
 import Immutable from 'immutable'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
@@ -18,16 +18,8 @@ import { updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../..
 import isEditable from '../../../utils/selectors/isEditable'
 import { getReturnUrl } from '../../../utils/utils/browser'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
+import messages from './messages'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
-
-const messages = defineMessages({
-  profile: { id: 'pages.DeviceDetail.profile', defaultMessage: 'Profile' },
-  operation: { id: 'pages.DeviceDetail.operation', defaultMessage: 'Operation' },
-  alerts: { id: 'pages.DeviceDetail.alerts', defaultMessage: 'Alerts' },
-  edit: { id: 'pages.DeviceDetail.edit', defaultMessage: 'Edit' },
-  deviceNotFound: { id: 'pages.DeviceDetail.deviceNotFound', defaultMessage: 'Device not found.' },
-  undeployed: { id: 'pages.DeviceDetail.undeployed', defaultMessage: 'Undeployed' },
-})
 
 export const DeviceDetail = props => {
   const dispatch = useDispatch()
