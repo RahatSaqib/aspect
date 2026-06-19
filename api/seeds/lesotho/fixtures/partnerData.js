@@ -26,11 +26,14 @@ module.exports = {
     {
       deviceType: 'GeneXpert',
       data: {
-        EnableAspectSync: true,
-        SendResultsToAspect: true,
         AspectUploadExcludePatientId: false,
         AspectApiEndpoint: 'https://lesotho.aspect.id/api',
-        MigrateAspectApiKey: true,
+        ConnectSettingsAndCustomFieldsSource: 'ASPECT',
+        EnableAspectSync: true,
+        MigrateAspectApiKey: false,
+        SendResultsToAspect: true,
+        EnableGxAlertSync: false,
+        SendResultsToGxAlert: false,
       },
     },
   ],
