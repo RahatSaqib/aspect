@@ -19,7 +19,7 @@ const Header = () => {
   const intl = useIntl()
   const navigate = useNavigate()
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const isMobile = useMediaQuery(theme.breakpoints.down(1320))
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [version, setVersion] = useState({ fetched: false, v: '' })
 
