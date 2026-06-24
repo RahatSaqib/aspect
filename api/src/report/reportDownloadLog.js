@@ -82,7 +82,12 @@ async function finishReportDownloadLog(logId, { success, generationTimeMs, total
   }
 }
 
+function finishReportDownloadLogInBackground(logId, payload) {
+  finishReportDownloadLog(logId, payload).catch(() => null)
+}
+
 module.exports = {
   startReportDownloadLog,
   finishReportDownloadLog,
+  finishReportDownloadLogInBackground,
 }

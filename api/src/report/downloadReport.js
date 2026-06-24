@@ -4,7 +4,7 @@ const Path = require('path')
 const Boom = require('@hapi/boom')
 const { respondFile } = require('../shared/response')
 const { saveReportToFile } = require('./saveReportToFile')
-const { startReportDownloadLog, finishReportDownloadLog } = require('./reportDownloadLog')
+const { startReportDownloadLog, finishReportDownloadLogInBackground } = require('./reportDownloadLog')
 // const { queue } = require('../messageQueue')
 
 /**
@@ -36,7 +36,7 @@ module.exports = async function downloadReport(request, reply) {
     const generationTimeMs = Date.now() - generationStart
     const { size: fileSizeBytes } = await fs.promises.stat(fullPath)
 
-    void finishReportDownloadLog(logId, {
+    finishReportDownloadLogInBackground(logId, {
       success: 1,
       generationTimeMs,
       totalTimeMs: Date.now() - handlerStart,
@@ -56,7 +56,7 @@ module.exports = async function downloadReport(request, reply) {
     })
   } catch (error) {
     const errorMessage = error?.message || String(error)
-    void finishReportDownloadLog(logId, {
+    finishReportDownloadLogInBackground(logId, {
       success: 0,
       generationTimeMs: Date.now() - generationStart,
       totalTimeMs: Date.now() - handlerStart,

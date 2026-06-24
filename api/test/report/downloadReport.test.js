@@ -33,7 +33,7 @@ describe('downloadReport', () => {
       './saveReportToFile': { saveReportToFile: saveReportToFileStub },
       './reportDownloadLog': {
         startReportDownloadLog: startStub,
-        finishReportDownloadLog: finishStub,
+        finishReportDownloadLogInBackground: finishStub,
       },
       '../shared/response': { respondFile: respondFileStub },
     })
@@ -79,7 +79,7 @@ describe('downloadReport', () => {
       './saveReportToFile': { saveReportToFile: saveReportToFileStub },
       './reportDownloadLog': {
         startReportDownloadLog: startStub,
-        finishReportDownloadLog: finishStub,
+        finishReportDownloadLogInBackground: finishStub,
       },
       '../shared/response': { respondFile: sinon.stub() },
     })
@@ -127,7 +127,7 @@ describe('downloadReport', () => {
       './saveReportToFile': { saveReportToFile: saveReportToFileStub },
       './reportDownloadLog': {
         startReportDownloadLog: startStub,
-        finishReportDownloadLog: finishStub,
+        finishReportDownloadLogInBackground: finishStub,
       },
       '../shared/response': { respondFile: respondFileStub },
     })

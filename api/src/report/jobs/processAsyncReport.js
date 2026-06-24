@@ -3,7 +3,7 @@ const { addHours } = require('date-fns')
 const { writeDataToFile } = require('../../shared/io')
 const { updateAsyncReport } = require('../../shared/report')
 const { generateReport } = require('../serviceReports')
-const { startReportDownloadLog, finishReportDownloadLog } = require('../reportDownloadLog')
+const { startReportDownloadLog, finishReportDownloadLogInBackground } = require('../reportDownloadLog')
 
 const logger = require('../../shared/logger')
 
@@ -46,7 +46,7 @@ const processAsyncReport = async reportPayload => {
       expiresOn,
     })
 
-    void finishReportDownloadLog(logId, {
+    finishReportDownloadLogInBackground(logId, {
       success: 1,
       generationTimeMs: generationTimeInMsec,
       fileSizeBytes,
@@ -59,7 +59,7 @@ const processAsyncReport = async reportPayload => {
       statusId: await asyncReportStatusToId('error'),
       errorMessage: JSON.stringify(err),
     })
-    void finishReportDownloadLog(logId, {
+    finishReportDownloadLogInBackground(logId, {
       success: 0,
       generationTimeMs: Date.now() - startTime,
       errorMessage: err?.message || JSON.stringify(err),

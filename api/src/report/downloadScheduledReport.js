@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const config = require('../config')
 const { readDataFromFile } = require('../shared/io')
 const { respondFile } = require('../shared/response')
-const { startReportDownloadLog, finishReportDownloadLog } = require('./reportDownloadLog')
+const { startReportDownloadLog, finishReportDownloadLogInBackground } = require('./reportDownloadLog')
 
 /**
  * This method allows to download a scheduled report file.
@@ -34,7 +34,7 @@ module.exports = async function downloadScheduledReport(request, reply) {
     const { size: fileSizeBytes } = await fs.promises.stat(filePath)
     const dataBuffer = await readDataFromFile(filePath)
 
-    void finishReportDownloadLog(logId, {
+    finishReportDownloadLogInBackground(logId, {
       success: 1,
       generationTimeMs: 0,
       totalTimeMs: Date.now() - handlerStart,
@@ -48,7 +48,7 @@ module.exports = async function downloadScheduledReport(request, reply) {
       streamResponse: true,
     })
   } catch (error) {
-    void finishReportDownloadLog(logId, {
+    finishReportDownloadLogInBackground(logId, {
       success: 0,
       generationTimeMs: Date.now() - handlerStart,
       totalTimeMs: Date.now() - handlerStart,
