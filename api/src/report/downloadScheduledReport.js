@@ -28,13 +28,13 @@ module.exports = async function downloadScheduledReport(request, reply) {
       format: tokenPayload.format ?? (fileName?.endsWith('.csv') ? 'csv' : 'xlsx'),
       query: tokenPayload.filters ?? {},
       source: 'scheduled',
-    })
+    }).catch(() => null)
 
     const filePath = `/tmp/${fileName}`
     const { size: fileSizeBytes } = await fs.promises.stat(filePath)
     const dataBuffer = await readDataFromFile(filePath)
 
-    await finishReportDownloadLog(logId, {
+    void finishReportDownloadLog(logId, {
       success: 1,
       generationTimeMs: 0,
       totalTimeMs: Date.now() - handlerStart,
@@ -48,14 +48,12 @@ module.exports = async function downloadScheduledReport(request, reply) {
       streamResponse: true,
     })
   } catch (error) {
-    if (logId) {
-      await finishReportDownloadLog(logId, {
-        success: 0,
-        generationTimeMs: Date.now() - handlerStart,
-        totalTimeMs: Date.now() - handlerStart,
-        errorMessage: error.message,
-      })
-    }
+    void finishReportDownloadLog(logId, {
+      success: 0,
+      generationTimeMs: Date.now() - handlerStart,
+      totalTimeMs: Date.now() - handlerStart,
+      errorMessage: error.message,
+    })
 
     if (error.name === 'JsonWebTokenError') {
       return reply.response({ error: 'Invalid token' }).code(401)

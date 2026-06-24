@@ -5,18 +5,35 @@ const logger = require('../shared/logger')
 const MAX_ERROR_MESSAGE_LENGTH = 2048
 
 function getTimeSpanDaysFromQuery(query = {}) {
-  const { minDate, maxDate } = query
-  if (!minDate || !maxDate) {
+  try {
+    const { minDate, maxDate } = query
+    if (!minDate || !maxDate) {
+      return null
+    }
+
+    const startDate = new Date(minDate)
+    const endDate = new Date(maxDate)
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+      return null
+    }
+
+    return daysBetweenDates(startDate, endDate)
+  } catch (err) {
+    logger.warning('Failed to compute timeSpanDays for ReportDownloadLog', {
+      err,
+      reLabel: 'aspect:report:downloadLog',
+    })
     return null
   }
+}
 
-  const startDate = new Date(minDate)
-  const endDate = new Date(maxDate)
-  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
-    return null
+function stringifyQuery(query) {
+  try {
+    return JSON.stringify(query ?? {})
+  } catch (err) {
+    logger.warning('Failed to serialize query for ReportDownloadLog', { err, reLabel: 'aspect:report:downloadLog' })
+    return '{}'
   }
-
-  return daysBetweenDates(startDate, endDate)
 }
 
 async function startReportDownloadLog({ userName, reportExternalId, format, query, source, asyncReportId }) {
@@ -25,7 +42,7 @@ async function startReportDownloadLog({ userName, reportExternalId, format, quer
       userName: userName ?? null,
       reportExternalId: reportExternalId ?? null,
       format,
-      query: JSON.stringify(query ?? {}),
+      query: stringifyQuery(query),
       timeSpanDays: getTimeSpanDaysFromQuery(query),
       source,
       asyncReportId: asyncReportId ?? null,

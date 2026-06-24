@@ -24,7 +24,7 @@ module.exports = async function downloadReport(request, reply) {
     format: query.format || 'xlsx',
     query,
     source: 'sync',
-  })
+  }).catch(() => null)
 
   const generationStart = Date.now()
 
@@ -36,7 +36,7 @@ module.exports = async function downloadReport(request, reply) {
     const generationTimeMs = Date.now() - generationStart
     const { size: fileSizeBytes } = await fs.promises.stat(fullPath)
 
-    await finishReportDownloadLog(logId, {
+    void finishReportDownloadLog(logId, {
       success: 1,
       generationTimeMs,
       totalTimeMs: Date.now() - handlerStart,
@@ -56,7 +56,7 @@ module.exports = async function downloadReport(request, reply) {
     })
   } catch (error) {
     const errorMessage = error?.message || String(error)
-    await finishReportDownloadLog(logId, {
+    void finishReportDownloadLog(logId, {
       success: 0,
       generationTimeMs: Date.now() - generationStart,
       totalTimeMs: Date.now() - handlerStart,

@@ -108,4 +108,41 @@ describe('downloadReport', () => {
       })
     )
   })
+
+  it('still returns the report when logging fails', async () => {
+    const startStub = sinon.stub().rejects(new Error('log insert failed'))
+    const finishStub = sinon.stub().rejects(new Error('log update failed'))
+    const testContent = Buffer.from('report content')
+    await fs.promises.writeFile(testFilePath, testContent)
+
+    const saveReportToFileStub = sinon.stub().resolves({
+      fileName: 'report-download-log-test.xlsx',
+      extension: 'xlsx',
+      promise: Promise.resolve(testFilePath),
+    })
+
+    const respondFileStub = sinon.stub().returns('file-response')
+
+    const downloadReport = proxyquire('../../src/report/downloadReport', {
+      './saveReportToFile': { saveReportToFile: saveReportToFileStub },
+      './reportDownloadLog': {
+        startReportDownloadLog: startStub,
+        finishReportDownloadLog: finishStub,
+      },
+      '../shared/response': { respondFile: respondFileStub },
+    })
+
+    const result = await downloadReport(
+      {
+        auth: { credentials: { name: 'admin' } },
+        query: { format: 'xlsx' },
+        params: { externalId: 'all_results' },
+      },
+      {}
+    )
+
+    assert.equal(result, 'file-response')
+    sinon.assert.calledOnce(saveReportToFileStub)
+    sinon.assert.calledOnce(respondFileStub)
+  })
 })

@@ -19,7 +19,7 @@ const processAsyncReport = async reportPayload => {
     query,
     source: 'async_generate',
     asyncReportId,
-  })
+  }).catch(() => null)
 
   const startTime = Date.now()
 
@@ -46,7 +46,7 @@ const processAsyncReport = async reportPayload => {
       expiresOn,
     })
 
-    await finishReportDownloadLog(logId, {
+    void finishReportDownloadLog(logId, {
       success: 1,
       generationTimeMs: generationTimeInMsec,
       fileSizeBytes,
@@ -59,7 +59,7 @@ const processAsyncReport = async reportPayload => {
       statusId: await asyncReportStatusToId('error'),
       errorMessage: JSON.stringify(err),
     })
-    await finishReportDownloadLog(logId, {
+    void finishReportDownloadLog(logId, {
       success: 0,
       generationTimeMs: Date.now() - startTime,
       errorMessage: err?.message || JSON.stringify(err),

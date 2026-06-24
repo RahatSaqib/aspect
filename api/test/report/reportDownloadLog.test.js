@@ -118,4 +118,12 @@ describe('reportDownloadLog', () => {
     await finishReportDownloadLog(null, { success: 1 })
     sinon.assert.notCalled(updateStub)
   })
+
+  it('does not throw when update fails', async () => {
+    updateStub.rejects(new Error('db down'))
+
+    await finishReportDownloadLog(42, { success: 1 })
+
+    sinon.assert.calledOnce(loggerWarningStub)
+  })
 })
