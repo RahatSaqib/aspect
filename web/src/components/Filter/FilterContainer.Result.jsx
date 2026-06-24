@@ -30,7 +30,7 @@ const ResultFilter = () => {
   return (
     <FilterContainer state={state} setState={setState} blocked={['minDate', 'maxDate']}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
@@ -38,7 +38,7 @@ const ResultFilter = () => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
@@ -48,7 +48,7 @@ const ResultFilter = () => {
         </Grid>
         {allowed(['assay:view']) ? (
           <>
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <AssayMultiSelect
                 valueBy="id"
                 value={state?.assayId ?? []}
@@ -63,7 +63,7 @@ const ResultFilter = () => {
               />
             </Grid>
 
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <ResultCategoryGroupSelect
                 valueBy="externalId"
                 label={formatMessage(messages.resultGroup)}
@@ -74,21 +74,21 @@ const ResultFilter = () => {
             </Grid>
           </>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.errorCode)}
             value={state.errorCode || ''}
             onChange={e => setState({ ...state, errorCode: e.target.value ? e.target.value : null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.patientOrResearchId)}
             value={state.patientOrResearchId || ''}
             onChange={e => setState({ ...state, patientOrResearchId: e.target.value ? e.target.value : null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.sampleId)}
             value={state.sampleId || ''}
@@ -96,7 +96,7 @@ const ResultFilter = () => {
           />
         </Grid>
         {allowed(['device']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               label={formatMessage(messages.deviceName)}
               value={state.deviceName || ''}
@@ -106,7 +106,7 @@ const ResultFilter = () => {
         ) : null}
         {allowed(['site:view']) ? (
           <>
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <SiteAutoCompleteField
                 name="siteName"
                 value={state.siteName || ''}
@@ -118,7 +118,7 @@ const ResultFilter = () => {
                 width="100%"
               />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <SiteAutoCompleteField
                 name="reportableSiteName"
                 value={state.reportableSiteName || ''}
@@ -132,7 +132,7 @@ const ResultFilter = () => {
             </Grid>
           </>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <SiteAutoCompleteField
             name="sampleOriginSite"
             value={state.sampleOriginSite || ''}
@@ -144,14 +144,14 @@ const ResultFilter = () => {
             width="100%"
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <DeviceTypeSelect
             label={formatMessage(messages.deviceType)}
             value={state.deviceType}
             onChange={deviceType => setState({ ...state, deviceType })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             noAny
             label={formatMessage(messages.date)}
@@ -160,24 +160,24 @@ const ResultFilter = () => {
             onChange={({ minDate, maxDate }) => setState({ ...state, minDate, maxDate })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <ResultTreatmentStatusSelect
             label={formatMessage(messages.treatmentStatus)}
             value={state.treatmentStatus}
             onChange={e => setState({ ...state, treatmentStatus: e.target.value })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <DisplayResultSelect
             label={formatMessage(messages.displayResult)}
             value={state.displayResult}
             onChange={e => setState({ ...state, displayResult: e.target.value })}
           />
         </Grid>
-        <Grid item xs={3} />
+        <Grid item md={3} sx={{ display: { xs: 'none', md: 'block' } }} />
 
         {allowed(['site:view']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -189,7 +189,7 @@ const ResultFilter = () => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <FormControlLabel
             control={
               <Checkbox
@@ -200,7 +200,7 @@ const ResultFilter = () => {
             label={formatMessage(messages.onlyDownloadedByReporter)}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <FormControlLabel
             control={
               <Checkbox
@@ -211,7 +211,7 @@ const ResultFilter = () => {
             label={formatMessage(messages.onlyTreatmentRequired)}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <FormControlLabel
             control={
               <Checkbox
@@ -222,7 +222,7 @@ const ResultFilter = () => {
             label={formatMessage(messages.showDecommissionedDevices)}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6} md={4}>
           <FormControlLabel
             control={
               <Checkbox

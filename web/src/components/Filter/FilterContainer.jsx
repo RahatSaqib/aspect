@@ -12,6 +12,8 @@ const cardContentStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'flex-start',
+  flexWrap: 'wrap',
+  gap: 1,
   p: '16px !important',
 }
 

@@ -32,7 +32,7 @@ const DeviceListFilter = () => {
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
@@ -40,7 +40,7 @@ const DeviceListFilter = () => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
@@ -48,7 +48,7 @@ const DeviceListFilter = () => {
             stateId={state.stateId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <AssaySelect
             label={formatMessage(messages.assay)}
             value={state.assayId}
@@ -59,7 +59,7 @@ const DeviceListFilter = () => {
           />
         </Grid>
         {allowed(['device']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               label={formatMessage(messages.deviceName)}
               value={state.deviceName || ''}
@@ -68,7 +68,7 @@ const DeviceListFilter = () => {
           </Grid>
         ) : null}
         {allowed(['site:view']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <SiteAutoCompleteField
               name="siteName"
               value={state.siteName || ''}
@@ -81,7 +81,7 @@ const DeviceListFilter = () => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <DeviceApprovalSelect
             label={formatMessage(messages.deviceApproval)}
             value={state.deviceApprovalExternalId || []}
@@ -89,7 +89,7 @@ const DeviceListFilter = () => {
             multiple
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <ConnectorStatusSelect
             label={formatMessage(messages.connectorStatus)}
             value={state.connectorStatus}
@@ -98,14 +98,14 @@ const DeviceListFilter = () => {
             }}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <DeviceStatusSelect
             label={formatMessage(messages.deviceStatus)}
             value={state.deviceMaintenanceStatusId}
             onChange={deviceMaintenanceStatusId => setState({ ...state, deviceMaintenanceStatusId })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <DeviceTypeSelect
             label={formatMessage(messages.deviceType)}
             value={state.deviceType}
@@ -113,7 +113,7 @@ const DeviceListFilter = () => {
           />
         </Grid>
         {state.deviceType === CONSTS.GENEXPERT_EXTERNAL_ID ? (
-          <Grid item display="flex" gap={1} alignItems="center" flexDirection="row" xs={3}>
+          <Grid item display="flex" gap={1} alignItems="center" flexDirection="row" xs={12} sm={6} md={3}>
             <CepheidModulesSelect
               sx={{ flex: 1 }}
               valueBy="value"
@@ -124,7 +124,7 @@ const DeviceListFilter = () => {
             <AspectTooltip showHelpIcon title={formatMessage(messages.geneXpertTypeTooltip)} />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <DeviceMaintenanceStatusSelect
             label={formatMessage(messages.deviceMaintenanceStatus)}
             value={state.deviceMaintenanceStatusId || []}

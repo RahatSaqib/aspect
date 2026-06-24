@@ -27,7 +27,7 @@ const InventoryLogFilter = props => {
       disabled={disabled}
     >
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
@@ -35,7 +35,7 @@ const InventoryLogFilter = props => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
@@ -43,7 +43,7 @@ const InventoryLogFilter = props => {
             stateId={state.stateId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <ConsumableSelect
             valueBy="id"
             label={formatMessage(messages.consumable)}
@@ -52,7 +52,7 @@ const InventoryLogFilter = props => {
           />
         </Grid>
         {allowed(['site:view']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <SiteAutoCompleteField
               name="siteName"
               value={state.siteName || ''}
@@ -65,7 +65,7 @@ const InventoryLogFilter = props => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}
@@ -74,7 +74,7 @@ const InventoryLogFilter = props => {
           />
         </Grid>
         {requireExpirationDate ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <PeriodSelector
               label={formatMessage(messages.expirationDate)}
               minDate={state.minExpirationDate || null}
@@ -89,7 +89,7 @@ const InventoryLogFilter = props => {
           </Grid>
         ) : null}
         {requireLotNumber ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               label={formatMessage(messages.lotNumber)}
               value={state.lotNumber || ''}
@@ -97,7 +97,7 @@ const InventoryLogFilter = props => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <FormControlLabel
             control={
               <Checkbox

@@ -20,6 +20,7 @@ Owns **`web/`** implementation and verification.
 
 1. Read Architecture **Contract** and API behavior (or stub until API exists).
 2. If permissions, routes, or menus change → `ai-context/skills/authentication-authorization/SKILL.md`.
+3. If the task involves mobile/responsive UI (hamburger menu, breakpoints, drawers) → `ai-context/skills/web/responsive-design/SKILL.md`.
 
 ## Workflow
 

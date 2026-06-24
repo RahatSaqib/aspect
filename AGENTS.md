@@ -18,6 +18,7 @@ When working in these areas, consult the matching skill first:
 - Authentication, authorization, permissions, menus, and permission-gated UI: `ai-context/skills/authentication-authorization/SKILL.md`
 - Reports: `ai-context/skills/api/reports/SKILL.md`
 - True Connect (mobile API, FormData, sites assigned): `ai-context/skills/api/trueconnect-support/SKILL.md`
+- Responsive / mobile-friendly UI (hamburger menu, breakpoints, drawers): `ai-context/skills/web/responsive-design/SKILL.md`
 
 ## Project Overview
 
