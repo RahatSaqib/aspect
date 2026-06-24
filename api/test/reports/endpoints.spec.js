@@ -224,6 +224,7 @@ describe('API Reports Endpoint', () => {
           minDate: '2024-01-01',
           maxDate: '2024-01-31',
         })
+        assert.equal(logEntry.timeSpanDays, 30)
       })
     })
 

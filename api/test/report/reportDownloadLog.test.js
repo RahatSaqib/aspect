@@ -48,8 +48,20 @@ describe('reportDownloadLog', () => {
         query: JSON.stringify(query),
         source: 'sync',
         success: null,
+        timeSpanDays: 30,
       })
     )
+  })
+
+  it('sets timeSpanDays to null when the query has no date range', async () => {
+    await startReportDownloadLog({
+      reportExternalId: 'all_results',
+      format: 'xlsx',
+      query: {},
+      source: 'sync',
+    })
+
+    sinon.assert.calledWith(insertStub, sinon.match({ timeSpanDays: null }))
   })
 
   it('returns null and logs a warning when insert fails', async () => {

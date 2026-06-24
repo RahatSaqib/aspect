@@ -1,7 +1,23 @@
 const { knex } = require('../db')
+const { daysBetweenDates } = require('../shared/date')
 const logger = require('../shared/logger')
 
 const MAX_ERROR_MESSAGE_LENGTH = 2048
+
+function getTimeSpanDaysFromQuery(query = {}) {
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    return null
+  }
+
+  const startDate = new Date(minDate)
+  const endDate = new Date(maxDate)
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    return null
+  }
+
+  return daysBetweenDates(startDate, endDate)
+}
 
 async function startReportDownloadLog({ userName, reportExternalId, format, query, source, asyncReportId }) {
   try {
@@ -10,6 +26,7 @@ async function startReportDownloadLog({ userName, reportExternalId, format, quer
       reportExternalId: reportExternalId ?? null,
       format,
       query: JSON.stringify(query ?? {}),
+      timeSpanDays: getTimeSpanDaysFromQuery(query),
       source,
       asyncReportId: asyncReportId ?? null,
       success: null,
