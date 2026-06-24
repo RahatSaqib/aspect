@@ -788,7 +788,6 @@ async function getUnusedModulesReportData(dataConstraints, query) {
     .select([
       'd.name as deploymentName',
       'd.moduleBayCapacity as modulesAvailable',
-      'd.lastInstrumentSerial as instrumentSerial',
       'st.name as State',
       'lg.name as Lga',
     ])
