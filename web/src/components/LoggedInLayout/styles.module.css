@@ -27,6 +27,32 @@
   display: inline-block;
 }
 
+.Drawer {
+  width: 280px;
+}
+
+.Navigation__vertical {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.Navigation__vertical .Link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+.Navigation__vertical .VerticalSubmenu {
+  padding-left: 16px;
+}
+
+.Navigation__vertical .VerticalSubmenu .Link {
+  min-width: 0;
+}
+
 .Caret {
   position: relative;
   top: 2px;
