@@ -12,6 +12,7 @@ async function up(knex) {
     table.integer('generationTimeMs').unsigned().nullable()
     table.integer('totalTimeMs').unsigned().nullable()
     table.integer('fileSizeBytes').unsigned().nullable()
+    table.integer('timeSpanDays').unsigned().nullable()
     table.string('errorMessage', 2048).nullable()
     table.integer('asyncReportId').unsigned().nullable().index().references('id').inTable('AsyncReport')
     table.dateTime('createdOn').notNullable().index()
