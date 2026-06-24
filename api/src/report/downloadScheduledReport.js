@@ -1,7 +1,9 @@
+const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const config = require('../config')
 const { readDataFromFile } = require('../shared/io')
 const { respondFile } = require('../shared/response')
+const { startReportDownloadLog, finishReportDownloadLog } = require('./reportDownloadLog')
 
 /**
  * This method allows to download a scheduled report file.
@@ -12,13 +14,32 @@ const { respondFile } = require('../shared/response')
 module.exports = async function downloadScheduledReport(request, reply) {
   const { query } = request
   const { token } = query
+  const handlerStart = Date.now()
 
   let fileName = null
+  let logId = null
 
   try {
-    ;({ report_filename: fileName } = jwt.verify(token, config.secret))
+    const tokenPayload = jwt.verify(token, config.secret)
+    ;({ report_filename: fileName } = tokenPayload)
 
-    const dataBuffer = await readDataFromFile(`/tmp/${fileName}`)
+    logId = await startReportDownloadLog({
+      reportExternalId: tokenPayload.reportExternalId ?? null,
+      format: tokenPayload.format ?? (fileName?.endsWith('.csv') ? 'csv' : 'xlsx'),
+      query: tokenPayload.filters ?? {},
+      source: 'scheduled',
+    })
+
+    const filePath = `/tmp/${fileName}`
+    const { size: fileSizeBytes } = await fs.promises.stat(filePath)
+    const dataBuffer = await readDataFromFile(filePath)
+
+    await finishReportDownloadLog(logId, {
+      success: 1,
+      generationTimeMs: 0,
+      totalTimeMs: Date.now() - handlerStart,
+      fileSizeBytes,
+    })
 
     return respondFile({
       reply,
@@ -27,6 +48,15 @@ module.exports = async function downloadScheduledReport(request, reply) {
       streamResponse: true,
     })
   } catch (error) {
+    if (logId) {
+      await finishReportDownloadLog(logId, {
+        success: 0,
+        generationTimeMs: Date.now() - handlerStart,
+        totalTimeMs: Date.now() - handlerStart,
+        errorMessage: error.message,
+      })
+    }
+
     if (error.name === 'JsonWebTokenError') {
       return reply.response({ error: 'Invalid token' }).code(401)
     }

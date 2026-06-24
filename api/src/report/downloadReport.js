@@ -4,6 +4,7 @@ const Path = require('path')
 const Boom = require('@hapi/boom')
 const { respondFile } = require('../shared/response')
 const { saveReportToFile } = require('./saveReportToFile')
+const { startReportDownloadLog, finishReportDownloadLog } = require('./reportDownloadLog')
 // const { queue } = require('../messageQueue')
 
 /**
@@ -15,13 +16,33 @@ const { saveReportToFile } = require('./saveReportToFile')
 module.exports = async function downloadReport(request, reply) {
   const { auth, query, params } = request
   const { externalId } = params
+  const handlerStart = Date.now()
+
+  const logId = await startReportDownloadLog({
+    userName: auth.credentials?.name,
+    reportExternalId: externalId,
+    format: query.format || 'xlsx',
+    query,
+    source: 'sync',
+  })
+
+  const generationStart = Date.now()
 
   try {
-    // queue().add('asyncReports', { auth, query, externalId })
     const dataBuffer = new Stream.PassThrough()
     const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true)
 
     const fullPath = await promise
+    const generationTimeMs = Date.now() - generationStart
+    const { size: fileSizeBytes } = await fs.promises.stat(fullPath)
+
+    await finishReportDownloadLog(logId, {
+      success: 1,
+      generationTimeMs,
+      totalTimeMs: Date.now() - handlerStart,
+      fileSizeBytes,
+    })
+
     const path = Path.join(fullPath)
     const stream = fs.createReadStream(path)
     stream.pipe(dataBuffer)
@@ -34,6 +55,13 @@ module.exports = async function downloadReport(request, reply) {
       streamResponse: true,
     })
   } catch (error) {
+    const errorMessage = error?.message || String(error)
+    await finishReportDownloadLog(logId, {
+      success: 0,
+      generationTimeMs: Date.now() - generationStart,
+      totalTimeMs: Date.now() - handlerStart,
+      errorMessage,
+    })
     throw Boom.badRequest(error)
   }
 }
