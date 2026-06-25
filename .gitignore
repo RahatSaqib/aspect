@@ -5,7 +5,7 @@ node_modules/
 # IDE Generated Files
 .idea/
 .cursor/
-.claude/CLAUDE.md
+
 
 # Runtime data
 pids
