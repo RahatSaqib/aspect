@@ -140,7 +140,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'd.serial as deviceSerial',
         knex.raw(
           `(SELECT GROUP_CONCAT(i.serial ORDER BY i.active DESC, i.serial SEPARATOR ', ')
-            FROM Instrument i WHERE i.deviceId = d.id) as instrumentSerials`
+            FROM Instrument i WHERE i.deviceId = d.id and i.active = 1) as instrumentSerials`
         ),
         'd.stickerInstrumentSerial as deviceStickerInstrumentSerial',
         'dt.externalId as deviceTypeExternalId',
