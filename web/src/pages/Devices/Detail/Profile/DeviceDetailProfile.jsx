@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
-import { Button, Card, IconButton, Tooltip } from '@mui/material'
+import { Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -13,6 +13,7 @@ import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import ColoredNumber from '../../../../components/shared/ColoredNumber'
 import Summary from '../../../../components/Summary'
 import { sanitizeFiltersStringBy } from '../../../../components/utils'
+import usePermissions from '../../../../hooks/person/usePermissions'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../../hooks/useFilterValues'
@@ -89,11 +90,9 @@ const enhance = compose(
     onExportDeviceLogsClick:
       ({ device, location, exportDeviceLogs }) =>
       () => {
-        const { sanitized, value: filtersParams } = filtersFromLocation(location)
-        if (!sanitized) {
-          filtersParams.set('deviceId', device.get('id'))
-          exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
-        }
+        const { value: filtersParams } = filtersFromLocation(location)
+        filtersParams.set('deviceId', device.get('id'))
+        exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
       },
     onShowCalibrationDialog:
       ({ showDialog, device }) =>
@@ -134,6 +133,13 @@ const enhance = compose(
   })
 )
 
+const SectionDivider = ({ label }) => (
+  <div className={styles.sectionDivider}>
+    <span className={styles.sectionDivider__label}>{label}</span>
+    <span className={styles.sectionDivider__line} />
+  </div>
+)
+
 const DeviceDetailProfile = ({
   navigate,
   location,
@@ -159,6 +165,9 @@ const DeviceDetailProfile = ({
 }) => {
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
+  const { checkPermission } = usePermissions()
+  const isGeneXpertDevice = device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID
+  const canViewDakList = isGeneXpertDevice && checkPermission(['browse', '+deviceApiKey'])
   const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
   const {
     culture,
@@ -194,8 +203,30 @@ const DeviceDetailProfile = ({
       <section className={`${styles.Section} ${styles.Section__first}`}>
         <Card className={styles.Section__Content}>
           <div className={styles.summaryGrid}>
+            {/* ── Overview ── */}
+            <SectionDivider label={formatMessage(messages.sectionOverview)} />
             <Summary
-              title={formatMessage(messages.deviceType)}
+              title={formatMessage(messages.site)}
+              description={device.get('siteName') ? device.get('siteName') : formatMessage(messages.undeployed)}
+              to={
+                device.get('siteName') && device.get('siteId')
+                  ? () => navigate(`/browse/site/${device.get('siteId')}`)
+                  : undefined
+              }
+            />
+            <Summary
+              title={
+                <span>
+                  {formatMessage(messages.deviceType)}
+                  {!disabled && (
+                    <Tooltip title={formatMessage(messages.deviceLogsTooltip)} placement="right">
+                      <button type="button" className={styles.fieldAction} onClick={onExportDeviceLogsClick}>
+                        ({formatMessage(messages.deviceLogs)})
+                      </button>
+                    </Tooltip>
+                  )}
+                </span>
+              }
               description={device.getIn(['deviceType', 'name'])}
               to={() => {
                 addFilter(
@@ -204,18 +235,39 @@ const DeviceDetailProfile = ({
                 )
                 navigate('/browse/device/list')
               }}
-              action={
-                <Fragment>
-                  <Tooltip title={formatMessage(messages.deviceLogsTooltip)} placement="right">
-                    <Button variant="contained" color="success" onClick={onExportDeviceLogsClick} disabled={disabled}>
-                      {formatMessage(messages.deviceLogs)}
-                    </Button>
-                  </Tooltip>
-                </Fragment>
-              }
             />
-            <Summary title={formatMessage(messages.shortName)} description={device.get('shortName')} />
+            <Summary
+              title={formatMessage(messages.approvalStatus)}
+              description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
+            />
+            <Summary
+              title={formatMessage(messages.connectivity)}
+              description={formatMessage(messages.lastSeen, {
+                lastSeen: formatRelative(device.get('lastPingOn'), formatRelativeTime),
+              })}
+            />
 
+            {/* ── Capacity & Modules (GeneXpert only) ── */}
+            {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
+              <>
+                <SectionDivider label={formatMessage(messages.sectionCapacityModules)} />
+                <Summary
+                  title={formatMessage(messages.gx6cModulesCount)}
+                  description={device.get('gx6cModulesCount') ?? '0'}
+                />
+                <Summary
+                  title={formatMessage(messages.gx10cModulesCount)}
+                  description={device.get('gx10cModulesCount') ?? '0'}
+                />
+                <Summary
+                  title={formatMessage(messages.moduleBayCapacity)}
+                  description={device.get('moduleBayCapacity')}
+                />
+              </>
+            )}
+
+            {/* ── Maintenance ── */}
+            <SectionDivider label={formatMessage(messages.sectionMaintenance)} />
             <Summary
               title={
                 isMaintenanceStatusChangeDisabled ? (
@@ -225,10 +277,22 @@ const DeviceDetailProfile = ({
                     showHelpIcon
                     title={formatMessage(messages.deviceStatusChangeDisabledTooltip)}
                   >
-                    {formatMessage(messages.maintenance)}
+                    <span>
+                      {formatMessage(messages.maintenance)}
+                      <button type="button" className={styles.fieldAction} disabled>
+                        ({formatMessage(messages.buttonChange)})
+                      </button>
+                    </span>
                   </AspectTooltip>
                 ) : (
-                  formatMessage(messages.maintenance)
+                  <span>
+                    {formatMessage(messages.maintenance)}
+                    {!disabled && (
+                      <button type="button" className={styles.fieldAction} onClick={onShowMaintenanceDialog}>
+                        ({formatMessage(messages.buttonChange)})
+                      </button>
+                    )}
+                  </span>
                 )
               }
               description={
@@ -243,19 +307,18 @@ const DeviceDetailProfile = ({
                   )}
                 </Fragment>
               }
-              action={
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={onShowMaintenanceDialog}
-                  disabled={isMaintenanceStatusChangeDisabled}
-                >
-                  {formatMessage(messages.buttonChange)}
-                </Button>
-              }
             />
             <Summary
-              title={formatMessage(messages.calibration)}
+              title={
+                <span>
+                  {formatMessage(messages.calibration)}
+                  {!disabled && (
+                    <button type="button" className={styles.fieldAction} onClick={onShowCalibrationDialog}>
+                      ({formatMessage(messages.buttonAddRecord)})
+                    </button>
+                  )}
+                </span>
+              }
               description={
                 <Fragment>
                   {formatMaintenanceDate(device.get('calibrationDate'))}
@@ -268,29 +331,18 @@ const DeviceDetailProfile = ({
                   )}
                 </Fragment>
               }
-              action={
-                <Button variant="contained" color="success" onClick={onShowCalibrationDialog} disabled={disabled}>
-                  {formatMessage(messages.buttonAddRecord)}
-                </Button>
+            />
+            <Summary
+              title={
+                <span>
+                  {formatMessage(messages.warranty)}
+                  {!disabled && (
+                    <button type="button" className={styles.fieldAction} onClick={onShowWarrantyDialog}>
+                      ({formatMessage(messages.buttonUpdate)})
+                    </button>
+                  )}
+                </span>
               }
-            />
-            <Summary
-              title={formatMessage(messages.site)}
-              description={device.get('siteName') ? device.get('siteName') : formatMessage(messages.undeployed)}
-              to={
-                device.get('siteName') && device.get('siteId')
-                  ? () => navigate(`/browse/site/${device.get('siteId')}`)
-                  : undefined
-              }
-            />
-            <Summary
-              title={formatMessage(messages.connectivity)}
-              description={formatMessage(messages.lastSeen, {
-                lastSeen: formatRelative(device.get('lastPingOn'), formatRelativeTime),
-              })}
-            />
-            <Summary
-              title={formatMessage(messages.warranty)}
               description={
                 <Fragment>
                   {formatMaintenanceDate(device.get('warrantyDueDate'))}
@@ -303,29 +355,14 @@ const DeviceDetailProfile = ({
                   )}
                 </Fragment>
               }
-              action={
-                <Button variant="contained" color="success" onClick={onShowWarrantyDialog} disabled={disabled}>
-                  {formatMessage(messages.buttonUpdate)}
-                </Button>
-              }
             />
-            <Summary title={formatMessage(messages.serial)} description={device.get('serial')} />
-            <Summary title={formatMessage(messages.hostId)} description={device.get('hostId')} />
-            <Summary
-              title={formatMessage(messages.stickerInstrumentSerial)}
-              description={device.get('stickerInstrumentSerial')}
-            />
-            <Summary title={formatMessage(messages.instrumentModel)} description={device.get('instrumentModel')} />
-            <Summary title={formatMessage(messages.softwareType)} description={device.get('softwareType')} />
             <Summary
               title={formatMessage(messages.isDaisyChained)}
               description={device.get('isDaisyChained') ? 'True' : 'False'}
             />
-            <Summary
-              title={formatMessage(messages.createdOn)}
-              description={formatRelative(device.get('createdOn'), formatRelativeTime)}
-            />
 
+            {/* ── Usage ── */}
+            <SectionDivider label={formatMessage(messages.sectionUsage)} />
             {utilizationRateThisMonth !== null && (
               <Summary
                 title={
@@ -391,39 +428,48 @@ const DeviceDetailProfile = ({
                 )
               }
             />
-            {/* Approval Status Summary */}
-            <Summary
-              title={formatMessage(messages.approval)}
-              description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
-            />
             <Summary title={formatMessage(messages.dailyCapacity)} description={device.get('dailyTestCapacity')} />
-            <Summary title={formatMessage(messages.moduleBayCapacity)} description={device.get('moduleBayCapacity')} />
 
-            {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID ? (
-              <>
-                <Summary
-                  title={formatMessage(messages.gx6cModulesCount)}
-                  description={device.get('gx6cModulesCount') ?? '0'}
-                />
+            {/* ── Technical Details ── */}
+            <SectionDivider label={formatMessage(messages.sectionTechnicalDetails)} />
+            <Summary title={formatMessage(messages.serial)} description={device.get('serial')} />
+            <Summary title={formatMessage(messages.hostId)} description={device.get('hostId')} />
+            <Summary title={formatMessage(messages.instrumentModel)} description={device.get('instrumentModel')} />
+            <Summary title={formatMessage(messages.softwareType)} description={device.get('softwareType')} />
+            <Summary
+              title={formatMessage(messages.stickerInstrumentSerial)}
+              description={device.get('stickerInstrumentSerial')}
+            />
 
-                <Summary
-                  title={formatMessage(messages.gx10cModulesCount)}
-                  description={device.get('gx10cModulesCount') ?? '0'}
-                />
-              </>
-            ) : null}
-
+            {/* ── Additional Information ── */}
+            <SectionDivider label={formatMessage(messages.sectionAdditionalInfo)} />
+            <Summary
+              title={formatMessage(messages.createdOn)}
+              description={formatRelative(device.get('createdOn'), formatRelativeTime)}
+            />
+            <Summary title={formatMessage(messages.notes)} description={device.get('notes')} />
+            <Summary title={formatMessage(messages.tags)} description={deviceTags.map(tag => tag.title).join(', ')} />
             <Summary
               title={formatMessage(messages.partner)}
               description={device.get('implementingPartnerName') ?? 'n/a'}
             />
-
-            <Summary title={formatMessage(messages.notes)} description={device.get('notes')} cols="1" />
-            <Summary
-              title={formatMessage(messages.tags)}
-              description={deviceTags.map(tag => tag.title).join(', ')}
-              cols="1"
-            />
+            {canViewDakList && (
+              <Summary
+                title={formatMessage(messages.deviceApiKey)}
+                description={device.get('maskedDeviceApiKey') ?? 'n/a'}
+                to={
+                  device.get('maskedDeviceApiKey')
+                    ? () => {
+                        addFilter(
+                          { deviceApiKeyToken: device.get('maskedDeviceApiKey').slice(-9) },
+                          '/browse/deviceApiKey'
+                        )
+                        navigate('/browse/deviceApiKey')
+                      }
+                    : undefined
+                }
+              />
+            )}
           </div>
         </Card>
         <CalibrationDialog

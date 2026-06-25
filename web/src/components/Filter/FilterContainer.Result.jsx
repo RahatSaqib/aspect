@@ -222,7 +222,18 @@ const ResultFilter = () => {
             label={formatMessage(messages.showDecommissionedDevices)}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={[true, 'true'].includes(state.showResultsFromUndeployedDevices)}
+                onChange={e => setState({ ...state, showResultsFromUndeployedDevices: e.target.checked || null })}
+              />
+            }
+            label={formatMessage(messages.showResultsFromUndeployedDevices)}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
           <FormControlLabel
             control={
               <Checkbox

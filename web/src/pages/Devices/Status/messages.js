@@ -100,6 +100,10 @@ const messages = {
       id: 'pages.DeviceList.site',
       defaultMessage: 'Site',
     },
+    deviceType: {
+      id: 'pages.DeviceList.deviceType',
+      defaultMessage: 'Type',
+    },
     maintenanceStatus: {
       id: 'pages.DeviceList.maintenanceStatus',
       defaultMessage: 'Maintenance Status',

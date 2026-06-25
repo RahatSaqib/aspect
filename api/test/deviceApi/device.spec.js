@@ -209,7 +209,7 @@ describe('Device API routes', () => {
       // this is the site default timezone
       assert.equal(newDevice.timezone, 'South Africa Standard Time')
     })
-    it('should return shortName of 45 characters if shortName is greater than 45 when creating a device', async () => {
+    it('should auto-generate the device name from the device type acronym and id, ignoring any provided name', async () => {
       const { apiKey, deviceAuth } = newDeviceContext
       assert.isOk(apiKey)
 
@@ -238,7 +238,9 @@ describe('Device API routes', () => {
 
       const newDevice = await getDeviceFromApiKey(knex, apiKey)
 
-      assert.lengthOf(newDevice.shortName, 45)
+      // Name is `${DeviceType.acronym}${Device.id}` (GeneXpert -> "GX"), not the provided name.
+      assert.equal(newDevice.name, `GX${newDevice.id}`)
+      assert.equal(newDevice.shortName, newDevice.name)
     })
   })
 

@@ -32,6 +32,7 @@ const {
   sampleTypeToId,
 } = require('../src/shared/dictionary')
 const { addCase } = require('../src/case/service')
+const { insertDeviceWithGeneratedName } = require('./common/insertDeviceWithGeneratedName')
 const { getRandomGeneXpertPatientData, getRandomTruenatPatientData } = require('./commonTBResults')
 const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovidResultFormSchema.json')
 const {
@@ -107,8 +108,6 @@ async function createDevicesForAllMissingTypes(
         const siteData = _.sample(validSites)
         const deviceToInsert = {
           ...auditFields,
-          name: `${siteData.shortName} ${deviceType.name}`,
-          shortName: `${siteData.shortName} ${deviceType.name}`,
           deviceTypeId: deviceType.id,
           deviceApprovalId: deviceApprovalApproved,
           partnerId,
@@ -120,7 +119,7 @@ async function createDevicesForAllMissingTypes(
           lastSeenOn: new Date(+now - (i * millisInHour) / 3),
           putInService: subMonths(new Date(), 2),
         }
-        const [deviceId] = await knex('Device').insert(deviceToInsert)
+        const { id: deviceId } = await insertDeviceWithGeneratedName(knex, deviceToInsert)
         if (deviceType.requiresApiCredentials) {
           const password = await bcrypt.hash(siteData.shortName, parseInt(passwordSaltRounds, 10))
           const [deviceApiKeyId] = await knex('DeviceApiKey').insert({

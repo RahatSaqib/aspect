@@ -174,6 +174,10 @@ const messages = {
       id: 'filter.btnGroup.showDecommissionedDevices',
       defaultMessage: 'Show Results From Decommissioned Devices',
     },
+    showResultsFromUndeployedDevices: {
+      id: 'filter.btnGroup.showResultsFromUndeployedDevices',
+      defaultMessage: 'Show Results From Undeployed Devices',
+    },
     deviceIssueType: { id: 'filter.btnGroup.deviceIssueType', defaultMessage: 'Device Issue: {issueTypeId}' },
     hasStock: { id: 'filter.btnGroup.hasStock', defaultMessage: 'Only lots with stock' },
     // outOfStock: { id: 'filter.btnGroup.daysStockLeft.outOfStock', defaultMessage: 'Out of Stock' },
@@ -453,6 +457,7 @@ const messages = {
     isRequired: { id: 'pages.LocationSelector.isRequired', defaultMessage: '{entity} is required' },
     accountDetails: { id: 'pages.HorizontalAppBar.accountDetails', defaultMessage: 'Account Details' },
     signOut: { id: 'pages.HorizontalAppBar.signOut', defaultMessage: 'Sign Out' },
+    openNavigation: { id: 'pages.HorizontalAppBar.openNavigation', defaultMessage: 'Open navigation menu' },
     homeTitle: { id: 'header.link.home.title', defaultMessage: 'Home' },
     dashboardV2Title: { id: 'header.link.dashboardv2.title', defaultMessage: 'Dashboard' },
     taskListTitle: { id: 'header.link.taskList.title', defaultMessage: 'Task List' },

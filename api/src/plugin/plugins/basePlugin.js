@@ -3,6 +3,7 @@ const issueTriggers = require('../issueTriggers')
 const issueResolutions = require('../issueResolutions')
 const filtersOpenIssues = require('../../issue/filterConditions')
 const { extractSampleId } = require('../deviceType/extractSampleId')
+const { defaultGenerateDeviceName } = require('../../device/common/deviceAcronym')
 
 const DEFAULT_SETTINGS = {
   displayPreferences: {
@@ -33,6 +34,8 @@ const basePlugin = {
   filtersOpenIssues,
   preProcessCreateDevice,
   postProcessCreateDevice,
+  generateDeviceName,
+  resolveDeviceNameOnEdit,
   postProcessGetResult,
   preProcessMergeResult,
   excludeResult,
@@ -68,6 +71,32 @@ async function preProcessCreateDevice(/* request, now */) {
  */
 async function postProcessCreateDevice(/* context */) {
   // nothing to do by default
+}
+
+/**
+ * A device has been inserted; generate the value to store in Device.name.
+ * Called after the row exists so Device.id is available.
+ *
+ * The default produces `${DeviceType.acronym}${Device.id}` (e.g. "GX45").
+ * Override per partner/device type to customise the displayed name.
+ *
+ * @param {Object} context - { knex, deviceId, deviceTypeId }
+ * @returns {Promise<string>}
+ */
+async function generateDeviceName(context) {
+  return defaultGenerateDeviceName(context)
+}
+
+/**
+ * Called when a device is edited via the client API. Partners may override
+ * to derive Device.name from the edited payload. Return null to keep the
+ * submitted name/shortName values.
+ *
+ * @param {Object} context - { deviceId, currentName, deviceType, editedDevice }
+ * @returns {Promise<string|null>}
+ */
+async function resolveDeviceNameOnEdit(/* context */) {
+  return null
 }
 
 /**

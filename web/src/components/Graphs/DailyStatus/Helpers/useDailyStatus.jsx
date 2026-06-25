@@ -173,7 +173,7 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
    */
   const getDeviceDayDetails = useCallback(
     ({ day, deviceId }) => {
-      const { maintenanceStatusHistory, shortName, siteContacts, hoursStart, hoursEnd } = devicesDaily.find(
+      const { maintenanceStatusHistory, name, siteContacts, hoursStart, hoursEnd } = devicesDaily.find(
         ({ id }) => +id === +deviceId
       )
       const {
@@ -198,7 +198,7 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
 
       return {
         deviceId,
-        deviceName: shortName,
+        deviceName: name,
         siteProps: {
           siteContacts,
           hoursStart,

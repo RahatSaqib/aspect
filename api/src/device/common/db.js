@@ -172,6 +172,12 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
+    .leftJoin('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
+    .column(
+      knex.raw(
+        "CASE WHEN dak.token IS NULL OR dak.token = '' THEN NULL ELSE CONCAT('xxxx-xxxx-xxxx-', LEFT(RIGHT(dak.token, 8), 4), '-', RIGHT(dak.token, 4)) END as maskedDeviceApiKey"
+      )
+    )
 
   if (!device) {
     return null

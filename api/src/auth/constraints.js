@@ -719,14 +719,22 @@ function canEditInventories(auth) {
   return canEdit(auth, 'inventory:')
 }
 
-const addPartnerQueryConstraints = (queryBuilder, { partner, country, geography, site, caseAlias }) => {
+const addPartnerQueryConstraints = (queryBuilder, { partner, country, geography, site, caseAlias }, options = {}) => {
   if (caseAlias && partner) queryBuilder.where(`${caseAlias}.partnerId`, partner.id)
   if (partner && !caseAlias) queryBuilder.where('r.partnerId', partner.id)
   if (site) queryBuilder.where(`r.partnerId`, partner.id)
   else if (geography) {
     if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
     else if (geography.stateId) queryBuilder.where('g.stateId', geography.lgaId)
-  } else if (country) queryBuilder.where('c.id', country.id)
+  } else if (country) {
+    if (options.showResultsFromUndeployedDevices) {
+      queryBuilder.where(qb => {
+        qb.where('c.id', country.id).orWhereNull('r.siteId')
+      })
+    } else {
+      queryBuilder.where('c.id', country.id)
+    }
+  }
 }
 
 function addTransferLogConstraints(queryBuilder, constraints, aliases) {
