@@ -106,11 +106,19 @@
 
 .Summary__Card__Title__main {
   font-weight: var(--lato-font-weight-bold);
-  white-space: nowrap;
+  /* Allow multi-word titles (e.g. "Non Functional/Disabled Module") to wrap
+     instead of overflowing the tile; capped at 2 lines to keep tiles tidy. */
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
   padding-right: 2px;
   width: 90%;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .Summary__Card__Title__sub {
