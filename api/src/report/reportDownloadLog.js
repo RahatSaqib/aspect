@@ -36,18 +36,18 @@ function stringifyQuery(query) {
   }
 }
 
-async function startReportDownloadLog({ userName, reportExternalId, format, query, source, asyncReportId }) {
+async function startReportDownloadLog({ userId, userName, reportExternalId, format, query, source }) {
   try {
     const [logId] = await knex('ReportDownloadLog').insert({
+      userId: userId ?? null,
       userName: userName ?? null,
       reportExternalId: reportExternalId ?? null,
       format,
       query: stringifyQuery(query),
       timeSpanDays: getTimeSpanDaysFromQuery(query),
       source,
-      asyncReportId: asyncReportId ?? null,
       success: null,
-      createdOn: new Date(),
+      startedOn: new Date(),
     })
     return logId
   } catch (err) {
@@ -56,7 +56,10 @@ async function startReportDownloadLog({ userName, reportExternalId, format, quer
   }
 }
 
-async function finishReportDownloadLog(logId, { success, generationTimeMs, totalTimeMs, fileSizeBytes, errorMessage }) {
+async function finishReportDownloadLog(
+  logId,
+  { success, dataQueryTimeSeconds, fileGenerationTimeSeconds, fileSizeBytes, errorMessage }
+) {
   if (!logId) {
     return
   }
@@ -71,11 +74,11 @@ async function finishReportDownloadLog(logId, { success, generationTimeMs, total
       .where({ id: logId })
       .update({
         success,
-        generationTimeMs: generationTimeMs ?? null,
-        totalTimeMs: totalTimeMs ?? null,
+        dataQueryTimeSeconds: dataQueryTimeSeconds ?? null,
+        fileGenerationTimeSeconds: fileGenerationTimeSeconds ?? null,
         fileSizeBytes: fileSizeBytes ?? null,
         errorMessage: truncatedError ?? null,
-        endedOn: new Date(),
+        finishedOn: new Date(),
       })
   } catch (err) {
     logger.warning('Failed to finish ReportDownloadLog entry', { err, logId, reLabel: 'aspect:report:downloadLog' })

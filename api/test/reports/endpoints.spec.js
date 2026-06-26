@@ -6,7 +6,6 @@ const path = require('path')
 const jwt = require('jsonwebtoken')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
 const config = require('../../src/config')
@@ -149,7 +148,6 @@ describe('API Reports Endpoint', () => {
       } catch (error) {
         // File might not exist, ignore error
       }
-      await runTestWithKnex(() => knex('ReportDownloadLog').del())
     })
 
     it('should return 401 for an invalid token', async () => {
@@ -162,43 +160,18 @@ describe('API Reports Endpoint', () => {
     })
 
     it('should return 404 when the token is valid but the file does not exist', async () => {
-      const token = jwt.sign(
-        {
-          report_filename: 'missing-report.xlsx',
-          reportExternalId: 'all_results',
-          filters: {},
-          format: 'xlsx',
-        },
-        config.secret,
-        { expiresIn: '1 hour' }
-      )
-
-      const response = await server.get(apiPath).query({ token }).set('Authorization', `Bearer ${shared.token}`)
+      const response = await server
+        .get(apiPath)
+        .query({ token: shared.token })
+        .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(response.status, 404)
       assert.equal(response.body.error, 'File not found')
-
-      await runTestWithKnex(async () => {
-        const [logEntry] = await knex('ReportDownloadLog').orderBy('id', 'desc').limit(1)
-        assert.exists(logEntry)
-        assert.equal(logEntry.source, 'scheduled')
-        assert.equal(logEntry.success, 0)
-        assert.equal(logEntry.reportExternalId, 'all_results')
-        assert.isNull(logEntry.fileSizeBytes)
-      })
     })
     it('should return 200 when the token is valid and the file exists', async () => {
-      const token = jwt.sign(
-        {
-          report_filename: testFileName,
-          reportExternalId: 'all_results',
-          filters: { minDate: '2024-01-01', maxDate: '2024-01-31' },
-          format: 'xlsx',
-        },
-        config.secret,
-        { expiresIn: '1 hour' }
-      )
-
-      const response = await server.get(apiPath).query({ token }).set('Authorization', `Bearer ${shared.token}`)
+      const response = await server
+        .get(apiPath)
+        .query({ token: jwt.sign({ report_filename: testFileName }, config.secret, { expiresIn: '1 hour' }) })
+        .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(response.status, 200)
 
       // Verify that the response contains the expected file content
@@ -210,22 +183,6 @@ describe('API Reports Endpoint', () => {
       // Verify the file content matches what we created
       const expectedContent = Buffer.from('Test Excel file content for download verification')
       assert.deepEqual(response.body, expectedContent)
-
-      await runTestWithKnex(async () => {
-        const [logEntry] = await knex('ReportDownloadLog').orderBy('id', 'desc').limit(1)
-        assert.exists(logEntry)
-        assert.equal(logEntry.source, 'scheduled')
-        assert.equal(logEntry.success, 1)
-        assert.equal(logEntry.reportExternalId, 'all_results')
-        assert.equal(logEntry.fileSizeBytes, expectedContent.length)
-        assert.equal(logEntry.generationTimeMs, 0)
-        assert.isNotNull(logEntry.endedOn)
-        assert.deepEqual(JSON.parse(logEntry.query), {
-          minDate: '2024-01-01',
-          maxDate: '2024-01-31',
-        })
-        assert.equal(logEntry.timeSpanDays, 30)
-      })
     })
 
     it('should return 404 when the token has undefined report_filename', async () => {

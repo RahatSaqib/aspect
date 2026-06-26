@@ -2,6 +2,7 @@ const Stream = require('stream')
 const fs = require('fs')
 const Path = require('path')
 const Boom = require('@hapi/boom')
+const { getUserFromCredentials } = require('../auth/constraints')
 const { respondFile } = require('../shared/response')
 const { saveReportToFile } = require('./saveReportToFile')
 const { startReportDownloadLog, finishReportDownloadLogInBackground } = require('./reportDownloadLog')
@@ -16,30 +17,29 @@ const { startReportDownloadLog, finishReportDownloadLogInBackground } = require(
 module.exports = async function downloadReport(request, reply) {
   const { auth, query, params } = request
   const { externalId } = params
-  const handlerStart = Date.now()
+
+  const user = await getUserFromCredentials(auth.credentials).catch(() => null)
 
   const logId = await startReportDownloadLog({
-    userName: auth.credentials?.name,
+    userId: user?.id ?? null,
+    userName: auth.credentials?.name ?? user?.name ?? null,
     reportExternalId: externalId,
     format: query.format || 'xlsx',
     query,
     source: 'sync',
   }).catch(() => null)
 
-  const generationStart = Date.now()
-
   try {
     const dataBuffer = new Stream.PassThrough()
     const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true)
 
-    const fullPath = await promise
-    const generationTimeMs = Date.now() - generationStart
+    const { fullPath, dataQueryTimeSeconds, fileGenerationTimeSeconds } = await promise
     const { size: fileSizeBytes } = await fs.promises.stat(fullPath)
 
     finishReportDownloadLogInBackground(logId, {
       success: 1,
-      generationTimeMs,
-      totalTimeMs: Date.now() - handlerStart,
+      dataQueryTimeSeconds,
+      fileGenerationTimeSeconds,
       fileSizeBytes,
     })
 
@@ -58,8 +58,6 @@ module.exports = async function downloadReport(request, reply) {
     const errorMessage = error?.message || String(error)
     finishReportDownloadLogInBackground(logId, {
       success: 0,
-      generationTimeMs: Date.now() - generationStart,
-      totalTimeMs: Date.now() - handlerStart,
       errorMessage,
     })
     throw Boom.badRequest(error)

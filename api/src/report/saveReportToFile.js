@@ -51,7 +51,11 @@ async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = f
       if (response.error) {
         return reject(response.error)
       }
-      return resolve(fullPath)
+      return resolve({
+        fullPath,
+        dataQueryTimeSeconds: response.dataQueryTimeSeconds,
+        fileGenerationTimeSeconds: response.fileGenerationTimeSeconds,
+      })
     })
   })
 

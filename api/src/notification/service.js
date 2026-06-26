@@ -507,9 +507,6 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, notifi
       const reportToken = jwt.sign(
         {
           report_filename: fileName,
-          reportExternalId: externalId,
-          filters,
-          format: fileName.endsWith('.csv') ? 'csv' : 'xlsx',
         },
         config.secret,
         {

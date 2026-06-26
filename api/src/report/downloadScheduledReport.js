@@ -1,9 +1,7 @@
-const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const config = require('../config')
 const { readDataFromFile } = require('../shared/io')
 const { respondFile } = require('../shared/response')
-const { startReportDownloadLog, finishReportDownloadLogInBackground } = require('./reportDownloadLog')
 
 /**
  * This method allows to download a scheduled report file.
@@ -14,32 +12,13 @@ const { startReportDownloadLog, finishReportDownloadLogInBackground } = require(
 module.exports = async function downloadScheduledReport(request, reply) {
   const { query } = request
   const { token } = query
-  const handlerStart = Date.now()
 
   let fileName = null
-  let logId = null
 
   try {
-    const tokenPayload = jwt.verify(token, config.secret)
-    ;({ report_filename: fileName } = tokenPayload)
+    ;({ report_filename: fileName } = jwt.verify(token, config.secret))
 
-    logId = await startReportDownloadLog({
-      reportExternalId: tokenPayload.reportExternalId ?? null,
-      format: tokenPayload.format ?? (fileName?.endsWith('.csv') ? 'csv' : 'xlsx'),
-      query: tokenPayload.filters ?? {},
-      source: 'scheduled',
-    }).catch(() => null)
-
-    const filePath = `/tmp/${fileName}`
-    const { size: fileSizeBytes } = await fs.promises.stat(filePath)
-    const dataBuffer = await readDataFromFile(filePath)
-
-    finishReportDownloadLogInBackground(logId, {
-      success: 1,
-      generationTimeMs: 0,
-      totalTimeMs: Date.now() - handlerStart,
-      fileSizeBytes,
-    })
+    const dataBuffer = await readDataFromFile(`/tmp/${fileName}`)
 
     return respondFile({
       reply,
@@ -48,13 +27,6 @@ module.exports = async function downloadScheduledReport(request, reply) {
       streamResponse: true,
     })
   } catch (error) {
-    finishReportDownloadLogInBackground(logId, {
-      success: 0,
-      generationTimeMs: Date.now() - handlerStart,
-      totalTimeMs: Date.now() - handlerStart,
-      errorMessage: error.message,
-    })
-
     if (error.name === 'JsonWebTokenError') {
       return reply.response({ error: 'Invalid token' }).code(401)
     }

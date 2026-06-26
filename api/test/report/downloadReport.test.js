@@ -18,18 +18,24 @@ describe('downloadReport', () => {
   it('inserts a log before generation and updates it after the file is written', async () => {
     const startStub = sinon.stub().resolves(99)
     const finishStub = sinon.stub().resolves()
+    const getUserFromCredentialsStub = sinon.stub().resolves({ id: 7, name: 'admin' })
     const testContent = Buffer.from('report content for logging test')
     await fs.promises.writeFile(testFilePath, testContent)
 
     const saveReportToFileStub = sinon.stub().resolves({
       fileName: 'report-download-log-test.xlsx',
       extension: 'xlsx',
-      promise: Promise.resolve(testFilePath),
+      promise: Promise.resolve({
+        fullPath: testFilePath,
+        dataQueryTimeSeconds: 3,
+        fileGenerationTimeSeconds: 5,
+      }),
     })
 
     const respondFileStub = sinon.stub().returns('file-response')
 
     const downloadReport = proxyquire('../../src/report/downloadReport', {
+      '../auth/constraints': { getUserFromCredentials: getUserFromCredentialsStub },
       './saveReportToFile': { saveReportToFile: saveReportToFileStub },
       './reportDownloadLog': {
         startReportDownloadLog: startStub,
@@ -48,8 +54,10 @@ describe('downloadReport', () => {
     const result = await downloadReport(request, reply)
 
     assert.equal(result, 'file-response')
+    sinon.assert.calledOnce(getUserFromCredentialsStub)
     sinon.assert.calledOnce(startStub)
     sinon.assert.calledWith(startStub, {
+      userId: 7,
       userName: 'admin',
       reportExternalId: 'all_results',
       format: 'xlsx',
@@ -63,19 +71,21 @@ describe('downloadReport', () => {
       99,
       sinon.match({
         success: 1,
+        dataQueryTimeSeconds: 3,
+        fileGenerationTimeSeconds: 5,
         fileSizeBytes: testContent.length,
       })
     )
-    assert.isNumber(finishStub.firstCall.args[1].generationTimeMs)
-    assert.isNumber(finishStub.firstCall.args[1].totalTimeMs)
   })
 
   it('updates the log with an error when report generation fails', async () => {
     const startStub = sinon.stub().resolves(100)
     const finishStub = sinon.stub().resolves()
+    const getUserFromCredentialsStub = sinon.stub().resolves({ id: 7, name: 'admin' })
     const saveReportToFileStub = sinon.stub().rejects(new Error('generation failed'))
 
     const downloadReport = proxyquire('../../src/report/downloadReport', {
+      '../auth/constraints': { getUserFromCredentials: getUserFromCredentialsStub },
       './saveReportToFile': { saveReportToFile: saveReportToFileStub },
       './reportDownloadLog': {
         startReportDownloadLog: startStub,
@@ -112,18 +122,24 @@ describe('downloadReport', () => {
   it('still returns the report when logging fails', async () => {
     const startStub = sinon.stub().rejects(new Error('log insert failed'))
     const finishStub = sinon.stub().rejects(new Error('log update failed'))
+    const getUserFromCredentialsStub = sinon.stub().resolves({ id: 7, name: 'admin' })
     const testContent = Buffer.from('report content')
     await fs.promises.writeFile(testFilePath, testContent)
 
     const saveReportToFileStub = sinon.stub().resolves({
       fileName: 'report-download-log-test.xlsx',
       extension: 'xlsx',
-      promise: Promise.resolve(testFilePath),
+      promise: Promise.resolve({
+        fullPath: testFilePath,
+        dataQueryTimeSeconds: 1,
+        fileGenerationTimeSeconds: 2,
+      }),
     })
 
     const respondFileStub = sinon.stub().returns('file-response')
 
     const downloadReport = proxyquire('../../src/report/downloadReport', {
+      '../auth/constraints': { getUserFromCredentials: getUserFromCredentialsStub },
       './saveReportToFile': { saveReportToFile: saveReportToFileStub },
       './reportDownloadLog': {
         startReportDownloadLog: startStub,

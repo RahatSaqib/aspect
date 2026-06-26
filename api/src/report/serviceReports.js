@@ -216,10 +216,14 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
 
   const { sheets } = await getReportDetails(externalId, { personId })
 
+  const dataQueryStart = Date.now()
   const data = await getAllSheetsData(auth, query, timezone, sheets)
+  const dataQueryTimeSeconds = Math.round((Date.now() - dataQueryStart) / 1000)
   if (Boom.isBoom(data)) {
     throw data
   }
+
+  const fileGenerationStart = Date.now()
 
   const administrativeDivisionLabelPlaceHolders = await getAdministrativeDivisionLabelPlaceHolders({
     partnerId,
@@ -320,7 +324,10 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
     }
   }
 
-  return { dataBuffer, streamResponse }
+  // For streaming reports, this measures render setup — not full stream write time.
+  const fileGenerationTimeSeconds = Math.round((Date.now() - fileGenerationStart) / 1000)
+
+  return { dataBuffer, streamResponse, dataQueryTimeSeconds, fileGenerationTimeSeconds }
 }
 
 // ----------------------------------------------------------------------------------------------

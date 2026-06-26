@@ -30,6 +30,7 @@ describe('reportDownloadLog', () => {
   it('inserts an in-progress row', async () => {
     const query = { minDate: '2024-01-01', maxDate: '2024-01-31', format: 'xlsx' }
     const logId = await startReportDownloadLog({
+      userId: 7,
       userName: 'admin',
       reportExternalId: 'all_results',
       format: 'xlsx',
@@ -42,6 +43,7 @@ describe('reportDownloadLog', () => {
     sinon.assert.calledWith(
       insertStub,
       sinon.match({
+        userId: 7,
         userName: 'admin',
         reportExternalId: 'all_results',
         format: 'xlsx',
@@ -49,6 +51,7 @@ describe('reportDownloadLog', () => {
         source: 'sync',
         success: null,
         timeSpanDays: 30,
+        startedOn: sinon.match.date,
       })
     )
   })
@@ -81,8 +84,8 @@ describe('reportDownloadLog', () => {
   it('updates the row on success', async () => {
     await finishReportDownloadLog(42, {
       success: 1,
-      generationTimeMs: 1200,
-      totalTimeMs: 1500,
+      dataQueryTimeSeconds: 12,
+      fileGenerationTimeSeconds: 8,
       fileSizeBytes: 4096,
     })
 
@@ -91,10 +94,10 @@ describe('reportDownloadLog', () => {
       updateStub,
       sinon.match({
         success: 1,
-        generationTimeMs: 1200,
-        totalTimeMs: 1500,
+        dataQueryTimeSeconds: 12,
+        fileGenerationTimeSeconds: 8,
         fileSizeBytes: 4096,
-        endedOn: sinon.match.date,
+        finishedOn: sinon.match.date,
       })
     )
   })
