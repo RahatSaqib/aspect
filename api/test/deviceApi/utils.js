@@ -376,7 +376,6 @@ async function createDevice(
     dailyTestCapacity: type === 'CepheidGeneXpert' ? partnerData.deviceCapacityFactor * 4 : null, // for CepheidGeneXpert we are setting module=4
     moduleBayCapacity: type === 'CepheidGeneXpert' ? 4 : 0,
     lastSeenOn: now,
-    lastInstrumentSerial: instrumentSerial,
     deviceApiKeyId: knex('DeviceApiKey').where({ token }).first('id'),
   })
 

@@ -72,7 +72,6 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
         'st.name AS stateName',
         'lg.name AS districtName',
         'd.serial AS serial',
-        'd.lastInstrumentSerial AS instrumentSerial',
         getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastPingOn', timezoneIANA, 'lastPingOn'),
         'd.lastPingFromIp AS lastPingFrom',
         getDateTimeProjectionInTimeZoneIANA(

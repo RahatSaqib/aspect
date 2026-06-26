@@ -328,14 +328,14 @@ describe('Process GeneXpert Logs', () => {
       .first()
 
     // -------------------
-    // Email message should contain the instrument serial number as the System serial
+    // Email message should contain the instrument serial number
     // -------------------
     const { emailMessage } = await knex('Notification as n')
       .innerJoin('EmailMessage as em', 'n.emailMessageId', 'em.id')
       .where('issueId', issue.id)
       .first('em.body as emailMessage')
     assert.isNotNull(emailMessage)
-    assert.isTrue(emailMessage.indexOf('System Serial: GX-00001') > -1)
+    assert.isTrue(emailMessage.indexOf('Instrument Serials: GX-00001') > -1)
 
     const eventData = JSON.parse(issueEvent.data)
     const { details: eventDetailsStored } = eventData
