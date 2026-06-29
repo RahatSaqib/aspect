@@ -32,13 +32,13 @@ module.exports = async function downloadReport(request, reply) {
     const dataBuffer = new Stream.PassThrough()
     const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true)
 
-    const { fullPath, dataQueryTimeSeconds, fileGenerationTimeSeconds } = await promise
+    const { fullPath, dataQueryTimeMs, fileGenerationTimeMs } = await promise
     const { size: fileSizeBytes } = await fs.promises.stat(fullPath)
 
     finishReportDownloadLogInBackground(logId, {
       success: 1,
-      dataQueryTimeSeconds,
-      fileGenerationTimeSeconds,
+      dataQueryTimeMs,
+      fileGenerationTimeMs,
       fileSizeBytes,
     })
 

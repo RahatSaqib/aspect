@@ -27,8 +27,8 @@ describe('downloadReport', () => {
       extension: 'xlsx',
       promise: Promise.resolve({
         fullPath: testFilePath,
-        dataQueryTimeSeconds: 3,
-        fileGenerationTimeSeconds: 5,
+        dataQueryTimeMs: 3,
+        fileGenerationTimeMs: 5,
       }),
     })
 
@@ -70,8 +70,8 @@ describe('downloadReport', () => {
       99,
       sinon.match({
         success: 1,
-        dataQueryTimeSeconds: 3,
-        fileGenerationTimeSeconds: 5,
+        dataQueryTimeMs: 3,
+        fileGenerationTimeMs: 5,
         fileSizeBytes: testContent.length,
       })
     )
@@ -130,8 +130,8 @@ describe('downloadReport', () => {
       extension: 'xlsx',
       promise: Promise.resolve({
         fullPath: testFilePath,
-        dataQueryTimeSeconds: 1,
-        fileGenerationTimeSeconds: 2,
+        dataQueryTimeMs: 1,
+        fileGenerationTimeMs: 2,
       }),
     })
 

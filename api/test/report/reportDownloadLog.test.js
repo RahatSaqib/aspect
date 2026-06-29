@@ -82,8 +82,8 @@ describe('reportDownloadLog', () => {
   it('updates the row on success', async () => {
     await finishReportDownloadLog(42, {
       success: 1,
-      dataQueryTimeSeconds: 12,
-      fileGenerationTimeSeconds: 8,
+      dataQueryTimeMs: 12,
+      fileGenerationTimeMs: 8,
       fileSizeBytes: 4096,
     })
 
@@ -92,8 +92,8 @@ describe('reportDownloadLog', () => {
       updateStub,
       sinon.match({
         success: 1,
-        dataQueryTimeSeconds: 12,
-        fileGenerationTimeSeconds: 8,
+        dataQueryTimeMs: 12,
+        fileGenerationTimeMs: 8,
         fileSizeBytes: 4096,
         finishedOn: sinon.match.date,
       })

@@ -57,7 +57,7 @@ async function startReportDownloadLog({ userId, reportExternalId, format, query,
 
 async function finishReportDownloadLog(
   logId,
-  { success, dataQueryTimeSeconds, fileGenerationTimeSeconds, fileSizeBytes, errorMessage }
+  { success, dataQueryTimeMs, fileGenerationTimeMs, fileSizeBytes, errorMessage }
 ) {
   if (!logId) {
     return
@@ -73,8 +73,8 @@ async function finishReportDownloadLog(
       .where({ id: logId })
       .update({
         success,
-        dataQueryTimeSeconds: dataQueryTimeSeconds ?? null,
-        fileGenerationTimeSeconds: fileGenerationTimeSeconds ?? null,
+        dataQueryTimeMs: dataQueryTimeMs ?? null,
+        fileGenerationTimeMs: fileGenerationTimeMs ?? null,
         fileSizeBytes: fileSizeBytes ?? null,
         errorMessage: truncatedError ?? null,
         finishedOn: new Date(),

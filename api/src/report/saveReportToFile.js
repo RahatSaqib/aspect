@@ -53,8 +53,8 @@ async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = f
       }
       return resolve({
         fullPath,
-        dataQueryTimeSeconds: response.dataQueryTimeSeconds,
-        fileGenerationTimeSeconds: response.fileGenerationTimeSeconds,
+        dataQueryTimeMs: response.dataQueryTimeMs,
+        fileGenerationTimeMs: response.fileGenerationTimeMs,
       })
     })
   })

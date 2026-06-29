@@ -18,7 +18,7 @@ async function start() {
   }
 
   try {
-    const { dataBuffer, streamResponse, dataQueryTimeSeconds, fileGenerationTimeSeconds } = await generateReport(
+    const { dataBuffer, streamResponse, dataQueryTimeMs, fileGenerationTimeMs } = await generateReport(
       externalId,
       query,
       auth,
@@ -37,8 +37,8 @@ async function start() {
     parentPort.postMessage({
       success: true,
       streamResponse,
-      dataQueryTimeSeconds,
-      fileGenerationTimeSeconds,
+      dataQueryTimeMs,
+      fileGenerationTimeMs,
     })
   } catch (err) {
     parentPort.postMessage({ error: err.message })

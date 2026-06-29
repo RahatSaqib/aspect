@@ -218,7 +218,7 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
 
   const dataQueryStart = Date.now()
   const data = await getAllSheetsData(auth, query, timezone, sheets)
-  const dataQueryTimeSeconds = Math.round((Date.now() - dataQueryStart) / 1000)
+  const dataQueryTimeMs = Date.now() - dataQueryStart
   if (Boom.isBoom(data)) {
     throw data
   }
@@ -325,9 +325,9 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
   }
 
   // For streaming reports, this measures render setup — not full stream write time.
-  const fileGenerationTimeSeconds = Math.round((Date.now() - fileGenerationStart) / 1000)
+  const fileGenerationTimeMs = Date.now() - fileGenerationStart
 
-  return { dataBuffer, streamResponse, dataQueryTimeSeconds, fileGenerationTimeSeconds }
+  return { dataBuffer, streamResponse, dataQueryTimeMs, fileGenerationTimeMs }
 }
 
 // ----------------------------------------------------------------------------------------------
