@@ -16,7 +16,7 @@ const StatesFilter = () => {
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId || ''}

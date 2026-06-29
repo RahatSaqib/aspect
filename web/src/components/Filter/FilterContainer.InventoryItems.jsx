@@ -20,7 +20,7 @@ const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, 
   return (
     <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId ?? ''}
@@ -28,7 +28,7 @@ const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, 
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId ?? ''}
@@ -36,7 +36,7 @@ const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, 
             stateId={state.stateId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <ConsumableSelect
             valueBy="id"
             label={formatMessage(messages.consumable)}
@@ -45,7 +45,7 @@ const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, 
           />
         </Grid>
         {allowed(['site:view']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <SiteAutoCompleteField
               name="siteName"
               value={state.siteName || ''}
@@ -59,7 +59,7 @@ const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, 
           </Grid>
         ) : null}
         {breakOutByLot && requireExpirationDate ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <PeriodSelector
               label={formatMessage(messages.expiresOn)}
               minDate={state.minDate || null}
@@ -69,7 +69,7 @@ const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, 
           </Grid>
         ) : null}
         {breakOutByLot && requireLotNumber ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               label={formatMessage(messages.lotNumber)}
               value={state.lotNumber || ''}
@@ -78,7 +78,7 @@ const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, 
           </Grid>
         ) : null}
         {!breakOutByLot ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <DaysStockLeftSelect
               label={formatMessage(messages.daysStockLeft)}
               value={`${state.daysStockLeft}`}
@@ -86,7 +86,7 @@ const InventoryItemsFilter = ({ disabled, breakOutByLot, requireExpirationDate, 
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <FormControlLabel
             control={
               <Checkbox

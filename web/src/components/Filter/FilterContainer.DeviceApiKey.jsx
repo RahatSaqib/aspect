@@ -19,14 +19,14 @@ const DeviceApiKeyFilter = () => {
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.deviceApiKey)}
             value={state.deviceApiKeyToken || ''}
             onChange={e => setState({ ...state, deviceApiKeyToken: e.target.value || null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.deviceName)}
             value={state.deviceName || ''}
@@ -34,7 +34,7 @@ const DeviceApiKeyFilter = () => {
           />
         </Grid>
         {allowed(['site:view']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <SiteAutoCompleteField
               name="siteName"
               value={state.siteName || ''}
@@ -45,7 +45,7 @@ const DeviceApiKeyFilter = () => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <RevokeSelect
             label={formatMessage(messages.revoked)}
             value={state.revoked || ''}

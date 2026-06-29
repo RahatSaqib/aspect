@@ -20,7 +20,7 @@ const ReporterFilter = () => {
   return (
     <FilterContainer state={state} setState={setState} blocked={['minDate', 'maxDate']}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
@@ -28,7 +28,7 @@ const ReporterFilter = () => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
@@ -37,7 +37,7 @@ const ReporterFilter = () => {
           />
         </Grid>
         {allowed(['assay:view']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <AssaySelect
               label={formatMessage(messages.assay)}
               value={state.assayId}
@@ -48,7 +48,7 @@ const ReporterFilter = () => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <SiteAutoCompleteField
             name="siteName"
             value={state.siteName || ''}
@@ -60,7 +60,7 @@ const ReporterFilter = () => {
             width="100%"
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}

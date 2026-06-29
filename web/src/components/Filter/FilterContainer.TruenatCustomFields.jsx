@@ -13,7 +13,7 @@ const TruenatCustomFieldsFilter = () => {
   return (
     <FilterContainer state={state} setState={setState} blocked={['minDate', 'maxDate']}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <SiteSelect
             name="siteId"
             label={formatMessage(messages.site)}
@@ -21,7 +21,7 @@ const TruenatCustomFieldsFilter = () => {
             onChange={e => setState({ ...state, siteId: e.target.value || null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}
@@ -29,7 +29,7 @@ const TruenatCustomFieldsFilter = () => {
             onChange={dateValues => setState({ ...state, ...dateValues })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.sampleExternalId)}
             value={state.sampleExternalId || ''}
@@ -37,7 +37,7 @@ const TruenatCustomFieldsFilter = () => {
             fullWidth
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             select
             label={formatMessage(messages.matchStatus)}

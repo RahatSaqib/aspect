@@ -20,7 +20,7 @@ const NotificationLogFilter = () => {
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <NotificationCategorySelect
             valueBy="id"
             label={formatMessage(messages.notificationCategoryType)}
@@ -29,7 +29,7 @@ const NotificationLogFilter = () => {
           />
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <NotificationTypeSelect
             valueBy="id"
             label={formatMessage(messages.notificationType)}
@@ -38,28 +38,28 @@ const NotificationLogFilter = () => {
             onChange={id => setState(state => ({ ...state, notificationTypeId: id }))}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.sampleId)}
             value={state.sampleId || ''}
             onChange={({ target: { value } }) => setState({ ...state, sampleId: value || null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.patientId)}
             value={state.patientId || ''}
             onChange={({ target: { value } }) => setState({ ...state, patientId: value || null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.reportWithName)}
             value={state.reportWithName || ''}
             onChange={({ target: { value } }) => setState({ ...state, reportWithName: value || null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}
@@ -67,7 +67,7 @@ const NotificationLogFilter = () => {
             onChange={dateValues => setState({ ...state, ...dateValues })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <FormControlLabel
             control={
               <Checkbox

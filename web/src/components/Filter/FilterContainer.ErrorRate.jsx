@@ -13,7 +13,7 @@ export default function ErrorRateFilter() {
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}

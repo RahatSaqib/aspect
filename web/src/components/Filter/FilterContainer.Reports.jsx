@@ -20,7 +20,7 @@ const ReportsFilter = () => {
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
@@ -28,7 +28,7 @@ const ReportsFilter = () => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
@@ -36,7 +36,7 @@ const ReportsFilter = () => {
             stateId={state.stateId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <AssaySelect
             label={formatMessage(messages.assay)}
             value={state.assayId}
@@ -46,7 +46,7 @@ const ReportsFilter = () => {
             onlyResults
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <ConsumableSelect
             valueBy="id"
             label={formatMessage(messages.consumable)}
@@ -55,7 +55,7 @@ const ReportsFilter = () => {
           />
         </Grid>
         {allowed(['site:view']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <SiteAutoCompleteField
               name="siteName"
               value={state.siteName || ''}
@@ -68,7 +68,7 @@ const ReportsFilter = () => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}
@@ -76,7 +76,7 @@ const ReportsFilter = () => {
             onChange={dateValues => setState({ ...state, ...dateValues })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <ReportSelector
             label={formatMessage(messages.reportName)}
             value={state.reportName}

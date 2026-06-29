@@ -16,7 +16,7 @@ const PersonFilter = () => {
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
@@ -24,7 +24,7 @@ const PersonFilter = () => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
@@ -32,14 +32,14 @@ const PersonFilter = () => {
             stateId={state.stateId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.contactNameEmail)}
             value={state.contactNameOrEmail || ''}
             onChange={e => setState({ ...state, contactNameOrEmail: e.target.value ? e.target.value : null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <ContactStatusSelect
             label={formatMessage(messages.contactStatus)}
             value={`${state.contactStatus}`}

@@ -18,7 +18,7 @@ const InventoryTransferFilter = props => {
   return (
     <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
@@ -26,7 +26,7 @@ const InventoryTransferFilter = props => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
@@ -34,7 +34,7 @@ const InventoryTransferFilter = props => {
             stateId={state.stateId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <SiteAutoCompleteField
             name="originSiteName"
             value={state.originSiteName || ''}
@@ -46,7 +46,7 @@ const InventoryTransferFilter = props => {
             width="100%"
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <SiteAutoCompleteField
             name="destinationSiteName"
             value={state.destinationSiteName || ''}
@@ -58,7 +58,7 @@ const InventoryTransferFilter = props => {
             width="100%"
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}
@@ -66,7 +66,7 @@ const InventoryTransferFilter = props => {
             onChange={dateValues => setState({ ...state, ...dateValues })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <ConsumableSelect
             valueBy="id"
             label={formatMessage(messages.consumable)}
