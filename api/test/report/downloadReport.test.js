@@ -58,7 +58,6 @@ describe('downloadReport', () => {
     sinon.assert.calledOnce(startStub)
     sinon.assert.calledWith(startStub, {
       userId: 7,
-      userName: 'admin',
       reportExternalId: 'all_results',
       format: 'xlsx',
       query: request.query,

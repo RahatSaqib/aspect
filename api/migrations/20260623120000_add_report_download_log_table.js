@@ -5,7 +5,6 @@ async function up(knex) {
     table.increments('id').primary()
     // No FK, never affect business case execution with logging issues.
     table.integer('userId').unsigned().nullable().index()
-    table.string('userName').nullable().index()
     table.string('reportExternalId', 100).nullable().index()
     table.string('format', 10).notNullable()
     table.specificType('query', 'JSON').notNullable()

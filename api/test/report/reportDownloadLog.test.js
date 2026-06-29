@@ -31,7 +31,6 @@ describe('reportDownloadLog', () => {
     const query = { minDate: '2024-01-01', maxDate: '2024-01-31', format: 'xlsx' }
     const logId = await startReportDownloadLog({
       userId: 7,
-      userName: 'admin',
       reportExternalId: 'all_results',
       format: 'xlsx',
       query,
@@ -44,7 +43,6 @@ describe('reportDownloadLog', () => {
       insertStub,
       sinon.match({
         userId: 7,
-        userName: 'admin',
         reportExternalId: 'all_results',
         format: 'xlsx',
         query: JSON.stringify(query),

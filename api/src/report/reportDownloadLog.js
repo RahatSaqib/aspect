@@ -36,11 +36,10 @@ function stringifyQuery(query) {
   }
 }
 
-async function startReportDownloadLog({ userId, userName, reportExternalId, format, query, source }) {
+async function startReportDownloadLog({ userId, reportExternalId, format, query, source }) {
   try {
     const [logId] = await knex('ReportDownloadLog').insert({
       userId: userId ?? null,
-      userName: userName ?? null,
       reportExternalId: reportExternalId ?? null,
       format,
       query: stringifyQuery(query),

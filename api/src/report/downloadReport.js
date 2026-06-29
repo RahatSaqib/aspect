@@ -22,7 +22,6 @@ module.exports = async function downloadReport(request, reply) {
 
   const logId = await startReportDownloadLog({
     userId: user?.id ?? null,
-    userName: auth.credentials?.name ?? user?.name ?? null,
     reportExternalId: externalId,
     format: query.format || 'xlsx',
     query,
