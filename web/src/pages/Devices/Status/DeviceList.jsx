@@ -173,7 +173,7 @@ const DeviceList = () => {
   } = useQuery(
     [DEVICE_LIST.KEY, { params }],
     async () => fetchWrapperForQueries({ endpoint: DEVICE_LIST.ENDPOINT, params: { ...params, hasResults: 1 } }),
-    { enabled: !isEmpty(params) }
+    { enabled: !isEmpty(pagination) }
   )
 
   useEffect(() => {
