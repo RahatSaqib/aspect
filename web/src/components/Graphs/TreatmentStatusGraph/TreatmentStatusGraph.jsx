@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
-import filter from 'lodash/filter'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
@@ -75,72 +74,67 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
     { ...GRAPHS_QUERY_OPTIONS }
   )
 
-  // code for donut
-  const [donutData, setDonutData] = useState({})
-  const [barData, setBarData] = useState({})
-  useEffect(() => {
-    if (data && data.data) {
-      const info = data.data
-      const i18nKeys = { Confirmed: 'Confirmed', NotConfirmed: 'NotConfirmed' }
+  const { donutData, barData } = useMemo(() => {
+    if (!data?.data) return { donutData: {}, barData: {} }
 
-      const pieData = formatDataByGraphType(
-        info,
-        'percentage',
-        false,
-        'MMM yy',
-        'monthTested',
-        'onTreatment',
-        i18nKeys,
-        'pieLegacyTreatment',
-        mergedParams,
-        formatMessage,
-        messages
-      )
-      const numberOfMonthsInAYear = 12
-      const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const confirmed = pieData.find(elem => elem.id === 'Confirmed') || {}
+    const info = data.data
+    const i18nKeys = { Confirmed: 'Confirmed', NotConfirmed: 'NotConfirmed' }
 
-      const pieAvg = (confirmed.value / numberOfMonthsInAYear).toFixed(1)
-      const pie = pieData.map(d => ({
-        ...d,
-        label: genLabel(d.id, assaysFromState, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
-      }))
-      // code for column
-      const groupedForBar = formatDataByGraphType(
-        info,
-        'percentage',
-        false,
-        'MMM',
-        'monthTested',
-        'pcOnTreatment',
-        i18nKeys,
-        'barLegacyTreatment',
-        mergedParams,
-        formatMessage,
-        messages
+    const pieData = formatDataByGraphType(
+      info,
+      'percentage',
+      false,
+      'MMM yy',
+      'monthTested',
+      'onTreatment',
+      i18nKeys,
+      'pieLegacyTreatment',
+      mergedParams,
+      formatMessage,
+      messages
+    )
+    const numberOfMonthsInAYear = 12
+    const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
+    const confirmed = pieData.find(elem => elem.id === 'Confirmed') || {}
+
+    const pieAvg = (confirmed.value / numberOfMonthsInAYear).toFixed(1)
+    const pie = pieData.map(d => ({
+      ...d,
+      label: genLabel(d.id, assaysFromState, formatMessage, messages, i18nKeys),
+      value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
+    }))
+    // code for column
+    const groupedForBar = formatDataByGraphType(
+      info,
+      'percentage',
+      false,
+      'MMM',
+      'monthTested',
+      'pcOnTreatment',
+      i18nKeys,
+      'barLegacyTreatment',
+      mergedParams,
+      formatMessage,
+      messages
+    )
+    const expandedBarData = []
+    groupedForBar.map(result => {
+      const allKeysButMonth = Object.keys(result).filter(key => key !== 'monthTested' && key !== 'totalCnt')
+      allKeysButMonth.map(key =>
+        expandedBarData.push({
+          id: key,
+          month:
+            formatMessage(messages[format(negateTimeZoneOffset(new Date(result.monthTested)), 'MMM').toLowerCase()]) +
+            format(negateTimeZoneOffset(new Date(result.monthTested)), '-yyyy'),
+          value: +result[key].toFixed(3).slice(0, -1),
+          type: genLabel(key, assays, formatMessage, messages, i18nKeys),
+          originalMonth: result.monthTested,
+        })
       )
-      const expandedBarData = []
-      groupedForBar.map(result => {
-        const allKeysButMonth = Object.keys(result).filter(key => key !== 'monthTested' && key !== 'totalCnt')
-        allKeysButMonth.map(key =>
-          expandedBarData.push({
-            id: key,
-            month:
-              formatMessage(messages[format(negateTimeZoneOffset(new Date(result.monthTested)), 'MMM').toLowerCase()]) +
-              format(negateTimeZoneOffset(new Date(result.monthTested)), '-yyyy'),
-            value: +result[key].toFixed(3).slice(0, -1),
-            type: genLabel(key, assays, formatMessage, messages, i18nKeys),
-            originalMonth: result.monthTested,
-          })
-        )
-        return result
-      })
-      setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAvg}%` })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, filter])
+      return result
+    })
+    return { donutData: { data: pie, total: `${pieAvg}%` }, barData: { data: expandedBarData } }
+  }, [data, assaysFromState, formatMessage, format, messages, mergedParams])
 
   return isLoading ? (
     <Loading />

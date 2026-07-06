@@ -394,3 +394,10 @@
 .wrapper {
   width: 100%;
 }
+
+.GraphWidget {
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+

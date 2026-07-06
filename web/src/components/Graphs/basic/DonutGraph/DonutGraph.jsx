@@ -67,4 +67,4 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total, label, toolti
   return <Pie {...config} />
 }
 
-export default DonutGraph
+export default React.memo(DonutGraph)

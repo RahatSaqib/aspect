@@ -58,4 +58,4 @@ const BarGraph = ({
   return <Bar {...config} />
 }
 
-export default BarGraph
+export default React.memo(BarGraph)

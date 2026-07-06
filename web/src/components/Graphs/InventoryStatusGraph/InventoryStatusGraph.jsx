@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -41,25 +41,23 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
     { ...GRAPHS_QUERY_OPTIONS }
   )
 
-  const [barData, setBarData] = useState([])
-  useEffect(() => {
-    if (assaysFromState && data && data.data) {
-      const info = data.data.filter(r => r.consumableId === filter?.consumableId)[0] || {}
-      const allKeysButMonth = Object.keys(info).filter(key => key !== 'consumableId' && key !== 'consumableName')
-      const expandedBarData = []
-      allKeysButMonth.map(key =>
-        expandedBarData.push({
-          id: key,
-          consumableName: info.consumableName,
-          consumableId: info.consumableId,
-          value: +info[key],
-          type: genLabel(key, assaysFromState, formatMessage, messages, i18nKeys),
-        })
-      )
-      setBarData({ data: expandedBarData })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, assaysFromState])
+  const barData = useMemo(() => {
+    if (!assaysFromState || !data?.data || !filter) return { data: [] }
+
+    const info = data.data.filter(r => r.consumableId === filter?.consumableId)[0] || {}
+    const allKeysButMonth = Object.keys(info).filter(key => key !== 'consumableId' && key !== 'consumableName')
+    const expandedBarData = []
+    allKeysButMonth.map(key =>
+      expandedBarData.push({
+        id: key,
+        consumableName: info.consumableName,
+        consumableId: info.consumableId,
+        value: +info[key],
+        type: genLabel(key, assaysFromState, formatMessage, messages, i18nKeys),
+      })
+    )
+    return { data: expandedBarData }
+  }, [data, assaysFromState, filter, formatMessage, messages])
 
   return (
     <Grid container className={styles.Graph_Container}>

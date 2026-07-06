@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import endOfDay from 'date-fns/endOfDay'
 import startOfDay from 'date-fns/startOfDay'
@@ -61,53 +61,50 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
     { ...GRAPHS_QUERY_OPTIONS }
   )
 
-  const [barData, setBarData] = useState({})
-  useEffect(() => {
-    if (data && data.data) {
-      const info = data.data
+  const barData = useMemo(() => {
+    if (!data?.data) return {}
 
-      // code for column
-      const groupedForBar = formatDataByGraphType(
-        info,
-        'percentage',
-        false,
-        'LLLL do',
-        'date',
-        'devicesActive',
-        i18nKeys,
-        'stackedDeviceActivity',
-        mergedParams,
-        formatMessage,
-        messages
+    const info = data.data
+    const groupedForBar = formatDataByGraphType(
+      info,
+      'percentage',
+      false,
+      'LLLL do',
+      'date',
+      'devicesActive',
+      i18nKeys,
+      'stackedDeviceActivity',
+      mergedParams,
+      formatMessage,
+      messages
+    )
+    const expandedBarData = []
+    groupedForBar.map(result => {
+      const filterOut = ['date', 'devicesTotal', 'devicesInactive', 'devicesActiveRaw', 'isWeekendOrHoliday']
+      const allKeysButMonth = Object.keys(result)
+        .filter(key => !filterOut.includes(key))
+        .reverse()
+
+      allKeysButMonth.map(key =>
+        expandedBarData.push({
+          id: key,
+          date: `${formatMessage(messages[result.date.split(' ')[0].toLowerCase()])} ${result.date.split(' ')[1]}`,
+          value: +result[key]?.toFixed(1),
+          type: genLabel(key, assaysFromState, formatMessage, messages, i18nKeys),
+          realValue:
+            key === 'weekendOrHoliday'
+              ? result.devicesTotal - result.devicesActiveRaw
+              : Math.round((result[key] * result.devicesTotal) / 100),
+        })
       )
-      const expandedBarData = []
-      groupedForBar.map(result => {
-        const filterOut = ['date', 'devicesTotal', 'devicesInactive', 'devicesActiveRaw', 'isWeekendOrHoliday']
-        const allKeysButMonth = Object.keys(result)
-          .filter(key => !filterOut.includes(key))
-          .reverse()
+      return result
+    })
 
-        allKeysButMonth.map(key =>
-          expandedBarData.push({
-            id: key,
-            date: `${formatMessage(messages[result.date.split(' ')[0].toLowerCase()])} ${result.date.split(' ')[1]}`,
-            value: +result[key]?.toFixed(1),
-            type: genLabel(key, assaysFromState, formatMessage, messages, i18nKeys),
-            realValue:
-              key === 'weekendOrHoliday'
-                ? result.devicesTotal - result.devicesActiveRaw
-                : Math.round((result[key] * result.devicesTotal) / 100),
-          })
-        )
-        return result
-      })
-      setBarData({
-        data: expandedBarData,
-        average: calcOverallRate('devicesActiveRaw', 'devicesTotal', groupedForBar, { weekendOrHoliday: 0 }).toFixed(0),
-      })
+    return {
+      data: expandedBarData,
+      average: calcOverallRate('devicesActiveRaw', 'devicesTotal', groupedForBar, { weekendOrHoliday: 0 }).toFixed(0),
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
+  }, [data, assaysFromState, formatMessage, messages, mergedParams])
 
   return (
     <Grid container className={styles.Graph_Container}>
