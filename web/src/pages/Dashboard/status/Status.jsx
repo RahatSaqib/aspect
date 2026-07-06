@@ -62,18 +62,24 @@ const Status = () => {
           </LazyGraph>
 
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
-            <LazyGraph>
-              <PermissionChecker permissions={['dashboard']}>
-                <ErrorBoundary>
-                  <TbDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                  {/* 2 */}
-                </ErrorBoundary>
-                <ErrorBoundary>
-                  <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                  {/* 3 */}
-                </ErrorBoundary>
-              </PermissionChecker>
-            </LazyGraph>
+            <>
+              <LazyGraph>
+                <PermissionChecker permissions={['dashboard']}>
+                  <ErrorBoundary>
+                    <TbDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                    {/* 2 */}
+                  </ErrorBoundary>
+                </PermissionChecker>
+              </LazyGraph>
+              <LazyGraph>
+                <PermissionChecker permissions={['dashboard']}>
+                  <ErrorBoundary>
+                    <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                    {/* 3 */}
+                  </ErrorBoundary>
+                </PermissionChecker>
+              </LazyGraph>
+            </>
           ) : null}
 
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
@@ -108,13 +114,17 @@ const Status = () => {
             </LazyGraph>
           ) : null}
 
-          <LazyGraph>
-            <PermissionChecker permissions={['dashboard', 'operationalData']}>
-              {!isCountry('BD') ? (
+          {!isCountry('BD') ? (
+            <LazyGraph>
+              <PermissionChecker permissions={['dashboard', 'operationalData']}>
                 <ErrorBoundary>
                   <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
                 </ErrorBoundary>
-              ) : null}
+              </PermissionChecker>
+            </LazyGraph>
+          ) : null}
+          <LazyGraph>
+            <PermissionChecker permissions={['dashboard', 'operationalData']}>
               <ErrorBoundary>
                 <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
               </ErrorBoundary>

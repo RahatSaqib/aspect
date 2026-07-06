@@ -9,7 +9,7 @@ import useIntersectionObserver from '../hooks/useIntersectionObserver'
  * @param {React.ReactNode} children - The graph component to lazy-load
  * @param {Object} options - IntersectionObserver options (threshold, rootMargin)
  */
-const LazyGraph = ({ children, options = { rootMargin: '100px' } }) => {
+const LazyGraph = ({ children, options }) => {
   const { ref, isVisible } = useIntersectionObserver(options)
 
   return (
