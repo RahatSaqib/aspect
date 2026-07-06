@@ -140,17 +140,24 @@ function buildTrx({
 }
 
 function loadModule({ transactStub, syncDeviceApprovalFromDeploymentsStub }) {
+  const deviceApprovalServiceStub = {
+    assertDeviceIsNotDecommissioned: sinon.stub().resolves(),
+    syncDeviceApprovalFromDeployments:
+      syncDeviceApprovalFromDeploymentsStub || sinon.stub().resolves({ changed: false }),
+  }
+
+  const deploymentService = proxyquire('../../../src/device/deployment/deploymentService', {
+    '../common/deviceApprovalService': deviceApprovalServiceStub,
+  })
+
   return proxyquire('../../../src/device/deployment/persistDeploymentChanges', {
     '../../db': { transact: transactStub },
     '../../auth/constraints': {
       getUserFromCredentials: sinon.stub().resolves({ id: 42, timezoneIANA: 'Etc/UTC' }),
     },
     '../common/logic': { recalculateDeviceFactTables: sinon.stub().resolves() },
-    '../common/deviceApprovalService': {
-      assertDeviceIsNotDecommissioned: sinon.stub().resolves(),
-      syncDeviceApprovalFromDeployments:
-        syncDeviceApprovalFromDeploymentsStub || sinon.stub().resolves({ changed: false }),
-    },
+    '../common/deviceApprovalService': deviceApprovalServiceStub,
+    './deploymentService': deploymentService,
   })
 }
 

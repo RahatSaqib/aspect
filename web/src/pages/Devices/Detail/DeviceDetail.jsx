@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import { Box } from '@mui/material'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
@@ -17,9 +17,11 @@ import deviceMessages from '../../../messages/deviceMessages'
 import { updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
 import { getReturnUrl } from '../../../utils/utils/browser'
+import DecommissionDeviceDialog from './DecommissionDeviceDialog'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import messages from './messages'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
+import ReactivateDeviceDialog from './ReactivateDeviceDialog'
 
 export const DeviceDetail = props => {
   const dispatch = useDispatch()
@@ -31,6 +33,13 @@ export const DeviceDetail = props => {
   const { deviceId } = useParams()
   const intl = useIntl()
   const queryClient = useQueryClient()
+  const [decommissionDialogOpen, setDecommissionDialogOpen] = useState(false)
+  const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false)
+
+  const canDecommission = useMemo(
+    () => user.jwt.jobFunctionNames?.some(name => name === 'Super Admin' || name === 'Regional Admin'),
+    [user.jwt.jobFunctionNames]
+  )
 
   const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
   const { isLoading: isDeviceTagsLoading, data: deviceTags } = useTagByTypeAndId('device', deviceId)
@@ -41,6 +50,25 @@ export const DeviceDetail = props => {
 
   const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
   const isDeviceNotFound = !isDeviceLoading && !device
+  const isDecommissioned = device?.approvalToken === 'decommissioned'
+  const isApproved = device?.approvalToken === 'approved'
+  const showDecommissionButton = canDecommission && device && isApproved
+  const showReactivateButton = canDecommission && device && isDecommissioned
+  const editPath = `/browse/device/list/${deviceId}/edit${location.search}`
+  const decommissionButtonInverse = editPath !== location?.pathname
+
+  const deviceTitle = useMemo(() => {
+    if (!device) return 'Devices'
+
+    const baseTitle = device.siteName
+      ? intl.formatMessage(deviceMessages.nameAtSite, {
+          deviceName: device.name,
+          siteName: device.siteName,
+        })
+      : `${device.name} (${intl.formatMessage(messages.undeployed)})`
+
+    return isDecommissioned ? `${baseTitle} ${intl.formatMessage(messages.decommissionedTitleSuffix)}` : baseTitle
+  }, [device, intl, isDecommissioned])
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = () => queryClient.invalidateQueries([DEVICE_KEY, deviceId])
@@ -80,16 +108,7 @@ export const DeviceDetail = props => {
     <>
       <DetailHeader
         responsive
-        name={
-          device
-            ? device.siteName
-              ? intl.formatMessage(deviceMessages.nameAtSite, {
-                  deviceName: device.name,
-                  siteName: device.siteName,
-                })
-              : `${device.name} (${intl.formatMessage(messages.undeployed)})`
-            : 'Devices'
-        }
+        name={deviceTitle}
         back={location.state?.previousLocationPathname ?? getReturnUrl(location, '/browse/device/list')}
       >
         {[
@@ -108,7 +127,41 @@ export const DeviceDetail = props => {
             {label}
           </AspectButton>
         ))}
+        {showDecommissionButton && (
+          <AspectButton
+            color="primary"
+            variant="contained"
+            inverse={decommissionButtonInverse}
+            onClick={() => setDecommissionDialogOpen(true)}
+          >
+            {intl.formatMessage(messages.decommission)}
+          </AspectButton>
+        )}
+        {showReactivateButton && (
+          <AspectButton
+            color="primary"
+            variant="contained"
+            inverse={decommissionButtonInverse}
+            onClick={() => setReactivateDialogOpen(true)}
+          >
+            {intl.formatMessage(messages.reactivate)}
+          </AspectButton>
+        )}
       </DetailHeader>
+      {showReactivateButton && (
+        <ReactivateDeviceDialog
+          open={reactivateDialogOpen}
+          onClose={() => setReactivateDialogOpen(false)}
+          deviceId={deviceId}
+        />
+      )}
+      {showDecommissionButton && (
+        <DecommissionDeviceDialog
+          open={decommissionDialogOpen}
+          onClose={() => setDecommissionDialogOpen(false)}
+          deviceId={deviceId}
+        />
+      )}
       <Box component="main" sx={{ flex: '1 1 auto' }}>
         {isLoading ? (
           <Loading centered level={2} />

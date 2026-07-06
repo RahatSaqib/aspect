@@ -968,10 +968,16 @@ msgstr "Are you sure to toggle notification status?"
 
 #. [pages.DeviceDetail.decommissionConfirmMessage]
 #. defaultMessage is:
-#. Are you sure you want to decommission this device?
+#. Once decommissioned, this device will no longer appear in active-device lists, counts, or reports. The results it has already produced stay valid and will keep appearing in every result view and result count.
 #: extracted_strings.json
-msgid "Are you sure you want to decommission this device?"
-msgstr "Are you sure you want to decommission this device?"
+msgid ""
+"Once decommissioned, this device will no longer appear in active-device "
+"lists, counts, or reports. The results it has already produced stay valid "
+"and will keep appearing in every result view and result count."
+msgstr ""
+"Once decommissioned, this device will no longer appear in active-device "
+"lists, counts, or reports. The results it has already produced stay valid "
+"and will keep appearing in every result view and result count."
 
 #. [pages.DeviceDetailProfile.confirmDeleteDeployment]
 #. defaultMessage is:
@@ -3270,10 +3276,17 @@ msgstr "Dec"
 msgid "December"
 msgstr "December"
 
-#. [pages.DeviceDetail.decommissionDevice]
+#. [pages.DeviceDetail.decommission]
 #. defaultMessage is:
-#. Decommission device
+#. Decommission
 #. [pages.DeviceDetail.decommissionConfirmTitle]
+#. defaultMessage is:
+#. Decommission
+#: extracted_strings.json
+msgid "Decommission"
+msgstr "Decommission"
+
+#. [pages.DeviceDetail.decommissionDevice]
 #. defaultMessage is:
 #. Decommission device
 #: extracted_strings.json

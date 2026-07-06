@@ -88,11 +88,37 @@ async function decommissionDevice(trx, { deviceId, userId = null, now = new Date
   })
 }
 
-async function reactivateDevice(trx, { deviceId, userId = null, now = new Date() }) {
-  const deploymentCount = await getDeploymentCount(trx, deviceId)
-  const approvalToken = getNewApprovalStatus({ hasDeployments: deploymentCount > 0 })
+async function assertDeviceCanBeReactivated(trx, deviceId) {
+  const device = await getDeviceApprovalState(trx, deviceId)
 
-  return saveDeviceApprovalIfChanged(trx, { deviceId, approvalToken, userId, now })
+  if (device.approvalToken !== DECOMMISSIONED) {
+    throw Boom.conflict('Only decommissioned devices can be reactivated')
+  }
+
+  const deploymentCount = await getDeploymentCount(trx, deviceId)
+  if (deploymentCount === 0) {
+    throw Boom.conflict('Device has no deployments to reactivate')
+  }
+
+  return device
+}
+
+async function assertDeviceCanBeDecommissioned(trx, deviceId) {
+  const device = await getDeviceApprovalState(trx, deviceId)
+
+  if (device.approvalToken === APPROVED) {
+    return device
+  }
+
+  if (device.approvalToken === PENDING_DEPLOYMENT) {
+    throw Boom.conflict('Only approved devices can be decommissioned')
+  }
+
+  if (device.approvalToken === DECOMMISSIONED) {
+    throw Boom.conflict('Device is already decommissioned')
+  }
+
+  throw Boom.conflict('Only approved devices can be decommissioned')
 }
 
 async function assertDeviceIsNotDecommissioned(trx, deviceId) {
@@ -106,9 +132,11 @@ async function assertDeviceIsNotDecommissioned(trx, deviceId) {
 }
 
 module.exports = {
+  assertDeviceCanBeDecommissioned,
+  assertDeviceCanBeReactivated,
   assertDeviceIsNotDecommissioned,
   decommissionDevice,
-  reactivateDevice,
+  saveDeviceApprovalIfChanged,
   syncDeviceApprovalFromDeployments,
   APPROVED,
   PENDING_DEPLOYMENT,
