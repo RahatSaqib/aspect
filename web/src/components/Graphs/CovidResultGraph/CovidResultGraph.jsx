@@ -110,7 +110,7 @@ const CovidResultGraph = ({ assaysFromState: assays, resultCategoryGroupsFromSta
       return result
     })
     return { donutData: { data: pie, total: `${pieAvg}%` }, barData: { data: expandedBarData } }
-  }, [data, assays, formatMessage, format, messages])
+  }, [data, assays, formatMessage, format])
 
   return !data || !assays || !resultCategoryGroups ? (
     <Loading />

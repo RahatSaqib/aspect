@@ -149,7 +149,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
     })
 
     return { donutData: { data: pie, total: `${totalAverage}` }, barData: { data: expandedBarData } }
-  }, [data, filter, endPointParams, assays, formatMessage, format, messages])
+  }, [data, filter, assays, formatMessage, format])
 
   return isLoading || !filter.length ? (
     <Loading />

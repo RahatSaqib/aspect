@@ -126,7 +126,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
       return result
     })
     return { donutData: { data: pie, total: `${pieAvg}%` }, barData: { data: expandedBarData } }
-  }, [data, formatMessage, messages])
+  }, [data, assays, format, formatMessage])
 
   return !data || !assays || !resultCategoryGroups ? (
     <Loading />

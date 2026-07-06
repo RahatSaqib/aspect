@@ -56,17 +56,19 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
 
-  const whiteListed = getWhitelistedAssays({ assays, assaysFromState })
-  const mergedParams = [
-    ...prepAssaysForParams(whiteListed, 'GET'),
-    ...prepParamsForEndPoint(
-      {
-        minDate: startOfMonth(subMonths(new Date(), 12)),
-        maxDate: endOfMonth(subMonths(new Date(), 1)),
-      },
-      false
-    ),
-  ]
+  const mergedParams = useMemo(() => {
+    const whiteListed = getWhitelistedAssays({ assays, assaysFromState })
+    return [
+      ...prepAssaysForParams(whiteListed, 'GET'),
+      ...prepParamsForEndPoint(
+        {
+          minDate: startOfMonth(subMonths(new Date(), 12)),
+          maxDate: endOfMonth(subMonths(new Date(), 1)),
+        },
+        false
+      ),
+    ]
+  }, [assaysFromState])
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
@@ -134,7 +136,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
       return result
     })
     return { donutData: { data: pie, total: `${pieAvg}%` }, barData: { data: expandedBarData } }
-  }, [data, assaysFromState, formatMessage, format, messages, mergedParams])
+  }, [data, assaysFromState, formatMessage, format, mergedParams])
 
   return isLoading ? (
     <Loading />

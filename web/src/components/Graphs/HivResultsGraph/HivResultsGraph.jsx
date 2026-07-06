@@ -112,7 +112,7 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       return result
     })
     return { donutData: { data: parsedData, total: `${pieAvg}%` }, barData: { data: expandedBarData } }
-  }, [data, assays, formatMessage, messages])
+  }, [data, assays, formatMessage, format])
 
   return !data || !assays || !resultCategoryGroups ? (
     <Loading />

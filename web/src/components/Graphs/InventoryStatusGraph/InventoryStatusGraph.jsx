@@ -57,7 +57,7 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
       })
     )
     return { data: expandedBarData }
-  }, [data, assaysFromState, filter, formatMessage, messages])
+  }, [data, assaysFromState, filter, formatMessage])
 
   return (
     <Grid container className={styles.Graph_Container}>

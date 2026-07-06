@@ -52,7 +52,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState(defaultFilters)
 
-  const mergedParams = [{ minDate: filter.minDate }, { maxDate: filter.maxDate }]
+  const mergedParams = useMemo(() => [{ minDate: filter.minDate }, { maxDate: filter.maxDate }], [filter])
 
   const { data, isLoading } = useQuery(
     ['deviceStatusMonthly', { mergedParams }],
@@ -104,7 +104,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
       data: expandedBarData,
       average: calcOverallRate('devicesActiveRaw', 'devicesTotal', groupedForBar, { weekendOrHoliday: 0 }).toFixed(0),
     }
-  }, [data, assaysFromState, formatMessage, messages, mergedParams])
+  }, [data, assaysFromState, formatMessage, mergedParams])
 
   return (
     <Grid container className={styles.Graph_Container}>
