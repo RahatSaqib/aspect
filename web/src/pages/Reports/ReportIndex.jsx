@@ -1,26 +1,37 @@
-import React, { useState, useEffect } from 'react'
-import { Alert, Box, Button, Grid, LinearProgress, List, ListItem } from '@mui/material'
+import React, { useContext, useEffect, useState } from 'react'
+import { Alert, Box, Button, Grid, LinearProgress, List, ListItem, TextField } from '@mui/material'
 import groupBy from 'lodash/groupBy'
+import pick from 'lodash/pick'
 import { Helmet } from 'react-helmet'
 import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
 import { useIdleTimerContext } from 'react-idle-timer'
 import { defineMessages, useIntl } from 'react-intl'
 import { useQuery, useMutation } from 'react-query'
-import { useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { DetailHeader, ReportsFilter } from '../../components'
+import { DetailHeader } from '../../components'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { REPORT_LIST } from '../../components/QueryFetch/Report/index'
-import useFilterValues from '../../hooks/useFilterValues'
+import { getReportParameters, resolveParameterDefaults } from '../../components/ReportParameterForm'
+import useAuthState from '../../hooks/useAuthState'
 import messages from '../../messages/report'
+import FilterContext from '../../providers/FilterProvider/FilterProvider.Context'
 import { showError } from '../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../utils/utils/files'
 import { asyncReportsFeatureEnabled } from './constants'
+import pageMessages from './messages'
 import { ReportActions } from './ReportActions'
 import ReportCard from './ReportCard'
+import ReportFilterDialog from './ReportFilterDialog'
 import { ReportRecentRequests } from './ReportRecentRequests'
 import styles from './styles.module.css'
+
+const LAST_SUBMISSION_KEY = '/reports/_lastSubmission'
+const SHARED_PARAMETER_TYPES = ['state', 'lga', 'site', 'assay', 'consumable', 'dateRange']
+
+// dateRange is virtual: it reads/writes the minDate/maxDate wire keys
+const wireKeysOf = parameters =>
+  parameters.reduce((keys, p) => (p.type === 'dateRange' ? [...keys, 'minDate', 'maxDate'] : [...keys, p.name]), [])
 
 const getFileType = fileExtension => (fileExtension === 'xlsx' ? 'Excel' : 'CSV')
 
@@ -67,10 +78,12 @@ const getDateRangeValidationError = reportName => ({
 })
 
 const ReportIndex = () => {
-  const location = useLocation()
   const intl = useIntl()
+  const user = useAuthState()
   const [showProgressBar, setShowProgressBar] = useState(false)
-  const filter = useFilterValues(location.pathname)
+  const [search, setSearch] = useState('')
+  const [dialogState, setDialogState] = useState(null)
+  const [filterState, setFilterState] = useContext(FilterContext)
   const idleTimer = useIdleTimerContext()
 
   useEffect(() => {
@@ -80,17 +93,40 @@ const ReportIndex = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { data: reportListResponse, isLoading } = useQuery([REPORT_LIST.KEY, { params: filter }], async () =>
-    fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: filter })
+  const { data: reportListResponse, isLoading } = useQuery([REPORT_LIST.KEY], async () =>
+    fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: {} })
   )
 
+  // Prefill precedence (later spreads win): definition defaults <- shared-type wire
+  // keys from the last submission (any report) <- last-used values for THIS report.
+  const buildInitialValues = report => {
+    const parameters = getReportParameters(report)
+    const sharedKeys = wireKeysOf(parameters.filter(p => SHARED_PARAMETER_TYPES.includes(p.type)))
+    return {
+      ...resolveParameterDefaults(parameters),
+      ...pick(filterState[LAST_SUBMISSION_KEY] || {}, sharedKeys),
+      ...(filterState[`/reports/${report.externalId}`] || {}),
+    }
+  }
+
+  const openDialog = ({ report, fileExtension, requestType }) =>
+    setDialogState({ report, fileExtension, requestType, initialValues: buildInitialValues(report) })
+
+  const persistValues = (report, values) => {
+    setFilterState(prev => ({
+      ...prev,
+      [`/reports/${report.externalId}`]: values,
+      [LAST_SUBMISSION_KEY]: values,
+    }))
+  }
+
   const { mutate: onClickSubmitAsyncReportRequest, isSubmitting: isSubmittingReportRequest } = useMutation(
-    async ({ report, fileExtension }) => {
+    async ({ report, fileExtension, values }) => {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
       return fetchWrapperForQueries({
         endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}/async`,
         method: 'POST',
-        params: { reportsFilter: filter, format: fileExtension, timeZone },
+        params: { reportsFilter: { ...values, countryId: user.countryId }, format: fileExtension, timeZone },
         customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
       })
     },
@@ -98,7 +134,8 @@ const ReportIndex = () => {
       onSettled: () => {
         // toast component will come here.
       },
-      onSuccess: () => {
+      onSuccess: (data, { report, values }) => {
+        persistValues(report, values)
         toast.success('Report request submitted successfully and you will be notified once it is ready for download.')
         refetchReportRequest()
         refetchAllReportRequests()
@@ -106,8 +143,8 @@ const ReportIndex = () => {
       onError: () => {
         toast.error('Report request failed. Please try again later.')
       },
-      onMutate: ({ report }) => {
-        if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
+      onMutate: ({ report, values }) => {
+        if (report.validations.includes('dateRangeRequired') && (!values.minDate || !values.maxDate)) {
           const store = require('../../store/store').default
           store.dispatch(showError(getDateRangeValidationError(report.name)))
           throw new Error('Date range required')
@@ -118,7 +155,7 @@ const ReportIndex = () => {
 
   const onClickReportSubmit = async ({ report, fileExtension, requestType }) => {
     if (requestType === 'generate') {
-      onClickSubmitAsyncReportRequest({ report, fileExtension })
+      openDialog({ report, fileExtension, requestType })
     } else if (requestType === 'download') {
       // Report download mutation comes here
     }
@@ -129,12 +166,12 @@ const ReportIndex = () => {
     isLoading: reportRequestLoading,
     refetch: refetchReportRequest,
   } = useQuery(
-    [`${REPORT_LIST.KEY}/async`, { params: filter }],
+    [`${REPORT_LIST.KEY}/async`],
     async () =>
       fetchWrapperForQueries({
         method: 'POST',
         endpoint: `${REPORT_LIST.ENDPOINT}/async`,
-        params: { reportsFilter: filter },
+        params: {},
       }),
     {
       enabled: asyncReportsFeatureEnabled,
@@ -162,19 +199,27 @@ const ReportIndex = () => {
 
   const groupedResponse = groupBy(reportRequestResponse?.data ?? [], 'externalId')
 
-  const onClickDownload = (report, fileExtension = 'xlsx') => {
-    if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
+  const onClickDownload = (report, fileExtension = 'xlsx', values = {}) => {
+    if (report.validations.includes('dateRangeRequired') && (!values.minDate || !values.maxDate)) {
       const store = require('../../store/store').default
       store.dispatch(showError(getDateRangeValidationError(report.name)))
       return
     }
+
+    persistValues(report, values)
 
     const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
     setShowProgressBar(true)
     idleTimer.pause()
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}`,
-      params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
+      params: {
+        ...values,
+        countryId: user.countryId,
+        format: fileExtension,
+        timeZone,
+        maxDate: values.maxDate || new Date(),
+      },
       customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
     })
       .then(async resp => {
@@ -187,12 +232,44 @@ const ReportIndex = () => {
       })
   }
 
+  const onDialogSubmit = values => {
+    const { report, fileExtension } = dialogState
+    if (asyncReportsFeatureEnabled) {
+      onClickSubmitAsyncReportRequest({ report, fileExtension, values })
+    } else {
+      onClickDownload(report, fileExtension, values)
+    }
+    setDialogState(null)
+  }
+
+  // Same localized resolution as ReportCard.jsx
+  const localizeReport = report => ({
+    name: messages[report.i18nKey] ? intl.formatMessage(messages[report.i18nKey]) : report.name,
+    description: messages[report.i18nKeyDescription]
+      ? intl.formatMessage(messages[report.i18nKeyDescription])
+      : report.description,
+  })
+
+  const searchTerm = search.trim().toLowerCase()
+  const visibleReports = (reportListResponse?.data ?? []).filter(report => {
+    if (!searchTerm) return true
+    const { name, description } = localizeReport(report)
+    return (name || '').toLowerCase().includes(searchTerm) || (description || '').toLowerCase().includes(searchTerm)
+  })
+
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.reportsTitle)} disableBack />
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
-        <ReportsFilter />
+        <TextField
+          fullWidth
+          size="small"
+          label={intl.formatMessage(pageMessages.searchReports)}
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          sx={{ marginY: 2 }}
+        />
         {asyncReportsFeatureEnabled ? (
           <Alert severity="info" sx={{ marginY: 2 }}>
             You can download your report if it’s already generated. If it’s not yet available, you can continue browsing
@@ -218,7 +295,7 @@ const ReportIndex = () => {
           <LinearProgress />
         ) : (
           <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
-            {reportListResponse.data.map(report => (
+            {visibleReports.map(report => (
               <ReportCard
                 key={report.externalId}
                 title={report.name}
@@ -228,7 +305,7 @@ const ReportIndex = () => {
                 onClick={() =>
                   asyncReportsFeatureEnabled
                     ? onClickReportSubmit({ report, fileExtension: 'xlsx' })
-                    : onClickDownload(report, 'xlsx')
+                    : openDialog({ report, fileExtension: 'xlsx' })
                 }
               >
                 {asyncReportsFeatureEnabled ? (
@@ -252,12 +329,16 @@ const ReportIndex = () => {
                 ) : (
                   <>
                     {report.exportExcel === 1 && (
-                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => openDialog({ report, fileExtension: 'xlsx' })}
+                      >
                         Excel
                       </Button>
                     )}
                     {report.exportCsv === 1 && (
-                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
+                      <Button size="small" color="primary" onClick={() => openDialog({ report, fileExtension: 'csv' })}>
                         CSV
                       </Button>
                     )}
@@ -267,6 +348,15 @@ const ReportIndex = () => {
             ))}
           </Grid>
         )}
+        <ReportFilterDialog
+          open={Boolean(dialogState)}
+          report={dialogState?.report}
+          fileExtension={dialogState?.fileExtension}
+          requestType={dialogState?.requestType}
+          initialValues={dialogState?.initialValues}
+          onClose={() => setDialogState(null)}
+          onSubmit={onDialogSubmit}
+        />
       </div>
     </>
   )

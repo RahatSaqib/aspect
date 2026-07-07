@@ -6,6 +6,7 @@ const { jsonToArraySorted } = require('../shared/sort')
 const { getHash } = require('../shared/encryption')
 const { getContentDispositionFilename } = require('../shared/io')
 const { getReportDetails } = require('./service')
+const { buildParamsValidator, resolveParams } = require('./params')
 const { queue } = require('../messageQueue')
 const { knex } = require('../db')
 
@@ -22,13 +23,13 @@ const incrementRequestCount = async (asyncReportId, currentUserId) => {
 }
 
 const saveReportAndPushToQueue = async payload => {
-  const { reportId, hash, query, queryHash, auth, useUserPlaceHolders, externalId } = payload
+  const { reportId, hash, query, queryHash, auth, useUserPlaceHolders, externalId, reportDetails } = payload
 
   const statusId = await asyncReportStatusToId('queued')
 
   const user = await getUserFromCredentials(auth.credentials)
 
-  const { fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId: user.personId })
+  const { fileNamePrefix, exportExcel } = reportDetails
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format === 'csv' || !exportExcel ? 'csv' : 'xlsx'
@@ -79,10 +80,18 @@ async function processAsyncReportRequest(request) {
   const { externalId } = params
   const dataConstraints = await getConstraints(auth.credentials)
   const reportId = await reportToId(externalId)
+  const reportDetails = await getReportDetails(externalId, { personId: dataConstraints.person.id })
 
-  const querySorted = jsonToArraySorted(reportsFilter)
+  buildParamsValidator(reportDetails.parameters)(reportsFilter, { reportExternalId: externalId })
+  // hashes must be computed on RESOLVED params so defaulted and explicit requests share the cache
+  const resolvedFilter = resolveParams(reportDetails.parameters, reportsFilter, {
+    timeZone: restPayload.timeZone ?? (reportsFilter || {}).timeZone,
+    reportExternalId: externalId,
+  })
+
+  const querySorted = jsonToArraySorted(resolvedFilter)
   const queryHash = getHash(JSON.stringify(querySorted))
-  const query = { ...reportsFilter, ...restPayload }
+  const query = { ...resolvedFilter, ...restPayload }
   /**
    * generate hash from combination of report, query and data constraints
    */
@@ -107,6 +116,7 @@ async function processAsyncReportRequest(request) {
       auth,
       useUserPlaceHolders: true,
       externalId,
+      reportDetails,
     }
 
     const asyncReportId = await saveReportAndPushToQueue(payload)

@@ -53,6 +53,44 @@ function responseBaseReports() {
             exportExcel: Joi.number().allow(null).description('Flag to allow export to excel'),
             exportCsv: Joi.number().allow(null).description('Flag to allow export to csv'),
             validations: Joi.array().items(Joi.string()),
+            parameters: Joi.array()
+              .required()
+              .description('Declared user-facing parameters for this report')
+              .items(
+                Joi.object().keys({
+                  name: Joi.string()
+                    .required()
+                    .description('Wire key of the parameter (dateRange is virtual: minDate/maxDate)'),
+                  type: Joi.string()
+                    .valid(
+                      'dateRange',
+                      'state',
+                      'lga',
+                      'site',
+                      'assay',
+                      'consumable',
+                      'enum',
+                      'number',
+                      'text',
+                      'boolean'
+                    )
+                    .required(),
+                  required: Joi.bool().description('Server-enforced in strict mode (phase 4); UI hint now'),
+                  multiple: Joi.bool().description('Multi-select (arrays accepted)'),
+                  default: Joi.alternatives()
+                    .try(Joi.string(), Joi.number(), Joi.bool(), Joi.object().keys({ period: Joi.string().required() }))
+                    .description('Literal for scalars; { period: <dateToken> } for dateRange'),
+                  dependsOn: Joi.string().description('Name of the parameter this one cascades from'),
+                  permission: Joi.string().description('Web hides the field unless user has this permission'),
+                  i18nKey: Joi.string().description('Message key for the label (web/src/messages)'),
+                  label: Joi.string().description('Fallback English label'),
+                  options: Joi.array()
+                    .items(Joi.alternatives().try(Joi.string(), Joi.number()))
+                    .description('Allowed values for enum type'),
+                  min: Joi.number().description('Min for number type'),
+                  max: Joi.number().description('Max for number type'),
+                })
+              ),
           })
         ),
     }),

@@ -2,6 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const commonReportFixture = require('../fixtures/Report')
 const { getIdsByExternalId } = require('../../src/shared/dictionary')
+const { LEGACY_REPORT_PARAMETERS } = require('../../src/report/params')
 const { mapExternalIdToId } = require('./utils')
 
 async function upsertSheets(knex, reportId, sheets) {
@@ -59,7 +60,11 @@ module.exports = async function upsertReports(knex, countrySpecificReportFixture
 
     const reportToUpdate = await knex('Report').where({ externalId }).first()
     let reportId
-    const reportData = { ..._.omit(report, omitFields), validations: JSON.stringify(report.validations) }
+    const reportData = {
+      ..._.omit(report, omitFields),
+      validations: JSON.stringify(report.validations),
+      parameters: JSON.stringify(report.parameters ?? LEGACY_REPORT_PARAMETERS),
+    }
 
     if (reportToUpdate) {
       // Update

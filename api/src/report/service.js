@@ -50,12 +50,21 @@ async function getReports(request) {
       'r.i18nKeyDescription',
       'r.exportExcel',
       'r.exportCsv',
-      'r.validations'
+      'r.validations',
+      'r.parameters'
     )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  return { ok: true, total, data: data.map(r => ({ ...r, validations: JSON.parse(r.validations) })) }
+  return {
+    ok: true,
+    total,
+    data: data.map(r => ({
+      ...r,
+      validations: JSON.parse(r.validations),
+      parameters: r.parameters ? JSON.parse(r.parameters) : [],
+    })),
+  }
 }
 
 async function getReportDetails(externalId, dataConstraints) {
@@ -76,11 +85,14 @@ async function getReportDetails(externalId, dataConstraints) {
       'r.i18nKey',
       'r.name',
       'r.exportCsv',
-      'r.exportExcel'
+      'r.exportExcel',
+      'r.parameters'
     )
     .first()
 
   if (!report) throw Boom.forbidden("You don't have access to the requested report")
+
+  report.parameters = report.parameters ? JSON.parse(report.parameters) : []
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)

@@ -2,6 +2,7 @@ const { Worker } = require('worker_threads')
 const { getUserFromCredentials } = require('../auth/constraints')
 const { getContentDispositionFilename } = require('../shared/io')
 const { getReportDetails } = require('./service')
+const { buildParamsValidator, resolveParams } = require('./params')
 
 /**
  * Execute a report and save it to disk.
@@ -12,7 +13,10 @@ const { getReportDetails } = require('./service')
 async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = false, reportPassword = undefined) {
   const user = await getUserFromCredentials(auth.credentials)
 
-  const { fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId: user.personId })
+  const { fileNamePrefix, exportExcel, parameters } = await getReportDetails(externalId, { personId: user.personId })
+
+  buildParamsValidator(parameters)(query, { reportExternalId: externalId })
+  query = resolveParams(parameters, query, { timeZone: query.timeZone, reportExternalId: externalId })
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format === 'csv' || !exportExcel ? 'csv' : 'xlsx'
