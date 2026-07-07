@@ -55,4 +55,4 @@ const ColumnGraph = ({
   return <Column {...config} />
 }
 
-export default React.memo(ColumnGraph)
+export default ColumnGraph

@@ -29,4 +29,4 @@ const LineGraph = ({ data, graphId, showLabel, xField, yField, seriesField, ...r
   return <Line {...config} />
 }
 
-export default React.memo(LineGraph)
+export default LineGraph

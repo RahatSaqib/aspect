@@ -67,4 +67,4 @@ const ColumnLineGraph = ({ data, colors, graphId, showLabel, xField, yField, get
   return data ? <DualAxes {...props} /> : null
 }
 
-export default React.memo(ColumnLineGraph)
+export default ColumnLineGraph
