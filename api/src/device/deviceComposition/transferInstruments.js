@@ -78,8 +78,24 @@ async function validate(sourceInstruments, sourceDeviceIds, targetDevice, creden
   validateTargetDeviceExists(targetDevice)
   validateDifferentDevices(sourceInstruments, targetDevice)
   validateTargetDeviceIsGeneXpert(targetDevice)
+  await validateNoDecommissionedDevices([...sourceDeviceIds, targetDevice.id])
   await validateInstruments(sourceInstruments, targetDevice)
   await validatePersmissions(sourceDeviceIds, targetDevice, credentials)
+}
+
+// Instruments cannot be moved off (or onto) a decommissioned device: its lifecycle is closed.
+async function validateNoDecommissionedDevices(deviceIds) {
+  const decommissioned = await knex('Device as d')
+    .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .whereIn('d.id', deviceIds)
+    .where('da.token', 'decommissioned')
+    .first('d.id')
+
+  if (decommissioned) {
+    throw Boom.conflict('Instruments cannot be moved for a decommissioned device', {
+      errorKeyCode: 'transferInstrumentsDecommissioned',
+    })
+  }
 }
 
 async function validateInstruments(sourceInstruments, targetDevice) {

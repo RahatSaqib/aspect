@@ -12,6 +12,12 @@ async function transferInstrumentToNewDevice({ payload, plugins: { messageContex
   const { instrumentId, siteId } = payload
   const { sourceDevice } = await getSourceDevice(instrumentId)
 
+  if (sourceDevice.approvalToken === 'decommissioned') {
+    throw Boom.conflict('Instruments cannot be moved for a decommissioned device', {
+      errorKeyCode: 'transferInstrumentsDecommissioned',
+    })
+  }
+
   await validate(instrumentId, siteId, auth.credentials)
 
   const { deletedDeviceIds, newDeviceId } = await transact(async trknex => {
@@ -60,8 +66,18 @@ async function validateSitePermissions(siteId, credentials) {
 async function getSourceDevice(instrumentId) {
   const data = await knex('Device as d')
     .join('Instrument as i', 'i.deviceId', 'd.id')
+    .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .where('i.id', instrumentId)
-    .first('d.id', 'd.partnerId', 'd.deviceTypeId', 'd.deviceApprovalId', 'd.deviceApiKeyId', 'd.culture', 'd.timezone')
+    .first(
+      'd.id',
+      'd.partnerId',
+      'd.deviceTypeId',
+      'd.deviceApprovalId',
+      'd.deviceApiKeyId',
+      'd.culture',
+      'd.timezone',
+      'da.token as approvalToken'
+    )
 
   if (!data) {
     throw Boom.badRequest('Instrument not found')
@@ -76,6 +92,7 @@ async function getSourceDevice(instrumentId) {
       deviceApiKeyId: data.deviceApiKeyId,
       culture: data.culture,
       timezone: data.timezone,
+      approvalToken: data.approvalToken,
     },
   }
 }

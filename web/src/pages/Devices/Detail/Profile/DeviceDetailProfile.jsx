@@ -146,6 +146,7 @@ const DeviceDetailProfile = ({
   // m-tch,
   device,
   disabled,
+  canExportDeviceLogs,
   devicePerformance,
   // --- injected by recompose ---
   sortCol,
@@ -218,7 +219,7 @@ const DeviceDetailProfile = ({
               title={
                 <span>
                   {formatMessage(messages.deviceType)}
-                  {!disabled && (
+                  {canExportDeviceLogs && (
                     <Tooltip title={formatMessage(messages.deviceLogsTooltip)} placement="right">
                       <button type="button" className={styles.fieldAction} onClick={onExportDeviceLogsClick}>
                         ({formatMessage(messages.deviceLogs)})
@@ -531,6 +532,7 @@ DeviceDetailProfile.propTypes = {
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   disabled: PropTypes.bool.isRequired,
+  canExportDeviceLogs: PropTypes.bool,
   devicePerformance: PropTypes.oneOfType([PropTypes.object]).isRequired,
   sortCol: PropTypes.string.isRequired,
   sortDir: PropTypes.string.isRequired,
@@ -554,6 +556,7 @@ DeviceDetailProfile.propTypes = {
 
 DeviceDetailProfile.defaultProps = {
   deviceTags: [],
+  canExportDeviceLogs: false,
 }
 
 export default enhance(DeviceDetailProfile)

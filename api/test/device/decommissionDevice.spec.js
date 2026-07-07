@@ -36,6 +36,7 @@ describe('Device decommission route', () => {
   })
 
   afterEach(async () => {
+    await knex('Instrument').where({ deviceId: testDeviceId }).del()
     await knex('Deployment').where({ deviceId: testDeviceId }).del()
     await knex('DeviceApprovalLog').where({ deviceId: testDeviceId }).del()
     await knex('FactDeviceFlag').where({ deviceId: testDeviceId }).del()
@@ -90,5 +91,34 @@ describe('Device decommission route', () => {
 
     assert.equal(res.status, 409)
     assert.equal(res.body.message, 'Deployments cannot be edited for a decommissioned device')
+  })
+
+  it('should block editing device details while the device is decommissioned', async () => {
+    await knex('Device').where({ id: testDeviceId }).update({ deviceApprovalId: approvals.decommissioned })
+
+    const res = await server
+      .put(`${path}/${testDeviceId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send({ notes: 'should not persist' })
+
+    assert.equal(res.status, 409)
+    assert.equal(res.body.message, 'A decommissioned device cannot be edited')
+  })
+
+  it('should block moving instruments off a decommissioned device', async () => {
+    await knex('Device').where({ id: testDeviceId }).update({ deviceApprovalId: approvals.decommissioned })
+    const [instrumentId] = await knex('Instrument').insert({
+      deviceId: testDeviceId,
+      serial: `DECOM-${Date.now()}`,
+      active: true,
+    })
+
+    const res = await server
+      .post(`${path}/transfer-instrument-to-new-device`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send({ instrumentId, siteId: refDevice.siteId })
+
+    assert.equal(res.status, 409)
+    assert.equal(res.body.message, 'Instruments cannot be moved for a decommissioned device')
   })
 })

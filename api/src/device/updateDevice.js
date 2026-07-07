@@ -4,6 +4,7 @@ const { knex } = require('../db')
 const { getUser } = require('../auth/service')
 const { resolveDeviceNameOnEdit } = require('./common/deviceNaming')
 const { showDevice, getDeviceByRequest } = require('./service')
+const { DECOMMISSIONED } = require('./common/deviceApprovalService')
 
 async function updateDevice(request) {
   const {
@@ -17,6 +18,10 @@ async function updateDevice(request) {
   // TODO: check permission
   const now = new Date()
   const device = await getDeviceByRequest(request)
+
+  if (device.approvalToken === DECOMMISSIONED) {
+    throw Boom.conflict('A decommissioned device cannot be edited')
+  }
 
   const configurationData = _.assign({}, device.configurationData, payload.configurationData)
 

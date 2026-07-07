@@ -113,7 +113,8 @@ export const DeviceDetail = props => {
       >
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}${location.search}` },
-          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit${location.search}` },
+          // A decommissioned device is read-only: its fields can no longer be edited.
+          ...(isDecommissioned ? [] : [{ label: intl.formatMessage(messages.edit), path: editPath }]),
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}
@@ -180,7 +181,9 @@ export const DeviceDetail = props => {
                   onDateRangeChange={onDateRangeChange}
                   device={Immutable.fromJS(device)}
                   devicePerformance={Immutable.fromJS(devicePerformance)}
-                  disabled={!editable}
+                  // Decommissioned devices are read-only for every action except exporting Device Logs.
+                  disabled={!editable || isDecommissioned}
+                  canExportDeviceLogs={editable}
                   onMaintenanceSubmit={onMaintenanceSubmit}
                   onCalibrationSubmit={onCalibrationSubmit}
                   onWarrantySubmit={onWarrantySubmit}
@@ -191,7 +194,7 @@ export const DeviceDetail = props => {
             <Route
               path="edit"
               element={
-                editable ? (
+                editable && !isDecommissioned ? (
                   <DeviceDetailEdit device={device} deviceTags={deviceTags} editable={editable} />
                 ) : (
                   <Navigate replace to="." />
