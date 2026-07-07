@@ -43,7 +43,7 @@ const Status = () => {
   const { data: resultCategoryGroups } = useResultCategoryGroup(assays?.map(x => x.id))
   return (
     <div className={styles.Container}>
-      <Helmet title={formatMessage(messages.statusTitle)} />
+      <Helmet title={formatMessage(messages.homeTitle)} />
 
       <PermissionChecker permissions={['dashboard']}>
         <ErrorBoundary>
