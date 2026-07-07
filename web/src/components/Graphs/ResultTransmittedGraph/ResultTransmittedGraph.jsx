@@ -10,7 +10,7 @@ import {
   formatDateToYYYYMMDD,
   formatDataByGraphType,
   PeriodSelector,
-  Loading,
+  LoadingCard,
   PieRowGraph,
 } from '../../index'
 import fetchWrapperForQueries from '../../QueryFetch'
@@ -73,7 +73,9 @@ const ResultTransmittedGraph = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
-  return (
+  return isLoading ? (
+    <LoadingCard />
+  ) : (
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
@@ -112,19 +114,15 @@ const ResultTransmittedGraph = () => {
               </Grid>
               <Grid item xs={12} md={12} lg={10}>
                 <Grid container>
-                  {isLoading ? (
-                    <Loading />
-                  ) : (
-                    <Grid item xs={12} md={12} lg={12}>
-                      <div className={styles.Graph_Wrapper}>
-                        {graphData && !isEmpty(graphData) ? (
-                          <PieRowGraph data={graphData} componentClasses={['piegraph__container--nobg']} />
-                        ) : (
-                          <EmptyGraph type="pieRow" />
-                        )}
-                      </div>
-                    </Grid>
-                  )}
+                  <Grid item xs={12} md={12} lg={12}>
+                    <div className={styles.Graph_Wrapper}>
+                      {graphData && !isEmpty(graphData) ? (
+                        <PieRowGraph data={graphData} componentClasses={['piegraph__container--nobg']} />
+                      ) : (
+                        <EmptyGraph type="pieRow" />
+                      )}
+                    </div>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
