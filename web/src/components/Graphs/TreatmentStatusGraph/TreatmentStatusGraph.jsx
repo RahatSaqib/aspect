@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
 import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
-import { formatDataByGraphType, Loading } from '../../index'
+import { formatDataByGraphType, Loading, LoadingCard } from '../../index'
 import fetchWrapperForQueries from '../../QueryFetch'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -139,7 +139,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
   }, [data, assaysFromState, formatMessage, format, mergedParams])
 
   return isLoading ? (
-    <Loading />
+    <LoadingCard />
   ) : (
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>

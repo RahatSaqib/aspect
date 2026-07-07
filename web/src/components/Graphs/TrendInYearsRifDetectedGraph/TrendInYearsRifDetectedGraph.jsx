@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { LineGraph } from '..'
 import { graphMessages, months } from '../../../messages'
 import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
-import { StateSelector, Loading } from '../../index'
+import { StateSelector, LoadingCard } from '../../index'
 import fetchWrapperForQueries from '../../QueryFetch'
 import styles from '../graphStyles.module.css'
 import { fillYear } from '../graphUtils'
@@ -53,7 +53,7 @@ const TrendInYearsAllTestsGraph = () => {
   }, [data])
 
   return isLoading ? (
-    <Loading />
+    <LoadingCard />
   ) : (
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>

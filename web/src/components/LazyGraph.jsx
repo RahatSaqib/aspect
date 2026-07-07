@@ -19,6 +19,7 @@ const LazyGraph = ({ children, options }) => {
         minHeight: '500px',
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: 'center',
       }}
     >
       {isVisible ? children : null}

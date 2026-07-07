@@ -53,92 +53,92 @@ const Status = () => {
 
       {assays ? (
         <div className={styles.wrapper}>
-          <LazyGraph>
-            <PermissionChecker permissions={['dashboard']}>
+          <PermissionChecker permissions={['dashboard']}>
+            <LazyGraph>
               <ErrorBoundary>
                 <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
               </ErrorBoundary>
-            </PermissionChecker>
-          </LazyGraph>
+            </LazyGraph>
+          </PermissionChecker>
 
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
             <>
-              <LazyGraph>
-                <PermissionChecker permissions={['dashboard']}>
+              <PermissionChecker permissions={['dashboard']}>
+                <LazyGraph>
                   <ErrorBoundary>
                     <TbDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
                     {/* 2 */}
                   </ErrorBoundary>
-                </PermissionChecker>
-              </LazyGraph>
-              <LazyGraph>
-                <PermissionChecker permissions={['dashboard']}>
+                </LazyGraph>
+              </PermissionChecker>
+              <PermissionChecker permissions={['dashboard']}>
+                <LazyGraph>
                   <ErrorBoundary>
                     <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
                     {/* 3 */}
                   </ErrorBoundary>
-                </PermissionChecker>
-              </LazyGraph>
+                </LazyGraph>
+              </PermissionChecker>
             </>
           ) : null}
 
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
-            <LazyGraph>
-              <PermissionChecker permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
+              <LazyGraph>
                 <ErrorBoundary>
                   <XDRFLQResistanceGraph /> {/* 4 */}
                 </ErrorBoundary>
-              </PermissionChecker>
-            </LazyGraph>
+              </LazyGraph>
+            </PermissionChecker>
           ) : null}
 
           {assays.some(a => covidPermissions.includes(a.externalId)) && !isCountry('BD') ? (
-            <LazyGraph>
-              <PermissionChecker permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
+              <LazyGraph>
                 <ErrorBoundary>
                   <CovidResultGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
                   {/* 11 */}
                 </ErrorBoundary>
-              </PermissionChecker>
-            </LazyGraph>
+              </LazyGraph>
+            </PermissionChecker>
           ) : null}
 
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
-            <LazyGraph>
-              <PermissionChecker permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
+              <LazyGraph>
                 <ErrorBoundary>
                   <HivResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
                   {/* 12 */}
                 </ErrorBoundary>
-              </PermissionChecker>
-            </LazyGraph>
+              </LazyGraph>
+            </PermissionChecker>
           ) : null}
 
           {!isCountry('BD') ? (
-            <LazyGraph>
-              <PermissionChecker permissions={['dashboard', 'operationalData']}>
+            <PermissionChecker permissions={['dashboard', 'operationalData']}>
+              <LazyGraph>
                 <ErrorBoundary>
                   <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
                 </ErrorBoundary>
-              </PermissionChecker>
-            </LazyGraph>
+              </LazyGraph>
+            </PermissionChecker>
           ) : null}
-          <LazyGraph>
-            <PermissionChecker permissions={['dashboard', 'operationalData']}>
+          <PermissionChecker permissions={['dashboard', 'operationalData']}>
+            <LazyGraph>
               <ErrorBoundary>
                 <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
               </ErrorBoundary>
-            </PermissionChecker>
-          </LazyGraph>
+            </LazyGraph>
+          </PermissionChecker>
 
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
-            <LazyGraph>
-              <PermissionChecker permissions={['dashboard', '+reporter']}>
+            <PermissionChecker permissions={['dashboard', '+reporter']}>
+              <LazyGraph>
                 <ErrorBoundary>
                   <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
                 </ErrorBoundary>
-              </PermissionChecker>
-            </LazyGraph>
+              </LazyGraph>
+            </PermissionChecker>
           ) : null}
         </div>
       ) : null}
