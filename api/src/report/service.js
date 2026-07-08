@@ -12,6 +12,14 @@ const logger = require('../shared/logger')
 const { getAllAsyncReportsForUser } = require('../shared/report')
 
 const { asyncReportStatusToId } = require('../shared/dictionary')
+const { LEGACY_REPORT_PARAMETERS } = require('./params')
+
+// Rows still holding the migration backfill '[]' (envs not yet reseeded) behave exactly
+// like the legacy filter set — deploy and reseed can happen in any order under strict mode.
+const parseReportParameters = raw => {
+  const parsed = raw ? JSON.parse(raw) : []
+  return parsed.length ? parsed : LEGACY_REPORT_PARAMETERS
+}
 
 async function getReports(request) {
   const { query, auth } = request
@@ -62,7 +70,7 @@ async function getReports(request) {
     data: data.map(r => ({
       ...r,
       validations: JSON.parse(r.validations),
-      parameters: r.parameters ? JSON.parse(r.parameters) : [],
+      parameters: parseReportParameters(r.parameters),
     })),
   }
 }
@@ -92,7 +100,7 @@ async function getReportDetails(externalId, dataConstraints) {
 
   if (!report) throw Boom.forbidden("You don't have access to the requested report")
 
-  report.parameters = report.parameters ? JSON.parse(report.parameters) : []
+  report.parameters = parseReportParameters(report.parameters)
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)

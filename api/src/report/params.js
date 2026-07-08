@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi')
+const Boom = require('@hapi/boom')
 const { subDays, subMonths, startOfDay, endOfDay, startOfMonth, endOfMonth, startOfYear } = require('date-fns')
 const { replaceOffset, REGEX_ISODATESTRING } = require('../shared/date')
 const logger = require('../shared/logger')
@@ -63,14 +64,15 @@ function formatRangeInTimeZone(min, max, timeZoneIANA, reportExternalId) {
 
 /**
  * Resolve a relative date token into concrete `{ minDate, maxDate }` ISO strings
- * with the offset of the given IANA time zone (falls back to UTC on unknown zones).
+ * with the offset of the given IANA time zone (falls back to UTC on unknown zones,
+ * naming the report in the warning when `reportExternalId` is given).
  * Returns null for an unknown token. Never throws.
  */
-function resolveDateToken(token, timeZoneIANA, now = new Date()) {
+function resolveDateToken(token, timeZoneIANA, now = new Date(), reportExternalId = undefined) {
   const range = DATE_TOKEN_RANGES[token]
   if (!range) return null
   const { min, max } = range(now)
-  return formatRangeInTimeZone(min, max, timeZoneIANA, undefined)
+  return formatRangeInTimeZone(min, max, timeZoneIANA, reportExternalId)
 }
 
 /**
@@ -143,18 +145,25 @@ function joiSchemaForDef(def) {
 const dateRangeValueSchema = () => Joi.string().pattern(REGEX_ISODATESTRING).allow(null, '')
 
 /**
- * Permissive validator factory. Returns validate(query, { reportExternalId }) which
- * logs (logger.warn) every violation prefixed with the report externalId and ALWAYS
- * returns undefined. It never throws, never rejects, never mutates query.
+ * Validator factory. Returns validate(query, { reportExternalId }) which logs
+ * (logger.warn) every violation prefixed with the report externalId and never
+ * mutates query. In 'permissive' mode (default) it ALWAYS returns undefined.
+ * In 'strict' mode it collects every violation and throws ONE Boom.badRequest
+ * whose message never leaks Joi internals or the report externalId; malformed
+ * definitions still only warn (a seed typo must never 400 users), and
+ * ENGINE_KEYS are never rejected even when the report does not declare them.
  */
 function buildParamsValidator(parameterDefs, { mode = 'permissive' } = {}) {
-  if (mode !== 'permissive') throw new Error('strict mode not implemented')
+  if (mode !== 'permissive' && mode !== 'strict') throw new Error(`unknown validation mode "${mode}"`)
+  const strict = mode === 'strict'
   const defs = Array.isArray(parameterDefs) ? parameterDefs.filter(def => def && def.name && def.type) : []
 
   return function validate(query, { reportExternalId } = {}) {
     const source = query || {}
     const warn = message => logger.warn(`report params [${reportExternalId}]: ${message}`)
     const declaredKeys = new Set(ENGINE_KEYS)
+    // Fragments accumulate in def-declaration order; the undeclared-keys fragment goes last.
+    const violations = []
 
     defs.forEach(def => {
       const wireNames = def.type === 'dateRange' ? ['minDate', 'maxDate'] : [def.name]
@@ -175,13 +184,17 @@ function buildParamsValidator(parameterDefs, { mode = 'permissive' } = {}) {
             : wireNames.every(wireName => isMissing(source[wireName]))
         if (def.required && missing) {
           warn(`missing required parameter "${def.name}"`)
+          violations.push(`missing required parameter "${def.name}"`)
           return
         }
 
         wireNames.forEach(wireName => {
           if (source[wireName] === undefined) return
           const { error } = schema.validate(source[wireName], { convert: false, abortEarly: false })
-          if (error) warn(`invalid value for "${wireName}": ${error.message}`)
+          if (error) {
+            warn(`invalid value for "${wireName}": ${error.message}`)
+            violations.push(`invalid value for "${wireName}"`)
+          }
         })
       } catch (err) {
         warn(`malformed definition for "${def.name}": ${err.message}`)
@@ -189,7 +202,12 @@ function buildParamsValidator(parameterDefs, { mode = 'permissive' } = {}) {
     })
 
     const undeclaredKeys = Object.keys(source).filter(key => !declaredKeys.has(key))
-    if (undeclaredKeys.length) warn(`undeclared parameters: ${undeclaredKeys.join(', ')}`)
+    if (undeclaredKeys.length) {
+      warn(`undeclared parameters: ${undeclaredKeys.join(', ')}`)
+      violations.push(`unknown parameters "${undeclaredKeys.join(', ')}"`)
+    }
+
+    if (strict && violations.length) throw Boom.badRequest(`Invalid report parameters: ${violations.join('; ')}`)
 
     return undefined
   }

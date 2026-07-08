@@ -14,13 +14,10 @@ const { responseAsyncReports } = require('./validation/response')
 const { processAsyncReportRequest } = require('./processAsyncReportRequest')
 
 function requestBaseQuery() {
-  const { minDate, maxDate } = validateDateRangeParams()
   return {
     ...validateAllGeographyFilterParams(),
     ...validateDateRangeParams(),
     consumableId: Joi.number().integer().positive().allow('', null),
-    minDate,
-    maxDate: maxDate.default(new Date().toISOString()),
     siteName: Joi.string().allow('').description('Filter for site name'),
     reportName: Joi.string().allow('').description('Filter for report name'),
     assayId: Joi.alternatives()
@@ -141,10 +138,11 @@ const routes = [
       notes: 'Returns Excel file generated from template corresponding to externalId',
       auth: { scope: ['report:view'] },
       validate: {
-        query: {
+        // ad-hoc per-report parameters pass through; the strict params validator rejects undeclared keys
+        query: Joi.object({
           ...requestBaseQuery(),
           format: Joi.string().allow('', null, 'xlsx', 'csv').description('File format for exporting data'),
-        },
+        }).unknown(true),
         params: {
           externalId: Joi.string().description('Value of externalId in table Report').required(),
         },
@@ -217,9 +215,10 @@ const routes = [
       auth: { scope: ['report:view'] },
       validate: {
         payload: {
-          reportsFilter: {
+          // ad-hoc per-report parameters pass through; the strict params validator rejects undeclared keys
+          reportsFilter: Joi.object({
             ...requestBaseQuery(),
-          },
+          }).unknown(true),
           ...pick(requestBaseQuery(), ['timeZone']),
           format: Joi.string().allow('', null, 'xlsx', 'csv').description('File format for exporting data'),
         },

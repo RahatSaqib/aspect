@@ -75,6 +75,12 @@ describe('report params', () => {
       })
       sinon.assert.calledOnce(warnStub)
     })
+
+    it('names the report in the UTC-fallback warning when reportExternalId is passed', () => {
+      params.resolveDateToken('today', 'Not/AZone', NOW, 'my_report')
+      sinon.assert.calledOnce(warnStub)
+      assert.include(warnStub.firstCall.args[0], 'for report my_report')
+    })
   })
 
   describe('resolveParams', () => {
@@ -210,8 +216,8 @@ describe('report params', () => {
   describe('buildParamsValidator', () => {
     const validateOptions = { reportExternalId: 'some_report' }
 
-    it('throws for strict mode (phase 4 seam)', () => {
-      assert.throws(() => params.buildParamsValidator([], { mode: 'strict' }), 'strict mode not implemented')
+    it('throws for an unknown validation mode', () => {
+      assert.throws(() => params.buildParamsValidator([], { mode: 'lenient' }), 'unknown validation mode "lenient"')
     })
 
     it('logs zero warnings for legacy traffic', () => {
@@ -307,6 +313,184 @@ describe('report params', () => {
       assert.isUndefined(validate({}, validateOptions))
       sinon.assert.calledOnce(warnStub)
       assert.include(warnStub.firstCall.args[0], 'unknown parameter type "hologram"')
+    })
+  })
+
+  describe('buildParamsValidator — strict mode', () => {
+    const validateOptions = { reportExternalId: 'some_report' }
+    const strict = defs => params.buildParamsValidator(defs, { mode: 'strict' })
+
+    const catchBoom = fn => {
+      try {
+        fn()
+      } catch (err) {
+        return err
+      }
+      return assert.fail('expected a Boom.badRequest to be thrown')
+    }
+
+    it('rejects undeclared keys with one 400 listing all of them', () => {
+      const err = catchBoom(() =>
+        strict(params.LEGACY_REPORT_PARAMETERS)({ stateId: 3, adHocThing: 1, otherThing: 'x' }, validateOptions)
+      )
+      assert.isTrue(err.isBoom)
+      assert.equal(err.output.statusCode, 400)
+      assert.equal(err.message, 'Invalid report parameters: unknown parameters "adHocThing, otherThing"')
+    })
+
+    it('rejects a missing required scalar parameter', () => {
+      const defs = [{ name: 'groupBy', type: 'enum', options: ['day', 'month'], required: true }]
+      const err = catchBoom(() => strict(defs)({}, validateOptions))
+      assert.equal(err.message, 'Invalid report parameters: missing required parameter "groupBy"')
+      const emptyErr = catchBoom(() => strict(defs)({ groupBy: '' }, validateOptions))
+      assert.equal(emptyErr.message, 'Invalid report parameters: missing required parameter "groupBy"')
+    })
+
+    it('rejects a required dateRange only when BOTH bounds are missing', () => {
+      const defs = [{ name: 'dateRange', type: 'dateRange', required: true }]
+      const err = catchBoom(() => strict(defs)({}, validateOptions))
+      assert.equal(err.message, 'Invalid report parameters: missing required parameter "dateRange"')
+      const nullishErr = catchBoom(() => strict(defs)({ minDate: null, maxDate: '' }, validateOptions))
+      assert.equal(nullishErr.message, 'Invalid report parameters: missing required parameter "dateRange"')
+    })
+
+    it('accepts a required dateRange when one bound is present', () => {
+      const defs = [{ name: 'dateRange', type: 'dateRange', required: true }]
+      assert.isUndefined(strict(defs)({ maxDate: '2026-07-06T23:59:59+06:00' }, validateOptions))
+      assert.isUndefined(strict(defs)({ minDate: '2026-06-06T00:00:00+06:00' }, validateOptions))
+      sinon.assert.notCalled(warnStub)
+    })
+
+    it('rejects type violations naming the wire key without Joi text or externalId', () => {
+      const err = catchBoom(() => strict(params.LEGACY_REPORT_PARAMETERS)({ stateId: 'abc' }, validateOptions))
+      assert.equal(err.message, 'Invalid report parameters: invalid value for "stateId"')
+      assert.notInclude(err.message, 'must be')
+      assert.notInclude(err.message, 'some_report')
+    })
+
+    it('rejects enum option violations', () => {
+      const defs = [{ name: 'groupBy', type: 'enum', options: ['day', 'week', 'month'] }]
+      const err = catchBoom(() => strict(defs)({ groupBy: 'year' }, validateOptions))
+      assert.equal(err.message, 'Invalid report parameters: invalid value for "groupBy"')
+    })
+
+    it('rejects number bounds violations', () => {
+      const defs = [{ name: 'errorThreshold', type: 'number', min: 0, max: 100 }]
+      const err = catchBoom(() => strict(defs)({ errorThreshold: 500 }, validateOptions))
+      assert.equal(err.message, 'Invalid report parameters: invalid value for "errorThreshold"')
+    })
+
+    it('never rejects ENGINE_KEYS the report does not declare', () => {
+      const defs = [{ name: 'groupBy', type: 'enum', options: ['day', 'month'] }]
+      const engineOnlyQuery = {
+        minDate: '2026-06-06T00:00:00+06:00',
+        maxDate: '2026-07-06T23:59:59+06:00',
+        timeZone: DHAKA,
+        format: 'xlsx',
+        countryId: 1,
+        reportName: '',
+        siteName: 'Central Lab',
+        stateId: 3,
+        lgaId: 7,
+        assayId: [1, 2],
+        consumableId: 4,
+      }
+      assert.isUndefined(strict(defs)(engineOnlyQuery, validateOptions))
+      sinon.assert.notCalled(warnStub)
+    })
+
+    it('still type-checks ENGINE_KEYS when the report declares the matching param', () => {
+      const err = catchBoom(() => strict(params.LEGACY_REPORT_PARAMETERS)({ minDate: 'not-a-date' }, validateOptions))
+      assert.equal(err.message, 'Invalid report parameters: invalid value for "minDate"')
+    })
+
+    it('warns and skips malformed defs instead of rejecting users', () => {
+      const defs = [
+        { name: 'errorThreshold', type: 'number', min: '5' }, // Joi.number().min('5') throws
+        { name: 'weird', type: 'hologram' },
+      ]
+      assert.isUndefined(strict(defs)({ errorThreshold: 10 }, validateOptions))
+      sinon.assert.calledTwice(warnStub)
+      assert.include(warnStub.firstCall.args[0], 'malformed definition for "errorThreshold"')
+      assert.include(warnStub.secondCall.args[0], 'unknown parameter type "hologram"')
+    })
+
+    it('collects every violation into ONE Boom in def-declaration order, unknown keys last', () => {
+      const defs = [
+        { name: 'dateRange', type: 'dateRange', required: true },
+        { name: 'groupBy', type: 'enum', options: ['day', 'week', 'month'] },
+        { name: 'errorThreshold', type: 'number', min: 0, max: 100 },
+      ]
+      const err = catchBoom(() => strict(defs)({ groupBy: 'year', errorThreshold: 500, foo: 1, bar: 2 }, validateOptions))
+      assert.equal(
+        err.message,
+        'Invalid report parameters: missing required parameter "dateRange"; ' +
+          'invalid value for "groupBy"; invalid value for "errorThreshold"; unknown parameters "foo, bar"'
+      )
+    })
+
+    it('logs full Joi detail with the pinned prefix while the Boom stays clean', () => {
+      const defs = [{ name: 'errorThreshold', type: 'number', min: 0, max: 100 }]
+      catchBoom(() => strict(defs)({ errorThreshold: 500 }, validateOptions))
+      sinon.assert.calledOnce(warnStub)
+      assert.match(warnStub.firstCall.args[0], /^report params \[some_report\]: invalid value for "errorThreshold": /)
+      assert.include(warnStub.firstCall.args[0], '100')
+    })
+
+    it('never mutates the query when rejecting', () => {
+      const query = { stateId: 'abc', adHocThing: 1 }
+      catchBoom(() => strict(params.LEGACY_REPORT_PARAMETERS)(query, validateOptions))
+      assert.deepEqual(query, { stateId: 'abc', adHocThing: 1 })
+    })
+
+    it('produces zero warnings and zero rejections for legacy traffic', () => {
+      const legacyQuery = {
+        minDate: '2026-06-06T00:00:00+06:00',
+        maxDate: '2026-07-06T23:59:59+06:00',
+        stateId: 3,
+        lgaId: '',
+        siteName: 'Central Lab',
+        assayId: [1, 2],
+        consumableId: null,
+        timeZone: DHAKA,
+        format: 'xlsx',
+        countryId: 1,
+        reportName: '',
+      }
+      assert.isUndefined(strict(params.LEGACY_REPORT_PARAMETERS)(legacyQuery, validateOptions))
+      assert.isUndefined(strict(params.LEGACY_REPORT_PARAMETERS)({}, validateOptions))
+      sinon.assert.notCalled(warnStub)
+    })
+  })
+
+  describe('ISO date-string guards (notification wire shape)', () => {
+    it('REGEX_ISODATESTRING accepts new Date().toISOString() output', () => {
+      const { REGEX_ISODATESTRING } = require('../../src/shared/date')
+      assert.isTrue(REGEX_ISODATESTRING.test(new Date().toISOString()))
+    })
+
+    it('strict dateRange validation accepts toISOString()-shaped bounds', () => {
+      const validate = params.buildParamsValidator([{ name: 'dateRange', type: 'dateRange' }], { mode: 'strict' })
+      assert.isUndefined(
+        validate(
+          { minDate: '2026-01-01T00:00:00.000Z', maxDate: '2026-01-31T23:59:59.999Z' },
+          { reportExternalId: 'some_report' }
+        )
+      )
+      sinon.assert.notCalled(warnStub)
+    })
+  })
+
+  describe('resolve-then-validate ordering', () => {
+    it('a required def with a default passes strict validation when the key is omitted', () => {
+      const context = { timeZone: DHAKA, reportExternalId: 'some_report', now: NOW }
+      const defs = [
+        { name: 'dateRange', type: 'dateRange', required: true, default: { period: 'last30Days' } },
+        { name: 'groupBy', type: 'enum', options: ['day', 'month'], required: true, default: 'month' },
+      ]
+      const resolved = params.resolveParams(defs, {}, context)
+      assert.isUndefined(params.buildParamsValidator(defs, { mode: 'strict' })(resolved, { reportExternalId: 'some_report' }))
+      sinon.assert.notCalled(warnStub)
     })
   })
 })

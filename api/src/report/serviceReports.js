@@ -214,7 +214,7 @@ async function getAllSheetsData(auth, query, timezone, sheets) {
 async function generateReport(externalId, query, auth, user, userPlaceHolders, extension) {
   const { countryAbbreviation, culture, partnerId, userName, personId, timezoneIANA: timezone } = user
 
-  const { sheets } = await getReportDetails(externalId, { personId })
+  const { sheets } = await getReportDetails(externalId, { person: { id: personId } })
 
   const dataQueryStart = Date.now()
   const data = await getAllSheetsData(auth, query, timezone, sheets)

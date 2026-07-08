@@ -80,14 +80,15 @@ async function processAsyncReportRequest(request) {
   const { externalId } = params
   const dataConstraints = await getConstraints(auth.credentials)
   const reportId = await reportToId(externalId)
-  const reportDetails = await getReportDetails(externalId, { personId: dataConstraints.person.id })
+  const reportDetails = await getReportDetails(externalId, dataConstraints)
 
-  buildParamsValidator(reportDetails.parameters)(reportsFilter, { reportExternalId: externalId })
-  // hashes must be computed on RESOLVED params so defaulted and explicit requests share the cache
+  // hashes must be computed on RESOLVED params so defaulted and explicit requests share the cache;
+  // resolve first so `required`-with-`default` defs are satisfiable, then validate strictly (400 before any DB write)
   const resolvedFilter = resolveParams(reportDetails.parameters, reportsFilter, {
     timeZone: restPayload.timeZone ?? (reportsFilter || {}).timeZone,
     reportExternalId: externalId,
   })
+  buildParamsValidator(reportDetails.parameters, { mode: 'strict' })(resolvedFilter, { reportExternalId: externalId })
 
   const querySorted = jsonToArraySorted(resolvedFilter)
   const queryHash = getHash(JSON.stringify(querySorted))

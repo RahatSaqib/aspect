@@ -9,14 +9,27 @@ const { buildParamsValidator, resolveParams } = require('./params')
  * @param {Object} auth - auth like object with personId and credentials
  * @param {Object} query - query params
  * @param {string} externalId - externalId of the report
+ * @param {boolean} useUserPlaceHolders - fill user placeholders in the generated file
+ * @param {string} reportPassword - optional password for the generated file
+ * @param {Object} options - { validationMode: 'strict' | 'permissive' } — notifications pass permissive
  */
-async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = false, reportPassword = undefined) {
+async function saveReportToFile(
+  auth,
+  query,
+  externalId,
+  useUserPlaceHolders = false,
+  reportPassword = undefined,
+  { validationMode = 'strict' } = {}
+) {
   const user = await getUserFromCredentials(auth.credentials)
 
-  const { fileNamePrefix, exportExcel, parameters } = await getReportDetails(externalId, { personId: user.personId })
+  const { fileNamePrefix, exportExcel, parameters } = await getReportDetails(externalId, {
+    person: { id: user.personId },
+  })
 
-  buildParamsValidator(parameters)(query, { reportExternalId: externalId })
+  // Resolve first so `required`-with-`default` defs are satisfiable and defaults get type-checked
   query = resolveParams(parameters, query, { timeZone: query.timeZone, reportExternalId: externalId })
+  buildParamsValidator(parameters, { mode: validationMode })(query, { reportExternalId: externalId })
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format === 'csv' || !exportExcel ? 'csv' : 'xlsx'
