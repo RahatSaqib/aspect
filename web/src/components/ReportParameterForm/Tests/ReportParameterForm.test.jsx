@@ -74,9 +74,9 @@ const LEGACY_TESTIDS = [
   'period-selector',
   'state-select',
   'lga-select',
+  'site-select',
   'assay-select',
   'consumable-select',
-  'site-select',
 ]
 
 describe('legacyParameters', () => {
@@ -85,9 +85,9 @@ describe('legacyParameters', () => {
       { name: 'dateRange', type: 'dateRange' },
       { name: 'stateId', type: 'state' },
       { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+      { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
       { name: 'assayId', type: 'assay', multiple: true },
       { name: 'consumableId', type: 'consumable' },
-      { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
     ])
   })
 

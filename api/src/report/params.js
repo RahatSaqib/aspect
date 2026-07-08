@@ -12,9 +12,9 @@ const LEGACY_REPORT_PARAMETERS = [
   { name: 'dateRange', type: 'dateRange' },
   { name: 'stateId', type: 'state' },
   { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+  { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
   { name: 'assayId', type: 'assay', multiple: true },
   { name: 'consumableId', type: 'consumable' },
-  { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
 ]
 
 const DATE_TOKEN_RANGES = {
