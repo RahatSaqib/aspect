@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { graphMessages } from '../../../messages'
 import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
-import { StateSelector, Loading } from '../../index'
+import { StateSelector, LoadingCard } from '../../index'
 import fetchWrapperForQueries from '../../QueryFetch'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -54,7 +54,7 @@ const QuartersMtbDetectedGraph = () => {
   }, [data])
 
   return isLoading ? (
-    <Loading />
+    <LoadingCard />
   ) : (
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>

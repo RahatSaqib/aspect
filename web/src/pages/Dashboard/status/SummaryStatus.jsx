@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
-import { AspectWidgets, EmptyWidgets } from '../../../components/AspectWidgets'
+import { AspectWidgets } from '../../../components/AspectWidgets'
 import { groupWidgets } from '../../../components/AspectWidgets/Helpers'
+import LoadingCard from '../../../components/LoadingCard/LoadingCard'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import SUMMARY_STATUS_WIDGETS from '../../../components/QueryFetch/Dashboard/index'
 import useAuthState from '../../../hooks/useAuthState'
@@ -39,7 +40,7 @@ const SummaryStatus = ({ className, dashboard }) => {
 
   return (
     <div className={className}>
-      {isLoading && !widgets ? <EmptyWidgets /> : null}
+      {isLoading && !widgets ? <LoadingCard /> : null}
       {!isLoading && widgets ? <AspectWidgets data={widgets} /> : null}
     </div>
   )

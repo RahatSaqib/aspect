@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns'
 import { format } from 'date-fns-tz'
@@ -7,7 +7,7 @@ import { useQuery } from 'react-query'
 import { graphMessages } from '../../../messages'
 import pkMessages from '../../../pages/PkDashboard/PkDashboard.Messages'
 import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
-import { StateSelector, Loading, AspectSelect } from '../../index'
+import { StateSelector, LoadingCard, AspectSelect } from '../../index'
 import fetchWrapperForQueries from '../../QueryFetch'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -47,33 +47,40 @@ const XDRFLQResistanceGraph = () => {
   const FQRPercentMessage = formatMessage(messages.FQRPercent)
   const INHPercentMessage = formatMessage(messages.INHPercent)
 
-  const [graphData, setGraphData] = useState()
-  useEffect(() => {
-    if (data) {
-      const line = []
-      const bar = []
-      data.grouped.map(
-        ({ month, FqrToMtbPercentage, InhToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected }) => {
-          if (lineFor === FQRPercentMessage) {
-            line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(1) })
-          } else if (lineFor === INHPercentMessage) {
-            line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(1) })
-          }
-          bar.push({ month, value: TotalTests, type: totalTestsMessage })
-          bar.push({ month, value: MtbDetected, type: mtbDetectedMessage })
-          bar.push({ month, value: FqrDetected, type: fqrDetectedMessage })
-          bar.push({ month, value: InhDetected, type: inhDetectedMessage })
-          return {}
-        }
-      )
+  const graphData = useMemo(() => {
+    if (!data) return undefined
 
-      setGraphData([bar, line])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, lineFor])
+    const line = []
+    const bar = []
+    data.grouped.map(
+      ({ month, FqrToMtbPercentage, InhToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected }) => {
+        if (lineFor === FQRPercentMessage) {
+          line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(1) })
+        } else if (lineFor === INHPercentMessage) {
+          line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(1) })
+        }
+        bar.push({ month, value: TotalTests, type: totalTestsMessage })
+        bar.push({ month, value: MtbDetected, type: mtbDetectedMessage })
+        bar.push({ month, value: FqrDetected, type: fqrDetectedMessage })
+        bar.push({ month, value: InhDetected, type: inhDetectedMessage })
+        return {}
+      }
+    )
+
+    return [bar, line]
+  }, [
+    data,
+    lineFor,
+    FQRPercentMessage,
+    INHPercentMessage,
+    totalTestsMessage,
+    mtbDetectedMessage,
+    fqrDetectedMessage,
+    inhDetectedMessage,
+  ])
 
   return isLoading ? (
-    <Loading />
+    <LoadingCard />
   ) : (
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>

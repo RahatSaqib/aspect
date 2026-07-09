@@ -64,19 +64,20 @@ async function summaryDashboard(request) {
       const { externalId, sqlForExtra, options } = widget
       const { sqlForIndicator, sqlForStatUnit } = widget
 
-      const unitQuery = queryValue(sqlForStatUnit, dataConstraints, query, user.timezoneIANA)
-      const unit = await unitQuery
-      const extra = await queryValue(sqlForExtra, dataConstraints, query, user.timezoneIANA)
+      const unitQueryPromise = queryValue(sqlForStatUnit, dataConstraints, query, user.timezoneIANA)
+      const extraQueryPromise = queryValue(sqlForExtra, dataConstraints, query, user.timezoneIANA)
+      const indicatorQueryPromise =
+        !sqlForIndicator && knexWidgets[externalId]
+          ? Promise.resolve(knexWidgets[externalId](knex, dataConstraints) || { cnt: null }).then(
+              r => r || { cnt: null }
+            )
+          : queryValue(sqlForIndicator, dataConstraints, query, user.timezoneIANA).then(r => r || { cnt: null })
 
-      let indicatorQueryResult
-      if (!sqlForIndicator && knexWidgets[externalId]) {
-        const knexFunction = knexWidgets[externalId]
-        const indicatorKnexQuery = knexFunction(knex, dataConstraints) || { cnt: null }
-        indicatorQueryResult = (await indicatorKnexQuery) || { cnt: null }
-      } else {
-        const sqlQuery = queryValue(sqlForIndicator, dataConstraints, query, user.timezoneIANA)
-        indicatorQueryResult = (await sqlQuery) || { cnt: null }
-      }
+      const [unit, extra, indicatorQueryResult] = await Promise.all([
+        unitQueryPromise,
+        extraQueryPromise,
+        indicatorQueryPromise,
+      ])
 
       const { cnt, ...restCountProps } = indicatorQueryResult
 
