@@ -3,11 +3,7 @@ const { getUserFromCredentials } = require('../../auth/constraints')
 const { recalculateDeviceFactTables } = require('../common/logic')
 const { assertDeviceIsNotDecommissioned } = require('../common/deviceApprovalService')
 const { resultSiteAssigned } = require('../../result/actions')
-const {
-  applyDeploymentChanges,
-  finalizeDeploymentTimeline,
-  normalizeDeploymentDates,
-} = require('./deploymentService')
+const { applyDeploymentChanges, finalizeDeploymentTimeline, normalizeDeploymentDates } = require('./deploymentService')
 
 async function persistDeploymentChanges(request) {
   const {

@@ -5,9 +5,9 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
-import SiteSelect from '../../../components/SiteSelect/SiteSelect'
 import AspectButton from '../../../components/shared/AspectButton'
 import AspectDialog from '../../../components/shared/AspectDialog'
+import SiteSelect from '../../../components/SiteSelect/SiteSelect'
 import useDeployments from '../../../hooks/device/useDeployments'
 import useReactivateDevice from '../../../hooks/device/useReactivateDevice'
 import validationErrorMessages from '../../../messages/validationErrorMessages'
@@ -40,7 +40,12 @@ const ReactivateDeviceDialog = ({ open, onClose, deviceId }) => {
   }
 
   return (
-    <AspectDialog open={open} onRequestClose={onClose} title={formatMessage(messages.reactivateConfirmTitle)} maxWidth="sm">
+    <AspectDialog
+      open={open}
+      onRequestClose={onClose}
+      title={formatMessage(messages.reactivateConfirmTitle)}
+      maxWidth="sm"
+    >
       {isLoading ? null : (
         <Formik
           initialValues={{ siteId: defaultSiteId }}
