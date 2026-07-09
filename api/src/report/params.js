@@ -10,7 +10,7 @@ const logger = require('../shared/logger')
  * change: no defaults, no required flags).
  */
 const LEGACY_REPORT_PARAMETERS = [
-  { name: 'dateRange', type: 'dateRange' },
+  { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
   { name: 'stateId', type: 'state' },
   { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
   { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },

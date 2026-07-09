@@ -264,6 +264,10 @@ const messages = {
       id: 'filter.popover.showDecommissionedDevices',
       defaultMessage: 'Show Results From Decommissioned Devices',
     },
+    includeDecommissionedDevices: {
+      id: 'filter.popover.includeDecommissionedDevices',
+      defaultMessage: 'Include Decommissioned Devices',
+    },
     showResultsFromUndeployedDevices: {
       id: 'filter.popover.showResultsFromUndeployedDevices',
       defaultMessage: 'Show Results From Undeployed Devices',

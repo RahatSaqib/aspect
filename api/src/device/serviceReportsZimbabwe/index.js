@@ -81,12 +81,20 @@ function getMaintenanceBaseQuery(dataConstraints, query) {
       // Get only the latest log of the day
       .whereNull('dmslNewer.id')
       .whereRaw(`DAYOFWEEK(dmsl.day) <> 1 AND DAYOFWEEK(dmsl.day) <> 7`)
-      .modify(addConstraints, dataConstraints, {
-        device: 'd',
-        site: 's',
-        geography: 'g',
-        deviceType: 'dt',
-      })
+      .modify(
+        addConstraints,
+        dataConstraints,
+        {
+          device: 'd',
+          site: 's',
+          geography: 'g',
+          deviceType: 'dt',
+        },
+        {
+          showDecommissionedDevices: query.showDecommissionedDevices,
+          showUnapprovedDevices: query.showUnapprovedDevices,
+        }
+      )
       .modify(filterDateRangeParams, query, 'dmsl.day')
       .modify(filterParams, query, {
         countryId: 'g.countryId',
@@ -111,12 +119,20 @@ async function getDevicePerformanceReport(auth, query) {
 
   const [resultBasedData, maintenanceBasedData] = await Promise.all([
     getResultsBaseQuery(query)
-      .modify(addConstraints, dataConstraints, {
-        device: 'd',
-        site: 's',
-        geography: 'g',
-        partner: 'p',
-      })
+      .modify(
+        addConstraints,
+        dataConstraints,
+        {
+          device: 'd',
+          site: 's',
+          geography: 'g',
+          partner: 'p',
+        },
+        {
+          showDecommissionedDevices: query.showDecommissionedDevices,
+          showUnapprovedDevices: query.showUnapprovedDevices,
+        }
+      )
       .orderBy(['state', 'lga', 'deviceName']),
     getMaintenanceBaseQuery(dataConstraints, query).orderBy(['state', 'lga', 'deviceName']),
   ])
@@ -143,13 +159,21 @@ async function getDevicePerformanceReportByAssay(auth, query) {
 
   const data = await getResultsBaseQuery(query)
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      partner: 'p',
-      assay: 'a',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        site: 's',
+        geography: 'g',
+        partner: 'p',
+        assay: 'a',
+      },
+      {
+        showDecommissionedDevices: query.showDecommissionedDevices,
+        showUnapprovedDevices: query.showUnapprovedDevices,
+      }
+    )
     .groupBy('r.assayId')
     .orderBy(['state', 'lga', 'deviceName', 'a.name'])
     .select(['a.name as assayName', knex.raw('COUNT(r.id) as totalTests')])

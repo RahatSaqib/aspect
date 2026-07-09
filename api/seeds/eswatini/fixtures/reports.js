@@ -9,6 +9,8 @@ const szMtbStats = {
   availableForNotification: 1,
   sortOrder: 100,
   validations: [],
+  // getMtbStats calls filterParams without a map — only the date range is ever applied.
+  parameters: [{ name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } }],
   sheets: [
     {
       sortOrder: 0,
@@ -29,6 +31,8 @@ const szSmsStats = {
   sortOrder: 110,
   exportCsv: false,
   validations: [],
+  // getSmsStats calls filterParams without a map — only the date range is ever applied.
+  parameters: [{ name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } }],
   sheets: [
     {
       sortOrder: 0,

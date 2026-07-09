@@ -20,9 +20,10 @@ const _ = require('lodash')
 function getBaseQueryForFactResultsDeviceByTimeFrame(
   knex,
   { addConstraints, dataConstraints, filterParams, assay, query, timeFrame = 'month', joinSiteWith = 'device' },
-  opts
+  opts = {}
 ) {
-  const { showDecommissionedDevices = false, showUnapprovedDevices = false } = opts || {}
+  const showDecommissionedDevices = opts.showDecommissionedDevices ?? query.showDecommissionedDevices ?? false
+  const showUnapprovedDevices = opts.showUnapprovedDevices ?? query.showUnapprovedDevices ?? false
   const qb = knex('FactResultsDeviceByTimeFrame as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')

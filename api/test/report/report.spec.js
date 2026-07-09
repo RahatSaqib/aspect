@@ -45,6 +45,16 @@ describe.skip('Global reports', () => {
             assert.property(res.body.data[0], 'externalId')
             assert.property(res.body.data[0], 'sortOrder')
             assert.isTrue(res.body.data.some(r => r.externalId === 'mtb_detected_rr_detected'))
+
+            // every report declares its parameters (empty DB values degrade to the legacy set)
+            res.body.data.forEach(report => {
+              assert.typeOf(report.parameters, 'array')
+              assert.isAtLeast(report.parameters.length, 1)
+              report.parameters.forEach(parameter => {
+                assert.typeOf(parameter.name, 'string')
+                assert.typeOf(parameter.type, 'string')
+              })
+            })
           })
       }))
 

@@ -253,12 +253,14 @@ function getDeviceBaseExtendedQuery(
   query,
   dataConstraints,
   {
-    showUnapprovedDevices = false,
-    showDecommissionedDevices = false,
+    showUnapprovedDevices: showUnapprovedDevicesOption,
+    showDecommissionedDevices: showDecommissionedDevicesOption,
     excludeInternalDevices = true,
     extendJoinToAssays = false,
   } = {}
 ) {
+  const showUnapprovedDevices = showUnapprovedDevicesOption ?? query.showUnapprovedDevices ?? false
+  const showDecommissionedDevices = showDecommissionedDevicesOption ?? query.showDecommissionedDevices ?? false
   const conditionalAliases = {}
 
   const deviceQuery = knex('Device as d')

@@ -29,6 +29,19 @@ jest.mock('../../LgaSelect', () => {
       onChange: props.onChange,
     })
 })
+jest.mock('../../AssayMultiSelect', () => {
+  const ReactLib = require('react')
+  return props => {
+    const rawValue = props.value
+    const displayValue = Array.isArray(rawValue) ? rawValue.join(',') : rawValue ?? ''
+    return ReactLib.createElement('input', {
+      'data-testid': 'assay-multi-select',
+      'aria-label': props.label,
+      value: displayValue,
+      onChange: e => props.onChange(e.target.value ? e.target.value.split(',').map(Number) : []),
+    })
+  }
+})
 jest.mock('../../AssaySelect', () => {
   const ReactLib = require('react')
   return props =>
@@ -75,14 +88,14 @@ const LEGACY_TESTIDS = [
   'state-select',
   'lga-select',
   'site-select',
-  'assay-select',
+  'assay-multi-select',
   'consumable-select',
 ]
 
 describe('legacyParameters', () => {
   it('mirrors the API legacy parameter set byte for byte (drift guard)', () => {
     expect(LEGACY_REPORT_PARAMETERS).toEqual([
-      { name: 'dateRange', type: 'dateRange' },
+      { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
       { name: 'stateId', type: 'state' },
       { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
       { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
@@ -150,8 +163,8 @@ describe('ReportParameterForm', () => {
 
   it('does not cascade when an independent param changes', () => {
     const onChange = renderForm({ values: { stateId: 1, lgaId: 2, siteName: 'Clinic A' } })
-    fireEvent.change(screen.getByTestId('assay-select'), { target: { value: '4' } })
-    expect(onChange).toHaveBeenCalledWith({ stateId: 1, lgaId: 2, siteName: 'Clinic A', assayId: '4' })
+    fireEvent.change(screen.getByTestId('assay-multi-select'), { target: { value: '4' } })
+    expect(onChange).toHaveBeenCalledWith({ stateId: 1, lgaId: 2, siteName: 'Clinic A', assayId: [4] })
   })
 
   it('maps enum, number, text and boolean types to MUI fields', () => {
@@ -194,5 +207,84 @@ describe('ReportParameterForm', () => {
 
     expect(screen.getByLabelText('adhocText')).toBeInTheDocument()
     expect(screen.queryByText('mystery')).not.toBeInTheDocument()
+  })
+})
+
+describe('ReportParameterForm required UX', () => {
+  beforeEach(() => {
+    useAuthState.mockReturnValue({ countryId: 1, userPermissions: ['site:view'] })
+  })
+
+  // Controlled harness so touched tracking and validity react to real value flow.
+  const StatefulForm = ({ parameters, initialValues = {}, onValidityChange = undefined }) => {
+    const [values, setValues] = React.useState(initialValues)
+    return (
+      <ReportParameterForm
+        parameters={parameters}
+        values={values}
+        onChange={setValues}
+        onValidityChange={onValidityChange}
+      />
+    )
+  }
+
+  const requiredText = [{ name: 'comment', type: 'text', label: 'Comment', required: true }]
+
+  it('marks required fields with an asterisk but shows no error before the field is touched', () => {
+    render(<StatefulForm parameters={requiredText} />)
+    expect(screen.getByLabelText('Comment *')).toBeInTheDocument()
+    expect(screen.queryByText('This field is required')).not.toBeInTheDocument()
+  })
+
+  it('shows the required error only after the field was touched and left empty', () => {
+    render(<StatefulForm parameters={requiredText} />)
+    const input = screen.getByLabelText('Comment *')
+    fireEvent.change(input, { target: { value: 'x' } })
+    expect(screen.queryByText('This field is required')).not.toBeInTheDocument()
+    fireEvent.change(input, { target: { value: '' } })
+    expect(screen.getByText('This field is required')).toBeInTheDocument()
+  })
+
+  it('reports validity: false while a required field is empty, true once filled', () => {
+    const onValidityChange = jest.fn()
+    render(<StatefulForm parameters={requiredText} onValidityChange={onValidityChange} />)
+    expect(onValidityChange).toHaveBeenLastCalledWith(false)
+    fireEvent.change(screen.getByLabelText('Comment *'), { target: { value: 'hello' } })
+    expect(onValidityChange).toHaveBeenLastCalledWith(true)
+  })
+
+  it('reports validity true for the legacy set (nothing required)', () => {
+    const onValidityChange = jest.fn()
+    render(<StatefulForm parameters={LEGACY_REPORT_PARAMETERS} onValidityChange={onValidityChange} />)
+    expect(onValidityChange).toHaveBeenLastCalledWith(true)
+  })
+
+  it('never blocks submit on a permission-hidden required field', () => {
+    useAuthState.mockReturnValue({ countryId: 1, userPermissions: [] })
+    const parameters = [{ name: 'siteName', type: 'site', required: true, permission: 'site:view' }]
+    const onValidityChange = jest.fn()
+    render(<StatefulForm parameters={parameters} onValidityChange={onValidityChange} />)
+    expect(screen.queryByTestId('site-select')).not.toBeInTheDocument()
+    expect(onValidityChange).toHaveBeenLastCalledWith(true)
+  })
+
+  it('accepts one bound as satisfying a required dateRange', () => {
+    const parameters = [{ name: 'dateRange', type: 'dateRange', required: true }]
+    const onValidityChange = jest.fn()
+    render(
+      <StatefulForm
+        parameters={parameters}
+        initialValues={{ minDate: new Date() }}
+        onValidityChange={onValidityChange}
+      />
+    )
+    expect(onValidityChange).toHaveBeenLastCalledWith(true)
+  })
+
+  it('reports validity false for a required dateRange with both bounds missing', () => {
+    const parameters = [{ name: 'dateRange', type: 'dateRange', required: true }]
+    const onValidityChange = jest.fn()
+    render(<StatefulForm parameters={parameters} onValidityChange={onValidityChange} />)
+    expect(onValidityChange).toHaveBeenLastCalledWith(false)
   })
 })

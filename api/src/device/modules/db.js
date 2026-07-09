@@ -14,8 +14,9 @@
  * @param {boolean} opts.showUnapprovedDevices - Whether to show unapproved devices (default: false).
  * @returns {Object} - The Knex query builder object.
  */
-function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filterParams, query }, opts) {
-  const { showDecommissionedDevices = false, showUnapprovedDevices = false } = opts || {}
+function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filterParams, query }, opts = {}) {
+  const showDecommissionedDevices = opts.showDecommissionedDevices ?? query.showDecommissionedDevices ?? false
+  const showUnapprovedDevices = opts.showUnapprovedDevices ?? query.showUnapprovedDevices ?? false
   const queryBuilder = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')

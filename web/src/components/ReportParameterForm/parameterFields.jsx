@@ -1,5 +1,6 @@
 import React from 'react'
 import { Checkbox, FormControlLabel, MenuItem, TextField } from '@mui/material'
+import AssayMultiSelect from '../AssayMultiSelect'
 import AssaySelect from '../AssaySelect'
 import ConsumableSelect from '../ConsumableSelect'
 import LgaSelect from '../LgaSelect'
@@ -29,9 +30,26 @@ const parameterFields = {
       stateId={values.stateId}
     />
   ),
-  assay: ({ def, values, label, set }) => (
-    <AssaySelect label={label} value={values[def.name]} onChange={e => set(def.name, e.target.value)} onlyResults />
-  ),
+  assay: ({ def, values, label, set }) =>
+    def.multiple ? (
+      <AssayMultiSelect
+        label={label}
+        valueBy="id"
+        filters={{ hasResults: true }}
+        value={values[def.name] ?? []}
+        onChange={value => set(def.name, value?.length ? value : null)}
+      />
+    ) : (
+      <AssaySelect
+        label={label}
+        value={values[def.name]}
+        onChange={e => {
+          const raw = e.target.value
+          set(def.name, raw === '' || raw == null ? null : Number(raw))
+        }}
+        onlyResults
+      />
+    ),
   consumable: ({ def, values, label, set }) => (
     <ConsumableSelect valueBy="id" label={label} value={values[def.name]} onChange={value => set(def.name, value)} />
   ),

@@ -117,9 +117,10 @@ describe('report params', () => {
       assert.deepEqual(params.resolveParams(defs, incoming, context), incoming)
     })
 
-    it('leaves params without a default absent (all-time semantics)', () => {
+    it('applies the legacy dateRange default when bounds are missing', () => {
       const resolved = params.resolveParams(params.LEGACY_REPORT_PARAMETERS, {}, context)
-      assert.deepEqual(resolved, {})
+      assert.property(resolved, 'minDate')
+      assert.property(resolved, 'maxDate')
       sinon.assert.notCalled(warnStub)
     })
 
@@ -188,7 +189,7 @@ describe('report params', () => {
       assert.deepEqual(twice, once)
     })
 
-    it('keeps async-report hashes byte-identical for the legacy set', () => {
+    it('keeps async-report hashes byte-identical for the legacy set when bounds are explicit', () => {
       const representative = {
         minDate: '2026-06-06T00:00:00+06:00',
         maxDate: '2026-07-06T23:59:59+06:00',
@@ -199,16 +200,19 @@ describe('report params', () => {
         siteName: 'Central Lab',
         timeZone: DHAKA,
       }
-      const queries = [representative, {}]
-      queries.forEach(query => {
-        const resolved = params.resolveParams(params.LEGACY_REPORT_PARAMETERS, query, context)
-        assert.deepEqual(resolved, query)
-        assert.sameMembers(Object.keys(resolved), Object.keys(query))
-        assert.equal(
-          getHash(JSON.stringify(jsonToArraySorted(resolved))),
-          getHash(JSON.stringify(jsonToArraySorted(query)))
-        )
-      })
+      const resolved = params.resolveParams(params.LEGACY_REPORT_PARAMETERS, representative, context)
+      assert.deepEqual(resolved, representative)
+      assert.equal(
+        getHash(JSON.stringify(jsonToArraySorted(resolved))),
+        getHash(JSON.stringify(jsonToArraySorted(representative)))
+      )
+      sinon.assert.notCalled(warnStub)
+    })
+
+    it('applies the legacy dateRange default for empty queries before hashing', () => {
+      const resolved = params.resolveParams(params.LEGACY_REPORT_PARAMETERS, {}, context)
+      assert.property(resolved, 'minDate')
+      assert.property(resolved, 'maxDate')
       sinon.assert.notCalled(warnStub)
     })
   })
@@ -421,7 +425,9 @@ describe('report params', () => {
         { name: 'groupBy', type: 'enum', options: ['day', 'week', 'month'] },
         { name: 'errorThreshold', type: 'number', min: 0, max: 100 },
       ]
-      const err = catchBoom(() => strict(defs)({ groupBy: 'year', errorThreshold: 500, foo: 1, bar: 2 }, validateOptions))
+      const err = catchBoom(() =>
+        strict(defs)({ groupBy: 'year', errorThreshold: 500, foo: 1, bar: 2 }, validateOptions)
+      )
       assert.equal(
         err.message,
         'Invalid report parameters: missing required parameter "dateRange"; ' +
@@ -489,7 +495,9 @@ describe('report params', () => {
         { name: 'groupBy', type: 'enum', options: ['day', 'month'], required: true, default: 'month' },
       ]
       const resolved = params.resolveParams(defs, {}, context)
-      assert.isUndefined(params.buildParamsValidator(defs, { mode: 'strict' })(resolved, { reportExternalId: 'some_report' }))
+      assert.isUndefined(
+        params.buildParamsValidator(defs, { mode: 'strict' })(resolved, { reportExternalId: 'some_report' })
+      )
       sinon.assert.notCalled(warnStub)
     })
   })

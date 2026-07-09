@@ -9,7 +9,22 @@ const deviceAndSiteSummaryReport = {
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 10,
-  validations: ['dateRangeRequired'],
+  validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', required: true, default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    { name: 'consumableId', type: 'consumable' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -71,6 +86,14 @@ const allResults = {
   exportCsv: true,
   exportExcel: true,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    { name: 'consumableId', type: 'consumable' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -96,6 +119,20 @@ const geneXpertIssues = {
   fileName: 'geneXpertIssues',
   sortOrder: 30,
   validations: [],
+  // Dead copy: this common object is omitted at upsert time; zimbabwe's genexpert_issues is authoritative.
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -120,6 +157,14 @@ const mtbDetectedRRDetected = {
   sortOrder: 40,
   availableForNotification: 1,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    { name: 'consumableId', type: 'consumable' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -146,6 +191,20 @@ const geneXpertTBWorkloadReport = {
   availableForNotification: 1,
   sortOrder: 45,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -172,6 +231,12 @@ const xdrDevicesSummary = {
   exportCsv: false,
   sortOrder: 50,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -195,6 +260,20 @@ const xpertSiteSummaryReportSiteWise = {
   exportExcel: true,
   sortOrder: 60,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -218,6 +297,12 @@ const tbWorkloadSummary = {
   exportCsv: false,
   sortOrder: 70,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -262,6 +347,20 @@ const rifResistanceRate = {
   sortOrder: 80,
   availableForNotification: 1,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -282,6 +381,20 @@ const deviceActivity = {
   availableForNotification: 1,
   sortOrder: 90,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -319,6 +432,20 @@ const deviceActivityPercent = {
   availableForNotification: 1,
   sortOrder: 100,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -344,6 +471,20 @@ const deviceUtilizationReport = {
   availableForNotification: 1,
   sortOrder: 110,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -368,6 +509,20 @@ const deviceCalibrationReport = {
   availableForNotification: 1,
   sortOrder: 120,
   validations: [],
+  // No date filter anywhere in getDeviceCalibrationReport — dateRange dropped with positive evidence.
+  parameters: [
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -394,6 +549,19 @@ const utilizationPerInstrumentDayReport = {
   availableForNotification: 1,
   sortOrder: 130,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -412,7 +580,21 @@ const criticalErrorsByDevice = {
   fileName: 'DevicesWithErrors',
   availableForNotification: 1,
   sortOrder: 150,
-  validations: ['dateRangeRequired'],
+  validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', required: true, default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -450,6 +632,14 @@ const resultsHivNotSuppressed = {
   availableForNotification: 1,
   sortOrder: 160,
   validations: [],
+  // assayId is pinned by the sheet fixture query ('GxHiv1Vl') — engine-supplied, not a user parameter.
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'consumableId', type: 'consumable' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -477,6 +667,20 @@ const errorRatesReport = {
   exportCsv: false,
   exportExcel: true,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -517,6 +721,12 @@ const usageStats = {
   availableForNotification: 1,
   sortOrder: 180,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -548,6 +758,12 @@ const resultNotificationsReport = {
   availableForNotification: 1,
   sortOrder: 190,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -573,6 +789,12 @@ const reportCustomFieldsCompletion = {
   exportCsv: false,
   sortOrder: 200,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -597,6 +819,14 @@ const dataExtract = {
   exportCsv: true,
   exportExcel: false,
   validations: [],
+  // getQueryForDataExtract has no consumableId filter — consumable dropped with positive evidence.
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -622,6 +852,19 @@ const moduleActivityReport = {
   exportCsv: true,
   sortOrder: 220,
   validations: [],
+  // Module activity has no date filter in code — dateRange dropped with positive evidence.
+  parameters: [
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -644,6 +887,19 @@ const moduleStatusReport = {
   exportExcel: true,
   sortOrder: 230,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -663,6 +919,20 @@ const moduleSwaps = {
   availableForNotification: 1,
   sortOrder: 240,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -688,6 +958,19 @@ const doNotUseModulesReport = {
   exportCsv: false,
   sortOrder: 250,
   validations: [],
+  // 'Do not use' modules has no date filter in code — dateRange dropped with positive evidence.
+  parameters: [
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -708,6 +991,19 @@ const unusedModulesReport = {
   exportCsv: true,
   sortOrder: 260,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -727,7 +1023,20 @@ const criticalErrorsByModule = {
   exportCsv: true,
   exportExcel: true,
   sortOrder: 270,
-  validations: ['dateRangeRequired'],
+  validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', required: true, default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -748,6 +1057,14 @@ const inventoryLog = {
   exportCsv: false,
   sortOrder: 280,
   validations: [],
+  // listInventoryLog filters consumableId but never assayId — assay dropped with positive evidence.
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'consumableId', type: 'consumable' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -772,6 +1089,21 @@ const inventoryNoStock = {
   exportCsv: false,
   exportExcel: true,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    { name: 'consumableId', type: 'consumable' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -798,6 +1130,14 @@ const unreconciledInventoryReport = {
   exportExcel: true,
   sortOrder: 300,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    { name: 'consumableId', type: 'consumable' },
+  ],
   sheets: [
     {
       sortOrder: 0,

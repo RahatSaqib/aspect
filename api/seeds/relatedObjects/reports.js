@@ -32,7 +32,7 @@ async function getBaseReports() {
       i18nKey: 'Critical_Errors_By_Device',
       externalId: 'critical_errors_by_device',
       fileName: 'DevicesWithErrors',
-      validations: ['dateRangeRequired'],
+      validations: [],
       sheets: [
         {
           moduleName: 'device/service',

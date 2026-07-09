@@ -1,7 +1,7 @@
 // Byte-identical mirror of LEGACY_REPORT_PARAMETERS in api/src/report/params.js.
 // Drift is guarded by Tests/ReportParameterForm.test.jsx asserting the exact literal.
 export const LEGACY_REPORT_PARAMETERS = [
-  { name: 'dateRange', type: 'dateRange' },
+  { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
   { name: 'stateId', type: 'state' },
   { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
   { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },

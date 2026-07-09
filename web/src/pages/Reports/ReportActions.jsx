@@ -63,7 +63,7 @@ function ReportAction(props) {
       size="small"
       color="primary"
       disabled={isSubmitting || isLoading}
-      onClick={() => onClickReportSubmit({ report, fileExtension, requestType })}
+      onClick={() => onClickReportSubmit({ report, fileExtension, requestType, requestId: reportRequest?.requestId })}
     >
       {isSubmitting || isLoading ? <Skeleton width="100%" /> : buttonContent}
     </Button>

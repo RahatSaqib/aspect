@@ -8,6 +8,7 @@ const {
   getAsyncReportRequestWithReportsFilter,
 } = require('./service')
 const downloadReport = require('./downloadReport')
+const downloadAsyncReport = require('./downloadAsyncReport')
 const downloadScheduledReport = require('./downloadScheduledReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { responseAsyncReports } = require('./validation/response')
@@ -243,6 +244,21 @@ const routes = [
       },
       response: {
         ...responseAsyncReports(),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reports/async/{requestId}/download',
+    handler: downloadAsyncReport,
+    config: {
+      description: 'Download a ready async report file',
+      notes: 'Streams the pre-generated file for a completed async report request owned by the user',
+      auth: { scope: ['report:view'] },
+      validate: {
+        params: {
+          requestId: Joi.number().integer().positive().required().description('Async report request id'),
+        },
       },
     },
   },
