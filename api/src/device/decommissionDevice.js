@@ -9,8 +9,6 @@ const {
   decommissionDevice: saveDecommissionedDevice,
 } = require('./common/deviceApprovalService')
 
-const ALLOWED_JOB_FUNCTIONS = new Set(['Super Admin', 'Regional Admin'])
-
 async function decommissionDevice(request) {
   const {
     params: { deviceId },
@@ -18,7 +16,6 @@ async function decommissionDevice(request) {
   } = request
 
   const { id: userId } = await getUser(credentials.name)
-  assertCanDecommissionByJobFunction(credentials)
   await validateDeviceAccess(deviceId, credentials)
 
   await transact(async trx => {
@@ -27,14 +24,6 @@ async function decommissionDevice(request) {
   })
 
   return showDevice(request)
-}
-
-function assertCanDecommissionByJobFunction({ jobFunctionNames = [] }) {
-  const canDecommission = jobFunctionNames.some(name => ALLOWED_JOB_FUNCTIONS.has(name))
-
-  if (!canDecommission) {
-    throw Boom.forbidden()
-  }
 }
 
 async function validateDeviceAccess(deviceId, credentials) {

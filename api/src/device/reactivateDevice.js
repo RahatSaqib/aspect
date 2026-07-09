@@ -11,8 +11,6 @@ const {
 } = require('./common/deviceApprovalService')
 const { getDeploymentsHistory, updateDeployment } = require('./deployment/deploymentService')
 
-const ALLOWED_JOB_FUNCTIONS = new Set(['Super Admin', 'Regional Admin'])
-
 async function reactivateDevice(request) {
   const {
     params: { deviceId },
@@ -21,7 +19,6 @@ async function reactivateDevice(request) {
   } = request
 
   const user = await getUserFromCredentials(credentials)
-  assertAllowedJobFunction(credentials)
   await validateDeviceAccess(deviceId, credentials)
   await validateSiteAccess(siteId, credentials)
 
@@ -46,14 +43,6 @@ async function reactivateDevice(request) {
   })
 
   return showDevice(request)
-}
-
-function assertAllowedJobFunction({ jobFunctionNames = [] }) {
-  const allowed = jobFunctionNames.some(name => ALLOWED_JOB_FUNCTIONS.has(name))
-
-  if (!allowed) {
-    throw Boom.forbidden()
-  }
 }
 
 async function validateDeviceAccess(deviceId, credentials) {

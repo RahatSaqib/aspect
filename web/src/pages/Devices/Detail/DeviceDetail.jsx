@@ -11,6 +11,7 @@ import AspectButton from '../../../components/shared/AspectButton'
 import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
+import usePermissions from '../../../hooks/person/usePermissions'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useAuthState from '../../../hooks/useAuthState'
 import deviceMessages from '../../../messages/deviceMessages'
@@ -26,6 +27,7 @@ import ReactivateDeviceDialog from './ReactivateDeviceDialog'
 export const DeviceDetail = props => {
   const dispatch = useDispatch()
   const user = useAuthState()
+  const { checkPermission } = usePermissions()
   const editable = isEditable(user, 'device')
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
@@ -36,10 +38,7 @@ export const DeviceDetail = props => {
   const [decommissionDialogOpen, setDecommissionDialogOpen] = useState(false)
   const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false)
 
-  const canDecommission = useMemo(
-    () => user.jwt.jobFunctionNames?.some(name => name === 'Super Admin' || name === 'Regional Admin'),
-    [user.jwt.jobFunctionNames]
-  )
+  const canDecommission = useMemo(() => checkPermission(['admin:edit']), [checkPermission])
 
   const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
   const { isLoading: isDeviceTagsLoading, data: deviceTags } = useTagByTypeAndId('device', deviceId)
