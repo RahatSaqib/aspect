@@ -95,14 +95,18 @@ describe('Device decommission route', () => {
 
   it('should block editing device details while the device is decommissioned', async () => {
     await knex('Device').where({ id: testDeviceId }).update({ deviceApprovalId: approvals.decommissioned })
+    const attemptedNotes = 'should not persist'
 
     const res = await server
       .put(`${path}/${testDeviceId}`)
       .set('Authorization', `Bearer ${shared.token}`)
-      .send({ notes: 'should not persist' })
+      .send({ name: 'Blocked device edit', notes: attemptedNotes })
 
     assert.equal(res.status, 409)
     assert.equal(res.body.message, 'A decommissioned device cannot be edited')
+
+    const device = await knex('Device').where({ id: testDeviceId }).first('notes')
+    assert.notEqual(device.notes, attemptedNotes)
   })
 
   it('should block moving instruments off a decommissioned device', async () => {
