@@ -1,33 +1,29 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { Box } from '@mui/material'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
-import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { DetailHeader, Loading } from '../../../components'
 // import AspectVertMenu from '../../../components/AspectVertMenu'
 import AspectButton from '../../../components/shared/AspectButton'
 import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
-import usePermissions from '../../../hooks/person/usePermissions'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useAuthState from '../../../hooks/useAuthState'
 import deviceMessages from '../../../messages/deviceMessages'
-import { updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
+import { updateDeviceMaintenance, updateDeviceMaintenanceStatus } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
 import { getReturnUrl } from '../../../utils/utils/browser'
-import DecommissionDeviceDialog from './DecommissionDeviceDialog'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import messages from './messages'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
-import ReactivateDeviceDialog from './ReactivateDeviceDialog'
 
 export const DeviceDetail = props => {
   const dispatch = useDispatch()
   const user = useAuthState()
-  const { checkPermission } = usePermissions()
   const editable = isEditable(user, 'device')
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
@@ -35,10 +31,6 @@ export const DeviceDetail = props => {
   const { deviceId } = useParams()
   const intl = useIntl()
   const queryClient = useQueryClient()
-  const [decommissionDialogOpen, setDecommissionDialogOpen] = useState(false)
-  const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false)
-
-  const canDecommission = useMemo(() => checkPermission(['admin:edit']), [checkPermission])
 
   const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
   const { isLoading: isDeviceTagsLoading, data: deviceTags } = useTagByTypeAndId('device', deviceId)
@@ -50,11 +42,7 @@ export const DeviceDetail = props => {
   const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
   const isDeviceNotFound = !isDeviceLoading && !device
   const isDecommissioned = device?.approvalToken === 'decommissioned'
-  const isApproved = device?.approvalToken === 'approved'
-  const showDecommissionButton = canDecommission && device && isApproved
-  const showReactivateButton = canDecommission && device && isDecommissioned
   const editPath = `/browse/device/list/${deviceId}/edit${location.search}`
-  const decommissionButtonInverse = editPath !== location?.pathname
 
   const deviceTitle = useMemo(() => {
     if (!device) return 'Devices'
@@ -127,41 +115,7 @@ export const DeviceDetail = props => {
             {label}
           </AspectButton>
         ))}
-        {showDecommissionButton && (
-          <AspectButton
-            color="primary"
-            variant="contained"
-            inverse={decommissionButtonInverse}
-            onClick={() => setDecommissionDialogOpen(true)}
-          >
-            {intl.formatMessage(messages.decommission)}
-          </AspectButton>
-        )}
-        {showReactivateButton && (
-          <AspectButton
-            color="primary"
-            variant="contained"
-            inverse={decommissionButtonInverse}
-            onClick={() => setReactivateDialogOpen(true)}
-          >
-            {intl.formatMessage(messages.reactivate)}
-          </AspectButton>
-        )}
       </DetailHeader>
-      {showReactivateButton && (
-        <ReactivateDeviceDialog
-          open={reactivateDialogOpen}
-          onClose={() => setReactivateDialogOpen(false)}
-          deviceId={deviceId}
-        />
-      )}
-      {showDecommissionButton && (
-        <DecommissionDeviceDialog
-          open={decommissionDialogOpen}
-          onClose={() => setDecommissionDialogOpen(false)}
-          deviceId={deviceId}
-        />
-      )}
       <Box component="main" sx={{ flex: '1 1 auto' }}>
         {isLoading ? (
           <Loading centered level={2} />

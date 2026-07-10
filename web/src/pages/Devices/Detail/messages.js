@@ -8,6 +8,11 @@ export default defineMessages({
   deviceNotFound: { id: 'pages.DeviceDetail.deviceNotFound', defaultMessage: 'Device not found.' },
   undeployed: { id: 'pages.DeviceDetail.undeployed', defaultMessage: 'Undeployed' },
   decommission: { id: 'pages.DeviceDetail.decommission', defaultMessage: 'Decommission' },
+  cannotDecommissionExplanation: {
+    id: 'pages.DeviceDetail.cannotDecommissionExplanation',
+    defaultMessage:
+      'Cannot decommission. A device with results must be deployed to be decommissioned, otherwise the results would remain unassigned to any site.',
+  },
   decommissionConfirmTitle: {
     id: 'pages.DeviceDetail.decommissionConfirmTitle',
     defaultMessage: 'Decommission',

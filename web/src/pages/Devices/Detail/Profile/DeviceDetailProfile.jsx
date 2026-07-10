@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
@@ -34,6 +34,9 @@ import { formatRelative } from '../../../../utils/utils/dateFormat'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
+import DecommissionDeviceDialog from '../DecommissionDeviceDialog'
+import detailMessages from '../messages'
+import ReactivateDeviceDialog from '../ReactivateDeviceDialog'
 import styles from '../styles.module.css'
 import DeploymentsSection from './DeploymentsSection'
 import DeviceInstrumentsTable from './DeviceInstrumentsTable'
@@ -167,6 +170,13 @@ const DeviceDetailProfile = ({
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
   const { checkPermission } = usePermissions()
+  const [decommissionDialogOpen, setDecommissionDialogOpen] = useState(false)
+  const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false)
+  const canDecommission = checkPermission(['admin:edit'])
+  const isApproved = device.get('approvalToken') === 'approved'
+  const isDecommissioned = device.get('approvalToken') === 'decommissioned'
+  const showDecommissionButton = canDecommission && isApproved
+  const showReactivateButton = canDecommission && isDecommissioned
   const isGeneXpertDevice = device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID
   const canViewDakList = isGeneXpertDevice && checkPermission(['browse', '+deviceApiKey'])
   const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
@@ -238,7 +248,37 @@ const DeviceDetailProfile = ({
               }}
             />
             <Summary
-              title={formatMessage(messages.approvalStatus)}
+              title={
+                <span>
+                  {formatMessage(messages.approvalStatus)}
+                  {canDecommission &&
+                    (isDecommissioned ? (
+                      <button
+                        type="button"
+                        className={styles.fieldAction}
+                        onClick={() => setReactivateDialogOpen(true)}
+                      >
+                        ({formatMessage(detailMessages.reactivate)})
+                      </button>
+                    ) : isApproved ? (
+                      <button
+                        type="button"
+                        className={styles.fieldAction}
+                        onClick={() => setDecommissionDialogOpen(true)}
+                      >
+                        ({formatMessage(detailMessages.decommission)})
+                      </button>
+                    ) : (
+                      <Tooltip title={formatMessage(detailMessages.cannotDecommissionExplanation)} placement="right">
+                        <span>
+                          <button type="button" className={styles.fieldAction} disabled>
+                            ({formatMessage(detailMessages.decommission)})
+                          </button>
+                        </span>
+                      </Tooltip>
+                    ))}
+                </span>
+              }
               description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
             />
             <Summary
@@ -491,6 +531,20 @@ const DeviceDetailProfile = ({
           onCancel={onHideDialog}
           onSubmit={onWarrantySubmit}
         />
+        {showDecommissionButton && (
+          <DecommissionDeviceDialog
+            open={decommissionDialogOpen}
+            onClose={() => setDecommissionDialogOpen(false)}
+            deviceId={device.get('id')}
+          />
+        )}
+        {showReactivateButton && (
+          <ReactivateDeviceDialog
+            open={reactivateDialogOpen}
+            onClose={() => setReactivateDialogOpen(false)}
+            deviceId={device.get('id')}
+          />
+        )}
       </section>
 
       <DeploymentsSection
