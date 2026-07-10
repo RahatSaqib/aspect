@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -8,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
 import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
-import { formatDataByGraphType, Loading } from '../../index'
+import { formatDataByGraphType, Loading, LoadingCard } from '../../index'
 import fetchWrapperForQueries from '../../QueryFetch'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -44,83 +43,79 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
     { ...GRAPHS_QUERY_OPTIONS }
   )
 
-  const [donutData, setDonutData] = useState({})
-  const [barData, setBarData] = useState({})
-  useEffect(() => {
-    if (data && data.data) {
-      const info = data.data
-      const i18nKeys = reduce(
-        info,
-        (acc, curr) => {
-          acc[curr.resultCategory1] = curr.resultCategory1I18nKey
-          return acc
-        },
-        {}
-      )
-      // code for donut
-      const pieData = formatDataByGraphType(
-        info,
-        'percentage',
-        false,
-        'MMM yy',
-        'cnt',
-        'resultCategory1',
-        i18nKeys,
-        'pie',
-        endPointParams,
-        formatMessage,
-        messages
-      )
-      const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
+  const { donutData, barData } = useMemo(() => {
+    if (!data?.data) return { donutData: {}, barData: {} }
 
-      const detected = pieData.filter(elem => elem.id === 'Detected' || elem.id === 'Trace Detected')
-      const totalDetected = detected.reduce((sum, elem) => sum + elem.value, 0)
-      const totalValidResults = pieData.reduce((sum, elem) => sum + elem.value, 0)
-      const pieAvg = ((totalDetected / totalValidResults) * 100).toFixed(1)
+    const info = data.data
+    const i18nKeys = reduce(
+      info,
+      (acc, curr) => {
+        acc[curr.resultCategory1] = curr.resultCategory1I18nKey
+        return acc
+      },
+      {}
+    )
+    // code for donut
+    const pieData = formatDataByGraphType(
+      info,
+      'percentage',
+      false,
+      'MMM yy',
+      'cnt',
+      'resultCategory1',
+      i18nKeys,
+      'pie',
+      endPointParams,
+      formatMessage,
+      messages
+    )
+    const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
 
-      const pie = pieData.map(d => ({
-        ...d,
-        label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
-      }))
-      // code for column
-      const groupedForBar = formatDataByGraphType(
-        info,
-        'percentage',
-        {},
-        'MMM',
-        'month',
-        'resultCategory1',
-        i18nKeys,
-        'bar',
-        endPointParams,
-        formatMessage,
-        messages
+    const detected = pieData.filter(elem => elem.id === 'Detected' || elem.id === 'Trace Detected')
+    const totalDetected = detected.reduce((sum, elem) => sum + elem.value, 0)
+    const totalValidResults = pieData.reduce((sum, elem) => sum + elem.value, 0)
+    const pieAvg = ((totalDetected / totalValidResults) * 100).toFixed(1)
+
+    const pie = pieData.map(d => ({
+      ...d,
+      label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
+      value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
+    }))
+    // code for column
+    const groupedForBar = formatDataByGraphType(
+      info,
+      'percentage',
+      {},
+      'MMM',
+      'month',
+      'resultCategory1',
+      i18nKeys,
+      'bar',
+      endPointParams,
+      formatMessage,
+      messages
+    )
+    const expandedBarData = []
+    groupedForBar.map(result => {
+      const allKeysButMonth = Object.keys(result).filter(key => key !== 'month' && key !== 'totalCnt')
+      allKeysButMonth.map(key =>
+        expandedBarData.push({
+          id: key,
+          month:
+            formatMessage(messages[format(negateTimeZoneOffset(new Date(result.month)), 'MMM').toLowerCase()]) +
+            format(negateTimeZoneOffset(new Date(result.month)), '-yyyy'),
+          value: +result[key].toFixed(1),
+          type: genLabel(key, assays, formatMessage, messages, i18nKeys),
+          originalMonth: result.month,
+        })
       )
-      const expandedBarData = []
-      groupedForBar.map(result => {
-        const allKeysButMonth = Object.keys(result).filter(key => key !== 'month' && key !== 'totalCnt')
-        allKeysButMonth.map(key =>
-          expandedBarData.push({
-            id: key,
-            month:
-              formatMessage(messages[format(negateTimeZoneOffset(new Date(result.month)), 'MMM').toLowerCase()]) +
-              format(negateTimeZoneOffset(new Date(result.month)), '-yyyy'),
-            value: +result[key].toFixed(1),
-            type: genLabel(key, assays, formatMessage, messages, i18nKeys),
-            originalMonth: result.month,
-          })
-        )
-        return result
-      })
-      setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAvg}%` })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, filter])
+      return result
+    })
+    return { donutData: { data: pie, total: `${pieAvg}%` }, barData: { data: expandedBarData } }
+  }, [data, assays, format, formatMessage])
 
   return !data || !assays || !resultCategoryGroups ? (
-    <Loading />
+    <LoadingCard />
   ) : (
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>

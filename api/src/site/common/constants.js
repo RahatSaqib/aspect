@@ -1,5 +1,3 @@
-const { knex } = require('../../db')
-
 const SELECT_LIST_FIELDS = [
   's.id',
   's.name',
@@ -11,8 +9,6 @@ const SELECT_LIST_FIELDS = [
   's.createdOn',
   's.externalId',
   's.parentWarehouseId',
-  knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
-  knex.raw('COALESCE(COUNT(DISTINCT sc.consumableId), 0) as siteConsumableCount'),
 ]
 
 const SITE_FIELDS = [

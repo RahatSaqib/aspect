@@ -12,11 +12,8 @@ function getSitesQuery(dataConstraints) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
-    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
     .leftOuterJoin('Site as spw', 's.parentWarehouseId', 'spw.id')
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
-    .groupBy(['s.id'])
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 }
 

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import { useQuery } from 'react-query'
 import { ErrorBoundary, DeviceStatusGraph, ResultTransmittedGraph, InventoryStatusGraph } from '../../../components'
+import LazyGraph from '../../../components/LazyGraph'
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'
@@ -27,15 +28,23 @@ const OperationalDashBoard = () => {
           <SummaryStatus className={styles.Section__summary} dashboard="operational" />
         </ErrorBoundary>
 
-        <ResultTransmittedGraph />
+        <LazyGraph>
+          <ErrorBoundary>
+            <ResultTransmittedGraph />
+          </ErrorBoundary>
+        </LazyGraph>
         {assays ? (
           <div className={styles.wrapper}>
-            <ErrorBoundary>
-              <DeviceStatusGraph assaysFromState={assays} />
-            </ErrorBoundary>
-            <ErrorBoundary>
-              <InventoryStatusGraph assaysFromState={assays} />
-            </ErrorBoundary>
+            <LazyGraph>
+              <ErrorBoundary>
+                <DeviceStatusGraph assaysFromState={assays} />
+              </ErrorBoundary>
+            </LazyGraph>
+            <LazyGraph>
+              <ErrorBoundary>
+                <InventoryStatusGraph assaysFromState={assays} />
+              </ErrorBoundary>
+            </LazyGraph>
           </div>
         ) : null}
       </PermissionChecker>
