@@ -8,6 +8,7 @@ const patients = require('../../seeds/test/fixtures/patients.json')
 const { knex } = require('../../src/db')
 
 const { resultCategoryToId } = require('../../src/shared/dictionary')
+const { syncDeviceApprovalFromDeployments } = require('../../src/device/common/deviceApprovalService')
 
 const server = require('../utils/testUtils')
 const { getBaseQueryForResults } = require('../../src/result/common/db')
@@ -16,6 +17,8 @@ const { assert, expect } = chai
 
 describe('Mobile API Clinical Response', () => {
   let results = []
+  let generatedResults = []
+  let createdDeploymentDeviceIds = []
 
   beforeEach(async () => {
     const { partnerId, userId } = await knex('Person as p')
@@ -23,13 +26,42 @@ describe('Mobile API Clinical Response', () => {
       .where('u.name', 'admin')
       .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-    results = await generateResults(knex, userId, partnerId, patients, [], 'US', false, 30, 0, 0, 0)
+    generatedResults = await generateResults(knex, userId, partnerId, patients, [], 'US', false, 30, 0, 0, 0)
 
-    await setTreatmentStatusToResults(knex, results, ['OnTreatment'])
+    await setTreatmentStatusToResults(knex, generatedResults, ['OnTreatment'])
 
     // set all to a reportable result (=detected)
     const resultCategoryId = await resultCategoryToId('Detected')
-    await knex('Result').whereIn('id', _.map(results, 'id')).update('resultCategory1', resultCategoryId)
+    await knex('Result').whereIn('id', _.map(generatedResults, 'id')).update('resultCategory1', resultCategoryId)
+
+    const generatedDevices = await knex('Result as r')
+      .join('Device as d', 'r.deviceId', 'd.id')
+      .whereIn(
+        'r.id',
+        generatedResults.map(result => result.id)
+      )
+      .distinct('d.id', 'd.siteId')
+    createdDeploymentDeviceIds = (
+      await Promise.all(
+        generatedDevices.map(async device => {
+          const deployment = await knex('Deployment').where({ deviceId: device.id }).first('id')
+          if (deployment) {
+            return null
+          }
+
+          await knex('Deployment').insert({
+            deviceId: device.id,
+            siteId: device.siteId,
+            start: null,
+            end: null,
+            createdOn: new Date(),
+            updatedOn: new Date(),
+          })
+          await syncDeviceApprovalFromDeployments(knex, { deviceId: device.id })
+          return device.id
+        })
+      )
+    ).filter(Boolean)
 
     /**
      * notice that query in 'api/src/result/service.js' func 'getDownloadResultsList'
@@ -47,21 +79,24 @@ describe('Mobile API Clinical Response', () => {
       })
       .whereIn(
         'r.id',
-        results.map(({ id }) => id)
+        generatedResults.map(({ id }) => id)
       )
       .andWhere('dt.externalId', 'CepheidGeneXpert')
       .pluck('r.id')
     /**
      * leave only valid results
      */
-    results = results.filter(({ id }) => reportableResultIds.includes(id))
+    results = generatedResults.filter(({ id }) => reportableResultIds.includes(id))
   })
 
   afterEach(async () => {
-    await knex('ResultFollowUp').whereIn('resultId', _.map(results, 'id')).delete()
-    await knex('ResultDownloadLog').whereIn('resultId', _.map(results, 'id')).delete()
-    await knex('ResultCustomField').whereIn('resultId', _.map(results, 'id')).delete()
-    await knex('Result').whereIn('id', _.map(results, 'id')).delete()
+    const generatedResultIds = _.map(generatedResults, 'id')
+    await knex('ResultFollowUp').whereIn('resultId', generatedResultIds).delete()
+    await knex('ResultDownloadLog').whereIn('resultId', generatedResultIds).delete()
+    await knex('ResultCustomField').whereIn('resultId', generatedResultIds).delete()
+    await knex('Result').whereIn('id', generatedResultIds).delete()
+    await knex('Deployment').whereIn('deviceId', createdDeploymentDeviceIds).delete()
+    await Promise.all(createdDeploymentDeviceIds.map(deviceId => syncDeviceApprovalFromDeployments(knex, { deviceId })))
   })
 
   describe('POST: /mobile/api/results/clinical-responses', () => {
