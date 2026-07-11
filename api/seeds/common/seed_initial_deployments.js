@@ -35,11 +35,9 @@ async function seedDeploymentPerDeviceAtSite(knex) {
   }
 
   const allDeviceIds = await knex('Device as d').pluck('d.id')
-  await knex.transaction(trx =>
-    allDeviceIds.reduce(
-      (pendingSync, deviceId) => pendingSync.then(() => syncDeviceApprovalFromDeployments(trx, { deviceId })),
-      Promise.resolve()
-    )
+  await allDeviceIds.reduce(
+    (pendingSync, deviceId) => pendingSync.then(() => syncDeviceApprovalFromDeployments(knex, { deviceId })),
+    Promise.resolve()
   )
 }
 
