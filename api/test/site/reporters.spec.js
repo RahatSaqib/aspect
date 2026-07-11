@@ -121,7 +121,10 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       .where('s.partnerId', partnerId)
       .where('c.abbreviation', countryAbbreviation)
 
-    let device = await deviceQuery.clone().where('da.token', 'approved').first(...deviceSelect)
+    let device = await deviceQuery
+      .clone()
+      .where('da.token', 'approved')
+      .first(...deviceSelect)
 
     // Seeded GeneXpert devices without deployments are pendingDeployment after approval sync.
     // Ensure this fixture has a deployment so the device is approved for the dashboard query.
