@@ -27,95 +27,96 @@ describe('Device reactivate route', () => {
     assert.isOk(alternateSite, 'Expected an alternate site for reactivate route fixtures')
     alternateSiteId = alternateSite.id
 
-  beforeEach(async () => {
-    const now = new Date()
-    ;[testDeviceId] = await knex('Device').insert({
-      partnerId: refDevice.partnerId,
-      siteId: refDevice.siteId,
-      deviceTypeId: refDevice.deviceTypeId,
-      deviceApprovalId: approvals.decommissioned,
-      name: `Reactivate workflow device ${now.getTime()}`,
-      shortName: `Reactivate workflow ${now.getTime()}`,
-      createdOn: now,
-      updatedOn: now,
-      lastSeenOn: now,
+    beforeEach(async () => {
+      const now = new Date()
+      ;[testDeviceId] = await knex('Device').insert({
+        partnerId: refDevice.partnerId,
+        siteId: refDevice.siteId,
+        deviceTypeId: refDevice.deviceTypeId,
+        deviceApprovalId: approvals.decommissioned,
+        name: `Reactivate workflow device ${now.getTime()}`,
+        shortName: `Reactivate workflow ${now.getTime()}`,
+        createdOn: now,
+        updatedOn: now,
+        lastSeenOn: now,
+      })
+      await knex('FactDeviceFlag').insert({ deviceId: testDeviceId, updatedOn: now })
+      await knex('Deployment').insert({
+        deviceId: testDeviceId,
+        siteId: refDevice.siteId,
+        start: null,
+        end: null,
+        createdOn: now,
+        createdBy: 1,
+        updatedOn: now,
+        updatedBy: 1,
+      })
     })
-    await knex('FactDeviceFlag').insert({ deviceId: testDeviceId, updatedOn: now })
-    await knex('Deployment').insert({
-      deviceId: testDeviceId,
-      siteId: refDevice.siteId,
-      start: null,
-      end: null,
-      createdOn: now,
-      createdBy: 1,
-      updatedOn: now,
-      updatedBy: 1,
+
+    afterEach(async () => {
+      await knex('Deployment').where({ deviceId: testDeviceId }).del()
+      await knex('DeviceApprovalLog').where({ deviceId: testDeviceId }).del()
+      await knex('FactDeviceFlag').where({ deviceId: testDeviceId }).del()
+      await knex('Device').where({ id: testDeviceId }).del()
     })
-  })
 
-  afterEach(async () => {
-    await knex('Deployment').where({ deviceId: testDeviceId }).del()
-    await knex('DeviceApprovalLog').where({ deviceId: testDeviceId }).del()
-    await knex('FactDeviceFlag').where({ deviceId: testDeviceId }).del()
-    await knex('Device').where({ id: testDeviceId }).del()
-  })
+    it('should reactivate a decommissioned device to approved without changing deployments when site is unchanged', async () => {
+      const res = await server
+        .post(`${path}/${testDeviceId}/reactivate`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .send({ siteId: refDevice.siteId })
 
-  it('should reactivate a decommissioned device to approved without changing deployments when site is unchanged', async () => {
-    const res = await server
-      .post(`${path}/${testDeviceId}/reactivate`)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .send({ siteId: refDevice.siteId })
+      assert.equal(res.status, 200)
+      assert.equal(res.body.data.approvalToken, 'approved')
+      assert.equal(res.body.data.siteId, refDevice.siteId)
 
-    assert.equal(res.status, 200)
-    assert.equal(res.body.data.approvalToken, 'approved')
-    assert.equal(res.body.data.siteId, refDevice.siteId)
+      const deployments = await knex('Deployment').where({ deviceId: testDeviceId }).orderBy('id', 'asc')
+      assert.equal(deployments.length, 1)
+      assert.equal(deployments[0].siteId, refDevice.siteId)
+      assert.isNull(deployments[0].end)
+    })
 
-    const deployments = await knex('Deployment').where({ deviceId: testDeviceId }).orderBy('id', 'asc')
-    assert.equal(deployments.length, 1)
-    assert.equal(deployments[0].siteId, refDevice.siteId)
-    assert.isNull(deployments[0].end)
-  })
+    it('should reactivate at a different accessible site with a new deployment from today', async () => {
+      const res = await server
+        .post(`${path}/${testDeviceId}/reactivate`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .send({ siteId: alternateSiteId })
 
-  it('should reactivate at a different accessible site with a new deployment from today', async () => {
-    const res = await server
-      .post(`${path}/${testDeviceId}/reactivate`)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .send({ siteId: alternateSiteId })
+      assert.equal(res.status, 200)
+      assert.equal(res.body.data.approvalToken, 'approved')
+      assert.equal(res.body.data.siteId, alternateSiteId)
 
-    assert.equal(res.status, 200)
-    assert.equal(res.body.data.approvalToken, 'approved')
-    assert.equal(res.body.data.siteId, alternateSiteId)
+      const deployments = await knex('Deployment').where({ deviceId: testDeviceId }).orderBy('id', 'asc')
+      assert.equal(deployments.length, 2)
+      assert.equal(deployments[0].siteId, refDevice.siteId)
+      assert.isNotNull(deployments[0].end)
+      assert.equal(deployments[1].siteId, alternateSiteId)
+      assert.isNull(deployments[1].end)
+      assert.isNotNull(deployments[1].start)
+    })
 
-    const deployments = await knex('Deployment').where({ deviceId: testDeviceId }).orderBy('id', 'asc')
-    assert.equal(deployments.length, 2)
-    assert.equal(deployments[0].siteId, refDevice.siteId)
-    assert.isNotNull(deployments[0].end)
-    assert.equal(deployments[1].siteId, alternateSiteId)
-    assert.isNull(deployments[1].end)
-    assert.isNotNull(deployments[1].start)
-  })
+    it('should reject reactivating a non-decommissioned device', async () => {
+      await knex('Device').where({ id: testDeviceId }).update({ deviceApprovalId: approvals.approved })
 
-  it('should reject reactivating a non-decommissioned device', async () => {
-    await knex('Device').where({ id: testDeviceId }).update({ deviceApprovalId: approvals.approved })
+      const res = await server
+        .post(`${path}/${testDeviceId}/reactivate`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .send({ siteId: refDevice.siteId })
 
-    const res = await server
-      .post(`${path}/${testDeviceId}/reactivate`)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .send({ siteId: refDevice.siteId })
+      assert.equal(res.status, 409)
+      assert.equal(res.body.message, 'Only decommissioned devices can be reactivated')
+    })
 
-    assert.equal(res.status, 409)
-    assert.equal(res.body.message, 'Only decommissioned devices can be reactivated')
-  })
+    it('should reject reactivating without deployments', async () => {
+      await knex('Deployment').where({ deviceId: testDeviceId }).del()
 
-  it('should reject reactivating without deployments', async () => {
-    await knex('Deployment').where({ deviceId: testDeviceId }).del()
+      const res = await server
+        .post(`${path}/${testDeviceId}/reactivate`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .send({ siteId: refDevice.siteId })
 
-    const res = await server
-      .post(`${path}/${testDeviceId}/reactivate`)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .send({ siteId: refDevice.siteId })
-
-    assert.equal(res.status, 409)
-    assert.equal(res.body.message, 'Device has no deployments to reactivate')
+      assert.equal(res.status, 409)
+      assert.equal(res.body.message, 'Device has no deployments to reactivate')
+    })
   })
 })
