@@ -11,7 +11,7 @@ export default defineMessages({
   cannotDecommissionExplanation: {
     id: 'pages.DeviceDetail.cannotDecommissionExplanation',
     defaultMessage:
-      'Cannot decommission. A device with results must be deployed to be decommissioned, otherwise the results would remain unassigned to any site.',
+      'Cannot decommission. A device must be deployed to be decommissioned, otherwise any result it has produced would remain unassigned to any site.',
   },
   decommissionConfirmTitle: {
     id: 'pages.DeviceDetail.decommissionConfirmTitle',
