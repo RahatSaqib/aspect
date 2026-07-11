@@ -18,12 +18,14 @@ describe('Device reactivate route', () => {
     await shared.ensureToken(server)
     approvals = await allDeviceApprovalToId()
     refDevice = await knex('Device').whereNotNull('siteId').first('partnerId', 'siteId', 'deviceTypeId')
+    assert.isOk(refDevice, 'Expected a seeded device with a site for reactivate route fixtures')
+
     const alternateSite = await knex('Site')
       .where('partnerId', refDevice.partnerId)
       .whereNot('id', refDevice.siteId)
       .first('id')
+    assert.isOk(alternateSite, 'Expected an alternate site for reactivate route fixtures')
     alternateSiteId = alternateSite.id
-  })
 
   beforeEach(async () => {
     const now = new Date()
