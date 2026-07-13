@@ -133,14 +133,10 @@ const themeDefinition = {
               backgroundColor: theme.palette.common.white,
               color: themedColors.primary,
             },
-            '&.Mui-disabled': {
-              backgroundColor: 'transparent',
-              color: theme.palette.grey[600],
-            },
           },
         }),
         /* Styles applied to the root element if `variant="[contained | fab]"` and `color="primary"`. */
-        containedPrimary: ({ theme }) => ({
+        containedPrimary: {
           backgroundColor: themedColors.primary,
           '&:hover': {
             backgroundColor: themedColors.primary,
@@ -148,11 +144,7 @@ const themeDefinition = {
               backgroundColor: themedColors.primary,
             },
           },
-          '&.Mui-disabled': {
-            backgroundColor: 'transparent',
-            color: theme.palette.grey[600],
-          },
-        }),
+        },
         /* Styles applied to the root element if `variant="[contained | fab]"` and `color="secondary"`. */
         containedSecondary: ({ theme }) => ({
           color: theme.palette.common.white,
@@ -183,11 +175,6 @@ const themeDefinition = {
             backgroundColor: theme.palette.common.white,
             color: themedColors.primary,
             border: `1px solid ${themedColors.primary}`,
-            '&.Mui-disabled': {
-              backgroundColor: 'transparent',
-              color: theme.palette.grey[600],
-              border: 'none',
-            },
           },
         }),
         text: ({ theme }) => ({
@@ -195,11 +182,6 @@ const themeDefinition = {
             backgroundColor: theme.palette.common.white,
             color: themedColors.primary,
             border: `1px solid ${themedColors.primary}`,
-            '&.Mui-disabled': {
-              backgroundColor: 'transparent',
-              color: theme.palette.grey[600],
-              border: 'none',
-            },
           },
         }),
         textPrimary: {
