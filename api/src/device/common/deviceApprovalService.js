@@ -17,7 +17,9 @@ async function getDeviceApprovalState(trx, deviceId) {
     .first('d.id', 'd.deviceApprovalId', 'da.token as approvalToken')
 
   if (!device) {
-    throw Boom.notFound('Device not found')
+    throw Boom.notFound('Device not found', {
+      errorKeyCode: 'deviceNotFound',
+    })
   }
 
   return device
@@ -92,12 +94,16 @@ async function assertDeviceCanBeReactivated(trx, deviceId) {
   const device = await getDeviceApprovalState(trx, deviceId)
 
   if (device.approvalToken !== DECOMMISSIONED) {
-    throw Boom.conflict('Only decommissioned devices can be reactivated')
+    throw Boom.conflict('Only decommissioned devices can be reactivated', {
+      errorKeyCode: 'onlyDecommissionedDevicesCanBeReactivated',
+    })
   }
 
   const deploymentCount = await getDeploymentCount(trx, deviceId)
   if (deploymentCount === 0) {
-    throw Boom.conflict('Device has no deployments to reactivate')
+    throw Boom.conflict('Device has no deployments to reactivate', {
+      errorKeyCode: 'deviceHasNoDeploymentsToReactivate',
+    })
   }
 
   return device
@@ -106,26 +112,35 @@ async function assertDeviceCanBeReactivated(trx, deviceId) {
 async function assertDeviceCanBeDecommissioned(trx, deviceId) {
   const device = await getDeviceApprovalState(trx, deviceId)
 
-  if (device.approvalToken === APPROVED) {
-    return device
-  }
-
-  if (device.approvalToken === PENDING_DEPLOYMENT) {
-    throw Boom.conflict('Only approved devices can be decommissioned')
-  }
-
   if (device.approvalToken === DECOMMISSIONED) {
-    throw Boom.conflict('Device is already decommissioned')
+    throw Boom.conflict('Device is already decommissioned', {
+      errorKeyCode: 'deviceAlreadyDecommissioned',
+    })
   }
 
-  throw Boom.conflict('Only approved devices can be decommissioned')
+  if (device.approvalToken !== APPROVED) {
+    throw Boom.conflict('Only approved devices can be decommissioned', {
+      errorKeyCode: 'onlyApprovedDevicesCanBeDecommissioned',
+    })
+  }
+
+  const deploymentCount = await getDeploymentCount(trx, deviceId)
+  if (deploymentCount === 0) {
+    throw Boom.conflict('Device must have a deployment to be decommissioned', {
+      errorKeyCode: 'deviceMustHaveDeploymentToBeDecommissioned',
+    })
+  }
+
+  return device
 }
 
 async function assertDeviceIsNotDecommissioned(trx, deviceId) {
   const device = await getDeviceApprovalState(trx, deviceId)
 
   if (device.approvalToken === DECOMMISSIONED) {
-    throw Boom.conflict('Deployments cannot be edited for a decommissioned device')
+    throw Boom.conflict('Deployments cannot be edited for a decommissioned device', {
+      errorKeyCode: 'deploymentsCannotBeEditedForDecommissionedDevice',
+    })
   }
 
   return device

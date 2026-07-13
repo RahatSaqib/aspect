@@ -28,6 +28,9 @@ async function persistDeploymentChanges(request) {
   let resultIdsToRelink = []
 
   await transact(async trx => {
+    // Decommissioned devices are read-only for deployments (add/update/delete).
+    // Active (approved) devices may be edited; removing all deployments syncs them
+    // back to pendingDeployment via finalizeDeploymentTimeline.
     await assertDeviceIsNotDecommissioned(trx, deviceId)
     await applyDeploymentChanges(trx, { deviceId, changes, userId: user.id, now })
     ;({ resultIdsToRelink } = await finalizeDeploymentTimeline(trx, {

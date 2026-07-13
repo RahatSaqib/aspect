@@ -20,7 +20,9 @@ async function updateDevice(request) {
   const device = await getDeviceByRequest(request)
 
   if (device.approvalToken === DECOMMISSIONED) {
-    throw Boom.conflict('A decommissioned device cannot be edited')
+    throw Boom.conflict('A decommissioned device cannot be edited', {
+      errorKeyCode: 'decommissionedDeviceCannotBeEdited',
+    })
   }
 
   const configurationData = _.assign({}, device.configurationData, payload.configurationData)

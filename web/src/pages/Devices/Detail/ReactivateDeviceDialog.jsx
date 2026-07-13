@@ -34,7 +34,14 @@ const ReactivateDeviceDialog = ({ open, onClose, deviceId }) => {
       { deviceId, siteId: values.siteId },
       {
         onSuccess: () => onClose(),
-        onError: () => toast.error(formatMessage(messages.reactivate)),
+        onError: error => {
+          const errorKeyCode = error?.data?.errorKeyCode
+          toast.error(
+            errorKeyCode && messages[errorKeyCode]
+              ? formatMessage(messages[errorKeyCode])
+              : formatMessage(messages.reactivateFailed)
+          )
+        },
       }
     )
   }

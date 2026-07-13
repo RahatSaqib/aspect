@@ -16,7 +16,18 @@ describe('Device decommission route', () => {
     shared.checkToken(server, path)
     await shared.ensureToken(server)
     approvals = await allDeviceApprovalToId()
-    refDevice = await knex('Device').whereNotNull('siteId').first('partnerId', 'siteId', 'deviceTypeId')
+
+    // Use a device site the admin token can actually access (constraints apply on decommission).
+    const listRes = await server.get(`${path}?size=50`).set('Authorization', `Bearer ${shared.token}`)
+    assert.equal(listRes.status, 200)
+    const accessibleDeviceIds = (listRes.body.data || []).map(d => d.id)
+    assert.isAtLeast(accessibleDeviceIds.length, 1, 'Expected at least one accessible device')
+
+    refDevice = await knex('Device')
+      .whereIn('id', accessibleDeviceIds)
+      .whereNotNull('siteId')
+      .first('partnerId', 'siteId', 'deviceTypeId')
+    assert.isOk(refDevice, 'Expected an accessible seeded device with a site for decommission fixtures')
   })
 
   beforeEach(async () => {
@@ -43,8 +54,19 @@ describe('Device decommission route', () => {
     await knex('Device').where({ id: testDeviceId }).del()
   })
 
-  it('should decommission an approved device', async () => {
+  it('should decommission an approved device with a deployment', async () => {
+    const now = new Date()
     await knex('Device').where({ id: testDeviceId }).update({ deviceApprovalId: approvals.approved })
+    await knex('Deployment').insert({
+      deviceId: testDeviceId,
+      siteId: refDevice.siteId,
+      start: null,
+      end: null,
+      createdOn: now,
+      createdBy: 1,
+      updatedOn: now,
+      updatedBy: 1,
+    })
 
     const res = await server
       .post(`${path}/${testDeviceId}/decommission`)
@@ -59,6 +81,19 @@ describe('Device decommission route', () => {
     assert.equal(logs[0].deviceApprovalId, approvals.decommissioned)
   })
 
+  it('should reject decommissioning an approved device without deployments', async () => {
+    await knex('Device').where({ id: testDeviceId }).update({ deviceApprovalId: approvals.approved })
+
+    const res = await server
+      .post(`${path}/${testDeviceId}/decommission`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send()
+
+    assert.equal(res.status, 409)
+    assert.equal(res.body.message, 'Device must have a deployment to be decommissioned')
+    assert.equal(res.body.errorKeyCode, 'deviceMustHaveDeploymentToBeDecommissioned')
+  })
+
   it('should reject decommissioning a pending-deployment device', async () => {
     const res = await server
       .post(`${path}/${testDeviceId}/decommission`)
@@ -67,6 +102,7 @@ describe('Device decommission route', () => {
 
     assert.equal(res.status, 409)
     assert.equal(res.body.message, 'Only approved devices can be decommissioned')
+    assert.equal(res.body.errorKeyCode, 'onlyApprovedDevicesCanBeDecommissioned')
   })
 
   it('should reject decommissioning an already-decommissioned device', async () => {
@@ -79,6 +115,7 @@ describe('Device decommission route', () => {
 
     assert.equal(res.status, 409)
     assert.equal(res.body.message, 'Device is already decommissioned')
+    assert.equal(res.body.errorKeyCode, 'deviceAlreadyDecommissioned')
   })
 
   it('should block deployment edits while the device is decommissioned', async () => {
@@ -91,6 +128,7 @@ describe('Device decommission route', () => {
 
     assert.equal(res.status, 409)
     assert.equal(res.body.message, 'Deployments cannot be edited for a decommissioned device')
+    assert.equal(res.body.errorKeyCode, 'deploymentsCannotBeEditedForDecommissionedDevice')
   })
 
   it('should block editing device details while the device is decommissioned', async () => {
@@ -104,6 +142,7 @@ describe('Device decommission route', () => {
 
     assert.equal(res.status, 409)
     assert.equal(res.body.message, 'A decommissioned device cannot be edited')
+    assert.equal(res.body.errorKeyCode, 'decommissionedDeviceCannotBeEdited')
 
     const device = await knex('Device').where({ id: testDeviceId }).first('notes')
     assert.notEqual(device.notes, attemptedNotes)

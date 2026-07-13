@@ -25,7 +25,11 @@ export default defineMessages({
   tags: { id: 'pages.DeviceDetailEdit.tags', defaultMessage: 'Tags' },
   discard: { id: 'pages.DeviceDetailEdit.discard', defaultMessage: 'Discard' },
   save: { id: 'pages.DeviceDetailEdit.save', defaultMessage: 'Save' },
-  deviceUpdateError: { id: 'pages.DeviceDetailEdit.deviceUpdateError', defaultMessage: 'Error updating device' },
+    deviceUpdateError: { id: 'pages.DeviceDetailEdit.deviceUpdateError', defaultMessage: 'Error updating device' },
+  decommissionedDeviceCannotBeEdited: {
+    id: 'pages.DeviceDetailEdit.decommissionedDeviceCannotBeEdited',
+    defaultMessage: 'A decommissioned device cannot be edited.',
+  },
   deviceUpdated: { id: 'pages.DeviceDetailEdit.deviceUpdated', defaultMessage: 'Device updated successfully' },
   sectionCapacityModules: {
     id: 'pages.DeviceDetailEdit.sectionCapacityModules',

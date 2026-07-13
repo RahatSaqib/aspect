@@ -12,12 +12,19 @@ const DecommissionDeviceDialog = ({ open, onClose, deviceId }) => {
   const { formatMessage } = useIntl()
   const decommissionMutation = useDecommissionDevice()
 
+  const getErrorMessage = error => {
+    const errorKeyCode = error?.data?.errorKeyCode
+    return errorKeyCode && messages[errorKeyCode]
+      ? formatMessage(messages[errorKeyCode])
+      : formatMessage(messages.decommissionFailed)
+  }
+
   const handleConfirm = () => {
     decommissionMutation.mutate(
       { deviceId },
       {
         onSuccess: () => onClose(),
-        onError: () => toast.error(formatMessage(messages.decommission)),
+        onError: error => toast.error(getErrorMessage(error)),
       }
     )
   }

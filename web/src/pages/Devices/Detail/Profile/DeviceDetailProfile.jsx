@@ -13,6 +13,7 @@ import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import ColoredNumber from '../../../../components/shared/ColoredNumber'
 import Summary from '../../../../components/Summary'
 import { sanitizeFiltersStringBy } from '../../../../components/utils'
+import useDeployments from '../../../../hooks/device/useDeployments'
 import usePermissions from '../../../../hooks/person/usePermissions'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
@@ -175,7 +176,11 @@ const DeviceDetailProfile = ({
   const canDecommission = checkPermission(['admin:edit'])
   const isApproved = device.get('approvalToken') === 'approved'
   const isDecommissioned = device.get('approvalToken') === 'decommissioned'
-  const showDecommissionButton = canDecommission && isApproved
+  const { data: deploymentsData } = useDeployments(device.get('id'))
+  const hasDeployments = (deploymentsData?.deployments ?? []).length > 0
+  // Decommission only when the device is approved (active) and currently has deployments.
+  const canDecommissionDevice = canDecommission && isApproved && hasDeployments
+  const showDecommissionButton = canDecommissionDevice
   const showReactivateButton = canDecommission && isDecommissioned
   const isGeneXpertDevice = device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID
   const canViewDakList = isGeneXpertDevice && checkPermission(['browse', '+deviceApiKey'])
@@ -260,7 +265,7 @@ const DeviceDetailProfile = ({
                       >
                         ({formatMessage(detailMessages.reactivate)})
                       </button>
-                    ) : isApproved ? (
+                    ) : canDecommissionDevice ? (
                       <button
                         type="button"
                         className={styles.fieldAction}
