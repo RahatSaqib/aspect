@@ -29,19 +29,19 @@ const ReactivateDeviceDialog = ({ open, onClose, deviceId }) => {
     siteId: Yup.number().nullable(true).required(formatMessage(validationErrorMessages.required)),
   })
 
+  const getErrorMessage = error => {
+    const errorKeyCode = error?.data?.errorKeyCode
+    return errorKeyCode && messages[errorKeyCode]
+      ? formatMessage(messages[errorKeyCode])
+      : formatMessage(messages.reactivateFailed)
+  }
+
   const handleSubmit = values => {
     reactivateMutation.mutate(
       { deviceId, siteId: values.siteId },
       {
         onSuccess: () => onClose(),
-        onError: error => {
-          const errorKeyCode = error?.data?.errorKeyCode
-          toast.error(
-            errorKeyCode && messages[errorKeyCode]
-              ? formatMessage(messages[errorKeyCode])
-              : formatMessage(messages.reactivateFailed)
-          )
-        },
+        onError: error => toast.error(getErrorMessage(error)),
       }
     )
   }

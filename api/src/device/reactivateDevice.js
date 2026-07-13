@@ -32,7 +32,9 @@ async function reactivateDevice(request) {
     const activeDeployment = deployments.find(d => d.end === null)
 
     if (!activeDeployment) {
-      throw Boom.conflict('Device has no active deployment')
+      throw Boom.conflict('Device has no active deployment', {
+        errorKeyCode: 'deviceHasNoActiveDeployment',
+      })
     }
 
     if (Number(activeDeployment.siteId) !== Number(siteId)) {
@@ -50,7 +52,9 @@ async function validateDeviceAccess(deviceId, credentials) {
   const devices = await getDevicesIdsCheckingConstraints([deviceId], dataConstraints)
 
   if (devices.length !== 1) {
-    throw Boom.forbidden("You don't have permission to update the requested device")
+    throw Boom.forbidden("You don't have permission to update the requested device", {
+      errorKeyCode: 'devicePermissionDenied',
+    })
   }
 }
 
@@ -59,7 +63,9 @@ async function validateSiteAccess(siteId, credentials) {
   const site = await checkSiteAccess(siteId, dataConstraints)
 
   if (!site) {
-    throw Boom.forbidden("You don't have permission to use the requested site")
+    throw Boom.forbidden("You don't have permission to use the requested site", {
+      errorKeyCode: 'sitePermissionDenied',
+    })
   }
 }
 

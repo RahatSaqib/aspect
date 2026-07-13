@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
+import { toast } from 'react-toastify'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import DeviceResultHistory from '../../../../components/DeviceResultHistory/DeviceResultHistory'
 import PermissionChecker from '../../../../components/PermissionChecker'
@@ -180,8 +181,10 @@ const DeviceDetailProfile = ({
   const hasDeployments = (deploymentsData?.deployments ?? []).length > 0
   // Decommission only when the device is approved (active) and currently has deployments.
   const canDecommissionDevice = canDecommission && isApproved && hasDeployments
+  // Reactivate only when the device is decommissioned and still has deployments.
+  const canReactivateDevice = canDecommission && isDecommissioned && hasDeployments
   const showDecommissionButton = canDecommissionDevice
-  const showReactivateButton = canDecommission && isDecommissioned
+  const showReactivateButton = canReactivateDevice
   const isGeneXpertDevice = device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID
   const canViewDakList = isGeneXpertDevice && checkPermission(['browse', '+deviceApiKey'])
   const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
@@ -258,13 +261,23 @@ const DeviceDetailProfile = ({
                   {formatMessage(messages.approvalStatus)}
                   {canDecommission &&
                     (isDecommissioned ? (
-                      <button
-                        type="button"
-                        className={styles.fieldAction}
-                        onClick={() => setReactivateDialogOpen(true)}
-                      >
-                        ({formatMessage(detailMessages.reactivate)})
-                      </button>
+                      canReactivateDevice ? (
+                        <button
+                          type="button"
+                          className={styles.fieldAction}
+                          onClick={() => setReactivateDialogOpen(true)}
+                        >
+                          ({formatMessage(detailMessages.reactivate)})
+                        </button>
+                      ) : (
+                        <Tooltip title={formatMessage(detailMessages.cannotReactivateExplanation)} placement="right">
+                          <span>
+                            <button type="button" className={styles.fieldAction} disabled>
+                              ({formatMessage(detailMessages.reactivate)})
+                            </button>
+                          </span>
+                        </Tooltip>
+                      )
                     ) : canDecommissionDevice ? (
                       <button
                         type="button"
@@ -274,13 +287,15 @@ const DeviceDetailProfile = ({
                         ({formatMessage(detailMessages.decommission)})
                       </button>
                     ) : (
-                      <Tooltip title={formatMessage(detailMessages.cannotDecommissionExplanation)} placement="right">
-                        <span>
-                          <button type="button" className={styles.fieldAction} disabled>
-                            ({formatMessage(detailMessages.decommission)})
-                          </button>
-                        </span>
-                      </Tooltip>
+                      <button
+                        type="button"
+                        className={styles.fieldAction}
+                        onClick={() =>
+                          toast.error(formatMessage(detailMessages.deviceMustHaveDeploymentToBeDecommissioned))
+                        }
+                      >
+                        ({formatMessage(detailMessages.decommission)})
+                      </button>
                     ))}
                 </span>
               }

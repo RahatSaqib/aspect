@@ -12,11 +12,6 @@ export default defineMessages({
     id: 'pages.DeviceDetail.decommissionFailed',
     defaultMessage: 'Failed to decommission the device.',
   },
-  cannotDecommissionExplanation: {
-    id: 'pages.DeviceDetail.cannotDecommissionExplanation',
-    defaultMessage:
-      'Cannot decommission. A device must be deployed to be decommissioned, otherwise any result it has produced would remain unassigned to any site.',
-  },
   decommissionConfirmTitle: {
     id: 'pages.DeviceDetail.decommissionConfirmTitle',
     defaultMessage: 'Decommission',
@@ -53,6 +48,10 @@ export default defineMessages({
   },
   reactivateConfirmTitle: { id: 'pages.DeviceDetail.reactivateConfirmTitle', defaultMessage: 'Reactivate' },
   reactivateSite: { id: 'pages.DeviceDetail.reactivateSite', defaultMessage: 'Site' },
+  cannotReactivateExplanation: {
+    id: 'pages.DeviceDetail.cannotReactivateExplanation',
+    defaultMessage: 'Cannot reactivate. A decommissioned device must have a deployment before it can be reactivated.',
+  },
   onlyDecommissionedDevicesCanBeReactivated: {
     id: 'pages.DeviceDetail.onlyDecommissionedDevicesCanBeReactivated',
     defaultMessage: 'Only decommissioned devices can be reactivated.',
@@ -60,6 +59,22 @@ export default defineMessages({
   deviceHasNoDeploymentsToReactivate: {
     id: 'pages.DeviceDetail.deviceHasNoDeploymentsToReactivate',
     defaultMessage: 'This device has no deployments to reactivate.',
+  },
+  deviceHasNoActiveDeployment: {
+    id: 'pages.DeviceDetail.deviceHasNoActiveDeployment',
+    defaultMessage: 'This device has no active deployment to reactivate.',
+  },
+  reactivateDeploymentTimelineConflict: {
+    id: 'pages.DeviceDetail.reactivateDeploymentTimelineConflict',
+    defaultMessage: "Cannot reactivate because the deployment timeline conflicts with today's date.",
+  },
+  devicePermissionDenied: {
+    id: 'pages.DeviceDetail.devicePermissionDenied',
+    defaultMessage: "You don't have permission to update the requested device.",
+  },
+  sitePermissionDenied: {
+    id: 'pages.DeviceDetail.sitePermissionDenied',
+    defaultMessage: "You don't have permission to use the requested site.",
   },
   decommissionedDeviceCannotBeEdited: {
     id: 'pages.DeviceDetail.decommissionedDeviceCannotBeEdited',

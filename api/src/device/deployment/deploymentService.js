@@ -151,12 +151,16 @@ async function updateDeployment(trx, { deviceId, siteId, userId, now, timezoneIA
   const deployments = await getDeploymentsHistory(trx, deviceId)
 
   if (deployments.length === 0) {
-    throw Boom.conflict('Device has no deployments to reactivate')
+    throw Boom.conflict('Device has no deployments to reactivate', {
+      errorKeyCode: 'deviceHasNoDeploymentsToReactivate',
+    })
   }
 
   const activeDeployment = deployments.find(d => d.end === null)
   if (!activeDeployment) {
-    throw Boom.conflict('Device has no active deployment')
+    throw Boom.conflict('Device has no active deployment', {
+      errorKeyCode: 'deviceHasNoActiveDeployment',
+    })
   }
 
   const today = formatInTimeZone(now, timezoneIANA, 'yyyy-MM-dd')
@@ -164,7 +168,9 @@ async function updateDeployment(trx, { deviceId, siteId, userId, now, timezoneIA
   const activeStart = activeDeployment.start != null ? toDateOnly(activeDeployment.start) : null
 
   if (activeStart && activeStart > previousDay) {
-    throw Boom.conflict('Cannot reactivate: deployment timeline conflict')
+    throw Boom.conflict('Cannot reactivate: deployment timeline conflict', {
+      errorKeyCode: 'reactivateDeploymentTimelineConflict',
+    })
   }
 
   await trx('Deployment').where('id', activeDeployment.id).update({
