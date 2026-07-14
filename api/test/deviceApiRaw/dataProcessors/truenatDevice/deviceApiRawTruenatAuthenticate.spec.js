@@ -163,13 +163,13 @@ describe('Device API Raw routes for Truenat Authentication', () => {
   })
 
   describe('with an expired API key', () => {
-    it('should respond with a renewed API Key token in the body', async () => {
+    it('should respond with the same API Key token in the body', async () => {
       const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
         Username: expiredApiKey.username,
         Password: expiredApiKey.password,
       })
       assert.equal(response.statusCode, 200)
-      assert.notEqual(response.body.token, `Bearer ${expiredApiKey.token}`)
+      assert.equal(response.body.token, `Bearer ${expiredApiKey.token}`)
       assert.equal(response.body.username, expiredApiKey.username)
       assert.isTrue(response.body.success)
     })

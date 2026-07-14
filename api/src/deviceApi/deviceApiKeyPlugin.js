@@ -61,10 +61,6 @@ async function authToken(token) {
     logger.warning(`Cannot find API Key Token ${token}`)
     return
   }
-  if (!!data.expiresOn && data.expiresOn < new Date()) {
-    logger.warning(`API Key Token ${token} has Expired`)
-    return
-  }
 
   const credentials = {
     scope: ['deviceApi'],

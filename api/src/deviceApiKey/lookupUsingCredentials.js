@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt')
 const addMinutes = require('date-fns/addMinutes')
 
 const { knex } = require('../db')
-const { randomToken } = require('../deviceApi/apiKey')
 
 async function lookupUsingCredentials(username, password) {
   const nowTime = new Date().getTime()
@@ -33,12 +32,9 @@ async function lookupUsingCredentials(username, password) {
   }
 
   if (deviceApiKey.expiresOn < nowTime) {
-    const newToken = randomToken()
     const newExpiresOn = addMinutes(new Date(), 15)
-    deviceApiKey.token = newToken
     deviceApiKey.expiresOn = newExpiresOn
     await knex('DeviceApiKey').where('id', deviceApiKey.id).update({
-      token: newToken,
       expiresOn: newExpiresOn,
     })
   }

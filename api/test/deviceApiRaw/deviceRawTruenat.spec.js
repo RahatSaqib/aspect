@@ -151,13 +151,13 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
           .update({ expiresOn: subSeconds(new Date(), 1) })
       })
 
-      it('should return a 401 response', async () => {
+      it('should still accept the same token and process the upload', async () => {
         const newIdValue = uuid.v4()
         const { status } = await sendResult(authHeaderValue, {
           ...defaultPayload,
           PatientID: newIdValue,
         })
-        assert.equal(status, 401)
+        assert.equal(status, 201)
       })
     })
 
