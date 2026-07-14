@@ -31,7 +31,8 @@ const DATE_TOKEN_RANGES = {
 
 const DATE_TOKENS = Object.freeze(Object.keys(DATE_TOKEN_RANGES))
 
-// Everything requestBaseQuery() accepts today: legacy traffic must log zero warnings.
+// Everything the web reports flow sends today: legacy traffic must log zero
+// warnings and must never be rejected in strict mode.
 const ENGINE_KEYS = [
   'minDate',
   'maxDate',
@@ -44,6 +45,7 @@ const ENGINE_KEYS = [
   'lgaId',
   'assayId',
   'consumableId',
+  'showDecommissionedDevices',
 ]
 
 const isMissing = value => value === undefined || value === null || value === ''
@@ -57,7 +59,9 @@ function formatRangeInTimeZone(min, max, timeZoneIANA, reportExternalId) {
     if (!timeZoneIANA) throw new Error('missing time zone')
     return { minDate: replaceOffset(min, timeZoneIANA), maxDate: replaceOffset(max, timeZoneIANA) }
   } catch (err) {
-    logger.warn(`report params: unknown timeZone "${timeZoneIANA}" for report ${reportExternalId}, falling back to UTC`)
+    logger.warning(
+      `report params: unknown timeZone "${timeZoneIANA}" for report ${reportExternalId}, falling back to UTC`
+    )
     return { minDate: replaceOffset(min, 'Etc/UTC'), maxDate: replaceOffset(max, 'Etc/UTC') }
   }
 }
@@ -97,7 +101,7 @@ function resolveParams(parameterDefs, incoming, context = {}) {
         if (!isDateRangeMissing(out)) return
         const token = def.default.period
         if (!DATE_TOKEN_RANGES[token]) {
-          logger.warn(`report params: unknown date token "${token}" for report ${reportExternalId}`)
+          logger.warning(`report params: unknown date token "${token}" for report ${reportExternalId}`)
           return
         }
         const { min, max } = DATE_TOKEN_RANGES[token](now)
@@ -109,7 +113,7 @@ function resolveParams(parameterDefs, incoming, context = {}) {
         out[def.name] = def.default
       }
     } catch (err) {
-      logger.warn(`report params [${reportExternalId}]: skipped default for "${def && def.name}": ${err.message}`)
+      logger.warning(`report params [${reportExternalId}]: skipped default for "${def && def.name}": ${err.message}`)
     }
   })
 
@@ -146,7 +150,7 @@ const dateRangeValueSchema = () => Joi.string().pattern(REGEX_ISODATESTRING).all
 
 /**
  * Validator factory. Returns validate(query, { reportExternalId }) which logs
- * (logger.warn) every violation prefixed with the report externalId and never
+ * (logger.warning) every violation prefixed with the report externalId and never
  * mutates query. In 'permissive' mode (default) it ALWAYS returns undefined.
  * In 'strict' mode it collects every violation and throws ONE Boom.badRequest
  * whose message never leaks Joi internals or the report externalId; malformed
@@ -160,7 +164,7 @@ function buildParamsValidator(parameterDefs, { mode = 'permissive' } = {}) {
 
   return function validate(query, { reportExternalId } = {}) {
     const source = query || {}
-    const warn = message => logger.warn(`report params [${reportExternalId}]: ${message}`)
+    const warn = message => logger.warning(`report params [${reportExternalId}]: ${message}`)
     const declaredKeys = new Set(ENGINE_KEYS)
     // Fragments accumulate in def-declaration order; the undeclared-keys fragment goes last.
     const violations = []

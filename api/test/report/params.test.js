@@ -16,7 +16,8 @@ describe('report params', () => {
   beforeEach(() => {
     warnStub = sinon.stub()
     params = proxyquire('../../src/report/params', {
-      '../shared/logger': { warn: warnStub },
+      // the real logger uses winston syslog levels: `warning`, not `warn`
+      '../shared/logger': { warning: warnStub },
     })
   })
 

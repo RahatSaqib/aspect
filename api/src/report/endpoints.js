@@ -25,6 +25,11 @@ function requestBaseQuery() {
       .try(Joi.array().items(Joi.number()), Joi.number())
       .allow(null, '')
       .description('Filter for assay ID(s)'),
+    // Converted here so the string "false" from GET query params reaches the
+    // params validator (and the sheet functions) as a real boolean.
+    showDecommissionedDevices: Joi.boolean()
+      .allow(null, '')
+      .description('If true, will include decommissioned devices'),
     timeZone: Joi.string().allow('').description('IANA Timezone for requester'),
   }
 }
