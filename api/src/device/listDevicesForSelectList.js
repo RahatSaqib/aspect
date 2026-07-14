@@ -9,7 +9,7 @@ const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 async function listDevicesForSelectList(request) {
   const {
     query,
-    query: { showUnapprovedDevices, showDecommissionedDevices, onlyResultDevices, deviceTypeExternalId },
+    query: { showUndeployedDevices, showDecommissionedDevices, onlyResultDevices, deviceTypeExternalId },
     auth,
   } = request
   // get data constraints
@@ -24,7 +24,7 @@ async function listDevicesForSelectList(request) {
       addConstraints,
       dataConstraints,
       { device: 'd', geography: 'g' },
-      { showUnapprovedDevices, showDecommissionedDevices }
+      { showUndeployedDevices, showDecommissionedDevices }
     )
     .modify(filterParams, query, {
       countryId: 'g.countryId',

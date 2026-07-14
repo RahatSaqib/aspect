@@ -11,12 +11,12 @@
  * @param {string} query.maxDate - The maximum date for filtering results.
  * @param {Object} opts - The additional options for customizing the query.
  * @param {boolean} opts.showDecommissionedDevices - Whether to show decommissioned devices (default: false).
- * @param {boolean} opts.showUnapprovedDevices - Whether to show unapproved devices (default: false).
+ * @param {boolean} opts.showUndeployedDevices - Whether to show undeployed (pendingDeployment) devices (default: false).
  * @returns {Object} - The Knex query builder object.
  */
 function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filterParams, query }, opts = {}) {
   const showDecommissionedDevices = opts.showDecommissionedDevices ?? query.showDecommissionedDevices ?? false
-  const showUnapprovedDevices = opts.showUnapprovedDevices ?? query.showUnapprovedDevices ?? false
+  const showUndeployedDevices = opts.showUndeployedDevices ?? query.showUndeployedDevices ?? false
   const queryBuilder = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -36,7 +36,7 @@ function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filt
         site: 's',
         geography: 'g',
       },
-      { showDecommissionedDevices, showUnapprovedDevices }
+      { showDecommissionedDevices, showUndeployedDevices }
     )
     .modify(filterParams, query, {
       assay: 'a.externalId',

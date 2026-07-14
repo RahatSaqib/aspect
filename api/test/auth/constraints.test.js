@@ -120,3 +120,63 @@ describe('addConstraints should add disabled sites filter, only when applicable'
     })
   })
 })
+
+describe('addConstraints device approval filtering', async () => {
+  const dataConstraints = {
+    partner: { id: 1 },
+    country: { id: 3 },
+    person: { id: 3 },
+  }
+
+  const buildDeviceQuerySql = (knex, options) => {
+    const queryBuilder = knex('Device as d').first()
+    addConstraints(queryBuilder, dataConstraints, { device: 'd' }, options)
+    return queryBuilder.toString()
+  }
+
+  it('hides undeployed and decommissioned devices by default (approved only)', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, undefined)
+      sql.should.to.have.string(`(deviceApproval.token is null or deviceApproval.token = 'approved')`)
+    })
+  })
+
+  it('keeps any approval except decommissioned when only showUndeployedDevices is true', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, { showUndeployedDevices: true })
+      sql.should.to.have.string(`(deviceApproval.token is null or deviceApproval.token != 'decommissioned')`)
+      sql.should.not.have.string(`token = 'approved'`)
+    })
+  })
+
+  it('keeps approved and decommissioned when only showDecommissionedDevices is true', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, { showDecommissionedDevices: true })
+      sql.should.to.have.string(
+        `(deviceApproval.token is null or deviceApproval.token in ('approved', 'decommissioned'))`
+      )
+    })
+  })
+
+  it('adds no approval filter when both flags are true', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, { showUndeployedDevices: true, showDecommissionedDevices: true })
+      sql.should.not.have.string('deviceApproval')
+    })
+  })
+
+  it('never joins the device maintenance status tables', async () => {
+    await runTestWithKnex(async knex => {
+      const flagCombinations = [
+        undefined,
+        { showUndeployedDevices: true },
+        { showDecommissionedDevices: true },
+        { showUndeployedDevices: true, showDecommissionedDevices: true },
+      ]
+      for (const options of flagCombinations) {
+        const sql = buildDeviceQuerySql(knex, options)
+        sql.should.not.have.string('DeviceMaintenanceStatus')
+      }
+    })
+  })
+})

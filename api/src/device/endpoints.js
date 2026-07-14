@@ -401,7 +401,7 @@ const routes = [
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
           deviceTypeExternalId: Joi.string().allow('').description('Device Type External ID'),
-          showUnapprovedDevices: Joi.bool().optional().default(false).description('Show unapproved devices'),
+          showUndeployedDevices: Joi.bool().optional().default(false).description('Show unapproved devices'),
           showDecommissionedDevices: Joi.bool().optional().default(false).description('Show decommissioned devices'),
           onlyResultDevices: Joi.bool().optional().default(false).description('Show only devices that process results'),
         },

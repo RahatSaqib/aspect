@@ -217,7 +217,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
     }
 
     queryBuilder.modify(addConstraints, dataConstraints, aliases, {
-      showUnapprovedDevices: true,
+      showUndeployedDevices: true,
       showDecommissionedDevices: true,
     })
   }

@@ -1,7 +1,7 @@
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 const {
-  applyShowResultsFromUndeployedDevicesFilter,
+  applyUndeployedDevicesResultFilter,
   getResultListConstraintOptions,
   getUndeployedDevicesPartnerQueryOptions,
   withUndeployedAwareGeographyFilters,
@@ -9,7 +9,7 @@ const {
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { assayId } = query
-  const { displayResult, showUnapprovedDevices, showDecommissionedDevices } = getResultListConstraintOptions(query)
+  const { displayResult, showUndeployedDevices, showDecommissionedDevices } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseResults()
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -108,7 +108,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints, getUndeployedDevicesPartnerQueryOptions(query))
-    .modify(queryBuilder => applyShowResultsFromUndeployedDevicesFilter(queryBuilder, query))
+    .modify(queryBuilder => applyUndeployedDevicesResultFilter(queryBuilder, query))
     .modify(
       addConstraints,
       dataConstraints,
@@ -122,7 +122,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         country: 'c',
         // disease: 'dis',
       },
-      { showUnapprovedDevices, showDecommissionedDevices, displayResult }
+      { showUndeployedDevices, showDecommissionedDevices, displayResult }
     )
     .modify(queryBuilder => {
       if (query.withTags) {

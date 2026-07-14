@@ -318,7 +318,7 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
 function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options) {
   let filterAlias = null
   const { device, assay, result } = aliases
-  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = options
+  const { showUndeployedDevices = false, showDecommissionedDevices = false } = options
   if (!result) {
     if (!aliases.site && device && !aliases.resultTransferFlag) {
       aliases.site = alias('Site')
@@ -348,48 +348,18 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
     excludeDisabledSites(queryBuilder, aliases.site || filterAlias)
   }
 
-  if (device) {
-    const hideUnapprovedDevices = !showUnapprovedDevices
-    const hideDecommissionedDevices = !showDecommissionedDevices
-    if (hideUnapprovedDevices || hideDecommissionedDevices) {
-      queryBuilder.leftOuterJoin(`DeviceApproval as deviceApproval`, `${device}.deviceApprovalId`, `deviceApproval.id`)
+  if (device && !(showUndeployedDevices && showDecommissionedDevices)) {
+    queryBuilder.leftOuterJoin(`DeviceApproval as deviceApproval`, `${device}.deviceApprovalId`, `deviceApproval.id`)
 
-      if (hideDecommissionedDevices /* showUnapprovedDevices may be true or false */) {
-        queryBuilder
-          .leftOuterJoin(
-            `DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog`,
-            `${device}.deviceMaintenanceStatusLogId`,
-            `deviceMaintenanceStatusLog.id`
-          )
-          .leftOuterJoin(
-            'DeviceMaintenanceStatus AS deviceMaintenanceStatus',
-            'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
-            'deviceMaintenanceStatus.id'
-          )
-
-        queryBuilder.whereRaw(`
-            (deviceMaintenanceStatus.externalId is null or deviceMaintenanceStatus.externalId != 'inactiveDecommissioned')
-        `)
-        /**
-         * any deviceApproval except 'decommissioned'
-         */
-        queryBuilder.whereRaw(`
-          (deviceApproval.token is null or deviceApproval.token != 'decommissioned')
-        `)
-        if (hideUnapprovedDevices) {
-          /**
-           * deviceApproval is null or 'approved' only
-           */
-          queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token = 'approved')`)
-        }
-      } else if (hideUnapprovedDevices /* showDecommissionedDevices = true */) {
-        /**
-         * deviceApproval is null or 'approved' or 'decommissioned' only
-         */
-        queryBuilder.whereRaw(
-          `(deviceApproval.token is null or deviceApproval.token in ('approved', 'decommissioned'))`
-        )
-      }
+    if (!showUndeployedDevices && !showDecommissionedDevices) {
+      // 'approved' only
+      queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token = 'approved')`)
+    } else if (!showDecommissionedDevices) {
+      // any deviceApproval except 'decommissioned'
+      queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token != 'decommissioned')`)
+    } else {
+      // 'approved' or 'decommissioned' only
+      queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token in ('approved', 'decommissioned'))`)
     }
   }
 
@@ -578,18 +548,22 @@ function filterExcludedResults(queryBuilder, aliases, options) {
  * @param {*} queryBuilder - Knex query builder
  * @param {*} constraints - Constraints to apply, @see getConstraints
  * @param {*} receivedAliases - Aliases used for each table in the query (e.g. { assay: 'a', result: 'r' })
- * @param {Object} options - Options to apply.
+ * @param {Object} options - Options to apply. Omitted options behave as the defaults below.
  * @param {('actual'|'excluded'|'all')=} options.displayResult - Excluded result filter mode.
  * 'actual': default. only returns non excluded results.
  * 'excluded' only returns excluded results.
  * 'all' return all results.
+ * @param {boolean=} options.showUndeployedDevices - Include devices not yet deployed to a site
+ * (DeviceApproval 'pendingDeployment'). Default false.
+ * @param {boolean=} options.showDecommissionedDevices - Include devices with DeviceApproval
+ * 'decommissioned'. Default false.
  */
 
 function addConstraints(
   queryBuilder,
   constraints,
   receivedAliases,
-  options = { displayResult: 'actual', showUnapprovedDevices: false, showDecommissionedDevices: false }
+  options = { displayResult: 'actual', showUndeployedDevices: false, showDecommissionedDevices: false }
 ) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
@@ -727,7 +701,7 @@ const addPartnerQueryConstraints = (queryBuilder, { partner, country, geography,
     if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
     else if (geography.stateId) queryBuilder.where('g.stateId', geography.lgaId)
   } else if (country) {
-    if (options.showResultsFromUndeployedDevices) {
+    if (options.showUndeployedDevices) {
       queryBuilder.where(qb => {
         qb.where('c.id', country.id).orWhereNull('r.siteId')
       })

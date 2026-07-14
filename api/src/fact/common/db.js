@@ -14,7 +14,7 @@ const _ = require('lodash')
  *      Constraints will be applied to the joined table.
  * @param {Object} opts - show options
  * @param {boolean} opts.showDecommissionedDevices - show decommissioned devices
- * @param {boolean} opts.showUnapprovedDevices - show unapproved devices
+ * @param {boolean} opts.showUndeployedDevices - show undeployed (pendingDeployment) devices
  * @returns {Object} - base query without projection. Constraints and filter params are applied.
  */
 function getBaseQueryForFactResultsDeviceByTimeFrame(
@@ -23,7 +23,7 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
   opts = {}
 ) {
   const showDecommissionedDevices = opts.showDecommissionedDevices ?? query.showDecommissionedDevices ?? false
-  const showUnapprovedDevices = opts.showUnapprovedDevices ?? query.showUnapprovedDevices ?? false
+  const showUndeployedDevices = opts.showUndeployedDevices ?? query.showUndeployedDevices ?? false
   const qb = knex('FactResultsDeviceByTimeFrame as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -62,7 +62,7 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
         site: 's',
         geography: 'g',
       },
-      { showDecommissionedDevices, showUnapprovedDevices }
+      { showDecommissionedDevices, showUndeployedDevices }
     )
     .modify(filterParams, query, {
       assay: 'a.externalId',

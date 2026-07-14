@@ -223,7 +223,7 @@ function getDeviceByIdBaseQuery(
   dataConstraints,
   deviceId,
   fields = 'd.*',
-  showUnapprovedDevices = false,
+  showUndeployedDevices = false,
   showDecommissionedDevices = false
 ) {
   const query = knex('Device as d')
@@ -241,7 +241,7 @@ function getDeviceByIdBaseQuery(
         device: 'd',
         deviceType: 'dt',
       },
-      { showUnapprovedDevices, showDecommissionedDevices }
+      { showUndeployedDevices, showDecommissionedDevices }
     )
     .where('d.id', +deviceId)
     .first(fields)
@@ -253,13 +253,14 @@ function getDeviceBaseExtendedQuery(
   query,
   dataConstraints,
   {
-    showUnapprovedDevices: showUnapprovedDevicesOption,
+    showUndeployedDevices: showUndeployedDevicesOption,
     showDecommissionedDevices: showDecommissionedDevicesOption,
     excludeInternalDevices = true,
     extendJoinToAssays = false,
   } = {}
 ) {
-  const showUnapprovedDevices = showUnapprovedDevicesOption ?? query.showUnapprovedDevices ?? false
+  
+  const showUndeployedDevices = showUndeployedDevicesOption ?? query.showUndeployedDevices ?? false
   const showDecommissionedDevices = showDecommissionedDevicesOption ?? query.showDecommissionedDevices ?? false
   const conditionalAliases = {}
 
@@ -325,7 +326,7 @@ function getDeviceBaseExtendedQuery(
         geography: 'g',
         site: 's',
       },
-      { showDecommissionedDevices, showUnapprovedDevices }
+      { showDecommissionedDevices, showUndeployedDevices }
     )
 
   return deviceQuery
@@ -360,9 +361,9 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
  * Builds a knex query object including all 'join' and 'where' for managing constraints.
  * @param {object} dataConstraints
  * @param {aliases} aliases An object representing the aliases for the tables used in the query.e.g. { assay: 'a'}
- * @param {object} options An object representing the dataConstraints options, like showUnapprovedDevices
+ * @param {object} options An object representing the dataConstraints options, like showUndeployedDevices
  *  and showDecommissionedDevices.
- *  For example: { showUnapprovedDevices: true, showDecommissionedDevices: true }
+ *  For example: { showUndeployedDevices: true, showDecommissionedDevices: true }
  * @returns The knex query object.
  */
 function getDeviceBaseQuery(dataConstraints, aliases, options = {}) {
@@ -382,7 +383,7 @@ function getDeviceBaseQuery(dataConstraints, aliases, options = {}) {
 }
 
 const getNotDecommissionedDevices = dataConstraints =>
-  getDeviceBaseQuery(dataConstraints, {}, { showUnapprovedDevices: true })
+  getDeviceBaseQuery(dataConstraints, {}, { showUndeployedDevices: true })
 
 // Delete device
 async function deleteNotifications(deviceId, trknex) {

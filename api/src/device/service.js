@@ -903,7 +903,7 @@ async function deviceMaintenanceStatus(request) {
         {
           device: 'd',
         },
-        { showUnapprovedDevices: true, showDecommissionedDevices: true }
+        { showUndeployedDevices: true, showDecommissionedDevices: true }
       )
       .where('d.id', deviceId)
       .first('dmsl.*')) || {}

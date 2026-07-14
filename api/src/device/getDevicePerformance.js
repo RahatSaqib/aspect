@@ -38,7 +38,7 @@ async function getDevicePerformance(request) {
       addConstraints,
       dataConstraints,
       { result: 'r', device: 'd' },
-      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+      { showUndeployedDevices: true, showDecommissionedDevices: true }
     )
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', periodStart)
@@ -69,7 +69,7 @@ async function getDevicePerformance(request) {
       addConstraints,
       dataConstraints,
       { device: 'd', assay: 'a' },
-      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+      { showUndeployedDevices: true, showDecommissionedDevices: true }
     )
     .where('f.days', 365)
     .groupBy('f.resultCategory1')

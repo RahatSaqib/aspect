@@ -92,7 +92,7 @@ function getMaintenanceBaseQuery(dataConstraints, query) {
         },
         {
           showDecommissionedDevices: query.showDecommissionedDevices,
-          showUnapprovedDevices: query.showUnapprovedDevices,
+          showUndeployedDevices: query.showUndeployedDevices,
         }
       )
       .modify(filterDateRangeParams, query, 'dmsl.day')
@@ -130,7 +130,7 @@ async function getDevicePerformanceReport(auth, query) {
         },
         {
           showDecommissionedDevices: query.showDecommissionedDevices,
-          showUnapprovedDevices: query.showUnapprovedDevices,
+          showUndeployedDevices: query.showUndeployedDevices,
         }
       )
       .orderBy(['state', 'lga', 'deviceName']),
@@ -171,7 +171,7 @@ async function getDevicePerformanceReportByAssay(auth, query) {
       },
       {
         showDecommissionedDevices: query.showDecommissionedDevices,
-        showUnapprovedDevices: query.showUnapprovedDevices,
+        showUndeployedDevices: query.showUndeployedDevices,
       }
     )
     .groupBy('r.assayId')
