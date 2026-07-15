@@ -13,8 +13,8 @@ const _ = require('lodash')
  *      Use result when the information needed is regarding the test performed the user is authorized to see.
  *      Constraints will be applied to the joined table.
  * @param {Object} opts - show options
- * @param {boolean} opts.showDecommissionedDevices - show decommissioned devices
- * @param {boolean} opts.showUndeployedDevices - show undeployed (pendingDeployment) devices
+ * @param {string[]} opts.deviceApprovals - DeviceApproval tokens the query may see; falls back
+ *  to the wire-level query flags (showUndeployedDevices / showDecommissionedDevices)
  * @returns {Object} - base query without projection. Constraints and filter params are applied.
  */
 function getBaseQueryForFactResultsDeviceByTimeFrame(
@@ -22,8 +22,12 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
   { addConstraints, dataConstraints, filterParams, assay, query, timeFrame = 'month', joinSiteWith = 'device' },
   opts = {}
 ) {
-  const showDecommissionedDevices = opts.showDecommissionedDevices ?? query.showDecommissionedDevices ?? false
-  const showUndeployedDevices = opts.showUndeployedDevices ?? query.showUndeployedDevices ?? false
+  // The wire-level query flags act as fallback when the caller does not pass the token set.
+  const deviceApprovals = opts.deviceApprovals ?? ['approved']
+  if (!opts.deviceApprovals) {
+    if (query.showUndeployedDevices) deviceApprovals.push('pendingDeployment')
+    if (query.showDecommissionedDevices) deviceApprovals.push('decommissioned')
+  }
   const qb = knex('FactResultsDeviceByTimeFrame as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -62,7 +66,7 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
         site: 's',
         geography: 'g',
       },
-      { showDecommissionedDevices, showUndeployedDevices }
+      { deviceApprovals }
     )
     .modify(filterParams, query, {
       assay: 'a.externalId',

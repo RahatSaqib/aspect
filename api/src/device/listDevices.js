@@ -132,7 +132,7 @@ async function getListDevices(query, auth) {
         site: 's',
         disease: 'dis',
       },
-      { showUndeployedDevices: true, showDecommissionedDevices: true }
+      { deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] }
     )
 
   const now = new Date()

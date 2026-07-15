@@ -31,7 +31,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
         device: 'd',
         resultTransferFlag: true,
       },
-      { displayResult: 'all', showUndeployedDevices: true, showDecommissionedDevices: true }
+      { displayResult: 'all', deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] }
     )
     .select({
       resultText: knex.raw(
@@ -200,7 +200,7 @@ const getBaseQueryForResults = () =>
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { assayId } = query
-  const { displayResult, showUndeployedDevices, showDecommissionedDevices } = getResultListConstraintOptions(query)
+  const { displayResult, deviceApprovals } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseQueryForResults()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
@@ -338,7 +338,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { displayResult, showUndeployedDevices, showDecommissionedDevices }
+      { displayResult, deviceApprovals }
     )
     .modify(queryBuilder => {
       if (query.withTags) {
@@ -421,7 +421,7 @@ async function showResultFollowUps(resultId, dataConstraints) {
 }
 
 function getQueryForDataExtract(query, dataConstraints) {
-  const { displayResult, showUndeployedDevices, showDecommissionedDevices } = getResultListConstraintOptions(query)
+  const { displayResult, deviceApprovals } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseResults()
     .leftJoin('Geography as go', 'so.geographyId', 'go.id')
@@ -477,7 +477,7 @@ function getQueryForDataExtract(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { showUndeployedDevices, showDecommissionedDevices, displayResult }
+      { deviceApprovals, displayResult }
     )
 
   return resultQuery

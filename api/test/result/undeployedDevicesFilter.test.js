@@ -48,11 +48,17 @@ describe('undeployedDevicesFilter', () => {
   })
 
   describe('getResultListConstraintOptions', () => {
-    it('includes undeployed devices without touching decommissioned when only undeployed is requested', () => {
+    it('defaults to approved devices only', () => {
+      expect(getResultListConstraintOptions({})).to.deep.equal({
+        displayResult: 'actual',
+        deviceApprovals: ['approved'],
+      })
+    })
+
+    it('adds pendingDeployment without touching decommissioned when only undeployed is requested', () => {
       expect(getResultListConstraintOptions({ showUndeployedDevices: true })).to.deep.equal({
         displayResult: 'actual',
-        showUndeployedDevices: true,
-        showDecommissionedDevices: false,
+        deviceApprovals: ['approved', 'pendingDeployment'],
       })
     })
 
@@ -65,8 +71,16 @@ describe('undeployedDevicesFilter', () => {
         })
       ).to.deep.equal({
         displayResult: 'all',
-        showUndeployedDevices: false,
-        showDecommissionedDevices: true,
+        deviceApprovals: ['approved', 'decommissioned'],
+      })
+    })
+
+    it('allows every approval status when both flags are set', () => {
+      expect(
+        getResultListConstraintOptions({ showUndeployedDevices: true, showDecommissionedDevices: true })
+      ).to.deep.equal({
+        displayResult: 'actual',
+        deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'],
       })
     })
   })

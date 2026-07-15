@@ -23,7 +23,7 @@ async function getCandidateInstruments({ params, auth }) {
         device: 'd',
         site: 's',
       },
-      { showUndeployedDevices: true, showDecommissionedDevices: true }
+      { deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] }
     )
     .first()
 
@@ -105,7 +105,7 @@ function getCandidateInstrumentsData(deviceId, siteId, dataConstraints, timezone
         device: 'd',
         site: 's',
       },
-      { showUndeployedDevices: true }
+      { deviceApprovals: ['approved', 'pendingDeployment'] }
     )
     .select(
       'd.id as deviceId',

@@ -1,6 +1,10 @@
 const _ = require('lodash')
 const { knex } = require('../db')
+const { getDictionarySync } = require('../shared/dictionary')
 const { getUser, getUserByUserId, getPersonByPersonId } = require('./service')
+
+// Fixed DeviceApproval vocabulary (seeds/fixtures/DeviceApproval.json)
+const DEVICE_APPROVAL_TOKENS = ['approved', 'pendingDeployment', 'decommissioned']
 
 // A prefix for joined table aliases intended to avoid
 // conflict with caller supplied table aliases
@@ -318,7 +322,6 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
 function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options) {
   let filterAlias = null
   const { device, assay, result } = aliases
-  const { showUndeployedDevices = false, showDecommissionedDevices = false } = options
   if (!result) {
     if (!aliases.site && device && !aliases.resultTransferFlag) {
       aliases.site = alias('Site')
@@ -348,19 +351,8 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
     excludeDisabledSites(queryBuilder, aliases.site || filterAlias)
   }
 
-  if (device && !(showUndeployedDevices && showDecommissionedDevices)) {
-    queryBuilder.leftOuterJoin(`DeviceApproval as deviceApproval`, `${device}.deviceApprovalId`, `deviceApproval.id`)
-
-    if (!showUndeployedDevices && !showDecommissionedDevices) {
-      // 'approved' only
-      queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token = 'approved')`)
-    } else if (!showDecommissionedDevices) {
-      // any deviceApproval except 'decommissioned'
-      queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token != 'decommissioned')`)
-    } else {
-      // 'approved' or 'decommissioned' only
-      queryBuilder.whereRaw(`(deviceApproval.token is null or deviceApproval.token in ('approved', 'decommissioned'))`)
-    }
+  if (device) {
+    addDeviceApprovalConstraint(queryBuilder, device, options.deviceApprovals)
   }
 
   if (aliases.site && constraints?.$or?.some(jobContextConstraint => jobContextConstraint.tag)) {
@@ -369,6 +361,46 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
       queryBuilder.leftOuterJoin(`SiteTag as ${aliases.siteTag}`, `${aliases.site}.id`, `${aliases.siteTag}.siteId`)
     }
   }
+}
+
+/**
+ * Restricts devices to the given set of DeviceApproval tokens. No clause is added when
+ * every token is allowed; with two allowed tokens the excluded one is filtered with `<>`,
+ * and with a single allowed token an `=` is used. Null deviceApprovalId always passes
+ * (mirrors the previous token-join behavior).
+ * @param {*} queryBuilder - Knex query builder
+ * @param {string} device - Device table alias in the query
+ * @param {string[]=} deviceApprovals - Allowed tokens; missing/empty defaults to ['approved']
+ */
+function addDeviceApprovalConstraint(queryBuilder, device, deviceApprovals) {
+  const allowed = _.uniq(_.isEmpty(deviceApprovals) ? ['approved'] : deviceApprovals)
+  const unknown = _.difference(allowed, DEVICE_APPROVAL_TOKENS)
+  if (unknown.length) {
+    throw new Error(`addConstraints: unknown deviceApprovals token(s): ${unknown.join(', ')}`)
+  }
+
+  const excluded = _.difference(DEVICE_APPROVAL_TOKENS, allowed)
+  if (!excluded.length) return
+
+  const column = `${device}.deviceApprovalId`
+  queryBuilder.where(qb => {
+    qb.whereNull(column)
+    if (excluded.length === 1) {
+      qb.orWhere(column, '<>', deviceApprovalIdFor(excluded[0]))
+    } else {
+      qb.orWhere(column, deviceApprovalIdFor(allowed[0]))
+    }
+  })
+}
+
+/**
+ * Resolves a DeviceApproval token to its id synchronously from the warmed dictionary cache
+ * (see initDictionaryTables). Falls back to a scalar subquery on the 3-row DeviceApproval
+ * table when the cache is cold (e.g. unit tests building queries without a request context).
+ */
+function deviceApprovalIdFor(token) {
+  const idByToken = getDictionarySync('DeviceApproval', 'id')
+  return idByToken?.[token] ?? knex('DeviceApproval').select('id').where('token', token)
 }
 
 function excludeDisabledSites(queryBuilder, alias) {
@@ -553,17 +585,15 @@ function filterExcludedResults(queryBuilder, aliases, options) {
  * 'actual': default. only returns non excluded results.
  * 'excluded' only returns excluded results.
  * 'all' return all results.
- * @param {boolean=} options.showUndeployedDevices - Include devices not yet deployed to a site
- * (DeviceApproval 'pendingDeployment'). Default false.
- * @param {boolean=} options.showDecommissionedDevices - Include devices with DeviceApproval
- * 'decommissioned'. Default false.
+ * @param {string[]=} options.deviceApprovals - DeviceApproval tokens the query is allowed to
+ * see: 'approved', 'pendingDeployment', 'decommissioned'. Default ['approved'].
  */
 
 function addConstraints(
   queryBuilder,
   constraints,
   receivedAliases,
-  options = { displayResult: 'actual', showUndeployedDevices: false, showDecommissionedDevices: false }
+  options = { displayResult: 'actual', deviceApprovals: ['approved'] }
 ) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')

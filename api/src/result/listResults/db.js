@@ -9,7 +9,7 @@ const {
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { assayId } = query
-  const { displayResult, showUndeployedDevices, showDecommissionedDevices } = getResultListConstraintOptions(query)
+  const { displayResult, deviceApprovals } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseResults()
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -122,7 +122,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         country: 'c',
         // disease: 'dis',
       },
-      { showUndeployedDevices, showDecommissionedDevices, displayResult }
+      { deviceApprovals, displayResult }
     )
     .modify(queryBuilder => {
       if (query.withTags) {

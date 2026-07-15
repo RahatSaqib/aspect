@@ -10,13 +10,17 @@
  * @param {string} query.minDate - The minimum date for filtering results.
  * @param {string} query.maxDate - The maximum date for filtering results.
  * @param {Object} opts - The additional options for customizing the query.
- * @param {boolean} opts.showDecommissionedDevices - Whether to show decommissioned devices (default: false).
- * @param {boolean} opts.showUndeployedDevices - Whether to show undeployed (pendingDeployment) devices (default: false).
+ * @param {string[]} opts.deviceApprovals - DeviceApproval tokens the query may see; falls back
+ *  to the wire-level query flags (showUndeployedDevices / showDecommissionedDevices).
  * @returns {Object} - The Knex query builder object.
  */
 function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filterParams, query }, opts = {}) {
-  const showDecommissionedDevices = opts.showDecommissionedDevices ?? query.showDecommissionedDevices ?? false
-  const showUndeployedDevices = opts.showUndeployedDevices ?? query.showUndeployedDevices ?? false
+  // The wire-level query flags act as fallback when the caller does not pass the token set.
+  const deviceApprovals = opts.deviceApprovals ?? ['approved']
+  if (!opts.deviceApprovals) {
+    if (query.showUndeployedDevices) deviceApprovals.push('pendingDeployment')
+    if (query.showDecommissionedDevices) deviceApprovals.push('decommissioned')
+  }
   const queryBuilder = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -36,7 +40,7 @@ function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filt
         site: 's',
         geography: 'g',
       },
-      { showDecommissionedDevices, showUndeployedDevices }
+      { deviceApprovals }
     )
     .modify(filterParams, query, {
       assay: 'a.externalId',

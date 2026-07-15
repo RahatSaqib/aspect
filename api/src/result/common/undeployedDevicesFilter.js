@@ -49,17 +49,16 @@ function withUndeployedAwareGeographyFilters(filters, query) {
 }
 
 function getResultListConstraintOptions(query) {
-  // showUndeployedDevices is the single flag governing undeployed (pendingDeployment) devices
-  // and their results (null siteId). Decommissioned devices are a separate concern gated only
-  // by showDecommissionedDevices — they always have a site, so the null-site filter never hides them.
-  const { showDecommissionedDevices = false } = query
+  // showUndeployedDevices is the single wire flag governing undeployed (pendingDeployment)
+  // devices and their results (null siteId). Decommissioned devices are a separate concern
+  // gated only by showDecommissionedDevices — they always have a site, so the null-site
+  // filter never hides them.
   const displayResult = query.displayResult || 'actual'
+  const deviceApprovals = ['approved']
+  if (isShowUndeployedDevices(query)) deviceApprovals.push('pendingDeployment')
+  if (query.showDecommissionedDevices) deviceApprovals.push('decommissioned')
 
-  return {
-    displayResult,
-    showUndeployedDevices: isShowUndeployedDevices(query),
-    showDecommissionedDevices,
-  }
+  return { displayResult, deviceApprovals }
 }
 
 module.exports = {

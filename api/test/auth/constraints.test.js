@@ -128,54 +128,82 @@ describe('addConstraints device approval filtering', async () => {
     person: { id: 3 },
   }
 
+  // With a cold dictionary cache (no request context in unit tests) tokens resolve
+  // through the scalar subquery fallback on the DeviceApproval table.
+  const approvalIdSubquery = token => `(select \`id\` from \`DeviceApproval\` where \`token\` = '${token}')`
+
   const buildDeviceQuerySql = (knex, options) => {
     const queryBuilder = knex('Device as d').first()
     addConstraints(queryBuilder, dataConstraints, { device: 'd' }, options)
     return queryBuilder.toString()
   }
 
-  it('hides undeployed and decommissioned devices by default (approved only)', async () => {
+  it('allows approved devices only by default', async () => {
     await runTestWithKnex(async knex => {
       const sql = buildDeviceQuerySql(knex, undefined)
-      sql.should.to.have.string(`(deviceApproval.token is null or deviceApproval.token = 'approved')`)
-    })
-  })
-
-  it('keeps any approval except decommissioned when only showUndeployedDevices is true', async () => {
-    await runTestWithKnex(async knex => {
-      const sql = buildDeviceQuerySql(knex, { showUndeployedDevices: true })
-      sql.should.to.have.string(`(deviceApproval.token is null or deviceApproval.token != 'decommissioned')`)
-      sql.should.not.have.string(`token = 'approved'`)
-    })
-  })
-
-  it('keeps approved and decommissioned when only showDecommissionedDevices is true', async () => {
-    await runTestWithKnex(async knex => {
-      const sql = buildDeviceQuerySql(knex, { showDecommissionedDevices: true })
       sql.should.to.have.string(
-        `(deviceApproval.token is null or deviceApproval.token in ('approved', 'decommissioned'))`
+        `(\`d\`.\`deviceApprovalId\` is null or \`d\`.\`deviceApprovalId\` = ${approvalIdSubquery('approved')})`
       )
     })
   })
 
-  it('adds no approval filter when both flags are true', async () => {
+  it('excludes decommissioned with <> when approved and pendingDeployment are allowed', async () => {
     await runTestWithKnex(async knex => {
-      const sql = buildDeviceQuerySql(knex, { showUndeployedDevices: true, showDecommissionedDevices: true })
-      sql.should.not.have.string('deviceApproval')
+      const sql = buildDeviceQuerySql(knex, { deviceApprovals: ['approved', 'pendingDeployment'] })
+      sql.should.to.have.string(
+        `(\`d\`.\`deviceApprovalId\` is null or \`d\`.\`deviceApprovalId\` <> ${approvalIdSubquery('decommissioned')})`
+      )
     })
   })
 
-  it('never joins the device maintenance status tables', async () => {
+  it('excludes pendingDeployment with <> when approved and decommissioned are allowed', async () => {
     await runTestWithKnex(async knex => {
-      const flagCombinations = [
+      const sql = buildDeviceQuerySql(knex, { deviceApprovals: ['approved', 'decommissioned'] })
+      sql.should.to.have.string(
+        `(\`d\`.\`deviceApprovalId\` is null or \`d\`.\`deviceApprovalId\` <> ${approvalIdSubquery(
+          'pendingDeployment'
+        )})`
+      )
+    })
+  })
+
+  it('adds no approval filter when every token is allowed', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, {
+        deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'],
+      })
+      sql.should.not.have.string('deviceApproval')
+      sql.should.not.have.string('DeviceApproval')
+    })
+  })
+
+  it('treats an empty deviceApprovals array as the default (approved only)', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, { deviceApprovals: [] })
+      sql.should.to.have.string(`\`d\`.\`deviceApprovalId\` = ${approvalIdSubquery('approved')}`)
+    })
+  })
+
+  it('throws on an unknown deviceApprovals token', async () => {
+    await runTestWithKnex(async knex => {
+      ;(() => buildDeviceQuerySql(knex, { deviceApprovals: ['approved', 'decomissioned'] })).should.throw(
+        /unknown deviceApprovals token/
+      )
+    })
+  })
+
+  it('never joins the DeviceApproval or maintenance status tables', async () => {
+    await runTestWithKnex(async knex => {
+      const approvalCombinations = [
         undefined,
-        { showUndeployedDevices: true },
-        { showDecommissionedDevices: true },
-        { showUndeployedDevices: true, showDecommissionedDevices: true },
+        { deviceApprovals: ['approved', 'pendingDeployment'] },
+        { deviceApprovals: ['approved', 'decommissioned'] },
+        { deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] },
       ]
-      for (const options of flagCombinations) {
+      for (const options of approvalCombinations) {
         const sql = buildDeviceQuerySql(knex, options)
         sql.should.not.have.string('DeviceMaintenanceStatus')
+        sql.should.not.have.string('join `DeviceApproval`')
       }
     })
   })
