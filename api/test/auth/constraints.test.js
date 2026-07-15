@@ -1,4 +1,4 @@
-const { addConstraints } = require('../../src/auth/constraints')
+const { addConstraints, addPartnerQueryConstraints } = require('../../src/auth/constraints')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 describe('addConstraints should add disabled sites filter, only when applicable', async () => {
@@ -205,6 +205,27 @@ describe('addConstraints device approval filtering', async () => {
         sql.should.not.have.string('DeviceMaintenanceStatus')
         sql.should.not.have.string('join `DeviceApproval`')
       }
+    })
+  })
+})
+
+describe('addPartnerQueryConstraints geography scoping', async () => {
+  it('filters by g.stateId with the constraint stateId for state-scoped users', async () => {
+    await runTestWithKnex(async knex => {
+      const queryBuilder = knex('Result as r').first()
+      addPartnerQueryConstraints(queryBuilder, { geography: { stateId: 18 } })
+      const sql = queryBuilder.toString()
+      sql.should.have.string('`g`.`stateId` = 18')
+    })
+  })
+
+  it('filters by g.lgaId when the constraint has an lgaId, ignoring stateId', async () => {
+    await runTestWithKnex(async knex => {
+      const queryBuilder = knex('Result as r').first()
+      addPartnerQueryConstraints(queryBuilder, { geography: { stateId: 18, lgaId: 7 } })
+      const sql = queryBuilder.toString()
+      sql.should.have.string('`g`.`lgaId` = 7')
+      sql.should.not.have.string('`g`.`stateId`')
     })
   })
 })

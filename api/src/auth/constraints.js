@@ -729,7 +729,7 @@ const addPartnerQueryConstraints = (queryBuilder, { partner, country, geography,
   if (site) queryBuilder.where(`r.partnerId`, partner.id)
   else if (geography) {
     if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
-    else if (geography.stateId) queryBuilder.where('g.stateId', geography.lgaId)
+    else if (geography.stateId) queryBuilder.where('g.stateId', geography.stateId)
   } else if (country) {
     if (options.showUndeployedDevices) {
       queryBuilder.where(qb => {
