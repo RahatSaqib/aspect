@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Box } from '@mui/material'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
-import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { DetailHeader, Loading } from '../../../components'
 // import AspectVertMenu from '../../../components/AspectVertMenu'
 import AspectButton from '../../../components/shared/AspectButton'
@@ -14,7 +14,7 @@ import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useAuthState from '../../../hooks/useAuthState'
 import deviceMessages from '../../../messages/deviceMessages'
-import { updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
+import { updateDeviceMaintenance, updateDeviceMaintenanceStatus } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
 import { getReturnUrl } from '../../../utils/utils/browser'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
@@ -41,6 +41,21 @@ export const DeviceDetail = props => {
 
   const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
   const isDeviceNotFound = !isDeviceLoading && !device
+  const isDecommissioned = device?.approvalToken === 'decommissioned'
+  const editPath = `/browse/device/list/${deviceId}/edit${location.search}`
+
+  const deviceTitle = useMemo(() => {
+    if (!device) return 'Devices'
+
+    const baseTitle = device.siteName
+      ? intl.formatMessage(deviceMessages.nameAtSite, {
+          deviceName: device.name,
+          siteName: device.siteName,
+        })
+      : `${device.name} (${intl.formatMessage(messages.undeployed)})`
+
+    return isDecommissioned ? `${baseTitle} ${intl.formatMessage(messages.decommissionedTitleSuffix)}` : baseTitle
+  }, [device, intl, isDecommissioned])
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = () => queryClient.invalidateQueries([DEVICE_KEY, deviceId])
@@ -80,21 +95,13 @@ export const DeviceDetail = props => {
     <>
       <DetailHeader
         responsive
-        name={
-          device
-            ? device.siteName
-              ? intl.formatMessage(deviceMessages.nameAtSite, {
-                  deviceName: device.name,
-                  siteName: device.siteName,
-                })
-              : `${device.name} (${intl.formatMessage(messages.undeployed)})`
-            : 'Devices'
-        }
+        name={deviceTitle}
         back={location.state?.previousLocationPathname ?? getReturnUrl(location, '/browse/device/list')}
       >
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}${location.search}` },
-          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit${location.search}` },
+          // A decommissioned device is read-only: its fields can no longer be edited.
+          ...(isDecommissioned ? [] : [{ label: intl.formatMessage(messages.edit), path: editPath }]),
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}
@@ -127,7 +134,9 @@ export const DeviceDetail = props => {
                   onDateRangeChange={onDateRangeChange}
                   device={Immutable.fromJS(device)}
                   devicePerformance={Immutable.fromJS(devicePerformance)}
-                  disabled={!editable}
+                  // Decommissioned devices are read-only for every action except exporting Device Logs.
+                  disabled={!editable || isDecommissioned}
+                  canExportDeviceLogs={editable}
                   onMaintenanceSubmit={onMaintenanceSubmit}
                   onCalibrationSubmit={onCalibrationSubmit}
                   onWarrantySubmit={onWarrantySubmit}
@@ -138,7 +147,7 @@ export const DeviceDetail = props => {
             <Route
               path="edit"
               element={
-                editable ? (
+                editable && !isDecommissioned ? (
                   <DeviceDetailEdit device={device} deviceTags={deviceTags} editable={editable} />
                 ) : (
                   <Navigate replace to="." />

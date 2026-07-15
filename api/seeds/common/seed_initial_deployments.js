@@ -1,11 +1,13 @@
 const { subDays } = require('date-fns')
 const { toDateOnly } = require('../../src/shared/date')
+const { syncDeviceApprovalFromDeployments } = require('../../src/device/common/deviceApprovalService')
 /**
  * Infers deployment history from the Result table by walking each device's results in
  * local-time chronological order and creating a new Deployment whenever the result site changes.
  * Consecutive results from the same site are treated as a single deployment period.
  * If a device later returns to a previous site, that becomes a new deployment row.
  * Assumes no existing Deployment rows. Only devices that have results get deployments.
+ * After deployments are created, approval statuses are synchronized for every device.
  *
  * Result.endedOn is stored in UTC; ordering and dates are computed in the device's timezone
  * (Device.timezone -> TimeZone.timeZone IANA) via CONVERT_TZ so the calendar date is correct for the device location.
@@ -31,6 +33,12 @@ async function seedDeploymentPerDeviceAtSite(knex) {
   if (deploymentRowsBatch.length > 0) {
     await knex('Deployment').insert(deploymentRowsBatch)
   }
+
+  const allDeviceIds = await knex('Device as d').pluck('d.id')
+  await allDeviceIds.reduce(
+    (pendingSync, deviceId) => pendingSync.then(() => syncDeviceApprovalFromDeployments(knex, { deviceId })),
+    Promise.resolve()
+  )
 }
 
 async function getDeviceIdsWithResults(knex) {

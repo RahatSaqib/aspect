@@ -36,6 +36,7 @@ const deleteDevice = async deviceIds => {
   await knex('Instrument').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactDeviceModulesCount').delete().whereIn('deviceId', deviceIds)
+  await knex('Deployment').whereIn('deviceId', deviceIds).delete()
 
   await knex('Device').whereIn('id', deviceIds).update({ deviceApiKeyId: null })
 
@@ -62,6 +63,16 @@ const insertDevice = async (name, siteId, partnerId, instrumentSerial = null) =>
     name,
     shortName: name,
     lastSeenOn: now,
+  })
+  await knex('Deployment').insert({
+    deviceId,
+    siteId,
+    start: null,
+    end: null,
+    createdOn: now,
+    createdBy: 1,
+    updatedOn: now,
+    updatedBy: 1,
   })
   if (instrumentSerial) {
     await knex('Instrument').insert({
@@ -264,8 +275,8 @@ describe('Device result calculation test', function () {
 
     const instrumentSerial = resultPayload.result.instrument.serial
     deviceId = await insertDevice('Test Device', siteId, partnerId, instrumentSerial)
-    deviceId2 = await insertDevice('Test Device 2', siteId, partnerId, instrumentSerial)
-    deviceId3 = await insertDevice('Test Device 3', siteId2, partnerId, instrumentSerial)
+    deviceId2 = await insertDevice('Test Device 2', siteId, partnerId, `${instrumentSerial}-2`)
+    deviceId3 = await insertDevice('Test Device 3', siteId2, partnerId, `${instrumentSerial}-3`)
 
     token = randomToken()
     token2 = randomToken()

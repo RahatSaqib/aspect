@@ -346,7 +346,11 @@ const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled
           toast.success(formatMessage(messages.deploymentSaved))
         },
         onError: err => {
-          const message = err?.message || formatMessage(messages.deploymentError)
+          const errorKeyCode = err?.data?.errorKeyCode
+          const message =
+            errorKeyCode && messages[errorKeyCode]
+              ? formatMessage(messages[errorKeyCode])
+              : err?.message || formatMessage(messages.deploymentError)
           setSaveError(message)
           toast.error(message)
         },

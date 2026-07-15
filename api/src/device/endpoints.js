@@ -25,7 +25,8 @@ const {
 const exportWorkload = require('./exportWorkload')
 const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
-const { updateDeviceApproval } = require('./updateDeviceApproval')
+const { decommissionDevice } = require('./decommissionDevice')
+const { reactivateDevice } = require('./reactivateDevice')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 const { deviceReport } = require('./serviceReports/deviceReport')
 const getMtbErrorGraph = require('./getErrorGraph')
@@ -284,18 +285,42 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/device/{deviceId}/approval',
-    handler: asyncHandler(updateDeviceApproval),
+    path: '/device/{deviceId}/decommission',
+    handler: asyncHandler(decommissionDevice),
     config: {
-      description: 'Update Device Approval Workflow',
-      notes: 'Executes approval workflow actions like decommission and reactivate',
+      description: 'Decommission Device',
+      notes: 'Marks an approved device as decommissioned',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: deviceDetailsResponseFields,
+        }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/{deviceId}/reactivate',
+    handler: asyncHandler(reactivateDevice),
+    config: {
+      description: 'Reactivate Device',
+      notes: 'Restores a decommissioned device to approved at the selected site',
       auth: { scope: ['device:edit'] },
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required(),
         },
         payload: {
-          action: Joi.string().valid('decommission', 'reactivate').required(),
+          siteId: Joi.number().integer().required(),
         },
       },
       response: {

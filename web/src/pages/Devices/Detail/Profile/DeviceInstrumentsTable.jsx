@@ -59,7 +59,12 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                       <GeneXpertModulesNames modules={instrument.modules} />
                     </TableCell>
                     <TableCell align="right">
-                      {instrument.active ? (
+                      {/* No instrument actions on a read-only (e.g. decommissioned) device */}
+                      {!instrument.active ? (
+                        <Tooltip title={formatMessage(messages.duplicatedInstrumentTooltip)}>
+                          <WarningIcon className={styles.InactiveInstrumentWarningIcon} color="warning" />
+                        </Tooltip>
+                      ) : disabled ? null : (
                         <InstrumentContextualMenu
                           deviceId={deviceId}
                           instrument={instrument}
@@ -76,10 +81,6 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                             queryClient.invalidateQueries([CANDIDATE_INSTRUMENTS_KEY, deviceId])
                           }}
                         />
-                      ) : (
-                        <Tooltip title={formatMessage(messages.duplicatedInstrumentTooltip)}>
-                          <WarningIcon className={styles.InactiveInstrumentWarningIcon} color="warning" />
-                        </Tooltip>
                       )}
                     </TableCell>
                   </TableRow>

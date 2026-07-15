@@ -523,6 +523,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deploymentReadOnlyDecommissioned',
       defaultMessage: 'Deployments cannot be edited while this device is decommissioned.',
     },
+    deploymentsCannotBeEditedForDecommissionedDevice: {
+      id: 'pages.DeviceDetailProfile.deploymentsCannotBeEditedForDecommissionedDevice',
+      defaultMessage: 'Deployments cannot be edited while this device is decommissioned.',
+    },
   }),
 }
 

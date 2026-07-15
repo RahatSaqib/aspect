@@ -4,36 +4,29 @@ const { getUser } = require('../auth/service')
 const { getConstraints } = require('../auth/constraints')
 const { getDevicesIdsCheckingConstraints } = require('./common/db')
 const { showDevice } = require('./service')
-const { decommissionDevice, reactivateDevice } = require('./common/deviceApprovalService')
+const {
+  assertDeviceCanBeDecommissioned,
+  decommissionDevice: saveDecommissionedDevice,
+} = require('./common/deviceApprovalService')
 
-async function updateDeviceApproval(request) {
+async function decommissionDevice(request) {
   const {
     params: { deviceId },
-    payload: { action },
     auth: { credentials },
   } = request
 
   const { id: userId } = await getUser(credentials.name)
-  await validatePermissions(deviceId, credentials)
+  await validateDeviceAccess(deviceId, credentials)
 
   await transact(async trx => {
-    if (action === 'decommission') {
-      await decommissionDevice(trx, { deviceId, userId })
-      return
-    }
-
-    if (action === 'reactivate') {
-      await reactivateDevice(trx, { deviceId, userId })
-      return
-    }
-
-    throw Boom.badRequest('Unsupported device approval action')
+    await assertDeviceCanBeDecommissioned(trx, deviceId)
+    await saveDecommissionedDevice(trx, { deviceId, userId })
   })
 
   return showDevice(request)
 }
 
-async function validatePermissions(deviceId, credentials) {
+async function validateDeviceAccess(deviceId, credentials) {
   const dataConstraints = await getConstraints(credentials)
   const devices = await getDevicesIdsCheckingConstraints([deviceId], dataConstraints)
 
@@ -42,4 +35,4 @@ async function validatePermissions(deviceId, credentials) {
   }
 }
 
-module.exports = { updateDeviceApproval }
+module.exports = { decommissionDevice }

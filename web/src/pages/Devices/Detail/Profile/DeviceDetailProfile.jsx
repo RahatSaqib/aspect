@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
+import { toast } from 'react-toastify'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import DeviceResultHistory from '../../../../components/DeviceResultHistory/DeviceResultHistory'
 import PermissionChecker from '../../../../components/PermissionChecker'
@@ -13,6 +14,7 @@ import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import ColoredNumber from '../../../../components/shared/ColoredNumber'
 import Summary from '../../../../components/Summary'
 import { sanitizeFiltersStringBy } from '../../../../components/utils'
+import useDeployments from '../../../../hooks/device/useDeployments'
 import usePermissions from '../../../../hooks/person/usePermissions'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
@@ -34,6 +36,9 @@ import { formatRelative } from '../../../../utils/utils/dateFormat'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
+import DecommissionDeviceDialog from '../DecommissionDeviceDialog'
+import detailMessages from '../messages'
+import ReactivateDeviceDialog from '../ReactivateDeviceDialog'
 import styles from '../styles.module.css'
 import DeploymentsSection from './DeploymentsSection'
 import DeviceInstrumentsTable from './DeviceInstrumentsTable'
@@ -146,6 +151,7 @@ const DeviceDetailProfile = ({
   // m-tch,
   device,
   disabled,
+  canExportDeviceLogs,
   devicePerformance,
   // --- injected by recompose ---
   sortCol,
@@ -166,6 +172,20 @@ const DeviceDetailProfile = ({
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
   const { checkPermission } = usePermissions()
+  const [decommissionDialogOpen, setDecommissionDialogOpen] = useState(false)
+  const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false)
+  // Any user who can edit devices can decommission and reactivate them.
+  const canDecommission = checkPermission(['device:edit'])
+  const isApproved = device.get('approvalToken') === 'approved'
+  const isDecommissioned = device.get('approvalToken') === 'decommissioned'
+  const { data: deploymentsData } = useDeployments(device.get('id'))
+  const hasDeployments = (deploymentsData?.deployments ?? []).length > 0
+  // Decommission only when the device is approved (active) and currently has deployments.
+  const canDecommissionDevice = canDecommission && isApproved && hasDeployments
+  // Reactivate only when the device is decommissioned and still has deployments.
+  const canReactivateDevice = canDecommission && isDecommissioned && hasDeployments
+  const showDecommissionButton = canDecommissionDevice
+  const showReactivateButton = canReactivateDevice
   const isGeneXpertDevice = device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID
   const canViewDakList = isGeneXpertDevice && checkPermission(['browse', '+deviceApiKey'])
   const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
@@ -218,7 +238,7 @@ const DeviceDetailProfile = ({
               title={
                 <span>
                   {formatMessage(messages.deviceType)}
-                  {!disabled && (
+                  {canExportDeviceLogs && (
                     <Tooltip title={formatMessage(messages.deviceLogsTooltip)} placement="right">
                       <button type="button" className={styles.fieldAction} onClick={onExportDeviceLogsClick}>
                         ({formatMessage(messages.deviceLogs)})
@@ -237,7 +257,49 @@ const DeviceDetailProfile = ({
               }}
             />
             <Summary
-              title={formatMessage(messages.approvalStatus)}
+              title={
+                <span>
+                  {formatMessage(messages.approvalStatus)}
+                  {canDecommission &&
+                    (isDecommissioned ? (
+                      canReactivateDevice ? (
+                        <button
+                          type="button"
+                          className={styles.fieldAction}
+                          onClick={() => setReactivateDialogOpen(true)}
+                        >
+                          ({formatMessage(detailMessages.reactivate)})
+                        </button>
+                      ) : (
+                        <Tooltip title={formatMessage(detailMessages.cannotReactivateExplanation)} placement="right">
+                          <span>
+                            <button type="button" className={styles.fieldAction} disabled>
+                              ({formatMessage(detailMessages.reactivate)})
+                            </button>
+                          </span>
+                        </Tooltip>
+                      )
+                    ) : canDecommissionDevice ? (
+                      <button
+                        type="button"
+                        className={styles.fieldAction}
+                        onClick={() => setDecommissionDialogOpen(true)}
+                      >
+                        ({formatMessage(detailMessages.decommission)})
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className={styles.fieldAction}
+                        onClick={() =>
+                          toast.error(formatMessage(detailMessages.deviceMustHaveDeploymentToBeDecommissioned))
+                        }
+                      >
+                        ({formatMessage(detailMessages.decommission)})
+                      </button>
+                    ))}
+                </span>
+              }
               description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
             />
             <Summary
@@ -490,6 +552,20 @@ const DeviceDetailProfile = ({
           onCancel={onHideDialog}
           onSubmit={onWarrantySubmit}
         />
+        {showDecommissionButton && (
+          <DecommissionDeviceDialog
+            open={decommissionDialogOpen}
+            onClose={() => setDecommissionDialogOpen(false)}
+            deviceId={device.get('id')}
+          />
+        )}
+        {showReactivateButton && (
+          <ReactivateDeviceDialog
+            open={reactivateDialogOpen}
+            onClose={() => setReactivateDialogOpen(false)}
+            deviceId={device.get('id')}
+          />
+        )}
       </section>
 
       <DeploymentsSection
@@ -531,6 +607,7 @@ DeviceDetailProfile.propTypes = {
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   disabled: PropTypes.bool.isRequired,
+  canExportDeviceLogs: PropTypes.bool,
   devicePerformance: PropTypes.oneOfType([PropTypes.object]).isRequired,
   sortCol: PropTypes.string.isRequired,
   sortDir: PropTypes.string.isRequired,
@@ -554,6 +631,7 @@ DeviceDetailProfile.propTypes = {
 
 DeviceDetailProfile.defaultProps = {
   deviceTags: [],
+  canExportDeviceLogs: false,
 }
 
 export default enhance(DeviceDetailProfile)

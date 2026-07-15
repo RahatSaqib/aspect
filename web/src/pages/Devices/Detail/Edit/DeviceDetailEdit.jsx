@@ -60,9 +60,14 @@ const DeviceDetailEdit = ({ device, deviceTags }) => {
     tags: deviceTags || [],
   }
 
-  const onError = () => {
+  const onError = error => {
     setSubmitting(false)
-    toast.error(intl.formatMessage(messages.deviceUpdateError))
+    const errorKeyCode = error?.data?.errorKeyCode
+    toast.error(
+      errorKeyCode && messages[errorKeyCode]
+        ? intl.formatMessage(messages[errorKeyCode])
+        : intl.formatMessage(messages.deviceUpdateError)
+    )
   }
 
   const handleSubmit = async values => {

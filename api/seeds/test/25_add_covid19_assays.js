@@ -39,7 +39,7 @@ async function seed(knex) {
   )
   const deviceApprovalApprovedId = await deviceApprovalToId('approved')
   await Promise.each(covidDeviceTypes, async covidDeviceType => {
-    const device = await knex('Device')
+    let device = await knex('Device')
       .where({
         deviceTypeId: covidDeviceType.id,
         siteId: labSiteId,
@@ -47,7 +47,7 @@ async function seed(knex) {
       })
       .first('id')
     if (!device) {
-      await insertDeviceWithGeneratedName(knex, {
+      const { id: deviceId } = await insertDeviceWithGeneratedName(knex, {
         ...auditFields,
         deviceTypeId: covidDeviceType.id,
         deviceApprovalId: deviceApprovalApprovedId,
@@ -58,6 +58,18 @@ async function seed(knex) {
         lastSeenOn: new Date(+now),
         hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
         serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+      })
+      device = { id: deviceId }
+    }
+
+    const deployment = await knex('Deployment').where({ deviceId: device.id }).first('id')
+    if (!deployment) {
+      await knex('Deployment').insert({
+        ...auditFields,
+        deviceId: device.id,
+        siteId: labSiteId,
+        start: null,
+        end: null,
       })
     }
   })

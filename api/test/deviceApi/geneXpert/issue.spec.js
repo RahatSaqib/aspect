@@ -129,6 +129,10 @@ describe('Integration test for device status', () => {
 
       assert.equal(responseDeviceWithDisabledModule.statusCode, 200)
       const yesterday = subDays(new Date(), 1)
+      const waitForModuleReplacedIssue = waitForAction(
+        { type: 'RESULT_MODULE_REPLACED', deviceId: context.device.id },
+        10000
+      )
       const responseWithIssue = await postToDeviceApi({
         authHeader: deviceAuth,
         payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
@@ -153,6 +157,7 @@ describe('Integration test for device status', () => {
         }),
       })
 
+      await waitForModuleReplacedIssue
       await waitForIdle()
       const issues = await knex('Issue').where({ deviceId: context.device.id }).orderBy('createdOn', 'DESC').select()
 
