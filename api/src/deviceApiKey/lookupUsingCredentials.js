@@ -1,12 +1,9 @@
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const addMinutes = require('date-fns/addMinutes')
 
 const { knex } = require('../db')
-const { randomToken } = require('../deviceApi/apiKey')
 
 async function lookupUsingCredentials(username, password) {
-  const nowTime = new Date().getTime()
   const deviceApiKey = await knex('DeviceApiKey as dak')
     .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
     .where('dak.username', username)
@@ -30,17 +27,6 @@ async function lookupUsingCredentials(username, password) {
       reason: 'revoked',
       data: deviceApiKey,
     }
-  }
-
-  if (deviceApiKey.expiresOn < nowTime) {
-    const newToken = randomToken()
-    const newExpiresOn = addMinutes(new Date(), 15)
-    deviceApiKey.token = newToken
-    deviceApiKey.expiresOn = newExpiresOn
-    await knex('DeviceApiKey').where('id', deviceApiKey.id).update({
-      token: newToken,
-      expiresOn: newExpiresOn,
-    })
   }
 
   return {

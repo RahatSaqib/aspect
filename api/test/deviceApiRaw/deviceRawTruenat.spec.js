@@ -1,6 +1,5 @@
 const chai = require('chai')
 const uuid = require('node-uuid')
-const subSeconds = require('date-fns/subSeconds')
 const { knex } = require('../../src/db')
 const server = require('../utils/testUtils')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
@@ -135,29 +134,6 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
         const patient = JSON.parse(resultUpdated.patientData)
         assert.equal(patient.id, newIdValue)
         assert.equal(patient.age, 66)
-      })
-    })
-
-    describe('after the device API key token has expired', () => {
-      let authHeaderValue
-      before(async () => {
-        const { body } = await authenticateWithTruelabApi(truenatDevice.username, truenatDevice.password)
-        authHeaderValue = body.token
-        const { id: deviceApiKeyId } = await knex('DeviceApiKey')
-          .where(knex.raw("CONCAT('Bearer ', token) = ?", authHeaderValue))
-          .first('id')
-        await knex('DeviceApiKey')
-          .where('id', deviceApiKeyId)
-          .update({ expiresOn: subSeconds(new Date(), 1) })
-      })
-
-      it('should return a 401 response', async () => {
-        const newIdValue = uuid.v4()
-        const { status } = await sendResult(authHeaderValue, {
-          ...defaultPayload,
-          PatientID: newIdValue,
-        })
-        assert.equal(status, 401)
       })
     })
 

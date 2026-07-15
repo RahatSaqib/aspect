@@ -564,6 +564,7 @@ async function getAccessToken({ id, name, partnerId, personId, userName }, clien
   // create a new token
   const token = jwt.sign(
     {
+      userId: id,
       personId,
       name,
       fullName: userName,
