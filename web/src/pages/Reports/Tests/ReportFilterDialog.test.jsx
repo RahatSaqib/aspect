@@ -47,7 +47,7 @@ describe('ReportFilterDialog required UX', () => {
     expect(screen.queryByText('Fill in the required fields to continue')).not.toBeInTheDocument()
 
     fireEvent.click(submit)
-    expect(onSubmit).toHaveBeenCalledWith({ comment: 'hello' })
+    expect(onSubmit).toHaveBeenCalledWith({ comment: 'hello' }, 'xlsx')
   })
 
   it('keeps Cancel enabled while invalid', () => {
@@ -60,6 +60,29 @@ describe('ReportFilterDialog required UX', () => {
   it('shows Generate label in async generate mode', () => {
     renderDialog({ requestType: 'generate' })
     expect(screen.getByRole('button', { name: /generate excel/i })).toBeInTheDocument()
+  })
+
+  it('offers one submit button per supported format and passes the chosen format', () => {
+    const onSubmit = jest.fn()
+    render(
+      <ReportFilterDialog
+        open
+        report={{
+          externalId: 'r',
+          name: 'R',
+          exportExcel: 1,
+          exportCsv: 1,
+          parameters: [{ name: 'comment', type: 'text', label: 'Comment' }],
+        }}
+        initialValues={{}}
+        onClose={jest.fn()}
+        onSubmit={onSubmit}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: /download excel/i })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /download csv/i }))
+    expect(onSubmit).toHaveBeenCalledWith({}, 'csv')
   })
 
   it('resets values when reopened with new initialValues', () => {

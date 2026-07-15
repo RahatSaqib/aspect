@@ -3,7 +3,6 @@ import ClearIcon from '@mui/icons-material/Clear'
 import {
   Alert,
   Box,
-  Button,
   Card,
   CardContent,
   Grid,
@@ -237,15 +236,13 @@ const ReportIndex = () => {
       })
   }
 
-  const onDialogSubmit = values => {
-    const { report, fileExtension, requestType } = dialogState
+  const onDialogSubmit = (values, format) => {
+    const { report, requestType } = dialogState
     const prepared = prepareSubmitValues(report, values)
-    if (requestType === 'download') {
-      onClickDownload(report, fileExtension, prepared)
-    } else if (asyncReportsFeatureEnabled) {
-      onClickSubmitAsyncReportRequest({ report, fileExtension, values: prepared })
+    if (requestType === 'generate' && asyncReportsFeatureEnabled) {
+      onClickSubmitAsyncReportRequest({ report, fileExtension: format, values: prepared })
     } else {
-      onClickDownload(report, fileExtension, prepared)
+      onClickDownload(report, format, prepared)
     }
     setDialogState(null)
   }
@@ -327,11 +324,9 @@ const ReportIndex = () => {
                 i18nKey={report.i18nKey}
                 i18nKeyDescription={report.i18nKeyDescription}
                 onClick={() =>
-                  openDialog({
-                    report,
-                    fileExtension: 'xlsx',
-                    ...(asyncReportsFeatureEnabled ? { requestType: 'generate' } : {}),
-                  })
+                  asyncReportsFeatureEnabled
+                    ? openDialog({ report, fileExtension: 'xlsx', requestType: 'generate' })
+                    : openDialog({ report })
                 }
               >
                 {asyncReportsFeatureEnabled ? (
@@ -352,24 +347,7 @@ const ReportIndex = () => {
                       report={report}
                     />
                   </Box>
-                ) : (
-                  <>
-                    {report.exportExcel === 1 && (
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={() => openDialog({ report, fileExtension: 'xlsx' })}
-                      >
-                        Excel
-                      </Button>
-                    )}
-                    {report.exportCsv === 1 && (
-                      <Button size="small" color="primary" onClick={() => openDialog({ report, fileExtension: 'csv' })}>
-                        CSV
-                      </Button>
-                    )}
-                  </>
-                )}
+                ) : null}
               </ReportCard>
             ))}
           </Grid>

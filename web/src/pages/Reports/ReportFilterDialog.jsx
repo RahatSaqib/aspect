@@ -9,6 +9,19 @@ import FilterMessages from '../../messages/FilterMessages'
 import messages from '../../messages/report'
 import pageMessages from './messages'
 
+const FORMAT_LABELS = { xlsx: 'Excel', csv: 'CSV' }
+
+// Output formats offered inside the dialog. When a caller fixes `fileExtension`
+// (async generate, where the format was chosen on the status button) we honor it;
+// otherwise the user picks the output here, from the formats the report supports.
+const availableFormats = (report, fileExtension) => {
+  if (fileExtension) return [fileExtension]
+  const formats = []
+  if (report.exportExcel === 1) formats.push('xlsx')
+  if (report.exportCsv === 1) formats.push('csv')
+  return formats.length ? formats : ['xlsx']
+}
+
 // Pure controlled dialog: no fetching, no FilterProvider access. ReportIndex owns
 // prefill (initialValues), persistence and submission.
 const ReportFilterDialog = ({ open, report, fileExtension, requestType, initialValues, onClose, onSubmit }) => {
@@ -24,7 +37,9 @@ const ReportFilterDialog = ({ open, report, fileExtension, requestType, initialV
 
   // Same localized name resolution as ReportCard.jsx
   const reportName = messages[report.i18nKey] ? formatMessage(messages[report.i18nKey]) : report.name
-  const fileLabel = fileExtension === 'xlsx' ? 'Excel' : 'CSV'
+  const formats = availableFormats(report, fileExtension)
+  const ActionIcon = requestType === 'generate' ? FiRefreshCw : FaDownload
+  const verb = requestType === 'generate' ? 'Generate' : 'Download'
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -44,17 +59,17 @@ const ReportFilterDialog = ({ open, report, fileExtension, requestType, initialV
           </Typography>
         )}
         <Button onClick={onClose}>{formatMessage(FilterMessages.cancel)}</Button>
-        <Button color="primary" variant="contained" disabled={!isValid} onClick={() => onSubmit(values)}>
-          {requestType === 'generate' ? (
-            <>
-              <FiRefreshCw style={{ marginRight: 4 }} /> Generate {fileLabel}
-            </>
-          ) : (
-            <>
-              <FaDownload style={{ marginRight: 4 }} /> Download {fileLabel}
-            </>
-          )}
-        </Button>
+        {formats.map((ext, index) => (
+          <Button
+            key={ext}
+            color="primary"
+            variant={index === 0 ? 'contained' : 'outlined'}
+            disabled={!isValid}
+            onClick={() => onSubmit(values, ext)}
+          >
+            <ActionIcon style={{ marginRight: 4 }} /> {verb} {FORMAT_LABELS[ext]}
+          </Button>
+        ))}
       </DialogActions>
     </Dialog>
   )
@@ -67,7 +82,11 @@ ReportFilterDialog.propTypes = {
     name: PropTypes.string,
     i18nKey: PropTypes.string,
     parameters: PropTypes.array,
+    exportExcel: PropTypes.number,
+    exportCsv: PropTypes.number,
   }),
+  // When set, the dialog offers only this format (async generate). Otherwise the
+  // user chooses among the formats the report supports.
   fileExtension: PropTypes.oneOf(['xlsx', 'csv']),
   requestType: PropTypes.oneOf(['generate', 'download']),
   initialValues: PropTypes.object,
@@ -77,7 +96,7 @@ ReportFilterDialog.propTypes = {
 
 ReportFilterDialog.defaultProps = {
   report: null,
-  fileExtension: 'xlsx',
+  fileExtension: null,
   requestType: undefined,
   initialValues: null,
 }
