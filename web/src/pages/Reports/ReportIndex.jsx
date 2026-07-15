@@ -14,7 +14,6 @@ import {
   TextField,
 } from '@mui/material'
 import groupBy from 'lodash/groupBy'
-import pick from 'lodash/pick'
 import { Helmet } from 'react-helmet'
 import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
@@ -28,6 +27,7 @@ import { REPORT_LIST } from '../../components/QueryFetch/Report/index'
 import {
   getReportParameters,
   normalizeParameterValues,
+  pickSharedValues,
   resolveParameterDefaults,
 } from '../../components/ReportParameterForm'
 import useAuthState from '../../hooks/useAuthState'
@@ -43,11 +43,6 @@ import { ReportRecentRequests } from './ReportRecentRequests'
 import styles from './styles.module.css'
 
 const LAST_SUBMISSION_KEY = '/reports/_lastSubmission'
-const SHARED_PARAMETER_TYPES = ['state', 'lga', 'site', 'assay', 'consumable', 'dateRange']
-
-// dateRange is virtual: it reads/writes the minDate/maxDate wire keys
-const wireKeysOf = parameters =>
-  parameters.reduce((keys, p) => (p.type === 'dateRange' ? [...keys, 'minDate', 'maxDate'] : [...keys, p.name]), [])
 
 const getFileType = fileExtension => (fileExtension === 'xlsx' ? 'Excel' : 'CSV')
 
@@ -98,14 +93,14 @@ const ReportIndex = () => {
     fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: {} })
   )
 
-  // Prefill precedence (later spreads win): definition defaults <- shared-type wire
-  // keys from the last submission (any report) <- last-used values for THIS report.
+  // Prefill precedence (later spreads win): definition defaults <- shared wire keys
+  // from the last submission (any report, honoring cacheScope) <- last-used values
+  // for THIS report.
   const buildInitialValues = report => {
     const parameters = getReportParameters(report)
-    const sharedKeys = wireKeysOf(parameters.filter(p => SHARED_PARAMETER_TYPES.includes(p.type)))
     return normalizeParameterValues(parameters, {
       ...resolveParameterDefaults(parameters),
-      ...pick(filterState[LAST_SUBMISSION_KEY] || {}, sharedKeys),
+      ...pickSharedValues(parameters, filterState[LAST_SUBMISSION_KEY]),
       ...(filterState[`/reports/${report.externalId}`] || {}),
     })
   }
@@ -119,7 +114,9 @@ const ReportIndex = () => {
     setFilterState(prev => ({
       ...prev,
       [`/reports/${report.externalId}`]: values,
-      [LAST_SUBMISSION_KEY]: values,
+      // Publish only what this report's definitions allow to travel across reports
+      // (cacheScope): report-local values stay in the per-report entry above.
+      [LAST_SUBMISSION_KEY]: pickSharedValues(getReportParameters(report), values),
     }))
   }
 
