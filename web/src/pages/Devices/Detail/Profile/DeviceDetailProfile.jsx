@@ -174,7 +174,8 @@ const DeviceDetailProfile = ({
   const { checkPermission } = usePermissions()
   const [decommissionDialogOpen, setDecommissionDialogOpen] = useState(false)
   const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false)
-  const canDecommission = checkPermission(['admin:edit'])
+  // Any user who can edit devices can decommission and reactivate them.
+  const canDecommission = checkPermission(['device:edit'])
   const isApproved = device.get('approvalToken') === 'approved'
   const isDecommissioned = device.get('approvalToken') === 'decommissioned'
   const { data: deploymentsData } = useDeployments(device.get('id'))
