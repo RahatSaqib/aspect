@@ -128,7 +128,6 @@ async function createDevicesForAllMissingTypes(
             partnerId: siteData.partnerId,
             username: `device-${deviceId}`,
             password,
-            expiresOn: addMinutes(new Date(), 15),
             ...auditFields,
           })
           await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
