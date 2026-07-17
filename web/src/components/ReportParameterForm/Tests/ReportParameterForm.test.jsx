@@ -2,7 +2,7 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '@testing-library/react'
 import useAuthState from '../../../hooks/useAuthState'
-import { LEGACY_REPORT_PARAMETERS, getReportParameters } from '../legacyParameters'
+import { getReportParameters } from '../getReportParameters'
 import ReportParameterForm from '../ReportParameterForm'
 
 jest.mock('../../../hooks/useAuthState')
@@ -92,26 +92,23 @@ const LEGACY_TESTIDS = [
   'consumable-select',
 ]
 
-describe('legacyParameters', () => {
-  it('mirrors the API legacy parameter set byte for byte (drift guard)', () => {
-    expect(LEGACY_REPORT_PARAMETERS).toEqual([
-      { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
-      { name: 'stateId', type: 'state' },
-      { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
-      { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
-      { name: 'assayId', type: 'assay', multiple: true },
-      { name: 'consumableId', type: 'consumable' },
-    ])
-  })
+// Wire shape of the pre-feature global filter set, shared flags derived server-side.
+const GLOBAL_FILTER_PARAMETERS = [
+  { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' }, shared: true },
+  { name: 'stateId', type: 'state', shared: true },
+  { name: 'lgaId', type: 'lga', dependsOn: 'stateId', shared: true },
+  { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view', shared: true },
+  { name: 'assayId', type: 'assay', multiple: true, shared: true },
+  { name: 'consumableId', type: 'consumable', shared: true },
+]
 
-  it('degrades missing/empty parameters to the legacy set', () => {
-    expect(getReportParameters(undefined)).toBe(LEGACY_REPORT_PARAMETERS)
-    expect(getReportParameters({})).toBe(LEGACY_REPORT_PARAMETERS)
-    expect(getReportParameters({ parameters: null })).toBe(LEGACY_REPORT_PARAMETERS)
-    expect(getReportParameters({ parameters: [] })).toBe(LEGACY_REPORT_PARAMETERS)
-
+describe('getReportParameters', () => {
+  it('returns the declared parameters and guards against a report not loaded yet', () => {
     const declared = [{ name: 'groupBy', type: 'enum' }]
     expect(getReportParameters({ parameters: declared })).toBe(declared)
+    expect(getReportParameters(undefined)).toEqual([])
+    expect(getReportParameters({})).toEqual([])
+    expect(getReportParameters({ parameters: null })).toEqual([])
   })
 })
 
@@ -122,20 +119,13 @@ describe('ReportParameterForm', () => {
     useAuthState.mockReturnValue(authState)
   })
 
-  const renderForm = ({ parameters = LEGACY_REPORT_PARAMETERS, values = {}, onChange = jest.fn() } = {}) => {
+  const renderForm = ({ parameters = GLOBAL_FILTER_PARAMETERS, values = {}, onChange = jest.fn() } = {}) => {
     render(<ReportParameterForm parameters={parameters} values={values} onChange={onChange} />)
     return onChange
   }
 
-  it('renders every field of the legacy set through the registry', () => {
+  it('renders every field of the global filter set through the registry', () => {
     renderForm()
-    LEGACY_TESTIDS.forEach(testid => {
-      expect(screen.getByTestId(testid)).toBeInTheDocument()
-    })
-  })
-
-  it('renders the legacy set for a report degraded through getReportParameters', () => {
-    renderForm({ parameters: getReportParameters({ parameters: [] }) })
     LEGACY_TESTIDS.forEach(testid => {
       expect(screen.getByTestId(testid)).toBeInTheDocument()
     })
@@ -253,9 +243,9 @@ describe('ReportParameterForm required UX', () => {
     expect(onValidityChange).toHaveBeenLastCalledWith(true)
   })
 
-  it('reports validity true for the legacy set (nothing required)', () => {
+  it('reports validity true for the global filter set (nothing required)', () => {
     const onValidityChange = jest.fn()
-    render(<StatefulForm parameters={LEGACY_REPORT_PARAMETERS} onValidityChange={onValidityChange} />)
+    render(<StatefulForm parameters={GLOBAL_FILTER_PARAMETERS} onValidityChange={onValidityChange} />)
     expect(onValidityChange).toHaveBeenLastCalledWith(true)
   })
 

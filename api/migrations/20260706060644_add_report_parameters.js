@@ -1,14 +1,10 @@
 module.exports = require('../src/db').migration(up, down)
 
+// Schema only: seeds own the data (upsert_reports writes every report's parameters
+// and runs on the same deploy, right after migrations).
 async function up(knex) {
   await knex.schema.alterTable('Report', table => {
     table.json('parameters').nullable()
-  })
-
-  await knex('Report').update({ parameters: '[]' })
-
-  await knex.schema.alterTable('Report', table => {
-    table.json('parameters').notNullable().alter()
   })
 }
 

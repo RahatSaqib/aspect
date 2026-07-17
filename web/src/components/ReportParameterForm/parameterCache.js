@@ -1,13 +1,10 @@
 import pick from 'lodash/pick'
 
-// Parameter types whose values users expect to carry from one report dialog to the
-// next ("set geography once, run many"). Everything else is report-local: the same
-// wire key can mean different things per report (e.g. a report without results hides
-// decommissioned devices while another shows them), so those values never travel
-// between reports — each report keeps its own default or its own last-used value.
-const SHARED_PARAMETER_TYPES = ['state', 'lga', 'site', 'assay', 'consumable', 'dateRange']
-
-export const isSharedParameter = def => SHARED_PARAMETER_TYPES.includes(def.type)
+// Whether a value carries from one report dialog to the next ("set geography once,
+// run many") is decided by the server: it derives `shared` on every definition from
+// SHARED_PARAMETER_TYPES in api/src/report/params.js. Defs from an API that does not
+// send the flag yet degrade to nothing shared — each report keeps its own values.
+export const isSharedParameter = def => Boolean(def.shared)
 
 // dateRange is virtual: it reads/writes the minDate/maxDate wire keys
 export const sharedWireKeys = parameters =>

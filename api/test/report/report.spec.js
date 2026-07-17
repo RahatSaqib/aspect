@@ -53,6 +53,7 @@ describe.skip('Global reports', () => {
               report.parameters.forEach(parameter => {
                 assert.typeOf(parameter.name, 'string')
                 assert.typeOf(parameter.type, 'string')
+                assert.typeOf(parameter.shared, 'boolean')
               })
             })
           })

@@ -2,7 +2,6 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const commonReportFixture = require('../fixtures/Report')
 const { getIdsByExternalId } = require('../../src/shared/dictionary')
-const { LEGACY_REPORT_PARAMETERS } = require('../../src/report/params')
 const { mapExternalIdToId } = require('./utils')
 
 async function upsertSheets(knex, reportId, sheets) {
@@ -63,7 +62,8 @@ module.exports = async function upsertReports(knex, countrySpecificReportFixture
     const reportData = {
       ..._.omit(report, omitFields),
       validations: JSON.stringify(report.validations),
-      parameters: JSON.stringify(report.parameters ?? LEGACY_REPORT_PARAMETERS),
+      // every fixture must declare parameters (enforced by test/report/reportFixtures.test.js)
+      parameters: JSON.stringify(report.parameters ?? []),
     }
 
     if (reportToUpdate) {

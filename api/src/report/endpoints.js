@@ -78,6 +78,9 @@ function responseBaseReports() {
                       'boolean'
                     )
                     .required(),
+                  shared: Joi.bool()
+                    .required()
+                    .description('Derived from type server-side; value carries across report dialogs when true'),
                   required: Joi.bool().description('Server-enforced in strict mode (phase 4); UI hint now'),
                   multiple: Joi.bool().description('Multi-select (arrays accepted)'),
                   default: Joi.alternatives()

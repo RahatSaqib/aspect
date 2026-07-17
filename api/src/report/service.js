@@ -12,14 +12,11 @@ const logger = require('../shared/logger')
 const { getAllAsyncReportsForUser } = require('../shared/report')
 
 const { asyncReportStatusToId } = require('../shared/dictionary')
-const { LEGACY_REPORT_PARAMETERS } = require('./params')
+const { withSharedFlags } = require('./params')
 
-// Rows still holding the migration backfill '[]' (envs not yet reseeded) behave exactly
-// like the legacy filter set — deploy and reseed can happen in any order under strict mode.
-const parseReportParameters = raw => {
-  const parsed = raw ? JSON.parse(raw) : []
-  return parsed.length ? parsed : LEGACY_REPORT_PARAMETERS
-}
+// Seeds own the data: upsert_reports writes every fixture report's curated definitions
+// on each deploy. Null only on rows no seed owns, which serve no parameters.
+const parseReportParameters = raw => withSharedFlags(JSON.parse(raw || '[]'))
 
 async function getReports(request) {
   const { query, auth } = request

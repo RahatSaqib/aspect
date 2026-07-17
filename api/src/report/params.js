@@ -4,19 +4,18 @@ const { subDays, subMonths, startOfDay, endOfDay, startOfMonth, endOfMonth, star
 const { replaceOffset, REGEX_ISODATESTRING } = require('../shared/date')
 const logger = require('../shared/logger')
 
+// Parameter types whose values users expect to carry from one report dialog to the
+// next ("set geography once, run many"). Everything else is report-local: the same
+// wire key can mean different things per report (e.g. a report without results hides
+// decommissioned devices while another shows them), so those values never travel
+// between reports — each report keeps its own default or its own last-used value.
+const SHARED_PARAMETER_TYPES = ['state', 'lga', 'site', 'assay', 'consumable', 'dateRange']
+
 /**
- * Parameter set equivalent to today's global reports filter. Reports whose
- * fixture declares no `parameters` get this set at seed time (zero behavior
- * change: no defaults, no required flags).
+ * Derive the cross-report sharing flag on every definition served to clients.
+ * Derived-only: fixtures never author `shared` (guarded by the fixture-lint test).
  */
-const LEGACY_REPORT_PARAMETERS = [
-  { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
-  { name: 'stateId', type: 'state' },
-  { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
-  { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
-  { name: 'assayId', type: 'assay', multiple: true },
-  { name: 'consumableId', type: 'consumable' },
-]
+const withSharedFlags = defs => defs.map(def => ({ ...def, shared: SHARED_PARAMETER_TYPES.includes(def.type) }))
 
 const DATE_TOKEN_RANGES = {
   today: now => ({ min: startOfDay(now), max: endOfDay(now) }),
@@ -218,8 +217,8 @@ function buildParamsValidator(parameterDefs, { mode = 'permissive' } = {}) {
 }
 
 module.exports = {
-  LEGACY_REPORT_PARAMETERS,
   DATE_TOKENS,
+  withSharedFlags,
   resolveDateToken,
   resolveParams,
   buildParamsValidator,

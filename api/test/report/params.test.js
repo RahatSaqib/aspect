@@ -9,6 +9,16 @@ const { getHash } = require('../../src/shared/encryption')
 const NOW = new Date('2026-07-06T10:20:30Z')
 const DHAKA = 'Asia/Dhaka'
 
+// Representative definition set: the pre-feature global filter shape.
+const LEGACY_DEFS = [
+  { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+  { name: 'stateId', type: 'state' },
+  { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+  { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  { name: 'assayId', type: 'assay', multiple: true },
+  { name: 'consumableId', type: 'consumable' },
+]
+
 describe('report params', () => {
   let warnStub
   let params
@@ -34,6 +44,31 @@ describe('report params', () => {
         'currentYear',
       ])
       assert.isFrozen(params.DATE_TOKENS)
+    })
+  })
+
+  describe('withSharedFlags', () => {
+    it('flags the six cross-report types as shared and everything else as report-local', () => {
+      const flagged = params.withSharedFlags(LEGACY_DEFS)
+      assert.isTrue(flagged.every(def => def.shared === true))
+
+      const local = params.withSharedFlags([
+        { name: 'groupBy', type: 'enum' },
+        { name: 'errorThreshold', type: 'number' },
+        { name: 'comment', type: 'text' },
+        { name: 'showDecommissionedDevices', type: 'boolean' },
+      ])
+      assert.isTrue(local.every(def => def.shared === false))
+    })
+
+    it('does not mutate the input definitions', () => {
+      const defs = [{ name: 'stateId', type: 'state' }]
+      params.withSharedFlags(defs)
+      assert.deepEqual(defs, [{ name: 'stateId', type: 'state' }])
+    })
+
+    it('tolerates an empty definition list', () => {
+      assert.deepEqual(params.withSharedFlags([]), [])
     })
   })
 
@@ -119,7 +154,7 @@ describe('report params', () => {
     })
 
     it('applies the legacy dateRange default when bounds are missing', () => {
-      const resolved = params.resolveParams(params.LEGACY_REPORT_PARAMETERS, {}, context)
+      const resolved = params.resolveParams(LEGACY_DEFS, {}, context)
       assert.property(resolved, 'minDate')
       assert.property(resolved, 'maxDate')
       sinon.assert.notCalled(warnStub)
@@ -201,7 +236,7 @@ describe('report params', () => {
         siteName: 'Central Lab',
         timeZone: DHAKA,
       }
-      const resolved = params.resolveParams(params.LEGACY_REPORT_PARAMETERS, representative, context)
+      const resolved = params.resolveParams(LEGACY_DEFS, representative, context)
       assert.deepEqual(resolved, representative)
       assert.equal(
         getHash(JSON.stringify(jsonToArraySorted(resolved))),
@@ -211,7 +246,7 @@ describe('report params', () => {
     })
 
     it('applies the legacy dateRange default for empty queries before hashing', () => {
-      const resolved = params.resolveParams(params.LEGACY_REPORT_PARAMETERS, {}, context)
+      const resolved = params.resolveParams(LEGACY_DEFS, {}, context)
       assert.property(resolved, 'minDate')
       assert.property(resolved, 'maxDate')
       sinon.assert.notCalled(warnStub)
@@ -226,7 +261,7 @@ describe('report params', () => {
     })
 
     it('logs zero warnings for legacy traffic', () => {
-      const validate = params.buildParamsValidator(params.LEGACY_REPORT_PARAMETERS)
+      const validate = params.buildParamsValidator(LEGACY_DEFS)
       const legacyQuery = {
         minDate: '2026-06-06T00:00:00+06:00',
         maxDate: '2026-07-06T23:59:59+06:00',
@@ -251,7 +286,7 @@ describe('report params', () => {
     })
 
     it('warns once for undeclared keys, never rejects', () => {
-      const validate = params.buildParamsValidator(params.LEGACY_REPORT_PARAMETERS)
+      const validate = params.buildParamsValidator(LEGACY_DEFS)
       assert.isUndefined(validate({ stateId: 3, adHocThing: 1, otherThing: 'x' }, validateOptions))
       sinon.assert.calledOnce(warnStub)
       assert.match(
@@ -261,7 +296,7 @@ describe('report params', () => {
     })
 
     it('warns for values violating the declared type, never throws or mutates', () => {
-      const validate = params.buildParamsValidator(params.LEGACY_REPORT_PARAMETERS)
+      const validate = params.buildParamsValidator(LEGACY_DEFS)
       const query = { stateId: 'abc', minDate: 'not-a-date' }
       assert.isUndefined(validate(query, validateOptions))
       sinon.assert.calledTwice(warnStub)
@@ -335,9 +370,7 @@ describe('report params', () => {
     }
 
     it('rejects undeclared keys with one 400 listing all of them', () => {
-      const err = catchBoom(() =>
-        strict(params.LEGACY_REPORT_PARAMETERS)({ stateId: 3, adHocThing: 1, otherThing: 'x' }, validateOptions)
-      )
+      const err = catchBoom(() => strict(LEGACY_DEFS)({ stateId: 3, adHocThing: 1, otherThing: 'x' }, validateOptions))
       assert.isTrue(err.isBoom)
       assert.equal(err.output.statusCode, 400)
       assert.equal(err.message, 'Invalid report parameters: unknown parameters "adHocThing, otherThing"')
@@ -367,7 +400,7 @@ describe('report params', () => {
     })
 
     it('rejects type violations naming the wire key without Joi text or externalId', () => {
-      const err = catchBoom(() => strict(params.LEGACY_REPORT_PARAMETERS)({ stateId: 'abc' }, validateOptions))
+      const err = catchBoom(() => strict(LEGACY_DEFS)({ stateId: 'abc' }, validateOptions))
       assert.equal(err.message, 'Invalid report parameters: invalid value for "stateId"')
       assert.notInclude(err.message, 'must be')
       assert.notInclude(err.message, 'some_report')
@@ -405,7 +438,7 @@ describe('report params', () => {
     })
 
     it('still type-checks ENGINE_KEYS when the report declares the matching param', () => {
-      const err = catchBoom(() => strict(params.LEGACY_REPORT_PARAMETERS)({ minDate: 'not-a-date' }, validateOptions))
+      const err = catchBoom(() => strict(LEGACY_DEFS)({ minDate: 'not-a-date' }, validateOptions))
       assert.equal(err.message, 'Invalid report parameters: invalid value for "minDate"')
     })
 
@@ -446,7 +479,7 @@ describe('report params', () => {
 
     it('never mutates the query when rejecting', () => {
       const query = { stateId: 'abc', adHocThing: 1 }
-      catchBoom(() => strict(params.LEGACY_REPORT_PARAMETERS)(query, validateOptions))
+      catchBoom(() => strict(LEGACY_DEFS)(query, validateOptions))
       assert.deepEqual(query, { stateId: 'abc', adHocThing: 1 })
     })
 
@@ -464,8 +497,8 @@ describe('report params', () => {
         countryId: 1,
         reportName: '',
       }
-      assert.isUndefined(strict(params.LEGACY_REPORT_PARAMETERS)(legacyQuery, validateOptions))
-      assert.isUndefined(strict(params.LEGACY_REPORT_PARAMETERS)({}, validateOptions))
+      assert.isUndefined(strict(LEGACY_DEFS)(legacyQuery, validateOptions))
+      assert.isUndefined(strict(LEGACY_DEFS)({}, validateOptions))
       sinon.assert.notCalled(warnStub)
     })
   })

@@ -58,6 +58,12 @@ describe('report fixtures parameters lint', () => {
         })
       })
 
+      it('never authors shared (derived from type at read time, never in fixtures)', () => {
+        report.parameters.forEach(def => {
+          assert.notProperty(def, 'shared', `"${def.name}" must not declare shared`)
+        })
+      })
+
       it('never combines required with permission (hidden-required deadlock)', () => {
         report.parameters.forEach(def => {
           assert.isFalse(Boolean(def.required) && Boolean(def.permission), `"${def.name}" has required AND permission`)

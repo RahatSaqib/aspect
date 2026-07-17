@@ -1,5 +1,5 @@
 export { default } from './ReportParameterForm'
 export { resolveParameterDefaults } from './dateTokens'
 export { normalizeParameterValues } from './normalizeParameterValues'
-export { LEGACY_REPORT_PARAMETERS, getReportParameters } from './legacyParameters'
+export { getReportParameters } from './getReportParameters'
 export { isSharedParameter, pickSharedValues, sharedWireKeys } from './parameterCache'

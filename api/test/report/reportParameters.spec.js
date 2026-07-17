@@ -28,8 +28,17 @@ describe('Report parameters API', () => {
           report.parameters.forEach(parameter => {
             assert.isString(parameter.name)
             assert.isString(parameter.type)
+            assert.isBoolean(parameter.shared)
           })
         })
+
+        // shared is derived from the type: dateRange carries values across reports,
+        // a boolean like showDecommissionedDevices stays report-local
+        const anyDateRange = res.body.data.flatMap(r => r.parameters).find(p => p.type === 'dateRange')
+        assert.isDefined(anyDateRange)
+        assert.isTrue(anyDateRange.shared)
+        const anyBoolean = res.body.data.flatMap(r => r.parameters).find(p => p.type === 'boolean')
+        if (anyBoolean) assert.isFalse(anyBoolean.shared)
 
         const dated = res.body.data.find(r => r.externalId === 'device_and_site_summary_report')
         assert.isDefined(dated)
