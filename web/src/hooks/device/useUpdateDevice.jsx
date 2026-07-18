@@ -17,6 +17,7 @@ const updateDeviceById = async (device, deviceId) => {
     params: {
       name: device.name,
       shortName: device.shortName,
+      customNamePart: device.customNamePart,
       stickerInstrumentSerial: device.stickerInstrumentSerial || null,
       instrumentModel: device.instrumentModel ?? null,
       softwareType: device.softwareType ?? null,

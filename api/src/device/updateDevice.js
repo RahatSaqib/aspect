@@ -40,6 +40,10 @@ async function updateDevice(request) {
 
   const prevDeviceApprovalId = await knex('Device').where('id', params.deviceId).first('deviceApprovalId')
 
+  // Absent from the payload means "unchanged": resolve names with the stored value.
+  const hasCustomNamePart = payload.customNamePart !== undefined
+  const customNamePart = hasCustomNamePart ? String(payload.customNamePart || '').trim() : device.customNamePart || ''
+
   const resolvedName = await resolveDeviceNameOnEdit({
     partnerPluginName,
     deviceTypePluginName,
@@ -47,6 +51,7 @@ async function updateDevice(request) {
     currentName: device.name,
     deviceType: device.deviceType,
     editedDevice: {
+      customNamePart,
       moduleBayCapacity: payload.moduleBayCapacity,
       gx6cModulesCount: payload.gx6cModulesCount,
       gx10cModulesCount: payload.gx10cModulesCount,
@@ -54,6 +59,7 @@ async function updateDevice(request) {
   })
 
   const updateFields = {
+    customNamePart: hasCustomNamePart ? customNamePart : undefined,
     siteId: payload.siteId || device.siteId,
     deviceApprovalId: device.deviceApprovalId,
     configurationData: JSON.stringify(configurationData),

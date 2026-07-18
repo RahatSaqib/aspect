@@ -15,6 +15,7 @@ const SELECT_SHOW_FIELDS = [
   'd.id',
   'd.name',
   'd.shortName',
+  'd.customNamePart',
   'd.createdOn',
   'd.lastPingOn',
   'd.dailyTestCapacity',

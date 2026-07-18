@@ -111,6 +111,12 @@ const routes = [
         },
         payload: {
           changes: Joi.array().items(changeSchema).min(1).required(),
+          customNamePart: Joi.string()
+            .allow('', null)
+            .max(20)
+            .description(
+              'New custom name part for the device (empty clears it); omit to leave the stored value untouched'
+            ),
         },
       },
       response: {

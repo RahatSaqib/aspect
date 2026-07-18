@@ -45,4 +45,20 @@ export default defineMessages({
     id: 'pages.DeviceDetailEdit.sectionAdditionalInfo',
     defaultMessage: 'Additional Information',
   },
+  sectionOverview: {
+    id: 'pages.DeviceDetailEdit.sectionOverview',
+    defaultMessage: 'Overview',
+  },
+  customNamePart: {
+    id: 'pages.DeviceDetailEdit.customNamePart',
+    defaultMessage: 'Custom Name Part',
+  },
+  customNamePartHelp: {
+    id: 'pages.DeviceDetailEdit.customNamePartHelp',
+    defaultMessage: 'Added to the device name, right after the identifier',
+  },
+  customNamePartPreview: {
+    id: 'pages.DeviceDetailEdit.customNamePartPreview',
+    defaultMessage: 'New device name: {name}',
+  },
 })

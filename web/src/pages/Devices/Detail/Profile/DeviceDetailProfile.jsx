@@ -307,6 +307,7 @@ const DeviceDetailProfile = ({
                 lastSeen: formatRelative(device.get('lastPingOn'), formatRelativeTime),
               })}
             />
+            <Summary title={formatMessage(messages.customNamePart)} description={device.get('customNamePart')} />
 
             {/* ── Capacity & Modules (GeneXpert only) ── */}
             {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
@@ -572,6 +573,8 @@ const DeviceDetailProfile = ({
         firstResultDate={device.get('firstResultEndedOn')}
         approvalToken={device.get('approvalToken')}
         disabled={disabled}
+        deviceName={device.get('name')}
+        deviceCustomNamePart={device.get('customNamePart')}
       />
 
       <PermissionChecker permissions={['admin:edit']}>

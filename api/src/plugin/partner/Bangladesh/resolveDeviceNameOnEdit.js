@@ -11,6 +11,7 @@ async function resolveDeviceNameOnEdit({ deviceId, deviceType, editedDevice }) {
   return buildBangladeshDeviceName({
     deviceId,
     deviceType,
+    customNamePart: editedDevice.customNamePart,
     moduleBayCapacity: editedDevice.moduleBayCapacity,
     gx6cModulesCount: editedDevice.gx6cModulesCount,
     gx10cModulesCount: editedDevice.gx10cModulesCount,
