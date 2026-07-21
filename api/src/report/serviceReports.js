@@ -260,6 +260,18 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
       value: await getConsumablesNamesString(query),
     },
     {
+      // Label lives server-side so every locale template carries the same token text
+      // (same approach as <StatesLabel> & co, which appear untranslated in fr/uk files).
+      placeholder: '<DecommissionedDevicesLabel>',
+      value: 'Decommissioned Devices',
+    },
+    {
+      // Plain truthiness on purpose: it must mirror getResultListConstraintOptions and the
+      // device query filters exactly, so the header can never contradict the rows below it.
+      placeholder: '<DecommissionedDevices>',
+      value: query.showDecommissionedDevices ? 'Included' : 'Excluded',
+    },
+    {
       placeholder: '<UserEmail>',
       value: userPlaceHolders.email || '-',
     },
