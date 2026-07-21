@@ -38,8 +38,9 @@ const ReportFilterDialog = ({ open, report, fileExtension, requestType, initialV
   // Same localized name resolution as ReportCard.jsx
   const reportName = messages[report.i18nKey] ? formatMessage(messages[report.i18nKey]) : report.name
   const formats = availableFormats(report, fileExtension)
-  const ActionIcon = requestType === 'generate' ? FiRefreshCw : FaDownload
-  const verb = requestType === 'generate' ? 'Generate' : 'Download'
+  const isGenerate = requestType === 'generate'
+  const ActionIcon = isGenerate ? FiRefreshCw : FaDownload
+  const actionMessage = isGenerate ? pageMessages.generateFormat : pageMessages.downloadFormat
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -67,7 +68,7 @@ const ReportFilterDialog = ({ open, report, fileExtension, requestType, initialV
             disabled={!isValid}
             onClick={() => onSubmit(values, ext)}
           >
-            <ActionIcon style={{ marginRight: 4 }} /> {verb} {FORMAT_LABELS[ext]}
+            <ActionIcon style={{ marginRight: 4 }} /> {formatMessage(actionMessage, { format: FORMAT_LABELS[ext] })}
           </Button>
         ))}
       </DialogActions>

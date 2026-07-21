@@ -3,9 +3,12 @@ import { Box, Button, Skeleton, Tooltip } from '@mui/material'
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
+import { useIntl } from 'react-intl'
+import messages from './messages'
 
 function ReportAction(props) {
   const { onClickReportSubmit, report, reportRequests, fileExtension } = props
+  const { formatMessage } = useIntl()
 
   const { data: reportRequestsData = [], isLoading, isSubmitting } = reportRequests
 
@@ -28,14 +31,14 @@ function ReportAction(props) {
         <Box>
           {' '}
           <FaDownload style={{ marginRight: 4 }} />
-          Download {label}
+          {formatMessage(messages.downloadFormat, { format: label })}
         </Box>
       </Tooltip>
     )
   } else if (requestType === 'generate') {
     buttonContent = (
       <>
-        <FiRefreshCw style={{ marginRight: 4 }} /> Generate {label}
+        <FiRefreshCw style={{ marginRight: 4 }} /> {formatMessage(messages.generateFormat, { format: label })}
       </>
     )
   } else if (requestType === 'processing') {
@@ -51,7 +54,7 @@ function ReportAction(props) {
         placement="top"
       >
         <Box>
-          <FaHourglassStart style={{ marginRight: 4 }} /> Processing {label}
+          <FaHourglassStart style={{ marginRight: 4 }} /> {formatMessage(messages.processingFormat, { format: label })}
         </Box>
       </Tooltip>
     )
