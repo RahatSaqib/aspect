@@ -93,6 +93,13 @@ const allResults = {
     { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
     { name: 'assayId', type: 'assay', multiple: true },
     { name: 'consumableId', type: 'consumable' },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: true,
+    },
   ],
   sheets: [
     {
