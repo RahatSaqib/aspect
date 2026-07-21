@@ -119,7 +119,9 @@ const ReportIndex = () => {
     }))
   }
 
-  const { mutate: onClickSubmitAsyncReportRequest, isSubmitting: isSubmittingReportRequest } = useMutation(
+  // react-query exposes the in-flight flag as `isLoading`; the downstream ReportActions
+  // prop stays `isSubmitting` so the button disables while the request is being submitted.
+  const { mutate: onClickSubmitAsyncReportRequest, isLoading: isSubmittingReportRequest } = useMutation(
     async ({ report, fileExtension, values }) => {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
       return fetchWrapperForQueries({
