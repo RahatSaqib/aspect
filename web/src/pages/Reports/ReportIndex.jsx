@@ -151,16 +151,16 @@ const ReportIndex = () => {
     if (requestType === 'generate') {
       openDialog({ report, fileExtension, requestType })
     } else if (requestType === 'download') {
-      onClickAsyncDownload({ report, requestId })
+      onClickAsyncDownload({ report, requestId, fileExtension })
     }
   }
 
-  const onClickAsyncDownload = ({ report, requestId }) => {
+  const onClickAsyncDownload = ({ report, requestId, fileExtension }) => {
     setShowProgressBar(true)
     idleTimer.pause()
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/async/${requestId}/download`,
-      customErrorNotifications: getCustomErrorNotifications('xlsx', report.name),
+      customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
     })
       .then(async resp => {
         const file = await resp.blob
