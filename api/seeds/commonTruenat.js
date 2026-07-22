@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
-const { addMinutes, subMonths } = require('date-fns')
+const { subMonths } = require('date-fns')
 const truenatDeviceTypes = require('./fixtures/truenatDevice/DeviceType.json')
 const truenatAssays = require('./fixtures/truenatDevice/Assays.json')
 const truenatPatientDataSchema = require('./fixtures/truenatDevice/PatientDataSchema.json')
@@ -254,7 +254,6 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
         siteId: truenatLab.id,
         username: truenatDevice.username,
         password,
-        expiresOn: addMinutes(new Date(), 15),
         ...auditFields,
       })
 

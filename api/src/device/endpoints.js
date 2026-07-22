@@ -294,7 +294,7 @@ const routes = [
     config: {
       description: 'Decommission Device',
       notes: 'Marks an approved device as decommissioned',
-      auth: { scope: ['admin:edit'] },
+      auth: { scope: ['device:edit'] },
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required(),
@@ -318,7 +318,7 @@ const routes = [
     config: {
       description: 'Reactivate Device',
       notes: 'Restores a decommissioned device to approved at the selected site',
-      auth: { scope: ['admin:edit'] },
+      auth: { scope: ['device:edit'] },
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required(),
