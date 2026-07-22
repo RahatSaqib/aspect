@@ -257,6 +257,10 @@ const ReportIndex = () => {
       : report.description,
   })
 
+  // The loader replaces the report grid, so there is nothing left to search while it
+  // shows: hide the search box too instead of leaving it floating over a blank page.
+  const isBusy = isLoading || showProgressBar
+
   const searchTerm = search.trim().toLowerCase()
   const visibleReports = (reportListResponse?.data ?? []).filter(report => {
     if (!searchTerm) return true
@@ -269,30 +273,32 @@ const ReportIndex = () => {
       <DetailHeader name={intl.formatMessage(messages.reportsTitle)} disableBack />
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
-        <Card sx={{ mb: 2 }}>
-          <CardContent sx={{ p: '16px !important', '&:last-child': { pb: '16px' } }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  label={intl.formatMessage(pageMessages.searchReports)}
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton
-                        aria-label={intl.formatMessage(pageMessages.clearSearch)}
-                        onClick={() => setSearch('')}
-                        sx={{ visibility: search ? 'visible' : 'hidden' }}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    ),
-                  }}
-                />
+        {!isBusy && (
+          <Card sx={{ mb: 2 }}>
+            <CardContent sx={{ p: '16px !important', '&:last-child': { pb: '16px' } }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={3}>
+                  <TextField
+                    label={intl.formatMessage(pageMessages.searchReports)}
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton
+                          aria-label={intl.formatMessage(pageMessages.clearSearch)}
+                          onClick={() => setSearch('')}
+                          sx={{ visibility: search ? 'visible' : 'hidden' }}
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                      ),
+                    }}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
         {asyncReportsFeatureEnabled ? (
           <Alert severity="info" sx={{ marginY: 2 }}>
             You can download your report if it’s already generated. If it’s not yet available, you can continue browsing
@@ -314,7 +320,7 @@ const ReportIndex = () => {
             </List>
           </Alert>
         ) : null}
-        {isLoading || showProgressBar ? (
+        {isBusy ? (
           <LinearProgress />
         ) : (
           <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
