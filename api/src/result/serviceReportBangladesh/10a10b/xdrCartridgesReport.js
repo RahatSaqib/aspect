@@ -139,9 +139,21 @@ async function getData(dataConstraints, dateFrom, dateTo, query, assayIds) {
       knex.raw(`IF(rc.id in (${positiveResultCategoriesIds}), 1, 0) as MTBDET`),
       // Own Site vs Other Site
       knex.raw(`IF(r.resultData ->> '$.originTestLocation' = 'This site', 'OWN', 'OTH') as MtbRifUltraAt`),
-      // Patient history (New/Unknown -> NEW, else PREV)
+      // Patient history (check both PatientHistory AND TypeOfPatient for previously-treated categories)
       knex.raw(`
-        IF(r.patientData ->> '$.PatientHistory' IN ('Previously treated'), 'PREV', 'NEW') as patientHistory
+        IF(
+          r.patientData ->> '$.PatientHistory' IN ('Previously treated')
+          OR r.patientData ->> '$.TypeOfPatient' IN (
+            'Failures of Category I',
+            'Failures of Retreatment',
+            'Non converters of Category I',
+            'Non converters of Retreatment',
+            'Relapses',
+            'Treatment after loss to follow up'
+          ),
+          'PREV',
+          'NEW'
+        ) as patientHistory
       `),
       // Sample type mapping
       knex.raw(`CASE r.patientData ->> '$.SampleType'
