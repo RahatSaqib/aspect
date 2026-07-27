@@ -1,4 +1,4 @@
-const { addConstraints } = require('../../src/auth/constraints')
+const { addConstraints, addPartnerQueryConstraints } = require('../../src/auth/constraints')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 describe('addConstraints should add disabled sites filter, only when applicable', async () => {
@@ -117,6 +117,115 @@ describe('addConstraints should add disabled sites filter, only when applicable'
 
       const query = queryBuilder.toString()
       query.should.not.match(/\(`.*`\.`id` is null or `.*`\.`disabled` = 0\)/g)
+    })
+  })
+})
+
+describe('addConstraints device approval filtering', async () => {
+  const dataConstraints = {
+    partner: { id: 1 },
+    country: { id: 3 },
+    person: { id: 3 },
+  }
+
+  // With a cold dictionary cache (no request context in unit tests) tokens resolve
+  // through the scalar subquery fallback on the DeviceApproval table.
+  const approvalIdSubquery = token => `(select \`id\` from \`DeviceApproval\` where \`token\` = '${token}')`
+
+  const buildDeviceQuerySql = (knex, options) => {
+    const queryBuilder = knex('Device as d').first()
+    addConstraints(queryBuilder, dataConstraints, { device: 'd' }, options)
+    return queryBuilder.toString()
+  }
+
+  it('allows approved devices only by default', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, undefined)
+      sql.should.to.have.string(
+        `(\`d\`.\`deviceApprovalId\` is null or \`d\`.\`deviceApprovalId\` = ${approvalIdSubquery('approved')})`
+      )
+    })
+  })
+
+  it('excludes decommissioned with <> when approved and pendingDeployment are allowed', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, { deviceApprovals: ['approved', 'pendingDeployment'] })
+      sql.should.to.have.string(
+        `(\`d\`.\`deviceApprovalId\` is null or \`d\`.\`deviceApprovalId\` <> ${approvalIdSubquery('decommissioned')})`
+      )
+    })
+  })
+
+  it('excludes pendingDeployment with <> when approved and decommissioned are allowed', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, { deviceApprovals: ['approved', 'decommissioned'] })
+      sql.should.to.have.string(
+        `(\`d\`.\`deviceApprovalId\` is null or \`d\`.\`deviceApprovalId\` <> ${approvalIdSubquery(
+          'pendingDeployment'
+        )})`
+      )
+    })
+  })
+
+  it('adds no approval filter when every token is allowed', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, {
+        deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'],
+      })
+      sql.should.not.have.string('deviceApproval')
+      sql.should.not.have.string('DeviceApproval')
+    })
+  })
+
+  it('treats an empty deviceApprovals array as the default (approved only)', async () => {
+    await runTestWithKnex(async knex => {
+      const sql = buildDeviceQuerySql(knex, { deviceApprovals: [] })
+      sql.should.to.have.string(`\`d\`.\`deviceApprovalId\` = ${approvalIdSubquery('approved')}`)
+    })
+  })
+
+  it('throws on an unknown deviceApprovals token', async () => {
+    await runTestWithKnex(async knex => {
+      ;(() => buildDeviceQuerySql(knex, { deviceApprovals: ['approved', 'decomissioned'] })).should.throw(
+        /unknown deviceApprovals token/
+      )
+    })
+  })
+
+  it('never joins the DeviceApproval or maintenance status tables', async () => {
+    await runTestWithKnex(async knex => {
+      const approvalCombinations = [
+        undefined,
+        { deviceApprovals: ['approved', 'pendingDeployment'] },
+        { deviceApprovals: ['approved', 'decommissioned'] },
+        { deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] },
+      ]
+      for (const options of approvalCombinations) {
+        const sql = buildDeviceQuerySql(knex, options)
+        sql.should.not.have.string('DeviceMaintenanceStatus')
+        sql.should.not.have.string('join `DeviceApproval`')
+      }
+    })
+  })
+})
+
+describe('addPartnerQueryConstraints geography scoping', async () => {
+  it('filters by g.stateId with the constraint stateId for state-scoped users', async () => {
+    await runTestWithKnex(async knex => {
+      const queryBuilder = knex('Result as r').first()
+      addPartnerQueryConstraints(queryBuilder, { geography: { stateId: 18 } })
+      const sql = queryBuilder.toString()
+      sql.should.have.string('`g`.`stateId` = 18')
+    })
+  })
+
+  it('filters by g.lgaId when the constraint has an lgaId, ignoring stateId', async () => {
+    await runTestWithKnex(async knex => {
+      const queryBuilder = knex('Result as r').first()
+      addPartnerQueryConstraints(queryBuilder, { geography: { stateId: 18, lgaId: 7 } })
+      const sql = queryBuilder.toString()
+      sql.should.have.string('`g`.`lgaId` = 7')
+      sql.should.not.have.string('`g`.`stateId`')
     })
   })
 })

@@ -6,6 +6,14 @@ const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../../db')
 const { getArrayOfDaysInRange } = require('../../shared/date')
 
+// Translate the report wire-level flags into the deviceApprovals token set
+function deviceApprovalsFor(query) {
+  const deviceApprovals = ['approved']
+  if (query.showUndeployedDevices) deviceApprovals.push('pendingDeployment')
+  if (query.showDecommissionedDevices) deviceApprovals.push('decommissioned')
+  return deviceApprovals
+}
+
 function getResultsBaseQuery(query) {
   const now = new Date()
   const days = getArrayOfDaysInRange(
@@ -81,12 +89,17 @@ function getMaintenanceBaseQuery(dataConstraints, query) {
       // Get only the latest log of the day
       .whereNull('dmslNewer.id')
       .whereRaw(`DAYOFWEEK(dmsl.day) <> 1 AND DAYOFWEEK(dmsl.day) <> 7`)
-      .modify(addConstraints, dataConstraints, {
-        device: 'd',
-        site: 's',
-        geography: 'g',
-        deviceType: 'dt',
-      })
+      .modify(
+        addConstraints,
+        dataConstraints,
+        {
+          device: 'd',
+          site: 's',
+          geography: 'g',
+          deviceType: 'dt',
+        },
+        { deviceApprovals: deviceApprovalsFor(query) }
+      )
       .modify(filterDateRangeParams, query, 'dmsl.day')
       .modify(filterParams, query, {
         countryId: 'g.countryId',
@@ -111,12 +124,17 @@ async function getDevicePerformanceReport(auth, query) {
 
   const [resultBasedData, maintenanceBasedData] = await Promise.all([
     getResultsBaseQuery(query)
-      .modify(addConstraints, dataConstraints, {
-        device: 'd',
-        site: 's',
-        geography: 'g',
-        partner: 'p',
-      })
+      .modify(
+        addConstraints,
+        dataConstraints,
+        {
+          device: 'd',
+          site: 's',
+          geography: 'g',
+          partner: 'p',
+        },
+        { deviceApprovals: deviceApprovalsFor(query) }
+      )
       .orderBy(['state', 'lga', 'deviceName']),
     getMaintenanceBaseQuery(dataConstraints, query).orderBy(['state', 'lga', 'deviceName']),
   ])
@@ -143,13 +161,18 @@ async function getDevicePerformanceReportByAssay(auth, query) {
 
   const data = await getResultsBaseQuery(query)
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      partner: 'p',
-      assay: 'a',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        site: 's',
+        geography: 'g',
+        partner: 'p',
+        assay: 'a',
+      },
+      { deviceApprovals: deviceApprovalsFor(query) }
+    )
     .groupBy('r.assayId')
     .orderBy(['state', 'lga', 'deviceName', 'a.name'])
     .select(['a.name as assayName', knex.raw('COUNT(r.id) as totalTests')])

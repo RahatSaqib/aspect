@@ -3,7 +3,11 @@ const issueTriggers = require('../issueTriggers')
 const issueResolutions = require('../issueResolutions')
 const filtersOpenIssues = require('../../issue/filterConditions')
 const { extractSampleId } = require('../deviceType/extractSampleId')
-const { defaultGenerateDeviceName } = require('../../device/common/deviceAcronym')
+const {
+  acronymForDeviceType,
+  withCustomNamePart,
+  defaultGenerateDeviceName,
+} = require('../../device/common/deviceAcronym')
 
 const DEFAULT_SETTINGS = {
   displayPreferences: {
@@ -92,11 +96,14 @@ async function generateDeviceName(context) {
  * to derive Device.name from the edited payload. Return null to keep the
  * submitted name/shortName values.
  *
+ * The default rebuilds the generated name (`${acronym}${id}`) with the edited
+ * custom name part so name changes to that field take effect immediately.
+ *
  * @param {Object} context - { deviceId, currentName, deviceType, editedDevice }
  * @returns {Promise<string|null>}
  */
-async function resolveDeviceNameOnEdit(/* context */) {
-  return null
+async function resolveDeviceNameOnEdit({ deviceId, deviceType, editedDevice }) {
+  return withCustomNamePart(`${acronymForDeviceType(deviceType || {})}${deviceId}`, editedDevice?.customNamePart)
 }
 
 /**

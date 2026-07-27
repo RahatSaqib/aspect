@@ -123,7 +123,7 @@ const getAvailableTargetDevices = (deviceList, sourceDevicesIds, siteToMergeDevi
 }
 
 const DeviceList = () => {
-  const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true, showUnapprovedDevices: true })
+  const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true, showUndeployedDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
   const { formatMessage } = useIntl()
   const navigate = useNavigate()

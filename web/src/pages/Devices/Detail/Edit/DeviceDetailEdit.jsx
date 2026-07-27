@@ -17,6 +17,7 @@ import AspectButton from '../../../../components/shared/AspectButton'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
+import { previewDeviceName } from '../deviceNamePreview'
 import styles from '../styles.module.css'
 import messages from './messages'
 import { getValidationSchema } from './validation'
@@ -27,6 +28,19 @@ const SectionDivider = ({ label }) => (
     <span className={styles.sectionDivider__line} />
   </div>
 )
+
+const customNamePartHelperText = (intl, device, values, errors) => {
+  if (errors.customNamePart) return errors.customNamePart
+  const newDeviceName = previewDeviceName({
+    currentName: device.name,
+    currentPart: device.customNamePart,
+    editedPart: values.customNamePart,
+  })
+  if (newDeviceName !== (device.name || '')) {
+    return intl.formatMessage(messages.customNamePartPreview, { name: newDeviceName })
+  }
+  return intl.formatMessage(messages.customNamePartHelp)
+}
 
 const DeviceDetailEdit = ({ device, deviceTags }) => {
   const navigate = useNavigate()
@@ -46,6 +60,7 @@ const DeviceDetailEdit = ({ device, deviceTags }) => {
   const initialValues = {
     name: device.name || '',
     shortName: device.shortName || device.name || '',
+    customNamePart: device.customNamePart || '',
     siteId: device.siteId ?? null,
     implementingPartnerId: device.implementingPartnerId,
     dailyTestCapacity: device.dailyTestCapacity,
@@ -110,6 +125,20 @@ const DeviceDetailEdit = ({ device, deviceTags }) => {
             {({ values, errors, setFieldValue, dirty, isValid }) => (
               <Form>
                 <div className={styles.formGrid}>
+                  {/* ── Overview ── */}
+                  <SectionDivider label={intl.formatMessage(messages.sectionOverview)} />
+                  <TextField
+                    id="customNamePart"
+                    name="customNamePart"
+                    margin="none"
+                    label={intl.formatMessage(messages.customNamePart)}
+                    error={Boolean(errors.customNamePart)}
+                    helperText={customNamePartHelperText(intl, device, values, errors)}
+                    value={values.customNamePart}
+                    onChange={e => setFieldValue('customNamePart', e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+
                   {/* ── Capacity & Modules — GeneXpert only ── */}
                   {isGeneXpert && (
                     <>

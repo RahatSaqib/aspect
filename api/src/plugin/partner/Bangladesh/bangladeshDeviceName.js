@@ -1,8 +1,15 @@
-const { acronymForDeviceType } = require('../../../device/common/deviceAcronym')
+const { acronymForDeviceType, withCustomNamePart } = require('../../../device/common/deviceAcronym')
 const { GENEXPERT_DEVICE_TYPE_EXTERNAL_ID, buildGeneXpertModuleSuffix } = require('./geneXpertModuleSuffix')
 
-function buildBangladeshDeviceName({ deviceId, deviceType, moduleBayCapacity, gx6cModulesCount, gx10cModulesCount }) {
-  const baseName = `${acronymForDeviceType(deviceType || {})}${deviceId}`
+function buildBangladeshDeviceName({
+  deviceId,
+  deviceType,
+  customNamePart,
+  moduleBayCapacity,
+  gx6cModulesCount,
+  gx10cModulesCount,
+}) {
+  const baseName = withCustomNamePart(`${acronymForDeviceType(deviceType || {})}${deviceId}`, customNamePart)
 
   if (deviceType?.externalId !== GENEXPERT_DEVICE_TYPE_EXTERNAL_ID) {
     return baseName

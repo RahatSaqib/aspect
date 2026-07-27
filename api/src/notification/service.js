@@ -497,7 +497,9 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, notifi
           filters,
           externalId,
           false,
-          notificationType.reportPassword
+          notificationType.reportPassword,
+          // a curated `required` param on a report must degrade to a warn, never kill scheduled delivery
+          { validationMode: 'permissive' }
         )
         fileName = reportFileName
         // wait until report end

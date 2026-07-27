@@ -7,7 +7,7 @@ import messages from '../../messages/FilterMessages'
 import AspectSelect from '../AspectSelect'
 
 function AssayMultiSelect(props) {
-  const { filters, ...rest } = props
+  const { filters, label, ...rest } = props
 
   const { isLoading, data } = useAssayList()
 
@@ -19,7 +19,7 @@ function AssayMultiSelect(props) {
     <AspectSelect
       {...rest}
       multiple
-      label={formatMessage(messages.assay)}
+      label={label || formatMessage(messages.assay)}
       options={options}
       isLoading={isLoading}
       itemToString={i => formatMessage(assay[i?.i18nKey])}
