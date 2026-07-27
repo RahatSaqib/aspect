@@ -6,6 +6,7 @@ function assertPropertiesOfListItem(res) {
   assert.property(res.body.data[0], 'id')
   assert.property(res.body.data[0], 'name')
   assert.property(res.body.data[0], 'shortName')
+  assert.property(res.body.data[0], 'notes')
   assert.property(res.body.data[0], 'createdOn')
   assert.property(res.body.data[0], 'lastPingOn')
   assert.property(res.body.data[0], 'lastSeen')
