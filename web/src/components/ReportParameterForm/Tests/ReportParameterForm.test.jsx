@@ -145,6 +145,18 @@ describe('ReportParameterForm', () => {
     expect(onChange).toHaveBeenCalledWith({ stateId: '5', assayId: 3 })
   })
 
+  it('omits cleared state instead of storing null and clears dependents', () => {
+    const onChange = renderForm({ values: { stateId: 1, lgaId: 2, siteName: 'Clinic A', assayId: 3 } })
+    fireEvent.change(screen.getByTestId('state-select'), { target: { value: null } })
+    expect(onChange).toHaveBeenCalledWith({ assayId: 3 })
+  })
+
+  it('omits cleared lga instead of storing null and clears site', () => {
+    const onChange = renderForm({ values: { stateId: 1, lgaId: 2, siteName: 'Clinic A' } })
+    fireEvent.change(screen.getByTestId('lga-select'), { target: { value: null } })
+    expect(onChange).toHaveBeenCalledWith({ stateId: 1 })
+  })
+
   it('clears only the site when lga changes', () => {
     const onChange = renderForm({ values: { stateId: 1, lgaId: 2, siteName: 'Clinic A' } })
     fireEvent.change(screen.getByTestId('lga-select'), { target: { value: '9' } })
@@ -172,12 +184,20 @@ describe('ReportParameterForm', () => {
     expect(screen.getByRole('checkbox')).toBeInTheDocument()
   })
 
-  it('coerces number input to Number and empty to null', () => {
+  it('coerces number input to Number', () => {
     const parameters = [{ name: 'errorThreshold', type: 'number', label: 'Error threshold' }]
     const onChange = renderForm({ parameters, values: {} })
 
     fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '7' } })
     expect(onChange).toHaveBeenLastCalledWith({ errorThreshold: 7 })
+  })
+
+  it('omits cleared number values instead of storing null', () => {
+    const parameters = [{ name: 'errorThreshold', type: 'number', label: 'Error threshold' }]
+    const onChange = renderForm({ parameters, values: { errorThreshold: 7 } })
+
+    fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '' } })
+    expect(onChange).toHaveBeenLastCalledWith({})
   })
 
   it('toggles boolean params via the checkbox', () => {

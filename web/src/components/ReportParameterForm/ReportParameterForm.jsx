@@ -94,7 +94,14 @@ const ReportParameterForm = ({ parameters, values, onChange, onValidityChange })
 
   const touch = name => setTouched(prev => (prev.has(name) ? prev : new Set(prev).add(name)))
 
-  const set = (name, value) => onChange(applyDependsOnResets(parameters, { ...values, [name]: value }, name))
+  // Omit cleared values (null / '') instead of storing them — otherwise GET report
+  // URLs serialize null as the string "null" and Hapi Joi rejects geography ids.
+  const set = (name, value) => {
+    const next = { ...values }
+    if (isMissingValue(value)) delete next[name]
+    else next[name] = value
+    onChange(applyDependsOnResets(parameters, next, name))
+  }
 
   return (
     <Grid container spacing={2}>

@@ -37,5 +37,11 @@ export const normalizeParameterValues = (parameters, values) => {
     if (Number.isNaN(n)) delete next[def.name]
     else next[def.name] = n
   })
+  // Drop cleared optional params (e.g. stateId: null after Clear) so query strings
+  // never send encodeURIComponent(null) → "null", which fails Joi.number().
+  Object.keys(next).forEach(key => {
+    const value = next[key]
+    if (value === undefined || value === null || value === '') delete next[key]
+  })
   return next
 }

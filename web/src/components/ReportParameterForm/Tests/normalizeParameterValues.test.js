@@ -21,4 +21,22 @@ describe('normalizeParameterValues', () => {
   it('coerces single assay strings to numbers', () => {
     expect(normalizeParameterValues([{ name: 'assayId', type: 'assay' }], { assayId: '3' })).toEqual({ assayId: 3 })
   })
+
+  it('drops null and empty geography params so they are not serialized as "null"', () => {
+    expect(
+      normalizeParameterValues(
+        [
+          { name: 'stateId', type: 'state' },
+          { name: 'lgaId', type: 'lga' },
+        ],
+        { stateId: null, lgaId: '', minDate: '2020-01-01', showDecommissionedDevices: false }
+      )
+    ).toEqual({ minDate: '2020-01-01', showDecommissionedDevices: false })
+  })
+
+  it('keeps numeric zero', () => {
+    expect(
+      normalizeParameterValues([{ name: 'errorThreshold', type: 'number' }], { errorThreshold: 0 })
+    ).toEqual({ errorThreshold: 0 })
+  })
 })
