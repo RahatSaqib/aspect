@@ -257,6 +257,10 @@ const routes = [
           name: Joi.string()
             .description('The name of the device')
             .when('approvalToken', { is: Joi.any().valid(null, ''), then: Joi.required() }),
+          customNamePart: Joi.string()
+            .allow('', null)
+            .max(20)
+            .description('User-entered part inserted into the generated device name, after the identifier'),
           notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number().allow(null).description('The site id of the device'),
@@ -401,7 +405,10 @@ const routes = [
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
           deviceTypeExternalId: Joi.string().allow('').description('Device Type External ID'),
-          showUnapprovedDevices: Joi.bool().optional().default(false).description('Show unapproved devices'),
+          showUndeployedDevices: Joi.bool()
+            .optional()
+            .default(false)
+            .description('Show undeployed (pending deployment) devices'),
           showDecommissionedDevices: Joi.bool().optional().default(false).description('Show decommissioned devices'),
           onlyResultDevices: Joi.bool().optional().default(false).description('Show only devices that process results'),
         },

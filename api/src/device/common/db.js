@@ -15,6 +15,7 @@ const SELECT_SHOW_FIELDS = [
   'd.id',
   'd.name',
   'd.shortName',
+  'd.customNamePart',
   'd.createdOn',
   'd.lastPingOn',
   'd.dailyTestCapacity',
@@ -122,7 +123,11 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
 
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
-  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields, true, true)
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields, [
+    'approved',
+    'pendingDeployment',
+    'decommissioned',
+  ])
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .leftJoin('FactResultsDevice as frd30', function () {
@@ -219,13 +224,7 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
   return device
 }
 
-function getDeviceByIdBaseQuery(
-  dataConstraints,
-  deviceId,
-  fields = 'd.*',
-  showUnapprovedDevices = false,
-  showDecommissionedDevices = false
-) {
+function getDeviceByIdBaseQuery(dataConstraints, deviceId, fields = 'd.*', deviceApprovals = undefined) {
   const query = knex('Device as d')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftJoin('Site as s', 'd.siteId', 's.id')
@@ -241,7 +240,7 @@ function getDeviceByIdBaseQuery(
         device: 'd',
         deviceType: 'dt',
       },
-      { showUnapprovedDevices, showDecommissionedDevices }
+      { deviceApprovals }
     )
     .where('d.id', +deviceId)
     .first(fields)
@@ -252,13 +251,14 @@ function getDeviceByIdBaseQuery(
 function getDeviceBaseExtendedQuery(
   query,
   dataConstraints,
-  {
-    showUnapprovedDevices = false,
-    showDecommissionedDevices = false,
-    excludeInternalDevices = true,
-    extendJoinToAssays = false,
-  } = {}
+  { deviceApprovals: deviceApprovalsOption, excludeInternalDevices = true, extendJoinToAssays = false } = {}
 ) {
+  // The wire-level query flags act as fallback when the caller does not pass the token set.
+  const deviceApprovals = deviceApprovalsOption ?? ['approved']
+  if (!deviceApprovalsOption) {
+    if (query.showUndeployedDevices) deviceApprovals.push('pendingDeployment')
+    if (query.showDecommissionedDevices) deviceApprovals.push('decommissioned')
+  }
   const conditionalAliases = {}
 
   const deviceQuery = knex('Device as d')
@@ -323,7 +323,7 @@ function getDeviceBaseExtendedQuery(
         geography: 'g',
         site: 's',
       },
-      { showDecommissionedDevices, showUnapprovedDevices }
+      { deviceApprovals }
     )
 
   return deviceQuery
@@ -358,9 +358,8 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
  * Builds a knex query object including all 'join' and 'where' for managing constraints.
  * @param {object} dataConstraints
  * @param {aliases} aliases An object representing the aliases for the tables used in the query.e.g. { assay: 'a'}
- * @param {object} options An object representing the dataConstraints options, like showUnapprovedDevices
- *  and showDecommissionedDevices.
- *  For example: { showUnapprovedDevices: true, showDecommissionedDevices: true }
+ * @param {object} options An object representing the dataConstraints options, like deviceApprovals.
+ *  For example: { deviceApprovals: ['approved', 'pendingDeployment'] }
  * @returns The knex query object.
  */
 function getDeviceBaseQuery(dataConstraints, aliases, options = {}) {
@@ -380,7 +379,7 @@ function getDeviceBaseQuery(dataConstraints, aliases, options = {}) {
 }
 
 const getNotDecommissionedDevices = dataConstraints =>
-  getDeviceBaseQuery(dataConstraints, {}, { showUnapprovedDevices: true })
+  getDeviceBaseQuery(dataConstraints, {}, { deviceApprovals: ['approved', 'pendingDeployment'] })
 
 // Delete device
 async function deleteNotifications(deviceId, trknex) {

@@ -70,7 +70,7 @@ const filtersOrdering = {
   minExpirationDate: 360,
   maxExpirationDate: 370,
   showDecommissionedDevices: 380,
-  showResultsFromUndeployedDevices: 385,
+  showUndeployedDevices: 385,
   siteTypeId: 390,
   parentWarehouseId: 400,
   tagId: 410,
@@ -226,9 +226,7 @@ const buttonMapping = {
   onlyDownloadedByReporter: ({ remove, blocked }) => <OnlyDownloadedByReporter remove={remove} blocked={blocked} />,
   onlyTreatmentRequired: ({ remove, blocked }) => <OnlyTreatmentRequired remove={remove} blocked={blocked} />,
   showDecommissionedDevices: ({ remove, blocked }) => <ShowDecommissionedDevices remove={remove} blocked={blocked} />,
-  showResultsFromUndeployedDevices: ({ remove, blocked }) => (
-    <ShowResultsFromUndeployedDevices remove={remove} blocked={blocked} />
-  ),
+  showUndeployedDevices: ({ remove, blocked }) => <ShowUndeployedDevices remove={remove} blocked={blocked} />,
   onlyUnreconciled: ({ remove, blocked }) => <OnlyUnreconciled remove={remove} blocked={blocked} />,
   revoked: ({ revoked, remove, blocked }) => <Revoked revoked={revoked} remove={remove} blocked={blocked} />,
   assayOverride: () => null,
@@ -928,17 +926,13 @@ const ShowDecommissionedDevices = ({ remove, blocked }) => {
   )
 }
 
-const ShowResultsFromUndeployedDevices = ({ remove, blocked }) => {
+const ShowUndeployedDevices = ({ remove, blocked }) => {
   const { formatMessage } = useIntl()
 
   return (
     <Btn
       lbl={formatMessage(messages.showResultsFromUndeployedDevices)}
-      del={
-        blocked.includes('showResultsFromUndeployedDevices')
-          ? undefined
-          : () => remove(['showResultsFromUndeployedDevices'])
-      }
+      del={blocked.includes('showUndeployedDevices') ? undefined : () => remove(['showUndeployedDevices'])}
     />
   )
 }

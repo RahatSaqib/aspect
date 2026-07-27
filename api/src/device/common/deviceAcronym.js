@@ -51,20 +51,32 @@ function acronymForDeviceType(deviceType = {}) {
 }
 
 /**
- * Default device-name generator: `${acronym}${deviceId}` (e.g. "GX45").
+ * Inserts the user-entered custom name part after the base name
+ * (e.g. "GX101" + "— 1" -> "GX101 — 1"). Blank parts leave the name unchanged.
+ */
+function withCustomNamePart(baseName, customNamePart) {
+  const part = String(customNamePart || '').trim()
+  return part ? `${baseName} ${part}` : baseName
+}
+
+/**
+ * Default device-name generator: `${acronym}${deviceId}` (e.g. "GX45"),
+ * followed by the device's custom name part when set.
  * Requires the device row to already exist so the auto-increment id is known.
  *
  * @param {Object} context - { knex, deviceId, deviceTypeId }
  */
 async function defaultGenerateDeviceName({ knex, deviceId, deviceTypeId }) {
   const deviceType = await knex('DeviceType').where('id', deviceTypeId).first('externalId', 'name', 'acronym')
+  const device = await knex('Device').where('id', deviceId).first('customNamePart')
 
-  return `${acronymForDeviceType(deviceType || {})}${deviceId}`
+  return withCustomNamePart(`${acronymForDeviceType(deviceType || {})}${deviceId}`, device?.customNamePart)
 }
 
 module.exports = {
   ACRONYM_BY_EXTERNAL_ID,
   deriveAcronym,
   acronymForDeviceType,
+  withCustomNamePart,
   defaultGenerateDeviceName,
 }

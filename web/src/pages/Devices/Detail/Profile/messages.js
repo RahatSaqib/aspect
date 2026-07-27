@@ -86,6 +86,27 @@ const messages = {
       id: 'pages.DeviceDetailProfile.sectionAdditionalInfo',
       defaultMessage: 'Additional Information',
     },
+    customNamePart: {
+      id: 'pages.DeviceDetailProfile.customNamePart',
+      defaultMessage: 'Custom Name Part',
+    },
+    deploymentCustomNamePart: {
+      id: 'pages.DeviceDetailProfile.deploymentCustomNamePart',
+      defaultMessage: 'Custom Name Part',
+    },
+    deploymentCustomNamePartHelp: {
+      id: 'pages.DeviceDetailProfile.deploymentCustomNamePartHelp',
+      defaultMessage:
+        'Optional. Helps tell twin devices apart, you can use a number or a descriptive short text. Avoid using the site name.',
+    },
+    deploymentCustomNamePartCleared: {
+      id: 'pages.DeviceDetailProfile.deploymentCustomNamePartCleared',
+      defaultMessage: 'The current text "{part}" will be removed.',
+    },
+    deploymentCustomNamePartPreview: {
+      id: 'pages.DeviceDetailProfile.deploymentCustomNamePartPreview',
+      defaultMessage: 'New device name: {name}',
+    },
     deviceApiKey: {
       id: 'pages.DeviceDetailProfile.deviceApiKey',
       defaultMessage: 'Device API Key',

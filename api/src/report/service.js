@@ -12,6 +12,11 @@ const logger = require('../shared/logger')
 const { getAllAsyncReportsForUser } = require('../shared/report')
 
 const { asyncReportStatusToId } = require('../shared/dictionary')
+const { withSharedFlags } = require('./params')
+
+// Seeds own the data: upsert_reports writes every fixture report's curated definitions
+// on each deploy. Null only on rows no seed owns, which serve no parameters.
+const parseReportParameters = raw => withSharedFlags(JSON.parse(raw || '[]'))
 
 async function getReports(request) {
   const { query, auth } = request
@@ -50,12 +55,21 @@ async function getReports(request) {
       'r.i18nKeyDescription',
       'r.exportExcel',
       'r.exportCsv',
-      'r.validations'
+      'r.validations',
+      'r.parameters'
     )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  return { ok: true, total, data: data.map(r => ({ ...r, validations: JSON.parse(r.validations) })) }
+  return {
+    ok: true,
+    total,
+    data: data.map(r => ({
+      ...r,
+      validations: JSON.parse(r.validations),
+      parameters: parseReportParameters(r.parameters),
+    })),
+  }
 }
 
 async function getReportDetails(externalId, dataConstraints) {
@@ -76,11 +90,14 @@ async function getReportDetails(externalId, dataConstraints) {
       'r.i18nKey',
       'r.name',
       'r.exportCsv',
-      'r.exportExcel'
+      'r.exportExcel',
+      'r.parameters'
     )
     .first()
 
   if (!report) throw Boom.forbidden("You don't have access to the requested report")
+
+  report.parameters = parseReportParameters(report.parameters)
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)

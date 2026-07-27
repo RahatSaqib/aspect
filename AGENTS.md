@@ -31,6 +31,20 @@ Aspect is a full-stack IoT management platform (monorepo) for tracking medical d
 
 ## Build / Lint / Test Commands
 
+### After finishing changes (required)
+
+When you finish implementing or editing code, **always** run `yarn lint:changes` in **both** packages (even if you only touched one):
+
+```bash
+# From api/
+yarn lint:changes
+
+# From web/
+yarn lint:changes
+```
+
+This lints only changed JS/TS files (from `git diff`) and applies `--fix`. Fix any remaining lint errors before considering the work done.
+
 ### From repo root
 
 ```bash
@@ -42,6 +56,7 @@ yarn start             # Start API + web concurrently
 ```bash
 yarn lint              # eslint src/ test/ migrations/ seeds/
 yarn lint:fix          # Same with --fix
+yarn lint:changes      # eslint --fix only changed JS/TS files (run after finishing changes)
 yarn mocha:unit        # Run all unit tests
 yarn mocha:contract    # Run all contract tests (requires running server)
 yarn db:migrate        # knex migrate:latest + seed:run
@@ -66,6 +81,7 @@ yarn dist              # Production build
 yarn test              # Jest with coverage
 yarn test:watch        # Jest in watch mode
 yarn lint              # eslint src/
+yarn lint:changes      # eslint --fix only changed JS/TS files (run after finishing changes)
 yarn prettier          # Prettier format src/**/*.{js,jsx,css}
 ```
 

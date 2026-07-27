@@ -59,7 +59,12 @@ module.exports = async function upsertReports(knex, countrySpecificReportFixture
 
     const reportToUpdate = await knex('Report').where({ externalId }).first()
     let reportId
-    const reportData = { ..._.omit(report, omitFields), validations: JSON.stringify(report.validations) }
+    const reportData = {
+      ..._.omit(report, omitFields),
+      validations: JSON.stringify(report.validations),
+      // every fixture must declare parameters (enforced by test/report/reportFixtures.test.js)
+      parameters: JSON.stringify(report.parameters ?? []),
+    }
 
     if (reportToUpdate) {
       // Update

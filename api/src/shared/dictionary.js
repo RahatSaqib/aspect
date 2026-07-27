@@ -200,7 +200,11 @@ exports.getDictionarySync = getDictionarySync
  * tables defined
  */
 exports.initDictionaryTables = async () => {
-  const dictionaryTables = [{ table: 'Assay', column: 'id' }]
+  const dictionaryTables = [
+    { table: 'Assay', column: 'id' },
+    // token -> id map used synchronously by the deviceApprovals filter in addConstraints()
+    { table: 'DeviceApproval', column: 'id' },
+  ]
   await Promise.all(
     dictionaryTables.map(async ({ table, column }) => {
       if (!getDictionarySync(table, column)) {

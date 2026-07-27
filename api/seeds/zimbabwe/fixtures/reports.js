@@ -10,6 +10,19 @@ module.exports = {
     availableForNotification: 1,
     sortOrder: 10,
     validations: [],
+    parameters: [
+      { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+      { name: 'stateId', type: 'state' },
+      { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+      { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+      {
+        name: 'showDecommissionedDevices',
+        type: 'boolean',
+        i18nKey: 'includeDecommissionedDevices',
+        label: 'Include Decommissioned Devices',
+        default: false,
+      },
+    ],
     sheets: [
       {
         sortOrder: 0,
@@ -33,6 +46,20 @@ module.exports = {
     availableForNotification: 1,
     sortOrder: 9,
     validations: [],
+    // Authoritative parameters for genexpert_issues (common's copy is omitted at upsert time).
+    parameters: [
+      { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+      { name: 'stateId', type: 'state' },
+      { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+      { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+      {
+        name: 'showDecommissionedDevices',
+        type: 'boolean',
+        i18nKey: 'includeDecommissionedDevices',
+        label: 'Include Decommissioned Devices',
+        default: false,
+      },
+    ],
     sheets: [
       {
         sortOrder: 0,

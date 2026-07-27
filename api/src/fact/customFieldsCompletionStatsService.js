@@ -144,19 +144,8 @@ function getUpdatedRecords(startOfDay, endOfDay, dateFrom, dateTo) {
     .leftOuterJoin('Country as c', 'c.id', 'g.countryId')
     .leftOuterJoin('TimeZone as tz', 'c.timezone', 'tz.id')
     .leftOuterJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
-    .leftOuterJoin(
-      'DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog',
-      'd.deviceMaintenanceStatusLogId',
-      'deviceMaintenanceStatusLog.id'
-    )
-    .leftOuterJoin(
-      'DeviceMaintenanceStatus as deviceMaintenanceStatus',
-      'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
-      'deviceMaintenanceStatus.id'
-    )
     .innerJoin('ResultType as __constraints_ResultType', 'r.resultTypeId', '__constraints_ResultType.id')
     .where('s.disabled', 0)
-    .whereRaw("IFNULL(deviceMaintenanceStatus.externalId, '') != 'inactiveDecommissioned'")
     .whereRaw("IFNULL(deviceApproval.token, '') != 'decommissioned'")
     .whereRaw("IFNULL(deviceApproval.token, 'approved') = 'approved'")
     .where('__constraints_ResultType.excluded', false)
@@ -184,19 +173,8 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
     .leftOuterJoin('Country as c', 'c.id', 'g.countryId')
     .leftOuterJoin('TimeZone as tz', 'c.timezone', 'tz.id')
     .leftOuterJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
-    .leftOuterJoin(
-      'DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog',
-      'd.deviceMaintenanceStatusLogId',
-      'deviceMaintenanceStatusLog.id'
-    )
-    .leftOuterJoin(
-      'DeviceMaintenanceStatus as deviceMaintenanceStatus',
-      'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
-      'deviceMaintenanceStatus.id'
-    )
     .innerJoin('ResultType as __constraints_ResultType', 'r.resultTypeId', '__constraints_ResultType.id')
     .where('s.disabled', 0)
-    .whereRaw("IFNULL(deviceMaintenanceStatus.externalId, '') != 'inactiveDecommissioned'")
     .whereRaw("IFNULL(deviceApproval.token, '') != 'decommissioned'")
     .whereRaw("IFNULL(deviceApproval.token, 'approved') = 'approved'")
     .where('__constraints_ResultType.excluded', false)

@@ -41,6 +41,7 @@ describe('updateDevice', () => {
   const baseDevice = {
     name: 'GX100',
     shortName: 'GX100',
+    customNamePart: '',
     deviceType: { id: 5, externalId: 'CepheidGeneXpert', name: 'GeneXpert' },
     configurationData: {},
     deviceApprovalId: 1,
@@ -97,12 +98,39 @@ describe('updateDevice', () => {
         currentName: 'GX100',
         deviceType: baseDevice.deviceType,
         editedDevice: {
+          customNamePart: '',
           moduleBayCapacity: 16,
           gx6cModulesCount: 4,
           gx10cModulesCount: 12,
         },
       })
     )
+  })
+
+  it('persists a trimmed customNamePart and resolves the name with it', async () => {
+    resolveDeviceNameOnEdit.resolves('GX100 — 1 (16m, 4x6c, 12x10c)')
+    const { knex, deviceUpdate } = buildKnexStub({ partnerPluginName: 'bangladesh' })
+    updateDevice = loadUpdateDevice(knex)
+
+    await updateDevice({ ...baseRequest, payload: { ...baseRequest.payload, customNamePart: ' — 1 ' } })
+
+    const updatePayload = deviceUpdate.firstCall.args[0]
+    assert.equal(updatePayload.customNamePart, '— 1')
+    assert.equal(updatePayload.name, 'GX100 — 1 (16m, 4x6c, 12x10c)')
+    assert.equal(resolveDeviceNameOnEdit.firstCall.args[0].editedDevice.customNamePart, '— 1')
+  })
+
+  it('resolves the name with the stored customNamePart when the payload omits it', async () => {
+    resolveDeviceNameOnEdit.resolves('GX100')
+    const { knex, deviceUpdate } = buildKnexStub({ partnerPluginName: 'bangladesh' })
+    getDeviceByRequest.resolves({ ...baseDevice, customNamePart: '— 1' })
+    updateDevice = loadUpdateDevice(knex)
+
+    await updateDevice(baseRequest)
+
+    const updatePayload = deviceUpdate.firstCall.args[0]
+    assert.isUndefined(updatePayload.customNamePart)
+    assert.equal(resolveDeviceNameOnEdit.firstCall.args[0].editedDevice.customNamePart, '— 1')
   })
 
   it('omits name fields when the plugin-resolved name matches the current name', async () => {

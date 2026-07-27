@@ -1,16 +1,16 @@
 const _ = require('lodash')
 
-function isShowResultsFromUndeployedDevices(query) {
-  const value = query.showResultsFromUndeployedDevices
+function isShowUndeployedDevices(query) {
+  const value = query.showUndeployedDevices
   return value === true || value === 'true' || value === 1 || value === '1'
 }
 
 function getUndeployedDevicesPartnerQueryOptions(query) {
-  return { showResultsFromUndeployedDevices: isShowResultsFromUndeployedDevices(query) }
+  return { showUndeployedDevices: isShowUndeployedDevices(query) }
 }
 
-function applyShowResultsFromUndeployedDevicesFilter(queryBuilder, query) {
-  if (!isShowResultsFromUndeployedDevices(query)) {
+function applyUndeployedDevicesResultFilter(queryBuilder, query) {
+  if (!isShowUndeployedDevices(query)) {
     queryBuilder.whereNotNull('r.siteId')
   }
 }
@@ -30,7 +30,7 @@ function applyGeographyFilterIncludingUndeployed(queryBuilder, columnName, param
 }
 
 function withUndeployedAwareGeographyFilters(filters, query) {
-  if (!isShowResultsFromUndeployedDevices(query)) {
+  if (!isShowUndeployedDevices(query)) {
     return filters
   }
 
@@ -49,22 +49,23 @@ function withUndeployedAwareGeographyFilters(filters, query) {
 }
 
 function getResultListConstraintOptions(query) {
-  const showResultsFromUndeployedDevices = isShowResultsFromUndeployedDevices(query)
-  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = query
+  // showUndeployedDevices is the single wire flag governing undeployed (pendingDeployment)
+  // devices and their results (null siteId). Decommissioned devices are a separate concern
+  // gated only by showDecommissionedDevices — they always have a site, so the null-site
+  // filter never hides them.
   const displayResult = query.displayResult || 'actual'
+  const deviceApprovals = ['approved']
+  if (isShowUndeployedDevices(query)) deviceApprovals.push('pendingDeployment')
+  if (query.showDecommissionedDevices) deviceApprovals.push('decommissioned')
 
-  return {
-    displayResult,
-    showUnapprovedDevices: showUnapprovedDevices || showResultsFromUndeployedDevices,
-    showDecommissionedDevices: showDecommissionedDevices || showResultsFromUndeployedDevices,
-  }
+  return { displayResult, deviceApprovals }
 }
 
 module.exports = {
   applyGeographyFilterIncludingUndeployed,
-  applyShowResultsFromUndeployedDevicesFilter,
+  applyUndeployedDevicesResultFilter,
   getResultListConstraintOptions,
   getUndeployedDevicesPartnerQueryOptions,
-  isShowResultsFromUndeployedDevices,
+  isShowUndeployedDevices,
   withUndeployedAwareGeographyFilters,
 }

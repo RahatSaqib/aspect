@@ -81,7 +81,7 @@ async function listDeviceApiKeys(request) {
         partner: 'p',
         site: 'dakSite',
       },
-      { showUnapprovedDevices: true }
+      { deviceApprovals: ['approved', 'pendingDeployment'] }
     )
 
   const getCount = dakQuery.clone().countDistinct('dak.id as count').first()

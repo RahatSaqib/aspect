@@ -12,9 +12,11 @@ const { startReportDownloadLog, finishReportDownloadLogInBackground } = require(
  * This method execute a report and return the result over a hapi reply object.
  * @param {*} request - Hapi request.
  * @param {*} reply - Hapi reply.
+ * @param {*} options - { validationMode: 'strict' | 'permissive' } — callers whose
+ * route schema already bounds the query (e.g. /result/export) pass permissive.
  * @returns The received Hapi reply object with the appropiate reponse and the report as content.
  */
-module.exports = async function downloadReport(request, reply) {
+module.exports = async function downloadReport(request, reply, { validationMode = 'strict' } = {}) {
   const { auth, query, params } = request
   const { externalId } = params
 
@@ -30,7 +32,9 @@ module.exports = async function downloadReport(request, reply) {
 
   try {
     const dataBuffer = new Stream.PassThrough()
-    const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true)
+    const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true, undefined, {
+      validationMode,
+    })
 
     const { fullPath, dataQueryTimeMs, fileGenerationTimeMs } = await promise
     const { size: fileSizeBytes } = await fs.promises.stat(fullPath)

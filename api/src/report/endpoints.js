@@ -8,25 +8,28 @@ const {
   getAsyncReportRequestWithReportsFilter,
 } = require('./service')
 const downloadReport = require('./downloadReport')
+const downloadAsyncReport = require('./downloadAsyncReport')
 const downloadScheduledReport = require('./downloadScheduledReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { responseAsyncReports } = require('./validation/response')
 const { processAsyncReportRequest } = require('./processAsyncReportRequest')
 
 function requestBaseQuery() {
-  const { minDate, maxDate } = validateDateRangeParams()
   return {
     ...validateAllGeographyFilterParams(),
     ...validateDateRangeParams(),
     consumableId: Joi.number().integer().positive().allow('', null),
-    minDate,
-    maxDate: maxDate.default(new Date().toISOString()),
     siteName: Joi.string().allow('').description('Filter for site name'),
     reportName: Joi.string().allow('').description('Filter for report name'),
     assayId: Joi.alternatives()
       .try(Joi.array().items(Joi.number()), Joi.number())
       .allow(null, '')
       .description('Filter for assay ID(s)'),
+    // Converted here so the string "false" from GET query params reaches the
+    // params validator (and the sheet functions) as a real boolean.
+    showDecommissionedDevices: Joi.boolean()
+      .allow(null, '')
+      .description('If true, will include decommissioned devices'),
     timeZone: Joi.string().allow('').description('IANA Timezone for requester'),
   }
 }
@@ -53,6 +56,47 @@ function responseBaseReports() {
             exportExcel: Joi.number().allow(null).description('Flag to allow export to excel'),
             exportCsv: Joi.number().allow(null).description('Flag to allow export to csv'),
             validations: Joi.array().items(Joi.string()),
+            parameters: Joi.array()
+              .required()
+              .description('Declared user-facing parameters for this report')
+              .items(
+                Joi.object().keys({
+                  name: Joi.string()
+                    .required()
+                    .description('Wire key of the parameter (dateRange is virtual: minDate/maxDate)'),
+                  type: Joi.string()
+                    .valid(
+                      'dateRange',
+                      'state',
+                      'lga',
+                      'site',
+                      'assay',
+                      'consumable',
+                      'enum',
+                      'number',
+                      'text',
+                      'boolean'
+                    )
+                    .required(),
+                  shared: Joi.bool()
+                    .required()
+                    .description('Derived from type server-side; value carries across report dialogs when true'),
+                  required: Joi.bool().description('Server-enforced in strict mode (phase 4); UI hint now'),
+                  multiple: Joi.bool().description('Multi-select (arrays accepted)'),
+                  default: Joi.alternatives()
+                    .try(Joi.string(), Joi.number(), Joi.bool(), Joi.object().keys({ period: Joi.string().required() }))
+                    .description('Literal for scalars; { period: <dateToken> } for dateRange'),
+                  dependsOn: Joi.string().description('Name of the parameter this one cascades from'),
+                  permission: Joi.string().description('Web hides the field unless user has this permission'),
+                  i18nKey: Joi.string().description('Message key for the label (web/src/messages)'),
+                  label: Joi.string().description('Fallback English label'),
+                  options: Joi.array()
+                    .items(Joi.alternatives().try(Joi.string(), Joi.number()))
+                    .description('Allowed values for enum type'),
+                  min: Joi.number().description('Min for number type'),
+                  max: Joi.number().description('Max for number type'),
+                })
+              ),
           })
         ),
     }),
@@ -103,10 +147,11 @@ const routes = [
       notes: 'Returns Excel file generated from template corresponding to externalId',
       auth: { scope: ['report:view'] },
       validate: {
-        query: {
+        // ad-hoc per-report parameters pass through; the strict params validator rejects undeclared keys
+        query: Joi.object({
           ...requestBaseQuery(),
           format: Joi.string().allow('', null, 'xlsx', 'csv').description('File format for exporting data'),
-        },
+        }).unknown(true),
         params: {
           externalId: Joi.string().description('Value of externalId in table Report').required(),
         },
@@ -179,9 +224,10 @@ const routes = [
       auth: { scope: ['report:view'] },
       validate: {
         payload: {
-          reportsFilter: {
+          // ad-hoc per-report parameters pass through; the strict params validator rejects undeclared keys
+          reportsFilter: Joi.object({
             ...requestBaseQuery(),
-          },
+          }).unknown(true),
           ...pick(requestBaseQuery(), ['timeZone']),
           format: Joi.string().allow('', null, 'xlsx', 'csv').description('File format for exporting data'),
         },
@@ -206,6 +252,21 @@ const routes = [
       },
       response: {
         ...responseAsyncReports(),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reports/async/{requestId}/download',
+    handler: downloadAsyncReport,
+    config: {
+      description: 'Download a ready async report file',
+      notes: 'Streams the pre-generated file for a completed async report request owned by the user',
+      auth: { scope: ['report:view'] },
+      validate: {
+        params: {
+          requestId: Joi.number().integer().positive().required().description('Async report request id'),
+        },
       },
     },
   },

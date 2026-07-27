@@ -123,7 +123,14 @@ const DEPLOYMENT_TIMELINE_PALETTE = [
   'var(--aspect-color-chill-blue-3, #67abb4)',
 ]
 
-const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled }) => {
+const DeploymentsSection = ({
+  deviceId,
+  firstResultDate,
+  approvalToken,
+  disabled,
+  deviceName,
+  deviceCustomNamePart,
+}) => {
   const { formatMessage } = useIntl()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
@@ -215,7 +222,7 @@ const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled
    * - Subsequent deployments: start is a date string; the current active is closed at (start - 1).
    */
   const handleAddDeployment = useCallback(
-    ({ siteId, siteName, start }) => {
+    ({ siteId, siteName, start, customNamePart }) => {
       const newChanges = [...pendingChanges]
 
       if (activeDeployment) {
@@ -230,10 +237,19 @@ const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled
           siteName,
           start: newStartStr,
           end: null,
+          customNamePart,
         })
       } else {
         // First deployment: no start date (covers from the beginning)
-        newChanges.push({ action: 'add', tempId: `temp-${Date.now()}`, siteId, siteName, start: null, end: null })
+        newChanges.push({
+          action: 'add',
+          tempId: `temp-${Date.now()}`,
+          siteId,
+          siteName,
+          start: null,
+          end: null,
+          customNamePart,
+        })
       }
 
       setPendingChanges(newChanges)
@@ -335,8 +351,12 @@ const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled
       return c
     })
 
+    // The staged add that becomes the active deployment carries the device's new custom
+    // name part (empty string clears it); without one, the stored value is untouched.
+    const activeAdd = [...pendingChanges].reverse().find(c => c.action === 'add' && (c.end ?? null) === null)
+
     persistMutation.mutate(
-      { deviceId, changes },
+      { deviceId, changes, ...(activeAdd ? { customNamePart: activeAdd.customNamePart ?? '' } : {}) },
       {
         onSuccess: async () => {
           setSaveError(null)
@@ -607,12 +627,14 @@ const DeploymentsSection = ({ deviceId, firstResultDate, approvalToken, disabled
       <AddDeploymentDialog
         open={addDialogOpen}
         onClose={() => setAddDialogOpen(false)}
-        onConfirm={({ siteId, siteName, start }) => {
-          const applied = handleAddDeployment({ siteId, start, siteName })
+        onConfirm={({ siteId, siteName, start, customNamePart }) => {
+          const applied = handleAddDeployment({ siteId, start, siteName, customNamePart })
           if (applied) setAddDialogOpen(false)
           return applied
         }}
         activeDeployment={activeDeployment}
+        deviceName={deviceName}
+        deviceCustomNamePart={deviceCustomNamePart}
       />
 
       {editingDeployment && (
@@ -647,12 +669,16 @@ DeploymentsSection.propTypes = {
   firstResultDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
   approvalToken: PropTypes.string,
   disabled: PropTypes.bool,
+  deviceName: PropTypes.string,
+  deviceCustomNamePart: PropTypes.string,
 }
 
 DeploymentsSection.defaultProps = {
   firstResultDate: null,
   approvalToken: null,
   disabled: false,
+  deviceName: null,
+  deviceCustomNamePart: null,
 }
 
 export default DeploymentsSection
