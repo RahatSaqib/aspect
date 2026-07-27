@@ -135,7 +135,7 @@ function coerceQueryDate(value) {
 
 async function listFormDataEntries(request) {
   const dataConstraints = await getConstraints(request.auth.credentials)
-  const { siteId, minDate, maxDate, sampleExternalId } = request.query
+  const { siteId, minDate, maxDate, sampleExternalId, page, size } = request.query
   const partnerId = dataConstraints.partner.id
 
   /**
@@ -150,7 +150,7 @@ async function listFormDataEntries(request) {
   }
 
   const [rows, totalRow] = await Promise.all([
-    getFormDataEntries(dataConstraints, filters),
+    getFormDataEntries(dataConstraints, filters, { page, size }),
     countFormDataEntries(dataConstraints, filters),
   ])
 

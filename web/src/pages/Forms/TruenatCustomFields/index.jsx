@@ -53,6 +53,8 @@ const TruenatCustomFieldsList = () => {
       matched: filters.matched,
       minDate: filters.minDate,
       maxDate: filters.maxDate,
+      page: pageAt,
+      size: pageSize,
     },
     isNil
   )

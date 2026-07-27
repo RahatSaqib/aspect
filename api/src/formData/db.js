@@ -1,4 +1,4 @@
-const { knex } = require('../db')
+const { knex, pageParams } = require('../db')
 const { addConstraints } = require('../auth/constraints')
 
 function buildBaseQuery(dataConstraints) {
@@ -35,7 +35,7 @@ function applyListFilters(query, { siteId, minDate, maxDate, sampleExternalId, m
   }
 }
 
-function getFormDataEntries(dataConstraints, filters) {
+function getFormDataEntries(dataConstraints, filters, paging) {
   return buildBaseQuery(dataConstraints)
     .modify(applyListFilters, filters)
     .select(
@@ -53,6 +53,7 @@ function getFormDataEntries(dataConstraints, filters) {
       'fd.data'
     )
     .orderBy('fd.createdOn', 'desc')
+    .modify(pageParams, paging)
 }
 
 function countFormDataEntries(dataConstraints, filters) {
