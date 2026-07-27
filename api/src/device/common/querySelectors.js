@@ -14,7 +14,6 @@ const SELECT_LIST_FIELDS = [
   'd.id',
   'd.name',
   'd.shortName',
-  'd.notes',
   'st.name as state',
   'dt.name as type',
   's.name as siteName',
