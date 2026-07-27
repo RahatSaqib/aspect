@@ -35,8 +35,8 @@ describe('normalizeParameterValues', () => {
   })
 
   it('keeps numeric zero', () => {
-    expect(
-      normalizeParameterValues([{ name: 'errorThreshold', type: 'number' }], { errorThreshold: 0 })
-    ).toEqual({ errorThreshold: 0 })
+    expect(normalizeParameterValues([{ name: 'errorThreshold', type: 'number' }], { errorThreshold: 0 })).toEqual({
+      errorThreshold: 0,
+    })
   })
 })
