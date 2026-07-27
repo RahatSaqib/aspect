@@ -3,7 +3,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 const {
-  applyShowResultsFromUndeployedDevicesFilter,
+  applyUndeployedDevicesResultFilter,
   getResultListConstraintOptions,
   getUndeployedDevicesPartnerQueryOptions,
   withUndeployedAwareGeographyFilters,
@@ -31,7 +31,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
         device: 'd',
         resultTransferFlag: true,
       },
-      { displayResult: 'all', showUnapprovedDevices: true, showDecommissionedDevices: true }
+      { displayResult: 'all', deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] }
     )
     .select({
       resultText: knex.raw(
@@ -200,7 +200,7 @@ const getBaseQueryForResults = () =>
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { assayId } = query
-  const { displayResult, showUnapprovedDevices, showDecommissionedDevices } = getResultListConstraintOptions(query)
+  const { displayResult, deviceApprovals } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseQueryForResults()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
@@ -322,7 +322,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints, getUndeployedDevicesPartnerQueryOptions(query))
-    .modify(queryBuilder => applyShowResultsFromUndeployedDevicesFilter(queryBuilder, query))
+    .modify(queryBuilder => applyUndeployedDevicesResultFilter(queryBuilder, query))
     .modify(
       addConstraints,
       dataConstraints,
@@ -338,7 +338,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { displayResult, showUnapprovedDevices, showDecommissionedDevices }
+      { displayResult, deviceApprovals }
     )
     .modify(queryBuilder => {
       if (query.withTags) {
@@ -421,7 +421,7 @@ async function showResultFollowUps(resultId, dataConstraints) {
 }
 
 function getQueryForDataExtract(query, dataConstraints) {
-  const { displayResult, showUnapprovedDevices, showDecommissionedDevices } = getResultListConstraintOptions(query)
+  const { displayResult, deviceApprovals } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseResults()
     .leftJoin('Geography as go', 'so.geographyId', 'go.id')
@@ -461,7 +461,7 @@ function getQueryForDataExtract(query, dataConstraints) {
       )
     )
     .modify(addPartnerQueryConstraints, dataConstraints, getUndeployedDevicesPartnerQueryOptions(query))
-    .modify(queryBuilder => applyShowResultsFromUndeployedDevicesFilter(queryBuilder, query))
+    .modify(queryBuilder => applyUndeployedDevicesResultFilter(queryBuilder, query))
     .modify(
       addConstraints,
       dataConstraints,
@@ -477,7 +477,7 @@ function getQueryForDataExtract(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { showUnapprovedDevices, showDecommissionedDevices, displayResult }
+      { deviceApprovals, displayResult }
     )
 
   return resultQuery

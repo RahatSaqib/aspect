@@ -21,6 +21,10 @@ export const getValidationSchema = (formatMessage, isGeneXpert) =>
     shortName: Yup.string()
       .nullable()
       .transform(value => value ?? ''),
+    customNamePart: Yup.string()
+      .nullable()
+      .transform(value => value ?? '')
+      .max(20, formatMessage(validationErrorMessages.mustBeAtMostCharacters, { max: 20 })),
     siteId: Yup.number().nullable(),
     implementingPartnerId: Yup.number().nullable(),
     dailyTestCapacity: Yup.number()

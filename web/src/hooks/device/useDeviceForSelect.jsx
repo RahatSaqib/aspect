@@ -18,7 +18,7 @@ const useDeviceForSelect = params => {
     partnerId = '',
     siteId = '',
     deviceTypeExternalId,
-    showUnapprovedDevices = false,
+    showUndeployedDevices = false,
     onlyResultDevices = false,
   } = params
   return useQuery(
@@ -28,7 +28,7 @@ const useDeviceForSelect = params => {
       partnerId,
       siteId,
       deviceTypeExternalId,
-      showUnapprovedDevices,
+      showUndeployedDevices,
       onlyResultDevices,
     ],
     () =>
@@ -37,7 +37,7 @@ const useDeviceForSelect = params => {
         partnerId,
         siteId,
         deviceTypeExternalId,
-        showUnapprovedDevices,
+        showUndeployedDevices,
         onlyResultDevices,
       })
   )

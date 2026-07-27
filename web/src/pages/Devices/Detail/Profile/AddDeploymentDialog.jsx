@@ -11,6 +11,7 @@ import { toDateOnly } from '../../../../components/shared/DateTimeInput/utils/da
 import SiteSelect from '../../../../components/SiteSelect/SiteSelect'
 import useSiteList from '../../../../hooks/site/useSiteList'
 import validationErrorMessages from '../../../../messages/validationErrorMessages'
+import { previewDeviceName } from '../deviceNamePreview'
 import messages from './messages'
 
 const getTodayInUserTimezone = () => {
@@ -37,9 +38,11 @@ const getTodayInUserTimezone = () => {
  * - First deployment (activeDeployment is null): only site is asked; start will be null.
  * - Subsequent deployments: site + start date; current active closes at (start - 1).
  */
-const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => {
+const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment, deviceName, deviceCustomNamePart }) => {
   const { formatMessage } = useIntl()
   const { data: sites = [] } = useSiteList()
+
+  const currentCustomNamePart = String(deviceCustomNamePart || '').trim()
 
   const isFirstDeployment = !activeDeployment
 
@@ -73,11 +76,14 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => 
             ),
         }),
     siteId: Yup.number().nullable(true).required(formatMessage(validationErrorMessages.required)),
+    customNamePart: Yup.string().max(20, formatMessage(validationErrorMessages.mustBeAtMostCharacters, { max: 20 })),
   })
 
   const initialValues = {
     start: isFirstDeployment ? '' : minStart && minStart > today ? minStart : today,
     siteId: '',
+    // Deploying always starts from a clean custom name part; users must re-enter it to keep it.
+    customNamePart: '',
   }
 
   return (
@@ -93,6 +99,7 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => 
             siteId: values.siteId,
             siteName: site?.name || null,
             start: isFirstDeployment ? null : values.start,
+            customNamePart: String(values.customNamePart || '').trim(),
           })
           if (success !== false) resetForm()
         }}
@@ -106,6 +113,25 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => 
                   return d.toISOString().slice(0, 10)
                 })()
               : null
+
+          const newDeviceName = previewDeviceName({
+            currentName: deviceName,
+            currentPart: currentCustomNamePart,
+            editedPart: values.customNamePart,
+          })
+
+          const helpText = currentCustomNamePart
+            ? `${formatMessage(messages.deploymentCustomNamePartHelp)} ${formatMessage(
+                messages.deploymentCustomNamePartCleared,
+                { part: currentCustomNamePart }
+              )}`
+            : formatMessage(messages.deploymentCustomNamePartHelp)
+
+          const customNamePartHelperText = errors.customNamePart
+            ? errors.customNamePart
+            : String(values.customNamePart || '').trim() && deviceName
+            ? formatMessage(messages.deploymentCustomNamePartPreview, { name: newDeviceName })
+            : helpText
 
           return (
             <Form onSubmit={handleSubmit}>
@@ -150,6 +176,19 @@ const AddDeploymentDialog = ({ open, onClose, onConfirm, activeDeployment }) => 
                 helperText={touched.siteId && errors.siteId}
                 required
               />
+              <TextField
+                label={formatMessage(messages.deploymentCustomNamePart)}
+                name="customNamePart"
+                value={values.customNamePart}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ maxLength: 20 }}
+                error={!!errors.customNamePart}
+                helperText={customNamePartHelperText}
+              />
               <DialogActions>
                 <AspectButton onClick={onClose}>{formatMessage(messages.cancel)}</AspectButton>
                 <AspectButton type="submit" color="primary" variant="contained" disabled={!isValid || !dirty}>
@@ -169,10 +208,14 @@ AddDeploymentDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   activeDeployment: PropTypes.object,
+  deviceName: PropTypes.string,
+  deviceCustomNamePart: PropTypes.string,
 }
 
 AddDeploymentDialog.defaultProps = {
   activeDeployment: null,
+  deviceName: null,
+  deviceCustomNamePart: null,
 }
 
 export default AddDeploymentDialog

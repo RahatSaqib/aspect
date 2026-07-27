@@ -30,6 +30,10 @@ const validationErrorMessages = {
       id: 'form.error.mustBeAString',
       defaultMessage: 'Must be a string',
     },
+    mustBeAtMostCharacters: {
+      id: 'form.error.mustBeAtMostCharacters',
+      defaultMessage: 'Must be at most {max} characters',
+    },
   }),
 }
 

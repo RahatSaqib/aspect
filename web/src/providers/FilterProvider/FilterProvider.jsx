@@ -71,7 +71,7 @@ export const defaultFilter = {
   '/browse/samples': { minDate, maxDate }, //
   '/browse/site': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate }, //
-  '/reports': { minDate, maxDate }, //
+  '/reports': {}, // per-report keys ('/reports/<externalId>', '/reports/_lastSubmission') are created lazily
   '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
   ...dashboardV2DefaultFilters,
 }

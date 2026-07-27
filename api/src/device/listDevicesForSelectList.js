@@ -9,23 +9,23 @@ const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 async function listDevicesForSelectList(request) {
   const {
     query,
-    query: { showUnapprovedDevices, showDecommissionedDevices, onlyResultDevices, deviceTypeExternalId },
+    query: { showUndeployedDevices, showDecommissionedDevices, onlyResultDevices, deviceTypeExternalId },
     auth,
   } = request
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
+
+  // Translate the wire-level flags into the deviceApprovals token set
+  const deviceApprovals = ['approved']
+  if (showUndeployedDevices) deviceApprovals.push('pendingDeployment')
+  if (showDecommissionedDevices) deviceApprovals.push('decommissioned')
 
   const devicesQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(
-      addConstraints,
-      dataConstraints,
-      { device: 'd', geography: 'g' },
-      { showUnapprovedDevices, showDecommissionedDevices }
-    )
+    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' }, { deviceApprovals })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'd.partnerId',

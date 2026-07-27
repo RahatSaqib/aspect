@@ -16,7 +16,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints, timezoneIANA) {
         device: 'd',
         site: 's',
       },
-      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+      { deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] }
     )
     .select(
       'd.id as deviceId',

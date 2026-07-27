@@ -45,9 +45,8 @@ const DeviceResultHistory = ({ deviceId, sortDir, sortCol, pageAt, pageSize }) =
   const page = pageAt
   const size = pageSize
   const filters = {
-    showUnapprovedDevices: true,
+    showUndeployedDevices: true,
     showDecommissionedDevices: true,
-    showResultsFromUndeployedDevices: true,
     deviceId,
   }
   // Params for main list query

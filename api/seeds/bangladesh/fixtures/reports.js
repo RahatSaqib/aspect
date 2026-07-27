@@ -9,6 +9,12 @@ const resultsDrTb10A10BCovid = {
   sortOrder: 14,
   availableForNotification: 1,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -71,6 +77,12 @@ const resultsForNTPUse = {
   availableForNotification: 1,
   sortOrder: 11,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  ],
   sheets: [
     {
       sortOrder: 0,
@@ -93,6 +105,12 @@ const resultsDrTb10A10BCovidNtpUse = {
   availableForNotification: 1,
   sortOrder: 17,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+  ],
   sheets: [
     {
       sortOrder: 0,

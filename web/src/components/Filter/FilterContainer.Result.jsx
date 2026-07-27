@@ -226,8 +226,8 @@ const ResultFilter = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={[true, 'true'].includes(state.showResultsFromUndeployedDevices)}
-                onChange={e => setState({ ...state, showResultsFromUndeployedDevices: e.target.checked || null })}
+                checked={[true, 'true'].includes(state.showUndeployedDevices)}
+                onChange={e => setState({ ...state, showUndeployedDevices: e.target.checked || null })}
               />
             }
             label={formatMessage(messages.showResultsFromUndeployedDevices)}

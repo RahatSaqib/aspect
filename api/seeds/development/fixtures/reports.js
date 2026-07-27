@@ -10,6 +10,20 @@ const deviceSummaryReport = {
   exportCsv: false,
   sortOrder: 15,
   validations: [],
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'assayId', type: 'assay', multiple: true },
+    {
+      name: 'showDecommissionedDevices',
+      type: 'boolean',
+      i18nKey: 'includeDecommissionedDevices',
+      label: 'Include Decommissioned Devices',
+      default: false,
+    },
+  ],
   sheets: [
     {
       sortOrder: 0,

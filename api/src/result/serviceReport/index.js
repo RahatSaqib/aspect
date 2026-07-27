@@ -41,7 +41,12 @@ const columnsDeviceErrorHistoryForAttachment = [
 
 // ----------------------------------------------------------------------------------------------
 async function exportResults(request, reply) {
-  return downloadReport({ ...request, params: { externalId: 'all_results' } }, reply)
+  // The /result/export route validates its query with the full (closed) result-list
+  // Joi schema, whose keys (sortCol, page, showUndeployedDevices, ...) are not report
+  // parameters — strict report validation would reject legitimate exports.
+  return downloadReport({ ...request, params: { externalId: 'all_results' } }, reply, {
+    validationMode: 'permissive',
+  })
 }
 
 async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {

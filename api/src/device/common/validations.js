@@ -165,6 +165,7 @@ function listDevicesBaseResponse() {
               id: Joi.number().required().description('The ID of the device'),
               name: Joi.string().required().description('The name of the device'),
               shortName: Joi.string().allow('', null).description('The short name of the device'),
+              notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
               deviceStatus: Joi.string().allow('', null).description('The connector status'),
               connectorStatus: Joi.string().allow('', null).description('The connector status'),
               connectorVersion: Joi.string().allow('', null).description('The connector version'),
@@ -249,6 +250,9 @@ const deviceDetailsResponseFields = Joi.object()
     id: Joi.number().required().description('The ID of the device'),
     name: Joi.string().required().description('The name of the device'),
     shortName: Joi.string().allow('', null).description('The short name of the device'),
+    customNamePart: Joi.string()
+      .allow('', null)
+      .description('User-entered part inserted into the generated device name, after the identifier'),
     createdOn: Joi.date().required().description('When the device was added to the database'),
     lastPingOn: Joi.date().allow(null).description('When the device last pinged'),
     lastSeen: Joi.date()
