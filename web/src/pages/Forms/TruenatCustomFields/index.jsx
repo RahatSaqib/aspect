@@ -53,6 +53,8 @@ const TruenatCustomFieldsList = () => {
       matched: filters.matched,
       minDate: filters.minDate,
       maxDate: filters.maxDate,
+      sortCol,
+      sortDir,
       page: pageAt,
       size: pageSize,
     },
@@ -66,12 +68,12 @@ const TruenatCustomFieldsList = () => {
   const rows = data?.data || []
 
   const columns = [
-    { key: 'sampleExternalId', label: formatMessage(messages.sampleId), sortable: false },
-    { key: 'siteName', label: formatMessage(messages.siteName), sortable: false },
-    { key: 'collectedOn', label: formatMessage(messages.dateOfTest), sortable: false },
+    { key: 'sampleExternalId', label: formatMessage(messages.sampleId), sortable: true },
+    { key: 'siteName', label: formatMessage(messages.siteName), sortable: true },
+    { key: 'collectedOn', label: formatMessage(messages.dateOfTest), sortable: true },
     { key: 'resultId', label: formatMessage(messages.matchToResult), sortable: false },
-    { key: 'resultEndedOn', label: formatMessage(messages.resultEndedOn), sortable: false },
-    { key: 'createdOn', label: formatMessage(messages.dateUploaded), sortable: false },
+    { key: 'resultEndedOn', label: formatMessage(messages.resultEndedOn), sortable: true },
+    { key: 'createdOn', label: formatMessage(messages.dateUploaded), sortable: true },
   ]
 
   return (

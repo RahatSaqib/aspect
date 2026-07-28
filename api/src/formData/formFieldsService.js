@@ -1,34 +1,17 @@
-const Boom = require('@hapi/boom')
-const { getConstraints } = require('../auth/constraints')
 const { getFormsByFormDefinitionExternalIds } = require('../forms/service')
 const formsFileDictionary = require('../forms/formsFileDictionary')
-const { countFormDataEntries, getFormDataEntries, getFormDataEntryById } = require('./db')
 
-function parseMatchedFilter(value) {
-  if (value === undefined) {
-    return undefined
-  }
-
-  if (value === true || value === 'true') {
-    return true
-  }
-
-  if (value === false || value === 'false') {
-    return false
-  }
-
-  return undefined
-}
+/**
+ * Maps a persisted FormData row into a display-ready shape. Non-entrypoint logic:
+ * parses the stored `data` JSON and resolves each `customFieldsData` entry against the
+ * partner's form definitions so the web can render titles and values without raw JSON.
+ */
 
 function parseRow(row) {
   const parsedData = typeof row.data === 'string' ? JSON.parse(row.data) : row.data
   return { ...row, ...parsedData }
 }
 
-/**
- * For each entry in customFieldsData, resolve field titles and display values
- * from the form definitions so the web can render them without raw JSON.
- */
 function getFieldEntryByFieldDef(fields, fieldDef) {
   if (!fields) return null
 
@@ -129,58 +112,4 @@ async function enrichWithFormFields(parsedRow, partnerId) {
   return { ...parsedRow, formFields }
 }
 
-function coerceQueryDate(value) {
-  return value instanceof Date ? value : new Date(value)
-}
-
-async function listFormDataEntries(request) {
-  const dataConstraints = await getConstraints(request.auth.credentials)
-  const { siteId, minDate, maxDate, sampleExternalId, page, size } = request.query
-  const partnerId = dataConstraints.partner.id
-
-  /**
-   * Same shape as result list (ISO with offset). Joi guarantees both are present.
-   */
-  const filters = {
-    siteId,
-    minDate: coerceQueryDate(minDate),
-    maxDate: coerceQueryDate(maxDate),
-    sampleExternalId,
-    matched: parseMatchedFilter(request.query.matched),
-  }
-
-  const [rows, totalRow] = await Promise.all([
-    getFormDataEntries(dataConstraints, filters, { page, size }),
-    countFormDataEntries(dataConstraints, filters),
-  ])
-
-  const parsedRows = rows.map(parseRow)
-  const enrichedRows = await Promise.all(parsedRows.map(row => enrichWithFormFields(row, partnerId)))
-
-  return {
-    ok: true,
-    total: Number(totalRow.total || 0),
-    length: enrichedRows.length,
-    data: enrichedRows,
-  }
-}
-
-async function showFormDataEntry(request) {
-  const dataConstraints = await getConstraints(request.auth.credentials)
-  const partnerId = dataConstraints.partner.id
-  const row = await getFormDataEntryById(dataConstraints, request.params.id)
-
-  if (!row) {
-    throw Boom.notFound('FormData entry not found.')
-  }
-
-  const parsedRow = parseRow(row)
-  const enrichedRow = await enrichWithFormFields(parsedRow, partnerId)
-
-  return {
-    ok: true,
-    data: enrichedRow,
-  }
-}
-
-module.exports = { listFormDataEntries, showFormDataEntry }
+module.exports = { parseRow, enrichWithFormFields }
