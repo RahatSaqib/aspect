@@ -297,20 +297,24 @@ Never throw `new Error(...)` from route handlers or service functions.
 
 ## 8. Listing records with `addConstraints` (read-only use case)
 
-Use this pattern when you need a **pageable, filterable list** of records that are access-controlled by the user's site/result constraints. The canonical example is `api/src/formData/` (TDC-21).
+Use this pattern when you need a **pageable, filterable list** of records that are access-controlled by the user's site/result constraints. The canonical example is `api/src/formData/` (TDC-21). For **`minDate` / `maxDate`** ISO semantics, see **`api/date-time-handling`**.
 
 ### Structure
 
 ```
 src/formData/
-  db.js          ← Knex queries; buildBaseQuery + filter modifier
-  service.js     ← Handler + serialization
-  endpoints.js   ← Route definitions (GET /form-data, GET /form-data/{id})
+  endpoints.js              ← Route definitions (GET /form-data, GET /form-data/{id})
+  listFormDataEntries.js    ← list use case: handler + list-only filters / select / sort+page
+  showFormDataEntry.js      ← show use case: handler + show-only query
+  db.js                     ← only buildBaseQuery (shared by ≥2 use cases)
+  formFieldsService.js      ← shared non-entrypoint logic (parse / enrich form fields)
 ```
+
+Do **not** keep a mega `service.js`. Promote to `db.js` (or `common/db.js`) only when a query is shared by ≥2 use cases — here that is only `buildBaseQuery`.
 
 ### Key patterns
 
-**`db.js` — base query with constraints**
+**`db.js` — shared base query with constraints**
 
 ```js
 const { knex } = require('../db')
@@ -323,48 +327,63 @@ function buildBaseQuery(dataConstraints) {
     .modify(addConstraints, dataConstraints, { site: 's' })
 }
 
-function applyListFilters(query, { siteId, dateFrom, dateTo }) {
-  if (siteId) query.where('fd.siteId', siteId)
-  if (dateFrom) query.where('fd.createdOn', '>=', dateFrom)
-  if (dateTo)   query.where('fd.createdOn', '<=', dateTo)
-}
-
-function getRecords(dataConstraints, filters) {
-  return buildBaseQuery(dataConstraints)
-    .modify(applyListFilters, filters)
-    .select('fd.id', 's.name as siteName', ...)
-    .orderBy('fd.createdOn', 'desc')
-}
-
-function countRecords(dataConstraints, filters) {
-  return buildBaseQuery(dataConstraints).modify(applyListFilters, filters).countDistinct('fd.id as total').first()
-}
+module.exports = { buildBaseQuery }
 ```
 
-**`service.js` — handler with default date range**
+**`listFormDataEntries.js` — handler + use-case-local DB**
 
 ```js
-async function listRecords(request) {
-  const dataConstraints = await getConstraints(request.auth.credentials)
-  const now = new Date()
+const { sortPageParams } = require('../db')
+const { getConstraints } = require('../auth/constraints')
+const { buildBaseQuery } = require('./db')
+
+async function listFormDataEntries({ auth, query }) {
+  const dataConstraints = await getConstraints(auth.credentials)
   const filters = {
-    siteId: request.query.siteId,
-    dateFrom: request.query.dateFrom || subDays(now, 30),
-    dateTo:   request.query.dateTo   || now,
+    siteId: query.siteId,
+    minDate: coerceQueryDate(query.minDate),
+    maxDate: coerceQueryDate(query.maxDate),
+    // ...
   }
   const [rows, totalRow] = await Promise.all([
-    getRecords(dataConstraints, filters),
-    countRecords(dataConstraints, filters),
+    getFormDataEntries(dataConstraints, filters, query),
+    countFormDataEntries(dataConstraints, filters),
   ])
   return { ok: true, total: Number(totalRow.total || 0), length: rows.length, data: rows }
 }
+
+function applyListFilters(qb, { siteId, minDate, maxDate }) {
+  if (siteId) qb.where('fd.siteId', siteId)
+  if (minDate) qb.where('fd.createdOn', '>=', minDate)
+  if (maxDate) qb.where('fd.createdOn', '<=', maxDate)
+}
+
+function getFormDataEntries(dataConstraints, filters, sortPageQuery) {
+  return buildBaseQuery(dataConstraints)
+    .modify(applyListFilters, filters)
+    .select('fd.id', 's.name as siteName', /* ... */)
+    .modify(sortPageParams, sortPageQuery, 'createdOn', SORT_COLUMNS)
+}
+
+function countFormDataEntries(dataConstraints, filters) {
+  return buildBaseQuery(dataConstraints).modify(applyListFilters, filters).countDistinct('fd.id as total').first()
+}
+
+module.exports = { listFormDataEntries }
 ```
 
-**`endpoints.js` — register with `decorateClientAPI('result')`**
+**`endpoints.js` — validate dates + sort/page**
 
 ```js
-// In routes.js:
-server.route(require('./formData/endpoints').routes.map(decorateClientAPI('result')))
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { listFormDataEntries } = require('./listFormDataEntries')
+
+// query:
+{
+  minDate: Joi.date().iso().required(),
+  maxDate: Joi.date().iso().required(),
+  ...validateSortPageParams('sampleExternalId', 'siteName', 'collectedOn', 'createdOn'),
+}
 ```
 
 **Access-control alias rule**: pass `{ site: 's' }` to `addConstraints` when the table being listed has a `siteId` FK, exactly like `getAccessibleFormDataByExternalId` in `api/src/mobileApi/customFields/db.js`. This hooks into job-context OR-constraints and country/partner filtering automatically.

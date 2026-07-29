@@ -15,10 +15,21 @@ This skill covers **filter date ranges**, **`api/src/shared/date.js`**, and alig
 
 ## FormData list (`GET /form-data`) — reference implementation
 
+Canonical layout follows **`api/use-case-development`** (flat use cases + shared `db.js` only for queries reused by ≥2 use cases):
+
+```
+src/formData/
+  endpoints.js              ← GET /form-data, GET /form-data/{id}
+  listFormDataEntries.js    ← list use case (handler + list-only filters/queries)
+  showFormDataEntry.js      ← show use case (handler + show-only query)
+  db.js                     ← only buildBaseQuery (shared by both use cases)
+  formFieldsService.js      ← shared row parse / form-field enrichment
+```
+
 - Route: `api/src/formData/endpoints.js`, scope **`forms:view`**.
-- **Required** query params: **`minDate`**, **`maxDate`** — `Joi.date().iso().required()` (same names as `fetchWrapperForQueries` / result list).
-- Handler: `api/src/formData/service.js` coerces both to **`Date`** and passes them through. **No** second server-side timezone transform.
-- DB: `api/src/formData/db.js` — `fd.createdOn` with `>=` / `<=`. Client ISO strings **with offset** (e.g. `...+06:00`) are correct UTC instants.
+- **Required** query params: **`minDate`**, **`maxDate`** — `Joi.date().iso().required()` (same names as `fetchWrapperForQueries` / result list). Sort/page via **`validateSortPageParams`**.
+- Use case: `api/src/formData/listFormDataEntries.js` coerces both to **`Date`** (`coerceQueryDate`) and applies `fd.createdOn` `>=` / `<=` in the use-case-local `applyListFilters`. **No** second server-side timezone transform.
+- Shared DB: `api/src/formData/db.js` — **`buildBaseQuery` only** (constraints + joins). Do **not** put list date filters there. Client ISO strings **with offset** (e.g. `...+06:00`) are correct UTC instants.
 
 ## UI — recommended practice
 

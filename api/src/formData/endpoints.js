@@ -1,6 +1,7 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler } = require('../routes')
-const { listFormDataEntries, showFormDataEntry } = require('./service')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { listFormDataEntries } = require('./listFormDataEntries')
+const { showFormDataEntry } = require('./showFormDataEntry')
 
 const routes = [
   {
@@ -18,6 +19,7 @@ const routes = [
           maxDate: Joi.date().iso().required(),
           sampleExternalId: Joi.string().trim().optional(),
           matched: Joi.boolean().truthy('true').falsy('false').optional(),
+          ...validateSortPageParams('sampleExternalId', 'siteName', 'collectedOn', 'resultEndedOn', 'createdOn'),
         }),
       },
     },
