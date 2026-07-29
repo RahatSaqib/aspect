@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2026-05-21T10:10:52.895Z\n"
+"POT-Creation-Date: 2026-07-29T14:33:25.855Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -55,6 +55,15 @@ msgstr "# Número de sítios PMDT com 10 C GX"
 #: extracted_strings.json
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# Número de locais testados Ensaio MTB/XDR"
+
+#. [pages.DeviceDetail.decommissionedTitleSuffix]
+#. defaultMessage is:
+#. (Decommissioned)
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Decommissioned"
+msgid "(Decommissioned)"
+msgstr "Desmantelados"
 
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -179,6 +188,26 @@ msgstr ""
 #: extracted_strings.json
 msgid ">6 Months"
 msgstr ">6 Meses"
+
+#. [pages.DeviceDetail.decommissionedDeviceCannotBeEdited]
+#. defaultMessage is:
+#. A decommissioned device cannot be edited.
+#. [pages.DeviceDetailEdit.decommissionedDeviceCannotBeEdited]
+#. defaultMessage is:
+#. A decommissioned device cannot be edited.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Decommission device"
+msgid "A decommissioned device cannot be edited."
+msgstr "Dispositivo de desativação"
+
+#. [pages.DeviceDetail.deviceMustHaveDeploymentToBeDecommissioned]
+#. defaultMessage is:
+#. A device must have a deployment before it can be decommissioned.
+#: extracted_strings.json
+msgid "A device must have a deployment before it can be decommissioned."
+msgstr ""
+"Um dispositivo deve ter uma implantação antes de poder ser descomissionado."
 
 #. [pages.ReportIndex.doNotUseModulesReport_Description]
 #. defaultMessage is:
@@ -503,12 +532,31 @@ msgstr "Adicionar linha"
 msgid "Add to this device"
 msgstr "Adicionar a este dispositivo"
 
+#. [pages.DeviceDetailEdit.customNamePartHelp]
+#. defaultMessage is:
+#. Added to the device name, right after the identifier
+#: extracted_strings.json
+msgid "Added to the device name, right after the identifier"
+msgstr "Adicionado ao nome do dispositivo, logo após o identificador"
+
 #. [errorResponseMessages.addInventory.PUT.default.title]
 #. defaultMessage is:
 #. Adding Inventory Failed
 #: extracted_strings.json
 msgid "Adding Inventory Failed"
 msgstr "Adicionando Inventário Falhado"
+
+#. [pages.DeviceDetailEdit.sectionAdditionalInfo]
+#. defaultMessage is:
+#. Additional Information
+#. [pages.DeviceDetailProfile.sectionAdditionalInfo]
+#. defaultMessage is:
+#. Additional Information
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Technical information"
+msgid "Additional Information"
+msgstr "Informação técnica"
 
 #. [pages.NotificationDetail.fieldAddress]
 #. defaultMessage is:
@@ -913,14 +961,14 @@ msgstr "Aplicar filtros"
 #. [filter.popover.deviceApproval]
 #. defaultMessage is:
 #. Approval
-#. [pages.DeviceDetailProfile.approval]
-#. defaultMessage is:
-#. Approval
 #: extracted_strings.json
 msgid "Approval"
 msgstr "Aprovação"
 
 #. [pages.DeviceList.approvalStatus]
+#. defaultMessage is:
+#. Approval Status
+#. [pages.DeviceDetailProfile.approvalStatus]
 #. defaultMessage is:
 #. Approval Status
 #: extracted_strings.json
@@ -969,13 +1017,6 @@ msgstr "Tem a certeza de que quer apagar este {entity}?"
 msgid "Are you sure to toggle notification status?"
 msgstr "Tem certeza de que deseja excluir a notificação {notificationName}?"
 
-#. [pages.DeviceDetail.decommissionConfirmMessage]
-#. defaultMessage is:
-#. Are you sure you want to decommission this device?
-#: extracted_strings.json
-msgid "Are you sure you want to decommission this device?"
-msgstr "Tem a certeza de que pretende desativar este dispositivo?"
-
 #. [pages.DeviceDetailProfile.confirmDeleteDeployment]
 #. defaultMessage is:
 #. Are you sure you want to delete this deployment?
@@ -993,13 +1034,6 @@ msgid ""
 msgstr ""
 "Tem a certeza de que quer apagar este sítio? Esta acção destina-se apenas a "
 "sítios de teste, todos os dados do sítio serão perdidos."
-
-#. [pages.DeviceDetail.reactivateConfirmMessage]
-#. defaultMessage is:
-#. Are you sure you want to reactivate this device?
-#: extracted_strings.json
-msgid "Are you sure you want to reactivate this device?"
-msgstr "Tem a certeza de que pretende reativar este dispositivo?"
 
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
@@ -1066,20 +1100,6 @@ msgstr "Tipo de ensaio"
 #: extracted_strings.json
 msgid "Assay that Consume this Item"
 msgstr "Ensaio que consome este item"
-
-#. [pages.DeviceApiKeyList.assign]
-#. defaultMessage is:
-#. Assign
-#: extracted_strings.json
-msgid "Assign"
-msgstr "Atribuir"
-
-#. [pages.DeviceApiKeyList.assignerDialogTitle]
-#. defaultMessage is:
-#. Assign {count} Keys
-#: extracted_strings.json
-msgid "Assign {count} Keys"
-msgstr "Atribuir {count} Chaves"
 
 #. [pages.UserPreferences.assignmentDetails]
 #. defaultMessage is:
@@ -1782,9 +1802,6 @@ msgstr "Não pode ser editado"
 #. [pages.DeviceApiKeyList.cancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.DeviceDetail.cancel]
-#. defaultMessage is:
-#. Cancel
 #. [pages.BaseDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1819,6 +1836,28 @@ msgstr "Não pode ser editado"
 msgid "Cancel"
 msgstr "Cancelar"
 
+#. [pages.DeviceDetail.reactivateDeploymentTimelineConflict]
+#. defaultMessage is:
+#. Cannot reactivate because the deployment timeline conflicts with today's date.
+#: extracted_strings.json
+msgid ""
+"Cannot reactivate because the deployment timeline conflicts with today's "
+"date."
+msgstr ""
+"Não é possível reativar porque o cronograma de implementação entra em "
+"conflito com a data de hoje."
+
+#. [pages.DeviceDetail.cannotReactivateExplanation]
+#. defaultMessage is:
+#. Cannot reactivate. A decommissioned device must have a deployment before it can be reactivated.
+#: extracted_strings.json
+msgid ""
+"Cannot reactivate. A decommissioned device must have a deployment before it "
+"can be reactivated."
+msgstr ""
+"Não é possível reativar. Um dispositivo desativado necessita de ter uma "
+"implementação antes de poder ser reativado."
+
 #. [pages.DeviceDetailProfile.transferInstrumentsDuplicatedSerials]
 #. defaultMessage is:
 #. Cannot transfer instruments with duplicated serials.
@@ -1826,6 +1865,18 @@ msgstr "Cancelar"
 msgid "Cannot transfer instruments with duplicated serials."
 msgstr ""
 "Não é possível transferir instrumentos com números de série duplicados."
+
+#. [pages.DeviceDetailEdit.sectionCapacityModules]
+#. defaultMessage is:
+#. Capacity & Modules
+#. [pages.DeviceDetailProfile.sectionCapacityModules]
+#. defaultMessage is:
+#. Capacity & Modules
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Capacity"
+msgid "Capacity & Modules"
+msgstr "Capacidade"
 
 #. [pages.Consumable.New.cartridgeLotNumber]
 #. defaultMessage is:
@@ -2009,6 +2060,15 @@ msgstr "Limpiar Valores"
 msgid "Clear filters"
 msgstr "Limpar filtros"
 
+#. [pages.ReportIndex.clearSearch]
+#. defaultMessage is:
+#. Clear search
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Clear filters"
+msgid "Clear search"
+msgstr "Limpar filtros"
+
 #. [pages.Notifications.table.clickToResult]
 #. defaultMessage is:
 #. Click here to go to the result
@@ -2130,9 +2190,6 @@ msgstr "Percentagem de Conclusão"
 msgid "Conditions Should be Fulfilled"
 msgstr "As condições devem ser satisfeitas"
 
-#. [pages.DeviceDetail.confirm]
-#. defaultMessage is:
-#. Confirm
 #. [pages.DeviceList.buttonConfirmMerge]
 #. defaultMessage is:
 #. Confirm
@@ -2188,9 +2245,6 @@ msgstr "Casos confirmados"
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivity]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.DeviceList.connectivityHealth]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceDetailProfile.connectivity]
@@ -2885,6 +2939,19 @@ msgstr "Campos Personalizados"
 msgid "Custom Fields Average Completion"
 msgstr "Campos personalizados Conclusão média"
 
+#. [pages.DeviceDetailEdit.customNamePart]
+#. defaultMessage is:
+#. Custom Name Part
+#. [pages.DeviceDetailProfile.customNamePart]
+#. defaultMessage is:
+#. Custom Name Part
+#. [pages.DeviceDetailProfile.deploymentCustomNamePart]
+#. defaultMessage is:
+#. Custom Name Part
+#: extracted_strings.json
+msgid "Custom Name Part"
+msgstr "Parte do Nome Personalizado"
+
 #. [pages.resultEdit.truenatCustomFieldsReadOnlyNote]
 #. defaultMessage is:
 #. Custom fields for TrueNat devices are managed in TrueConnect and cannot be edited here.
@@ -3029,9 +3096,6 @@ msgstr "Danos"
 msgid "Dashboard"
 msgstr "Painel"
 
-#. [pages.DeviceList.dataHealth]
-#. defaultMessage is:
-#. Data
 #. [pages.Notifications.table.notificationsTableHeaderData]
 #. defaultMessage is:
 #. Data
@@ -3281,15 +3345,17 @@ msgstr "Dez"
 msgid "December"
 msgstr "Dezembro"
 
-#. [pages.DeviceDetail.decommissionDevice]
+#. [pages.DeviceDetail.decommission]
 #. defaultMessage is:
-#. Decommission device
+#. Decommission
 #. [pages.DeviceDetail.decommissionConfirmTitle]
 #. defaultMessage is:
-#. Decommission device
+#. Decommission
 #: extracted_strings.json
-msgid "Decommission device"
-msgstr "Dispositivo de desativação"
+#, fuzzy
+#| msgid "Decommissioned"
+msgid "Decommission"
+msgstr "Desmantelados"
 
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
@@ -3393,6 +3459,9 @@ msgstr "Implementações"
 #. [pages.DeviceDetailProfile.deploymentReadOnlyDecommissioned]
 #. defaultMessage is:
 #. Deployments cannot be edited while this device is decommissioned.
+#. [pages.DeviceDetailProfile.deploymentsCannotBeEditedForDecommissionedDevice]
+#. defaultMessage is:
+#. Deployments cannot be edited while this device is decommissioned.
 #: extracted_strings.json
 msgid "Deployments cannot be edited while this device is decommissioned."
 msgstr ""
@@ -3447,16 +3516,10 @@ msgstr "Detectado"
 #. [placeholder.device]
 #. defaultMessage is:
 #. Device
-#. [pages.DeviceApiKeyList.deviceId]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceApiKeyList.device]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.device]
-#. defaultMessage is:
-#. Device
-#. [pages.DeviceList.deviceHealth]
 #. defaultMessage is:
 #. Device
 #. [pages.ResultList.deviceName]
@@ -3471,6 +3534,18 @@ msgstr "Detectado"
 #: extracted_strings.json
 msgid "Device"
 msgstr "Dispositivo"
+
+#. [filter.popover.deviceApiKey]
+#. defaultMessage is:
+#. Device API Key
+#. [pages.DeviceDetailProfile.deviceApiKey]
+#. defaultMessage is:
+#. Device API Key
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Device API Keys"
+msgid "Device API Key"
+msgstr "Chaves API do dispositivo"
 
 #. [browsePage.browseDropdown.deviceApiKey]
 #. defaultMessage is:
@@ -3596,9 +3671,6 @@ msgstr "Criador de dispositivos"
 #. defaultMessage is:
 #. Device Name
 #. [pages.workload.name]
-#. defaultMessage is:
-#. Device Name
-#. [pages.DeviceDetailProfile.deviceName]
 #. defaultMessage is:
 #. Device Name
 #: extracted_strings.json
@@ -3731,20 +3803,6 @@ msgstr "Tipo de dispositivo"
 #: extracted_strings.json
 msgid "Device updated successfully"
 msgstr "Dispositivo atualizado com sucesso"
-
-#. [pages.DeviceDetailProfile.deviceNameAlreadyExists]
-#. defaultMessage is:
-#. Device with this name already exists
-#: extracted_strings.json
-msgid "Device with this name already exists"
-msgstr "Já existe um dispositivo com este nome"
-
-#. [pages.DeviceDetailProfile.deviceShortNameAlreadyExists]
-#. defaultMessage is:
-#. Device with this short name already exists
-#: extracted_strings.json
-msgid "Device with this short name already exists"
-msgstr "Já existe um dispositivo com este nome abreviado"
 
 #. [legends.Unknown.devices]
 #. defaultMessage is:
@@ -4005,6 +4063,13 @@ msgstr ""
 "registo. Neste relatório pode ver as datas de calibração, falhas de hardware/"
 "software e outros erros, falhas ou registos de informação que o dispositivo "
 "gerou"
+
+#. [pages.Reports.downloadFormat]
+#. defaultMessage is:
+#. Download {format}
+#: extracted_strings.json
+msgid "Download {format}"
+msgstr "Download {formato}"
 
 #. [pages.ResultList.resultCategoryDrugResistance]
 #. defaultMessage is:
@@ -4523,13 +4588,6 @@ msgstr "Erro ao atualizar o dispositivo"
 msgid "Error updating sites"
 msgstr "Erro ao atualizar sites"
 
-#. [report.missingDateRangeFilterTitle]
-#. defaultMessage is:
-#. Error: Date Selection Required to Download Report
-#: extracted_strings.json
-msgid "Error: Date Selection Required to Download Report"
-msgstr "Erro: Seleção de data necessária para descarregar o relatório"
-
 #. [pages.ErrorRate.errors]
 #. defaultMessage is:
 #. Errors
@@ -4907,6 +4965,15 @@ msgstr "Casos de FQ-R diagnosticados hoje"
 msgid "Facility Code"
 msgstr "Código da instalação"
 
+#. [pages.DeviceDetail.decommissionFailed]
+#. defaultMessage is:
+#. Failed to decommission the device.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Failed to merge devices."
+msgid "Failed to decommission the device."
+msgstr "Não foi possível unir os dispositivos."
+
 #. [reports.tooMuchDataErrorMessage]
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
@@ -4936,6 +5003,15 @@ msgstr ""
 #. Failed to merge devices.
 #: extracted_strings.json
 msgid "Failed to merge devices."
+msgstr "Não foi possível unir os dispositivos."
+
+#. [pages.DeviceDetail.reactivateFailed]
+#. defaultMessage is:
+#. Failed to reactivate the device.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Failed to merge devices."
+msgid "Failed to reactivate the device."
 msgstr "Não foi possível unir os dispositivos."
 
 #. [pages.DeviceDetailProfile.deploymentError]
@@ -5005,6 +5081,13 @@ msgstr "Fevereiro"
 #: extracted_strings.json
 msgid "Female"
 msgstr "Feminino"
+
+#. [report.filterDialog.requiredHint]
+#. defaultMessage is:
+#. Fill in the required fields to continue
+#: extracted_strings.json
+msgid "Fill in the required fields to continue"
+msgstr "Preencha os campos obrigatórios para continuar."
 
 #. [pages.truenatCustomFields.filters]
 #. defaultMessage is:
@@ -5597,6 +5680,13 @@ msgstr ""
 msgid "Generate"
 msgstr "Gerar"
 
+#. [pages.Reports.generateFormat]
+#. defaultMessage is:
+#. Generate {format}
+#: extracted_strings.json
+msgid "Generate {format}"
+msgstr "Gerar {format}"
+
 #. [filter.AssaySelectField.genericRdt]
 #. defaultMessage is:
 #. Generic RDT
@@ -6146,6 +6236,9 @@ msgstr "Vista hierárquica"
 #. [header.link.home.title]
 #. defaultMessage is:
 #. Home
+#. [pages.Status.title]
+#. defaultMessage is:
+#. Home
 #: extracted_strings.json
 msgid "Home"
 msgstr "Home"
@@ -6321,6 +6414,15 @@ msgstr "Inativo"
 #: extracted_strings.json
 msgid "Include ALL results related to Patient ID"
 msgstr "Incluir TODOS os resultados relacionados à identificação do paciente"
+
+#. [filter.popover.includeDecommissionedDevices]
+#. defaultMessage is:
+#. Include Decommissioned Devices
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Decommission device"
+msgid "Include Decommissioned Devices"
+msgstr "Dispositivo de desativação"
 
 #. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
@@ -6721,12 +6823,6 @@ msgid "Issue Based"
 msgstr "Com base no problema"
 
 #. [pages.admin.issues]
-#. defaultMessage is:
-#. Issues
-#. [pages.DeviceList.issues]
-#. defaultMessage is:
-#. Issues
-#. [pages.DeviceList.issueCategory]
 #. defaultMessage is:
 #. Issues
 #: extracted_strings.json
@@ -8060,6 +8156,18 @@ msgstr "Resistência aos medicamentos MTB/XDR"
 msgid "MagNA Pure-96 COVID-19"
 msgstr "MagNA Pure-96 COVID-19"
 
+#. [pages.DeviceDetailEdit.sectionMaintenance]
+#. defaultMessage is:
+#. Maintenance
+#. [pages.DeviceDetailProfile.sectionMaintenance]
+#. defaultMessage is:
+#. Maintenance
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Device Maintenance"
+msgid "Maintenance"
+msgstr "Manutenção de dispositivos"
+
 #. [filter.popover.deviceMaintenanceStatus]
 #. defaultMessage is:
 #. Maintenance Status
@@ -8513,6 +8621,13 @@ msgstr "Deve ser um número inteiro (sem decimais como 0,2, 1,5)"
 msgid "Must be at least {min}"
 msgstr "Deve ter pelo menos {min}"
 
+#. [form.error.mustBeAtMostCharacters]
+#. defaultMessage is:
+#. Must be at most {max} characters
+#: extracted_strings.json
+msgid "Must be at most {max} characters"
+msgstr "Deve ter no máximo {max} caracteres"
+
 #. [pages.InventoryAdjustmentDialogForm.expiryDateAfterToday]
 #. defaultMessage is:
 #. Must be later than today
@@ -8808,6 +8923,16 @@ msgstr "Nova quantidade em mãos"
 #: extracted_strings.json
 msgid "New Result"
 msgstr "Novo resultado"
+
+#. [pages.DeviceDetailEdit.customNamePartPreview]
+#. defaultMessage is:
+#. New device name: {name}
+#. [pages.DeviceDetailProfile.deploymentCustomNamePartPreview]
+#. defaultMessage is:
+#. New device name: {name}
+#: extracted_strings.json
+msgid "New device name: {name}"
+msgstr "Novo nome do dispositivo: {name}"
 
 #. [forms.formItem.newRecurrency]
 #. defaultMessage is:
@@ -9539,6 +9664,20 @@ msgstr "Sobre o tratamento"
 msgid "On the last weekday of every month"
 msgstr "No último dia da semana de cada mês"
 
+#. [pages.DeviceDetail.decommissionConfirmMessage]
+#. defaultMessage is:
+#. Once decommissioned, this device will no longer appear in active-device lists, counts, or reports. The results it has already produced stay valid and will keep appearing in every result view and result count.
+#: extracted_strings.json
+msgid ""
+"Once decommissioned, this device will no longer appear in active-device "
+"lists, counts, or reports. The results it has already produced stay valid "
+"and will keep appearing in every result view and result count."
+msgstr ""
+"Uma vez desativado, este dispositivo deixará de aparecer em listas, "
+"contagens ou relatórios de dispositivos ativos. Os resultados que já "
+"produziu permanecem válidos e continuarão a aparecer em todas as "
+"visualizações e contagens de resultados."
+
 #. [pages.connectorStatusSelectField.online]
 #. defaultMessage is:
 #. Online
@@ -9558,6 +9697,13 @@ msgstr "Online"
 #: extracted_strings.json
 msgid "Online Date"
 msgstr "Data online"
+
+#. [pages.DeviceDetail.decommissionOnlyApprovedTooltip]
+#. defaultMessage is:
+#. Only Approved Devices can be Decommissioned
+#: extracted_strings.json
+msgid "Only Approved Devices can be Decommissioned"
+msgstr "Apenas os dispositivos aprovados podem ser descomissionados."
 
 #. [filter.popover.onlyEverTransferred]
 #. defaultMessage is:
@@ -9589,10 +9735,32 @@ msgstr "Apenas resultados com tratamento necessário"
 
 #. [filter.popover.onlyUnreconciled]
 #. defaultMessage is:
-#. Only Results with unreconciled inventories
+#. Only Results With Unreconciled Inventories
 #: extracted_strings.json
-msgid "Only Results with unreconciled inventories"
+#, fuzzy
+#| msgid "Only Results with unreconciled inventories"
+msgid "Only Results With Unreconciled Inventories"
 msgstr "Apenas resultados com inventários não reconciliados"
+
+#. [pages.DeviceDetail.onlyApprovedDevicesCanBeDecommissioned]
+#. defaultMessage is:
+#. Only approved devices can be decommissioned.
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "The number of approved GeneXpert devices (excluding decommissioned "
+#| "devices)."
+msgid "Only approved devices can be decommissioned."
+msgstr ""
+"O número de dispositivos GeneXpert aprovados (excluindo dispositivos "
+"desativados)."
+
+#. [pages.DeviceDetail.onlyDecommissionedDevicesCanBeReactivated]
+#. defaultMessage is:
+#. Only decommissioned devices can be reactivated.
+#: extracted_strings.json
+msgid "Only decommissioned devices can be reactivated."
+msgstr ""
 
 #. [pages.DeviceList.mergeDevicesDifferentSites]
 #. defaultMessage is:
@@ -9635,6 +9803,13 @@ msgstr ""
 "para resolver o problema. Tente novamente mais tarde. Se o problema "
 "persistir, contacte a nossa equipa de apoio e forneça o seguinte erro:"
 
+#. [pages.HorizontalAppBar.openNavigation]
+#. defaultMessage is:
+#. Open navigation menu
+#: extracted_strings.json
+msgid "Open navigation menu"
+msgstr "Abrir menu de navegação"
+
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
 #. Operation
@@ -9651,6 +9826,17 @@ msgstr "Operações"
 #: extracted_strings.json
 msgid "Operational Data"
 msgstr "Dados operacionais"
+
+#. [pages.DeviceDetailProfile.deploymentCustomNamePartHelp]
+#. defaultMessage is:
+#. Optional. Helps tell twin devices apart, you can use a number or a descriptive short text. Avoid using the site name.
+#: extracted_strings.json
+msgid ""
+"Optional. Helps tell twin devices apart, you can use a number or a "
+"descriptive short text. Avoid using the site name."
+msgstr ""
+"Opcional. Ajuda a distinguir dispositivos idênticos; pode utilizar um número "
+"ou um texto curto descritivo. Evite utilizar o nome do site."
 
 #. [filter.popover.originSiteName]
 #. defaultMessage is:
@@ -9755,6 +9941,18 @@ msgstr "Taxa de atividade global"
 #: extracted_strings.json
 msgid "Overall Network Health Daily"
 msgstr "Saúde geral da rede diariamente"
+
+#. [pages.DeviceDetailEdit.sectionOverview]
+#. defaultMessage is:
+#. Overview
+#. [pages.DeviceDetailProfile.sectionOverview]
+#. defaultMessage is:
+#. Overview
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Preview"
+msgid "Overview"
+msgstr "Visualização"
 
 #. [pages.Consumable.New.partNumber]
 #. defaultMessage is:
@@ -10533,6 +10731,13 @@ msgstr "Prosseguir"
 msgid "Processing ..."
 msgstr "A processar..."
 
+#. [pages.Reports.processingFormat]
+#. defaultMessage is:
+#. Processing {format}
+#: extracted_strings.json
+msgid "Processing {format}"
+msgstr "Processamento {formato}"
+
 #. [pages.result.transferResult.processing]
 #. defaultMessage is:
 #. Processing...
@@ -10852,22 +11057,17 @@ msgstr "Diagnóstico de TBRR"
 msgid "RRTB Diagnosis Trends"
 msgstr "Tendências de diagnóstico de RRTB"
 
-#. [pages.DeviceDetail.reactivateDevice]
+#. [pages.DeviceDetail.reactivate]
 #. defaultMessage is:
-#. Reactivate device
+#. Reactivate
 #. [pages.DeviceDetail.reactivateConfirmTitle]
 #. defaultMessage is:
-#. Reactivate device
+#. Reactivate
 #: extracted_strings.json
-msgid "Reactivate device"
+#, fuzzy
+#| msgid "Reactivate device"
+msgid "Reactivate"
 msgstr "Reativar dispositivo"
-
-#. [pages.DeviceList.reagentHealth]
-#. defaultMessage is:
-#. Reagent
-#: extracted_strings.json
-msgid "Reagent"
-msgstr "Reagente"
 
 #. [forms.formItem.reason]
 #. defaultMessage is:
@@ -12098,6 +12298,15 @@ msgstr ""
 msgid "Screen is not yet complete"
 msgstr "O ecrã ainda não está completo"
 
+#. [pages.ReportIndex.searchReports]
+#. defaultMessage is:
+#. Search reports...
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Enter report name..."
+msgid "Search reports..."
+msgstr "Digite o nome do relatório..."
+
 #. [forms.formItem.selectAllUnselectAll]
 #. defaultMessage is:
 #. Select All / Unselect All
@@ -12546,9 +12755,6 @@ msgstr "Falha ao definir o status de manutenção"
 #. [pages.DeviceDetailEdit.shortName]
 #. defaultMessage is:
 #. Short Name
-#. [pages.DeviceDetailProfile.shortName]
-#. defaultMessage is:
-#. Short Name
 #: extracted_strings.json
 msgid "Short Name"
 msgstr "Nome curto"
@@ -12641,6 +12847,18 @@ msgstr "Mostrar Porcentagem"
 #. Show Results From Decommissioned Devices
 #: extracted_strings.json
 msgid "Show Results From Decommissioned Devices"
+msgstr "Mostrar resultados de dispositivos desactivados"
+
+#. [filter.popover.showResultsFromUndeployedDevices]
+#. defaultMessage is:
+#. Show Results From Undeployed Devices
+#. [filter.btnGroup.showResultsFromUndeployedDevices]
+#. defaultMessage is:
+#. Show Results From Undeployed Devices
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Show Results From Decommissioned Devices"
+msgid "Show Results From Undeployed Devices"
 msgstr "Mostrar resultados de dispositivos desactivados"
 
 #. [filter.btnGroup.onlyUnreconciled]
@@ -12897,6 +13115,9 @@ msgstr "Terminar Sessão"
 #. [pages.DeviceApiKeyList.site]
 #. defaultMessage is:
 #. Site
+#. [pages.DeviceDetail.reactivateSite]
+#. defaultMessage is:
+#. Site
 #. [pages.DeviceList.site]
 #. defaultMessage is:
 #. Site
@@ -12907,9 +13128,6 @@ msgstr "Terminar Sessão"
 #. defaultMessage is:
 #. Site
 #. [pages.resultEdit.site]
-#. defaultMessage is:
-#. Site
-#. [pages.DeviceDetailEdit.location]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceDetailProfile.site]
@@ -12924,6 +13142,15 @@ msgstr "Terminar Sessão"
 #: extracted_strings.json
 msgid "Site"
 msgstr "Site"
+
+#. [pages.DeviceApiKeyList.siteDevicePairs]
+#. defaultMessage is:
+#. Site / Device
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Demo Device"
+msgid "Site / Device"
+msgstr "Dispositivo"
 
 #. [pages.NotificationDetail.fieldContact]
 #. defaultMessage is:
@@ -13302,9 +13529,6 @@ msgstr "Distritos"
 msgid "Stats about SMS notifications sent."
 msgstr "Estatísticas sobre as notificações SMS enviadas."
 
-#. [pages.Status.title]
-#. defaultMessage is:
-#. Status
 #. [pages.workload.deviceStatus]
 #. defaultMessage is:
 #. Status
@@ -13725,6 +13949,12 @@ msgstr "Tb Total"
 #. [forms.formSectionHeader.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
+#. [pages.DeviceDetailEdit.sectionTechnicalDetails]
+#. defaultMessage is:
+#. Technical Details
+#. [pages.DeviceDetailProfile.sectionTechnicalDetails]
+#. defaultMessage is:
+#. Technical Details
 #: extracted_strings.json
 msgid "Technical Details"
 msgstr "Detalhes técnicos"
@@ -14000,6 +14230,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "The average uptime of the Aspect server this month."
 msgstr "O tempo médio de atividade do servidor Aspect neste mês."
+
+#. [pages.DeviceDetailProfile.deploymentCustomNamePartCleared]
+#. defaultMessage is:
+#. The current text "{part}" will be removed.
+#: extracted_strings.json
+msgid "The current text \"{part}\" will be removed."
+msgstr "O texto atual \"{part}\" será removido."
 
 #. [pages.DeviceDetailProfile.deploymentAddClosesActive]
 #. defaultMessage is:
@@ -14619,6 +14856,29 @@ msgstr ""
 "Esta implementação abrangerá o período de {start} a {end}. Selecione um "
 "local."
 
+#. [pages.DeviceDetail.deviceHasNoActiveDeployment]
+#. defaultMessage is:
+#. This device has no active deployment to reactivate.
+#: extracted_strings.json
+msgid "This device has no active deployment to reactivate."
+msgstr "Este dispositivo não tem nenhuma implementação ativa para reativar."
+
+#. [pages.DeviceDetail.deviceHasNoDeploymentsToReactivate]
+#. defaultMessage is:
+#. This device has no deployments to reactivate.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "This will remove all deployments from this device."
+msgid "This device has no deployments to reactivate."
+msgstr "Isto irá remover todas as implementações deste dispositivo."
+
+#. [pages.DeviceDetail.deviceAlreadyDecommissioned]
+#. defaultMessage is:
+#. This device is already decommissioned.
+#: extracted_strings.json
+msgid "This device is already decommissioned."
+msgstr "Este dispositivo já foi desativado."
+
 #. [pages.DeviceDetailProfile.deviceUndeployed]
 #. defaultMessage is:
 #. This device is currently undeployed. Click "Add Deployment" to assign it to a site.
@@ -14629,6 +14889,13 @@ msgid ""
 msgstr ""
 "Este dispositivo não está atualmente implementado. Clique em «Adicionar "
 "implementação» para o atribuir a um local."
+
+#. [report.parameterForm.requiredField]
+#. defaultMessage is:
+#. This field is required
+#: extracted_strings.json
+msgid "This field is required"
+msgstr "Este campo é obrigatório"
 
 #. [pages.DeviceDetailProfile.duplicatedInstrumentTooltip]
 #. defaultMessage is:
@@ -14939,17 +15206,6 @@ msgstr "A uma pessoa singular"
 #: extracted_strings.json
 msgid "To any of these Job Functions"
 msgstr "Para qualquer uma dessas funções de trabalho"
-
-#. [report.missingDateRangeFilterDescription]
-#. defaultMessage is:
-#. To download the report "{reportName}" you must select a date from the filters.
-#: extracted_strings.json
-msgid ""
-"To download the report \"{reportName}\" you must select a date from the "
-"filters."
-msgstr ""
-"Para descarregar o relatório \"{reportName}\" é necessário selecionar uma "
-"data nos filtros."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
 #. defaultMessage is:
@@ -15381,6 +15637,9 @@ msgstr "Tuberculose"
 msgid "Tuesday"
 msgstr "Terça-feira"
 
+#. [pages.DeviceList.deviceType]
+#. defaultMessage is:
+#. Type
 #. [pages.Notifications.table.notificationsTableHeaderType]
 #. defaultMessage is:
 #. Type
@@ -15454,6 +15713,9 @@ msgstr "Não é possível atualizar alguns sites"
 msgid "Unassigned period: {start} to {end}"
 msgstr "Período não atribuído: {start} a {end}"
 
+#. [pages.DeviceDetail.undeployed]
+#. defaultMessage is:
+#. Undeployed
 #. [pages.DeviceDetailProfile.undeployed]
 #. defaultMessage is:
 #. Undeployed
@@ -15577,6 +15839,16 @@ msgstr "Enviado por"
 #: extracted_strings.json
 msgid "Upper and Lower Case mix"
 msgstr "Mistura de maiúsculas e minúsculas"
+
+#. [pages.DeviceDetailEdit.sectionUsage]
+#. defaultMessage is:
+#. Usage
+#. [pages.DeviceDetailProfile.sectionUsage]
+#. defaultMessage is:
+#. Usage
+#: extracted_strings.json
+msgid "Usage"
+msgstr "Uso"
 
 #. [pages.ReportIndex.usageStatistics]
 #. defaultMessage is:
@@ -16222,6 +16494,26 @@ msgid "You don't have permission to merge one or more of the selected devices."
 msgstr ""
 "Não tem permissão para fundir um ou mais dos dispositivos selecionados."
 
+#. [pages.DeviceDetail.devicePermissionDenied]
+#. defaultMessage is:
+#. You don't have permission to update the requested device.
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "You don't have permission to merge one or more of the selected devices."
+msgid "You don't have permission to update the requested device."
+msgstr ""
+"Não tem permissão para fundir um ou mais dos dispositivos selecionados."
+
+#. [pages.DeviceDetail.sitePermissionDenied]
+#. defaultMessage is:
+#. You don't have permission to use the requested site.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "You do not have permission to create a device in this site"
+msgid "You don't have permission to use the requested site."
+msgstr "Não tem permissão para criar um dispositivo neste site"
+
 #. [pages.DeviceDetailProfile.deploymentSaveRequired]
 #. defaultMessage is:
 #. You have unsaved changes. Click "Save" to apply them.
@@ -16443,6 +16735,13 @@ msgstr "dados"
 #: extracted_strings.json
 msgid "destination site name includes \"{destinationSiteName}\""
 msgstr "o nome do sítio de destino inclui \"{destinationSiteName}\""
+
+#. [filter.btnGroup.whereDeviceApiKeyIncludes]
+#. defaultMessage is:
+#. device API key includes "{deviceApiKeyToken}"
+#: extracted_strings.json
+msgid "device API key includes \"{deviceApiKeyToken}\""
+msgstr "a chave API do dispositivo inclui \"{deviceApiKeyToken}\""
 
 #. [filter.btnGroup.whereDeviceNameIncludes]
 #. defaultMessage is:
@@ -16905,6 +17204,13 @@ msgstr ""
 "{daysInSameStatus, plural, one {# dia} other {# dias} } desde a última "
 "atualização"
 
+#. [pages.shared.device.nameAtSite]
+#. defaultMessage is:
+#. {deviceName} at {siteName}
+#: extracted_strings.json
+msgid "{deviceName} at {siteName}"
+msgstr "{deviceName} em {siteName}"
+
 #. [pages.TableCell.timeClassification]
 #. defaultMessage is:
 #. {elapsed} elapsed, {upcoming} upcoming
@@ -17043,6 +17349,37 @@ msgstr "{unit} calibrações totais"
 #: extracted_strings.json
 msgid "—"
 msgstr "—"
+
+#~ msgid "Are you sure you want to decommission this device?"
+#~ msgstr "Tem a certeza de que pretende desativar este dispositivo?"
+
+#~ msgid "Are you sure you want to reactivate this device?"
+#~ msgstr "Tem a certeza de que pretende reativar este dispositivo?"
+
+#~ msgid "Assign"
+#~ msgstr "Atribuir"
+
+#~ msgid "Assign {count} Keys"
+#~ msgstr "Atribuir {count} Chaves"
+
+#~ msgid "Device with this name already exists"
+#~ msgstr "Já existe um dispositivo com este nome"
+
+#~ msgid "Device with this short name already exists"
+#~ msgstr "Já existe um dispositivo com este nome abreviado"
+
+#~ msgid "Error: Date Selection Required to Download Report"
+#~ msgstr "Erro: Seleção de data necessária para descarregar o relatório"
+
+#~ msgid "Reagent"
+#~ msgstr "Reagente"
+
+#~ msgid ""
+#~ "To download the report \"{reportName}\" you must select a date from the "
+#~ "filters."
+#~ msgstr ""
+#~ "Para descarregar o relatório \"{reportName}\" é necessário selecionar uma "
+#~ "data nos filtros."
 
 #~ msgid "National GX-10C Diagnosed Trends in"
 #~ msgstr "GX-10C Tendências Nacional Diagnosticado em"
@@ -17297,9 +17634,6 @@ msgstr "—"
 
 #~ msgid "Manager"
 #~ msgstr "Gestor"
-
-#~ msgid "Capacity"
-#~ msgstr "Capacidade"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Ensaio para MTB Rif Ultra"
@@ -17761,9 +18095,6 @@ msgstr "—"
 #~ msgid "This email is not valid"
 #~ msgstr "Este email não é válido"
 
-#~ msgid "This field is required"
-#~ msgstr "Este campo é obrigatório"
-
 #~ msgid "Treatment"
 #~ msgstr "Tratamento"
 
@@ -17826,9 +18157,6 @@ msgstr "—"
 
 #~ msgid "Could Not Find Site Details"
 #~ msgstr "Não foi possível encontrar detalhes do site"
-
-#~ msgid "Enter report name..."
-#~ msgstr "Digite o nome do relatório..."
 
 #~ msgid "Error Loading Device profile performance report"
 #~ msgstr ""
@@ -17961,9 +18289,6 @@ msgstr "—"
 #~ "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 #~ "roteador} other {# roteadores} }"
 
-#~ msgid "Technical information"
-#~ msgstr "Informação técnica"
-
 #~ msgid "The current password that you have entered is incorrect."
 #~ msgstr "A senha atual que você digitou está incorreta."
 
@@ -18063,9 +18388,6 @@ msgstr "—"
 
 #~ msgid "undefined"
 #~ msgstr "indefinido"
-
-#~ msgid "Demo Device"
-#~ msgstr "Dispositivo"
 
 #~ msgid "Ok"
 #~ msgstr "OK"
