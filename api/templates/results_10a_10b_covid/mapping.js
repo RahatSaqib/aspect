@@ -20,6 +20,14 @@ let sheetMappings = [
     M14: 'cntModules',
     M15: 'cntModulesActive',
 
+    Q14: 'cntTruenatDevice',
+    U14: 'cntTruenatDeviceFunctional',
+    Q15: 'cntTruenatChipPortsTotal',
+    U15: 'cntTruenatChipPortsFunctional',
+    U17: 'cntTruenatCartridgeUsed',
+    U18: 'cntTruenatMtbChipUsed',
+    U19: 'cntTruenatRifDxChipUsed',
+
     J19: 'cnt_Presumptive_TB_Cases_Invalid_Mtb',
     K19: 'cnt_Presumptive_TB_Cases_NoResult_Mtb',
     L19: 'cnt_Presumptive_TB_Cases_Error_Mtb',

@@ -17,10 +17,7 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const delay = 5000
 
 const deleteDevice = async deviceIds => {
-  const deviceApiKeyIds = [
-    ...(await knex('Device').whereIn('id', deviceIds).pluck('deviceApiKeyId')),
-    ...(await knex('DeviceApiKey').whereIn('deviceId', deviceIds).pluck('id')),
-  ].filter(Boolean)
+  const deviceApiKeyIds = [...(await knex('Device').whereIn('id', deviceIds).pluck('deviceApiKeyId'))].filter(Boolean)
   const resultIds = await knex('Result').whereIn('deviceId', deviceIds).pluck('id')
 
   if (resultIds.length > 0) {
@@ -33,12 +30,15 @@ const deleteDevice = async deviceIds => {
     await knex('DeviceLog').whereIn('deviceApiKeyId', deviceApiKeyIds).delete()
   }
 
+  await knex('InstrumentModule')
+    .whereIn('instrumentId', knex('Instrument').whereIn('deviceId', deviceIds).select('id'))
+    .delete()
   await knex('Instrument').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactDeviceModulesCount').delete().whereIn('deviceId', deviceIds)
+  await knex('Deployment').whereIn('deviceId', deviceIds).delete()
 
   await knex('Device').whereIn('id', deviceIds).update({ deviceApiKeyId: null })
-  await knex('DeviceApiKey').whereIn('deviceId', deviceIds).update({ deviceId: null })
 
   if (deviceApiKeyIds.length > 0) {
     await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
@@ -63,6 +63,16 @@ const insertDevice = async (name, siteId, partnerId, instrumentSerial = null) =>
     name,
     shortName: name,
     lastSeenOn: now,
+  })
+  await knex('Deployment').insert({
+    deviceId,
+    siteId,
+    start: null,
+    end: null,
+    createdOn: now,
+    createdBy: 1,
+    updatedOn: now,
+    updatedBy: 1,
   })
   if (instrumentSerial) {
     await knex('Instrument').insert({
@@ -90,8 +100,9 @@ const insertDeviceApiKey = async (token, deviceId, siteId, geographyId, partnerI
     createdBy: 1,
     updatedOn: now,
     updatedBy: 1,
-    deviceId,
   })
+
+  await knex('Device').where({ id: deviceId }).update({ deviceApiKeyId: deviceApiId })
 
   return deviceApiId
 }
@@ -264,8 +275,8 @@ describe('Device result calculation test', function () {
 
     const instrumentSerial = resultPayload.result.instrument.serial
     deviceId = await insertDevice('Test Device', siteId, partnerId, instrumentSerial)
-    deviceId2 = await insertDevice('Test Device 2', siteId, partnerId, instrumentSerial)
-    deviceId3 = await insertDevice('Test Device 3', siteId2, partnerId, instrumentSerial)
+    deviceId2 = await insertDevice('Test Device 2', siteId, partnerId, `${instrumentSerial}-2`)
+    deviceId3 = await insertDevice('Test Device 3', siteId2, partnerId, `${instrumentSerial}-3`)
 
     token = randomToken()
     token2 = randomToken()

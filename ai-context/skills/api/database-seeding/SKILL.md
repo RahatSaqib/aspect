@@ -8,7 +8,7 @@ description: Use when working with database seeds, creating new seeds, understan
 ## Overview
 
 The Aspect project uses database seeding system built on top of Knex.js. The seeding system is designed to handle both shared data (applied to all countries) and country-specific data, with different execution behaviors for different environments. The seeding process occurs after the migration process on each deploy.
-In the db the seeding files are applied incrementally using the table `AspectSeed` that records already applied seedings.
+In the db the seeding files are applied incrementally using the table `AspectSeed` that records already applied seedings. Incremental application only matters in production/staging — development and test databases are always recreated from scratch (see [Environment Behavior](#environment-behavior)).
 
 > Every time knex must be preferred over raw sql. If raw sql is needed, the user must be warned about it.
 
@@ -114,14 +114,28 @@ await knex.transaction(async trx => {
 
 ## Environment Behavior
 
-### Development & Test
-- Only country-specific seeds execute
-- Shared seeds (`zz_shared/`) are skipped
-- Enables faster local development cycles
+### Development & Test — always from scratch
+- Databases are **recreated from zero** (`yarn db:reseed`); there is **no incremental deploy** in these environments
+- Every migration and every seed in `seeds/development/` or `seeds/test/` replays on each recreation
+- Shared seeds (`zz_shared/`) are skipped (`api/src/config.js` excludes them when `seeds.directory` points at `/test` or `/development`)
+- **Consequence**: for dev/test purposes you may alter any existing migration or seed file in the history — the change takes effect on the next DB recreation
 
-### Production & Staging
-- All seeds execute (shared + country-specific)
-- Full data consistency across environments
+### Production & Staging — incremental
+- Partner-specific (`seeds/[country]/`) **and** `zz_shared/` seeds run **incrementally**: only seeds not yet recorded in the `AspectSeed` table execute on deploy
+- Migrations are likewise incremental (standard knex versioning)
+- The web and the API are always deployed together (the web is never online against a newer/older API)
+
+### Can I edit an existing migration/seed file, or do I need a new one?
+
+Decide by asking: **will this file run again in production?**
+
+| File state | Production behavior | What to do |
+| --- | --- | --- |
+| One-time seed / migration **already applied in production** | Never re-runs | Add a **new** numbered seed (or migration) with the change |
+| Repeated-execution seed (`${__filename}-${new Date().toISOString()}` identifier, e.g. `zz_shared/03_upsert_reports_with_country_specific.js`) | Re-runs on **every** deploy | Editing the file (or the fixtures it reads) reaches production on the next deploy |
+| File **not yet shipped** to production (unmerged branch) | Will run once, with its final content | Free to alter in place |
+
+Dev/test never constrain this decision — they rebuild from scratch either way. Only the production ledger (`AspectSeed` / knex migrations table) makes history immutable.
 
 ## Creating New Seeds
 

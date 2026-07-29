@@ -1,7 +1,6 @@
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
-const { promisify } = require('util')
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
@@ -9,9 +8,6 @@ const AWS = require('aws-sdk')
 require('isomorphic-fetch')
 const logger = require('../shared/logger')
 const { messageStatusToId } = require('../shared/dictionary')
-
-const bcryptCompare = promisify(bcrypt.compare)
-const bcryptHash = promisify(bcrypt.hash)
 
 const config = require('../config')
 const { query, knex } = require('../db')
@@ -255,7 +251,7 @@ async function authenticate(request, response) {
         )
       }
       // update user password to the new aspect hashing method
-      const pw = await bcryptHash(payload.password, parseInt(config.passwordSaltRounds, 10))
+      const pw = await bcrypt.hash(payload.password, parseInt(config.passwordSaltRounds, 10))
       await knex('User').update({ password: pw, legacyPassword: 0 }).where({ id: user.id })
     } else if (config.gxAlertRemoteAuthentication) {
       // The user might exist or not, but try logging in to gxAlert anyway
@@ -299,7 +295,7 @@ async function authenticate(request, response) {
     // Aspect
     // this is for "regular" accounts that were either created in aspect
     // or migrated from GxAlert and updated their password
-    const pwResult = await bcryptCompare(payload.password, user.password)
+    const pwResult = await bcrypt.compare(payload.password, user.password)
 
     if (!pwResult) {
       const attempts = user.failedPasswordAttempts + 1
@@ -568,6 +564,7 @@ async function getAccessToken({ id, name, partnerId, personId, userName }, clien
   // create a new token
   const token = jwt.sign(
     {
+      userId: id,
       personId,
       name,
       fullName: userName,
@@ -684,9 +681,9 @@ async function getChangedFields(payload, existingRecord) {
     changedFields.name = payload.newUsername
   }
   if (payload.newPassword) {
-    const passwordsMatch = await bcryptCompare(payload.newPassword, existingRecord.password)
+    const passwordsMatch = await bcrypt.compare(payload.newPassword, existingRecord.password)
     if (!passwordsMatch) {
-      changedFields.password = await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10))
+      changedFields.password = await bcrypt.hash(payload.newPassword, parseInt(config.passwordSaltRounds, 10))
       changedFields.lastPasswordChange = new Date()
       if (existingRecord.legacyPassword) {
         changedFields.legacyPassword = 0
@@ -707,7 +704,7 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   if (!loggedInUser) {
     return Boom.notFound('User not Found')
   }
-  const pwResult = await bcryptCompare(payload.currentPassword, loggedInUser.password)
+  const pwResult = await bcrypt.compare(payload.currentPassword, loggedInUser.password)
   if (!pwResult) {
     return Boom.unauthorized('Incorrect password.')
   }
@@ -722,12 +719,12 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   const changedFields = await getChangedFields(payload, loggedInUser)
   const now = new Date()
   if (payload.newPassword) {
-    const passwordsMatch = await bcryptCompare(payload.newPassword, loggedInUser.password)
+    const passwordsMatch = await bcrypt.compare(payload.newPassword, loggedInUser.password)
     if (!passwordsMatch) {
       changedFields.lockedOut = 0
       changedFields.failedPasswordAttempts = 0
       changedFields.legacyPassword = 0
-      changedFields.password = await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10))
+      changedFields.password = await bcrypt.hash(payload.newPassword, parseInt(config.passwordSaltRounds, 10))
       changedFields.lastPasswordChange = now
     }
   }
@@ -787,7 +784,7 @@ async function updatePasswordWithResetPasswordToken(request) {
         lockedOut: 0,
         failedPasswordAttempts: 0,
         legacyPassword: 0,
-        password: await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
+        password: await bcrypt.hash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
         lastPasswordChange: now,
         resetPasswordToken: null,
         resetPasswordTokenExpires: null,
@@ -843,7 +840,7 @@ async function updateUsernameAndPasswordForPerson(request) {
         .from('User')
         .insert({
           name: payload.newUsername,
-          password: await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
+          password: await bcrypt.hash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
           approved: 1,
           createdOn: new Date(),
           lockedOut: payload.userLockedOut || 0,

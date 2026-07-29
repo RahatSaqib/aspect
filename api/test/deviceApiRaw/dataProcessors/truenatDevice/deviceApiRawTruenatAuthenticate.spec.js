@@ -86,7 +86,6 @@ describe('Device API Raw routes for Truenat Authentication', () => {
     const [validApiKeyId] = await knex('DeviceApiKey').insert({
       ...validApiKey,
       password: bcrypt.hashSync(validApiKey.password, saltRounds),
-      deviceId,
       siteId,
       revoked: false,
       createdOn: now,
@@ -95,11 +94,11 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       updatedBy: userId,
       partnerId: partner.id,
     })
+    await knex('Device').where('id', deviceId).update({ deviceApiKeyId: validApiKeyId })
     validApiKey.id = validApiKeyId
     const [expiredApiKeyId] = await knex('DeviceApiKey').insert({
       ...expiredApiKey,
       password: bcrypt.hashSync(expiredApiKey.password, saltRounds),
-      deviceId,
       siteId,
       revoked: false,
       createdOn: now,
@@ -108,18 +107,19 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       updatedBy: userId,
       partnerId: partner.id,
     })
+    await knex('Device').where('id', deviceId).update({ deviceApiKeyId: expiredApiKeyId })
     expiredApiKey.id = expiredApiKeyId
   })
 
   after(async () => {
     const { deviceId: validDeviceId, siteId: validSiteId } = await knex('DeviceApiKey as dak')
-      .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+      .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
       .where('dak.id', validApiKey.id)
-      .first('dak.deviceId', 'd.siteId')
+      .first('d.id as deviceId', 'd.siteId')
     const { deviceId: expiredDeviceId, siteId: expiredSiteId } = await knex('DeviceApiKey as dak')
-      .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+      .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
       .where('dak.id', expiredApiKey.id)
-      .first('dak.deviceId', 'd.siteId')
+      .first('d.id as deviceId', 'd.siteId')
     await knex('DeviceApprovalLog').where('deviceId', validDeviceId).delete()
     await knex('DeviceApprovalLog').where('deviceId', expiredDeviceId).delete()
     await knex('DeviceLog').where('deviceApiKeyId', validApiKey.id).delete()
@@ -127,20 +127,22 @@ describe('Device API Raw routes for Truenat Authentication', () => {
 
     await knex('DeviceApiRaw').where('deviceApiKeyId', validApiKey.id).delete()
     await knex('DeviceApiRaw').where('deviceApiKeyId', expiredApiKey.id).delete()
-    await knex('DeviceApiKey').where('id', validApiKey.id).orWhere('deviceId', validDeviceId).delete()
-    await knex('DeviceApiKey').where('id', expiredApiKey.id).orWhere('deviceId', expiredDeviceId).delete()
     await knex('Device').where('id', validDeviceId).delete()
     await knex('Device').where('id', expiredDeviceId).delete()
+    await knex('DeviceApiKey').where('id', validApiKey.id).delete()
+    await knex('DeviceApiKey').where('id', expiredApiKey.id).delete()
     await knex('Site').where('id', validSiteId).delete()
     await knex('Site').where('id', expiredSiteId).delete()
 
     const row = await knex('DeviceApiKey as dak')
+      .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
       .where('dak.username', newTruenatDevice.username)
-      .first('dak.id', 'dak.deviceId', 'dak.siteId')
+      .first('dak.id', 'd.id as deviceId', 'dak.siteId')
     if (row) {
-      await knex('DeviceApiKey').where('id', row.id).delete()
       await knex('DeviceLog').where('deviceApiKeyId', row.id).delete()
       await knex('Device').where('id', row.deviceId).delete()
+      await knex('DeviceApiKey').where('id', row.id).delete()
+
       if (row.siteId) {
         await knex('Site').where('id', row.siteId).delete()
       }
@@ -161,13 +163,13 @@ describe('Device API Raw routes for Truenat Authentication', () => {
   })
 
   describe('with an expired API key', () => {
-    it('should respond with a renewed API Key token in the body', async () => {
+    it('should respond with the same API Key token in the body', async () => {
       const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
         Username: expiredApiKey.username,
         Password: expiredApiKey.password,
       })
       assert.equal(response.statusCode, 200)
-      assert.notEqual(response.body.token, `Bearer ${expiredApiKey.token}`)
+      assert.equal(response.body.token, `Bearer ${expiredApiKey.token}`)
       assert.equal(response.body.username, expiredApiKey.username)
       assert.isTrue(response.body.success)
     })
@@ -205,10 +207,13 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       const unapprovedDeviceApprovalId = await deviceApprovalToId('pendingDeployment')
       const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
       const expectedGeographyId = await geographyIdForDefaultCountry()
-      const device = await knex('Device').where('name', newTruenatDevice.username).first()
+      // The device is now matched by hostId (the username); its display name is
+      // auto-generated from the device type acronym + id (e.g. "MT5").
+      const device = await knex('Device').where('hostId', newTruenatDevice.username).first()
       const site = await knex('Site').where('name', newTruenatDevice.username).first()
       const apiKeyRow = await knex('DeviceApiKey').where('username', newTruenatDevice.username).first()
-      assert.isDefined(device, 'new device should be created with username as device name')
+      assert.isDefined(device, 'new device should be created with username as hostId')
+      assert.equal(device.name, `MT${device.id}`, 'device name should follow the acronym + id scheme')
       assert.isUndefined(site, 'no site should be created until deployment')
       assert.equal(device.deviceApprovalId, unapprovedDeviceApprovalId, 'new device should be pending deployment')
       assert.equal(device.partnerId, defaultPartner.id)

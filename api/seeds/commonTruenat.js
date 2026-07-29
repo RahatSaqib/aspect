@@ -1,8 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
-const { promisify } = require('util')
-const { addMinutes, subMonths } = require('date-fns')
+const { subMonths } = require('date-fns')
 const truenatDeviceTypes = require('./fixtures/truenatDevice/DeviceType.json')
 const truenatAssays = require('./fixtures/truenatDevice/Assays.json')
 const truenatPatientDataSchema = require('./fixtures/truenatDevice/PatientDataSchema.json')
@@ -13,8 +12,7 @@ const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
 const upsertConsumables = require('./common/upsert_consumables')
 const { insertSite } = require('../src/site/common/db')
-
-const bcryptHash = promisify(bcrypt.hash)
+const { insertDeviceWithGeneratedName } = require('./common/insertDeviceWithGeneratedName')
 
 async function upsertTruenatDeviceTypeAndAssays(
   knex,
@@ -198,10 +196,8 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
       .andWhere('deviceTypeId', truenatDeviceTypeId)
       .first()
     if (!existingTruenatDevice) {
-      const [newTruenatDeviceId] = await knex('Device').insert({
+      const { id: newTruenatDeviceId } = await insertDeviceWithGeneratedName(knex, {
         ...auditFields,
-        name: truenatDevice.deviceName,
-        shortName: truenatDevice.deviceShortName,
         deviceTypeId: truenatDeviceTypeId,
         deviceApprovalId: deviceApprovalApprovedId,
         partnerId,
@@ -243,37 +239,35 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
       }
     }
     const truenatDeviceApiKey = await knex('DeviceApiKey')
-      .where('deviceId', existingTruenatDevice.id)
+      .where('id', existingTruenatDevice.deviceApiKeyId)
       .whereNotNull('username')
       .whereNotNull('password')
       .andWhere('revoked', 0)
       .first()
-    const password = await bcryptHash(truenatDevice.password, parseInt(passwordSaltRounds, 10))
+    const password = await bcrypt.hash(truenatDevice.password, parseInt(passwordSaltRounds, 10))
     if (!truenatDeviceApiKey) {
-      await knex('DeviceApiKey').insert({
+      const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
         token: randomToken(),
         revoked: 0,
         partnerId,
         geographyId,
         siteId: truenatLab.id,
-        deviceId: existingTruenatDevice.id,
         username: truenatDevice.username,
         password,
-        expiresOn: addMinutes(new Date(), 15),
         ...auditFields,
       })
+
+      await knex('Device').where('id', existingTruenatDevice.id).update({ deviceApiKeyId })
     } else {
       const deviceApiKeyFixtureChanged =
         truenatDeviceApiKey.geographyId !== geographyId ||
         truenatDeviceApiKey.siteId !== truenatLab.id ||
-        truenatDeviceApiKey.deviceId !== existingTruenatDevice.id ||
         truenatDeviceApiKey.username !== truenatDevice.username ||
         truenatDeviceApiKey.password !== password
       if (deviceApiKeyFixtureChanged) {
         await knex('DeviceApiKey').where('id', truenatDeviceApiKey.id).update({
           geographyId,
           siteId: truenatLab.id,
-          deviceId: existingTruenatDevice.id,
           username: truenatDevice.username,
           password,
           updatedOn: auditFields.updatedOn,

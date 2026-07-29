@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { promisify } = require('util')
 const bcrypt = require('bcrypt')
 
 const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
@@ -33,6 +32,7 @@ const {
   sampleTypeToId,
 } = require('../src/shared/dictionary')
 const { addCase } = require('../src/case/service')
+const { insertDeviceWithGeneratedName } = require('./common/insertDeviceWithGeneratedName')
 const { getRandomGeneXpertPatientData, getRandomTruenatPatientData } = require('./commonTBResults')
 const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovidResultFormSchema.json')
 const {
@@ -51,8 +51,6 @@ const truenatMtbPlusResultData = require('./development/generateResultsSeed/true
 const truenatMtbRifDxResultData = require('./development/generateResultsSeed/truenatMtbRifDxResultData.json')
 const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
-
-const bcryptHash = promisify(bcrypt.hash)
 
 function calculateDateForResultForCovid(currentResult, totalResults, randomMillisToAdd) {
   const resultTimeFrameInDays = 360
@@ -110,8 +108,6 @@ async function createDevicesForAllMissingTypes(
         const siteData = _.sample(validSites)
         const deviceToInsert = {
           ...auditFields,
-          name: `${siteData.shortName} ${deviceType.name}`,
-          shortName: `${siteData.shortName} ${deviceType.name}`,
           deviceTypeId: deviceType.id,
           deviceApprovalId: deviceApprovalApproved,
           partnerId,
@@ -123,19 +119,18 @@ async function createDevicesForAllMissingTypes(
           lastSeenOn: new Date(+now - (i * millisInHour) / 3),
           putInService: subMonths(new Date(), 2),
         }
-        const [deviceId] = await knex('Device').insert(deviceToInsert)
+        const { id: deviceId } = await insertDeviceWithGeneratedName(knex, deviceToInsert)
         if (deviceType.requiresApiCredentials) {
-          const password = await bcryptHash(siteData.shortName, parseInt(passwordSaltRounds, 10))
-          await knex('DeviceApiKey').insert({
+          const password = await bcrypt.hash(siteData.shortName, parseInt(passwordSaltRounds, 10))
+          const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
             token: randomToken(),
             revoked: 0,
             partnerId: siteData.partnerId,
-            deviceId,
             username: `device-${deviceId}`,
             password,
-            expiresOn: addMinutes(new Date(), 15),
             ...auditFields,
           })
+          await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
         }
         i += 1
       })

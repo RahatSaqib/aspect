@@ -1,9 +1,9 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
-  statusTitle: {
+  homeTitle: {
     id: 'pages.Status.title',
-    defaultMessage: 'Status',
+    defaultMessage: 'Home',
   },
   reportsTitle: {
     id: 'pages.Status.reportsTitle',

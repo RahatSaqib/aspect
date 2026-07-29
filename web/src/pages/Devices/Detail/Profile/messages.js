@@ -5,10 +5,6 @@ const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...defineMessages({
-    shortName: {
-      id: 'pages.DeviceDetailProfile.shortName',
-      defaultMessage: 'Short Name',
-    },
     serial: {
       id: 'pages.DeviceDetailProfile.serial',
       defaultMessage: 'Serial No',
@@ -62,9 +58,58 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deviceStatusChangeDisabledTooltip',
       defaultMessage: "Active status can't be edited",
     },
-    approval: {
-      id: 'pages.DeviceDetailProfile.approval',
-      defaultMessage: 'Approval',
+    approvalStatus: {
+      id: 'pages.DeviceDetailProfile.approvalStatus',
+      defaultMessage: 'Approval Status',
+    },
+    sectionOverview: {
+      id: 'pages.DeviceDetailProfile.sectionOverview',
+      defaultMessage: 'Overview',
+    },
+    sectionCapacityModules: {
+      id: 'pages.DeviceDetailProfile.sectionCapacityModules',
+      defaultMessage: 'Capacity & Modules',
+    },
+    sectionMaintenance: {
+      id: 'pages.DeviceDetailProfile.sectionMaintenance',
+      defaultMessage: 'Maintenance',
+    },
+    sectionUsage: {
+      id: 'pages.DeviceDetailProfile.sectionUsage',
+      defaultMessage: 'Usage',
+    },
+    sectionTechnicalDetails: {
+      id: 'pages.DeviceDetailProfile.sectionTechnicalDetails',
+      defaultMessage: 'Technical Details',
+    },
+    sectionAdditionalInfo: {
+      id: 'pages.DeviceDetailProfile.sectionAdditionalInfo',
+      defaultMessage: 'Additional Information',
+    },
+    customNamePart: {
+      id: 'pages.DeviceDetailProfile.customNamePart',
+      defaultMessage: 'Custom Name Part',
+    },
+    deploymentCustomNamePart: {
+      id: 'pages.DeviceDetailProfile.deploymentCustomNamePart',
+      defaultMessage: 'Custom Name Part',
+    },
+    deploymentCustomNamePartHelp: {
+      id: 'pages.DeviceDetailProfile.deploymentCustomNamePartHelp',
+      defaultMessage:
+        'Optional. Helps tell twin devices apart, you can use a number or a descriptive short text. Avoid using the site name.',
+    },
+    deploymentCustomNamePartCleared: {
+      id: 'pages.DeviceDetailProfile.deploymentCustomNamePartCleared',
+      defaultMessage: 'The current text "{part}" will be removed.',
+    },
+    deploymentCustomNamePartPreview: {
+      id: 'pages.DeviceDetailProfile.deploymentCustomNamePartPreview',
+      defaultMessage: 'New device name: {name}',
+    },
+    deviceApiKey: {
+      id: 'pages.DeviceDetailProfile.deviceApiKey',
+      defaultMessage: 'Device API Key',
     },
     calibration: {
       id: 'pages.DeviceDetailProfile.calibration',
@@ -240,10 +285,6 @@ const messages = {
       id: 'pages.DeviceDetailProfile.joinDevicesButton',
       defaultMessage: 'Join Devices',
     },
-    deviceName: {
-      id: 'pages.DeviceDetailProfile.deviceName',
-      defaultMessage: 'Device Name',
-    },
     otherInstrumentsDetected: {
       id: 'pages.DeviceDetailProfile.otherInstrumentsDetected',
       defaultMessage: 'Other instruments detected ({count})',
@@ -296,14 +337,6 @@ const messages = {
     cancel: {
       id: 'pages.DeviceDetailProfile.cancel',
       defaultMessage: 'Cancel',
-    },
-    deviceNameAlreadyExists: {
-      id: 'pages.DeviceDetailProfile.deviceNameAlreadyExists',
-      defaultMessage: 'Device with this name already exists',
-    },
-    deviceShortNameAlreadyExists: {
-      id: 'pages.DeviceDetailProfile.deviceShortNameAlreadyExists',
-      defaultMessage: 'Device with this short name already exists',
     },
     sitePermissionDenied: {
       id: 'pages.DeviceDetailProfile.sitePermissionDenied',
@@ -509,6 +542,10 @@ const messages = {
     },
     deploymentReadOnlyDecommissioned: {
       id: 'pages.DeviceDetailProfile.deploymentReadOnlyDecommissioned',
+      defaultMessage: 'Deployments cannot be edited while this device is decommissioned.',
+    },
+    deploymentsCannotBeEditedForDecommissionedDevice: {
+      id: 'pages.DeviceDetailProfile.deploymentsCannotBeEditedForDecommissionedDevice',
       defaultMessage: 'Deployments cannot be edited while this device is decommissioned.',
     },
   }),

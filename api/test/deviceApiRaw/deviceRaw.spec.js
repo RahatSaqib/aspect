@@ -105,9 +105,9 @@ describe('Device API Raw routes', () => {
         deviceId,
         siteId,
       } = await knex('DeviceApiKey as dak')
-        .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+        .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
         .where('dak.token', validApiKeyToken)
-        .first('dak.id', 'dak.deviceId', 'd.siteId')
+        .first('dak.id', 'd.id as deviceId', 'd.siteId')
 
       const resultIds = deviceId ? await knex('Result').where('deviceId', deviceId).pluck('id') : []
       const opIds = deviceApiKeyId

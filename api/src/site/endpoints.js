@@ -40,10 +40,8 @@ function listSitesBaseConfig() {
           'createdOn',
           'totalDevices',
           'externalId',
-          'inventoryUpdatedOn',
           'siteType',
-          'parentWarehouseName',
-          'siteConsumableCount'
+          'parentWarehouseName'
         ),
       },
     },
@@ -215,7 +213,10 @@ const routes = [
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False if there was some sort of error'),
           mode: Joi.string().allow(null, '').description('The mode that was use for this request'),
-          countryName: Joi.string().required().description('Country name of the user that requested the sites'),
+          countryName: Joi.string()
+            .required()
+            .allow(null)
+            .description('Country name of the user that requested the sites'),
           stateName: Joi.string().required().allow(null).description('State name of the user that requested the sites'),
           data: Joi.array()
             .required()
@@ -237,6 +238,7 @@ const routes = [
                     not: 'reporter',
                     then: Joi.required(),
                   })
+                  .allow(null)
                   .description("Unique ID of the site's country"),
                 stateId: Joi.number().allow(null).description("Unique ID of the site's state"),
                 parentWarehouseId: Joi.number().allow(null).description('ID of stock provider'),

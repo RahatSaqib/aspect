@@ -9,11 +9,12 @@ import {
   DEVICE_KEY,
 } from './deviceKeys'
 
-const persistChanges = async ({ deviceId, changes }) => {
+const persistChanges = async ({ deviceId, changes, customNamePart }) => {
   const endpoint = replaceRouteParams(DEVICE_DEPLOYMENTS_PERSIST_ENDPOINT, { deviceId })
   return aspectFetch(endpoint, {
     method: 'POST',
-    body: JSON.stringify({ changes }),
+    // customNamePart is omitted when undefined: the device's stored value stays untouched
+    body: JSON.stringify({ changes, customNamePart }),
   })
 }
 

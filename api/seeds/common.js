@@ -383,6 +383,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     ;[deviceTypeGeneXpertId] = await knex('DeviceType').insert({
       externalId: 'CepheidGeneXpert',
       name: 'GeneXpert',
+      acronym: 'GX',
       manufacturer: 'Cepheid',
       plugin: 'gxconnect',
       deviceTypeCategoryId: deviceTypeCategoryLab,
@@ -1459,7 +1460,7 @@ async function seedLabClinicFixture(
           const deviceApiKeyToken = device.deviceApiKey
           const deviceData =
             (await knex('DeviceApiKey as dak')
-              .join('Device as d', 'dak.deviceId', 'd.id')
+              .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
               .where('dak.token', deviceApiKeyToken)
               .first('d.*')) || {}
           if (_.isEmpty(deviceData)) {
@@ -1487,15 +1488,15 @@ async function seedLabClinicFixture(
               ...auditFields,
             })
             deviceData.id = deviceId
-            await knex('DeviceApiKey').insert({
+            const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
               token: deviceApiKeyToken,
               revoked: 0,
               partnerId,
               geographyId: labGeographyId,
               siteId,
-              deviceId,
               ...auditFields,
             })
+            await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
           }
         })
       )
@@ -1793,9 +1794,8 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
           if (device.apiKey) {
             const existingDeviceApiKey = await knex('DeviceApiKey').where('token', device.apiKey).first()
             if (!existingDeviceApiKey) {
-              await knex('DeviceApiKey').insert({
+              const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
                 token: device.apiKey,
-                deviceId,
                 geographyId: siteGeographyId,
                 siteId,
                 revoked: false,
@@ -1805,9 +1805,10 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
                 updatedBy: adminId,
                 partnerId,
               })
-            } else if (!existingDeviceApiKey.deviceId) {
-              await knex('DeviceApiKey').where('id', existingDeviceApiKey.id).update({
-                deviceId,
+              await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
+            } else if (existingDevice.deviceApiKeyId !== existingDeviceApiKey.id) {
+              await knex('Device').where('id', deviceId).update({
+                deviceApiKeyId: existingDeviceApiKey.id,
                 updatedOn: now,
                 updatedBy: adminId,
               })
@@ -1831,13 +1832,14 @@ const createClientDeviceApiKey = async (knex, data) => {
 
   const now = new Date()
 
-  return knex('DeviceApiKey').insert({
+  const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
     ...deviceApiKeyPayload,
-    deviceId,
     revoked: false,
     createdOn: now,
     updatedOn: now,
   })
+
+  return knex('Device').where('id', deviceId).update({ deviceApiKeyId, updatedOn: now })
 }
 
 async function getOrInsertGeography(knex, countryId) {

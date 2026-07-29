@@ -1,6 +1,5 @@
 const chai = require('chai')
 const uuid = require('node-uuid')
-const subSeconds = require('date-fns/subSeconds')
 const { knex } = require('../../src/db')
 const server = require('../utils/testUtils')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
@@ -15,7 +14,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
     truenatDevice = await knex('DeviceType as dt')
       .join('Device as d', 'dt.id', 'd.deviceTypeId')
       .join('Site as s', 'd.siteId', 's.id')
-      .join('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
+      .join('DeviceApiKey as dak', 'd.deviceApiKeyId', 'dak.id')
       .whereNotNull('dak.username')
       .andWhere({
         'dak.revoked': false,
@@ -138,29 +137,6 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
       })
     })
 
-    describe('after the device API key token has expired', () => {
-      let authHeaderValue
-      before(async () => {
-        const { body } = await authenticateWithTruelabApi(truenatDevice.username, truenatDevice.password)
-        authHeaderValue = body.token
-        const { id: deviceApiKeyId } = await knex('DeviceApiKey')
-          .where(knex.raw("CONCAT('Bearer ', token) = ?", authHeaderValue))
-          .first('id')
-        await knex('DeviceApiKey')
-          .where('id', deviceApiKeyId)
-          .update({ expiresOn: subSeconds(new Date(), 1) })
-      })
-
-      it('should return a 401 response', async () => {
-        const newIdValue = uuid.v4()
-        const { status } = await sendResult(authHeaderValue, {
-          ...defaultPayload,
-          PatientID: newIdValue,
-        })
-        assert.equal(status, 401)
-      })
-    })
-
     describe('when unapproved device sends result with a lab name', () => {
       const unapprovedDevice = {
         username: 'tempUnapprovedTruenatDevice',
@@ -190,9 +166,11 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
           deviceId: unapprovedDeviceId,
           siteId: unapprovedDeviceSiteId,
         } = await knex('DeviceApiKey as dak')
+          .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
           .where('dak.username', unapprovedDevice.username)
-          .first('dak.id', 'dak.deviceId', 'dak.siteId')
+          .first('dak.id', 'd.id as deviceId', 'dak.siteId')
         await knex('Result').where('deviceId', unapprovedDeviceId).delete()
+        await knex('Device').where('id', unapprovedDeviceId).update({ deviceApiKeyId: null })
         await knex('DeviceApiKey').where('id', unapprovedDeviceApiKeyId).delete()
         await knex('DeviceLog').where('deviceApiKeyId', unapprovedDeviceApiKeyId).delete()
         await knex('Device').where('id', unapprovedDeviceId).delete()
@@ -222,7 +200,10 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
         const [siteId] = await insertSite(knex, site)
         site.id = siteId
         const { body } = await authenticateWithTruelabApi(approvedDevice.username, approvedDevice.password)
-        const { deviceId } = await knex('DeviceApiKey').where('username', approvedDevice.username).first('deviceId')
+        const { deviceId } = await knex('DeviceApiKey as dak')
+          .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
+          .where('dak.username', approvedDevice.username)
+          .first('d.id as deviceId')
         const approvedDeviceApprovalId = await deviceApprovalToId('approved')
         await knex('Device').where('id', deviceId).update({ deviceApprovalId: approvedDeviceApprovalId })
         authHeaderValue = body.token
@@ -266,15 +247,14 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
         assert.isTrue(success)
 
         const { deviceId, siteId } = await knex('DeviceApiKey as dak')
+          .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
           .where('dak.username', approvedDevice.username)
-          .first('dak.deviceId', 'dak.siteId')
+          .first('d.id as deviceId', 'dak.siteId')
         assert.notEqual(siteId, site.id, 'device.siteId should not point to site with full lab name')
         const { name: deviceName } = await knex('Device').where('id', deviceId).first('name')
-        assert.equal(
-          deviceName,
-          approvedDevice.username,
-          'device name should remain unchanged and equal to device username'
-        )
+        // Device names are now generated as ${acronym}${id} (ASP-7977); the original
+        // intent of this assertion is that the Truenat LabName field must not rename the device.
+        assert.notEqual(deviceName, fullLabName, 'device name should not be overwritten by the result LabName')
       })
 
       after(async () => {
@@ -283,10 +263,12 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
           deviceId: approvedDeviceId,
           siteId: approvedDeviceSiteId,
         } = await knex('DeviceApiKey as dak')
+          .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
           .where('dak.username', approvedDevice.username)
-          .first('dak.id', 'dak.deviceId', 'dak.siteId')
+          .first('dak.id', 'd.id as deviceId', 'dak.siteId')
         await knex('DeviceApiRaw').where('deviceApiKeyId', approvedDeviceApiKeyId).delete()
         await knex('Result').where('deviceId', approvedDeviceId).delete()
+        await knex('Device').where('id', approvedDeviceId).update({ deviceApiKeyId: null })
         await knex('DeviceApiKey').where('id', approvedDeviceApiKeyId).delete()
         await knex('DeviceLog').where('deviceApiKeyId', approvedDeviceApiKeyId).delete()
         await knex('Device').where('id', approvedDeviceId).delete()

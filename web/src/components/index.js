@@ -37,7 +37,6 @@ import {
   NotificationLogFilter,
   PersonFilter,
   ReporterFilter,
-  ReportsFilter,
   ResultFilter,
   SampleFilter,
   SiteFilter,
@@ -87,11 +86,13 @@ import LabeledSwitch from './LabeledSwitch'
 import LanguageSelect from './LanguageSelect'
 import LgaSelect from './LgaSelect'
 import Loading from './Loading'
+import LoadingCard from './LoadingCard/LoadingCard'
 import LocationSelector from './LocationSelector'
 import LoggedInLayout from './LoggedInLayout'
 import LoggedOutLayout from './LoggedOutLayout'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
+import ReportParameterForm from './ReportParameterForm'
 import ReportSelector from './ReportSelector'
 import ResultCategoryGroupSelect from './ResultCategoryGroupSelect'
 import ResultTreatmentStatusSelect from './ResultTreatmentStatusSelect'
@@ -159,6 +160,7 @@ export {
   LgasFilter,
   LineGraph,
   Loading,
+  LoadingCard,
   LocationSelector,
   LoggedInLayout,
   LoggedOutLayout,
@@ -170,9 +172,9 @@ export {
   PieRowGraph,
   QuartersMtbDetectedGraph,
   QuartersRifDetectedGraph,
+  ReportParameterForm,
   ReportSelector,
   ReporterFilter,
-  ReportsFilter,
   ResultCategoryGroupSelect,
   ResultFilter,
   ResultTransmittedGraph,

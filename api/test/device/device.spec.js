@@ -148,14 +148,18 @@ describe('Device routes', () => {
 
     after(async () => {
       removeUser(daktariManagerUserId)
-      const { id } = await knex('Device').where({ name: 'The greatest device I ever created' }).first()
+      const { id, deviceApiKeyId } = await knex('Device')
+        .where({ name: 'The greatest device I ever created' })
+        .first('id', 'deviceApiKeyId')
       await knex('Notification').whereIn('issueId', issuesToDelete).delete()
       await knex('Issue').whereIn('id', issuesToDelete).delete()
+      if (deviceApiKeyId) {
+        await knex('DeviceLog').where({ deviceApiKeyId }).delete()
+      }
       await knex('Device').where({ id }).update({ deviceApiKeyId: null })
-      await knex('DeviceApiKey').where({ deviceId: id }).delete()
-      await knex('DeviceLog')
-        .where({ deviceApiKeyId: knex('Device').where({ id }).first('deviceApiKeyId') })
-        .delete()
+      if (deviceApiKeyId) {
+        await knex('DeviceApiKey').where({ id: deviceApiKeyId }).delete()
+      }
       await knex('DeviceApprovalLog').where({ deviceId: id }).delete()
       await knex('DeviceMaintenanceStatusLog').where({ deviceId: id }).delete()
       await knex('Device').where({ id }).delete()

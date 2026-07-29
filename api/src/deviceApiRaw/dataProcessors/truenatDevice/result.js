@@ -78,6 +78,8 @@ class TruenatResult extends SynchronousDataProcessor {
           notes,
           date,
           time,
+          bayNo,
+          trueLabId,
         } = getDetailsFromRequest(request)
 
         const assay = await getAssay(knex, testName)
@@ -140,6 +142,8 @@ class TruenatResult extends SynchronousDataProcessor {
             labName,
             testName,
             resultText,
+            bayNo,
+            trueLabId,
           }),
           rawData: rawMessage,
           updatedOn: utcNow,
@@ -191,12 +195,12 @@ class TruenatResult extends SynchronousDataProcessor {
 
 async function getDeviceDetailsFromApiKey(knex, deviceApiToken) {
   const deviceDetails = await knex('DeviceApiKey as dak')
-    .join('Device as d', 'dak.deviceId', 'd.id')
+    .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Site as s', 'd.siteId', 's.id')
     .where('dak.token', deviceApiToken)
     .first(
-      'dak.deviceId',
+      'd.id as deviceId',
       'dak.username',
       'dak.id as deviceApiKeyId',
       'd.partnerId',
@@ -249,6 +253,8 @@ function getDetailsFromRequest(request) {
     notes: _.get(payload, 'Notes')?.trim(),
     date: _.get(payload, 'Date')?.trim(),
     time: _.get(payload, 'Time')?.trim(),
+    bayNo: _.get(payload, 'BayNo')?.toString()?.trim(),
+    trueLabId: _.get(payload, 'TrueLabId')?.toString()?.trim(),
   }
 }
 

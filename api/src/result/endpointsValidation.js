@@ -394,9 +394,9 @@ function listResultsBaseConfig() {
         onlyUnreconciled: Joi.boolean()
           .optional()
           .description('It filters only results that has unreconciled inventories'),
-        showUnapprovedDevices: Joi.boolean()
+        showUndeployedDevices: Joi.boolean()
           .default(false)
-          .description('If true, will include all the results of unapproved devices'),
+          .description('If true, will include undeployed (pendingDeployment) devices and their results'),
         showDecommissionedDevices: Joi.boolean()
           .default(false)
           .description('If true, will include results from decommissioned devices'),

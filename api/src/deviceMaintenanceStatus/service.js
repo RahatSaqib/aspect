@@ -175,6 +175,7 @@ async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
       'd.name',
       'd.shortName',
       'd.siteId',
+      's.name as siteName',
       'd.dailyTestCapacity as deviceCapacity',
       's.longitude',
       's.latitude',

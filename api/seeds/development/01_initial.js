@@ -41,6 +41,7 @@ const {
   getXdrDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { insertSite } = require('../../src/site/common/db')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -3385,10 +3386,8 @@ async function seed(knex) {
     const routerIds = []
     await Promise.each(_.range(routerNumber), async i => {
       const siteData = siteDatas[i % siteDatas.length]
-      const [routerId] = await knex('Device').insert({
+      const { id: routerId } = await insertDeviceWithGeneratedName(knex, {
         ...auditFields,
-        name: `${siteData.shortName} Router`,
-        shortName: `${siteData.city} Router`,
         deviceTypeId: deviceTypeIdRouter,
         deviceApprovalId: deviceApprovalApproved,
         partnerId: siteData.partnerId,
@@ -3411,8 +3410,6 @@ async function seed(knex) {
       const routerId = routerIds[i]
       const device = {
         ...auditFields,
-        name: `${siteData.name} ${i < 10 ? '&' : ''} GeneXpert`,
-        shortName: `${siteData.city} GeneXpert`,
         deviceTypeId: deviceTypeGeneXpertId,
         deviceApprovalId: deviceApprovalApproved,
         configurationData: JSON.stringify({
@@ -3480,12 +3477,12 @@ async function seed(knex) {
         putInService: subMonths(now, 2),
         hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
         serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-        lastInstrumentSerial: _.times(14, () =>
-          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
       }
 
-      ;[device.id] = await knex('Device').insert(device)
+      const { id, name, shortName } = await insertDeviceWithGeneratedName(knex, device)
+      device.id = id
+      device.name = name
+      device.shortName = shortName
       devicesGeneXpert.push(device)
 
       // Create API Keys
@@ -3495,9 +3492,10 @@ async function seed(knex) {
         partnerId: siteData.partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
-        deviceId: device.id,
         ...auditFields,
       })
+
+      await knex('Device').where('id', device.id).update({ deviceApiKeyId: device.deviceApiKeyId })
 
       // Create Status Log
       await knex('DeviceApprovalLog').insert({

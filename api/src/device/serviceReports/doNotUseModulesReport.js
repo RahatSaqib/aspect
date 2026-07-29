@@ -17,6 +17,7 @@ function getDoNotUseModulesReportData(dataConstraints, query, timezone) {
     .whereNot('dt.externalId', 'GxAlert')
     .distinct([
       'd.name as deviceName',
+      's.name as siteName',
       knex.raw(`ifnull(r.moduleName, 'N/A') as moduleName`),
       'r.moduleSerial',
       getDateTimeProjectionInTimeZoneIANA(knex, 'i.dateLastIssue', timezone, 'dateLastIssue'),

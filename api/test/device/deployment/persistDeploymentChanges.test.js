@@ -110,11 +110,17 @@ function buildTrx({
   const deviceUpdateFirstStub = sinon
     .stub()
     .resolves(deviceApiKeyId != null ? { deviceApiKeyId } : { deviceApiKeyId: null })
-  trx.withArgs('Device').returns({
+  const deviceChain = {
     where: sinon.stub().returnsThis(),
     update: sinon.stub().resolves(1),
     first: deviceUpdateFirstStub,
     count: sinon.stub().returnsThis(),
+  }
+  trx.withArgs('Device').returns(deviceChain)
+  trx.withArgs('Device as d').returns({
+    join: sinon.stub().returnsThis(),
+    where: sinon.stub().returnsThis(),
+    first: sinon.stub().resolves({ deviceTypeId: 5, partnerPluginName: null, deviceTypePluginName: null }),
   })
   trx.withArgs('DeviceApiKey').returns({
     where: sinon.stub().returnsThis(),
@@ -136,21 +142,31 @@ function buildTrx({
 
   trx.raw = sinon.stub().callsFake((...args) => ({ raw: args }))
 
-  return { trx, insertChain, deploymentLoadChain }
+  return { trx, insertChain, deploymentLoadChain, deviceChain }
 }
 
-function loadModule({ transactStub, syncDeviceApprovalFromDeploymentsStub }) {
+function loadModule({ transactStub, syncDeviceApprovalFromDeploymentsStub, assignGeneratedDeviceNameStub }) {
+  const deviceApprovalServiceStub = {
+    assertDeviceIsNotDecommissioned: sinon.stub().resolves(),
+    syncDeviceApprovalFromDeployments:
+      syncDeviceApprovalFromDeploymentsStub || sinon.stub().resolves({ changed: false }),
+  }
+
+  const deploymentService = proxyquire('../../../src/device/deployment/deploymentService', {
+    '../common/deviceApprovalService': deviceApprovalServiceStub,
+  })
+
   return proxyquire('../../../src/device/deployment/persistDeploymentChanges', {
     '../../db': { transact: transactStub },
     '../../auth/constraints': {
       getUserFromCredentials: sinon.stub().resolves({ id: 42, timezoneIANA: 'Etc/UTC' }),
     },
     '../common/logic': { recalculateDeviceFactTables: sinon.stub().resolves() },
-    '../common/deviceApprovalService': {
-      assertDeviceIsNotDecommissioned: sinon.stub().resolves(),
-      syncDeviceApprovalFromDeployments:
-        syncDeviceApprovalFromDeploymentsStub || sinon.stub().resolves({ changed: false }),
+    '../common/deviceApprovalService': deviceApprovalServiceStub,
+    '../common/deviceNaming': {
+      assignGeneratedDeviceName: assignGeneratedDeviceNameStub || sinon.stub().resolves({ name: '', shortName: '' }),
     },
+    './deploymentService': deploymentService,
   })
 }
 
@@ -362,6 +378,62 @@ describe('persistDeploymentChanges', () => {
       dispatchStub.getCalls().map(c => c.args[0]),
       [7, 8, 9]
     )
+  })
+
+  it('updates the custom name part and regenerates the device name when provided', async () => {
+    const { trx, deviceChain } = buildTrx({
+      resultingDeployments: [{ id: 1, siteId: 20, start: null, end: null }],
+      unassignedResultIds: [],
+    })
+
+    const transactStub = sinon.stub().callsFake(async cb => {
+      await cb(trx)
+    })
+    const assignGeneratedDeviceName = sinon.stub().resolves({ name: 'GX10 — 1', shortName: 'GX10 — 1' })
+    const { persistDeploymentChanges } = loadModule({
+      transactStub,
+      assignGeneratedDeviceNameStub: assignGeneratedDeviceName,
+    })
+
+    const messageContext = { bindActionCreators: sinon.stub().returns({ resultSiteAssigned: sinon.stub() }) }
+    const request = buildRequest({ messageContext, changes: [{ action: 'add', siteId: 20, start: null, end: null }] })
+    request.payload.customNamePart = ' — 1 '
+
+    await persistDeploymentChanges(request)
+
+    assert.isTrue(deviceChain.update.calledWithMatch({ customNamePart: '— 1' }))
+    assert.isTrue(assignGeneratedDeviceName.calledOnce)
+    assert.deepEqual(assignGeneratedDeviceName.firstCall.args[1], {
+      deviceId: 10,
+      deviceTypeId: 5,
+      partnerPluginName: null,
+      deviceTypePluginName: null,
+    })
+  })
+
+  it('leaves the custom name part and device name untouched when the payload omits it', async () => {
+    const { trx, deviceChain } = buildTrx({
+      resultingDeployments: [{ id: 1, siteId: 20, start: null, end: null }],
+      unassignedResultIds: [],
+    })
+
+    const transactStub = sinon.stub().callsFake(async cb => {
+      await cb(trx)
+    })
+    const assignGeneratedDeviceName = sinon.stub().resolves({ name: '', shortName: '' })
+    const { persistDeploymentChanges } = loadModule({
+      transactStub,
+      assignGeneratedDeviceNameStub: assignGeneratedDeviceName,
+    })
+
+    const messageContext = { bindActionCreators: sinon.stub().returns({ resultSiteAssigned: sinon.stub() }) }
+
+    await persistDeploymentChanges(
+      buildRequest({ messageContext, changes: [{ action: 'add', siteId: 20, start: null, end: null }] })
+    )
+
+    assert.isFalse(deviceChain.update.calledWithMatch(sinon.match.has('customNamePart')))
+    assert.isTrue(assignGeneratedDeviceName.notCalled)
   })
 
   it('does not dispatch in the empty-deployments branch (all deployments removed)', async () => {

@@ -44,7 +44,11 @@ const DeviceResultHistory = ({ deviceId, sortDir, sortCol, pageAt, pageSize }) =
   const { formatDate, formatMessage } = useIntl()
   const page = pageAt
   const size = pageSize
-  const filters = { showUnapprovedDevices: true, showDecommissionedDevices: true, deviceId }
+  const filters = {
+    showUndeployedDevices: true,
+    showDecommissionedDevices: true,
+    deviceId,
+  }
   // Params for main list query
   const params = omitBy(omit({ sortCol, sortDir, page, size, ...filters }, ['assayOverride']), isNil)
 

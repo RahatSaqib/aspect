@@ -16,6 +16,7 @@ const {
   allResultStatusToId,
   allResultTreatmentStatusToId,
 } = require('../../src/shared/dictionary')
+const { syncDeviceApprovalFromDeployments } = require('../../src/device/common/deviceApprovalService')
 
 const { assert } = chai
 
@@ -93,7 +94,19 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
 
     ;[assayGeneXpertMtbRif] = [await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name')]
 
-    const device = await knex('Device as d')
+    const deviceSelect = [
+      'd.id as deviceId',
+      'd.name as deviceName',
+      'd.partnerId',
+      's.geographyId',
+      'd.siteId',
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      's.name as siteName',
+      'dt.externalId as deviceType',
+    ]
+    const deviceQuery = knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .join('Site as s', 'd.siteId', 's.id')
@@ -107,19 +120,32 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       .where('d.partnerId', partnerId)
       .where('s.partnerId', partnerId)
       .where('c.abbreviation', countryAbbreviation)
+
+    let device = await deviceQuery
+      .clone()
       .where('da.token', 'approved')
-      .first(
-        'd.id as deviceId',
-        'd.name as deviceName',
-        'd.partnerId',
-        's.geographyId',
-        'd.siteId',
-        'g.countryId',
-        'g.stateId',
-        'g.lgaId',
-        's.name as siteName',
-        'dt.externalId as deviceType'
-      )
+      .first(...deviceSelect)
+
+    // Seeded GeneXpert devices without deployments are pendingDeployment after approval sync.
+    // Ensure this fixture has a deployment so the device is approved for the dashboard query.
+    if (!device) {
+      device = await deviceQuery.clone().first(...deviceSelect)
+      assert.isOk(device, 'Expected a Partner One US GeneXpert device for reporters dashboard fixture')
+
+      const deployment = await knex('Deployment').where({ deviceId: device.deviceId }).first('id')
+      if (!deployment) {
+        await knex('Deployment').insert({
+          deviceId: device.deviceId,
+          siteId: device.siteId,
+          start: null,
+          end: null,
+          createdOn: now,
+          updatedOn: now,
+        })
+        initialState.createdDeploymentDeviceId = device.deviceId
+      }
+      await syncDeviceApprovalFromDeployments(knex, { deviceId: device.deviceId })
+    }
 
     // week-day dates
     for (let day = minDate; day < maxDate; day = addDays(day, 1)) {
@@ -167,6 +193,10 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     await reset('Sample', initialState.sampleId)
     await reset('SiteTag', initialState.tagId, 'tagId')
     await reset('Tag', initialState.tagId)
+    if (initialState.createdDeploymentDeviceId) {
+      await knex('Deployment').where({ deviceId: initialState.createdDeploymentDeviceId }).delete()
+      await syncDeviceApprovalFromDeployments(knex, { deviceId: initialState.createdDeploymentDeviceId })
+    }
   })
 
   // ------------------------------------------------------------------------

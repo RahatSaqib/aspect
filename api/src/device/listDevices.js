@@ -1,5 +1,6 @@
 const _ = require('lodash')
-const { format, subMonths, endOfMonth, startOfMonth } = require('date-fns')
+const { subMonths } = require('date-fns')
+const { getUtcMonthBoundariesInTimezone, getUtcDayBoundariesInTimezone } = require('../shared/date')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { resultCategoryToId } = require('../shared/dictionary')
@@ -10,7 +11,7 @@ const { getUser } = require('../auth/service')
 async function getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  const { personId, timezoneIANA, personTimezoneIANA } = await getUser(auth.credentials.name)
+  const { timezoneIANA, personTimezoneIANA } = await getUser(auth.credentials.name)
   const resultCategoryErrorId = await resultCategoryToId('Error')
   const { assayId, geneXpertType } = query
   /**
@@ -131,55 +132,66 @@ async function getListDevices(query, auth) {
         site: 's',
         disease: 'dis',
       },
-      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+      { deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] }
     )
 
   const now = new Date()
-  const previousMonth = subMonths(now, 1)
-  // minDate for current and previous month
-  const minCurrentDate = format(startOfMonth(now), "yyyy-MM-dd'T'00:00:00.000'Z'")
-  const minPreviousDate = format(startOfMonth(previousMonth), "yyyy-MM-dd'T'00:00:00.000'Z'")
-  // maxDate for current and previous month
-  const maxCurrentDate = format(endOfMonth(now), "yyyy-MM-dd'T'23:59:59.999'Z'")
-  const maxPreviousDate = format(endOfMonth(previousMonth), "yyyy-MM-dd'T'23:59:59.999'Z'")
 
-  // Get current date in ISO format
-  const currentDateISO = format(now, 'yyyy-MM-dd')
-
-  // Define start and end of current day
-  const currentDayStart = `${currentDateISO}T00:00:00`
-  const currentDayEnd = `${currentDateISO}T23:59:59`
+  // Compute month and day boundaries as UTC equivalents of local calendar boundaries in the
+  // country timezone. This avoids CONVERT_TZ on every Result row in SQL, allowing the DB to
+  // compare the raw UTC column directly and use the (deviceId, endedOn) index.
+  const { start: minCurrentDate, end: maxCurrentDate } = getUtcMonthBoundariesInTimezone(now, timezoneIANA)
+  const { start: minPreviousDate, end: maxPreviousDate } = getUtcMonthBoundariesInTimezone(
+    subMonths(now, 1),
+    timezoneIANA
+  )
+  const { start: currentDayStart, end: currentDayEnd } = getUtcDayBoundariesInTimezone(now, timezoneIANA)
 
   // get rows
   const getItems = deviceQuery
     .clone()
     .leftJoin(
+      // Bounded to the previous month start so the DB uses the (deviceId, endedOn) index
+      // as a range scan (~2 months of rows) instead of a full table scan.
+      // CONVERT_TZ is intentionally absent: boundaries are pre-shifted to UTC in JS via
+      // getUtcMonthBoundariesInTimezone / getUtcDayBoundariesInTimezone so the raw column
+      // can be compared directly.
       knex('Result as resDevice')
+        .where('resDevice.endedOn', '>=', minPreviousDate)
         .select({
           deviceId: 'deviceId',
-          lastResultConductedOn: knex.raw('MAX(resDevice.endedOn)'),
-          /**
-           * --> to compare use country timezone in CONVERT_TZ to get a correct local (in-country) date value.
-           * Notice that passing params (minCurrentDate, maxCurrentDate, ...) are correctly formatted
-           * for start/end of local day - i.e. 00:00:00 and 23:59:59. And MySql uses these values as-is.
-           */
-          totalCurrentMonth: knex.raw(
-            `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
-            [minCurrentDate, maxCurrentDate]
-          ),
-          totalPreviousMonth: knex.raw(
-            `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
-            [minPreviousDate, maxPreviousDate]
-          ),
-          totalCurrentDay: knex.raw(
-            `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
-            [currentDayStart, currentDayEnd]
-          ),
+          totalCurrentMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            minCurrentDate,
+            maxCurrentDate,
+          ]),
+          totalPreviousMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            minPreviousDate,
+            maxPreviousDate,
+          ]),
+          totalCurrentDay: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            currentDayStart,
+            currentDayEnd,
+          ]),
         })
         .groupBy('deviceId')
         .as('deviceResult'),
       'd.id',
       'deviceResult.deviceId'
+    )
+    .leftJoin(
+      // Separate unbounded subquery for the all-time last result date.
+      // Kept apart from the counts subquery so it doesn't prevent the range scan above.
+      // TODO (Solution G): move this to a stored column on Device updated on result insert
+      //   to eliminate this scan entirely.
+      knex('Result as resLastResult')
+        .select({
+          deviceId: 'deviceId',
+          lastResultConductedOn: knex.raw('MAX(resLastResult.endedOn)'),
+        })
+        .groupBy('deviceId')
+        .as('deviceLastResult'),
+      'd.id',
+      'deviceLastResult.deviceId'
     )
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')
@@ -190,26 +202,6 @@ async function getListDevices(query, auth) {
         .groupBy('deviceId', 'day')
         .as('dmslActivity'),
       'dmslActivity.deviceId',
-      'd.id'
-    )
-    .leftJoin(
-      knex('Issue as i')
-        .select('i.deviceId', knex.raw('GROUP_CONCAT(DISTINCT ic.i18nKey) as categories'))
-        .innerJoin('Notification as n', 'n.issueId', 'i.id')
-        .leftJoin('AlertMessage as a', 'a.id', 'n.alertMessageId')
-        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-        .innerJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
-        .leftOuterJoin('IssueCategory as ic', leftBuilder =>
-          leftBuilder.on('it.issueCategoryId', 'ic.id').andOn('it.hasTag', knex.raw('1'))
-        )
-        .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
-        .modify(queryBuilder => {
-          if (query.issueTypeId) queryBuilder.whereIn('it.externalId', query.issueTypeId)
-        })
-        .where('a.personId', personId)
-        .groupBy('i.deviceId')
-        .as('issues'),
-      'issues.deviceId',
       'd.id'
     )
     .modify(queryBuilder => {
@@ -234,6 +226,7 @@ async function getListDevices(query, auth) {
        * --> to return use user timezone
        */
       ...getSelectListFields(personTimezoneIANA),
+      'd.notes',
       // The lastPingOn and createdOn fields from the getSelectListFields function are adjusted to UTC by accounting for the user's timezone offset.
       // These UTC values are then used in reports and are sent separately for further processing.
       'd.lastPingOn as lastPingInUtc',
@@ -252,7 +245,6 @@ async function getListDevices(query, auth) {
       'frd30Errors.resultCount as thisMonthErrors',
       knex.raw('count(distinct dmslActivity.day) as totalDays'),
       knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
-      'issues.categories as issueCategories',
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
       // Connector is considered online if it did a connection since the start of the previous day
@@ -260,7 +252,7 @@ async function getListDevices(query, auth) {
         'CASE WHEN d.lastPingOn > DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN "online" ELSE "offline" END AS connectorStatus'
       ),
       knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS connectorVersion'),
-      knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
+      knex.raw('deviceLastResult.lastResultConductedOn AS lastResultConductedOn'),
       // If the device last maintenance status log was registered since the start of yesterday, then...
       //  Is considered up if the last maintenance log was active, reported active, or no tests performed
       //  Is considered unknown if the last maintenance log was unknown
@@ -298,8 +290,6 @@ async function getListDevices(query, auth) {
       rate: it.resultCountThisMonth ? it.thisMonthErrors / it.resultCountThisMonth : 0,
     }
     delete it.thisMonthErrors
-
-    it.issueCategories = it.issueCategories ? it.issueCategories.split(',').map(key => ({ key })) : []
 
     it.timezoneIANA = timezoneIANA
     delete it.dmslDay

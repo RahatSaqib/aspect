@@ -9,7 +9,15 @@ const eidWindowReport = {
   availableForNotification: 1,
   exportCsv: false,
   exportExcel: true,
-  validations: ['dateRangeRequired'],
+  validations: [],
+  // assayId is pinned by the all_results sheet fixture query ('GxHiv1Qual') — engine-supplied, not a user parameter.
+  parameters: [
+    { name: 'dateRange', type: 'dateRange', required: true, default: { period: 'last30Days' } },
+    { name: 'stateId', type: 'state' },
+    { name: 'lgaId', type: 'lga', dependsOn: 'stateId' },
+    { name: 'siteName', type: 'site', dependsOn: 'lgaId', permission: 'site:view' },
+    { name: 'consumableId', type: 'consumable' },
+  ],
   sheets: [
     {
       sortOrder: 0,

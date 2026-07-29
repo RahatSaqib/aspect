@@ -1,36 +1,58 @@
 import * as Yup from 'yup'
 import { validationErrorMessages } from '../../../../messages'
 
-const onlyWholeNumbersCallback = value => {
-  if (value === null || value === undefined) return true
-  return Number.isInteger(value)
+const coerceNullableNumber = (value, originalValue) => {
+  if (originalValue === '' || originalValue === null || originalValue === undefined) return null
+  const n = Number(originalValue)
+  return Number.isFinite(n) ? n : value
 }
 
-export const getValidationSchema = formatMessage =>
+const onlyWholeNumbersCallback = value => {
+  if (value === null || value === undefined || value === '') return true
+  return Number.isInteger(Number(value))
+}
+
+export const getValidationSchema = (formatMessage, isGeneXpert) =>
   Yup.object({
-    name: Yup.string().required(formatMessage(validationErrorMessages.required)),
-    shortName: Yup.string().required(formatMessage(validationErrorMessages.required)),
-    siteId: Yup.string().required(formatMessage(validationErrorMessages.required)),
-    implementingPartnerId: Yup.string().nullable(),
+    // Hidden pass-through fields (not edited on this form); keep validation lenient.
+    name: Yup.string()
+      .nullable()
+      .transform(value => value ?? ''),
+    shortName: Yup.string()
+      .nullable()
+      .transform(value => value ?? ''),
+    customNamePart: Yup.string()
+      .nullable()
+      .transform(value => value ?? '')
+      .max(20, formatMessage(validationErrorMessages.mustBeAtMostCharacters, { max: 20 })),
+    siteId: Yup.number().nullable(),
+    implementingPartnerId: Yup.number().nullable(),
     dailyTestCapacity: Yup.number()
       .nullable()
-      .transform((value, originalValue) => (originalValue === '' ? null : value))
+      .transform(coerceNullableNumber)
       .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
-      .min(1, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }))
+      .test(
+        'min-when-set',
+        formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }),
+        value => value == null || value >= 1
+      )
       .max(9999, formatMessage(validationErrorMessages.mustBeLessThan, { max: 9999 })),
-    moduleBayCapacity: Yup.number()
-      .required(formatMessage(validationErrorMessages.required))
-      .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
-      .min(1, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 1 }))
-      .max(256, formatMessage(validationErrorMessages.mustBeLessThan, { max: 256 })),
+    moduleBayCapacity: isGeneXpert
+      ? Yup.number()
+          .transform(coerceNullableNumber)
+          .required(formatMessage(validationErrorMessages.required))
+          .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
+          .min(0, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 0 }))
+          .max(256, formatMessage(validationErrorMessages.mustBeLessThan, { max: 256 }))
+      : Yup.number().nullable().transform(coerceNullableNumber),
     gx6cModulesCount: Yup.number()
       .nullable()
-      .transform((value, originalValue) => (originalValue === '' ? null : value))
+      .transform(coerceNullableNumber)
       .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
       .min(0, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 0 })),
     gx10cModulesCount: Yup.number()
       .nullable()
-      .transform((value, originalValue) => (originalValue === '' ? null : value))
+      .transform(coerceNullableNumber)
       .test('no-decimals', formatMessage(validationErrorMessages.mustBeAWholeNumber), onlyWholeNumbersCallback)
       .min(0, formatMessage(validationErrorMessages.mustBeAtLeast, { min: 0 })),
     stickerInstrumentSerial: Yup.string().nullable(),

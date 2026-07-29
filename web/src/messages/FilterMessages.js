@@ -88,6 +88,10 @@ const messages = {
       id: 'filter.popover.deviceName',
       defaultMessage: 'Device',
     },
+    deviceApiKey: {
+      id: 'filter.popover.deviceApiKey',
+      defaultMessage: 'Device API Key',
+    },
     enterDeviceName: {
       id: 'filter.popover.enterDeviceName',
       defaultMessage: 'Enter device name...',
@@ -260,9 +264,17 @@ const messages = {
       id: 'filter.popover.showDecommissionedDevices',
       defaultMessage: 'Show Results From Decommissioned Devices',
     },
+    includeDecommissionedDevices: {
+      id: 'filter.popover.includeDecommissionedDevices',
+      defaultMessage: 'Include Decommissioned Devices',
+    },
+    showResultsFromUndeployedDevices: {
+      id: 'filter.popover.showResultsFromUndeployedDevices',
+      defaultMessage: 'Show Results From Undeployed Devices',
+    },
     onlyUnreconciled: {
       id: 'filter.popover.onlyUnreconciled',
-      defaultMessage: 'Only Results with unreconciled inventories',
+      defaultMessage: 'Only Results With Unreconciled Inventories',
     },
     deviceMaintenanceStatus: {
       id: 'filter.popover.deviceMaintenanceStatus',

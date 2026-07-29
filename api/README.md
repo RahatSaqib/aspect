@@ -89,6 +89,94 @@ yarn run knex seed:run
 yarn start
 ```
 
+### Windows Development Setup (native, no Docker)
+
+Run **all** `yarn`/`npm`/`node` commands from **Windows PowerShell or cmd.exe** (not WSL). Installing dependencies in WSL can produce Linux native binaries (`bcrypt`) and POSIX `node_modules/.bin` links
+that Windows `node.exe` can't load (`is not a valid Win32 application` / `'nodemon' is not recognized`).
+
+Commands below assume the MySQL `bin` is on your `PATH`; otherwise use the full path to
+`"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"`.
+
+**1. Node 14** (via [nvm-windows](https://github.com/coreybutler/nvm-windows); use the version in `api/.nvmrc`)
+
+    nvm install 14.17.0
+    nvm use 14.17.0
+    npm install -g yarn          # yarn is per-Node-version in nvm-windows
+
+If `nvm install` fails during npm-zip extraction (known nvm-windows bug): download
+`node-v14.17.0-win-x64.zip` from <https://nodejs.org/dist/v14.17.0/>, extract into
+`C:\Users\<you>\AppData\Local\nvm\v14.17.0`, then `nvm use 14.17.0`.
+
+**2. Install dependencies**
+
+```powershell
+yarn install
+```
+
+
+**3. MySQL — auth plugin** (the old `mysql` driver can't do MySQL 8's default `caching_sha2_password`)
+
+```powershell
+mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '<your_password>';"
+```
+
+**4. MySQL — sql_mode + server time zone.** `sql-mode` avoids `ER_WRONG_FIELD_WITH_GROUP` /
+`only_full_group_by` errors; `default-time-zone` makes the server run in UTC (matching production
+and the Docker setup, since the app stores/expects UTC datetimes).
+Edit `C:\ProgramData\MySQL\MySQL Server 8.0\my.ini` **as Administrator**; under `[mysqld]` set:
+
+```ini
+sql-mode="NO_ENGINE_SUBSTITUTION"
+default-time-zone='+00:00'
+```
+
+then restart the service:
+
+```powershell
+Restart-Service MySQL80
+```
+
+**5. MySQL — load time-zone tables** (one time). The app uses `CONVERT_TZ(..,'Asia/Dhaka')`, which
+returns `NULL` when these tables are empty (→ NULL `startedOn`, broken reports). Windows ships no
+zoneinfo, so import MySQL's prebuilt package: download the **`*_posix_sql`** archive from
+<https://dev.mysql.com/downloads/timezones.html>, extract it, then:
+
+```powershell
+cmd /c "mysql -u root -p mysql < timezone_posix.sql"
+```
+
+Verify (must not print `NULL`):
+
+```powershell
+mysql -u root -p -N -e "SELECT CONVERT_TZ('2026-01-01 00:00:00','+00:00','Asia/Dhaka');"
+```
+
+**6. RabbitMQ** (`amqp://localhost:5672`). Native: <https://www.rabbitmq.com/install-windows-manual.html>. Or, if you have Docker:
+
+```powershell
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
+
+**7. `.env`** — set `swagger.enabled = false` (`hapi-swagger` has an unmet `joi@17` peer dependency and crashes on boot when enabled).
+
+**8. Create + migrate + seed the database**
+
+```powershell
+yarn run db:reseed
+```
+
+**9. Start the server**
+
+```powershell
+yarn start
+```
+
+> **Time-zone note:** the `start` script sets `TZ=UTC` via `cross-env` (works on Windows and
+> Linux), **but Node on Windows ignores the `TZ` env var**, so locally the process still runs in
+> your Windows system time zone, not UTC (DB-side `CONVERT_TZ` is unaffected; it takes effect on
+> Linux/Docker). To make the Node process itself run in UTC like production, set the Windows system
+> time zone to **"(UTC) Coordinated Universal Time"**.
+
 ### Update development environment
 
 To update, pull from `develop` and run any new migrations.

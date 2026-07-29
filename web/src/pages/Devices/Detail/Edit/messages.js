@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl'
 export default defineMessages({
   name: { id: 'pages.DeviceDetailEdit.name', defaultMessage: 'Name' },
   shortName: { id: 'pages.DeviceDetailEdit.shortName', defaultMessage: 'Short Name' },
-  location: { id: 'pages.DeviceDetailEdit.location', defaultMessage: 'Site' },
   dailyTestCapacity: { id: 'pages.DeviceDetailEdit.dailyTestCapacity', defaultMessage: 'Daily Capacity' },
   stickerInstrumentSerial: {
     id: 'pages.DeviceDetailEdit.stickerInstrumentSerial',
@@ -27,5 +26,39 @@ export default defineMessages({
   discard: { id: 'pages.DeviceDetailEdit.discard', defaultMessage: 'Discard' },
   save: { id: 'pages.DeviceDetailEdit.save', defaultMessage: 'Save' },
   deviceUpdateError: { id: 'pages.DeviceDetailEdit.deviceUpdateError', defaultMessage: 'Error updating device' },
+  decommissionedDeviceCannotBeEdited: {
+    id: 'pages.DeviceDetailEdit.decommissionedDeviceCannotBeEdited',
+    defaultMessage: 'A decommissioned device cannot be edited.',
+  },
   deviceUpdated: { id: 'pages.DeviceDetailEdit.deviceUpdated', defaultMessage: 'Device updated successfully' },
+  sectionCapacityModules: {
+    id: 'pages.DeviceDetailEdit.sectionCapacityModules',
+    defaultMessage: 'Capacity & Modules',
+  },
+  sectionMaintenance: { id: 'pages.DeviceDetailEdit.sectionMaintenance', defaultMessage: 'Maintenance' },
+  sectionUsage: { id: 'pages.DeviceDetailEdit.sectionUsage', defaultMessage: 'Usage' },
+  sectionTechnicalDetails: {
+    id: 'pages.DeviceDetailEdit.sectionTechnicalDetails',
+    defaultMessage: 'Technical Details',
+  },
+  sectionAdditionalInfo: {
+    id: 'pages.DeviceDetailEdit.sectionAdditionalInfo',
+    defaultMessage: 'Additional Information',
+  },
+  sectionOverview: {
+    id: 'pages.DeviceDetailEdit.sectionOverview',
+    defaultMessage: 'Overview',
+  },
+  customNamePart: {
+    id: 'pages.DeviceDetailEdit.customNamePart',
+    defaultMessage: 'Custom Name Part',
+  },
+  customNamePartHelp: {
+    id: 'pages.DeviceDetailEdit.customNamePartHelp',
+    defaultMessage: 'Added to the device name, right after the identifier',
+  },
+  customNamePartPreview: {
+    id: 'pages.DeviceDetailEdit.customNamePartPreview',
+    defaultMessage: 'New device name: {name}',
+  },
 })

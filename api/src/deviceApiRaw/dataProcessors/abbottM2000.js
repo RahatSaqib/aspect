@@ -1022,11 +1022,16 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     )
 
     await transact(async knex => {
-      const deviceApiKey = (await knex('DeviceApiKey').where('token', auth.credentials.token).first()) || {}
-      if (!deviceApiKey.deviceId) {
+      const deviceApiKey =
+        (await knex('DeviceApiKey as dak')
+          .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
+          .where('dak.token', auth.credentials.token)
+          .first('dak.*', 'd.id as linkedDeviceId')) || {}
+      const deviceId = deviceApiKey.linkedDeviceId || deviceApiKey.deviceId
+      if (!deviceId) {
         throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
       }
-      const deviceRecord = await knex('Device').where('id', deviceApiKey.deviceId).first()
+      const deviceRecord = await knex('Device').where('id', deviceId).first()
       const device = {
         ...deviceRecord,
         configurationData: JSON.parse(deviceRecord.configurationData),

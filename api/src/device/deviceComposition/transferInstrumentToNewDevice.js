@@ -5,16 +5,23 @@ const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { transferDeviceInstruments } = require('./transferInstrumentsLogic')
 const { recalculateDeviceFactTables } = require('../common/logic')
 const { syncDeviceApprovalFromDeployments } = require('../common/deviceApprovalService')
+const { assignGeneratedDeviceName } = require('../common/deviceNaming')
 
 async function transferInstrumentToNewDevice({ payload, plugins: { messageContext }, auth }) {
   const { id: userId } = await getUser(auth.credentials.name)
-  const { instrumentId, name, shortName, siteId } = payload
+  const { instrumentId, siteId } = payload
   const { sourceDevice } = await getSourceDevice(instrumentId)
 
-  await validate(instrumentId, name, shortName, siteId, auth.credentials)
+  if (sourceDevice.approvalToken === 'decommissioned') {
+    throw Boom.conflict('Instruments cannot be moved for a decommissioned device', {
+      errorKeyCode: 'transferInstrumentsDecommissioned',
+    })
+  }
+
+  await validate(instrumentId, siteId, auth.credentials)
 
   const { deletedDeviceIds, newDeviceId } = await transact(async trknex => {
-    const newDeviceId = await createNewDevice(trknex, sourceDevice, instrumentId, { name, shortName, siteId }, userId)
+    const newDeviceId = await createNewDevice(trknex, sourceDevice, instrumentId, { siteId }, userId)
 
     const { deletedDeviceIds } = await transferDeviceInstruments(
       trknex,
@@ -33,31 +40,13 @@ async function transferInstrumentToNewDevice({ payload, plugins: { messageContex
   return { ok: true, deletedDeviceIds, newDeviceId }
 }
 
-async function validate(instrumentId, name, shortName, siteId, credentials) {
+async function validate(instrumentId, siteId, credentials) {
   await validatePermissions(instrumentId, credentials)
-  await validateExistingDeviceNames(name, shortName)
   await validateSitePermissions(siteId, credentials)
 }
 
 async function validatePermissions() {
   // TODO: Implement this
-}
-
-async function validateExistingDeviceNames(name, shortName) {
-  const existingDevice = await knex('Device')
-    .where('name', name)
-    .orWhere('shortName', shortName)
-    .first('name', 'shortName')
-  if (existingDevice) {
-    if (existingDevice.name === name) {
-      throw Boom.badRequest('Device with this name already exists', { errorKeyCode: 'deviceNameAlreadyExists' })
-    }
-    if (existingDevice.shortName === shortName) {
-      throw Boom.badRequest('Device with this short name already exists', {
-        errorKeyCode: 'deviceShortNameAlreadyExists',
-      })
-    }
-  }
 }
 
 async function validateSitePermissions(siteId, credentials) {
@@ -77,8 +66,18 @@ async function validateSitePermissions(siteId, credentials) {
 async function getSourceDevice(instrumentId) {
   const data = await knex('Device as d')
     .join('Instrument as i', 'i.deviceId', 'd.id')
+    .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .where('i.id', instrumentId)
-    .first('d.id', 'd.partnerId', 'd.deviceTypeId', 'd.deviceApprovalId', 'd.deviceApiKeyId', 'd.culture', 'd.timezone')
+    .first(
+      'd.id',
+      'd.partnerId',
+      'd.deviceTypeId',
+      'd.deviceApprovalId',
+      'd.deviceApiKeyId',
+      'd.culture',
+      'd.timezone',
+      'da.token as approvalToken'
+    )
 
   if (!data) {
     throw Boom.badRequest('Instrument not found')
@@ -93,11 +92,12 @@ async function getSourceDevice(instrumentId) {
       deviceApiKeyId: data.deviceApiKeyId,
       culture: data.culture,
       timezone: data.timezone,
+      approvalToken: data.approvalToken,
     },
   }
 }
 
-async function createNewDevice(trknex, sourceDevice, instrumentId, { name, shortName, siteId }, userId) {
+async function createNewDevice(trknex, sourceDevice, instrumentId, { siteId }, userId) {
   const now = new Date()
 
   // Get last used deviceApiKeyId for this instrument, or use sourceDevice's deviceApiKeyId
@@ -110,8 +110,8 @@ async function createNewDevice(trknex, sourceDevice, instrumentId, { name, short
     deviceTypeId: sourceDevice.deviceTypeId,
     moduleBayCapacity: 4, // Initial Module Bay Capacity is 4 because it's just one instrument.
     deviceApprovalId: sourceDevice.deviceApprovalId,
-    name,
-    shortName,
+    name: 'device',
+    shortName: 'device',
     culture: sourceDevice.culture,
     timezone: sourceDevice.timezone,
     deviceApiKeyId,
@@ -119,6 +119,13 @@ async function createNewDevice(trknex, sourceDevice, instrumentId, { name, short
     createdBy: userId,
     updatedOn: now,
     updatedBy: userId,
+  })
+
+  await assignGeneratedDeviceName(trknex, {
+    deviceId,
+    deviceTypeId: sourceDevice.deviceTypeId,
+    partnerPluginName: null,
+    deviceTypePluginName: null,
   })
 
   await trknex('Deployment').insert({

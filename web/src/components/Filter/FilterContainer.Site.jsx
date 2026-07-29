@@ -19,7 +19,7 @@ const SiteFilter = props => {
   return (
     <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId ?? ''}
@@ -27,7 +27,7 @@ const SiteFilter = props => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId ?? ''}
@@ -35,7 +35,7 @@ const SiteFilter = props => {
             stateId={state.stateId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <SiteTypeSelect
             name="siteType"
             label={formatMessage(messages.siteType)}
@@ -43,7 +43,7 @@ const SiteFilter = props => {
             onChange={siteTypeId => setState({ ...state, siteTypeId })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <SiteListSelect
             name="parentWarehouseId"
             label={formatMessage(messages.stockProvider)}
@@ -53,7 +53,7 @@ const SiteFilter = props => {
             isClearable
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <SiteAutoCompleteField
             name="siteName"
             value={state.siteName || ''}
@@ -65,14 +65,14 @@ const SiteFilter = props => {
             width="100%"
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label={formatMessage(messages.externalId)}
             value={state.externalId || ''}
             onChange={e => setState({ ...state, externalId: e.target.value ? e.target.value : null })}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <TagSingleSelect
             type="site"
             id="tagId"

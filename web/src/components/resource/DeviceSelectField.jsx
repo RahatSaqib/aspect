@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react'
 import { MenuItem } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useDeviceForSelect } from '../../hooks/device/useDeviceForSelect'
+import deviceMessages from '../../messages/deviceMessages'
 import SelectField from '../shared/SelectField'
 
 function DeviceSelectField({
@@ -13,6 +15,7 @@ function DeviceSelectField({
   disabled,
   ...restProps
 }) {
+  const { formatMessage } = useIntl()
   const { data = [], isLoading } = useDeviceForSelect({ countryId, partnerId, siteId, deviceTypeExternalId })
 
   const handleChange = useCallback(
@@ -34,7 +37,9 @@ function DeviceSelectField({
       {data.length > 0 &&
         data.map(s => (
           <MenuItem key={s.id} value={s.id}>
-            {s.name}
+            {s.siteName
+              ? formatMessage(deviceMessages.nameAtSite, { deviceName: s.name, siteName: s.siteName })
+              : s.name}
           </MenuItem>
         ))}
     </SelectField>

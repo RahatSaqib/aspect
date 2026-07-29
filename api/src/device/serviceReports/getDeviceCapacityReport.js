@@ -25,6 +25,7 @@ async function getDeviceCapacityReport(auth, query, timezone) {
     .select(
       'd.id',
       'd.name',
+      'd.siteName',
       'd.dailyTestCapacity',
       'result_group.count',
       knex.raw('date_format(result_group.period_first_day, "%Y-%m") as period'),
@@ -32,8 +33,8 @@ async function getDeviceCapacityReport(auth, query, timezone) {
     )
     .from(
       deviceQuery
-        .groupBy('d.id', 'd.name', 'd.dailyTestCapacity', 'd.partnerId')
-        .select('d.id', 'd.name', 'd.dailyTestCapacity', 'd.partnerId')
+        .groupBy('d.id', 'd.name', 's.name', 'd.dailyTestCapacity', 'd.partnerId')
+        .select('d.id', 'd.name', 's.name as siteName', 'd.dailyTestCapacity', 'd.partnerId')
         .as('d')
     )
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
@@ -99,6 +100,7 @@ async function getDeviceCapacityReport(auth, query, timezone) {
       deviceEntry = {
         id: deviceId,
         name: deviceName,
+        siteName: row.siteName,
         dailyTestCapacity,
       }
       deviceMap.set(deviceId, deviceEntry)

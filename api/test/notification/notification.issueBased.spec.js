@@ -45,10 +45,16 @@ describe('Issue based Notifications triggers', () => {
     messageContext = await createMessageContext()
     // the cache should be reseted just for the test and because we are manually inserting data directly into the db.
     await server.post('/api/notification/clearcache').set('Authorization', `Bearer${shared.token}`)
+    // Device names are now generated (${acronym}${id}); look up by Wayne LGA name instead.
     const { partnerId, deviceId, siteId, geographyId } = await knex('Device as d')
+      .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
       .join('Site as s', 'd.siteId', 's.id')
-      .where('d.name', 'Daktari Wayne, OH')
-      .first('d.partnerId', 'd.id as deviceId', 'siteId', 's.geographyId')
+      .join('Geography as g', 's.geographyId', 'g.id')
+      .join('Lga as l', 'g.lgaId', 'l.id')
+      .where('l.name', 'Wayne')
+      .where('da.token', 'approved')
+      .whereNotNull('d.siteId')
+      .first('d.partnerId', 'd.id as deviceId', 'd.siteId as siteId', 's.geographyId')
     ;[insertedIssueId] = await knex('Issue').insert({
       partnerId,
       deviceId,

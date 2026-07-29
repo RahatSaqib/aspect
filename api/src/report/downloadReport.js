@@ -2,26 +2,50 @@ const Stream = require('stream')
 const fs = require('fs')
 const Path = require('path')
 const Boom = require('@hapi/boom')
+const { getUserFromCredentials } = require('../auth/constraints')
 const { respondFile } = require('../shared/response')
 const { saveReportToFile } = require('./saveReportToFile')
+const { startReportDownloadLog, finishReportDownloadLogInBackground } = require('./reportDownloadLog')
 // const { queue } = require('../messageQueue')
 
 /**
  * This method execute a report and return the result over a hapi reply object.
  * @param {*} request - Hapi request.
  * @param {*} reply - Hapi reply.
+ * @param {*} options - { validationMode: 'strict' | 'permissive' } — callers whose
+ * route schema already bounds the query (e.g. /result/export) pass permissive.
  * @returns The received Hapi reply object with the appropiate reponse and the report as content.
  */
-module.exports = async function downloadReport(request, reply) {
+module.exports = async function downloadReport(request, reply, { validationMode = 'strict' } = {}) {
   const { auth, query, params } = request
   const { externalId } = params
 
-  try {
-    // queue().add('asyncReports', { auth, query, externalId })
-    const dataBuffer = new Stream.PassThrough()
-    const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true)
+  const user = await getUserFromCredentials(auth.credentials).catch(() => null)
 
-    const fullPath = await promise
+  const logId = await startReportDownloadLog({
+    userId: user?.id ?? null,
+    reportExternalId: externalId,
+    format: query.format || 'xlsx',
+    query,
+    source: 'sync',
+  }).catch(() => null)
+
+  try {
+    const dataBuffer = new Stream.PassThrough()
+    const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true, undefined, {
+      validationMode,
+    })
+
+    const { fullPath, dataQueryTimeMs, fileGenerationTimeMs } = await promise
+    const { size: fileSizeBytes } = await fs.promises.stat(fullPath)
+
+    finishReportDownloadLogInBackground(logId, {
+      success: 1,
+      dataQueryTimeMs,
+      fileGenerationTimeMs,
+      fileSizeBytes,
+    })
+
     const path = Path.join(fullPath)
     const stream = fs.createReadStream(path)
     stream.pipe(dataBuffer)
@@ -34,6 +58,11 @@ module.exports = async function downloadReport(request, reply) {
       streamResponse: true,
     })
   } catch (error) {
+    const errorMessage = error?.message || String(error)
+    finishReportDownloadLogInBackground(logId, {
+      success: 0,
+      errorMessage,
+    })
     throw Boom.badRequest(error)
   }
 }

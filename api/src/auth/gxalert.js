@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { promisify } = require('util')
 const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 const Promise = require('bluebird')
@@ -9,8 +8,6 @@ require('isomorphic-fetch')
 
 const config = require('../config')
 const { query, transact } = require('../db')
-
-const bcryptHash = promisify(bcrypt.hash)
 
 class GxAlertLoginError extends Error {
   constructor(message, isConnectionError) {
@@ -47,7 +44,7 @@ async function storeUser(knex, username, password, gxUser, partnerId, countryId,
   const now = new Date()
 
   // generate pw hash
-  const pw = await bcryptHash(password, parseInt(config.passwordSaltRounds, 10))
+  const pw = await bcrypt.hash(password, parseInt(config.passwordSaltRounds, 10))
 
   // basic data to save
   const baseUserData = {

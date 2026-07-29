@@ -126,7 +126,15 @@ L|1`
       id: 1,
       revoked: false,
       partnerId: 2,
-      deviceId: 3,
+      deviceId: 4,
+      linkedDeviceId: 4,
+    },
+    'DeviceApiKey as dak': {
+      id: 1,
+      revoked: false,
+      partnerId: 2,
+      deviceId: 4,
+      linkedDeviceId: 4,
     },
     Device: {
       id: 4,

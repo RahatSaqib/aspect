@@ -78,11 +78,11 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
   }, [performanceReport])
 
   return (
-    <section className={styles.Section}>
+    <section className={styles.Section} style={{ overflowX: 'hidden' }}>
       <Card className={styles.Section}>
         <p data-panel-title>{formatMessage(messages.performanceTitle)}</p>
         <Grid container sx={{ mt: 2 }}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} sx={{ overflow: 'hidden', maxWidth: '100%' }}>
             <p>{formatMessage(messages.utilizationRate)}</p>
             {utilizationData.data && utilizationData.data.length ? (
               <ColumnGraph
@@ -138,7 +138,7 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
               />
             ) : null}
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} sx={{ overflow: 'hidden', maxWidth: '100%' }}>
             <p>{formatMessage(messages.errorRate)}</p>
             {errorData.data && errorData.data.length ? (
               <ColumnGraph

@@ -60,7 +60,6 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezoneIANA) {
       'st.name AS stateName',
       'lg.name AS districtName',
       'd.serial AS serial',
-      'd.lastInstrumentSerial AS lastInstrumentSerial',
       'dms.name AS maintenanceStatusName',
       knex.raw("dmsl.data->>'$.options.data.notes' AS maintenanceStatusNotes"),
       getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastPingOn', timezoneIANA, 'lastPingOn'),

@@ -1,28 +1,48 @@
 import React, { useState } from 'react'
-import { Button, Checkbox, Card, FormControlLabel, TextField, Stack } from '@mui/material'
-import { Formik, Form } from 'formik'
+import { Button, Card, Checkbox, FormControlLabel, Stack, TextField } from '@mui/material'
+import { Form, Formik } from 'formik'
 import get from 'lodash/get'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
-  ImplementingPartnerSelect,
-  SiteSelect,
   CepheidInstrumentModelSelect,
   CepheidSoftwareTypeSelect,
+  ImplementingPartnerSelect,
   TagInput,
 } from '../../../../components'
 import AspectButton from '../../../../components/shared/AspectButton'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
+import { previewDeviceName } from '../deviceNamePreview'
 import styles from '../styles.module.css'
 import messages from './messages'
 import { getValidationSchema } from './validation'
 
-const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
+const SectionDivider = ({ label }) => (
+  <div className={styles.sectionDivider}>
+    <span className={styles.sectionDivider__label}>{label}</span>
+    <span className={styles.sectionDivider__line} />
+  </div>
+)
+
+const customNamePartHelperText = (intl, device, values, errors) => {
+  if (errors.customNamePart) return errors.customNamePart
+  const newDeviceName = previewDeviceName({
+    currentName: device.name,
+    currentPart: device.customNamePart,
+    editedPart: values.customNamePart,
+  })
+  if (newDeviceName !== (device.name || '')) {
+    return intl.formatMessage(messages.customNamePartPreview, { name: newDeviceName })
+  }
+  return intl.formatMessage(messages.customNamePartHelp)
+}
+
+const DeviceDetailEdit = ({ device, deviceTags }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const intl = useIntl()
@@ -31,14 +51,17 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const { mutate: updateDeviceTags } = useUpdateTagByTypeAndId('device', device.id)
   const [submitting, setSubmitting] = useState(false)
 
-  // Create validation schema using imported function
-  const validationSchema = getValidationSchema(intl.formatMessage)
+  const isGeneXpert = get(device, 'deviceType.externalId') === CONSTS.GENEXPERT_EXTERNAL_ID
 
-  // Create initial values for Formik
+  const validationSchema = getValidationSchema(intl.formatMessage, isGeneXpert)
+
+  // name, shortName and siteId are kept so they are included in the API payload but are not rendered as inputs
+  // (siteId is not editable here — the device's site is managed via deployments)
   const initialValues = {
-    name: device.name,
-    shortName: device.shortName,
-    siteId: device.siteId,
+    name: device.name || '',
+    shortName: device.shortName || device.name || '',
+    customNamePart: device.customNamePart || '',
+    siteId: device.siteId ?? null,
     implementingPartnerId: device.implementingPartnerId,
     dailyTestCapacity: device.dailyTestCapacity,
     moduleBayCapacity: device.moduleBayCapacity,
@@ -47,20 +70,24 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
     stickerInstrumentSerial: device.stickerInstrumentSerial,
     instrumentModel: device.instrumentModel,
     softwareType: device.softwareType,
-    isDaisyChained: device.isDaisyChained || false, // Keep default for boolean
+    isDaisyChained: device.isDaisyChained || false,
     notes: device.notes,
-    tags: deviceTags || [], // Keep default for array operations
+    tags: deviceTags || [],
   }
 
-  const onError = () => {
+  const onError = error => {
     setSubmitting(false)
-    toast.error(intl.formatMessage(messages.deviceUpdateError))
+    const errorKeyCode = error?.data?.errorKeyCode
+    toast.error(
+      errorKeyCode && messages[errorKeyCode]
+        ? intl.formatMessage(messages[errorKeyCode])
+        : intl.formatMessage(messages.deviceUpdateError)
+    )
   }
 
   const handleSubmit = async values => {
     setSubmitting(true)
 
-    // Convert empty strings to null for numeric fields
     const deviceData = {
       ...values,
       dailyTestCapacity: values.dailyTestCapacity === '' ? null : values.dailyTestCapacity,
@@ -95,170 +122,178 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
             validateOnMount
             validateOnChange
           >
-            {({ values, errors, setFieldValue, resetForm, dirty, isValid }) => (
+            {({ values, errors, setFieldValue, dirty, isValid }) => (
               <Form>
-                <TextField
-                  fullWidth
-                  id="name"
-                  name="name"
-                  error={Boolean(errors.name)}
-                  helperText={errors.name}
-                  required
-                  label={intl.formatMessage(messages.name)}
-                  value={values.name}
-                  onChange={e => setFieldValue('name', e.target.value)}
-                />
-                <TextField
-                  fullWidth
-                  id="shortName"
-                  name="shortName"
-                  error={Boolean(errors.shortName)}
-                  helperText={errors.shortName}
-                  required
-                  label={intl.formatMessage(messages.shortName)}
-                  value={values.shortName}
-                  onChange={e => setFieldValue('shortName', e.target.value)}
-                />
-                <SiteSelect
-                  id="siteId"
-                  name="siteId"
-                  label={intl.formatMessage(messages.location)}
-                  value={values.siteId || ''}
-                  onChange={e => setFieldValue('siteId', e.target.value)}
-                  disabled={!editable}
-                />
+                <div className={styles.formGrid}>
+                  {/* ── Overview ── */}
+                  <SectionDivider label={intl.formatMessage(messages.sectionOverview)} />
+                  <TextField
+                    id="customNamePart"
+                    name="customNamePart"
+                    margin="none"
+                    label={intl.formatMessage(messages.customNamePart)}
+                    error={Boolean(errors.customNamePart)}
+                    helperText={customNamePartHelperText(intl, device, values, errors)}
+                    value={values.customNamePart}
+                    onChange={e => setFieldValue('customNamePart', e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                  />
 
-                <ImplementingPartnerSelect
-                  valueBy="value"
-                  label={intl.formatMessage(messages.partner)}
-                  value={values.implementingPartnerId ?? null}
-                  onChange={implementingPartnerId => setFieldValue('implementingPartnerId', implementingPartnerId)}
-                />
-                <TextField
-                  label={intl.formatMessage(messages.dailyTestCapacity)}
-                  type="number"
-                  name="dailyTestCapacity"
-                  error={Boolean(errors.dailyTestCapacity)}
-                  helperText={errors.dailyTestCapacity}
-                  value={values.dailyTestCapacity}
-                  onChange={e => setFieldValue('dailyTestCapacity', e.target.value)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
+                  {/* ── Capacity & Modules — GeneXpert only ── */}
+                  {isGeneXpert && (
+                    <>
+                      <SectionDivider label={intl.formatMessage(messages.sectionCapacityModules)} />
+                      <TextField
+                        label={intl.formatMessage(messages.gx6cModulesCount)}
+                        type="number"
+                        name="gx6cModulesCount"
+                        margin="none"
+                        error={Boolean(errors.gx6cModulesCount)}
+                        helperText={errors.gx6cModulesCount}
+                        value={values.gx6cModulesCount ?? 0}
+                        onChange={e => setFieldValue('gx6cModulesCount', e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                      <TextField
+                        label={intl.formatMessage(messages.gx10cModulesCount)}
+                        type="number"
+                        name="gx10cModulesCount"
+                        margin="none"
+                        error={Boolean(errors.gx10cModulesCount)}
+                        helperText={errors.gx10cModulesCount}
+                        value={values.gx10cModulesCount ?? 0}
+                        onChange={e => setFieldValue('gx10cModulesCount', e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                      <TextField
+                        label={intl.formatMessage(messages.moduleBayCapacity)}
+                        type="number"
+                        name="moduleBayCapacity"
+                        margin="none"
+                        error={Boolean(errors.moduleBayCapacity)}
+                        helperText={errors.moduleBayCapacity}
+                        value={values.moduleBayCapacity}
+                        onChange={e => setFieldValue('moduleBayCapacity', e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    </>
+                  )}
 
-                <TextField
-                  label={intl.formatMessage(messages.moduleBayCapacity)}
-                  type="number"
-                  name="moduleBayCapacity"
-                  error={Boolean(errors.moduleBayCapacity)}
-                  helperText={errors.moduleBayCapacity}
-                  value={values.moduleBayCapacity}
-                  onChange={e => setFieldValue('moduleBayCapacity', e.target.value)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
+                  {/* ── Maintenance — GeneXpert only (isDaisyChained is the only editable field) ── */}
+                  {isGeneXpert && (
+                    <>
+                      <SectionDivider label={intl.formatMessage(messages.sectionMaintenance)} />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            type="checkbox"
+                            name="isDaisyChained"
+                            onChange={e => setFieldValue('isDaisyChained', e.target.checked)}
+                            checked={[true, 'true'].includes(values.isDaisyChained)}
+                          />
+                        }
+                        label={intl.formatMessage(messages.isDaisyChained)}
+                      />
+                    </>
+                  )}
 
-                {get(device, 'deviceType.externalId') === CONSTS.GENEXPERT_EXTERNAL_ID ? (
-                  <>
-                    <TextField
-                      label={intl.formatMessage(messages.gx6cModulesCount)}
-                      type="number"
-                      name="gx6cModulesCount"
-                      error={Boolean(errors.gx6cModulesCount)}
-                      helperText={errors.gx6cModulesCount}
-                      value={values.gx6cModulesCount ?? 0}
-                      onChange={e => setFieldValue('gx6cModulesCount', e.target.value)}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
+                  {/* ── Usage ── */}
+                  <SectionDivider label={intl.formatMessage(messages.sectionUsage)} />
+                  <TextField
+                    label={intl.formatMessage(messages.dailyTestCapacity)}
+                    type="number"
+                    name="dailyTestCapacity"
+                    margin="none"
+                    error={Boolean(errors.dailyTestCapacity)}
+                    helperText={errors.dailyTestCapacity}
+                    value={values.dailyTestCapacity}
+                    onChange={e => setFieldValue('dailyTestCapacity', e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                  />
 
-                    <TextField
-                      label={intl.formatMessage(messages.gx10cModulesCount)}
-                      type="number"
-                      name="gx10cModulesCount"
-                      error={Boolean(errors.gx10cModulesCount)}
-                      helperText={errors.gx10cModulesCount}
-                      value={values.gx10cModulesCount ?? 0}
-                      onChange={e => setFieldValue('gx10cModulesCount', e.target.value)}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
+                  {/* ── Technical Details — GeneXpert only ── */}
+                  {isGeneXpert && (
+                    <>
+                      <SectionDivider label={intl.formatMessage(messages.sectionTechnicalDetails)} />
+                      <CepheidInstrumentModelSelect
+                        valueBy="value"
+                        label={intl.formatMessage(messages.instrumentModel)}
+                        value={values.instrumentModel}
+                        onChange={instrumentModel => setFieldValue('instrumentModel', instrumentModel)}
+                      />
+                      <CepheidSoftwareTypeSelect
+                        valueBy="value"
+                        label={intl.formatMessage(messages.softwareType)}
+                        value={values.softwareType}
+                        onChange={softwareType => setFieldValue('softwareType', softwareType)}
+                      />
+                      <TextField
+                        id="stickerInstrumentSerial"
+                        name="stickerInstrumentSerial"
+                        margin="none"
+                        label={intl.formatMessage(messages.stickerInstrumentSerial)}
+                        value={values.stickerInstrumentSerial}
+                        onChange={e => setFieldValue('stickerInstrumentSerial', e.target.value)}
+                      />
+                    </>
+                  )}
 
+                  {/* ── Additional Information ── */}
+                  <SectionDivider label={intl.formatMessage(messages.sectionAdditionalInfo)} />
+                  <div className={styles.formGrid__fullWidth}>
                     <TextField
                       fullWidth
-                      id="stickerInstrumentSerial"
-                      name="stickerInstrumentSerial"
-                      label={intl.formatMessage(messages.stickerInstrumentSerial)}
-                      value={values.stickerInstrumentSerial}
-                      onChange={e => setFieldValue('stickerInstrumentSerial', e.target.value)}
+                      id="notes"
+                      name="notes"
+                      margin="none"
+                      label={intl.formatMessage(messages.notes)}
+                      value={values.notes}
+                      onChange={e => setFieldValue('notes', e.target.value)}
+                      multiline
+                      maxRows={6}
+                      minRows={3}
                     />
-
-                    <CepheidInstrumentModelSelect
+                  </div>
+                  <div className={styles.formGrid__fullWidth}>
+                    <TagInput
+                      type="device"
+                      label={intl.formatMessage(messages.tags)}
+                      onChange={tags => setFieldValue('tags', tags)}
+                      value={values.tags}
+                    />
+                  </div>
+                  <div className={styles.formGrid__fullWidth}>
+                    <ImplementingPartnerSelect
                       valueBy="value"
-                      label={intl.formatMessage(messages.instrumentModel)}
-                      value={values.instrumentModel}
-                      onChange={instrumentModel => setFieldValue('instrumentModel', instrumentModel)}
+                      label={intl.formatMessage(messages.partner)}
+                      value={values.implementingPartnerId ?? null}
+                      onChange={implementingPartnerId => setFieldValue('implementingPartnerId', implementingPartnerId)}
                     />
+                  </div>
 
-                    <CepheidSoftwareTypeSelect
-                      valueBy="value"
-                      label={intl.formatMessage(messages.softwareType)}
-                      value={values.softwareType}
-                      onChange={softwareType => setFieldValue('softwareType', softwareType)}
-                    />
-
-                    <FormControlLabel
-                      sx={{ mb: '20px' }}
-                      control={
-                        <Checkbox
-                          type="checkbox"
-                          name="isDaisyChained"
-                          onChange={e => setFieldValue('isDaisyChained', e.target.checked)}
-                          checked={[true, 'true'].includes(values.isDaisyChained)}
-                        />
-                      }
-                      label={intl.formatMessage(messages.isDaisyChained)}
-                    />
-                  </>
-                ) : null}
-
-                <TextField
-                  fullWidth
-                  id="notes"
-                  name="notes"
-                  label={intl.formatMessage(messages.notes)}
-                  value={values.notes}
-                  onChange={e => setFieldValue('notes', e.target.value)}
-                  multiline
-                  maxRows={6}
-                  minRows={3}
-                />
-
-                <TagInput
-                  type="device"
-                  label={intl.formatMessage(messages.tags)}
-                  onChange={tags => setFieldValue('tags', tags)}
-                  value={values.tags}
-                />
-
-                <Stack sx={{ gap: 2, flexDirection: 'row', justifyContent: 'flex-end' }}>
-                  <AspectButton
-                    type="button"
-                    disabled={!dirty}
-                    onClick={() => resetForm()}
-                    color="primary"
-                    variant="contained"
+                  {/* ── Actions ── */}
+                  <Stack
+                    className={styles.formGrid__fullWidth}
+                    sx={{ gap: 2, flexDirection: 'row', justifyContent: 'flex-end', pt: 1 }}
                   >
-                    {intl.formatMessage(messages.discard)}
-                  </AspectButton>
-                  <Button type="submit" color="primary" variant="contained" disabled={!dirty || !isValid || submitting}>
-                    {intl.formatMessage(messages.save)}
-                  </Button>
-                </Stack>
+                    <AspectButton
+                      type="button"
+                      onClick={() => navigate(`/browse/device/list/${device.id}${location.search}`)}
+                      color="primary"
+                      variant="contained"
+                    >
+                      {intl.formatMessage(messages.discard)}
+                    </AspectButton>
+                    <Button
+                      type="submit"
+                      color="primary"
+                      variant="contained"
+                      disabled={!dirty || !isValid || submitting}
+                    >
+                      {intl.formatMessage(messages.save)}
+                    </Button>
+                  </Stack>
+                </div>
               </Form>
             )}
           </Formik>
@@ -271,7 +306,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
 DeviceDetailEdit.propTypes = {
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   deviceTags: PropTypes.arrayOf(PropTypes.object).isRequired,
-  editable: PropTypes.bool.isRequired,
 }
 
 export default DeviceDetailEdit

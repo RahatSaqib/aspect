@@ -39,6 +39,7 @@ const filtersOrdering = {
   consumableId: 70,
   sampleId: 80,
   patientOrResearchId: 90,
+  deviceApiKeyToken: 95,
   deviceName: 100,
   siteName: 110,
   siteId: 120,
@@ -69,6 +70,7 @@ const filtersOrdering = {
   minExpirationDate: 360,
   maxExpirationDate: 370,
   showDecommissionedDevices: 380,
+  showUndeployedDevices: 385,
   siteTypeId: 390,
   parentWarehouseId: 400,
   tagId: 410,
@@ -149,6 +151,9 @@ const buttonMapping = {
   externalId: ({ externalId, remove, blocked }) => (
     <ExternalId externalId={externalId} remove={remove} blocked={blocked} />
   ),
+  deviceApiKeyToken: ({ deviceApiKeyToken, remove, blocked }) => (
+    <DeviceApiKeyToken deviceApiKeyToken={deviceApiKeyToken} remove={remove} blocked={blocked} />
+  ),
   deviceName: ({ deviceName, remove, blocked }) => (
     <DeviceName deviceName={deviceName} remove={remove} blocked={blocked} />
   ),
@@ -221,6 +226,7 @@ const buttonMapping = {
   onlyDownloadedByReporter: ({ remove, blocked }) => <OnlyDownloadedByReporter remove={remove} blocked={blocked} />,
   onlyTreatmentRequired: ({ remove, blocked }) => <OnlyTreatmentRequired remove={remove} blocked={blocked} />,
   showDecommissionedDevices: ({ remove, blocked }) => <ShowDecommissionedDevices remove={remove} blocked={blocked} />,
+  showUndeployedDevices: ({ remove, blocked }) => <ShowUndeployedDevices remove={remove} blocked={blocked} />,
   onlyUnreconciled: ({ remove, blocked }) => <OnlyUnreconciled remove={remove} blocked={blocked} />,
   revoked: ({ revoked, remove, blocked }) => <Revoked revoked={revoked} remove={remove} blocked={blocked} />,
   assayOverride: () => null,
@@ -557,6 +563,17 @@ const ExternalId = ({ externalId, remove, blocked }) => {
     <Btn
       lbl={formatMessage(messages.whereExternalIdIncludes, { externalId })}
       del={blocked.includes('externalId') ? undefined : () => remove(['externalId'])}
+    />
+  )
+}
+
+const DeviceApiKeyToken = ({ deviceApiKeyToken, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereDeviceApiKeyIncludes, { deviceApiKeyToken })}
+      del={blocked.includes('deviceApiKeyToken') ? undefined : () => remove(['deviceApiKeyToken'])}
     />
   )
 }
@@ -905,6 +922,17 @@ const ShowDecommissionedDevices = ({ remove, blocked }) => {
     <Btn
       lbl={formatMessage(messages.showDecommissionedDevices)}
       del={blocked.includes('showDecommissionedDevices') ? undefined : () => remove(['showDecommissionedDevices'])}
+    />
+  )
+}
+
+const ShowUndeployedDevices = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.showResultsFromUndeployedDevices)}
+      del={blocked.includes('showUndeployedDevices') ? undefined : () => remove(['showUndeployedDevices'])}
     />
   )
 }

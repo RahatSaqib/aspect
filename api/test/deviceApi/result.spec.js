@@ -1102,11 +1102,11 @@ describe('Device Result API routes', () => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
-        // The last reported instrument serial should be updated in the device table
-        const { lastInstrumentSerial, deviceId: lastDeviceId } = await knex('Instrument')
+        // The last reported instrument serial should be stored on the Instrument table
+        const { instrumentSerial, deviceId: lastDeviceId } = await knex('Instrument')
           .orderBy('id', 'desc')
-          .first('serial as lastInstrumentSerial', 'deviceId')
-        assert.equal(lastInstrumentSerial, 'Aa123456')
+          .first('serial as instrumentSerial', 'deviceId')
+        assert.equal(instrumentSerial, 'Aa123456')
 
         resultIds.push(await getLastResultId(knex, lastDeviceId))
 
@@ -1182,7 +1182,7 @@ describe('Device Result API routes', () => {
           const { now } = context
 
           const deviceWithNoDefaultReportableSiteId = await knex('Device as d')
-            .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .join('DeviceApiKey as dak', 'dak.id', 'd.deviceApiKeyId')
             .whereNull('defaultReportableSiteId')
             .first('d.id', 'd.siteId', 'dak.token', 'd.PartnerId', 'd.defaultReportableSiteId')
 
@@ -1223,7 +1223,7 @@ describe('Device Result API routes', () => {
           const { now } = context
 
           const deviceWithNoDefaultReportableSiteId = await knex('Device as d')
-            .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .join('DeviceApiKey as dak', 'dak.id', 'd.deviceApiKeyId')
             .whereNull('defaultReportableSiteId')
             .first('d.id', 'dak.token', 'd.PartnerId', 'd.defaultReportableSiteId')
 
@@ -1275,7 +1275,7 @@ describe('Device Result API routes', () => {
           const { now } = context
 
           const deviceWithDefaultReportableSiteId = await knex('Device as d')
-            .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .join('DeviceApiKey as dak', 'dak.id', 'd.deviceApiKeyId')
             .whereNotNull('defaultReportableSiteId')
             .where('defaultReportableSiteId', '!=', 'siteId')
             .first('d.id', 'dak.token', 'd.PartnerId')
@@ -1328,7 +1328,7 @@ describe('Device Result API routes', () => {
           const { now } = context
 
           const deviceWithDefaultReportableSiteId = await knex('Device as d')
-            .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .join('DeviceApiKey as dak', 'dak.id', 'd.deviceApiKeyId')
             .whereNotNull('defaultReportableSiteId')
             .where('defaultReportableSiteId', '!=', 'siteId')
             .first('d.id', 'dak.token', 'd.PartnerId', 'd.defaultReportableSiteId')

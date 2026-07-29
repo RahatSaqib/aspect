@@ -68,10 +68,9 @@ describe('Device API Raw routes for Abbott M2000', () => {
       createdOn: now,
       updatedOn: now,
     })
-    await knex('DeviceApiKey').insert({
+    const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
       token: validApiKeyToken,
       partnerId: partner.id,
-      deviceId: abbottM2000DeviceId,
       siteId: abbottM2000SiteId,
       revoked: false,
       createdOn: now,
@@ -79,6 +78,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
       updatedOn: now,
       updatedBy: userId,
     })
+    await knex('Device').where('id', abbottM2000DeviceId).update({ deviceApiKeyId })
     ;({ id: latestSampleIdBeforeTests } = await knex('Sample').max('id as id').first())
     ;({ id: latestResultIdBeforeTests } = await knex('Result').max('id as id').first())
     ;({ id: latestCaseIdBeforeTests } = await knex('PatientCase').max('id as id').first())
@@ -92,9 +92,9 @@ describe('Device API Raw routes for Abbott M2000', () => {
       deviceId,
       siteId,
     } = await knex('DeviceApiKey as dak')
-      .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+      .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
       .where('dak.token', validApiKeyToken)
-      .first('dak.id', 'dak.deviceId', 'd.siteId')
+      .first('dak.id', 'd.id as deviceId', 'd.siteId')
     const resultIds = deviceId ? await knex('Result').where('deviceId', deviceId).pluck('id') : []
     const opIds = deviceApiKeyId
       ? await knex('DeviceOperation').where('deviceApiKeyId', deviceApiKeyId).pluck('id')
@@ -119,7 +119,8 @@ describe('Device API Raw routes for Abbott M2000', () => {
     await knex('Sample').whereIn('id', sampleIds).delete()
     await knex('Sample').where('originSiteId', siteId).delete()
     await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-    await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
+    await knex('Device').where('id', deviceId).update({ deviceApiKeyId: null })
+    await knex('DeviceApiKey').where('token', validApiKeyToken).delete()
     await knex('Device').where('id', deviceId).delete()
     await knex('Site').where('id', siteId).delete()
     const inventoryItemIds = await knex('InventoryItem as ii')

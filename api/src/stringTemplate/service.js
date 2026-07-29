@@ -138,7 +138,10 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'd.serial as deviceSerial',
-        'd.lastInstrumentSerial as lastInstrumentSerial',
+        knex.raw(
+          `(SELECT GROUP_CONCAT(i.serial ORDER BY i.active DESC, i.serial SEPARATOR ', ')
+            FROM Instrument i WHERE i.deviceId = d.id and i.active = 1) as instrumentSerials`
+        ),
         'd.stickerInstrumentSerial as deviceStickerInstrumentSerial',
         'dt.externalId as deviceTypeExternalId',
         'r.resultData',
@@ -214,8 +217,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
     }
 
     queryBuilder.modify(addConstraints, dataConstraints, aliases, {
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
+      deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'],
     })
   }
 
@@ -463,7 +465,7 @@ async function getBaseDataSource(data, auth) {
       lastSeenOn: d.deviceLastSeenOn,
       lastPingOn: d.deviceLastPingOn,
       serial: d.deviceSerial,
-      lastInstrumentSerial: d.lastInstrumentSerial,
+      instrumentSerials: d.instrumentSerials || '',
       calibrationDueDate: issueData.calibrationDueDate,
       daisyChained: d.daisyChained,
       instrumentModel: d.instrumentModel,

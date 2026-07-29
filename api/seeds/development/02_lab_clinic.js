@@ -6,6 +6,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { addMilliseconds, addMinutes, subDays, subMinutes, subMonths } = require('date-fns')
 const { insertSite } = require('../../src/site/common/db')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 const helpers = require('./fixtures/helpers')
 const { upsertJobFunctionFixture } = require('../common')
 const patients = require('./fixtures/patients.json')
@@ -288,14 +289,12 @@ async function seed(knex) {
       const lastTime = subMinutes(now, _.random(0, 60))
 
       if (clinic.hasReporter) {
-        const [deviceId] = await knex('Device').insert({
+        const { id: deviceId } = await insertDeviceWithGeneratedName(knex, {
           partnerId,
           siteId,
           defaultReportableSiteId: siteId,
           deviceTypeId: deviceTypeIdReporter,
           deviceApprovalId: approvedDeviceApprovalId,
-          name: `${siteData.name} Reporter`,
-          shortName: `${siteData.city || siteData.name} Reporter`,
           serial: `S1-R-${_.random(100000, 999999)}`,
           lastSeenOn: lastTime,
           lastPingOn: lastTime,
@@ -306,7 +305,7 @@ async function seed(knex) {
           ...auditFields,
         })
 
-        await knex('DeviceApiKey').insert({
+        const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
           token:
             clinic.name === 'Mponela Rural Hospital' // this is the reporter demo site - keep API key  static
               ? 'g39ypz0725x1cubf0vq3'
@@ -315,15 +314,14 @@ async function seed(knex) {
           partnerId,
           geographyId,
           siteId,
-          deviceId,
           ...auditFields,
         })
 
+        await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
+
         // Router
-        await knex('Device').insert({
+        await insertDeviceWithGeneratedName(knex, {
           ...auditFields,
-          name: `${siteData.name} Router`,
-          shortName: `RO-${siteData.shortName}`,
           deviceTypeId: deviceTypeIdRouter,
           deviceApprovalId: approvedDeviceApprovalId,
           partnerId: siteData.partnerId,
@@ -385,7 +383,7 @@ async function seed(knex) {
             const deviceApiKeyToken = device.deviceApiKey || randomToken()
             const deviceData =
               (await knex('DeviceApiKey as dak')
-                .join('Device as d', 'dak.deviceId', 'd.id')
+                .join('Device as d', 'd.deviceApiKeyId', 'dak.id')
                 .where('dak.token', deviceApiKeyToken)
                 .first('d.*')) || {}
             if (_.isEmpty(deviceData)) {
@@ -394,8 +392,6 @@ async function seed(knex) {
               deviceData.siteId = siteData.id
               deviceData.defaultReportableSiteId = siteData.id
               deviceData.deviceApprovalId = approvedDeviceApprovalId
-              deviceData.name = device.name
-              deviceData.shortName = device.shortName
               deviceData.macAddress = device.macAddress
               deviceData.serial = device.deviceSerial
               deviceData.hostId = device.hostId
@@ -407,21 +403,21 @@ async function seed(knex) {
               deviceData.configurationData = '{}'
               const { id: deviceTypeId } =
                 (await knex('DeviceType').where('externalId', device.deviceTypeId).first('id')) || {}
-              const [deviceId] = await knex('Device').insert({
+              const { id: deviceId } = await insertDeviceWithGeneratedName(knex, {
                 ...deviceData,
                 deviceTypeId,
                 ...auditFields,
               })
               deviceData.id = deviceId
-              await knex('DeviceApiKey').insert({
+              const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
                 token: deviceApiKeyToken,
                 revoked: 0,
                 partnerId,
                 geographyId,
                 siteId,
-                deviceId,
                 ...auditFields,
               })
+              await knex('Device').where('id', deviceId).update({ deviceApiKeyId })
             }
           })
         )
@@ -436,18 +432,15 @@ async function seed(knex) {
             .first()) || {}
         if (_.isEmpty(routerData)) {
           const lastRouterActivity = subMinutes(now, _.random(0, 60))
-          routerData.name = `Router at ${siteData.name}`
-          routerData.shortName = `RO-${siteData.shortName}`
-          routerData.deviceTypeId = deviceTypeIdRouter
-          routerData.deviceApprovalId = approvedDeviceApprovalId
-          routerData.partnerId = siteData.partnerId
-          routerData.siteId = siteData.id
-          routerData.lastSeenOn = lastRouterActivity
-          routerData.lastPingOn = lastRouterActivity
-          routerData.lastPingFromIp = `91.25.123.${Math.floor(Math.random() * 255)}`
-          routerData.putInService = subMonths(now, 2)
-          await knex('Device').insert({
-            ...routerData,
+          await insertDeviceWithGeneratedName(knex, {
+            deviceTypeId: deviceTypeIdRouter,
+            deviceApprovalId: approvedDeviceApprovalId,
+            partnerId: siteData.partnerId,
+            siteId: siteData.id,
+            lastSeenOn: lastRouterActivity,
+            lastPingOn: lastRouterActivity,
+            lastPingFromIp: `91.25.123.${Math.floor(Math.random() * 255)}`,
+            putInService: subMonths(now, 2),
             ...auditFields,
           })
         }

@@ -165,6 +165,7 @@ function listDevicesBaseResponse() {
               id: Joi.number().required().description('The ID of the device'),
               name: Joi.string().required().description('The name of the device'),
               shortName: Joi.string().allow('', null).description('The short name of the device'),
+              notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
               deviceStatus: Joi.string().allow('', null).description('The connector status'),
               connectorStatus: Joi.string().allow('', null).description('The connector status'),
               connectorVersion: Joi.string().allow('', null).description('The connector version'),
@@ -219,9 +220,6 @@ function listDevicesBaseResponse() {
                 .allow(null)
                 .description('Number of results delivered in the last 30 days'),
               timezoneIANA: Joi.string().allow(null).description('IANA timezone of the country'),
-              issueCategories: Joi.array()
-                .required()
-                .description('The categories of issues currently active for this device.'),
               availability: Joi.object()
                 .required()
                 .description('Stats on the availability of the device in the last 30 days.')
@@ -252,6 +250,9 @@ const deviceDetailsResponseFields = Joi.object()
     id: Joi.number().required().description('The ID of the device'),
     name: Joi.string().required().description('The name of the device'),
     shortName: Joi.string().allow('', null).description('The short name of the device'),
+    customNamePart: Joi.string()
+      .allow('', null)
+      .description('User-entered part inserted into the generated device name, after the identifier'),
     createdOn: Joi.date().required().description('When the device was added to the database'),
     lastPingOn: Joi.date().allow(null).description('When the device last pinged'),
     lastSeen: Joi.date()
@@ -332,9 +333,10 @@ const deviceDetailsResponseFields = Joi.object()
     instrumentModel: Joi.string().allow('', null).description('Cepheid instrument model'),
     softwareType: Joi.string().allow('', null).description('Cepheid software type'),
     isDaisyChained: Joi.bool().allow('', null).description('Determines if the instrument is daisy chained'),
-    firstResultEndedOn: Joi.date()
+    firstResultEndedOn: Joi.date().allow(null).description('Date of the device first result (for deployment timeline)'),
+    maskedDeviceApiKey: Joi.string()
       .allow(null)
-      .description('Date of the device’s first result (for deployment timeline)'),
+      .description('Masked Device API key — only the last segment is visible, e.g. xxxx-xxxx-xxxx-xxxx-9kd0'),
   })
 module.exports = {
   listWorkloadRequestSchema,

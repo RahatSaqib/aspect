@@ -1,9 +1,15 @@
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
+const {
+  applyUndeployedDevicesResultFilter,
+  getResultListConstraintOptions,
+  getUndeployedDevicesPartnerQueryOptions,
+  withUndeployedAwareGeographyFilters,
+} = require('../common/undeployedDevicesFilter')
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false, showDecommissionedDevices = false, assayId } = query
-  const displayResult = query.displayResult || 'actual'
+  const { assayId } = query
+  const { displayResult, deviceApprovals } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseResults()
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
@@ -59,25 +65,32 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')
-    .modify(filterParams, query, {
-      deviceId: 'd.id',
-      resultCategoryId: 'r.resultCategory1',
-      resultCategory2Id: 'r.resultCategory2',
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      deviceName: 'd.name',
-      deviceType: 'dt.externalId',
-      siteName: 'si.name',
-      sampleId: 'sp.externalId',
-      sampleOriginSite: 'so.name',
-      errorCode: 'r.errorCode',
-      patientCaseId: null, // 'r.patientCaseId',
-      diseaseId: 'disease_id',
-      onlyReportableResults: 'r.resultCategoryAssay_reportable',
-      resultCategoryGroupId: 'r.resultCategoryGroup_externalId',
-      assayId: 'assayId',
-    })
+    .modify(
+      filterParams,
+      query,
+      withUndeployedAwareGeographyFilters(
+        {
+          deviceId: 'd.id',
+          resultCategoryId: 'r.resultCategory1',
+          resultCategory2Id: 'r.resultCategory2',
+          countryId: 'g.countryId',
+          stateId: 'g.stateId',
+          lgaId: 'g.lgaId',
+          deviceName: 'd.name',
+          deviceType: 'dt.externalId',
+          siteName: 'si.name',
+          sampleId: 'sp.externalId',
+          sampleOriginSite: 'so.name',
+          errorCode: 'r.errorCode',
+          patientCaseId: null, // 'r.patientCaseId',
+          diseaseId: 'disease_id',
+          onlyReportableResults: 'r.resultCategoryAssay_reportable',
+          resultCategoryGroupId: 'r.resultCategoryGroup_externalId',
+          assayId: 'assayId',
+        },
+        query
+      )
+    )
     .modify((queryBuilder, params) => {
       if (params.onlyDownloadedByReporter) queryBuilder.innerJoin('ResultDownloadLog as rdl', 'r.id', 'rdl.resultId')
 
@@ -94,7 +107,8 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         queryBuilder.whereRaw('LOWER(r.patient_externalId) like LOWER(?)', [`%${params.patientOrResearchId}%`])
       }
     }, query)
-    .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(addPartnerQueryConstraints, dataConstraints, getUndeployedDevicesPartnerQueryOptions(query))
+    .modify(queryBuilder => applyUndeployedDevicesResultFilter(queryBuilder, query))
     .modify(
       addConstraints,
       dataConstraints,
@@ -108,7 +122,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         country: 'c',
         // disease: 'dis',
       },
-      { showUnapprovedDevices, showDecommissionedDevices, displayResult }
+      { deviceApprovals, displayResult }
     )
     .modify(queryBuilder => {
       if (query.withTags) {

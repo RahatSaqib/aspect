@@ -13,6 +13,7 @@ import {
   TreatmentStatusGraph,
   XDRFLQResistanceGraph,
 } from '../../../components'
+import LazyGraph from '../../../components/LazyGraph'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useAssayList from '../../../hooks/assay/useAssayList'
 import useResultCategoryGroup from '../../../hooks/result/useResultCategoryGroup'
@@ -42,7 +43,7 @@ const Status = () => {
   const { data: resultCategoryGroups } = useResultCategoryGroup(assays?.map(x => x.id))
   return (
     <div className={styles.Container}>
-      <Helmet title={formatMessage(messages.statusTitle)} />
+      <Helmet title={formatMessage(messages.homeTitle)} />
 
       <PermissionChecker permissions={['dashboard']}>
         <ErrorBoundary>
@@ -50,69 +51,93 @@ const Status = () => {
         </ErrorBoundary>
       </PermissionChecker>
 
-      {assays && resultCategoryGroups ? (
+      {assays ? (
         <div className={styles.wrapper}>
           <PermissionChecker permissions={['dashboard']}>
-            <ErrorBoundary>
-              <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
-            </ErrorBoundary>
+            <LazyGraph>
+              <ErrorBoundary>
+                <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
+              </ErrorBoundary>
+            </LazyGraph>
           </PermissionChecker>
 
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
-            <PermissionChecker permissions={['dashboard']}>
-              <ErrorBoundary>
-                <TbDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                {/* 2 */}
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                {/* 3 */}
-              </ErrorBoundary>
-            </PermissionChecker>
+            <>
+              <PermissionChecker permissions={['dashboard']}>
+                <LazyGraph>
+                  <ErrorBoundary>
+                    <TbDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                    {/* 2 */}
+                  </ErrorBoundary>
+                </LazyGraph>
+              </PermissionChecker>
+              <PermissionChecker permissions={['dashboard']}>
+                <LazyGraph>
+                  <ErrorBoundary>
+                    <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                    {/* 3 */}
+                  </ErrorBoundary>
+                </LazyGraph>
+              </PermissionChecker>
+            </>
           ) : null}
 
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
-              <ErrorBoundary>
-                <XDRFLQResistanceGraph /> {/* 4 */}
-              </ErrorBoundary>
+              <LazyGraph>
+                <ErrorBoundary>
+                  <XDRFLQResistanceGraph /> {/* 4 */}
+                </ErrorBoundary>
+              </LazyGraph>
             </PermissionChecker>
           ) : null}
 
           {assays.some(a => covidPermissions.includes(a.externalId)) && !isCountry('BD') ? (
             <PermissionChecker permissions={['dashboard']}>
-              <ErrorBoundary>
-                <CovidResultGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                {/* 11 */}
-              </ErrorBoundary>
+              <LazyGraph>
+                <ErrorBoundary>
+                  <CovidResultGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                  {/* 11 */}
+                </ErrorBoundary>
+              </LazyGraph>
             </PermissionChecker>
           ) : null}
 
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
-              <ErrorBoundary>
-                <HivResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                {/* 12 */}
-              </ErrorBoundary>
+              <LazyGraph>
+                <ErrorBoundary>
+                  <HivResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                  {/* 12 */}
+                </ErrorBoundary>
+              </LazyGraph>
             </PermissionChecker>
           ) : null}
 
+          {!isCountry('BD') ? (
+            <PermissionChecker permissions={['dashboard', 'operationalData']}>
+              <LazyGraph>
+                <ErrorBoundary>
+                  <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
+                </ErrorBoundary>
+              </LazyGraph>
+            </PermissionChecker>
+          ) : null}
           <PermissionChecker permissions={['dashboard', 'operationalData']}>
-            {!isCountry('BD') ? (
+            <LazyGraph>
               <ErrorBoundary>
-                <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
+                <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
               </ErrorBoundary>
-            ) : null}
-            <ErrorBoundary>
-              <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
-            </ErrorBoundary>
+            </LazyGraph>
           </PermissionChecker>
 
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard', '+reporter']}>
-              <ErrorBoundary>
-                <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
-              </ErrorBoundary>
+              <LazyGraph>
+                <ErrorBoundary>
+                  <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
+                </ErrorBoundary>
+              </LazyGraph>
             </PermissionChecker>
           ) : null}
         </div>

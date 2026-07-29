@@ -19,7 +19,7 @@ const DeviceWorkloadFilter = () => {
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
@@ -27,7 +27,7 @@ const DeviceWorkloadFilter = () => {
             countryId={state.countryId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
@@ -35,7 +35,7 @@ const DeviceWorkloadFilter = () => {
             stateId={state.stateId}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <AssaySelect
             label={formatMessage(messages.assay)}
             value={state.assayId}
@@ -44,7 +44,7 @@ const DeviceWorkloadFilter = () => {
           />
         </Grid>
         {allowed(['device']) ? (
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               label={formatMessage(messages.deviceName)}
               value={state.deviceName || ''}
@@ -52,7 +52,7 @@ const DeviceWorkloadFilter = () => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}

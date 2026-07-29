@@ -6,6 +6,7 @@ const Promise = require('bluebird')
 
 const { rowsAsObject } = require('../utils')
 const { messageStatusToId } = require('../../src/shared/dictionary')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 const { formatDateOrDefault } = require('../../src/shared/date')
 
 const millisInHour = 1000 * 60 * 60
@@ -32,13 +33,11 @@ async function seed(knex) {
     .select('s.*')
   await Promise.each(new Array(4), async () => {
     const site = _.sample(sites)
-    await knex('Device').insert({
+    await insertDeviceWithGeneratedName(knex, {
       partnerId: site.partnerId,
       siteId: site.id,
       deviceTypeId: deviceType.id,
       deviceApprovalId,
-      name: `${site.name} ${deviceType.name}`,
-      shortName: `${site.city} ${deviceType.name}`,
       serial: `S1-D-${_.random(100000, 999999)}`,
       lastSeenOn: subDays(now, _.random(1, 30)),
       lastPingOn: subDays(now, _.random(1, 30)),

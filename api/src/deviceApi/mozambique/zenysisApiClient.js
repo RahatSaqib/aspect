@@ -29,16 +29,6 @@ const getTestAggregate = async request => {
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'result.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'result.resultCategory2')
     .leftJoin('DeviceApproval as deviceApproval', 'device.deviceApprovalId', 'deviceApproval.id')
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog',
-      'device.deviceMaintenanceStatusLogId',
-      'deviceMaintenanceStatusLog.id'
-    )
-    .join(
-      'DeviceMaintenanceStatus as deviceMaintenanceStatus',
-      'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
-      'deviceMaintenanceStatus.id'
-    )
     .join('ResultType as __constraints_ResultType', 'result.resultTypeId', '__constraints_ResultType.id')
     .where(builder => {
       builder
@@ -51,11 +41,6 @@ const getTestAggregate = async request => {
     })
     .andWhere(queryBuilder => {
       queryBuilder.where('deviceApproval.token', 'approved').orWhereNull('deviceApproval.token')
-    })
-    .andWhere(queryBuilder => {
-      queryBuilder
-        .whereNull('deviceMaintenanceStatus.externalId')
-        .orWhereNot('deviceMaintenanceStatus.externalId', 'inactiveDecommissioned')
     })
     .andWhere('geography.countryId', countryId)
     .andWhere('__constraints_ResultType.excluded', false)

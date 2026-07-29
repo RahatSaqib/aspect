@@ -75,6 +75,7 @@ async function getErrorsByDevices(dataConstraints, query) {
       invalidResults: knex.raw('IFNULL(counts.invalidResults, 0)'),
       noResults: knex.raw('IFNULL(counts.noResults, 0)'),
       deviceName: 'd.name',
+      siteName: 's.name',
       /**
        * should select also device id for returning `distinct` entries, because
        * same device name with same counts may be found in different locations.

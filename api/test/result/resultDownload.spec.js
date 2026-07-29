@@ -8,7 +8,7 @@ const patients = require('../../seeds/test/fixtures/patients.json')
 
 const { knex } = require('../../src/db')
 
-const { resultCategoryToId } = require('../../src/shared/dictionary')
+const { resultCategoryToId, deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 
 const server = require('../utils/testUtils')
 const { getBaseQueryForResults } = require('../../src/result/common/db')
@@ -28,6 +28,8 @@ describe('Result download routes', () => {
 
   let clinicianAccessToken = ''
   let results = []
+  let generatedResults = []
+  let fixtureDeviceId = null
   let totalResults
 
   before(async () => {
@@ -41,13 +43,61 @@ describe('Result download routes', () => {
       .where('u.name', 'admin')
       .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-    results = await generateResults(knex, userId, partnerId, patients, [], 'US', false, 30, 0, 0, 0)
+    // Use a dedicated approved GeneXpert with a deployment so we do not promote shared
+    // seeded devices (and their historical results) into the download query.
+    const site = await knex('Site as s')
+      .join('Geography as g', 's.geographyId', 'g.id')
+      .join('Country as c', 'g.countryId', 'c.id')
+      .where('s.partnerId', partnerId)
+      .where('c.abbreviation', 'US')
+      .first('s.id')
+    assert.isOk(site, 'Expected a Partner One US site for result download fixture')
 
-    await setTreatmentStatusToResults(knex, results, ['OnTreatment'])
+    const now = new Date()
+    ;[fixtureDeviceId] = await knex('Device').insert({
+      partnerId,
+      siteId: site.id,
+      defaultReportableSiteId: site.id,
+      deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+      deviceApprovalId: await deviceApprovalToId('approved'),
+      name: `Result Download Fixture ${now.getTime()}`,
+      shortName: `RDF-${now.getTime()}`,
+      createdOn: now,
+      createdBy: userId,
+      updatedOn: now,
+      updatedBy: userId,
+    })
+    await knex('Deployment').insert({
+      deviceId: fixtureDeviceId,
+      siteId: site.id,
+      start: null,
+      end: null,
+      createdOn: now,
+      createdBy: userId,
+      updatedOn: now,
+      updatedBy: userId,
+    })
+
+    generatedResults = await generateResults(
+      knex,
+      userId,
+      partnerId,
+      patients,
+      [],
+      'US',
+      false,
+      30,
+      0,
+      0,
+      0,
+      fixtureDeviceId
+    )
+
+    await setTreatmentStatusToResults(knex, generatedResults, ['OnTreatment'])
 
     // set all to a reportable result (=detected)
     const resultCategoryId = await resultCategoryToId('Detected')
-    await knex('Result').whereIn('id', _.map(results, 'id')).update('resultCategory1', resultCategoryId)
+    await knex('Result').whereIn('id', _.map(generatedResults, 'id')).update('resultCategory1', resultCategoryId)
 
     /**
      * notice that query in 'api/src/result/service.js' func 'getDownloadResultsList'
@@ -65,23 +115,28 @@ describe('Result download routes', () => {
       })
       .whereIn(
         'r.id',
-        results.map(({ id }) => id)
+        generatedResults.map(({ id }) => id)
       )
       .andWhere('dt.externalId', 'CepheidGeneXpert')
       .pluck('r.id')
     /**
      * leave only valid results
      */
-    results = results.filter(({ id }) => reportableResultIds.includes(id))
+    results = generatedResults.filter(({ id }) => reportableResultIds.includes(id))
     totalResults = results.length
+    assert.isAtLeast(totalResults, 2, 'Expected reportable GeneXpert results for download fixture')
   })
 
   afterEach(async () => {
-    await knex('ResultFollowUp').whereIn('resultId', _.map(results, 'id')).delete()
-
-    await knex('ResultDownloadLog').whereIn('resultId', _.map(results, 'id')).delete()
-
-    await knex('Result').whereIn('id', _.map(results, 'id')).delete()
+    const generatedResultIds = _.map(generatedResults, 'id')
+    await knex('ResultFollowUp').whereIn('resultId', generatedResultIds).delete()
+    await knex('ResultDownloadLog').whereIn('resultId', generatedResultIds).delete()
+    await knex('Result').whereIn('id', generatedResultIds).delete()
+    if (fixtureDeviceId) {
+      await knex('Deployment').where({ deviceId: fixtureDeviceId }).delete()
+      await knex('Device').where({ id: fixtureDeviceId }).delete()
+      fixtureDeviceId = null
+    }
   })
 
   describe('GET', () => {

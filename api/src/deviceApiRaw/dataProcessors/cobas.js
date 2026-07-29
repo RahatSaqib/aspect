@@ -61,9 +61,10 @@ class DefaultCOBAS extends SynchronousDataProcessor {
 
     this.response = { deviceApiRawId: this.id }
     await transact(async knex => {
-      const { id: deviceApiKeyId, deviceId } = await knex('DeviceApiKey')
-        .where('token', auth.credentials.token)
-        .first('id', 'deviceId')
+      const { id: deviceApiKeyId, deviceId } = await knex('DeviceApiKey as dak')
+        .leftJoin('Device as d', 'd.deviceApiKeyId', 'dak.id')
+        .where('dak.token', auth.credentials.token)
+        .first('dak.id as id', 'd.id as deviceId')
       const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
         throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')

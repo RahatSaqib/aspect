@@ -2,6 +2,12 @@ const { subDays } = require('date-fns')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
+const {
+  applyUndeployedDevicesResultFilter,
+  getResultListConstraintOptions,
+  getUndeployedDevicesPartnerQueryOptions,
+  withUndeployedAwareGeographyFilters,
+} = require('./undeployedDevicesFilter')
 const { getUser } = require('../../auth/service')
 const { SELECT_FIELDS_UTC } = require('../query')
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
@@ -25,7 +31,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
         device: 'd',
         resultTransferFlag: true,
       },
-      { displayResult: 'all', showUnapprovedDevices: true, showDecommissionedDevices: true }
+      { displayResult: 'all', deviceApprovals: ['approved', 'pendingDeployment', 'decommissioned'] }
     )
     .select({
       resultText: knex.raw(
@@ -193,8 +199,8 @@ const getBaseQueryForResults = () =>
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false, showDecommissionedDevices = false, assayId } = query
-  const displayResult = query.displayResult || 'actual'
+  const { assayId } = query
+  const { displayResult, deviceApprovals } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseQueryForResults()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
@@ -259,26 +265,33 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')
-    .modify(filterParams, query, {
-      deviceId: 'd.id',
-      resultCategoryId: 'r.resultCategory1',
-      resultCategory2Id: 'r.resultCategory2',
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      deviceName: 'd.name',
-      deviceType: 'dt.externalId',
-      siteName: 'si.name',
-      sampleId: 'sp.externalId',
-      sampleOriginSite: 'so.name',
-      errorCode: 'r.errorCode',
-      treatmentStatusId: 'rts.id',
-      patientCaseId: 'r.patientCaseId',
-      diseaseId: 'dis.id',
-      onlyReportableResults: 'rca.reportable',
-      resultCategoryGroupId: 'rcg.externalId',
-      assayId: 'a.id',
-    })
+    .modify(
+      filterParams,
+      query,
+      withUndeployedAwareGeographyFilters(
+        {
+          deviceId: 'd.id',
+          resultCategoryId: 'r.resultCategory1',
+          resultCategory2Id: 'r.resultCategory2',
+          countryId: 'g.countryId',
+          stateId: 'g.stateId',
+          lgaId: 'g.lgaId',
+          deviceName: 'd.name',
+          deviceType: 'dt.externalId',
+          siteName: 'si.name',
+          sampleId: 'sp.externalId',
+          sampleOriginSite: 'so.name',
+          errorCode: 'r.errorCode',
+          treatmentStatusId: 'rts.id',
+          patientCaseId: 'r.patientCaseId',
+          diseaseId: 'dis.id',
+          onlyReportableResults: 'rca.reportable',
+          resultCategoryGroupId: 'rcg.externalId',
+          assayId: 'a.id',
+        },
+        query
+      )
+    )
     .modify((queryBuilder, params) => {
       if (params.onlyDownloadedByReporter) queryBuilder.innerJoin('ResultDownloadLog as rdl', 'r.id', 'rdl.resultId')
 
@@ -308,7 +321,8 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         queryBuilder.where('rts.externalId', params.treatmentStatus)
       }
     }, query)
-    .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(addPartnerQueryConstraints, dataConstraints, getUndeployedDevicesPartnerQueryOptions(query))
+    .modify(queryBuilder => applyUndeployedDevicesResultFilter(queryBuilder, query))
     .modify(
       addConstraints,
       dataConstraints,
@@ -324,7 +338,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { displayResult, showUnapprovedDevices, showDecommissionedDevices }
+      { displayResult, deviceApprovals }
     )
     .modify(queryBuilder => {
       if (query.withTags) {
@@ -407,8 +421,7 @@ async function showResultFollowUps(resultId, dataConstraints) {
 }
 
 function getQueryForDataExtract(query, dataConstraints) {
-  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = query
-  const displayResult = query.displayResult || 'actual'
+  const { displayResult, deviceApprovals } = getResultListConstraintOptions(query)
 
   const resultQuery = getBaseResults()
     .leftJoin('Geography as go', 'so.geographyId', 'go.id')
@@ -424,23 +437,31 @@ function getQueryForDataExtract(query, dataConstraints) {
       'd.id'
     )
     .modify(filterDateRangeParams, query, 'r.endedOn')
-    .modify(filterParams, query, {
-      deviceId: 'd.id',
-      resultCategoryId: 'r.resultCategory1',
-      resultCategory2Id: 'r.resultCategory2',
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      deviceName: 'd.name',
-      deviceType: 'dt.externalId',
-      siteName: 'si.name',
-      sampleId: 'sp.externalId',
-      sampleOriginSite: 'so.name',
-      errorCode: 'r.errorCode',
-      diseaseId: 'dis.id',
-      assayId: 'a.id',
-    })
-    .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(
+      filterParams,
+      query,
+      withUndeployedAwareGeographyFilters(
+        {
+          deviceId: 'd.id',
+          resultCategoryId: 'r.resultCategory1',
+          resultCategory2Id: 'r.resultCategory2',
+          countryId: 'g.countryId',
+          stateId: 'g.stateId',
+          lgaId: 'g.lgaId',
+          deviceName: 'd.name',
+          deviceType: 'dt.externalId',
+          siteName: 'si.name',
+          sampleId: 'sp.externalId',
+          sampleOriginSite: 'so.name',
+          errorCode: 'r.errorCode',
+          diseaseId: 'dis.id',
+          assayId: 'a.id',
+        },
+        query
+      )
+    )
+    .modify(addPartnerQueryConstraints, dataConstraints, getUndeployedDevicesPartnerQueryOptions(query))
+    .modify(queryBuilder => applyUndeployedDevicesResultFilter(queryBuilder, query))
     .modify(
       addConstraints,
       dataConstraints,
@@ -456,7 +477,7 @@ function getQueryForDataExtract(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { showUnapprovedDevices, showDecommissionedDevices, displayResult }
+      { deviceApprovals, displayResult }
     )
 
   return resultQuery

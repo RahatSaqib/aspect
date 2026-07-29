@@ -22,6 +22,7 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const { insertSite } = require('../../src/site/common/db')
+const { insertDeviceWithGeneratedName } = require('../common/insertDeviceWithGeneratedName')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -326,8 +327,6 @@ async function seed(knex) {
             defaultReportableSiteId: siteId,
             deviceTypeId: deviceTypes.CepheidGeneXpert.id,
             deviceApprovalId: await deviceApprovalToId('approved'),
-            name: deviceSeed.name,
-            shortName: deviceSeed.shortName,
             macAddress: deviceSeed.macAddress,
             serial: deviceSeed.serial,
             hostId: deviceSeed.hostId,
@@ -337,7 +336,7 @@ async function seed(knex) {
             lastSeenOn: now,
             putInService: subMonths(now, 2),
           }
-          const [deviceId] = await knex('Device').insert(device)
+          const { id: deviceId } = await insertDeviceWithGeneratedName(knex, device)
           device.id = deviceId
 
           // only create results if managed region

@@ -123,6 +123,7 @@ const sanitizerByConfigKey = {
   displayResult: defaultSanitizer,
   onlyTransfers: defaultSanitizer,
   showDecommissionedDevices: defaultSanitizer,
+  showUndeployedDevices: defaultSanitizer,
 }
 
 /**
