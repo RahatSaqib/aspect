@@ -162,7 +162,19 @@ async function getAggregatedRows(dataConstraints, dateFrom, dateTo, query, assay
       knex.raw(`IF(rc.id in (${positiveResultCategoriesIds}), 1, 0) as MTBDET`),
       knex.raw(`IF(r.resultData ->> '$.originTestLocation' = 'This site', 'OWN', 'OTH') as MtbRifUltraAt`),
       knex.raw(`
-        IF(r.patientData ->> '$.PatientHistory' IN ('Previously treated'), 'PREV', 'NEW') as patientHistory
+        IF(
+          r.patientData ->> '$.PatientHistory' IN ('Previously treated')
+          OR r.patientData ->> '$.TypeOfPatient' IN (
+            'Failures of Category I',
+            'Failures of Retreatment',
+            'Non converters of Category I',
+            'Non converters of Retreatment',
+            'Relapses',
+            'Treatment after loss to follow up'
+          ),
+          'PREV',
+          'NEW'
+        ) as patientHistory
       `),
       knex.raw(`CASE r.patientData ->> '$.SampleType'
         WHEN 'Pulmonary' THEN 'SP'
