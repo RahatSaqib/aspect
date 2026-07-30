@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2026-05-21T10:10:52.895Z\n"
+"POT-Creation-Date: 2026-07-29T14:33:25.855Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -55,6 +55,13 @@ msgstr "# Количество участков ПМДТ с 10 C GX"
 #: extracted_strings.json
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# Количество сайтов, прошедших тестирование MTB/XDR Assay"
+
+#. [pages.DeviceDetail.decommissionedTitleSuffix]
+#. defaultMessage is:
+#. (Decommissioned)
+#: extracted_strings.json
+msgid "(Decommissioned)"
+msgstr "(Выведено из эксплуатации)"
 
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -179,6 +186,25 @@ msgstr ""
 #: extracted_strings.json
 msgid ">6 Months"
 msgstr ">6 Месяцев"
+
+#. [pages.DeviceDetail.decommissionedDeviceCannotBeEdited]
+#. defaultMessage is:
+#. A decommissioned device cannot be edited.
+#. [pages.DeviceDetailEdit.decommissionedDeviceCannotBeEdited]
+#. defaultMessage is:
+#. A decommissioned device cannot be edited.
+#: extracted_strings.json
+msgid "A decommissioned device cannot be edited."
+msgstr "Устройство, выведенное из эксплуатации, нельзя редактировать."
+
+#. [pages.DeviceDetail.deviceMustHaveDeploymentToBeDecommissioned]
+#. defaultMessage is:
+#. A device must have a deployment before it can be decommissioned.
+#: extracted_strings.json
+msgid "A device must have a deployment before it can be decommissioned."
+msgstr ""
+"Устройство должно иметь развертывание, прежде чем его можно будет вывести из "
+"эксплуатации."
 
 #. [pages.ReportIndex.doNotUseModulesReport_Description]
 #. defaultMessage is:
@@ -505,12 +531,29 @@ msgstr "Добавить ряд"
 msgid "Add to this device"
 msgstr "С этого устройстваДобавить на это устройство"
 
+#. [pages.DeviceDetailEdit.customNamePartHelp]
+#. defaultMessage is:
+#. Added to the device name, right after the identifier
+#: extracted_strings.json
+msgid "Added to the device name, right after the identifier"
+msgstr "Добавляется к имени устройства сразу после идентификатора"
+
 #. [errorResponseMessages.addInventory.PUT.default.title]
 #. defaultMessage is:
 #. Adding Inventory Failed
 #: extracted_strings.json
 msgid "Adding Inventory Failed"
 msgstr "Добавление Ошибка инвентаризации"
+
+#. [pages.DeviceDetailEdit.sectionAdditionalInfo]
+#. defaultMessage is:
+#. Additional Information
+#. [pages.DeviceDetailProfile.sectionAdditionalInfo]
+#. defaultMessage is:
+#. Additional Information
+#: extracted_strings.json
+msgid "Additional Information"
+msgstr "Дополнительная информация"
 
 #. [pages.NotificationDetail.fieldAddress]
 #. defaultMessage is:
@@ -914,14 +957,14 @@ msgstr "Применить фильтры"
 #. [filter.popover.deviceApproval]
 #. defaultMessage is:
 #. Approval
-#. [pages.DeviceDetailProfile.approval]
-#. defaultMessage is:
-#. Approval
 #: extracted_strings.json
 msgid "Approval"
 msgstr "Одобрение"
 
 #. [pages.DeviceList.approvalStatus]
+#. defaultMessage is:
+#. Approval Status
+#. [pages.DeviceDetailProfile.approvalStatus]
 #. defaultMessage is:
 #. Approval Status
 #: extracted_strings.json
@@ -970,13 +1013,6 @@ msgstr "Вы уверены, что хотите удалить этот {entity
 msgid "Are you sure to toggle notification status?"
 msgstr "Вы уверены, что нужно переключить статус уведомления?"
 
-#. [pages.DeviceDetail.decommissionConfirmMessage]
-#. defaultMessage is:
-#. Are you sure you want to decommission this device?
-#: extracted_strings.json
-msgid "Are you sure you want to decommission this device?"
-msgstr "Вы уверены, что хотите вывести это устройство из эксплуатации?"
-
 #. [pages.DeviceDetailProfile.confirmDeleteDeployment]
 #. defaultMessage is:
 #. Are you sure you want to delete this deployment?
@@ -994,13 +1030,6 @@ msgid ""
 msgstr ""
 "Вы уверены, что хотите удалить этот сайт? Это действие предназначено только "
 "для тестовых сайтов, все данные сайта будут потеряны."
-
-#. [pages.DeviceDetail.reactivateConfirmMessage]
-#. defaultMessage is:
-#. Are you sure you want to reactivate this device?
-#: extracted_strings.json
-msgid "Are you sure you want to reactivate this device?"
-msgstr "Вы уверены, что хотите повторно активировать это устройство?"
 
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
@@ -1067,20 +1096,6 @@ msgstr "Тип анализа"
 #: extracted_strings.json
 msgid "Assay that Consume this Item"
 msgstr "Ассеѕѕ, которые потребляют этот предмет"
-
-#. [pages.DeviceApiKeyList.assign]
-#. defaultMessage is:
-#. Assign
-#: extracted_strings.json
-msgid "Assign"
-msgstr "Назначить"
-
-#. [pages.DeviceApiKeyList.assignerDialogTitle]
-#. defaultMessage is:
-#. Assign {count} Keys
-#: extracted_strings.json
-msgid "Assign {count} Keys"
-msgstr "Назначьте {count} ключи"
 
 #. [pages.UserPreferences.assignmentDetails]
 #. defaultMessage is:
@@ -1782,9 +1797,6 @@ msgstr "Невозможно редактировать"
 #. [pages.DeviceApiKeyList.cancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.DeviceDetail.cancel]
-#. defaultMessage is:
-#. Cancel
 #. [pages.BaseDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1819,12 +1831,44 @@ msgstr "Невозможно редактировать"
 msgid "Cancel"
 msgstr "Отмена"
 
+#. [pages.DeviceDetail.reactivateDeploymentTimelineConflict]
+#. defaultMessage is:
+#. Cannot reactivate because the deployment timeline conflicts with today's date.
+#: extracted_strings.json
+msgid ""
+"Cannot reactivate because the deployment timeline conflicts with today's "
+"date."
+msgstr ""
+"Активация невозможна, так как график развертывания конфликтует с текущей "
+"датой."
+
+#. [pages.DeviceDetail.cannotReactivateExplanation]
+#. defaultMessage is:
+#. Cannot reactivate. A decommissioned device must have a deployment before it can be reactivated.
+#: extracted_strings.json
+msgid ""
+"Cannot reactivate. A decommissioned device must have a deployment before it "
+"can be reactivated."
+msgstr ""
+"Повторная активация невозможна. Выведенное из эксплуатации устройство должно "
+"иметь развертывание, прежде чем его можно будет повторно активировать."
+
 #. [pages.DeviceDetailProfile.transferInstrumentsDuplicatedSerials]
 #. defaultMessage is:
 #. Cannot transfer instruments with duplicated serials.
 #: extracted_strings.json
 msgid "Cannot transfer instruments with duplicated serials."
 msgstr "Невозможно перенести инструменты с повторяющимися серийными номерами."
+
+#. [pages.DeviceDetailEdit.sectionCapacityModules]
+#. defaultMessage is:
+#. Capacity & Modules
+#. [pages.DeviceDetailProfile.sectionCapacityModules]
+#. defaultMessage is:
+#. Capacity & Modules
+#: extracted_strings.json
+msgid "Capacity & Modules"
+msgstr "Вместимость и модули"
 
 #. [pages.Consumable.New.cartridgeLotNumber]
 #. defaultMessage is:
@@ -2008,6 +2052,13 @@ msgstr "Четкое значение"
 msgid "Clear filters"
 msgstr "Очистить фильтры"
 
+#. [pages.ReportIndex.clearSearch]
+#. defaultMessage is:
+#. Clear search
+#: extracted_strings.json
+msgid "Clear search"
+msgstr "Очистить поиск"
+
 #. [pages.Notifications.table.clickToResult]
 #. defaultMessage is:
 #. Click here to go to the result
@@ -2129,9 +2180,6 @@ msgstr "Процент выполнения"
 msgid "Conditions Should be Fulfilled"
 msgstr "Условия должны быть выполнены"
 
-#. [pages.DeviceDetail.confirm]
-#. defaultMessage is:
-#. Confirm
 #. [pages.DeviceList.buttonConfirmMerge]
 #. defaultMessage is:
 #. Confirm
@@ -2187,9 +2235,6 @@ msgstr "Подтвержденные случаи"
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivity]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.DeviceList.connectivityHealth]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceDetailProfile.connectivity]
@@ -2585,10 +2630,8 @@ msgstr "Создать Сайт"
 #. defaultMessage is:
 #. Created By
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Created On"
 msgid "Created By"
-msgstr "Создано"
+msgstr "Кем создано"
 
 #. [pages.DeviceApiKeyList.createdOn]
 #. defaultMessage is:
@@ -2885,6 +2928,19 @@ msgstr "Настраиваемые поля"
 msgid "Custom Fields Average Completion"
 msgstr "Пользовательские поля Среднее заполнение"
 
+#. [pages.DeviceDetailEdit.customNamePart]
+#. defaultMessage is:
+#. Custom Name Part
+#. [pages.DeviceDetailProfile.customNamePart]
+#. defaultMessage is:
+#. Custom Name Part
+#. [pages.DeviceDetailProfile.deploymentCustomNamePart]
+#. defaultMessage is:
+#. Custom Name Part
+#: extracted_strings.json
+msgid "Custom Name Part"
+msgstr "Пользовательская часть имени"
+
 #. [pages.resultEdit.truenatCustomFieldsReadOnlyNote]
 #. defaultMessage is:
 #. Custom fields for TrueNat devices are managed in TrueConnect and cannot be edited here.
@@ -3029,9 +3085,6 @@ msgstr "Урон"
 msgid "Dashboard"
 msgstr "Панель управления"
 
-#. [pages.DeviceList.dataHealth]
-#. defaultMessage is:
-#. Data
 #. [pages.Notifications.table.notificationsTableHeaderData]
 #. defaultMessage is:
 #. Data
@@ -3281,15 +3334,15 @@ msgstr "Дек"
 msgid "December"
 msgstr "Декабрь"
 
-#. [pages.DeviceDetail.decommissionDevice]
+#. [pages.DeviceDetail.decommission]
 #. defaultMessage is:
-#. Decommission device
+#. Decommission
 #. [pages.DeviceDetail.decommissionConfirmTitle]
 #. defaultMessage is:
-#. Decommission device
+#. Decommission
 #: extracted_strings.json
-msgid "Decommission device"
-msgstr "Устройство вывода из эксплуатации"
+msgid "Decommission"
+msgstr "Вывести из эксплуатации"
 
 #. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
@@ -3394,6 +3447,9 @@ msgstr "Развертывания"
 #. [pages.DeviceDetailProfile.deploymentReadOnlyDecommissioned]
 #. defaultMessage is:
 #. Deployments cannot be edited while this device is decommissioned.
+#. [pages.DeviceDetailProfile.deploymentsCannotBeEditedForDecommissionedDevice]
+#. defaultMessage is:
+#. Deployments cannot be edited while this device is decommissioned.
 #: extracted_strings.json
 msgid "Deployments cannot be edited while this device is decommissioned."
 msgstr ""
@@ -3448,16 +3504,10 @@ msgstr "Обнаружен"
 #. [placeholder.device]
 #. defaultMessage is:
 #. Device
-#. [pages.DeviceApiKeyList.deviceId]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceApiKeyList.device]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.device]
-#. defaultMessage is:
-#. Device
-#. [pages.DeviceList.deviceHealth]
 #. defaultMessage is:
 #. Device
 #. [pages.ResultList.deviceName]
@@ -3472,6 +3522,16 @@ msgstr "Обнаружен"
 #: extracted_strings.json
 msgid "Device"
 msgstr "Устройство"
+
+#. [filter.popover.deviceApiKey]
+#. defaultMessage is:
+#. Device API Key
+#. [pages.DeviceDetailProfile.deviceApiKey]
+#. defaultMessage is:
+#. Device API Key
+#: extracted_strings.json
+msgid "Device API Key"
+msgstr "API-ключ устройства"
 
 #. [browsePage.browseDropdown.deviceApiKey]
 #. defaultMessage is:
@@ -3597,9 +3657,6 @@ msgstr "Производитель устройств"
 #. defaultMessage is:
 #. Device Name
 #. [pages.workload.name]
-#. defaultMessage is:
-#. Device Name
-#. [pages.DeviceDetailProfile.deviceName]
 #. defaultMessage is:
 #. Device Name
 #: extracted_strings.json
@@ -3732,20 +3789,6 @@ msgstr "Тип устройства"
 #: extracted_strings.json
 msgid "Device updated successfully"
 msgstr "Устройство успешно обновлено"
-
-#. [pages.DeviceDetailProfile.deviceNameAlreadyExists]
-#. defaultMessage is:
-#. Device with this name already exists
-#: extracted_strings.json
-msgid "Device with this name already exists"
-msgstr "Устройство с таким именем уже существует"
-
-#. [pages.DeviceDetailProfile.deviceShortNameAlreadyExists]
-#. defaultMessage is:
-#. Device with this short name already exists
-#: extracted_strings.json
-msgid "Device with this short name already exists"
-msgstr "Устройство с таким коротким именем уже существует"
 
 #. [legends.Unknown.devices]
 #. defaultMessage is:
@@ -4006,6 +4049,13 @@ msgstr ""
 "этом отчете вы можете увидеть даты калибровки, сбои аппаратного/программного "
 "обеспечения и other ошибки, сбои или информационные записи, которые "
 "генерировал прибор"
+
+#. [pages.Reports.downloadFormat]
+#. defaultMessage is:
+#. Download {format}
+#: extracted_strings.json
+msgid "Download {format}"
+msgstr "Скачать {format}"
 
 #. [pages.ResultList.resultCategoryDrugResistance]
 #. defaultMessage is:
@@ -4522,13 +4572,6 @@ msgstr "Ошибка обновления устройства"
 msgid "Error updating sites"
 msgstr "Ошибка обновления сайтов"
 
-#. [report.missingDateRangeFilterTitle]
-#. defaultMessage is:
-#. Error: Date Selection Required to Download Report
-#: extracted_strings.json
-msgid "Error: Date Selection Required to Download Report"
-msgstr "Ошибка: Требуется выбор даты для загрузки отчета"
-
 #. [pages.ErrorRate.errors]
 #. defaultMessage is:
 #. Errors
@@ -4906,6 +4949,13 @@ msgstr "Случаи FQ-R, диагностированные сегодня"
 msgid "Facility Code"
 msgstr "Кодекс предприятия"
 
+#. [pages.DeviceDetail.decommissionFailed]
+#. defaultMessage is:
+#. Failed to decommission the device.
+#: extracted_strings.json
+msgid "Failed to decommission the device."
+msgstr "Не удалось вывести устройство из эксплуатации."
+
 #. [reports.tooMuchDataErrorMessage]
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
@@ -4936,6 +4986,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "Failed to merge devices."
 msgstr "Не удалось объединить устройства."
+
+#. [pages.DeviceDetail.reactivateFailed]
+#. defaultMessage is:
+#. Failed to reactivate the device.
+#: extracted_strings.json
+msgid "Failed to reactivate the device."
+msgstr "Не удалось повторно активировать устройство."
 
 #. [pages.DeviceDetailProfile.deploymentError]
 #. defaultMessage is:
@@ -5002,6 +5059,13 @@ msgstr "Февраль"
 #: extracted_strings.json
 msgid "Female"
 msgstr "Женский"
+
+#. [report.filterDialog.requiredHint]
+#. defaultMessage is:
+#. Fill in the required fields to continue
+#: extracted_strings.json
+msgid "Fill in the required fields to continue"
+msgstr "Заполните обязательные поля, чтобы продолжить"
 
 #. [pages.truenatCustomFields.filters]
 #. defaultMessage is:
@@ -5594,6 +5658,13 @@ msgstr ""
 msgid "Generate"
 msgstr "Генерировать"
 
+#. [pages.Reports.generateFormat]
+#. defaultMessage is:
+#. Generate {format}
+#: extracted_strings.json
+msgid "Generate {format}"
+msgstr "Сгенерировать {format}"
+
 #. [filter.AssaySelectField.genericRdt]
 #. defaultMessage is:
 #. Generic RDT
@@ -6143,6 +6214,9 @@ msgstr "Просмотр архитектуры"
 #. [header.link.home.title]
 #. defaultMessage is:
 #. Home
+#. [pages.Status.title]
+#. defaultMessage is:
+#. Home
 #: extracted_strings.json
 msgid "Home"
 msgstr "Главная"
@@ -6318,6 +6392,13 @@ msgstr "Неактивно"
 #: extracted_strings.json
 msgid "Include ALL results related to Patient ID"
 msgstr "Включите ВСЕ результаты, связанные с идентификатором пациента"
+
+#. [filter.popover.includeDecommissionedDevices]
+#. defaultMessage is:
+#. Include Decommissioned Devices
+#: extracted_strings.json
+msgid "Include Decommissioned Devices"
+msgstr "Включить устройства, выведенные из эксплуатации"
 
 #. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
@@ -6718,12 +6799,6 @@ msgid "Issue Based"
 msgstr "На основе выпуска"
 
 #. [pages.admin.issues]
-#. defaultMessage is:
-#. Issues
-#. [pages.DeviceList.issues]
-#. defaultMessage is:
-#. Issues
-#. [pages.DeviceList.issueCategory]
 #. defaultMessage is:
 #. Issues
 #: extracted_strings.json
@@ -8059,6 +8134,16 @@ msgstr "Лекарственная устойчивость МТБ/ШЛУ"
 msgid "MagNA Pure-96 COVID-19"
 msgstr "Магна Чистый-96 КОВИД-19"
 
+#. [pages.DeviceDetailEdit.sectionMaintenance]
+#. defaultMessage is:
+#. Maintenance
+#. [pages.DeviceDetailProfile.sectionMaintenance]
+#. defaultMessage is:
+#. Maintenance
+#: extracted_strings.json
+msgid "Maintenance"
+msgstr "Обслуживание"
+
 #. [filter.popover.deviceMaintenanceStatus]
 #. defaultMessage is:
 #. Maintenance Status
@@ -8512,6 +8597,13 @@ msgstr "Должно быть целым числом (без десятичны
 msgid "Must be at least {min}"
 msgstr "Должно быть не менее {min}"
 
+#. [form.error.mustBeAtMostCharacters]
+#. defaultMessage is:
+#. Must be at most {max} characters
+#: extracted_strings.json
+msgid "Must be at most {max} characters"
+msgstr "Должно быть не более {max} символов"
+
 #. [pages.InventoryAdjustmentDialogForm.expiryDateAfterToday]
 #. defaultMessage is:
 #. Must be later than today
@@ -8524,7 +8616,7 @@ msgstr "Должно быть позже, чем сегодня"
 #. Must be less than {max}
 #: extracted_strings.json
 msgid "Must be less than {max}"
-msgstr "Должно быть меньше {макс}"
+msgstr "Должно быть меньше {max}"
 
 #. [pages.common.notAvailable]
 #. defaultMessage is:
@@ -8808,6 +8900,16 @@ msgstr "Новое количество в наличии"
 #: extracted_strings.json
 msgid "New Result"
 msgstr "Новый результат"
+
+#. [pages.DeviceDetailEdit.customNamePartPreview]
+#. defaultMessage is:
+#. New device name: {name}
+#. [pages.DeviceDetailProfile.deploymentCustomNamePartPreview]
+#. defaultMessage is:
+#. New device name: {name}
+#: extracted_strings.json
+msgid "New device name: {name}"
+msgstr "Новое имя устройства: {name}"
 
 #. [forms.formItem.newRecurrency]
 #. defaultMessage is:
@@ -9539,6 +9641,20 @@ msgstr "На лечении"
 msgid "On the last weekday of every month"
 msgstr "В последний будний день каждого месяца"
 
+#. [pages.DeviceDetail.decommissionConfirmMessage]
+#. defaultMessage is:
+#. Once decommissioned, this device will no longer appear in active-device lists, counts, or reports. The results it has already produced stay valid and will keep appearing in every result view and result count.
+#: extracted_strings.json
+msgid ""
+"Once decommissioned, this device will no longer appear in active-device "
+"lists, counts, or reports. The results it has already produced stay valid "
+"and will keep appearing in every result view and result count."
+msgstr ""
+"После вывода из эксплуатации это устройство больше не будет отображаться в "
+"списках активных устройств, счетчиках или отчетах. Уже полученные им "
+"результаты останутся действительными и будут по-прежнему отображаться во "
+"всех представлениях и счетчиках результатов."
+
 #. [pages.connectorStatusSelectField.online]
 #. defaultMessage is:
 #. Online
@@ -9558,6 +9674,13 @@ msgstr "Онлайн"
 #: extracted_strings.json
 msgid "Online Date"
 msgstr "Дата онлайн"
+
+#. [pages.DeviceDetail.decommissionOnlyApprovedTooltip]
+#. defaultMessage is:
+#. Only Approved Devices can be Decommissioned
+#: extracted_strings.json
+msgid "Only Approved Devices can be Decommissioned"
+msgstr "Вывести из эксплуатации можно только одобренные устройства"
 
 #. [filter.popover.onlyEverTransferred]
 #. defaultMessage is:
@@ -9589,10 +9712,25 @@ msgstr "Только результаты при необходимости ле
 
 #. [filter.popover.onlyUnreconciled]
 #. defaultMessage is:
-#. Only Results with unreconciled inventories
+#. Only Results With Unreconciled Inventories
 #: extracted_strings.json
-msgid "Only Results with unreconciled inventories"
-msgstr "Список несвернутой инвентаризации"
+msgid "Only Results With Unreconciled Inventories"
+msgstr "Только результаты с несверенными данными инвентаризации"
+
+#. [pages.DeviceDetail.onlyApprovedDevicesCanBeDecommissioned]
+#. defaultMessage is:
+#. Only approved devices can be decommissioned.
+#: extracted_strings.json
+msgid "Only approved devices can be decommissioned."
+msgstr "Вывести из эксплуатации можно только одобренные устройства."
+
+#. [pages.DeviceDetail.onlyDecommissionedDevicesCanBeReactivated]
+#. defaultMessage is:
+#. Only decommissioned devices can be reactivated.
+#: extracted_strings.json
+msgid "Only decommissioned devices can be reactivated."
+msgstr ""
+"Повторно активировать можно только устройства, выведенные из эксплуатации."
 
 #. [pages.DeviceList.mergeDevicesDifferentSites]
 #. defaultMessage is:
@@ -9636,6 +9774,13 @@ msgstr ""
 "проблема сохраняется, свяжитесь с нашей службой поддержки и сообщите им о "
 "следующей ошибке:"
 
+#. [pages.HorizontalAppBar.openNavigation]
+#. defaultMessage is:
+#. Open navigation menu
+#: extracted_strings.json
+msgid "Open navigation menu"
+msgstr "Открыть меню навигации"
+
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
 #. Operation
@@ -9652,6 +9797,17 @@ msgstr "Операция"
 #: extracted_strings.json
 msgid "Operational Data"
 msgstr "Оперативные данные"
+
+#. [pages.DeviceDetailProfile.deploymentCustomNamePartHelp]
+#. defaultMessage is:
+#. Optional. Helps tell twin devices apart, you can use a number or a descriptive short text. Avoid using the site name.
+#: extracted_strings.json
+msgid ""
+"Optional. Helps tell twin devices apart, you can use a number or a "
+"descriptive short text. Avoid using the site name."
+msgstr ""
+"Необязательно. Помогает различать одинаковые устройства: можно использовать "
+"номер или короткий описательный текст. Не используйте название сайта."
 
 #. [filter.popover.originSiteName]
 #. defaultMessage is:
@@ -9756,6 +9912,16 @@ msgstr "Общий объём деятельности"
 #: extracted_strings.json
 msgid "Overall Network Health Daily"
 msgstr "Общее состояние здоровья сети ежедневно"
+
+#. [pages.DeviceDetailEdit.sectionOverview]
+#. defaultMessage is:
+#. Overview
+#. [pages.DeviceDetailProfile.sectionOverview]
+#. defaultMessage is:
+#. Overview
+#: extracted_strings.json
+msgid "Overview"
+msgstr "Обзор"
 
 #. [pages.Consumable.New.partNumber]
 #. defaultMessage is:
@@ -10536,6 +10702,13 @@ msgstr "Продолжить"
 msgid "Processing ..."
 msgstr "Обработка..."
 
+#. [pages.Reports.processingFormat]
+#. defaultMessage is:
+#. Processing {format}
+#: extracted_strings.json
+msgid "Processing {format}"
+msgstr "Обработка {format}"
+
 #. [pages.result.transferResult.processing]
 #. defaultMessage is:
 #. Processing...
@@ -10855,22 +11028,15 @@ msgstr "Диагностика РРТ"
 msgid "RRTB Diagnosis Trends"
 msgstr "Тенденции диагностики РРТБ"
 
-#. [pages.DeviceDetail.reactivateDevice]
+#. [pages.DeviceDetail.reactivate]
 #. defaultMessage is:
-#. Reactivate device
+#. Reactivate
 #. [pages.DeviceDetail.reactivateConfirmTitle]
 #. defaultMessage is:
-#. Reactivate device
+#. Reactivate
 #: extracted_strings.json
-msgid "Reactivate device"
-msgstr "Повторно активировать устройство"
-
-#. [pages.DeviceList.reagentHealth]
-#. defaultMessage is:
-#. Reagent
-#: extracted_strings.json
-msgid "Reagent"
-msgstr "Реагент"
+msgid "Reactivate"
+msgstr "Повторно активировать"
 
 #. [forms.formItem.reason]
 #. defaultMessage is:
@@ -12104,6 +12270,13 @@ msgstr ""
 msgid "Screen is not yet complete"
 msgstr "Экран еще не завершен"
 
+#. [pages.ReportIndex.searchReports]
+#. defaultMessage is:
+#. Search reports...
+#: extracted_strings.json
+msgid "Search reports..."
+msgstr "Поиск отчетов..."
+
 #. [forms.formItem.selectAllUnselectAll]
 #. defaultMessage is:
 #. Select All / Unselect All
@@ -12553,9 +12726,6 @@ msgstr "Установка Статус техобслуживания Ошиб�
 #. [pages.DeviceDetailEdit.shortName]
 #. defaultMessage is:
 #. Short Name
-#. [pages.DeviceDetailProfile.shortName]
-#. defaultMessage is:
-#. Short Name
 #: extracted_strings.json
 msgid "Short Name"
 msgstr "Короткое имя"
@@ -12649,6 +12819,16 @@ msgstr "Показать Процент"
 #: extracted_strings.json
 msgid "Show Results From Decommissioned Devices"
 msgstr "Показать результаты работы снятых с эксплуатации устройств"
+
+#. [filter.popover.showResultsFromUndeployedDevices]
+#. defaultMessage is:
+#. Show Results From Undeployed Devices
+#. [filter.btnGroup.showResultsFromUndeployedDevices]
+#. defaultMessage is:
+#. Show Results From Undeployed Devices
+#: extracted_strings.json
+msgid "Show Results From Undeployed Devices"
+msgstr "Показать результаты с неразвернутых устройств"
 
 #. [filter.btnGroup.onlyUnreconciled]
 #. defaultMessage is:
@@ -12903,6 +13083,9 @@ msgstr "Выйти"
 #. [pages.DeviceApiKeyList.site]
 #. defaultMessage is:
 #. Site
+#. [pages.DeviceDetail.reactivateSite]
+#. defaultMessage is:
+#. Site
 #. [pages.DeviceList.site]
 #. defaultMessage is:
 #. Site
@@ -12913,9 +13096,6 @@ msgstr "Выйти"
 #. defaultMessage is:
 #. Site
 #. [pages.resultEdit.site]
-#. defaultMessage is:
-#. Site
-#. [pages.DeviceDetailEdit.location]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceDetailProfile.site]
@@ -12930,6 +13110,13 @@ msgstr "Выйти"
 #: extracted_strings.json
 msgid "Site"
 msgstr "Сайт"
+
+#. [pages.DeviceApiKeyList.siteDevicePairs]
+#. defaultMessage is:
+#. Site / Device
+#: extracted_strings.json
+msgid "Site / Device"
+msgstr "Сайт / Устройство"
 
 #. [pages.NotificationDetail.fieldContact]
 #. defaultMessage is:
@@ -13308,9 +13495,6 @@ msgstr "Области"
 msgid "Stats about SMS notifications sent."
 msgstr "Статистика отправленных SMS-уведомлений."
 
-#. [pages.Status.title]
-#. defaultMessage is:
-#. Status
 #. [pages.workload.deviceStatus]
 #. defaultMessage is:
 #. Status
@@ -13730,6 +13914,12 @@ msgstr "Тб Всего"
 #. [forms.formSectionHeader.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
+#. [pages.DeviceDetailEdit.sectionTechnicalDetails]
+#. defaultMessage is:
+#. Technical Details
+#. [pages.DeviceDetailProfile.sectionTechnicalDetails]
+#. defaultMessage is:
+#. Technical Details
 #: extracted_strings.json
 msgid "Technical Details"
 msgstr "Технические данные"
@@ -14007,6 +14197,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "The average uptime of the Aspect server this month."
 msgstr "Среднее время безотказной работы сервера Aspect в этом месяце."
+
+#. [pages.DeviceDetailProfile.deploymentCustomNamePartCleared]
+#. defaultMessage is:
+#. The current text "{part}" will be removed.
+#: extracted_strings.json
+msgid "The current text \"{part}\" will be removed."
+msgstr "Текущий текст \"{part}\" будет удален."
 
 #. [pages.DeviceDetailProfile.deploymentAddClosesActive]
 #. defaultMessage is:
@@ -14626,6 +14823,28 @@ msgstr ""
 "Это развертывание будет действовать в период с {start} по {end}. Выберите "
 "площадку."
 
+#. [pages.DeviceDetail.deviceHasNoActiveDeployment]
+#. defaultMessage is:
+#. This device has no active deployment to reactivate.
+#: extracted_strings.json
+msgid "This device has no active deployment to reactivate."
+msgstr ""
+"У этого устройства нет активного развертывания для повторной активации."
+
+#. [pages.DeviceDetail.deviceHasNoDeploymentsToReactivate]
+#. defaultMessage is:
+#. This device has no deployments to reactivate.
+#: extracted_strings.json
+msgid "This device has no deployments to reactivate."
+msgstr "У этого устройства нет развертываний для повторной активации."
+
+#. [pages.DeviceDetail.deviceAlreadyDecommissioned]
+#. defaultMessage is:
+#. This device is already decommissioned.
+#: extracted_strings.json
+msgid "This device is already decommissioned."
+msgstr "Это устройство уже выведено из эксплуатации."
+
 #. [pages.DeviceDetailProfile.deviceUndeployed]
 #. defaultMessage is:
 #. This device is currently undeployed. Click "Add Deployment" to assign it to a site.
@@ -14636,6 +14855,13 @@ msgid ""
 msgstr ""
 "В настоящее время это устройство не развернуто. Нажмите «Добавить "
 "развертывание», чтобы привязать его к объекту."
+
+#. [report.parameterForm.requiredField]
+#. defaultMessage is:
+#. This field is required
+#: extracted_strings.json
+msgid "This field is required"
+msgstr "Это поле обязательно для заполнения"
 
 #. [pages.DeviceDetailProfile.duplicatedInstrumentTooltip]
 #. defaultMessage is:
@@ -14946,16 +15172,6 @@ msgstr "Отдельному лицу"
 #: extracted_strings.json
 msgid "To any of these Job Functions"
 msgstr "На любую из этих должностных функций"
-
-#. [report.missingDateRangeFilterDescription]
-#. defaultMessage is:
-#. To download the report "{reportName}" you must select a date from the filters.
-#: extracted_strings.json
-msgid ""
-"To download the report \"{reportName}\" you must select a date from the "
-"filters."
-msgstr ""
-"Чтобы загрузить отчет \"{reportName}\", необходимо выбрать дату из фильтров."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
 #. defaultMessage is:
@@ -15388,6 +15604,9 @@ msgstr "Туберкулёз"
 msgid "Tuesday"
 msgstr "Вторник"
 
+#. [pages.DeviceList.deviceType]
+#. defaultMessage is:
+#. Type
 #. [pages.Notifications.table.notificationsTableHeaderType]
 #. defaultMessage is:
 #. Type
@@ -15461,6 +15680,9 @@ msgstr "Не удалось обновить некоторые сайты"
 msgid "Unassigned period: {start} to {end}"
 msgstr "Незаполненный период: от {start} до {end}"
 
+#. [pages.DeviceDetail.undeployed]
+#. defaultMessage is:
+#. Undeployed
 #. [pages.DeviceDetailProfile.undeployed]
 #. defaultMessage is:
 #. Undeployed
@@ -15584,6 +15806,16 @@ msgstr "Загружено"
 #: extracted_strings.json
 msgid "Upper and Lower Case mix"
 msgstr "Смешение верхнего и нижнего регистров"
+
+#. [pages.DeviceDetailEdit.sectionUsage]
+#. defaultMessage is:
+#. Usage
+#. [pages.DeviceDetailProfile.sectionUsage]
+#. defaultMessage is:
+#. Usage
+#: extracted_strings.json
+msgid "Usage"
+msgstr "Использование"
 
 #. [pages.ReportIndex.usageStatistics]
 #. defaultMessage is:
@@ -16232,6 +16464,20 @@ msgid "You don't have permission to merge one or more of the selected devices."
 msgstr ""
 "У вас нет прав на объединение одного или нескольких выбранных устройств."
 
+#. [pages.DeviceDetail.devicePermissionDenied]
+#. defaultMessage is:
+#. You don't have permission to update the requested device.
+#: extracted_strings.json
+msgid "You don't have permission to update the requested device."
+msgstr "У вас нет прав на обновление запрошенного устройства."
+
+#. [pages.DeviceDetail.sitePermissionDenied]
+#. defaultMessage is:
+#. You don't have permission to use the requested site.
+#: extracted_strings.json
+msgid "You don't have permission to use the requested site."
+msgstr "У вас нет прав на использование запрошенного сайта."
+
 #. [pages.DeviceDetailProfile.deploymentSaveRequired]
 #. defaultMessage is:
 #. You have unsaved changes. Click "Save" to apply them.
@@ -16457,6 +16703,13 @@ msgstr "данные"
 #: extracted_strings.json
 msgid "destination site name includes \"{destinationSiteName}\""
 msgstr "имя сайта назначения включает \"{destinationSiteName}\"."
+
+#. [filter.btnGroup.whereDeviceApiKeyIncludes]
+#. defaultMessage is:
+#. device API key includes "{deviceApiKeyToken}"
+#: extracted_strings.json
+msgid "device API key includes \"{deviceApiKeyToken}\""
+msgstr "API-ключ устройства содержит \"{deviceApiKeyToken}\""
 
 #. [filter.btnGroup.whereDeviceNameIncludes]
 #. defaultMessage is:
@@ -16890,7 +17143,7 @@ msgstr "{count} из {total}"
 #. {count} of {total} days
 #: extracted_strings.json
 msgid "{count} of {total} days"
-msgstr "{count} из {total}дней{count}"
+msgstr "{count} из {total} дней"
 
 #. [pages.DeviceDetailProfile.resultsWillLoseSite]
 #. defaultMessage is:
@@ -16918,6 +17171,13 @@ msgid ""
 msgstr ""
 "{daysInSameStatus, plural, one {# day} other {# days} } с момента последнего "
 "обновления"
+
+#. [pages.shared.device.nameAtSite]
+#. defaultMessage is:
+#. {deviceName} at {siteName}
+#: extracted_strings.json
+msgid "{deviceName} at {siteName}"
+msgstr "{deviceName} на сайте {siteName}"
 
 #. [pages.TableCell.timeClassification]
 #. defaultMessage is:
@@ -17055,6 +17315,37 @@ msgstr "{unit} суммарные калибровки"
 #: extracted_strings.json
 msgid "—"
 msgstr "—"
+
+#~ msgid "Are you sure you want to decommission this device?"
+#~ msgstr "Вы уверены, что хотите вывести это устройство из эксплуатации?"
+
+#~ msgid "Are you sure you want to reactivate this device?"
+#~ msgstr "Вы уверены, что хотите повторно активировать это устройство?"
+
+#~ msgid "Assign"
+#~ msgstr "Назначить"
+
+#~ msgid "Assign {count} Keys"
+#~ msgstr "Назначьте {count} ключи"
+
+#~ msgid "Device with this name already exists"
+#~ msgstr "Устройство с таким именем уже существует"
+
+#~ msgid "Device with this short name already exists"
+#~ msgstr "Устройство с таким коротким именем уже существует"
+
+#~ msgid "Error: Date Selection Required to Download Report"
+#~ msgstr "Ошибка: Требуется выбор даты для загрузки отчета"
+
+#~ msgid "Reagent"
+#~ msgstr "Реагент"
+
+#~ msgid ""
+#~ "To download the report \"{reportName}\" you must select a date from the "
+#~ "filters."
+#~ msgstr ""
+#~ "Чтобы загрузить отчет \"{reportName}\", необходимо выбрать дату из "
+#~ "фильтров."
 
 #~ msgid "National GX-10C Diagnosed Trends in"
 #~ msgstr "Национальный диагноз GX-10C Тенденции в"
@@ -17312,9 +17603,6 @@ msgstr "—"
 
 #~ msgid "Manager"
 #~ msgstr "Руководитель"
-
-#~ msgid "Capacity"
-#~ msgstr "Вместимость"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Анализ на МТБ Риф Ультра"
@@ -17782,9 +18070,6 @@ msgstr "—"
 #~ msgid "This email is not valid"
 #~ msgstr "Это электронное сообщение недействительно"
 
-#~ msgid "This field is required"
-#~ msgstr "Это поле обязательно для заполнения"
-
 #~ msgid "Treatment"
 #~ msgstr "Лечение"
 
@@ -17847,9 +18132,6 @@ msgstr "—"
 
 #~ msgid "Could Not Find Site Details"
 #~ msgstr "Не удалось найти информацию о сайте"
-
-#~ msgid "Enter report name..."
-#~ msgstr "Введите имя отчета..."
 
 #~ msgid "Error Loading Device profile performance report"
 #~ msgstr "Отчет о производительности профиля устройства загрузки ошибок"
@@ -17980,9 +18262,6 @@ msgstr "—"
 #~ "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 #~ "маршрутизатор} other {# маршрутизаторы} }"
 
-#~ msgid "Technical information"
-#~ msgstr "Техническая информация"
-
 #~ msgid "The current password that you have entered is incorrect."
 #~ msgstr "Текущий пароль, который вы ввели, неправильный."
 
@@ -18079,9 +18358,6 @@ msgstr "—"
 
 #~ msgid "undefined"
 #~ msgstr "не определено"
-
-#~ msgid "Demo Device"
-#~ msgstr "Демонстрационное устройство"
 
 #~ msgid "Ok"
 #~ msgstr "Ок"
