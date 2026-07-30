@@ -6,8 +6,8 @@ import { AspectWidget, EmptyWidget } from './Widget'
 
 const EmptyWidgets = () => (
   <Grid container spacing={2}>
-    {[0, 1, 2].map(key => (
-      <Grid item sm={4} key={key}>
+    {[0, 1, 2, 3, 4].map(key => (
+      <Grid item key={key} style={{ display: 'flex', flex: '1 1 160px', minWidth: 160 }}>
         <EmptyWidget />
       </Grid>
     ))}
