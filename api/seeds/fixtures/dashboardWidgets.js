@@ -26,32 +26,38 @@ const commonUtilizationRateQuery = (dateCondition, startDate, endDate) => `
     GROUP BY d.id, d.dailyTestCapacity, p.customWorkingDays
   ) AS innerQuery`
 
+/**
+ * Error rate for the previous calendar month, read from the pre-aggregated fact table
+ * (see api/src/fact/calculateFactResultsDeviceByTimeFrame.js) instead of scanning Result.
+ * Month rows are keyed on the 1st of the month, so no date range is needed, and the fact
+ * builder already applies `ResultType.excluded = false`.
+ *
+ * Per-user data constraints (partner, disabled sites, device approval, country) are injected
+ * at runtime by addConstraints, keyed on the table names below - which is why the Partner join
+ * is here even though nothing selects from it. Do not hardcode those filters.
+ */
 const errorRateQueryLast30Days = `SELECT
   CONCAT(
     ROUND(
       IFNULL(
-        SUM(errorCount)
+        SUM(CASE WHEN rc1.name = 'Error' THEN r.resultCount ELSE 0 END)
         /
-        SUM(resultCount) * 100
+        SUM(r.resultCount) * 100
       ,0)
     ,0)
   ,'%') AS cnt
-  FROM (
-    SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, d.dailyTestCapacity
-      FROM Result AS r
-      INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
-      INNER JOIN Device AS d ON d.id = r.deviceId
-      INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
-      INNER JOIN Site AS s ON s.id = d.siteId
-      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-    WHERE DATE(r.endedOn)
-          BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
-          AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
-          AND dtc.hasResults = 1
-          AND dt.externalId = 'CepheidGeneXpert'
-    GROUP BY r.deviceId, d.dailyTestCapacity
-  ) AS innerQuery`
+  FROM FactResultsDeviceByTimeFrame AS r
+    INNER JOIN ResultCategory AS rc1 ON rc1.id = r.resultCategory1
+    INNER JOIN Device AS d ON d.id = r.deviceId
+    INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory AS dtc ON dtc.id = dt.deviceTypeCategoryId
+    INNER JOIN Site AS s ON s.id = d.siteId
+    INNER JOIN Partner AS p ON p.id = s.partnerId
+    LEFT OUTER JOIN Geography AS g ON g.id = s.geographyId
+  WHERE r.timeFrame = 'month'
+    AND r.startedOn = DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
+    AND dtc.hasResults = 1
+    AND dt.externalId = 'CepheidGeneXpert'`
 
 // helper funcs and vars
 const partialValidResults = `SELECT

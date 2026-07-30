@@ -10,11 +10,7 @@ function bangladeshModuleVersions(knex, constraints) {
     .leftJoin(
       function () {
         this.distinct('r1.deviceId')
-          .from('Result as r1')
-          .modify(addConstraints, constraints, {
-            result: 'r1',
-            assay: 'a',
-          })
+          .from('FactResultsDeviceByTimeFrame as r1')
           .where('r1.assayId', function () {
             this.select('a.id').from('Assay as a').where('a.externalId', 'GxMtbXdr')
           })
