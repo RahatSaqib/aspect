@@ -108,7 +108,11 @@ describe('Parse nested queries', () => {
   })
 
   describe('Execute query with sub-query in FROM clause', () => {
-    const { sqlForStatUnit: sql } = Object.values(DashboardWidgetsCommon.stat).find(x => x.externalId === 'errorRate')
+    // Any widget whose 'sqlForStatUnit' still wraps a derived table works as the specimen here.
+    // If this one is ever rewritten without one, repoint it at another rather than dropping the case.
+    const { sqlForStatUnit: sql } = Object.values(DashboardWidgetsCommon.stat).find(
+      x => x.externalId === 'deviceDaysActive'
+    )
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
       assert.equal(nestedQueries.all.length, 1)
@@ -238,6 +242,7 @@ describe('Parse nested queries', () => {
       'stockouts',
       'deviceDaysActive',
       'errorRate',
+      'errorRateHome',
       'stockNotRecorded',
       'avgTimeToUpload',
       'moduleSwaps',
