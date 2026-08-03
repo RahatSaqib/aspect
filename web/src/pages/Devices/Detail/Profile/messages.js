@@ -111,6 +111,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deviceApiKey',
       defaultMessage: 'Device API Key',
     },
+    gxConnectInstallationId: {
+      id: 'pages.DeviceDetailProfile.gxConnectInstallationId',
+      defaultMessage: 'GxConnect Installation ID',
+    },
     calibration: {
       id: 'pages.DeviceDetailProfile.calibration',
       defaultMessage: 'Calibration',
@@ -270,6 +274,8 @@ const messages = {
     },
     instrumentListTitle: { id: 'device.instrumentList.title', defaultMessage: 'Device Instruments' },
     instrumentSerial: { id: 'device.instrumentList.instrumentSerial', defaultMessage: 'Serial Number' },
+    macAddress: { id: 'device.instrumentList.macAddress', defaultMessage: 'MAC Address' },
+    deviceName: { id: 'device.instrumentList.deviceName', defaultMessage: 'Device Name' },
     bayNames: { id: 'device.instrumentList.bayNames', defaultMessage: 'Bay Names' },
     noInstruments: { id: 'device.instrumentList.noInstruments', defaultMessage: 'No instruments' },
     noResults: { id: 'device.instrumentList.noResult', defaultMessage: 'No results' },

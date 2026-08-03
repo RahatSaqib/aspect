@@ -8,7 +8,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints, timezoneIANA) {
     .leftJoin('Site as s', 'd.siteId', 's.id')
     .join('Instrument as i', 'i.deviceId', 'd.id')
     .leftJoin('InstrumentModule as m', 'm.instrumentId', 'i.id')
-    .groupBy('d.id', 'i.id', 'i.active', 'i.serial')
+    .groupBy('d.id', 'i.id', 'i.active', 'i.serial', 'i.macAddress')
     .modify(
       addConstraints,
       dataConstraints,
@@ -23,6 +23,7 @@ function getDeviceInstrumentsData(deviceId, dataConstraints, timezoneIANA) {
       'i.id as instrumentId',
       'i.active as active',
       'i.serial as instrumentSerial',
+      'i.macAddress as macAddress',
       knex.raw(
         `json_arrayagg(IF(m.moduleName IS NULL, NULL,
           json_object('moduleName', TRIM(m.moduleName), 'lastResultDate', CONVERT_TZ(m.lastResultDate, '+00:00', '${timezoneIANA}')))) as modules`
@@ -61,6 +62,7 @@ async function getDeviceInstruments({ params, auth }) {
       instrumentId: instrument.instrumentId,
       active: Boolean(instrument.active),
       instrumentSerial: instrument.instrumentSerial,
+      macAddress: instrument.macAddress,
       modules,
     }
   })

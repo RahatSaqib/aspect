@@ -173,6 +173,7 @@ const routes = [
                     instrumentId: Joi.number().required().description('Instrument ID'),
                     active: Joi.bool().description('Whether the instrument is active'),
                     instrumentSerial: Joi.string().allow(null).required().description('Instrument serial number'),
+                    macAddress: Joi.string().allow(null, '').description('Instrument MAC address'),
                     modules: Joi.array()
                       .items(
                         Joi.object().keys({
@@ -220,6 +221,7 @@ const routes = [
                     deviceName: Joi.string().required().description('Device name'),
                     instrumentId: Joi.number().required().description('Instrument ID'),
                     instrumentSerial: Joi.string().allow(null).description('Instrument serial number'),
+                    macAddress: Joi.string().allow(null, '').description('Instrument MAC address'),
                     modules: Joi.array()
                       .items(
                         Joi.object().keys({
