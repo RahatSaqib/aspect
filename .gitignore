@@ -57,6 +57,9 @@ web/src/example-stories/
 web/diff.pot
 web/extracted_strings.json
 
+# Customer source releases (scrubbed trees + working clones of customer repos)
+.release/
+
 # POCs
 dev-tooling/
 web-2022/
