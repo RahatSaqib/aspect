@@ -18,6 +18,10 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/../.." && pwd)"
 OUT="${2:-$REPO/.release/bangladesh}"
 
+# Where the clone of the customer's Gitea repo is expected to live: alongside this
+# one, so the publish commands printed at the end are copy-pasteable.
+CUSTOMER_CLONE="$(dirname "$REPO")/bangladesh-aspect"
+
 step() { printf '\n\033[1m==> %s\033[0m\n' "$1"; }
 
 # ---------------------------------------------------------------------------
@@ -189,7 +193,7 @@ Remaining gate needs a database, so run it yourself:
 Then publish, from your clone of the customer repo - NEVER from this repo, whose
 history contains every other partner's code:
 
-  cd ~/<your-repos>/bangladesh-aspect
+  cd $CUSTOMER_CLONE
   git pull bangla system-one
   rsync -a --delete --exclude '.git/' --exclude 'node_modules' --exclude 'api/.env' $OUT/ .
   git add -A
