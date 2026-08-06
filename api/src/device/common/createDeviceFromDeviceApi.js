@@ -2,6 +2,7 @@ const _ = require('lodash')
 const { deviceApprovalToId } = require('../../shared/dictionary')
 const { syncDeviceApprovalFromDeployments } = require('./deviceApprovalService')
 const { assignGeneratedDeviceName } = require('./deviceNaming')
+const { loadPlugin } = require('../../plugin/loadPlugin')
 const logger = require('../../shared/logger')
 const { sendSms } = require('../../sms/smsUtil')
 const { sendEmail } = require('../../email/emailUtil')
@@ -116,6 +117,13 @@ async function createDeviceFromDeviceApi(context) {
   // Send notifications
   // Commented for now, This notification should be sent only once per GxConnect instance, in this place we are going to generate multiple notifications
   // await sendNotificationToContacts(payload, device)
+
+  const postProcessCreateDevice = await loadPlugin(
+    context.partnerPluginName,
+    context.deviceTypePluginName,
+    'postProcessCreateDevice'
+  )
+  await postProcessCreateDevice({ ...context, device })
 
   return device
 }

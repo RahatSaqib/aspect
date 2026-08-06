@@ -9,12 +9,11 @@ const {
 const { knex, transact } = require('../../db')
 const { deviceTypeToId } = require('../../shared/dictionary')
 const { createDeviceFromDeviceApi } = require('../../device/common/createDeviceFromDeviceApi')
-const { loadPlugin } = require('../../plugin/loadPlugin')
 const { parseDateOrDefault } = require('../../shared/date')
 const { updateDeviceConfiguration } = require('./shared/logic')
 
 const DEVICE_TYPE_EXTERNAL_ID = 'CepheidGeneXpert'
-const INSTRUMENT_DETAIL_COLUMNS = ['macAddress', 'letterOffset', 'version']
+const INSTRUMENT_DETAIL_COLUMNS = ['macAddress', 'letter', 'version']
 const MODULE_NAME_MAX_LENGTH = 15
 const MODULE_SERIAL_MAX_LENGTH = 15
 const LOG_DETAIL_MAX_LENGTH = 255
@@ -126,7 +125,7 @@ function normalizeInstruments(instruments) {
       .map(instrument => ({
         serial: toTrimmedString(instrument?.serial_number),
         macAddress: toTrimmedString(instrument?.mac_address, 17),
-        letterOffset: toIntegerOrNull(instrument?.letter_offset),
+        letter: letterOffsetToLetter(instrument?.letter_offset),
         version: toIntegerOrNull(instrument?.version),
       }))
       .filter(({ serial }) => serial),
@@ -202,9 +201,6 @@ async function registerInstrument({ payload, auth, partnerId, deviceTypeId, now,
     }
 
     context.device = await createDeviceFromDeviceApi(context)
-
-    const postProcessCreateDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessCreateDevice')
-    await postProcessCreateDevice(context)
 
     const created = await trknex('Instrument')
       .where({ deviceId: context.device.id, serial: instrument.serial })
@@ -323,6 +319,17 @@ function normalizeInstrumentLogs(instrumentsLogs, instrumentsBySerial) {
 function toIntegerOrNull(value) {
   const parsed = Number.parseInt(value, 10)
   return Number.isNaN(parsed) ? null : parsed
+}
+
+function letterOffsetToLetter(value) {
+  const offset = toIntegerOrNull(value)
+
+  if (offset == null || offset < 0 || offset > 25) {
+    return null
+  }
+
+  // 0 -> A, 1 -> B, ..., 25 -> Z
+  return String.fromCharCode(65 + offset)
 }
 
 function toTrimmedString(value, maxLength) {

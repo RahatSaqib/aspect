@@ -38,7 +38,9 @@ function buildKnexStub({ existingInstruments = [], createdInstrumentId = 99 }) {
   knex.withArgs('Instrument').returns({
     where: sinon.stub().returnsThis(),
     update: instrumentUpdate,
-    first: sinon.stub().resolves({ id: createdInstrumentId, serial: '753624', macAddress: null, deviceId: 11 }),
+    first: sinon
+      .stub()
+      .resolves({ id: createdInstrumentId, serial: '753624', macAddress: null, letter: null, deviceId: 11 }),
   })
 
   knex.withArgs('InstrumentModule').returns({ insert: instrumentModuleInsert })
@@ -54,13 +56,12 @@ function buildKnexStub({ existingInstruments = [], createdInstrumentId = 99 }) {
   return { knex, instrumentUpdate, instrumentModuleMerge, instrumentModuleInsert }
 }
 
-function loadHandler(knex, { createDeviceFromDeviceApi, postProcessCreateDevice }) {
+function loadHandler(knex, { createDeviceFromDeviceApi }) {
   return proxyquire('../../../src/deviceApi/payloadHandlers/handleDailyDetailsPayload', {
     '../../db': { knex, transact: block => block(knex) },
     '../../shared/dictionary': { deviceTypeToId: sinon.stub().resolves(5) },
     './shared/logic': { updateDeviceConfiguration: sinon.stub().resolves() },
     '../../device/common/createDeviceFromDeviceApi': { createDeviceFromDeviceApi },
-    '../../plugin/loadPlugin': { loadPlugin: sinon.stub().resolves(postProcessCreateDevice) },
   }).handleDailyDetailsPayload
 }
 
@@ -75,16 +76,14 @@ function buildRequest({ instruments, instrumentsLogs }) {
 
 describe('handleDailyDetailsPayload instruments', () => {
   let createDeviceFromDeviceApi
-  let postProcessCreateDevice
 
   beforeEach(() => {
     createDeviceFromDeviceApi = sinon.stub().resolves({ id: 11, name: 'GX11' })
-    postProcessCreateDevice = sinon.stub().resolves()
   })
 
   it('does not report instruments when the payload carries none', async () => {
     const { knex } = buildKnexStub({})
-    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi, postProcessCreateDevice })
+    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi })
 
     const response = await handleDailyDetailsPayload(buildRequest({}), DEVICE_LOG_ID)
 
@@ -94,7 +93,7 @@ describe('handleDailyDetailsPayload instruments', () => {
 
   it('creates a device for every unknown instrument and reports its name', async () => {
     const { knex } = buildKnexStub({ existingInstruments: [] })
-    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi, postProcessCreateDevice })
+    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi })
 
     const response = await handleDailyDetailsPayload(
       buildRequest({ instruments: [{ serial_number: 753624, mac_address: '00:21:38:01:87:F0' }] }),
@@ -104,8 +103,6 @@ describe('handleDailyDetailsPayload instruments', () => {
     assert.deepEqual(response.instruments, [{ serialNumber: '753624', deviceName: 'GX11' }])
     assert.isTrue(createDeviceFromDeviceApi.calledOnce)
     assert.equal(createDeviceFromDeviceApi.firstCall.args[0].deviceTypeExternalId, 'CepheidGeneXpert')
-    assert.isTrue(postProcessCreateDevice.calledOnce)
-    assert.equal(postProcessCreateDevice.firstCall.args[0].instrumentSerial, '753624')
   })
 
   it('reuses the device of a known instrument and refreshes its hardware details', async () => {
@@ -115,14 +112,14 @@ describe('handleDailyDetailsPayload instruments', () => {
           id: 1,
           serial: '753624',
           macAddress: null,
-          letterOffset: null,
+          letter: null,
           version: 0,
           deviceId: 11,
           deviceName: 'GX-01',
         },
       ],
     })
-    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi, postProcessCreateDevice })
+    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi })
 
     const response = await handleDailyDetailsPayload(
       buildRequest({
@@ -136,7 +133,7 @@ describe('handleDailyDetailsPayload instruments', () => {
     // version already matches, so it stays out of the update
     assert.deepOwnInclude(instrumentUpdate.firstCall.args[0], {
       macAddress: '00:21:38:01:87:F0',
-      letterOffset: 1,
+      letter: 'B',
     })
     assert.notProperty(instrumentUpdate.firstCall.args[0], 'version')
   })
@@ -147,7 +144,7 @@ describe('handleDailyDetailsPayload instruments', () => {
         { id: 1, serial: '753624', macAddress: '00:21:38:01:87:F0', deviceId: 11, deviceName: 'GX-01' },
       ],
     })
-    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi, postProcessCreateDevice })
+    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi })
 
     const response = await handleDailyDetailsPayload(
       buildRequest({ instruments: [{ serial_number: 753624, mac_address: '00:21:38:01:87:F1' }] }),
@@ -164,7 +161,7 @@ describe('handleDailyDetailsPayload instruments', () => {
         { id: 1, serial: '753624', macAddress: '00:21:38:01:87:F0', deviceId: 11, deviceName: 'GX-01' },
       ],
     })
-    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi, postProcessCreateDevice })
+    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi })
 
     const response = await handleDailyDetailsPayload(
       buildRequest({ instruments: [{ serial_number: 753624 }] }),
@@ -179,7 +176,7 @@ describe('handleDailyDetailsPayload instruments', () => {
     const { knex, instrumentModuleInsert } = buildKnexStub({
       existingInstruments: [{ id: 1, serial: '753624', macAddress: null, deviceId: 11, deviceName: 'GX-01' }],
     })
-    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi, postProcessCreateDevice })
+    const handleDailyDetailsPayload = loadHandler(knex, { createDeviceFromDeviceApi })
 
     await handleDailyDetailsPayload(
       buildRequest({

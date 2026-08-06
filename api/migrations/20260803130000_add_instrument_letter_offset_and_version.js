@@ -4,17 +4,16 @@ module.exports = require('../src/db').migration(up, down)
 
 /**
  * GxConnect reports `letter_offset` and `version` for every instrument in its daily details.
- * The letter offset is what turns a module site name into the letter GxConnect displays, so
- * it is needed to match modules across instruments of the same installation.
+ * The offset gets converted to a human-readable `letter` before persisting.
  */
 async function up(knex) {
   await knex.schema.alterTable('Instrument', table => {
-    table.integer('letterOffset').nullable().after('macAddress')
-    table.integer('version').nullable().after('letterOffset')
+    table.string('letter', 1).nullable().after('macAddress')
+    table.integer('version').nullable().after('letter')
   })
 
   await knex.schema.alterTable('Instrument_AUDIT', table => {
-    table.integer('letterOffset').nullable()
+    table.string('letter', 1).nullable()
     table.integer('version').nullable()
   })
 
@@ -23,12 +22,12 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.alterTable('Instrument', table => {
-    table.dropColumn('letterOffset')
+    table.dropColumn('letter')
     table.dropColumn('version')
   })
 
   await knex.schema.alterTable('Instrument_AUDIT', table => {
-    table.dropColumn('letterOffset')
+    table.dropColumn('letter')
     table.dropColumn('version')
   })
 

@@ -61,7 +61,7 @@ const getInstrument = serial =>
   knex('Instrument as i')
     .join('Device as d', 'd.id', 'i.deviceId')
     .where({ 'd.deviceApiKeyId': context.apiKey.id, 'i.serial': serial })
-    .first('i.id', 'i.macAddress', 'i.letterOffset', 'i.version', 'd.id as deviceId', 'd.name as deviceName')
+    .first('i.id', 'i.macAddress', 'i.letter', 'i.version', 'd.id as deviceId', 'd.name as deviceName')
 
 describe('Device daily details instruments', () => {
   beforeEach(async () => {
@@ -117,12 +117,12 @@ describe('Device daily details instruments', () => {
 
     assert.include(await getInstrument(KNOWN_SERIAL), {
       macAddress: '00:21:38:01:87:EF',
-      letterOffset: 0,
+      letter: 'A',
       version: 0,
     })
     assert.include(await getInstrument(UNKNOWN_SERIAL), {
       macAddress: '00:21:38:01:87:F0',
-      letterOffset: 1,
+      letter: 'B',
       version: 0,
     })
   })

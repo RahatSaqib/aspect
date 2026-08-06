@@ -40,6 +40,8 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
     }
   }
   const instrumentSerial = payload?.result?.instrument?.serial || payload?.result?.instrumentSerial
+  const instrumentMacAddress =
+    _.get(payload, 'result.instrument.macAddress', null) || _.get(payload, 'result.instrument.mac_address', null)
 
   // Create context for processing payload
   const context = {
@@ -47,6 +49,7 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
     auth,
     now: new Date(),
     instrumentSerial,
+    instrumentMacAddress,
     payload: request.payload,
     query: request.query,
     messageContext,
@@ -69,13 +72,6 @@ const processResultPayload = async (request, deviceLogId, remoteAddress) => {
       // If device not found, try to create it
       if (!context.device) {
         context.device = await createDeviceFromDeviceApi(context)
-
-        const postProcessCreateDevice = await loadPlugin(
-          partnerPluginName,
-          deviceTypePluginName,
-          'postProcessCreateDevice'
-        )
-        await postProcessCreateDevice(context)
       }
 
       // TODO: this should be only in case of existing device, and for the new one maybe just send the event deviceSeen
