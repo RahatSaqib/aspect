@@ -424,20 +424,21 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
   const { formatMessage } = useIntl()
   const { data: assays } = useAssayList()
   if (resultCategoryId && assays) {
-    const rcName = assays
-      .find(
-        a =>
-          (isArray(assayId) ? assayId.includes(a.id) : a.id === assayId) &&
-          a.resultCategories.find(rc => rc.id === resultCategoryId)
-      )
-      .resultCategories.find(rc => rc.id === resultCategoryId).i18nKey
+    const matchedAssay = assays.find(
+      a =>
+        (isArray(assayId) ? assayId.includes(a.id) : a.id === assayId) &&
+        a.resultCategories.find(rc => rc.id === resultCategoryId)
+    )
+    const rcName = matchedAssay?.resultCategories.find(rc => rc.id === resultCategoryId)?.i18nKey
     // diseaseId here is used to fix filtering from HIV graph
     const rcdName = (
       (assays.find(i => i.diseaseId === diseaseId && i.hasResults) || { resultCategories: [] }).resultCategories.find(
         el => el.id === resultCategoryId
       ) || { i18nKey: '' }
     ).i18nKey
-    const name = assayOverride ? `"${startCase(assayOverride)}"` : formatMessage(messages[assayId ? rcName : rcdName])
+    const name = assayOverride
+      ? `"${startCase(assayOverride)}"`
+      : formatMessage(messages[matchedAssay && assayId ? rcName : rcdName])
 
     const label = formatMessage(messages.withResultCategory, { resultCategoryName: name })
 
