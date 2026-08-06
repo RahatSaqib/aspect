@@ -117,7 +117,7 @@ async function mergeAndDeleteInstrumentModules(
           'IF(VALUES(lastResultDate) >= IFNULL(InstrumentModule.lastResultDate, VALUES(lastResultDate)), VALUES(moduleSerial), InstrumentModule.moduleSerial)'
         ),
         lastResultDate: trknex.raw(
-          'GREATEST(IFNULL(InstrumentModule.lastResultDate, VALUES(lastResultDate)), VALUES(lastResultDate))'
+          'COALESCE(GREATEST(InstrumentModule.lastResultDate, VALUES(lastResultDate)), InstrumentModule.lastResultDate, VALUES(lastResultDate))'
         ),
         lastLogDetail: trknex.raw(
           'IF(VALUES(lastLogDate) >= IFNULL(InstrumentModule.lastLogDate, VALUES(lastLogDate)), VALUES(lastLogDetail), InstrumentModule.lastLogDetail)'
