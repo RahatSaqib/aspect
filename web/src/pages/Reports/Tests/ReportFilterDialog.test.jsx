@@ -1,10 +1,11 @@
 import React from 'react'
 import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
 import useAuthState from '../../../hooks/useAuthState'
 import ReportFilterDialog from '../ReportFilterDialog'
 
-jest.mock('../../../hooks/useAuthState')
+vi.mock('../../../hooks/useAuthState')
 
 // text-type params keep the form registry free of the heavy select components
 const report = {
@@ -20,8 +21,8 @@ const renderDialog = (props = {}) =>
       report={report}
       fileExtension="xlsx"
       initialValues={{}}
-      onClose={jest.fn()}
-      onSubmit={jest.fn()}
+      onClose={vi.fn()}
+      onSubmit={vi.fn()}
       {...props}
     />
   )
@@ -38,7 +39,7 @@ describe('ReportFilterDialog required UX', () => {
   })
 
   it('enables the primary action and hides the hint once required fields are filled', () => {
-    const onSubmit = jest.fn()
+    const onSubmit = vi.fn()
     renderDialog({ onSubmit })
     fireEvent.change(screen.getByLabelText('Comment *'), { target: { value: 'hello' } })
 
@@ -51,7 +52,7 @@ describe('ReportFilterDialog required UX', () => {
   })
 
   it('keeps Cancel enabled while invalid', () => {
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     renderDialog({ onClose })
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }))
     expect(onClose).toHaveBeenCalled()
@@ -63,7 +64,7 @@ describe('ReportFilterDialog required UX', () => {
   })
 
   it('offers one submit button per supported format and passes the chosen format', () => {
-    const onSubmit = jest.fn()
+    const onSubmit = vi.fn()
     render(
       <ReportFilterDialog
         open
@@ -75,7 +76,7 @@ describe('ReportFilterDialog required UX', () => {
           parameters: [{ name: 'comment', type: 'text', label: 'Comment' }],
         }}
         initialValues={{}}
-        onClose={jest.fn()}
+        onClose={vi.fn()}
         onSubmit={onSubmit}
       />
     )
@@ -92,8 +93,8 @@ describe('ReportFilterDialog required UX', () => {
         report={report}
         fileExtension="xlsx"
         initialValues={{ comment: 'first' }}
-        onClose={jest.fn()}
-        onSubmit={jest.fn()}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
       />
     )
     expect(screen.getByLabelText('Comment *')).toHaveValue('first')
@@ -104,8 +105,8 @@ describe('ReportFilterDialog required UX', () => {
         report={report}
         fileExtension="xlsx"
         initialValues={{ comment: 'second' }}
-        onClose={jest.fn()}
-        onSubmit={jest.fn()}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
       />
     )
     expect(screen.getByLabelText('Comment *')).toHaveValue('second')

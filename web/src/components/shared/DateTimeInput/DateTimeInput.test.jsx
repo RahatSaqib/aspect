@@ -2,6 +2,7 @@ import React from 'react'
 import isDateEqual from 'date-fns/isEqual'
 import Downshift from 'downshift'
 import { act } from 'react-dom/test-utils'
+import { vi } from 'vitest'
 import { mountWithTheme, shallowWithTheme } from '../../../__setup__/common'
 import I18nProvider from '../../../providers/I18nProvider'
 import DateTimeInput from './DateTimeInput'
@@ -48,7 +49,7 @@ describe('DateTimeInput component', () => {
 
   describe('controlled mode', () => {
     let props
-    const getMockOnChange = date => jest.fn(d => isDateEqual(date, d))
+    const getMockOnChange = date => vi.fn(d => isDateEqual(date, d))
 
     beforeEach(() => {
       props = {

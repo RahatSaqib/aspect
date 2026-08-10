@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ExportListButton should not render the button 1`] = `""`;
+exports[`ExportListButton > should not render the button 1`] = `""`;
 
-exports[`ExportListButton should shallow render export list correctly 1`] = `
+exports[`ExportListButton > should shallow render export list correctly 1`] = `
 <div
   className="export_button_wrapper"
 >

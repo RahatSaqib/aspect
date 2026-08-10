@@ -10,11 +10,18 @@
   "env": {
     "browser": true,
     "es6": true,
-    "node": true,
-    "jest": true
+    "node": true
   },
   "globals": {
-    "__APP_ENV__": "readonly"
+    "__APP_ENV__": "readonly",
+    "afterAll": "readonly",
+    "afterEach": "readonly",
+    "beforeAll": "readonly",
+    "beforeEach": "readonly",
+    "describe": "readonly",
+    "expect": "readonly",
+    "it": "readonly",
+    "test": "readonly"
   },
   "rules": {
     "default-param-last": "off",

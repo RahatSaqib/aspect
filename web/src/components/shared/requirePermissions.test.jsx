@@ -1,9 +1,10 @@
 import React from 'react'
 import { shallow } from 'enzyme'
+import { vi } from 'vitest'
 import { useAuthStore } from '../../store/authStore'
 import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
 
-jest.mock('../../store/authStore', () => ({ useAuthStore: jest.fn() }))
+vi.mock('../../store/authStore', () => ({ useAuthStore: vi.fn() }))
 
 describe('requirePermissions', () => {
   describe('groupByPermissionTypes', () => {
