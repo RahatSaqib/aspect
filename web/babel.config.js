@@ -34,15 +34,14 @@ const plugins = [
 
 module.exports = {
   env: {
-    webpack: {
-      presets: ['@babel/preset-env', '@babel/preset-react'],
-      plugins: ['@babel/transform-runtime'],
-    },
     test: {
       presets: [
         [
           '@babel/preset-env',
           {
+            // Only ESM->CJS is needed for jest; downlevelling to ES5 would hide
+            // TDZ/scoping bugs that vite ships to the browser untranspiled.
+            targets: { node: 'current' },
             modules: 'commonjs',
             debug: false,
           },

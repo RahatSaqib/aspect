@@ -5,13 +5,12 @@ import get from 'lodash/get'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
+import logoAspect from '../../../assets/logo_aspect.png'
 import { acceptLicenseStart, fetchLicense, useAuthStore, userRequestedLogout } from '../../../store/authStore'
 import styles from './License.module.css'
 import messages from './messages'
 
-const AspectLogo = () => (
-  <img className={styles.Logo__Image} src={require('../../../assets/logo_aspect.png')} alt="Aspect" />
-)
+const AspectLogo = () => <img className={styles.Logo__Image} src={logoAspect} alt="Aspect" />
 
 export const License = ({ intl, licenseContent, onDoNotAcceptClick, onAcceptClick }) => (
   <div className={styles.Background}>

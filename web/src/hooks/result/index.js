@@ -1,6 +1,6 @@
-const { useNavigate } = require('react-router')
-const { default: useAuthState } = require('../useAuthState')
-const { default: useFilterUpdate } = require('../useFilterUpdate')
+import { useNavigate } from 'react-router'
+import useAuthState from '../useAuthState'
+import useFilterUpdate from '../useFilterUpdate'
 
 export const useResultlist = () => {
   const [, , , addMultipleFilter] = useFilterUpdate()

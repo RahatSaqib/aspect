@@ -7,6 +7,7 @@ import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+import logoAspect from '../../../assets/logo_aspect.png'
 import useAuthState from '../../../hooks/useAuthState'
 import { loginStart } from '../../../store/authStore'
 import { reasonTypes } from '../loggedOutReasons'
@@ -22,9 +23,7 @@ const errorProps = ({ touched, error } = {}) =>
       }
     : {}
 
-const AspectLogo = () => (
-  <img className={styles.Logo__Image} src={require('../../../assets/logo_aspect.png')} alt="Aspect" />
-)
+const AspectLogo = () => <img className={styles.Logo__Image} src={logoAspect} alt="Aspect" />
 
 export const Login = ({ intl, location, form, meta, values, onUserChange, onPasswordChange, handleSubmit }) => (
   <div className={styles.Background}>

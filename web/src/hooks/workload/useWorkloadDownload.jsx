@@ -1,4 +1,3 @@
-import { stringify } from 'querystring'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { defineMessages } from 'react-intl'
@@ -11,11 +10,12 @@ import {
 } from '../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
+import stringifyQuery from '../../utils/utils/queryString'
 import { WORKLOAD_KEY, WORKLOAD_KEY_EXPORT_ENDPOINT } from './workloadKeys.js'
 
 const getDownload = async (filtersParams, fileFormat) => {
   return aspectFetch(
-    `${WORKLOAD_KEY_EXPORT_ENDPOINT}?${stringify({
+    `${WORKLOAD_KEY_EXPORT_ENDPOINT}?${stringifyQuery({
       format: fileFormat,
       ...filtersParams,
     })}`,

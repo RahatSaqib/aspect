@@ -7,12 +7,16 @@
   "repository": "",
   "keywords": [],
   "author": "SystemOne",
+  "engines": {
+    "node": "^14.18.0 || >=16.0.0"
+  },
   "scripts": {
-    "start": "webpack serve --config cfg/dev.js --open --hot",
+    "start": "vite --open",
     "start:fresh": "yarn && yarn start",
-    "start:ci": "webpack serve --config cfg/dev.js",
-    "dev": "webpack --config cfg/dev.js",
-    "dist": "webpack --config cfg/dist.js",
+    "start:ci": "vite",
+    "dev": "vite build --mode development",
+    "dist": "vite build",
+    "preview": "vite preview",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "test": "cross-env TZ='Europe/Paris' DOTENV_CONFIG_PATH=./.env.test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
     "test:ci": "cross-env TZ='Europe/Paris' DOTENV_CONFIG_PATH=./.env.test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
@@ -25,7 +29,7 @@
     "updatemessages:end": "rip po2json \"./src/utils/i18n/web.*.po\" -m \"./extracted_strings.json\" -o \"./src/utils/i18n/translation.json\"",
     "postupdatemessages:end": "fsys --task=remove --fileFolder=extracted_strings.json && fsys --task=remove --fileFolder=./src/utils/i18n/diff.pot",
     "prettier": "prettier \"./src/**/*.{js,jsx,css}\" --write",
-    "lint": "eslint . --report-unused-disable-directives --ext .js --ext .jsx",
+    "lint": "eslint . --report-unused-disable-directives --ext .js --ext .jsx --ext .mjs",
     "lint:changes": "eslint $(git diff --name-only --diff-filter=ACM | grep -E '\\.(js|ts|jsx|tsx)$' | sed 's|^|../|') --fix",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
@@ -96,18 +100,14 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^14.4.3",
+    "@vitejs/plugin-react": "^3",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.7",
     "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.2.5",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "babel-plugin-lodash": "^3.3.4",
     "babel-polyfill": "^6.26.0",
-    "case-sensitive-paths-webpack-plugin": "^2.4.0",
-    "compression-webpack-plugin": "^10.0.0",
     "cross-env": "^7.0.3",
-    "css-loader": "^6.7.1",
-    "css-minimizer-webpack-plugin": "^4.0.0",
-    "dotenv-webpack": "^8.0.1",
+    "dotenv": "^8.6.0",
     "enzyme": "^3.11.0",
     "enzyme-to-json": "^3.6.2",
     "eslint": "^7.32.0",
@@ -121,27 +121,15 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-security": "^1.5.0",
     "eslint-plugin-small-import": "^1.0.0",
-    "file-loader": "^6.2.0",
     "fs-extra-cli": "0.0.4",
-    "html-loader": "^4.1.0",
-    "html-webpack-harddisk-plugin": "^2.0.0",
-    "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.0.6",
     "jest-bamboo-formatter": "^1.0.1",
     "jest-fetch-mock": "^3.0.3",
-    "mini-css-extract-plugin": "2.6.1",
     "prettier": "^2.7.1",
     "react-intl-po": "^2.2.2",
-    "style-loader": "^3.3.1",
-    "svg-sprite-loader": "^6.0.11",
-    "terser-webpack-plugin": "^5.3.5",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^3.11.2",
-    "webpack-manifest-plugin": "^5.0.0",
-    "webpack-merge": "^5.8.0"
+    "vite": "^4",
+    "vite-plugin-compression": "^0.5.1"
   },
   "jest": {
     "setupFiles": [
@@ -150,7 +138,8 @@
       "<rootDir>/src/__setup__/mockGoogle.js",
       "<rootDir>/src/__setup__/mockI18n.js",
       "<rootDir>/src/__setup__/enzyme.js",
-      "dotenv/config"
+      "dotenv/config",
+      "<rootDir>/src/__setup__/appEnv.js"
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
@@ -183,6 +172,7 @@
     "trim-newlines": "3.0.1",
     "trim": "0.0.3",
     "jpeg-js": "0.4.4",
-    "underscore": "1.12.1"
+    "underscore": "1.12.1",
+    "node-releases": "2.0.14"
   }
 }

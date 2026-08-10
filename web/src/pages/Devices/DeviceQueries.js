@@ -1,9 +1,9 @@
-import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { getFilters } from '../../components/utils'
 import { errorPleaseTryAgainInAFewMinutes, filterFieldsRejectedError } from '../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
+import stringifyQuery from '../../utils/utils/queryString'
 
 const filterErrorMessages = defineMessages({
   title: {
@@ -22,7 +22,7 @@ const defaultErrorMessages = defineMessages({
 export async function exportDeviceLogs(filtersParams, fileFormat, reportName) {
   const filters = getFilters(filtersParams)
   const elem = await aspectFetch(
-    `/device/exportDeviceLogs?${stringify({
+    `/device/exportDeviceLogs?${stringifyQuery({
       format: fileFormat,
       ...filters,
     })}`,

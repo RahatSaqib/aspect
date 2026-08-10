@@ -43,6 +43,6 @@ const AppWrapper = () => (
 
 prepareApp().then(renderApp)
 
-if (module.hot) {
-  module.hot.accept('./App', renderApp)
+if (import.meta.hot) {
+  import.meta.hot.accept('./App', renderApp)
 }

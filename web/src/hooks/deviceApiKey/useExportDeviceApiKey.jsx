@@ -1,14 +1,14 @@
-import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
+import stringifyQuery from '../../utils/utils/queryString'
 import { DEVICE_API_KEY_KEY } from './deviceApiKeyKeys'
 
 const getDownload = async ({ filters, sortCol, sortDir, page, pageSize, fileFormat }) => {
   return aspectFetch(
-    `/deviceApiKey/export?${stringify({
+    `/deviceApiKey/export?${stringifyQuery({
       sortCol,
       sortDir,
       page,

@@ -1,4 +1,4 @@
-exports.customPropertiesVariables = {
+export const customPropertiesVariables = {
   // Colors 2019
   '--alto': '#e0e0e0',
   '--alto-2': '#d8d8d8',
@@ -219,3 +219,6 @@ exports.customPropertiesVariables = {
 
   initialised: true, // only for test runner to work
 }
+
+// Default import used to receive `module.exports` through Babel's interop; keep that shape.
+export default { customPropertiesVariables }
