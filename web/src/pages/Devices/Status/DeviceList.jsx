@@ -16,7 +16,6 @@ import endOfMonth from 'date-fns/endOfMonth'
 import format from 'date-fns/format'
 import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
-import Immutable from 'immutable'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -37,8 +36,6 @@ import { useDeviceForSelect } from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
-import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
-import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
@@ -138,9 +135,6 @@ const DeviceList = () => {
   }
 
   const [isLoading, setIsLoading] = useState(false)
-  const [items, setItems] = useState(new Items())
-  const [table, setTable] = useState(new Table())
-  const [total, setTotal] = useState()
   const [sourceDevicesIds, setSourceDevicesIds] = useState([])
   const [targetDevice, setTargetDevice] = useState(null)
   const targetDeviceId = useMemo(() => +targetDevice?.id || null, [targetDevice])
@@ -176,19 +170,12 @@ const DeviceList = () => {
     { enabled: !isEmpty(pagination) }
   )
 
+  const devices = data?.data ?? []
+  const total = data?.total
+
   useEffect(() => {
     setIsLoading(tableLoading)
   }, [tableLoading])
-
-  useEffect(() => {
-    if (!tableLoading && data) {
-      const { data: list, total: totalItems } = data
-      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
-      setTotal(totalItems)
-      setTable(receiveTableItems(table, totalItems))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
 
   useEffect(() => {
     const sortPage = makeSortPageSelector({ sortCol: 'name' })
@@ -250,11 +237,11 @@ const DeviceList = () => {
         <DeviceListFilter />
         <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
+            <ExportListButton onExport={onExportClick} visible={devices.length > 0} />
           </div>
           {isLoading ? (
             <LinearProgress />
-          ) : items.currentIdList.length === 0 ? (
+          ) : devices.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
@@ -269,18 +256,15 @@ const DeviceList = () => {
                       columns={getColumns(formatMessage)}
                     />
                     <TableBody>
-                      {!items.currentIdList.isEmpty() &&
-                        items.currentIdList
-                          .map(id => items.byId.get(id))
-                          .map(device => (
-                            <DeviceDataTableRow
-                              key={device.get('id')}
-                              device={device}
-                              onClick={onRowClick}
-                              displayPreferences={displayPreferences}
-                              data-device-id={device.get('id')}
-                            />
-                          ))}
+                      {devices.map(device => (
+                        <DeviceDataTableRow
+                          key={device.id}
+                          device={device}
+                          onClick={onRowClick}
+                          displayPreferences={displayPreferences}
+                          data-device-id={device.id}
+                        />
+                      ))}
                     </TableBody>
                   </DeviceDataTable>
                 </TableContainer>

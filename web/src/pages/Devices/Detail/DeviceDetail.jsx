@@ -1,20 +1,17 @@
 import React, { useMemo } from 'react'
 import { Box } from '@mui/material'
-import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
-import { useMutation, useQueryClient } from 'react-query'
-import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { DetailHeader, Loading } from '../../../components'
 // import AspectVertMenu from '../../../components/AspectVertMenu'
 import AspectButton from '../../../components/shared/AspectButton'
-import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
+import useUpdateDeviceMaintenance from '../../../hooks/device/useUpdateDeviceMaintenance'
+import useUpdateDeviceMaintenanceStatus from '../../../hooks/device/useUpdateDeviceMaintenanceStatus'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useAuthState from '../../../hooks/useAuthState'
 import deviceMessages from '../../../messages/deviceMessages'
-import { updateDeviceMaintenance, updateDeviceMaintenanceStatus } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
 import { getReturnUrl } from '../../../utils/utils/browser'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
@@ -22,7 +19,6 @@ import messages from './messages'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
 
 export const DeviceDetail = props => {
-  const dispatch = useDispatch()
   const user = useAuthState()
   const editable = isEditable(user, 'device')
   const location = useLocation()
@@ -30,7 +26,6 @@ export const DeviceDetail = props => {
   const navigate = useNavigate()
   const { deviceId } = useParams()
   const intl = useIntl()
-  const queryClient = useQueryClient()
 
   const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
   const { isLoading: isDeviceTagsLoading, data: deviceTags } = useTagByTypeAndId('device', deviceId)
@@ -57,30 +52,17 @@ export const DeviceDetail = props => {
     return isDecommissioned ? `${baseTitle} ${intl.formatMessage(messages.decommissionedTitleSuffix)}` : baseTitle
   }, [device, intl, isDecommissioned])
 
-  // onSuccess - reset key to re-run query for device
-  const onSuccess = () => queryClient.invalidateQueries([DEVICE_KEY, deviceId])
+  const { mutateAsync: updateMaintenanceStatus } = useUpdateDeviceMaintenanceStatus(deviceId)
+  const { mutateAsync: updateMaintenance } = useUpdateDeviceMaintenance(deviceId)
 
-  const { mutateAsync: onMaintenanceSubmit } = useMutation(
-    values =>
-      dispatch(
-        updateDeviceMaintenanceStatus({
-          externalId: values.maintenanceStatus,
-          device: Immutable.fromJS(device),
-          notes: values.notes,
-          expectedBackOnline: values.expectedBack,
-        })
-      ),
-    { onSuccess }
-  )
-  const { mutateAsync: onCalibrationSubmit } = useMutation(
-    values =>
-      dispatch(updateDeviceMaintenance({ externalId: 'calibration', device: Immutable.fromJS(device), values })),
-    { onSuccess }
-  )
-  const { mutateAsync: onWarrantySubmit } = useMutation(
-    values => dispatch(updateDeviceMaintenance({ externalId: 'warranty', device: Immutable.fromJS(device), values })),
-    { onSuccess }
-  )
+  const onMaintenanceSubmit = values =>
+    updateMaintenanceStatus({
+      externalId: values.maintenanceStatus,
+      notes: values.notes,
+      expectedBackOnline: values.expectedBack,
+    })
+  const onCalibrationSubmit = values => updateMaintenance({ externalId: 'calibration', values })
+  const onWarrantySubmit = values => updateMaintenance({ externalId: 'warranty', values })
 
   const dateRange = searchParams.get('dateRange') || '30'
 
@@ -132,8 +114,8 @@ export const DeviceDetail = props => {
                   {...props}
                   dateRange={dateRange}
                   onDateRangeChange={onDateRangeChange}
-                  device={Immutable.fromJS(device)}
-                  devicePerformance={Immutable.fromJS(devicePerformance)}
+                  device={device}
+                  devicePerformance={devicePerformance}
                   // Decommissioned devices are read-only for every action except exporting Device Logs.
                   disabled={!editable || isDecommissioned}
                   canExportDeviceLogs={editable}
