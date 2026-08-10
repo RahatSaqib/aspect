@@ -47,11 +47,9 @@ export default defineConfig(({ mode }) => {
         './src/__setup__/mockFetch.js',
         './src/__setup__/mockGoogle.js',
         './src/__setup__/mockI18n.js',
-        './src/__setup__/enzyme.js',
+        './src/__setup__/testingLibrary.js',
       ],
       include: ['src/**/*.test.{js,jsx}'],
-      // jest 27 printed constructor names in snapshots; vitest omits them by default
-      snapshotFormat: { printBasicPrototype: true },
       // identity-obj-proxy used to hand the tests the raw class name
       css: { modules: { classNameStrategy: 'non-scoped' } },
       coverage: {

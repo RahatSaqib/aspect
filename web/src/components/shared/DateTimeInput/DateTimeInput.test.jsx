@@ -1,16 +1,20 @@
 import React from 'react'
+import { createTheme, ThemeProvider } from '@mui/material'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import isDateEqual from 'date-fns/isEqual'
-import Downshift from 'downshift'
-import { act } from 'react-dom/test-utils'
 import { vi } from 'vitest'
-import { mountWithTheme, shallowWithTheme } from '../../../__setup__/common'
 import I18nProvider from '../../../providers/I18nProvider'
 import DateTimeInput from './DateTimeInput'
 
+const theme = createTheme()
+
 const DateTimeInputI18n = props => (
-  <I18nProvider>
-    <DateTimeInput {...props} />
-  </I18nProvider>
+  <ThemeProvider theme={theme}>
+    <I18nProvider>
+      <DateTimeInput {...props} />
+    </I18nProvider>
+  </ThemeProvider>
 )
 
 describe('DateTimeInput component', () => {
@@ -23,27 +27,26 @@ describe('DateTimeInput component', () => {
 
   const selectRootSelector = 'div[role="presentation"]'
 
+  const getFieldOrder = container =>
+    Array.from(container.querySelectorAll(selectRootSelector)).map(node => node.getAttribute('name'))
+
+  // the dropdown is only mounted while the field has focus, and its options are filtered by the typed value
+  const selectOption = async (user, container, fieldName, optionLabel) => {
+    const input = container.querySelector(`input[name="${fieldName}"]`)
+    await user.click(input)
+    await user.clear(input)
+    await user.type(input, optionLabel)
+    const menu = await screen.findByRole('menu')
+    await user.click(within(menu).getByText(optionLabel))
+  }
+
   describe('common', () => {
     it('should determine the order of dropdowns by `dateFormat` and `timeFormat` props', () => {
-      const wrapper = mountWithTheme(<DateTimeInputI18n {...commonProps} />)
-      expect(wrapper.find(selectRootSelector).map(node => node.prop('name'))).toEqual([
-        'Year',
-        'Month',
-        'Date',
-        'Hours',
-        'Minutes',
-      ])
+      const { container, rerender } = render(<DateTimeInputI18n {...commonProps} />)
+      expect(getFieldOrder(container)).toEqual(['Year', 'Month', 'Date', 'Hours', 'Minutes'])
 
-      wrapper.setProps({
-        children: <DateTimeInputI18n {...commonProps} dateFormat="d/M/y" timeFormat="s:m:H" />,
-      })
-      expect(wrapper.find(selectRootSelector).map(node => node.prop('name'))).toEqual([
-        'Date',
-        'Month',
-        'Year',
-        'Minutes',
-        'Hours',
-      ])
+      rerender(<DateTimeInputI18n {...commonProps} dateFormat="d/M/y" timeFormat="s:m:H" />)
+      expect(getFieldOrder(container)).toEqual(['Date', 'Month', 'Year', 'Minutes', 'Hours'])
     })
   })
 
@@ -63,38 +66,27 @@ describe('DateTimeInput component', () => {
     })
 
     it('should render without crash', () => {
-      shallowWithTheme(<DateTimeInputI18n {...props} />)
+      const { container } = render(<DateTimeInputI18n {...props} />)
+
+      expect(container.querySelectorAll(selectRootSelector)).toHaveLength(5)
     })
 
-    it('should invoke `onChange` when a option has been selected', () => {
-      let onChange = getMockOnChange(new Date(2006, 2, 18))
-      const wrapper = mountWithTheme(<DateTimeInputI18n {...props} />)
-      wrapper.setProps({
-        children: <DateTimeInputI18n {...props} onChange={onChange} />,
-      })
+    it('should invoke `onChange` when a option has been selected', async () => {
+      const user = userEvent.setup()
+      const onChange = getMockOnChange(new Date(2006, 2, 18))
+      const { container } = render(<DateTimeInputI18n {...props} onChange={onChange} />)
 
-      act(() => {
-        const yearSelect = wrapper.find(Downshift).filterWhere(node => node.children().prop('name') === 'Year')
+      await selectOption(user, container, 'Year', '2006')
 
-        yearSelect.prop('onSelect')({
-          value: 2006,
-          label: '2006',
-        })
-      })
       expect(onChange).toHaveReturnedWith(true)
+    })
 
-      onChange = getMockOnChange(new Date(2006, 3, 18))
-      wrapper.setProps({
-        children: <DateTimeInputI18n {...props} onChange={onChange} />,
-      })
+    it('should invoke `onChange` when a month has been selected', async () => {
+      const user = userEvent.setup()
+      const onChange = getMockOnChange(new Date(2005, 3, 18))
+      const { container } = render(<DateTimeInputI18n {...props} onChange={onChange} />)
 
-      act(() => {
-        const monthSelect = wrapper.find(Downshift).filterWhere(node => node.children().prop('name') === 'Month')
-        monthSelect.prop('onSelect')({
-          value: 3,
-          label: 'Apr',
-        })
-      })
+      await selectOption(user, container, 'Month', '04')
 
       expect(onChange).toHaveReturnedWith(true)
     })
@@ -114,7 +106,9 @@ describe('DateTimeInput component', () => {
     })
 
     it('should render without crash', () => {
-      shallowWithTheme(<DateTimeInputI18n {...props} />)
+      const { container } = render(<DateTimeInputI18n {...props} />)
+
+      expect(container.querySelectorAll(selectRootSelector)).toHaveLength(5)
     })
   })
 })

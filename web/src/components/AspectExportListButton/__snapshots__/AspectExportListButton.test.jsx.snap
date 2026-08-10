@@ -1,58 +1,31 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ExportListButton > should not render the button 1`] = `""`;
-
-exports[`ExportListButton > should shallow render export list correctly 1`] = `
-<div
-  className="export_button_wrapper"
->
-  <ForwardRef(Button)
-    className="export_icon_button"
-    onClick={[Function]}
-    variant="outlined"
+exports[`ExportListButton > should render export list correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="export_button_wrapper"
   >
-    <Memo(ForwardRef(CloudDownloadIcon))
-      style={
-        Object {
-          "fontSize": "1.25rem",
-        }
-      }
-    />
-  </ForwardRef(Button)>
-  <ForwardRef(Menu)
-    anchorEl={null}
-    anchorOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "bottom",
-      }
-    }
-    classes={
-      Object {
-        "root": "export_menu_root",
-      }
-    }
-    onClose={[Function]}
-    open={false}
-    transformOrigin={
-      Object {
-        "horizontal": "center",
-        "vertical": "top",
-      }
-    }
-  >
-    <ForwardRef(MenuItem)
-      disabled={false}
-      onClick={[Function]}
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium export_icon_button css-1rwt2y5-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
     >
-      Excel
-    </ForwardRef(MenuItem)>
-    <ForwardRef(MenuItem)
-      disabled={false}
-      onClick={[Function]}
-    >
-      CSV
-    </ForwardRef(MenuItem)>
-  </ForwardRef(Menu)>
-</div>
+      <svg
+        aria-hidden="true"
+        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+        data-testid="CloudDownloadIcon"
+        focusable="false"
+        style="font-size: 1.25rem;"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"
+        />
+      </svg>
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+  </div>
+</DocumentFragment>
 `;

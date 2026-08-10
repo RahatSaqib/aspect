@@ -1,5 +1,5 @@
 import React from 'react'
-import { shallow } from 'enzyme'
+import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import { useAuthStore } from '../../store/authStore'
 import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
@@ -161,8 +161,8 @@ describe('requirePermissions', () => {
     })
   })
 
-  const ForbiddenComponent = () => {}
-  const WrappedComponent = () => {}
+  const ForbiddenComponent = () => <div data-testid="forbidden" />
+  const WrappedComponent = () => <div data-testid="wrapped" />
 
   function mockContext(userPermissions) {
     useAuthStore.mockReturnValue({ jwt: { permissions: userPermissions } })
@@ -181,20 +181,20 @@ describe('requirePermissions', () => {
 
     it('should render WrappedComponent', () => {
       const spies = mockContext(['person:edit'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+      expect(screen.getByTestId('wrapped')).toBeInTheDocument()
+      expect(screen.queryByTestId('forbidden')).not.toBeInTheDocument()
 
       unmock(spies)
     })
 
     it('should render WrappedComponent', () => {
       const spies = mockContext(['person:edit', 'device:view'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+      expect(screen.getByTestId('wrapped')).toBeInTheDocument()
+      expect(screen.queryByTestId('forbidden')).not.toBeInTheDocument()
 
       unmock(spies)
     })
@@ -208,20 +208,20 @@ describe('requirePermissions', () => {
 
     it('should render ForbiddenComponent', () => {
       const spies = mockContext(['device:view'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
+      expect(screen.queryByTestId('wrapped')).not.toBeInTheDocument()
+      expect(screen.getByTestId('forbidden')).toBeInTheDocument()
 
       unmock(spies)
     })
 
     it('should render ForbiddenComponent', () => {
       const spies = mockContext(['person:view', 'device:view'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
+      expect(screen.queryByTestId('wrapped')).not.toBeInTheDocument()
+      expect(screen.getByTestId('forbidden')).toBeInTheDocument()
 
       unmock(spies)
     })
@@ -235,20 +235,20 @@ describe('requirePermissions', () => {
 
     it('should render WrappedComponent', () => {
       const spies = mockContext(['person:edit'], ['person'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+      expect(screen.getByTestId('wrapped')).toBeInTheDocument()
+      expect(screen.queryByTestId('forbidden')).not.toBeInTheDocument()
 
       unmock(spies)
     })
 
     it('should render WrappedComponent', () => {
       const spies = mockContext(['person:edit'], ['task', 'person'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+      expect(screen.getByTestId('wrapped')).toBeInTheDocument()
+      expect(screen.queryByTestId('forbidden')).not.toBeInTheDocument()
 
       unmock(spies)
     })
