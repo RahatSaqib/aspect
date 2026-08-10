@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Button, Card, LinearProgress, TextField } from '@mui/material'
+import { useFormik } from 'formik'
 import flowRight from 'lodash/flowRight'
 import get from 'lodash/get'
 import omit from 'lodash/omit'
@@ -7,74 +8,19 @@ import { Helmet } from 'react-helmet'
 import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { compose } from 'recompose'
-import recomposeForm, { errorProps } from '../../../components/recomposeForm'
 import { loginStart } from '../../../store/AuthRedux'
 import { reasonTypes } from '../loggedOutReasons'
 import styles from './Login.module.css'
 import messages from './messages'
 import Reason from './Reason'
 
-const enhance = compose(
-  injectIntl,
-  connect(
-    state => ({
-      loggedOutReason: state.user.loggedOutReason,
-    }),
-    {
-      loginStart,
-    }
-  ),
-  WrappedComponent => props => {
-    const navigate = useNavigate()
-    const location = useLocation()
-    const [state, setState] = useState({
-      values: {
-        user: '',
-        password: '',
-      },
-    })
-
-    const onSubmit = data => {
-      const { loginStart, loggedOutReason } = props
-      return loginStart(data).then(() => {
-        const referrer = flowRight(
-          x => omit(x, 'search'),
-          x => get(x, 'state.referrer', { pathname: '/' })
-        )(location)
-        if (loggedOutReason === reasonTypes.userRequested) {
-          navigate('/', { replace: true })
-        } else {
-          navigate(referrer, { replace: true })
-        }
-      })
-    }
-
-    const onChange = nextValues => {
-      setState({ values: nextValues })
-    }
-
-    return <WrappedComponent {...props} {...state} onSubmit={onSubmit} onChange={onChange} />
-  },
-  recomposeForm({
-    fields: [
-      { fieldName: 'user', valueFromChangeEvent: it => it.target.value },
-      { fieldName: 'password', valueFromChangeEvent: it => it.target.value },
-    ],
-    validate(values, { intl }) {
-      const errors = {}
-      if (values) {
-        if (!values.user) {
-          errors.user = intl.formatMessage(messages.usernameRequired)
-        }
-        if (!values.password) {
-          errors.password = intl.formatMessage(messages.passwordRequired)
-        }
+const errorProps = ({ touched, error } = {}) =>
+  touched && error
+    ? {
+        error: true,
+        helperText: error,
       }
-      return errors
-    },
-  })
-)
+    : {}
 
 const AspectLogo = () => (
   <img className={styles.Logo__Image} src={require('../../../assets/logo_aspect.png')} alt="Aspect" />
@@ -140,4 +86,69 @@ export const Login = ({ intl, location, form, meta, values, onUserChange, onPass
   </div>
 )
 
-export default enhance(Login)
+const LoginContainer = ({ intl, location, loggedOutReason, loginStart }) => {
+  const navigate = useNavigate()
+  const currentLocation = useLocation()
+
+  const { values, errors, touched, isValid, isSubmitting, setFieldValue, setFieldTouched, handleSubmit } = useFormik({
+    initialValues: {
+      user: '',
+      password: '',
+    },
+    validate: values => {
+      const errors = {}
+      if (!values.user) {
+        errors.user = intl.formatMessage(messages.usernameRequired)
+      }
+      if (!values.password) {
+        errors.password = intl.formatMessage(messages.passwordRequired)
+      }
+      return errors
+    },
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        await loginStart(values)
+        const referrer = flowRight(
+          x => omit(x, 'search'),
+          x => get(x, 'state.referrer', { pathname: '/' })
+        )(currentLocation)
+        navigate(loggedOutReason === reasonTypes.userRequested ? '/' : referrer, { replace: true })
+      } finally {
+        setSubmitting(false)
+      }
+    },
+  })
+
+  const onFieldChange = fieldName => event => {
+    setFieldTouched(fieldName, true, false)
+    setFieldValue(fieldName, event.target.value)
+  }
+
+  return (
+    <Login
+      intl={intl}
+      location={location}
+      values={values}
+      meta={{
+        user: { touched: touched.user, error: errors.user },
+        password: { touched: touched.password, error: errors.password },
+      }}
+      form={{ valid: isValid, submitting: isSubmitting }}
+      onUserChange={onFieldChange('user')}
+      onPasswordChange={onFieldChange('password')}
+      handleSubmit={handleSubmit}
+    />
+  )
+}
+
+export default flowRight(
+  injectIntl,
+  connect(
+    state => ({
+      loggedOutReason: state.user.loggedOutReason,
+    }),
+    {
+      loginStart,
+    }
+  )
+)(LoginContainer)
