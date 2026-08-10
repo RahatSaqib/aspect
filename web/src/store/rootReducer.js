@@ -1,7 +1,6 @@
 import Immutable from 'immutable'
 import { reducer as formReducer } from 'redux-form/immutable'
 import { combineReducers } from 'redux-immutable'
-import appNotification from './AppNotificationRedux'
 import user, { types as authTypes } from './AuthRedux'
 import device from './DeviceRedux'
 import inventory from './InventoryRedux'
@@ -9,7 +8,6 @@ import jobs from './JobRedux'
 import serviceDegradation from './ServiceDegradation'
 
 const appReducer = combineReducers({
-  appNotification,
   user,
   device,
   form: formReducer,
@@ -19,7 +17,6 @@ const appReducer = combineReducers({
 })
 
 const App = Immutable.Record({
-  appNotification: undefined,
   user: undefined,
   device: undefined,
   form: undefined,
