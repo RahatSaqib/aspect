@@ -1,11 +1,10 @@
 {
   "plugins": ["prettier", "react", "react-hooks", "small-import", "lodash"],
   "extends": ["airbnb", "plugin:lodash/canonical", "plugin:security/recommended", "plugin:prettier/recommended"],
-  "parser": "babel-eslint",
   "parserOptions": {
-    "ecmaVersion": 2019,
+    "ecmaVersion": 2021,
     "sourceType": "module",
-    "ecmaFeatures": { "jsx": true, "legacyDecorators": true }
+    "ecmaFeatures": { "jsx": true }
   },
   "env": {
     "browser": true,
