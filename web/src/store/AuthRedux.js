@@ -4,13 +4,9 @@ import forEach from 'lodash/forEach'
 import isNil from 'lodash/isNil'
 import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
-import { SubmissionError } from 'redux-form/immutable'
 import config from '../config'
 import { reasonTypes } from '../pages/Auth/loggedOutReasons'
-import {
-  errorPleaseTryAgainInAFewMinutes,
-  inlineErrorPleaseTryAgainInAFewMinutes,
-} from '../utils/error/CommonErrorNotifications'
+import { errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { getClientId, getClientName } from '../utils/utils/browser'
 import { aspectFetch } from '../utils/utils/fetch'
 import { hideServiceDegradation, showServiceDegradation } from './ServiceDegradation'
@@ -27,8 +23,6 @@ export const types = {
   REFRESH_FAILURE: 'REFRESH_FAILURE',
 
   LOGOUT: 'LOGOUT',
-
-  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
 
   REQUEST_LICENSE: 'REQUEST_LICENSE',
   RECEIVE_LICENSE: 'RECEIVE_LICENSE',
@@ -304,72 +298,6 @@ export function refreshStart() {
   }
 }
 
-export function resetPasswordEnterEmailAddress(emailAddress) {
-  return function (dispatch, getState) {
-    const state = getState()
-    const { clientId } = state.user
-
-    return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`, {
-      method: 'POST',
-      body: JSON.stringify({
-        clientId,
-        clientName: getClientName(),
-      }),
-      errorNotifications: {
-        default: inlineErrorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
-              defaultMessage: 'Error Sending Reset Password Email',
-            },
-          })
-        ),
-      },
-    }).catch(err => {
-      throw new SubmissionError({ _error: err.message })
-    })
-  }
-}
-
-function createResetPasswordEnterPasswordSuccess(username) {
-  return {
-    type: types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS,
-    username,
-  }
-}
-
-export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
-  return function (dispatch, getState) {
-    const state = getState()
-    const { clientId } = state.user
-
-    return aspectFetch(`/auth/update-password/${resetPasswordToken}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        newPassword,
-        clientId,
-        clientName: getClientName(),
-      }),
-      errorNotifications: {
-        default: inlineErrorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
-              defaultMessage: 'Error Saving New Password',
-            },
-          })
-        ),
-      },
-    })
-      .then(json => {
-        dispatch(createResetPasswordEnterPasswordSuccess(json.username))
-      })
-      .catch(err => {
-        throw new SubmissionError({ _error: err.message })
-      })
-  }
-}
-
 function requestLicense() {
   return {
     type: types.REQUEST_LICENSE,
@@ -530,8 +458,6 @@ export default function authReducer(state = initialState, action) {
       sessionStorage.clear()
       return state.clear().set('loggedOutReason', action.data.reason)
 
-    case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
-      return state
     case types.RECEIVE_LICENSE:
       return state.set('licenseContent', action.data.content)
     default:
