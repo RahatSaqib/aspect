@@ -3,6 +3,7 @@ import { LinearProgress, TableBody, Table } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
+import { toast } from 'react-toastify'
 import { DetailHeader, DeviceApiKeyFilter } from '../../../components'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import BrowseEmptyList from '../../../components/BrowseEmptyList'
@@ -21,8 +22,6 @@ import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
 import styles from './DeviceApiKeyList.module.css'
 import DeviceApiKeyTableRow from './DeviceApiKeyTableRow'
 import messages from './messages'
-
-const DEFAULT_GENERATOR_VALUES = { count: 1 }
 
 const normalizeDeviceApiKeyFilters = filters => {
   const normalizedFilters = { ...filters }
@@ -58,10 +57,7 @@ export const DeviceApiKeyList = () => {
 
   useExportDeviceApiKey({ filters: normalizedFilters, sortCol, sortDir, page: pageAt, pageSize, ...download })
 
-  const [dialogState, onChangeDialogState] = useState({
-    generatorValues: DEFAULT_GENERATOR_VALUES,
-    isGeneratorDialogOpen: false,
-  })
+  const [isGeneratorDialogOpen, setIsGeneratorDialogOpen] = useState(false)
 
   useEffect(() => {
     if (download.enabled) setDownload({ enabled: false })
@@ -69,16 +65,17 @@ export const DeviceApiKeyList = () => {
 
   const onExportClick = formatType => setDownload({ fileFormat: formatType, enabled: true })
 
-  const onOpenGeneratorDialog = () => onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: true })
-  const onCloseGeneratorDialog = () => onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false })
-  const onGeneratorFormChange = generatorValues => onChangeDialogState({ ...dialogState, generatorValues })
-  const onGenerate = generatorValues => {
-    return generate(generatorValues, {
-      onSuccess: () => {
-        onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false, generatorValues: DEFAULT_GENERATOR_VALUES })
-        refetch()
-      },
-    })
+  const onOpenGeneratorDialog = () => setIsGeneratorDialogOpen(true)
+  const onCloseGeneratorDialog = () => setIsGeneratorDialogOpen(false)
+  const onGenerate = async generatorValues => {
+    try {
+      await generate(generatorValues)
+      setIsGeneratorDialogOpen(false)
+      refetch()
+      toast.success(intl.formatMessage(messages.generateSuccess))
+    } catch (error) {
+      toast.error(intl.formatMessage(messages.generateError))
+    }
   }
   const onRevokedChange = e => {
     const {
@@ -103,12 +100,9 @@ export const DeviceApiKeyList = () => {
         <DeviceApiKeyFilter />
         <div>
           <DeviceApiKeyGeneratorDialogForm
-            isDialogOpen={dialogState.isGeneratorDialogOpen}
-            onChange={onGeneratorFormChange}
+            isDialogOpen={isGeneratorDialogOpen}
             onCancel={onCloseGeneratorDialog}
             onSubmit={onGenerate}
-            values={dialogState.generatorValues}
-            intl={intl}
           />
         </div>
         <DataTableCard key={`DataTableCard__table-${location.key}`}>

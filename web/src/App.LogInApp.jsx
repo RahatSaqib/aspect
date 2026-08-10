@@ -13,7 +13,6 @@ import messages from './messages/allMessages'
 import RecordPageViewProvider from './providers/RecordPageViewProvider'
 import { routePaths } from './routes/constants'
 import { idleLogout, refreshStart } from './store/AuthRedux'
-import { fetchCountries } from './store/GeographyRedux'
 
 const ContactPage = lazy(() => import('./pages/Contact'))
 const DeviceApiKeyList = lazy(() => import('./pages/DeviceApiKey/list/DeviceApiKeyList'))
@@ -113,9 +112,6 @@ const LogInApp = () => {
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
 
   useEffect(() => {
-    // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
-    dispatch(fetchCountries())
-
     // Refresh the access token every 30 minutes.
     const refreshToken = setInterval(() => dispatch(refreshStart()), 30 * 60 * 1000)
     return () => clearInterval(refreshToken)
