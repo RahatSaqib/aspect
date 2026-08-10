@@ -5,8 +5,7 @@ import COUNTRY_ISO_MAPPING from '../../utils/consts/Countries/CONSTS'
 import AuthContext from './AuthProvider.Context'
 
 const AuthProvider = ({ children }) => {
-  const userComposed = useSelector(({ user }) => user)
-  const user = useMemo(() => userComposed.toJS(), [userComposed])
+  const user = useSelector(({ user }) => user)
 
   const jwtExp = user.jwt.exp
 

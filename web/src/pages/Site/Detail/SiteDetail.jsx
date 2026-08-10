@@ -28,7 +28,7 @@ const SiteDetail = ({ navigate, location }) => {
   const { isLoading, data: site } = useSite(siteId)
   const { editable, user } = useSelector(state => ({
     editable: isEditable(state.user, 'site'),
-    user: state.user.toJS(),
+    user: state.user,
   }))
   const [latLong, setLatLong] = useState({ lat: 0, lng: 0 })
 

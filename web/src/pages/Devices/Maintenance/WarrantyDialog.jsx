@@ -42,7 +42,7 @@ const WarrantyDialog = ({ device, isDialogActive, onCancel, onSubmit }) => {
     <BaseDialog
       isDialogActive={isDialogActive}
       onCancel={onCancel}
-      dateFormat={getAspectDisplayPreferences().get('dateFormat')}
+      dateFormat={getAspectDisplayPreferences().dateFormat}
       labels={{
         dialogTitle: formatMessage(messages.dialogTitle),
         contextDate: formatMessage(messages.warrantyDueDate),

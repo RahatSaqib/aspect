@@ -257,7 +257,7 @@ const monthRangeByCount = (date, offset, dateFormat) => ({
 })
 
 const dateRangeOptions = (formatMessage, formatDate, key, showLast30Days = true) => {
-  const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
+  const { dayMonthFormat } = getAspectDisplayPreferences()
   const dateFormatValue = 'yyyy-MM-dd'
   const dateFormatMonths = { month: 'long', year: 'numeric' }
   const today = negateTimeZoneOffset(new Date())

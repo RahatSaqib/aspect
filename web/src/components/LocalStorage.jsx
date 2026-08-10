@@ -1,15 +1,14 @@
-import Immutable from 'immutable'
 import identity from 'lodash/identity'
 import isUndefined from 'lodash/isUndefined'
 import { compose, pure, lifecycle } from 'recompose'
 import { getTimezoneById } from '../utils/utils/timezone'
 
-let displayPreferences = Immutable.Map({
+let displayPreferences = {
   dateFormat: 'yyyy-MM-dd',
   timeFormat: 'HH:mm:ss',
   dateTimeFormat: 'yyyy-MM-dd HH:mm:ss',
   dayMonthFormat: 'MM/dd',
-})
+}
 export const getAspectDisplayPreferences = () => displayPreferences
 
 const storageMappings = [
@@ -21,10 +20,10 @@ const storageMappings = [
   {
     storageKey: 'asDisplayPreferences',
     propsKey: 'displayPreferences',
-    load: it => Immutable.Map(JSON.parse(it)),
+    load: it => JSON.parse(it),
     update: it => {
-      displayPreferences = displayPreferences.merge(it)
-      return JSON.stringify(displayPreferences.toJS())
+      displayPreferences = { ...displayPreferences, ...it }
+      return JSON.stringify(displayPreferences)
     },
   },
 ]

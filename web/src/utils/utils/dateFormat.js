@@ -38,7 +38,7 @@ const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
 function formatBase(date, displayPreferenceKey, defaultFormat) {
   if (!date) return ''
   const prefs = getAspectDisplayPreferences()
-  const dateFormatPreference = prefs.get(displayPreferenceKey, defaultFormat)
+  const dateFormatPreference = prefs[displayPreferenceKey] || defaultFormat
   return format(new Date(date.replace('Z', '')), dateFormatPreference)
 }
 
@@ -55,7 +55,7 @@ export const formatWithLocale = locale => (date, formatStr) => format(date, form
 export const withDateFormatProps = withProps(() => {
   const prefs = getAspectDisplayPreferences()
   return {
-    dateFormat: prefs.get('dateFormat'),
+    dateFormat: prefs.dateFormat,
   }
 })
 

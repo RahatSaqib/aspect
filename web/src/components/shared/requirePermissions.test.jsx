@@ -1,6 +1,5 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import Immutable from 'immutable'
 import * as reactRedux from 'react-redux'
 import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
 
@@ -22,7 +21,7 @@ describe('requirePermissions', () => {
   describe('isPermittedUser', () => {
     describe('only required', () => {
       it('should be valid for edit user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['person:edit'],
           forbidden: [],
           optional: [],
@@ -32,7 +31,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be valid for edit user when requesting weaker level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['person:edit'],
           forbidden: [],
           optional: [],
@@ -42,7 +41,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be valid for edit user when requesting any level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['person'],
           forbidden: [],
           optional: [],
@@ -54,7 +53,7 @@ describe('requirePermissions', () => {
 
     describe('only forbidden', () => {
       it('should be invalid for edit user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: ['person:edit'],
           optional: [],
@@ -64,7 +63,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for edit user when denying even weaker level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: ['person:view'],
           optional: [],
@@ -74,7 +73,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for edit user when denying any level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: ['person'],
           optional: [],
@@ -86,7 +85,7 @@ describe('requirePermissions', () => {
 
     describe('only optional', () => {
       it('should be valid for edit user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: [],
           optional: ['person:edit', 'site:edit'],
@@ -95,7 +94,7 @@ describe('requirePermissions', () => {
         expect(isPermitted).toBe(true)
       })
       it('should be valid for edit user when requesting any level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: [],
           optional: ['person', 'site:edit'],
@@ -104,7 +103,7 @@ describe('requirePermissions', () => {
         expect(isPermitted).toBe(true)
       })
       it('should be valid for edit user when requesting weaker level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: [],
           optional: ['person:view', 'site:edit'],
@@ -116,7 +115,7 @@ describe('requirePermissions', () => {
 
     describe('required and forbidden', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['person:edit'],
           forbidden: ['site:view'],
           optional: [],
@@ -126,7 +125,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['site:view'],
           forbidden: ['person:edit'],
           optional: [],
@@ -138,7 +137,7 @@ describe('requirePermissions', () => {
 
     describe('required, forbidden and optional', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit', 'device:view']), {
+        const isPermitted = isPermittedUser(['person:edit', 'device:view'], {
           required: ['person:edit'],
           forbidden: ['site:view'],
           optional: ['device:view'],
@@ -148,7 +147,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['site:view'],
           forbidden: ['person:edit'],
           optional: ['device:view'],
@@ -171,7 +170,7 @@ describe('requirePermissions', () => {
           return {
             user: {
               jwt: {
-                permissions: Immutable.Set(userPermissions),
+                permissions: userPermissions,
               },
             },
           }

@@ -43,7 +43,7 @@ import styles from './DeviceList.module.css'
 import getExportableFile from './DeviceQueries'
 import messages from './messages'
 
-const { dateFormat } = getAspectDisplayPreferences().toJS()
+const { dateFormat } = getAspectDisplayPreferences()
 
 const getColumns = formatMessage => [
   { key: 'name', label: formatMessage(messages.device), sortable: true },

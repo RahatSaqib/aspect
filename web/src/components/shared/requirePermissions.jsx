@@ -54,7 +54,7 @@ export function groupByPermissionTypes(permissions) {
 /**
  * Returns array of JSON objects with userPermissions found in array of requestedPermissions
  *
- * @param {Immutable.List(string)} userPermissions: from state.user.jwt.permissions
+ * @param {Array(string)} userPermissions: from state.user.jwt.permissions
  * @param {Array(string)} requestedPermissions: array of requested permissions
  * @return an Array of JSON items
  *   {

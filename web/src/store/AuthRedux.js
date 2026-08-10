@@ -1,7 +1,6 @@
-import Immutable from 'immutable'
 import jwtDecode from 'jwt-decode'
-import forEach from 'lodash/forEach'
 import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
 import config from '../config'
@@ -215,7 +214,7 @@ export function loginStart({ user, password }) {
             culture: json.culture,
             countryAbbreviation: json.countryAbbreviation,
             timezoneId: json.timezone,
-            displayPreferences: Immutable.Map(json.displayPreferences),
+            displayPreferences: json.displayPreferences,
             loggedOutReason: '',
             userId: json.userId,
             personId: json.personId,
@@ -286,7 +285,7 @@ export function refreshStart() {
             culture: json.culture,
             countryAbbreviation: json.countryAbbreviation,
             timezoneId: json.timezone,
-            displayPreferences: Immutable.Map(json.displayPreferences),
+            displayPreferences: json.displayPreferences,
             userId: json.userId,
             personId: json.personId,
           })
@@ -378,7 +377,7 @@ export function acceptLicenseStart(licenseId) {
             culture: json.culture,
             countryAbbreviation: json.countryAbbreviation,
             timezoneId: json.timezone,
-            displayPreferences: Immutable.Map(json.displayPreferences),
+            displayPreferences: json.displayPreferences,
             countryId: json.countryId,
           })
         )
@@ -390,54 +389,49 @@ export function acceptLicenseStart(licenseId) {
 /*
  * ---------------- Reducers -----------------
  */
-const JWT = Immutable.Record({
+const initialJwt = {
   name: '',
-  permissions: Immutable.Set(),
-  jobFunctionNames: Immutable.Set(),
+  permissions: [],
+  jobFunctionNames: [],
   hasToAcceptLicenseId: undefined,
   iat: undefined,
   exp: undefined,
   iss: '',
-})
-const User = Immutable.Record({
+}
+
+const initialState = {
   requestedAt: undefined,
-  jwt: new JWT(),
+  jwt: initialJwt,
   access: undefined,
   refresh: undefined,
   clientId: undefined,
   culture: previousCulture || currentCulture,
   timezoneId: 'Eastern Standard Time',
-  displayPreferences: Immutable.Map(),
+  displayPreferences: {},
   countryAbbreviation: null,
   loggedOutReason: '',
   licenseContent: undefined,
   countryId: undefined,
   userId: undefined,
   personId: undefined,
-})
-
-const initialState = new User()
+}
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
     case types.LOGIN_REQUEST:
     case types.ACCEPT_LICENSE_REQUEST:
-      return state.set('requestedAt', action.requestedAt)
+      return { ...state, requestedAt: action.requestedAt }
     case types.LOGIN_SUCCESS:
     case types.REFRESH_SUCCESS:
     case types.ACCEPT_LICENSE_SUCCESS:
-      return state.withMutations(mutState => {
-        mutState.delete('requestedAt')
-        mutState.delete('licenseContent')
-
-        forEach(action.data, (v, k) => {
-          if (!isNil(v)) {
-            mutState.set(k, v)
-          }
-        })
-        mutState.mergeDeepIn(
-          ['jwt'],
-          pick(jwtDecode(action.data.access), [
+      return {
+        ...state,
+        ...omitBy(action.data, isNil),
+        requestedAt: undefined,
+        licenseContent: undefined,
+        jwt: {
+          ...state.jwt,
+          ...pick(jwtDecode(action.data.access), [
             'name',
             'permissions',
             'jobFunctionNames',
@@ -445,21 +439,21 @@ export default function authReducer(state = initialState, action) {
             'iat',
             'exp',
             'iss',
-          ])
-        )
-      })
+          ]),
+        },
+      }
     case types.LOGIN_FAILURE:
     case types.ACCEPT_LICENSE_FAILURE:
-      return state.delete('requestedAt')
+      return { ...state, requestedAt: undefined }
 
     // fallthrough
     case types.REFRESH_FAILURE:
     case types.LOGOUT:
       sessionStorage.clear()
-      return state.clear().set('loggedOutReason', action.data.reason)
+      return { ...initialState, loggedOutReason: action.data.reason }
 
     case types.RECEIVE_LICENSE:
-      return state.set('licenseContent', action.data.content)
+      return { ...state, licenseContent: action.data.content }
     default:
       return state
   }

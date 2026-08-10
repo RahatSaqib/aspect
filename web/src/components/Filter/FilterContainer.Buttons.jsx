@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import Immutable from 'immutable'
 import { pull } from 'lodash/array'
 import isArray from 'lodash/isArray'
 import startCase from 'lodash/startCase'
@@ -74,6 +73,15 @@ const filtersOrdering = {
   siteTypeId: 390,
   parentWarehouseId: 400,
   tagId: 410,
+}
+
+// keys missing from filtersOrdering compare as equal, so they keep their original order
+const byFilterOrder = (keyA, keyB) => {
+  const orderA = filtersOrdering[keyA]
+  const orderB = filtersOrdering[keyB]
+  if (orderA > orderB) return 1
+  if (orderA < orderB) return -1
+  return 0
 }
 
 const buttonMapping = {
@@ -259,9 +267,8 @@ const FilterButtons = ({ filters, remove, append, blocked }) => {
       {emptyFilter(filters) ? (
         <Btn lbl={formatMessage(messages.noFilters)} />
       ) : (
-        Immutable.Map(filters)
-          .keySeq()
-          .sortBy(filterKey => filtersOrdering[filterKey])
+        Object.keys(filters)
+          .sort(byFilterOrder)
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
             if (!Comp) return null
@@ -501,7 +508,7 @@ const ConsumableId = ({ consumableId, remove, blocked }) => {
 
 const MinDate = ({ minDate, remove, blocked }) => {
   const { formatMessage, format } = useIntl()
-  const { dateFormat } = getAspectDisplayPreferences().toJS()
+  const { dateFormat } = getAspectDisplayPreferences()
   const del = remove && !blocked.includes('minDate') ? () => remove(['minDate']) : undefined
 
   const date = format(new Date(minDate), dateFormat)
@@ -510,7 +517,7 @@ const MinDate = ({ minDate, remove, blocked }) => {
 
 const MaxDate = ({ maxDate, remove, blocked }) => {
   const { formatMessage, format } = useIntl()
-  const { dateFormat } = getAspectDisplayPreferences().toJS()
+  const { dateFormat } = getAspectDisplayPreferences()
   if (!maxDate) return null
 
   const del = remove && !blocked.includes('maxDate') ? () => remove(['maxDate']) : undefined
@@ -521,7 +528,7 @@ const MaxDate = ({ maxDate, remove, blocked }) => {
 
 const MinExpirationDate = ({ minExpirationDate, remove, blocked }) => {
   const { formatMessage, format } = useIntl()
-  const { dateFormat } = getAspectDisplayPreferences().toJS()
+  const { dateFormat } = getAspectDisplayPreferences()
   const date = format(new Date(minExpirationDate), dateFormat)
 
   return (
@@ -534,7 +541,7 @@ const MinExpirationDate = ({ minExpirationDate, remove, blocked }) => {
 
 const MaxExpirationDate = ({ maxExpirationDate, remove, blocked }) => {
   const { formatMessage, format } = useIntl()
-  const { dateFormat } = getAspectDisplayPreferences().toJS()
+  const { dateFormat } = getAspectDisplayPreferences()
   const date = format(new Date(maxExpirationDate), dateFormat)
 
   return (
