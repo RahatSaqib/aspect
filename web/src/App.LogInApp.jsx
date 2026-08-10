@@ -1,7 +1,6 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { IdleTimerProvider } from 'react-idle-timer'
 import { useIntl } from 'react-intl'
-import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { Loading, ErrorBoundary, LoggedInLayout } from './components'
 import AspectDialog from './components/shared/AspectDialog'
@@ -12,7 +11,7 @@ import useHashAndScroll from './hooks/useHashAndScroll'
 import messages from './messages/allMessages'
 import RecordPageViewProvider from './providers/RecordPageViewProvider'
 import { routePaths } from './routes/constants'
-import { idleLogout, refreshStart } from './store/AuthRedux'
+import { idleLogout, refreshStart } from './store/authStore'
 
 const ContactPage = lazy(() => import('./pages/Contact'))
 const DeviceApiKeyList = lazy(() => import('./pages/DeviceApiKey/list/DeviceApiKeyList'))
@@ -98,7 +97,6 @@ const ProvincialXDRTrendsFQ = lazy(() => import('./pages/PkDashboard/pages/MtbXd
 const XDRTestingDiagnosisTrend = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/XDRTestingDiagnosisTrend'))
 
 const LogInApp = () => {
-  const dispatch = useDispatch()
   const location = useLocation()
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
@@ -113,15 +111,15 @@ const LogInApp = () => {
 
   useEffect(() => {
     // Refresh the access token every 30 minutes.
-    const refreshToken = setInterval(() => dispatch(refreshStart()), 30 * 60 * 1000)
+    const refreshToken = setInterval(() => refreshStart(), 30 * 60 * 1000)
     return () => clearInterval(refreshToken)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // onPrompt fires at `timeout - promptBeforeIdle`, so timeout absorbs the prompt window
+  const promptBeforeIdle = 60 * 1000
   const idleTimerConfig = {
-    timeout: config.userInactiveMinutes * 60 * 1000, // after minutes, user is idle
-    promptTimeout: 60 * 1000, // after one minute, we call onIdle() and log user out
+    timeout: config.userInactiveMinutes * 60 * 1000 + promptBeforeIdle,
+    promptBeforeIdle, // after one minute prompted, we call onIdle() and log user out
     stopOnIdle: true, // once user is logged out, we stop timers
     crossTab: true,
     // Fire a Modal Prompt
@@ -129,7 +127,7 @@ const LogInApp = () => {
     // Close Modal Prompt & log out your user
     onIdle: () => {
       setShowIdleDialog(false)
-      dispatch(idleLogout())
+      idleLogout()
     },
     // Close Modal Prompt & Do some active action (reset timer)
     onAction: (event, { reset }) => {

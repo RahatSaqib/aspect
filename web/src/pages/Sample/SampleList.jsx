@@ -3,13 +3,13 @@ import { Button, LinearProgress, TableBody } from '@mui/material'
 import { formatInTimeZone } from 'date-fns-tz'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, SampleFilter, TableContainer } from '../../components'
 import BrowseEmptyList from '../../components/BrowseEmptyList'
 import BrowseTablePaginator from '../../components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import useSamples from '../../hooks/sample/useSamples'
+import useAuthState from '../../hooks/useAuthState'
 import useFilterValues from '../../hooks/useFilterValues'
 import { makeSortPageSelector } from '../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../utils/utils/browser'
@@ -26,7 +26,7 @@ const SampleList = () => {
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'sampleCollectedOn' })({ location })
   const [isLoading, setIsLoading] = useState(true)
 
-  const { timezoneId } = useSelector(({ user }) => user)
+  const { timezoneId } = useAuthState()
   const validTimeZone = getTimezoneById(timezoneId)
 
   const { data, isLoading: tableLoading } = useSamples(

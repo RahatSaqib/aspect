@@ -9,7 +9,6 @@ import startCase from 'lodash/startCase'
 import trim from 'lodash/trim'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
-import { useSelector } from 'react-redux'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader } from '../../../components'
 import AspectForm from '../../../components/Form'
@@ -50,7 +49,7 @@ const AspectResultDetail = () => {
     throw new Error(error)
   }
 
-  const { timezoneId } = useSelector(({ user }) => user)
+  const { timezoneId } = useAuthState()
   const validTimeZone = getTimezoneById(timezoneId)
   useEffect(() => {
     if (isLoading || !queryResponse) return

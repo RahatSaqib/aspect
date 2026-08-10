@@ -1,7 +1,9 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import * as reactRedux from 'react-redux'
+import { useAuthStore } from '../../store/authStore'
 import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
+
+jest.mock('../../store/authStore', () => ({ useAuthStore: jest.fn() }))
 
 describe('requirePermissions', () => {
   describe('groupByPermissionTypes', () => {
@@ -162,25 +164,12 @@ describe('requirePermissions', () => {
   const WrappedComponent = () => {}
 
   function mockContext(userPermissions) {
-    return [
-      jest.spyOn(reactRedux, 'useStore').mockReturnValue({
-        subscribe() {},
-        dispatch() {},
-        getState() {
-          return {
-            user: {
-              jwt: {
-                permissions: userPermissions,
-              },
-            },
-          }
-        },
-      }),
-    ]
+    useAuthStore.mockReturnValue({ jwt: { permissions: userPermissions } })
+    return [useAuthStore]
   }
 
   function unmock(spies) {
-    spies.forEach(spy => spy.mockRestore())
+    spies.forEach(spy => spy.mockReset())
   }
 
   describe('given right user permissions', () => {

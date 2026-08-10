@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react'
 import isNumber from 'lodash/isNumber'
-import { useSelector } from 'react-redux'
+import { useAuthStore } from '../../store/authStore'
 import COUNTRY_ISO_MAPPING from '../../utils/consts/Countries/CONSTS'
 import AuthContext from './AuthProvider.Context'
 
 const AuthProvider = ({ children }) => {
-  const user = useSelector(({ user }) => user)
+  const user = useAuthStore()
 
   const jwtExp = user.jwt.exp
 

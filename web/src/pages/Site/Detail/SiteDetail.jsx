@@ -3,11 +3,11 @@ import { Box, LinearProgress, Paper } from '@mui/material'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { defineMessages, useIntl } from 'react-intl'
-import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { DetailHeader } from '../../../components'
 import AspectButton from '../../../components/shared/AspectButton'
 import useSite from '../../../hooks/site/useSite'
+import useAuthState from '../../../hooks/useAuthState'
 import isEditable from '../../../utils/selectors/isEditable'
 import { getReturnUrl } from '../../../utils/utils/browser'
 import SiteForm from './Edit/SiteForm'
@@ -26,10 +26,8 @@ const SiteDetail = ({ navigate, location }) => {
   const intl = useIntl()
   const { siteId } = useParams()
   const { isLoading, data: site } = useSite(siteId)
-  const { editable, user } = useSelector(state => ({
-    editable: isEditable(state.user, 'site'),
-    user: state.user,
-  }))
+  const user = useAuthState()
+  const editable = isEditable(user, 'site')
   const [latLong, setLatLong] = useState({ lat: 0, lng: 0 })
 
   useEffect(() => {

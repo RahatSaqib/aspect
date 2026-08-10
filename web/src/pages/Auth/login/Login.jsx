@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Box, Button, Card, LinearProgress, TextField } from '@mui/material'
 import { useFormik } from 'formik'
 import flowRight from 'lodash/flowRight'
 import get from 'lodash/get'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
-import { injectIntl } from 'react-intl'
-import { connect } from 'react-redux'
+import { useIntl } from 'react-intl'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { loginStart } from '../../../store/AuthRedux'
+import useAuthState from '../../../hooks/useAuthState'
+import { loginStart } from '../../../store/authStore'
 import { reasonTypes } from '../loggedOutReasons'
 import styles from './Login.module.css'
 import messages from './messages'
@@ -86,9 +86,20 @@ export const Login = ({ intl, location, form, meta, values, onUserChange, onPass
   </div>
 )
 
-const LoginContainer = ({ intl, location, loggedOutReason, loginStart }) => {
+const LoginContainer = ({ location }) => {
+  const intl = useIntl()
   const navigate = useNavigate()
   const currentLocation = useLocation()
+  const { loggedOutReason } = useAuthState()
+  // a successful login unmounts this screen before the submit handler resumes
+  const mounted = useRef(true)
+
+  useEffect(
+    () => () => {
+      mounted.current = false
+    },
+    []
+  )
 
   const { values, errors, touched, isValid, isSubmitting, setFieldValue, setFieldTouched, handleSubmit } = useFormik({
     initialValues: {
@@ -114,7 +125,9 @@ const LoginContainer = ({ intl, location, loggedOutReason, loginStart }) => {
         )(currentLocation)
         navigate(loggedOutReason === reasonTypes.userRequested ? '/' : referrer, { replace: true })
       } finally {
-        setSubmitting(false)
+        if (mounted.current) {
+          setSubmitting(false)
+        }
       }
     },
   })
@@ -141,14 +154,4 @@ const LoginContainer = ({ intl, location, loggedOutReason, loginStart }) => {
   )
 }
 
-export default flowRight(
-  injectIntl,
-  connect(
-    state => ({
-      loggedOutReason: state.user.loggedOutReason,
-    }),
-    {
-      loginStart,
-    }
-  )
-)(LoginContainer)
+export default LoginContainer

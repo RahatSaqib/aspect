@@ -1,12 +1,10 @@
 import format from 'date-fns/format'
-import startOfDay from 'date-fns/startOfDay'
 import isDate from 'lodash/isDate'
 import isEmpty from 'lodash/isEmpty'
 import isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
-import { withProps } from 'recompose'
 import { getAspectDisplayPreferences } from '../../components/LocalStorage'
 import getLocale from './locale'
 
@@ -51,17 +49,6 @@ export function formatDateTime(date) {
 }
 
 export const formatWithLocale = locale => (date, formatStr) => format(date, formatStr, { locale: getLocale(locale) })
-
-export const withDateFormatProps = withProps(() => {
-  const prefs = getAspectDisplayPreferences()
-  return {
-    dateFormat: prefs.dateFormat,
-  }
-})
-
-export const withTodayProps = withProps(() => ({
-  today: startOfDay(new Date()),
-}))
 
 export const formatRelative = (date, formatRelativeTime, defaultMessage = '') => {
   const dateInMilliseconds = new Date(date).getTime()

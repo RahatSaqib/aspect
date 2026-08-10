@@ -3,29 +3,30 @@ import identity from 'lodash/identity'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
-import { compose, setPropTypes, pure } from 'recompose'
 import styles from './ReadOnlyField.module.css'
 
 const readOnlyFieldPropTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.any,
   lg: PropTypes.bool,
+  hideLabel: PropTypes.bool,
+  linkButton: PropTypes.object,
+  to: PropTypes.any,
   format: PropTypes.func,
   nullText: PropTypes.string,
 }
 
-const enhance = compose(pure, setPropTypes(readOnlyFieldPropTypes))
+const readOnlyFieldDefaultProps = {
+  value: undefined,
+  lg: false,
+  hideLabel: false,
+  linkButton: null,
+  to: undefined,
+  format: identity,
+  nullText: '-',
+}
 
-const ReadOnlyField = ({
-  label,
-  value,
-  lg,
-  hideLabel = false,
-  linkButton = null,
-  to,
-  format = identity,
-  nullText = '-',
-}) =>
+const ReadOnlyField = ({ label, value, lg, hideLabel, linkButton, to, format, nullText }) =>
   label && (
     <div className={`${styles.Container} ${lg ? styles.Container__large : ''}`}>
       {/* eslint-disable jsx-a11y/label-has-for */}
@@ -52,4 +53,7 @@ const ReadOnlyField = ({
     </div>
   )
 
-export default enhance(ReadOnlyField)
+ReadOnlyField.propTypes = readOnlyFieldPropTypes
+ReadOnlyField.defaultProps = readOnlyFieldDefaultProps
+
+export default React.memo(ReadOnlyField)

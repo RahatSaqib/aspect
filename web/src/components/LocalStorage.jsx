@@ -1,6 +1,6 @@
+import React, { useEffect } from 'react'
 import identity from 'lodash/identity'
 import isUndefined from 'lodash/isUndefined'
-import { compose, pure, lifecycle } from 'recompose'
 import { getTimezoneById } from '../utils/utils/timezone'
 
 let displayPreferences = {
@@ -28,30 +28,19 @@ const storageMappings = [
   },
 ]
 
-const enhance = compose(
-  pure,
-  lifecycle({
-    handleStorage(props) {
-      storageMappings.forEach(({ storageKey, propsKey, update = identity }) => {
-        const value = props[propsKey]
-        if (isUndefined(value) && propsKey !== 'clientId') {
-          localStorage.removeItem(storageKey)
-        } else if (update(value)) {
-          localStorage.setItem(storageKey, update(value))
-        }
-      })
-    },
-
-    componentDidMount() {
-      this.handleStorage(this.props)
-    },
-
-    componentDidUpdate() {
-      this.handleStorage(this.props)
-    },
+const LocalStorage = props => {
+  useEffect(() => {
+    storageMappings.forEach(({ storageKey, propsKey, update = identity }) => {
+      const value = props[propsKey]
+      if (isUndefined(value) && propsKey !== 'clientId') {
+        localStorage.removeItem(storageKey)
+      } else if (update(value)) {
+        localStorage.setItem(storageKey, update(value))
+      }
+    })
   })
-)
 
-const LocalStorage = () => false
+  return null
+}
 
-export default enhance(LocalStorage)
+export default React.memo(LocalStorage)
