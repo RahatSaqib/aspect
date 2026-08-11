@@ -7,7 +7,7 @@ import AccountEnableDisable from './AccountEnableDisable'
 
 const formatTags = tagsStr => {
   if (!tagsStr) return ''
-  let tags = isString(tagsStr) ? tagsStr.split(';') : tagsStr.toJS().map(e => (isString(e) ? e : e.title))
+  let tags = isString(tagsStr) ? tagsStr.split(';') : tagsStr.map(e => (isString(e) ? e : e.title))
   if (tags.length > 2) {
     const tagsToShow = tags.slice(0, 2)
     const tagsToHide = tags.slice(2)

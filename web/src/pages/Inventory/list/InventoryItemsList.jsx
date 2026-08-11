@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { FormControlLabel, LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omit from 'lodash/omit'
@@ -6,7 +6,6 @@ import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMutation } from 'react-query'
-import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
 import { DetailHeader, InventoryItemsFilter } from '../../../components'
@@ -25,18 +24,10 @@ import useInventoryList from '../../../hooks/inventory/useInventoryList'
 import usePartner from '../../../hooks/partner/usePartner'
 import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
-import {
-  addInventory,
-  hideAdjustInventoryDialog,
-  receiveInventory,
-  receiveInventoryItems,
-  removeInventory,
-  showNewInventoryDialog,
-  transferInventory,
-  types,
-} from '../../../store/InventoryRedux'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { adjustmentActions } from '../adjustment/actionTypes'
 import InventoryAdjustmentDialog from '../adjustment/InventoryAdjustmentDialog'
+import adjustInventory from '../adjustment/InventoryAdjustmentQueries'
 import { strategyRequireExpirationDate, strategyRequireLot } from '../strategyHelper'
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
 import styles from './InventoryItemsList.module.css'
@@ -66,6 +57,7 @@ const availableSortCol = [
 
 export default function InventoryItemsList() {
   const [inventoryOnField, setInventoryOnField] = useState(false)
+  const [adjustment, setAdjustment] = useState(null)
   const [filter, setFilter] = usePathFilter()
   const intl = useIntl()
   const user = useAuthState()
@@ -96,9 +88,6 @@ export default function InventoryItemsList() {
   )
   const location = useLocation()
   const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const inventory = useSelector(state => state.inventory)
-  const { table, items, inventoryAdjustment } = inventory
   const sortPage = makeSortPageSelector({ sortCol: 'siteName' })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({
     location,
@@ -124,6 +113,7 @@ export default function InventoryItemsList() {
     isNil
   )
   const { isError, isLoading: isLoadingData, data = false, error, refetch } = useInventoryList(params)
+  const items = data?.data ?? []
 
   const onSuccess = () => {
     refetch()
@@ -134,59 +124,29 @@ export default function InventoryItemsList() {
     getExportableFile(filter, formatType, sortCol, sortDir, data.total, 'supplies')
   )
 
-  const { mutate: onRemoveInventorySubmit } = useMutation(
-    values => removeInventory(omit(values, ['canExpire']), dispatch, inventory),
-    { onSuccess }
+  const { mutate: onAdjustmentSubmit } = useMutation(
+    values =>
+      adjustInventory({
+        actionType: adjustment.actionType,
+        values: omit(values, ['canExpire']),
+        inventoryItem: adjustment.inventoryItem,
+      }),
+    { onSuccess, onSettled: () => setAdjustment(null) }
   )
-
-  const { mutate: onAddInventorySubmit } = useMutation(
-    values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
-    {
-      onSuccess,
-    }
-  )
-
-  const { mutate: onTransferInventorySubmit } = useMutation(
-    values => transferInventory(omit(values, ['canExpire']), dispatch, inventory),
-    {
-      onSuccess,
-    }
-  )
-  const { mutate: onReceiveInventorySubmit } = useMutation(
-    values => receiveInventory(omit(values, ['canExpire']), dispatch, inventory),
-    {
-      onSuccess,
-    }
-  )
-
-  useEffect(() => {
-    if (data) dispatch(receiveInventoryItems(data))
-  }, [data, dispatch])
 
   if (isError) throw new Error(error)
 
-  const handleSubmit = values => {
-    switch (inventoryAdjustment.get('actionType')) {
-      case types.SHOW_REMOVE_INVENTORY_DIALOG:
-        onRemoveInventorySubmit(values)
-        break
-      case types.SHOW_TRANSFER_INVENTORY_DIALOG:
-        onTransferInventorySubmit(values)
-        break
-      case types.SHOW_RECEIVE_INVENTORY_DIALOG:
-        onReceiveInventorySubmit(values)
-        break
-      default: {
-        onAddInventorySubmit(values)
-      }
-    }
-  }
+  const onAdjust = (actionType, inventoryItem) => setAdjustment({ actionType, inventoryItem: { ...inventoryItem } })
 
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
         <PermissionChecker permissions={['inventory:edit']}>
-          <AspectButton variant="contained" onClick={() => dispatch(showNewInventoryDialog())} browseButton>
+          <AspectButton
+            variant="contained"
+            onClick={() => setAdjustment({ actionType: adjustmentActions.NEW })}
+            browseButton
+          >
             {intl.formatMessage(messages.addInventory)}
           </AspectButton>
         </PermissionChecker>
@@ -251,12 +211,12 @@ export default function InventoryItemsList() {
                   label={intl.formatMessage(messages.breakOutByLot)}
                   sx={{ m: 2 }}
                 />
-                <AspectExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
+                <AspectExportListButton onExport={onExportClick} visible={items.length > 0} />
               </Stack>
             </Stack>
             {isLoadingData || isLoadingPartner || isExporting ? (
               <LinearProgress />
-            ) : items.currentIdList.length === 0 ? (
+            ) : items.length === 0 ? (
               <BrowseEmptyList />
             ) : (
               <>
@@ -269,21 +229,20 @@ export default function InventoryItemsList() {
                     columns={columns}
                   />
                   <TableBody>
-                    {items.currentIdList
-                      .map(id => items.byId.get(id))
-                      .map(inventoryItem => (
-                        <InventoryDataTableRow
-                          key={inventoryItem.get('id')}
-                          inventoryItem={inventoryItem}
-                          breakOutByLot={filter.breakOutByLot}
-                          requireExpirationDate={requireExpirationDate}
-                          requireLotNumber={requireLotNumber}
-                          inventoryOnHand={enableInventoryOnHandField}
-                          refetch={onSuccess}
-                          navigate={navigate}
-                          location={location}
-                        />
-                      ))}
+                    {items.map(inventoryItem => (
+                      <InventoryDataTableRow
+                        key={inventoryItem.id}
+                        inventoryItem={inventoryItem}
+                        breakOutByLot={filter.breakOutByLot}
+                        requireExpirationDate={requireExpirationDate}
+                        requireLotNumber={requireLotNumber}
+                        inventoryOnHand={enableInventoryOnHandField}
+                        refetch={onSuccess}
+                        onAdjust={onAdjust}
+                        navigate={navigate}
+                        location={location}
+                      />
+                    ))}
                   </TableBody>
                 </InventoryDataTable>
                 <BrowseTablePaginator
@@ -291,7 +250,7 @@ export default function InventoryItemsList() {
                   location={location}
                   intl={intl}
                   paginatorStatus={messages.paginatorStatus}
-                  total={table.total}
+                  total={data.total}
                   pageAt={pageAt}
                   pageSize={pageSize}
                 />
@@ -300,12 +259,12 @@ export default function InventoryItemsList() {
           </DataTableCard>
         </Stack>
 
-        {inventoryAdjustment.get('actionType') ? (
+        {adjustment ? (
           <InventoryAdjustmentDialog
-            actionType={inventoryAdjustment.get('actionType')}
-            inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], undefined)}
-            onCancel={() => dispatch(hideAdjustInventoryDialog())}
-            onSubmit={handleSubmit}
+            actionType={adjustment.actionType}
+            inventoryItem={adjustment.inventoryItem}
+            onCancel={() => setAdjustment(null)}
+            onSubmit={onAdjustmentSubmit}
             breakOutByLot={filter.breakOutByLot}
             requireExpirationDate={requireExpirationDate}
             requireLotNumber={requireLotNumber}

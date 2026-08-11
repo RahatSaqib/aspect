@@ -1,8 +1,10 @@
 import React from 'react'
-import { shallow } from 'enzyme'
-import Immutable from 'immutable'
-import * as reactRedux from 'react-redux'
+import { render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
+import { useAuthStore } from '../../store/authStore'
 import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
+
+vi.mock('../../store/authStore', () => ({ useAuthStore: vi.fn() }))
 
 describe('requirePermissions', () => {
   describe('groupByPermissionTypes', () => {
@@ -22,7 +24,7 @@ describe('requirePermissions', () => {
   describe('isPermittedUser', () => {
     describe('only required', () => {
       it('should be valid for edit user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['person:edit'],
           forbidden: [],
           optional: [],
@@ -32,7 +34,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be valid for edit user when requesting weaker level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['person:edit'],
           forbidden: [],
           optional: [],
@@ -42,7 +44,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be valid for edit user when requesting any level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['person'],
           forbidden: [],
           optional: [],
@@ -54,7 +56,7 @@ describe('requirePermissions', () => {
 
     describe('only forbidden', () => {
       it('should be invalid for edit user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: ['person:edit'],
           optional: [],
@@ -64,7 +66,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for edit user when denying even weaker level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: ['person:view'],
           optional: [],
@@ -74,7 +76,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for edit user when denying any level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: ['person'],
           optional: [],
@@ -86,7 +88,7 @@ describe('requirePermissions', () => {
 
     describe('only optional', () => {
       it('should be valid for edit user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: [],
           optional: ['person:edit', 'site:edit'],
@@ -95,7 +97,7 @@ describe('requirePermissions', () => {
         expect(isPermitted).toBe(true)
       })
       it('should be valid for edit user when requesting any level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: [],
           optional: ['person', 'site:edit'],
@@ -104,7 +106,7 @@ describe('requirePermissions', () => {
         expect(isPermitted).toBe(true)
       })
       it('should be valid for edit user when requesting weaker level', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: [],
           forbidden: [],
           optional: ['person:view', 'site:edit'],
@@ -116,7 +118,7 @@ describe('requirePermissions', () => {
 
     describe('required and forbidden', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['person:edit'],
           forbidden: ['site:view'],
           optional: [],
@@ -126,7 +128,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['site:view'],
           forbidden: ['person:edit'],
           optional: [],
@@ -138,7 +140,7 @@ describe('requirePermissions', () => {
 
     describe('required, forbidden and optional', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit', 'device:view']), {
+        const isPermitted = isPermittedUser(['person:edit', 'device:view'], {
           required: ['person:edit'],
           forbidden: ['site:view'],
           optional: ['device:view'],
@@ -148,7 +150,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+        const isPermitted = isPermittedUser(['person:edit'], {
           required: ['site:view'],
           forbidden: ['person:edit'],
           optional: ['device:view'],
@@ -159,29 +161,16 @@ describe('requirePermissions', () => {
     })
   })
 
-  const ForbiddenComponent = () => {}
-  const WrappedComponent = () => {}
+  const ForbiddenComponent = () => <div data-testid="forbidden" />
+  const WrappedComponent = () => <div data-testid="wrapped" />
 
   function mockContext(userPermissions) {
-    return [
-      jest.spyOn(reactRedux, 'useStore').mockReturnValue({
-        subscribe() {},
-        dispatch() {},
-        getState() {
-          return {
-            user: {
-              jwt: {
-                permissions: Immutable.Set(userPermissions),
-              },
-            },
-          }
-        },
-      }),
-    ]
+    useAuthStore.mockReturnValue({ jwt: { permissions: userPermissions } })
+    return [useAuthStore]
   }
 
   function unmock(spies) {
-    spies.forEach(spy => spy.mockRestore())
+    spies.forEach(spy => spy.mockReset())
   }
 
   describe('given right user permissions', () => {
@@ -192,20 +181,20 @@ describe('requirePermissions', () => {
 
     it('should render WrappedComponent', () => {
       const spies = mockContext(['person:edit'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+      expect(screen.getByTestId('wrapped')).toBeInTheDocument()
+      expect(screen.queryByTestId('forbidden')).not.toBeInTheDocument()
 
       unmock(spies)
     })
 
     it('should render WrappedComponent', () => {
       const spies = mockContext(['person:edit', 'device:view'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+      expect(screen.getByTestId('wrapped')).toBeInTheDocument()
+      expect(screen.queryByTestId('forbidden')).not.toBeInTheDocument()
 
       unmock(spies)
     })
@@ -219,20 +208,20 @@ describe('requirePermissions', () => {
 
     it('should render ForbiddenComponent', () => {
       const spies = mockContext(['device:view'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
+      expect(screen.queryByTestId('wrapped')).not.toBeInTheDocument()
+      expect(screen.getByTestId('forbidden')).toBeInTheDocument()
 
       unmock(spies)
     })
 
     it('should render ForbiddenComponent', () => {
       const spies = mockContext(['person:view', 'device:view'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
+      expect(screen.queryByTestId('wrapped')).not.toBeInTheDocument()
+      expect(screen.getByTestId('forbidden')).toBeInTheDocument()
 
       unmock(spies)
     })
@@ -246,20 +235,20 @@ describe('requirePermissions', () => {
 
     it('should render WrappedComponent', () => {
       const spies = mockContext(['person:edit'], ['person'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+      expect(screen.getByTestId('wrapped')).toBeInTheDocument()
+      expect(screen.queryByTestId('forbidden')).not.toBeInTheDocument()
 
       unmock(spies)
     })
 
     it('should render WrappedComponent', () => {
       const spies = mockContext(['person:edit'], ['task', 'person'])
-      const ComponentWrapper = shallow(<DecoratedComponent />)
+      render(<DecoratedComponent />)
 
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+      expect(screen.getByTestId('wrapped')).toBeInTheDocument()
+      expect(screen.queryByTestId('forbidden')).not.toBeInTheDocument()
 
       unmock(spies)
     })

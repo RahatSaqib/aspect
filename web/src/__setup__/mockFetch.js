@@ -1,1 +1,4 @@
-global.fetch = require('jest-fetch-mock')
+import { vi } from 'vitest'
+import createFetchMock from 'vitest-fetch-mock'
+
+createFetchMock(vi).enableMocks()

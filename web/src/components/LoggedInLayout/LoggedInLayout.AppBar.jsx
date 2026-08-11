@@ -3,11 +3,10 @@ import { AppBar, Box, Drawer, IconButton, MenuItem, Toolbar, useMediaQuery, useT
 import { FaUser } from 'react-icons/fa'
 import { MdMenu } from 'react-icons/md'
 import { useIntl } from 'react-intl'
-import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../../assets/logo_confluence.png'
 import messages from '../../messages/allMessages'
-import { userRequestedLogout } from '../../store/AuthRedux'
+import { userRequestedLogout } from '../../store/authStore'
 import { aspectFetch } from '../../utils/utils/fetch'
 import PermissionChecker from '../PermissionChecker'
 import IconMenu from '../shared/IconMenu'
@@ -15,7 +14,6 @@ import LayoutNavigation from './LoggedInLayout.Navigation'
 import styles from './styles.module.css'
 
 const Header = () => {
-  const dispatch = useDispatch()
   const intl = useIntl()
   const navigate = useNavigate()
   const theme = useTheme()
@@ -59,7 +57,7 @@ const Header = () => {
               {intl.formatMessage(messages.accountDetails)}
             </MenuItem>
           </PermissionChecker>
-          <MenuItem onClick={() => dispatch(userRequestedLogout())}>{intl.formatMessage(messages.signOut)}</MenuItem>
+          <MenuItem onClick={() => userRequestedLogout()}>{intl.formatMessage(messages.signOut)}</MenuItem>
         </IconMenu>
       </Toolbar>
 

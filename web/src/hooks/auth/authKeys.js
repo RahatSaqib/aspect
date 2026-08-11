@@ -1,0 +1,4 @@
+const SEND_RESET_PASSWORD_TOKEN_ENDPOINT = '/auth/send-reset-password-token'
+const UPDATE_PASSWORD_ENDPOINT = '/auth/update-password'
+
+export { SEND_RESET_PASSWORD_TOKEN_ENDPOINT, UPDATE_PASSWORD_ENDPOINT }

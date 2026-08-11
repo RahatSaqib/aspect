@@ -6,8 +6,7 @@ import { render } from 'react-dom'
 import App from './App'
 import config from './config'
 import AllProviders from './providers/AllProviders'
-import { refreshStart } from './store/AuthRedux'
-import store from './store/store'
+import { refreshStart } from './store/authStore'
 import './index.css'
 
 const prepareApp = async () => {
@@ -29,7 +28,7 @@ const prepareApp = async () => {
   }
 
   // get new access token
-  await store.dispatch(refreshStart())
+  await refreshStart()
 
   return Promise.resolve()
 }
@@ -44,6 +43,6 @@ const AppWrapper = () => (
 
 prepareApp().then(renderApp)
 
-if (module.hot) {
-  module.hot.accept('./App', renderApp)
+if (import.meta.hot) {
+  import.meta.hot.accept('./App', renderApp)
 }

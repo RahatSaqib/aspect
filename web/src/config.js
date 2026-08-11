@@ -1,13 +1,14 @@
 const config = {
-  aspectApi: process.env.aspectApi,
+  aspectApi: __APP_ENV__.aspectApi,
   sentry: {
-    dsn: process.env['sentry.dsn'],
-    tracingOrigins: JSON.parse(process.env['sentry.tracingOrigins']),
-    tracesSampleRate: process.env['sentry.tracesSampleRate'],
+    dsn: __APP_ENV__['sentry.dsn'],
+    tracingOrigins: JSON.parse(__APP_ENV__['sentry.tracingOrigins']),
+    tracesSampleRate: __APP_ENV__['sentry.tracesSampleRate'],
   },
-  userInactiveMinutes: parseInt(process.env.userInactiveMinutes, 10),
-  supportEmail: process.env.supportEmail,
-  defaultCulture: process.env.defaultCulture,
+  userInactiveMinutes: parseInt(__APP_ENV__.userInactiveMinutes, 10),
+  supportEmail: __APP_ENV__.supportEmail,
+  defaultCulture: __APP_ENV__.defaultCulture,
+  googleAnalyticsMeasurementId: __APP_ENV__.googleAnalyticsMeasurementId,
 }
 
 export default config

@@ -2,7 +2,7 @@
 
 This is the web client for the aspect API
 
-It's based on the react-webpack yeoman generator: <https://github.com/newtriks/generator-react-webpack>
+It is a React single page app bundled with [Vite](https://vite.dev/). Node 14.18 or newer is required (see `.nvmrc`).
 
 ## Installation
 
@@ -15,9 +15,7 @@ yarn
 
 ## Available Commands
 
-By default, the site is served at <http://localhost:8000/webpack-dev-server/> this gives you compilation/error messages in the browser window. To browse just the "bare" site, go to <http://localhost:8000>.
-
-**Notice** when running `yarn start`, you'll immediately see `Cannot GET /` in the browser. Wait a little bit for the first compilation to be done, then refresh your browser.
+By default, the site is served at <http://localhost:8000>. The dev server starts in under a second and applies changes through hot module replacement, so there is no initial compilation to wait for.
 
 ```bash
 # Start for development

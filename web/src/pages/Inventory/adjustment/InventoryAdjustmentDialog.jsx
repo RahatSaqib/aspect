@@ -9,7 +9,7 @@ import DateTimeInput from '../../../components/shared/DateTimeInput'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
 import FormGroup from '../../../components/themedReactToolbox/FormGroup'
 import useSiteList from '../../../hooks/site/useSiteList'
-import { types } from '../../../store/InventoryRedux'
+import { adjustmentActions } from './actionTypes'
 import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, transformValues } from './helpers'
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages, { validationMessages } from './messages'
@@ -19,12 +19,12 @@ function InventoryAdjustmentDialog(props) {
   const { onCancel, onSubmit, inventoryItem, actionType, requireExpirationDate, requireLotNumber, breakOutByLot } =
     props
   const { formatMessage, ...intl } = useIntl()
-  const inventory = inventoryItem?.toJS?.() ?? undefined
+  const inventory = inventoryItem
   const labels = getLabels(actionType)
-  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
-  const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
-  const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
-  const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
+  const uiAdd = [adjustmentActions.NEW, adjustmentActions.ADD].includes(actionType)
+  const uiTransfer = actionType === adjustmentActions.TRANSFER
+  const uiRemove = actionType === adjustmentActions.REMOVE
+  const uiReceive = actionType === adjustmentActions.RECEIVE
 
   const now = new Date()
 
@@ -70,7 +70,7 @@ function InventoryAdjustmentDialog(props) {
           const toSiteId = event.id || undefined
           setFieldValue('toSiteId', toSiteId)
           //
-          if (actionType === types.SHOW_NEW_INVENTORY_DIALOG) {
+          if (actionType === adjustmentActions.NEW) {
             let resetConsumable = true
             if (toSiteId) {
               /**
@@ -156,10 +156,7 @@ function InventoryAdjustmentDialog(props) {
                     value={values.toSiteId || ''}
                     onChange={onToSiteChange}
                     errorText={errors.toSiteId}
-                    disabled={
-                      actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG ||
-                      actionType === types.SHOW_ADD_INVENTORY_DIALOG
-                    }
+                    disabled={actionType === adjustmentActions.RECEIVE || actionType === adjustmentActions.ADD}
                     floatingLabelFixed
                     floatingLabelText={
                       <span>
@@ -204,11 +201,11 @@ function InventoryAdjustmentDialog(props) {
                      */
                     disabled={
                       // ...global adding inventory but toSite is not selected
-                      (actionType === types.SHOW_NEW_INVENTORY_DIALOG && !values.toSiteId) ||
+                      (actionType === adjustmentActions.NEW && !values.toSiteId) ||
                       // ...or local adding inventory (`toSite` and `consumable` fields are prefilled)
-                      actionType === types.SHOW_ADD_INVENTORY_DIALOG ||
+                      actionType === adjustmentActions.ADD ||
                       // ...or remove (`fromSite` and `consumable` fields are prefilled)
-                      actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ||
+                      actionType === adjustmentActions.REMOVE ||
                       // ...or transferring inventory
                       uiTransfer
                     }
@@ -309,10 +306,7 @@ function InventoryAdjustmentDialog(props) {
                     value={values.toSiteId || ''}
                     onChange={onToSiteChange}
                     errorText={errors.toSiteId}
-                    disabled={
-                      actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG ||
-                      actionType === types.SHOW_ADD_INVENTORY_DIALOG
-                    }
+                    disabled={actionType === adjustmentActions.RECEIVE || actionType === adjustmentActions.ADD}
                     floatingLabelFixed
                     floatingLabelText={formatMessage(messages.toSiteName)}
                     floatingLabelClasses={{

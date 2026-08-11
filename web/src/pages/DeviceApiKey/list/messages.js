@@ -10,6 +10,14 @@ const messages = defineMessages({
     id: 'pages.DeviceApiKeyList.generate',
     defaultMessage: 'Generate',
   },
+  generateSuccess: {
+    id: 'pages.DeviceApiKeyList.generateSuccess',
+    defaultMessage: 'Device API keys generated successfully',
+  },
+  generateError: {
+    id: 'pages.DeviceApiKeyList.generateError',
+    defaultMessage: 'Device API keys could not be generated. Please try again.',
+  },
   /* ---------------- Table ----------------- */
   createdOn: {
     id: 'pages.DeviceApiKeyList.createdOn',

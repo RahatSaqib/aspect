@@ -1,86 +1,100 @@
 import React from 'react'
-import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
 import useAuthState from '../../../hooks/useAuthState'
 import { getReportParameters } from '../getReportParameters'
 import ReportParameterForm from '../ReportParameterForm'
 
-jest.mock('../../../hooks/useAuthState')
+vi.mock('../../../hooks/useAuthState')
 
 // The heavy select components pull in react-query/redux; stub them with inputs
 // that mirror their onChange contracts (see parameterFields.jsx wiring).
-jest.mock('../../StateSelect', () => {
-  const ReactLib = require('react')
-  return props =>
-    ReactLib.createElement('input', {
-      'data-testid': 'state-select',
-      'aria-label': props.label,
-      value: props.value ?? '',
-      onChange: props.onChange,
-    })
-})
-jest.mock('../../LgaSelect', () => {
-  const ReactLib = require('react')
-  return props =>
-    ReactLib.createElement('input', {
-      'data-testid': 'lga-select',
-      'aria-label': props.label,
-      value: props.value ?? '',
-      onChange: props.onChange,
-    })
-})
-jest.mock('../../AssayMultiSelect', () => {
-  const ReactLib = require('react')
-  return props => {
-    const rawValue = props.value
-    const displayValue = Array.isArray(rawValue) ? rawValue.join(',') : rawValue ?? ''
-    return ReactLib.createElement('input', {
-      'data-testid': 'assay-multi-select',
-      'aria-label': props.label,
-      value: displayValue,
-      onChange: e => props.onChange(e.target.value ? e.target.value.split(',').map(Number) : []),
-    })
+vi.mock('../../StateSelect', async () => {
+  const { createElement } = await import('react')
+  return {
+    default: props =>
+      createElement('input', {
+        'data-testid': 'state-select',
+        'aria-label': props.label,
+        value: props.value ?? '',
+        onChange: props.onChange,
+      }),
   }
 })
-jest.mock('../../AssaySelect', () => {
-  const ReactLib = require('react')
-  return props =>
-    ReactLib.createElement('input', {
-      'data-testid': 'assay-select',
-      'aria-label': props.label,
-      value: props.value ?? '',
-      onChange: props.onChange,
-    })
+vi.mock('../../LgaSelect', async () => {
+  const { createElement } = await import('react')
+  return {
+    default: props =>
+      createElement('input', {
+        'data-testid': 'lga-select',
+        'aria-label': props.label,
+        value: props.value ?? '',
+        onChange: props.onChange,
+      }),
+  }
 })
-jest.mock('../../ConsumableSelect', () => {
-  const ReactLib = require('react')
-  return props =>
-    ReactLib.createElement('input', {
-      'data-testid': 'consumable-select',
-      'aria-label': props.label,
-      value: props.value ?? '',
-      onChange: e => props.onChange(e.target.value),
-    })
+vi.mock('../../AssayMultiSelect', async () => {
+  const { createElement } = await import('react')
+  return {
+    default: props => {
+      const rawValue = props.value
+      const displayValue = Array.isArray(rawValue) ? rawValue.join(',') : rawValue ?? ''
+      return createElement('input', {
+        'data-testid': 'assay-multi-select',
+        'aria-label': props.label,
+        value: displayValue,
+        onChange: e => props.onChange(e.target.value ? e.target.value.split(',').map(Number) : []),
+      })
+    },
+  }
 })
-jest.mock('../../SiteAutocompleteField', () => {
-  const ReactLib = require('react')
-  return props =>
-    ReactLib.createElement('input', {
-      'data-testid': 'site-select',
-      'aria-label': props.floatingLabelText,
-      value: props.value ?? '',
-      onChange: e => props.onChange({ name: e.target.value }),
-    })
+vi.mock('../../AssaySelect', async () => {
+  const { createElement } = await import('react')
+  return {
+    default: props =>
+      createElement('input', {
+        'data-testid': 'assay-select',
+        'aria-label': props.label,
+        value: props.value ?? '',
+        onChange: props.onChange,
+      }),
+  }
 })
-jest.mock('../../PeriodSelector', () => {
-  const ReactLib = require('react')
-  return props =>
-    ReactLib.createElement('input', {
-      'data-testid': 'period-selector',
-      'aria-label': props.label,
-      value: '',
-      readOnly: true,
-    })
+vi.mock('../../ConsumableSelect', async () => {
+  const { createElement } = await import('react')
+  return {
+    default: props =>
+      createElement('input', {
+        'data-testid': 'consumable-select',
+        'aria-label': props.label,
+        value: props.value ?? '',
+        onChange: e => props.onChange(e.target.value),
+      }),
+  }
+})
+vi.mock('../../SiteAutocompleteField', async () => {
+  const { createElement } = await import('react')
+  return {
+    default: props =>
+      createElement('input', {
+        'data-testid': 'site-select',
+        'aria-label': props.floatingLabelText,
+        value: props.value ?? '',
+        onChange: e => props.onChange({ name: e.target.value }),
+      }),
+  }
+})
+vi.mock('../../PeriodSelector', async () => {
+  const { createElement } = await import('react')
+  return {
+    default: props =>
+      createElement('input', {
+        'data-testid': 'period-selector',
+        'aria-label': props.label,
+        value: '',
+        readOnly: true,
+      }),
+  }
 })
 
 const LEGACY_TESTIDS = [
@@ -119,7 +133,7 @@ describe('ReportParameterForm', () => {
     useAuthState.mockReturnValue(authState)
   })
 
-  const renderForm = ({ parameters = GLOBAL_FILTER_PARAMETERS, values = {}, onChange = jest.fn() } = {}) => {
+  const renderForm = ({ parameters = GLOBAL_FILTER_PARAMETERS, values = {}, onChange = vi.fn() } = {}) => {
     render(<ReportParameterForm parameters={parameters} values={values} onChange={onChange} />)
     return onChange
   }
@@ -256,7 +270,7 @@ describe('ReportParameterForm required UX', () => {
   })
 
   it('reports validity: false while a required field is empty, true once filled', () => {
-    const onValidityChange = jest.fn()
+    const onValidityChange = vi.fn()
     render(<StatefulForm parameters={requiredText} onValidityChange={onValidityChange} />)
     expect(onValidityChange).toHaveBeenLastCalledWith(false)
     fireEvent.change(screen.getByLabelText('Comment *'), { target: { value: 'hello' } })
@@ -264,7 +278,7 @@ describe('ReportParameterForm required UX', () => {
   })
 
   it('reports validity true for the global filter set (nothing required)', () => {
-    const onValidityChange = jest.fn()
+    const onValidityChange = vi.fn()
     render(<StatefulForm parameters={GLOBAL_FILTER_PARAMETERS} onValidityChange={onValidityChange} />)
     expect(onValidityChange).toHaveBeenLastCalledWith(true)
   })
@@ -272,7 +286,7 @@ describe('ReportParameterForm required UX', () => {
   it('never blocks submit on a permission-hidden required field', () => {
     useAuthState.mockReturnValue({ countryId: 1, userPermissions: [] })
     const parameters = [{ name: 'siteName', type: 'site', required: true, permission: 'site:view' }]
-    const onValidityChange = jest.fn()
+    const onValidityChange = vi.fn()
     render(<StatefulForm parameters={parameters} onValidityChange={onValidityChange} />)
     expect(screen.queryByTestId('site-select')).not.toBeInTheDocument()
     expect(onValidityChange).toHaveBeenLastCalledWith(true)
@@ -280,7 +294,7 @@ describe('ReportParameterForm required UX', () => {
 
   it('accepts one bound as satisfying a required dateRange', () => {
     const parameters = [{ name: 'dateRange', type: 'dateRange', required: true }]
-    const onValidityChange = jest.fn()
+    const onValidityChange = vi.fn()
     render(
       <StatefulForm
         parameters={parameters}
@@ -293,7 +307,7 @@ describe('ReportParameterForm required UX', () => {
 
   it('reports validity false for a required dateRange with both bounds missing', () => {
     const parameters = [{ name: 'dateRange', type: 'dateRange', required: true }]
-    const onValidityChange = jest.fn()
+    const onValidityChange = vi.fn()
     render(<StatefulForm parameters={parameters} onValidityChange={onValidityChange} />)
     expect(onValidityChange).toHaveBeenLastCalledWith(false)
   })

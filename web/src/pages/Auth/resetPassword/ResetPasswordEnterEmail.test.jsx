@@ -1,63 +1,58 @@
 import React from 'react'
-import { Button, TextField } from '@mui/material'
-import { shallow } from 'enzyme'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import noop from 'lodash/noop'
 import messages from './messages'
-import { validate, ResetPasswordEnterEmail } from './ResetPasswordEnterEmail'
+import ResetPasswordEnterEmail, { validate } from './ResetPasswordEnterEmail'
 
 describe('ResetPasswordEnterEmail module', () => {
   const intl = { formatMessage: message => message.defaultMessage }
   const props = {
     intl,
     onShowAdminHelpDialog: noop,
-    values: {},
-    meta: {
-      emailAddress: {},
-    },
-    onEmailAddressChange: noop,
-    handleSubmit: noop,
+    onSubmit: noop,
+  }
+
+  const renderForm = () => {
+    const { container } = render(<ResetPasswordEnterEmail {...props} />)
+
+    return {
+      emailAddressField: container.querySelector('input[name="emailAddress"]'),
+      submitButton: screen.getByRole('button', { name: messages.next.defaultMessage }),
+    }
   }
 
   describe('ResetPasswordEnterEmail component', () => {
-    it('should shallow render without crash', () => {
-      shallow(<ResetPasswordEnterEmail {...props} form={{}} />)
+    it('should disable the submit button while the form is pristine', () => {
+      const { submitButton } = renderForm()
+
+      expect(submitButton.disabled).toBe(true)
     })
 
-    it('should disable the submit button when the form is pristine, invalid or submitting', () => {
-      let wrapper = shallow(
-        <ResetPasswordEnterEmail {...props} form={{ pristine: true, valid: false, submitting: false }} />
-      )
-      expect(wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')).toBeTruthy()
+    it('should keep the submit button disabled while the email address is invalid', async () => {
+      const { emailAddressField, submitButton } = renderForm()
 
-      wrapper = shallow(
-        <ResetPasswordEnterEmail {...props} form={{ pristine: false, valid: false, submitting: false }} />
-      )
-      expect(wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')).toBeTruthy()
+      fireEvent.change(emailAddressField, { target: { value: 'test' } })
 
-      wrapper = shallow(
-        <ResetPasswordEnterEmail {...props} form={{ pristine: false, valid: true, submitting: true }} />
-      )
-      expect(wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')).toBeTruthy()
+      await waitFor(() => expect(submitButton.disabled).toBe(true))
     })
 
-    it('should enable the submit button when the form is dirty, valid and not submitting', () => {
-      const wrapper = shallow(
-        <ResetPasswordEnterEmail {...props} form={{ pristine: false, valid: true, submitting: false }} />
-      )
+    it('should enable the submit button once a valid email address is entered', async () => {
+      const { emailAddressField, submitButton } = renderForm()
 
-      expect(wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')).toBeFalsy()
+      fireEvent.change(emailAddressField, { target: { value: 'test@example.com' } })
+
+      await waitFor(() => expect(submitButton.disabled).toBe(false))
     })
 
-    it('should show the error when the text field is touched and the email is invalid', () => {
-      const wrapper = shallow(<ResetPasswordEnterEmail {...props} form={{}} />)
-      expect(wrapper.find(TextField).prop('error')).toBeFalsy()
-      expect(wrapper.find(TextField).prop('helperText')).toBeFalsy()
+    it('should show the error when the text field is touched and the email is invalid', async () => {
+      const { emailAddressField } = renderForm()
 
-      wrapper.setProps({
-        meta: { emailAddress: { touched: true, error: 'error-message' } },
-      })
-      expect(wrapper.find(TextField).prop('error')).toBeTruthy()
-      expect(wrapper.find(TextField).prop('helperText')).toEqual('error-message')
+      expect(screen.queryByText(messages.invalidEmailAddress.defaultMessage)).toBeNull()
+
+      fireEvent.change(emailAddressField, { target: { value: 'test' } })
+      fireEvent.blur(emailAddressField)
+
+      await waitFor(() => expect(screen.getByText(messages.invalidEmailAddress.defaultMessage)).toBeTruthy())
     })
   })
 

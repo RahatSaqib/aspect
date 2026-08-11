@@ -1,42 +1,34 @@
-import { compose, withHandlers, pure } from 'recompose'
+import React from 'react'
 import TablePaginator from './shared/TablePaginator'
 
 export * from './shared/TablePaginator'
 
-const enhance = compose(
-  pure,
-  withHandlers({
-    onPageChange:
-      ({ navigate, location }) =>
-      nextPage => {
-        const searchParams = new URLSearchParams(location.search)
-        searchParams.set('pageAt', nextPage)
+const BrowseTablePaginator = ({ navigate, location, pageAt, pageSize, ...restProps }) => {
+  const gotoSearchParams = searchParams =>
+    navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
 
-        navigate(
-          {
-            ...location,
-            search: `?${searchParams.toString()}`,
-          },
-          { replace: true }
-        )
-      },
+  const onPageChange = nextPage => {
+    const searchParams = new URLSearchParams(location.search)
+    searchParams.set('pageAt', nextPage)
+    gotoSearchParams(searchParams)
+  }
 
-    onPageSizeChange:
-      ({ navigate, location, pageAt, pageSize }) =>
-      nextPageSize => {
-        const searchParams = new URLSearchParams(location.search)
-        searchParams.set('pageSize', nextPageSize)
-        searchParams.set('pageAt', Math.floor((pageAt * pageSize) / nextPageSize))
+  const onPageSizeChange = nextPageSize => {
+    const searchParams = new URLSearchParams(location.search)
+    searchParams.set('pageSize', nextPageSize)
+    searchParams.set('pageAt', Math.floor((pageAt * pageSize) / nextPageSize))
+    gotoSearchParams(searchParams)
+  }
 
-        navigate(
-          {
-            ...location,
-            search: `?${searchParams.toString()}`,
-          },
-          { replace: true }
-        )
-      },
-  })
-)
+  return (
+    <TablePaginator
+      {...restProps}
+      pageAt={pageAt}
+      pageSize={pageSize}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+    />
+  )
+}
 
-export default enhance(TablePaginator)
+export default React.memo(BrowseTablePaginator)

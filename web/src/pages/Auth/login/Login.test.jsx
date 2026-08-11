@@ -1,8 +1,8 @@
 import React from 'react'
-import { Button, LinearProgress } from '@mui/material'
-import { shallow } from 'enzyme'
+import { render, screen } from '@testing-library/react'
 import noop from 'lodash/noop'
-import { createIntl } from 'react-intl'
+import { createIntl, IntlProvider } from 'react-intl'
+import { MemoryRouter } from 'react-router-dom'
 import { Login } from './Login'
 
 describe('Login component', () => {
@@ -22,23 +22,47 @@ describe('Login component', () => {
     },
   }
 
-  it('should shallow render without crash', () => {
-    shallow(<Login {...props} />)
+  const renderLogin = (overrides = {}) => {
+    const { rerender, ...rest } = render(
+      <IntlProvider locale="en">
+        <MemoryRouter>
+          <Login {...props} {...overrides} />
+        </MemoryRouter>
+      </IntlProvider>
+    )
+
+    return {
+      ...rest,
+      rerenderLogin: nextOverrides =>
+        rerender(
+          <IntlProvider locale="en">
+            <MemoryRouter>
+              <Login {...props} {...nextOverrides} />
+            </MemoryRouter>
+          </IntlProvider>
+        ),
+    }
+  }
+
+  it('should render without crash', () => {
+    renderLogin()
+
+    expect(screen.getByRole('button')).toBeInTheDocument()
   })
 
   it('should show `LinearProgress` when the form is submitting', () => {
-    const wrapper = shallow(<Login {...props} />)
-    expect(wrapper.find(LinearProgress)).toHaveLength(0)
+    const { rerenderLogin } = renderLogin()
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
 
-    wrapper.setProps({ form: { submitting: true } })
-    expect(wrapper.find(LinearProgress)).toHaveLength(1)
+    rerenderLogin({ form: { valid: true, submitting: true } })
+    expect(screen.getByRole('progressbar')).toBeInTheDocument()
   })
 
   it('should disable the button when the form is invalid', () => {
-    const wrapper = shallow(<Login {...props} />)
-    expect(wrapper.find(Button).prop('disabled')).toBeFalsy()
+    const { rerenderLogin } = renderLogin()
+    expect(screen.getByRole('button')).toBeEnabled()
 
-    wrapper.setProps({ form: { valid: false } })
-    expect(wrapper.find(Button).prop('disabled')).toBe(true)
+    rerenderLogin({ form: { valid: false, submitting: false } })
+    expect(screen.getByRole('button')).toBeDisabled()
   })
 })
