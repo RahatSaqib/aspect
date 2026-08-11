@@ -431,20 +431,29 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
   const { formatMessage } = useIntl()
   const { data: assays } = useAssayList()
   if (resultCategoryId && assays) {
-    const rcName = assays
-      .find(
-        a =>
-          (isArray(assayId) ? assayId.includes(a.id) : a.id === assayId) &&
-          a.resultCategories.find(rc => rc.id === resultCategoryId)
-      )
-      .resultCategories.find(rc => rc.id === resultCategoryId).i18nKey
+    const matchedAssay = assays.find(
+      a =>
+        (isArray(assayId) ? assayId.includes(a.id) : a.id === assayId) &&
+        a.resultCategories.find(rc => rc.id === resultCategoryId)
+    )
+    const matchedCategory = matchedAssay?.resultCategories.find(rc => rc.id === resultCategoryId)
+    const rcName = matchedCategory?.i18nKey
     // diseaseId here is used to fix filtering from HIV graph
-    const rcdName = (
-      (assays.find(i => i.diseaseId === diseaseId && i.hasResults) || { resultCategories: [] }).resultCategories.find(
-        el => el.id === resultCategoryId
-      ) || { i18nKey: '' }
-    ).i18nKey
-    const name = assayOverride ? `"${startCase(assayOverride)}"` : formatMessage(messages[assayId ? rcName : rcdName])
+    const diseaseCategory = (
+      assays.find(i => i.diseaseId === diseaseId && i.hasResults) || {
+        resultCategories: [],
+      }
+    ).resultCategories.find(el => el.id === resultCategoryId)
+    const fallbackCategory = assays.flatMap(a => a.resultCategories || []).find(rc => rc.id === resultCategoryId)
+    const rcdName = diseaseCategory?.i18nKey
+    const categoryName =
+      assayOverride ||
+      (rcName && messages[rcName] && formatMessage(messages[rcName])) ||
+      (rcdName && messages[rcdName] && formatMessage(messages[rcdName])) ||
+      fallbackCategory?.name ||
+      matchedCategory?.name ||
+      ''
+    const name = assayOverride ? `"${startCase(assayOverride)}"` : categoryName
 
     const label = formatMessage(messages.withResultCategory, { resultCategoryName: name })
 
