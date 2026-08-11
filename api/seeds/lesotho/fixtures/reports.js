@@ -26,7 +26,7 @@ const DeviceShortSummaryReport = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'device/serviceReportsLesotho/deviceShortSummaryReport',
+      moduleName: 'device/serviceReports/deviceShortSummaryReport',
       functionName: 'getAllDeviceReportData',
       query: {
         avoidStreaming: true,
