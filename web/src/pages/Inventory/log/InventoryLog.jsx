@@ -4,7 +4,6 @@ import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryLogFilter } from '../../../components'
 import BrowseEmptyList from '../../../components/BrowseEmptyList'
@@ -113,7 +112,7 @@ export const InventoryLogWithProps = ({
   ]
   const { data: items, total } = data || { data: null }
   const hasItems = items && items.length > 0
-  const { timezoneId } = useSelector(({ user }) => user)
+  const { timezoneId } = useAuthState()
   const validTimeZone = getTimezoneById(timezoneId)
   return (
     <>

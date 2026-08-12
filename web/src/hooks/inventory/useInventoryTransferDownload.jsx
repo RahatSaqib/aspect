@@ -1,4 +1,3 @@
-import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import {
@@ -8,6 +7,7 @@ import {
 } from '../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
+import stringifyQuery from '../../utils/utils/queryString'
 import { INVENTORY_KEY } from './inventoryKeys.js'
 
 const getDownload = async restParams => {
@@ -19,7 +19,7 @@ const getDownload = async restParams => {
     rest.maxDate = rest.maxDate.toISOString()
   }
 
-  return aspectFetch(`/inventory/transfer/export?${stringify({ ...rest, format: fileFormat })}`, {
+  return aspectFetch(`/inventory/transfer/export?${stringifyQuery({ ...rest, format: fileFormat })}`, {
     errorNotifications: {
       400: filterFieldsRejectedError(
         defineMessages({

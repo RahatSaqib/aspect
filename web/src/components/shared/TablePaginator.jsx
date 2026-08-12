@@ -3,7 +3,6 @@ import { Button } from '@mui/material'
 import min from 'lodash/min'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import { defineMessages, useIntl } from 'react-intl'
-import { compose, pure, withHandlers, withProps } from 'recompose'
 import styles from './TablePaginator.module.css'
 
 export const ALL_KEY = 'All'
@@ -41,116 +40,46 @@ const messages = defineMessages({
   },
 })
 
-const enhance = compose(
-  withProps(({ pageAt, pageSize, total, totalLoading, hasNextPageFromItems }) => {
-    // When total is loading, use hasNextPageFromItems to determine pagination
-    // Otherwise, use total count
-    const effectiveTotal = totalLoading ? undefined : total
-    const effectiveHasNextPage = totalLoading
-      ? hasNextPageFromItems ?? false
-      : effectiveTotal
-      ? effectiveTotal > pageSize * (1 + pageAt)
-      : false
-    const effectiveHasLastPage = totalLoading
-      ? false
-      : effectiveTotal
-      ? effectiveTotal > pageSize * (1 + pageAt)
-      : false
-
-    return {
-      hasFirstPage: pageAt !== 0,
-      hasPreviousPage: pageAt > 0,
-      firstItemIndex: 1 + pageSize * pageAt,
-      lastItemIndex: effectiveTotal ? min([effectiveTotal, pageSize * (1 + pageAt)]) : pageSize * (1 + pageAt),
-      hasNextPage: effectiveHasNextPage,
-      hasLastPage: effectiveHasLastPage,
-      totalLoading,
-      effectiveTotal,
-    }
-  }),
-  withHandlers({
-    onFirstClick:
-      ({ onPageChange }) =>
-      () => {
-        onPageChange(0)
-      },
-
-    onPreviousClick:
-      ({ pageAt, onPageChange }) =>
-      () => {
-        onPageChange(pageAt - 1)
-      },
-
-    onNextClick:
-      ({ pageAt, onPageChange }) =>
-      () => {
-        onPageChange(pageAt + 1)
-      },
-
-    onLastClick:
-      ({ total, effectiveTotal, pageSize, onPageChange }) =>
-      () => {
-        const totalToUse = effectiveTotal || total
-        if (!totalToUse) return
-        const lastPage = totalToUse % pageSize === 0 ? totalToUse / pageSize - 1 : totalToUse / pageSize
-        onPageChange(Math.floor(lastPage))
-      },
-
-    onPageSizeChange10:
-      ({ onPageSizeChange }) =>
-      () => {
-        onPageSizeChange(10)
-      },
-
-    onPageSizeChange25:
-      ({ onPageSizeChange }) =>
-      () => {
-        onPageSizeChange(25)
-      },
-
-    onPageSizeChange50:
-      ({ onPageSizeChange }) =>
-      () => {
-        onPageSizeChange(50)
-      },
-
-    onPageSizeChange100:
-      ({ onPageSizeChange }) =>
-      () => {
-        onPageSizeChange(100)
-      },
-
-    onPageSizeChangeAll:
-      ({ onPageSizeChange, total, effectiveTotal }) =>
-      () => {
-        onPageSizeChange(effectiveTotal || total || 'all')
-      },
-  }),
-  pure
-)
 const TablePaginator = ({
   timedMessageUsed = false,
   paginatorStatus,
   paginatorStatusLoading,
   className,
-  onFirstClick,
-  onPreviousClick,
-  onNextClick,
-  onLastClick,
-  hasFirstPage,
-  hasPreviousPage,
-  firstItemIndex,
-  lastItemIndex,
-  hasNextPage,
-  hasLastPage,
+  pageAt,
+  pageSize,
   total,
   totalLoading,
-  effectiveTotal,
-  pageSize,
+  hasNextPageFromItems,
+  onPageChange,
+  onPageSizeChange,
   pageSizeButtonKeys = PAGE_SIZE_BUTTON_KEYS,
-  ...restProps
 }) => {
   const { formatMessage } = useIntl()
+
+  // While the total is loading, pagination relies on the items themselves
+  const effectiveTotal = totalLoading ? undefined : total
+  const hasNextPage = totalLoading
+    ? hasNextPageFromItems ?? false
+    : effectiveTotal
+    ? effectiveTotal > pageSize * (1 + pageAt)
+    : false
+  const hasLastPage = totalLoading ? false : hasNextPage
+  const hasFirstPage = pageAt !== 0
+  const hasPreviousPage = pageAt > 0
+  const firstItemIndex = 1 + pageSize * pageAt
+  const lastItemIndex = effectiveTotal ? min([effectiveTotal, pageSize * (1 + pageAt)]) : pageSize * (1 + pageAt)
+
+  const onFirstClick = () => onPageChange(0)
+  const onPreviousClick = () => onPageChange(pageAt - 1)
+  const onNextClick = () => onPageChange(pageAt + 1)
+  const onLastClick = () => {
+    const totalToUse = effectiveTotal || total
+    if (!totalToUse) return
+    const lastPage = totalToUse % pageSize === 0 ? totalToUse / pageSize - 1 : totalToUse / pageSize
+    onPageChange(Math.floor(lastPage))
+  }
+  const onPageSizeButtonClick = key => () => onPageSizeChange(key === ALL_KEY ? effectiveTotal || total || 'all' : key)
+
   const statusMessage = totalLoading && paginatorStatusLoading ? paginatorStatusLoading : paginatorStatus
   const statusValues = totalLoading
     ? { firstItemIndex, lastItemIndex }
@@ -217,7 +146,7 @@ const TablePaginator = ({
               root: styles.Right__Button,
             }}
             className={`${(key !== ALL_KEY ? key === pageSize : pageSize === total) ? 'selected' : ''}`}
-            onClick={restProps[`onPageSizeChange${key}`]}
+            onClick={onPageSizeButtonClick(key)}
             variant="contained"
             color="primary"
           >
@@ -229,4 +158,4 @@ const TablePaginator = ({
   )
 }
 
-export default enhance(TablePaginator)
+export default React.memo(TablePaginator)

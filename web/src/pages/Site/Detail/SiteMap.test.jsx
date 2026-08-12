@@ -1,5 +1,5 @@
 import React from 'react'
-import { shallow } from 'enzyme'
+import { render } from '@testing-library/react'
 import SiteMap from './SiteMap'
 
 describe('SiteMap Component', () => {
@@ -10,7 +10,9 @@ describe('SiteMap Component', () => {
     },
   }
 
-  it('should shallow render without crash', () => {
-    shallow(<SiteMap {...props} />)
+  it('should render without crash', () => {
+    const { container } = render(<SiteMap {...props} />)
+
+    expect(container.firstChild).toBeInTheDocument()
   })
 })

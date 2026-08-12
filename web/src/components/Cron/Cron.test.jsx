@@ -1,7 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom'
 import I18nProvider from '../../providers/I18nProvider'
 import Cron from './Cron'
 
@@ -26,12 +25,13 @@ describe('Cron Component', () => {
 
   describe('Weekly', () => {
     it('Should return default cron expression for daily', async () => {
+      const user = userEvent.setup()
       render(
         <I18nProvider>
           <Cron {...props} />
         </I18nProvider>
       )
-      await userEvent.click(screen.getByText('Weekly'))
+      await user.click(screen.getByText('Weekly'))
       expect(screen.getByText('Monday')).toBeInTheDocument()
       expect(screen.getByText('Saturday')).toBeInTheDocument()
     })
@@ -39,42 +39,46 @@ describe('Cron Component', () => {
 
   describe('Quarterly', () => {
     it('Should return default cron expression for Quarterly', async () => {
+      const user = userEvent.setup()
       render(
         <I18nProvider>
           <Cron {...props} />
         </I18nProvider>
       )
-      await userEvent.click(screen.getByText('Quarterly'))
+      await user.click(screen.getByText('Quarterly'))
     })
   })
   describe('Monthly', () => {
     it('Should return default cron expression for Day of Every Months(s)', async () => {
+      const user = userEvent.setup()
       render(
         <I18nProvider>
           <Cron {...props} />
         </I18nProvider>
       )
-      await userEvent.click(screen.getByText('Monthly'))
+      await user.click(screen.getByText('Monthly'))
     })
   })
   describe('Daily', () => {
     it('Should return default cron expression for Every Day(s)', async () => {
+      const user = userEvent.setup()
       render(
         <I18nProvider>
           <Cron {...props} />
         </I18nProvider>
       )
-      await userEvent.click(screen.getByText('Every week day'))
+      await user.click(screen.getByText('Every week day'))
     })
     it('Should return default cron expression for Every week day', async () => {
+      const user = userEvent.setup()
       render(
         <I18nProvider>
           <h1>lalala</h1>
           <Cron {...props} />
         </I18nProvider>
       )
-      await userEvent.click(screen.getByText('Daily'))
-      await userEvent.click(screen.getByText('Every week day'))
+      await user.click(screen.getByText('Daily'))
+      await user.click(screen.getByText('Every week day'))
     })
   })
 })

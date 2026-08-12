@@ -9,7 +9,7 @@ import messages from '../../messages/allMessages'
 import { getAspectDisplayPreferences } from '../LocalStorage'
 import { dayOptions, weekOptions, monthOptions, quarterOptions, yearOptions, customYearOptions } from './periodOptions'
 
-const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
+const { dayMonthFormat } = getAspectDisplayPreferences()
 
 function PeriodSelector({
   minDate,

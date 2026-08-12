@@ -48,8 +48,8 @@ const buildWidgetParams = (link, linkParams) => {
 
   for (const [key, value] of Object.entries(omit(inParams, ['permissions']))) {
     if (key === 'dateRange') {
-      for (const [key, value] of Object.entries(buildDateRange(value))) {
-        params[key] = value
+      for (const [dateKey, dateValue] of Object.entries(buildDateRange(value))) {
+        params[dateKey] = dateValue
       }
     } else {
       params[key] = value

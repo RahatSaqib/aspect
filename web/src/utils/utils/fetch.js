@@ -5,8 +5,8 @@ import set from 'lodash/set'
 import trim from 'lodash/trim'
 import { defineMessages } from 'react-intl'
 import config from '../../config'
-import { showError } from '../../store/AppNotificationRedux'
-import { expiredTokenLogout } from '../../store/AuthRedux'
+import { expiredTokenLogout, getAuthState } from '../../store/authStore'
+import { notifyError } from '../notifications'
 
 export const aspectFetch = createFetch(
   base(config.aspectApi),
@@ -17,7 +17,8 @@ export const aspectFetch = createFetch(
 )
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
-  const token = localStorage.getItem('asAccess')
+  // the store holds the token immediately; localStorage only covers a full page reload
+  const token = getAuthState().access || localStorage.getItem('asAccess')
   if (token) {
     set(options, 'headers.Authorization', `Bearer ${token}`)
   }
@@ -83,11 +84,10 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
       () => Promise.reject(new ConnectionError('Connection Error'))
     )
     .catch(err => {
-      const store = require('../../store/store').default
       const customErrorNotifications = get(options, `errorNotifications.customErrorNotifications.${err.statusCode}`)
       if (customErrorNotifications && typeof customErrorNotifications === 'function') {
         const customErrorMessage = customErrorNotifications(err.data.extraData)
-        store.dispatch(showError(customErrorMessage, err))
+        notifyError(customErrorMessage, err)
         return Promise.reject(err)
       }
       let errorNotification = get(
@@ -122,7 +122,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         // If the statusCode is 401 unauthorized the system should redirect the user to the logout screen
         // For all other types of errors the user should be shown an error message.
         if (err.statusCode === 401 && input !== `${config.aspectApi}/auth`) {
-          store.dispatch(expiredTokenLogout())
+          expiredTokenLogout()
         } else {
           let customErrorNotification = null
           if (typeof errorNotification === 'function') {
@@ -130,7 +130,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
             if (!customErrorNotification) return Promise.reject(err)
           }
           // Maybe dont dispatch always the message? in case we need to do something else with the response.
-          store.dispatch(showError(customErrorNotification || errorNotification, err))
+          notifyError(customErrorNotification || errorNotification, err)
         }
       }
       return Promise.reject(err)

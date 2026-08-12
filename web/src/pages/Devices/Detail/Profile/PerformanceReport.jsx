@@ -34,8 +34,8 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
     if (performanceReport) {
       const utilization = []
       const error = []
-      const { data, utilizationRateAvg, errorRateAvg } = performanceReport.toJS()
-      data.shift()
+      const { utilizationRateAvg, errorRateAvg } = performanceReport
+      const data = performanceReport.data.slice(1)
 
       data.forEach(i => {
         const date = new Date(i.monthTested)

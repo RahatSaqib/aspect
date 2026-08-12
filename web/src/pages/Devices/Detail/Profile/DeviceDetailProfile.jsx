@@ -1,13 +1,11 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useIntl } from 'react-intl'
-import { connect } from 'react-redux'
 import { toast } from 'react-toastify'
-import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import DeviceResultHistory from '../../../../components/DeviceResultHistory/DeviceResultHistory'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
@@ -19,13 +17,6 @@ import usePermissions from '../../../../hooks/person/usePermissions'
 import useAuthState from '../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../../hooks/useFilterValues'
-import {
-  exportDeviceLogs,
-  hideDialog,
-  showDialog,
-  updateDeviceMaintenance,
-  updateDeviceMaintenanceStatus,
-} from '../../../../store/DeviceRedux'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import {
   composeSanitizer,
@@ -33,6 +24,7 @@ import {
   makeSortPageSelector,
 } from '../../../../utils/selectors/searchParams'
 import { formatRelative } from '../../../../utils/utils/dateFormat'
+import { exportDeviceLogs } from '../../DeviceQueries'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
@@ -66,77 +58,10 @@ const filtersFromLocation = composeSanitizer(
   searchSanitizer
 )
 
-const enhance = compose(
-  connect(
-    state => {
-      const { activeDialog, performanceReport } = state.device
-      const { culture } = state.user
-      return {
-        activeDialog,
-        performanceReport,
-        culture,
-      }
-    },
-    {
-      showDialog,
-      hideDialog,
-      updateDeviceMaintenanceStatus,
-      updateDeviceMaintenance,
-      exportDeviceLogs,
-    }
-  ),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'endedOn',
-      sortDir: 'desc',
-    })
-  ),
-  withHandlers({
-    onExportDeviceLogsClick:
-      ({ device, location, exportDeviceLogs }) =>
-      () => {
-        const { value: filtersParams } = filtersFromLocation(location)
-        filtersParams.set('deviceId', device.get('id'))
-        exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
-      },
-    onShowCalibrationDialog:
-      ({ showDialog, device }) =>
-      () => {
-        showDialog('calibration', device)
-      },
-    onShowMaintenanceDialog:
-      ({ showDialog, device }) =>
-      () => {
-        showDialog('maintenance', device)
-      },
-    onShowWarrantyDialog:
-      ({ showDialog, device }) =>
-      () => {
-        showDialog('warranty', device)
-      },
-    onHideDialog:
-      ({ hideDialog }) =>
-      () =>
-        hideDialog(),
-  }),
-  lifecycle({
-    UNSAFE_componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(this.props.location)
-      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
-
-        this.props.navigate(
-          {
-            ...this.props.location,
-            search: `?${searchParams.toString()}`,
-          },
-          { replace: true }
-        )
-      }
-    },
-  })
-)
+const sortPageSelector = makeSortPageSelector({
+  sortCol: 'endedOn',
+  sortDir: 'desc',
+})
 
 const SectionDivider = ({ label }) => (
   <div className={styles.sectionDivider}>
@@ -153,20 +78,9 @@ const DeviceDetailProfile = ({
   disabled,
   canExportDeviceLogs,
   devicePerformance,
-  // --- injected by recompose ---
-  sortCol,
-  sortDir,
-  pageAt,
-  pageSize,
-  activeDialog,
-  onShowMaintenanceDialog,
-  onShowCalibrationDialog,
-  onShowWarrantyDialog,
-  onHideDialog,
   onMaintenanceSubmit,
   onCalibrationSubmit,
   onWarrantySubmit,
-  onExportDeviceLogsClick,
   deviceTags,
 }) => {
   const deviceListFilter = useFilterValues('/browse/device/list')
@@ -174,11 +88,32 @@ const DeviceDetailProfile = ({
   const { checkPermission } = usePermissions()
   const [decommissionDialogOpen, setDecommissionDialogOpen] = useState(false)
   const [reactivateDialogOpen, setReactivateDialogOpen] = useState(false)
+  const [activeDialog, setActiveDialog] = useState(null)
+  const { sortCol, sortDir, pageAt, pageSize } = sortPageSelector({ location })
+
+  useEffect(() => {
+    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
+    if (sanitized || filtersSanitized) {
+      searchParams.set('filters', filtersParams)
+
+      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
+    }
+  }, [location, navigate])
+
+  const hideDialog = () => setActiveDialog(null)
+  const submitAndHideDialog = onSubmit => values => onSubmit(values).finally(hideDialog)
+
+  const onExportDeviceLogsClick = () => {
+    const { value: filtersParams } = filtersFromLocation(location)
+    filtersParams.set('deviceId', device.id)
+    exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
+  }
   // Any user who can edit devices can decommission and reactivate them.
   const canDecommission = checkPermission(['device:edit'])
-  const isApproved = device.get('approvalToken') === 'approved'
-  const isDecommissioned = device.get('approvalToken') === 'decommissioned'
-  const { data: deploymentsData } = useDeployments(device.get('id'))
+  const isApproved = device.approvalToken === 'approved'
+  const isDecommissioned = device.approvalToken === 'decommissioned'
+  const { data: deploymentsData } = useDeployments(device.id)
   const hasDeployments = (deploymentsData?.deployments ?? []).length > 0
   // Decommission only when the device is approved (active) and currently has deployments.
   const canDecommissionDevice = canDecommission && isApproved && hasDeployments
@@ -186,7 +121,7 @@ const DeviceDetailProfile = ({
   const canReactivateDevice = canDecommission && isDecommissioned && hasDeployments
   const showDecommissionButton = canDecommissionDevice
   const showReactivateButton = canReactivateDevice
-  const isGeneXpertDevice = device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID
+  const isGeneXpertDevice = device.deviceType?.externalId === CONSTS.GENEXPERT_EXTERNAL_ID
   const canViewDakList = isGeneXpertDevice && checkPermission(['browse', '+deviceApiKey'])
   const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
   const {
@@ -194,26 +129,24 @@ const DeviceDetailProfile = ({
     displayPreferences: { utilizationRateThreshold, errorRateThreshold },
   } = useAuthState()
 
-  const dailyCapacity = device.get('dailyCapacity')
-  const resultCountThisMonth = device.get('resultCountThisMonth')
-  const errorCountThisMonth = device.get('errorCountThisMonth')
-  const utilizationRateThisMonth = device.get('utilizationRateThisMonth')
-  const errorRateThisMonth = device.get('errorRateThisMonth')
-  const calibrationNotes = device.get('calibrationNotes')
-  const warrantyNotes = device.get('warrantyNotes')
+  const { dailyCapacity } = device
+  const { resultCountThisMonth } = device
+  const { errorCountThisMonth } = device
+  const { utilizationRateThisMonth } = device
+  const { errorRateThisMonth } = device
+  const { calibrationNotes } = device
+  const { warrantyNotes } = device
 
   const maintenanceStatusNotes =
-    !device.get('maintenanceStatusNotes') || device.get('maintenanceStatusNotes') === ''
-      ? null
-      : device.get('maintenanceStatusNotes')
+    !device.maintenanceStatusNotes || device.maintenanceStatusNotes === '' ? null : device.maintenanceStatusNotes
 
-  const maintenanceStatusText = device.get('maintenanceStatusI18nKey')
-    ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
+  const maintenanceStatusText = device.maintenanceStatusI18nKey
+    ? formatMessage(messages[device.maintenanceStatusI18nKey])
     : formatMessage(messages.undefinedValue)
 
   // convert 0/1 numbers of maintenanceStatusActive and maintenanceStatusManuallySet to bool
   const isMaintenanceStatusChangeDisabled = Boolean(
-    device.get('maintenanceStatusActive') && !device.get('maintenanceStatusManuallySet')
+    device.maintenanceStatusActive && !device.maintenanceStatusManuallySet
   )
 
   const formatMaintenanceDate = date => (date ? formatDate(date) : formatMessage(messages.undefinedValue))
@@ -227,12 +160,8 @@ const DeviceDetailProfile = ({
             <SectionDivider label={formatMessage(messages.sectionOverview)} />
             <Summary
               title={formatMessage(messages.site)}
-              description={device.get('siteName') ? device.get('siteName') : formatMessage(messages.undeployed)}
-              to={
-                device.get('siteName') && device.get('siteId')
-                  ? () => navigate(`/browse/site/${device.get('siteId')}`)
-                  : undefined
-              }
+              description={device.siteName ? device.siteName : formatMessage(messages.undeployed)}
+              to={device.siteName && device.siteId ? () => navigate(`/browse/site/${device.siteId}`) : undefined}
             />
             <Summary
               title={
@@ -247,12 +176,9 @@ const DeviceDetailProfile = ({
                   )}
                 </span>
               }
-              description={device.getIn(['deviceType', 'name'])}
+              description={device.deviceType?.name}
               to={() => {
-                addFilter(
-                  { ...deviceListFilter, deviceTypeId: device.getIn(['deviceType', 'id']) },
-                  '/browse/device/list'
-                )
+                addFilter({ ...deviceListFilter, deviceTypeId: device.deviceType?.id }, '/browse/device/list')
                 navigate('/browse/device/list')
               }}
             />
@@ -300,32 +226,29 @@ const DeviceDetailProfile = ({
                     ))}
                 </span>
               }
-              description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
+              description={formatMessage(messages[device.approvalStatusI18nKey])}
             />
             <Summary
               title={formatMessage(messages.connectivity)}
               description={formatMessage(messages.lastSeen, {
-                lastSeen: formatRelative(device.get('lastPingOn'), formatRelativeTime),
+                lastSeen: formatRelative(device.lastPingOn, formatRelativeTime),
               })}
             />
-            <Summary title={formatMessage(messages.customNamePart)} description={device.get('customNamePart')} />
+            <Summary title={formatMessage(messages.customNamePart)} description={device.customNamePart} />
 
             {/* ── Capacity & Modules (GeneXpert only) ── */}
-            {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
+            {isGeneXpertDevice && (
               <>
                 <SectionDivider label={formatMessage(messages.sectionCapacityModules)} />
                 <Summary
                   title={formatMessage(messages.gx6cModulesCount)}
-                  description={device.get('gx6cModulesCount') ?? '0'}
+                  description={device.gx6cModulesCount ?? '0'}
                 />
                 <Summary
                   title={formatMessage(messages.gx10cModulesCount)}
-                  description={device.get('gx10cModulesCount') ?? '0'}
+                  description={device.gx10cModulesCount ?? '0'}
                 />
-                <Summary
-                  title={formatMessage(messages.moduleBayCapacity)}
-                  description={device.get('moduleBayCapacity')}
-                />
+                <Summary title={formatMessage(messages.moduleBayCapacity)} description={device.moduleBayCapacity} />
               </>
             )}
 
@@ -351,7 +274,11 @@ const DeviceDetailProfile = ({
                   <span>
                     {formatMessage(messages.maintenance)}
                     {!disabled && (
-                      <button type="button" className={styles.fieldAction} onClick={onShowMaintenanceDialog}>
+                      <button
+                        type="button"
+                        className={styles.fieldAction}
+                        onClick={() => setActiveDialog('maintenance')}
+                      >
                         ({formatMessage(messages.buttonChange)})
                       </button>
                     )}
@@ -376,7 +303,7 @@ const DeviceDetailProfile = ({
                 <span>
                   {formatMessage(messages.calibration)}
                   {!disabled && (
-                    <button type="button" className={styles.fieldAction} onClick={onShowCalibrationDialog}>
+                    <button type="button" className={styles.fieldAction} onClick={() => setActiveDialog('calibration')}>
                       ({formatMessage(messages.buttonAddRecord)})
                     </button>
                   )}
@@ -384,7 +311,7 @@ const DeviceDetailProfile = ({
               }
               description={
                 <Fragment>
-                  {formatMaintenanceDate(device.get('calibrationDate'))}
+                  {formatMaintenanceDate(device.calibrationDate)}
                   {calibrationNotes && (
                     <Tooltip title={calibrationNotes} placement="top" disableInteractive>
                       <IconButton aria-label={formatMessage(messages.notes)}>
@@ -400,7 +327,7 @@ const DeviceDetailProfile = ({
                 <span>
                   {formatMessage(messages.warranty)}
                   {!disabled && (
-                    <button type="button" className={styles.fieldAction} onClick={onShowWarrantyDialog}>
+                    <button type="button" className={styles.fieldAction} onClick={() => setActiveDialog('warranty')}>
                       ({formatMessage(messages.buttonUpdate)})
                     </button>
                   )}
@@ -408,7 +335,7 @@ const DeviceDetailProfile = ({
               }
               description={
                 <Fragment>
-                  {formatMaintenanceDate(device.get('warrantyDueDate'))}
+                  {formatMaintenanceDate(device.warrantyDueDate)}
                   {warrantyNotes && (
                     <Tooltip title={warrantyNotes} placement="bottom" disableInteractive>
                       <IconButton aria-label={formatMessage(messages.notes)}>
@@ -421,7 +348,7 @@ const DeviceDetailProfile = ({
             />
             <Summary
               title={formatMessage(messages.isDaisyChained)}
-              description={device.get('isDaisyChained') ? 'True' : 'False'}
+              description={device.isDaisyChained ? 'True' : 'False'}
             />
 
             {/* ── Usage ── */}
@@ -491,42 +418,39 @@ const DeviceDetailProfile = ({
                 )
               }
             />
-            <Summary title={formatMessage(messages.dailyCapacity)} description={device.get('dailyTestCapacity')} />
+            <Summary title={formatMessage(messages.dailyCapacity)} description={device.dailyTestCapacity} />
 
             {/* ── Technical Details ── */}
             <SectionDivider label={formatMessage(messages.sectionTechnicalDetails)} />
-            <Summary title={formatMessage(messages.serial)} description={device.get('serial')} />
-            <Summary title={formatMessage(messages.hostId)} description={device.get('hostId')} />
-            <Summary title={formatMessage(messages.instrumentModel)} description={device.get('instrumentModel')} />
-            <Summary title={formatMessage(messages.softwareType)} description={device.get('softwareType')} />
+            <Summary title={formatMessage(messages.serial)} description={device.serial} />
+            <Summary title={formatMessage(messages.hostId)} description={device.hostId} />
+            <Summary title={formatMessage(messages.instrumentModel)} description={device.instrumentModel} />
+            <Summary title={formatMessage(messages.softwareType)} description={device.softwareType} />
             <Summary
               title={formatMessage(messages.stickerInstrumentSerial)}
-              description={device.get('stickerInstrumentSerial')}
+              description={device.stickerInstrumentSerial}
             />
 
             {/* ── Additional Information ── */}
             <SectionDivider label={formatMessage(messages.sectionAdditionalInfo)} />
             <Summary
               title={formatMessage(messages.createdOn)}
-              description={formatRelative(device.get('createdOn'), formatRelativeTime)}
+              description={formatRelative(device.createdOn, formatRelativeTime)}
             />
-            <Summary title={formatMessage(messages.notes)} description={device.get('notes')} />
+            <Summary title={formatMessage(messages.notes)} description={device.notes} />
             <Summary title={formatMessage(messages.tags)} description={deviceTags.map(tag => tag.title).join(', ')} />
             <Summary
               title={formatMessage(messages.partner)}
-              description={device.get('implementingPartnerName') ?? formatMessage(messages.undefinedValue)}
+              description={device.implementingPartnerName ?? formatMessage(messages.undefinedValue)}
             />
             {canViewDakList && (
               <Summary
                 title={formatMessage(messages.deviceApiKey)}
-                description={device.get('maskedDeviceApiKey') ?? formatMessage(messages.undefinedValue)}
+                description={device.maskedDeviceApiKey ?? formatMessage(messages.undefinedValue)}
                 to={
-                  device.get('maskedDeviceApiKey')
+                  device.maskedDeviceApiKey
                     ? () => {
-                        addFilter(
-                          { deviceApiKeyToken: device.get('maskedDeviceApiKey').slice(-9) },
-                          '/browse/deviceApiKey'
-                        )
+                        addFilter({ deviceApiKeyToken: device.maskedDeviceApiKey.slice(-9) }, '/browse/deviceApiKey')
                         navigate('/browse/deviceApiKey')
                       }
                     : undefined
@@ -537,8 +461,7 @@ const DeviceDetailProfile = ({
               <Summary
                 title={formatMessage(messages.gxConnectInstallationId)}
                 description={
-                  device.getIn(['configurationData', 'gxConnectInstallationId']) ??
-                  formatMessage(messages.undefinedValue)
+                  device.configurationData?.gxConnectInstallationId ?? formatMessage(messages.undefinedValue)
                 }
               />
             )}
@@ -546,51 +469,49 @@ const DeviceDetailProfile = ({
         </Card>
         <CalibrationDialog
           device={device}
-          isDialogActive={activeDialog.get('name') === 'calibration'}
-          onCancel={onHideDialog}
-          onSubmit={onCalibrationSubmit}
+          isDialogActive={activeDialog === 'calibration'}
+          onCancel={hideDialog}
+          onSubmit={submitAndHideDialog(onCalibrationSubmit)}
         />
         <DeviceMaintenanceStatusDialog
           device={device}
-          isDialogActive={activeDialog.get('name') === 'maintenance'}
-          onCancel={onHideDialog}
-          onSubmit={onMaintenanceSubmit}
+          isDialogActive={activeDialog === 'maintenance'}
+          onCancel={hideDialog}
+          onSubmit={submitAndHideDialog(onMaintenanceSubmit)}
         />
         <WarrantyDialog
           device={device}
-          isDialogActive={activeDialog.get('name') === 'warranty'}
-          onCancel={onHideDialog}
-          onSubmit={onWarrantySubmit}
+          isDialogActive={activeDialog === 'warranty'}
+          onCancel={hideDialog}
+          onSubmit={submitAndHideDialog(onWarrantySubmit)}
         />
         {showDecommissionButton && (
           <DecommissionDeviceDialog
             open={decommissionDialogOpen}
             onClose={() => setDecommissionDialogOpen(false)}
-            deviceId={device.get('id')}
+            deviceId={device.id}
           />
         )}
         {showReactivateButton && (
           <ReactivateDeviceDialog
             open={reactivateDialogOpen}
             onClose={() => setReactivateDialogOpen(false)}
-            deviceId={device.get('id')}
+            deviceId={device.id}
           />
         )}
       </section>
 
       <DeploymentsSection
-        deviceId={device.get('id')}
-        firstResultDate={device.get('firstResultEndedOn')}
-        approvalToken={device.get('approvalToken')}
+        deviceId={device.id}
+        firstResultDate={device.firstResultEndedOn}
+        approvalToken={device.approvalToken}
         disabled={disabled}
-        deviceName={device.get('name')}
-        deviceCustomNamePart={device.get('customNamePart')}
+        deviceName={device.name}
+        deviceCustomNamePart={device.customNamePart}
       />
 
       <PermissionChecker permissions={['admin:edit']}>
-        {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID && (
-          <DeviceInstrumentsTable deviceId={device.get('id')} disabled={disabled} />
-        )}
+        {isGeneXpertDevice && <DeviceInstrumentsTable deviceId={device.id} disabled={disabled} />}
       </PermissionChecker>
       <PerformanceReport
         performanceReport={devicePerformance}
@@ -602,7 +523,7 @@ const DeviceDetailProfile = ({
       <PermissionChecker permissions={['result:view']}>
         <ErrorBoundary>
           <DeviceResultHistory
-            deviceId={device.get('id')}
+            deviceId={device.id}
             sortDir={sortDir}
             sortCol={sortCol}
             pageAt={pageAt}
@@ -621,19 +542,9 @@ DeviceDetailProfile.propTypes = {
   disabled: PropTypes.bool.isRequired,
   canExportDeviceLogs: PropTypes.bool,
   devicePerformance: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  sortCol: PropTypes.string.isRequired,
-  sortDir: PropTypes.string.isRequired,
-  pageAt: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  activeDialog: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  onShowMaintenanceDialog: PropTypes.func.isRequired,
-  onShowCalibrationDialog: PropTypes.func.isRequired,
-  onShowWarrantyDialog: PropTypes.func.isRequired,
-  onHideDialog: PropTypes.func.isRequired,
   onMaintenanceSubmit: PropTypes.func.isRequired,
   onCalibrationSubmit: PropTypes.func.isRequired,
   onWarrantySubmit: PropTypes.func.isRequired,
-  onExportDeviceLogsClick: PropTypes.func.isRequired,
   deviceTags: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string,
@@ -646,4 +557,4 @@ DeviceDetailProfile.defaultProps = {
   canExportDeviceLogs: false,
 }
 
-export default enhance(DeviceDetailProfile)
+export default DeviceDetailProfile

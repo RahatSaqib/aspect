@@ -1,10 +1,8 @@
-import React, { useState } from 'react'
-import flowRight from 'lodash/flowRight'
-import pick from 'lodash/pick'
+import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
-import recomposeForm from '../../../components/recomposeForm'
-import { withDateFormatProps } from '../../../utils/utils/dateFormat'
-import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
+import { getAspectDisplayPreferences } from '../../../components/LocalStorage'
+import { BaseDialog } from './BaseDialog'
+import useDialogForm from './useDialogForm'
 
 const messages = defineMessages({
   dialogTitle: {
@@ -21,7 +19,7 @@ const messages = defineMessages({
   },
 })
 
-function validate({ contextDate }, { formatMessage }) {
+function validate({ contextDate }, formatMessage) {
   const errors = {}
   if (!contextDate) {
     errors.contextDate = formatMessage(messages.warrantyDueDateIsRequired)
@@ -29,36 +27,34 @@ function validate({ contextDate }, { formatMessage }) {
   return errors
 }
 
-const DEFAULT_VALUES = pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
-
-const warrantyDialog = WrappedComponent => props => {
+const WarrantyDialog = ({ device, isDialogActive, onCancel, onSubmit }) => {
   const { formatMessage } = useIntl()
-  const { device } = props
-  const [values, setValues] = useState({
-    ...DEFAULT_VALUES,
-    contextDate: device.get('warrantyDueDate') || null,
-    notes: device.get('warrantyNotes') || '',
+  const { values, meta, form, setFieldValue, handleSubmit } = useDialogForm({
+    initialValues: {
+      contextDate: device.warrantyDueDate || null,
+      notes: device.warrantyNotes || '',
+    },
+    validate: values => validate(values, formatMessage),
+    onSubmit,
   })
 
-  const allProps = {
-    ...props,
-    labels: {
-      dialogTitle: formatMessage(messages.dialogTitle),
-      contextDate: formatMessage(messages.warrantyDueDate),
-    },
-    onChange: values => setValues(values),
-    values,
-  }
-
-  return <WrappedComponent {...allProps} />
+  return (
+    <BaseDialog
+      isDialogActive={isDialogActive}
+      onCancel={onCancel}
+      dateFormat={getAspectDisplayPreferences().dateFormat}
+      labels={{
+        dialogTitle: formatMessage(messages.dialogTitle),
+        contextDate: formatMessage(messages.warrantyDueDate),
+      }}
+      form={form}
+      values={values}
+      meta={meta}
+      onContextDateChange={setFieldValue('contextDate')}
+      onNotesChange={event => setFieldValue('notes')(event.target.value)}
+      handleSubmit={handleSubmit}
+    />
+  )
 }
 
-export default flowRight(
-  React.memo,
-  withDateFormatProps,
-  warrantyDialog,
-  recomposeForm({
-    fields: [sharedFields.contextDate, sharedFields.notes],
-    validate,
-  })
-)(BaseDialog)
+export default WarrantyDialog

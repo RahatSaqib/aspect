@@ -1,7 +1,7 @@
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { date, number, object, string } from 'yup'
-import { types } from '../../../store/InventoryRedux'
+import { adjustmentActions } from './actionTypes'
 import {
   newInventoryMessages,
   receiveInventoryMessages,
@@ -23,10 +23,10 @@ export function transformValues(values) {
 }
 
 export function getValidations(format, actionType, { requireExpirationDate, requireLotNumber, inventory }) {
-  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
-  const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
-  const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
-  const uiReceive = actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
+  const uiAdd = [adjustmentActions.NEW, adjustmentActions.ADD].includes(actionType)
+  const uiTransfer = actionType === adjustmentActions.TRANSFER
+  const uiRemove = actionType === adjustmentActions.REMOVE
+  const uiReceive = actionType === adjustmentActions.RECEIVE
 
   const skipValidation = uiTransfer || uiRemove || uiReceive
 
@@ -46,7 +46,7 @@ export function getValidations(format, actionType, { requireExpirationDate, requ
   })
 
   /**
-   * `inventory` is not set only for global add inventory (actionType === types.SHOW_NEW_INVENTORY_DIALOG)
+   * `inventory` is not set only for global add inventory (actionType === adjustmentActions.NEW)
    * so below for `consumable` field depends only on `toSiteId`
    */
   if (!inventory) {
@@ -67,7 +67,7 @@ export function getValidations(format, actionType, { requireExpirationDate, requ
     }
   }
 
-  if (actionType !== types.SHOW_RECEIVE_INVENTORY_DIALOG) {
+  if (actionType !== adjustmentActions.RECEIVE) {
     schema = schema.shape({
       expiresOn: date()
         .nullable()
@@ -90,7 +90,7 @@ export function getValidations(format, actionType, { requireExpirationDate, requ
     })
   }
 
-  if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
+  if (actionType !== adjustmentActions.REMOVE) {
     schema = schema.shape({
       toSiteId: string().required(format(validationMessages.siteRequired)),
     })
@@ -114,16 +114,16 @@ export function getValidations(format, actionType, { requireExpirationDate, requ
 export function getQuantityOnHand(actionType, inventory, values) {
   let nextQuantity
   switch (actionType) {
-    case types.SHOW_REMOVE_INVENTORY_DIALOG:
-    case types.SHOW_TRANSFER_INVENTORY_DIALOG: {
+    case adjustmentActions.REMOVE:
+    case adjustmentActions.TRANSFER: {
       const quantityOnHand = values.lotNumber || values.expiresOn ? inventory.quantityOnHand : 0
       nextQuantity = quantityOnHand - Number(values?.quantity ?? 0)
       break
     }
-    case types.SHOW_RECEIVE_INVENTORY_DIALOG:
+    case adjustmentActions.RECEIVE:
       nextQuantity = values?.quantity
       break
-    case types.SHOW_ADD_INVENTORY_DIALOG:
+    case adjustmentActions.ADD:
       // If the reason is 'physical_count', just return the entered quantity
       if (values?.reason?.externalId === 'physical_count') {
         nextQuantity = Number(values.quantity)
@@ -142,11 +142,11 @@ export function getQuantityOnHand(actionType, inventory, values) {
 
 export function getLabels(actionType) {
   switch (actionType) {
-    case types.SHOW_REMOVE_INVENTORY_DIALOG:
+    case adjustmentActions.REMOVE:
       return removeInventoryMessages
-    case types.SHOW_TRANSFER_INVENTORY_DIALOG:
+    case adjustmentActions.TRANSFER:
       return transformInventoryMessages
-    case types.SHOW_RECEIVE_INVENTORY_DIALOG:
+    case adjustmentActions.RECEIVE:
       return receiveInventoryMessages
     default:
       return newInventoryMessages
@@ -158,14 +158,12 @@ export function transformInitialValue(inventory, actionType) {
   if (inventory) {
     value = {
       ...value,
-      quantity: actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG ? inventory.quantityOnHand : '',
-      toSiteId: [types.SHOW_ADD_INVENTORY_DIALOG, types.SHOW_RECEIVE_INVENTORY_DIALOG].includes(actionType)
-        ? inventory.siteId
-        : undefined,
+      quantity: actionType === adjustmentActions.RECEIVE ? inventory.quantityOnHand : '',
+      toSiteId: [adjustmentActions.ADD, adjustmentActions.RECEIVE].includes(actionType) ? inventory.siteId : undefined,
       fromSiteId:
-        actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
+        actionType === adjustmentActions.RECEIVE
           ? inventory?.inTransitFromSiteId
-          : ![types.SHOW_ADD_INVENTORY_DIALOG, types.SHOW_NEW_INVENTORY_DIALOG].includes(actionType)
+          : ![adjustmentActions.ADD, adjustmentActions.NEW].includes(actionType)
           ? inventory.siteId
           : undefined,
       lotNumber: inventory?.lotNumber || '',

@@ -18,7 +18,7 @@ import subtractYears from 'date-fns/subYears'
 import messages from '../../messages/allMessages'
 import { getAspectDisplayPreferences } from '../LocalStorage'
 
-const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
+const { dayMonthFormat } = getAspectDisplayPreferences()
 
 // fixed values
 const today = new Date()

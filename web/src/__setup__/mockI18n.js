@@ -1,5 +1,7 @@
-jest.mock('react-intl', () => {
-  const reactIntl = jest.requireActual('react-intl')
+import { vi } from 'vitest'
+
+vi.mock('react-intl', async () => {
+  const reactIntl = await vi.importActual('react-intl')
   const intl = reactIntl.createIntl({
     locale: 'en',
   })

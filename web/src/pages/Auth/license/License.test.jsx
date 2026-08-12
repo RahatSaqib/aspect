@@ -1,5 +1,5 @@
 import React from 'react'
-import { shallow } from 'enzyme'
+import { render, screen } from '@testing-library/react'
 import noop from 'lodash/noop'
 import { createIntl } from 'react-intl'
 import { License } from './License'
@@ -12,15 +12,17 @@ describe('License component', () => {
     onAcceptClick: noop,
   }
 
-  it('should shallow render without crash', () => {
-    shallow(<License {...props} />)
+  it('should render without crash', () => {
+    render(<License {...props} />)
+
+    expect(screen.getAllByRole('button')).toHaveLength(2)
   })
 
   it('should render the license content with newlines replaced', () => {
-    const license = shallow(<License {...props} />)
+    const { container } = render(<License {...props} />)
+    const paragraphs = container.querySelectorAll('p')
 
-    expect(license.find('p').at(0).text()).toBe('License here!')
-
-    expect(license.find('p').at(1).text()).toBe('You better accept!')
+    expect(paragraphs[0]).toHaveTextContent('License here!')
+    expect(paragraphs[1]).toHaveTextContent('You better accept!')
   })
 })

@@ -1,0 +1,28 @@
+/*Long error descriptions scroll inside the toast instead of pushing it off screen*/
+.ErrorToast__Body {
+  align-items: flex-start;
+}
+
+.ErrorToast__Details {
+  max-height: 30vh;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+
+.ErrorToast__Details p {
+  margin: 4px 0 0 0;
+}
+
+.ErrorToast__CopyButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
