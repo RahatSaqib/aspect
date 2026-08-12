@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
 
 const { knex } = require('../db')
 const { randomToken } = require('../deviceApi/apiKey')
@@ -7,26 +8,19 @@ const { getUser } = require('../auth/service')
 async function generateDeviceApiKeys(request) {
   const { auth, payload } = request
 
-  let geographyId
-  if (payload.countryId) {
-    ;({ id: geographyId } = await knex('Geography as g')
-      .where({
-        'g.countryId': payload.countryId,
-        'g.stateId': null,
-        'g.lgaId': null,
-      })
-      .first('id'))
-  }
-
   const now = new Date()
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
+  const { partnerId } = currentlyLoggedInUser
+
+  if (!partnerId) {
+    return Boom.badRequest('Cannot find partner for user')
+  }
 
   const deviceApiKeys = _.times(payload.count).map(() => ({
     token: randomToken(),
     revoked: 0,
-    geographyId,
     siteId: payload.siteId,
-    partnerId: payload.partnerId,
+    partnerId,
     createdOn: now,
     createdBy: currentlyLoggedInUser.id,
     updatedOn: now,

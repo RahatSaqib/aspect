@@ -2,7 +2,13 @@ import { aspectFetch } from '../../utils/utils/fetch'
 import defaultErrors from './errors'
 import { buildEndpointAndQueryString } from './Helpers'
 
-const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customErrorNotifications = {} }) => {
+const fetchWrapperForQueries = ({
+  endpoint,
+  method = 'GET',
+  params = {},
+  customErrorNotifications = {},
+  showErrorNotifications = true,
+}) => {
   if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
   let body = null
 
@@ -22,7 +28,7 @@ const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customE
 
   return aspectFetch(endpoint, {
     method,
-    errorNotifications: { ...defaultErrors(endpoint), ...customErrorNotifications },
+    errorNotifications: showErrorNotifications ? { ...defaultErrors(endpoint), ...customErrorNotifications } : {},
     body,
   })
 }

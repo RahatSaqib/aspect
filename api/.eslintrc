@@ -1,11 +1,9 @@
 {
   "extends": ["airbnb-base", "plugin:prettier/recommended", "plugin:lodash/canonical", "plugin:security/recommended"],
   "plugins": ["prettier", "lodash", "no-only-tests", "mocha"],
-  "parser": "@babel/eslint-parser",
   "parserOptions": {
-    "ecmaVersion": 2019,
-    "sourceType": "module",
-    "requireConfigFile": false
+    "ecmaVersion": 2022,
+    "sourceType": "module"
   },
   "env": {
     "amd": true,

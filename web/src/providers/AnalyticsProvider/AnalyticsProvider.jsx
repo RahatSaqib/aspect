@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import ReactGA from 'react-ga4'
 import { useLocation } from 'react-router-dom'
+import config from '../../config'
 import useAuthState from '../../hooks/useAuthState'
 
-const MEASUREMENT_ID = process.env.googleAnalyticsMeasurementId
+const MEASUREMENT_ID = config.googleAnalyticsMeasurementId
 const PAGE_VIEW_EVENT = 'page_view'
 
 if (MEASUREMENT_ID) ReactGA.initialize(MEASUREMENT_ID)

@@ -1,16 +1,13 @@
-describe('aspectFetch module', () => {
-  jest.mock('../../components/LocalStorage')
-  const { aspectFetch } = require('./fetch')
+import { aspectFetch } from './fetch'
 
+describe('aspectFetch module', () => {
   describe('aspectFetch function', () => {
     describe('unknown API endpoint', () => {
-      it('should throw a ConnectionError', done => {
+      it('should throw a ConnectionError', async () => {
         fetch.mockRejectOnce(new Error('net::ERR_CONNECTION_REFUSED'))
-        aspectFetch('/auth').catch(err => {
-          expect(err.constructor.name).toBe('ConnectionError')
-          expect(err.statusCode).toBe(0)
-          done()
-        })
+        const err = await aspectFetch('/auth').catch(e => e)
+        expect(err.constructor.name).toBe('ConnectionError')
+        expect(err.statusCode).toBe(0)
       })
     })
   })

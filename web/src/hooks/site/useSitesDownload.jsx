@@ -1,4 +1,3 @@
-import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import { getFilters } from '../../components/utils'
@@ -9,12 +8,13 @@ import {
 } from '../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
+import stringifyQuery from '../../utils/utils/queryString'
 import { SITE_KEY } from './siteKeys.js'
 
 const getDownload = async (filtersParams, sortCol, sortDir, page, pageSize, fileFormat) => {
   const filters = getFilters(filtersParams)
   return aspectFetch(
-    `/site/export?${stringify({
+    `/site/export?${stringifyQuery({
       sortCol,
       sortDir,
       page,

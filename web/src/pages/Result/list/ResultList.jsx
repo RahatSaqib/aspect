@@ -8,7 +8,6 @@ import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
-import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { DetailHeader, ResultFilter, TableContainer } from '../../../components'
 import AspectExportListButton from '../../../components/AspectExportListButton'
@@ -17,6 +16,7 @@ import BrowseTablePaginator from '../../../components/BrowseTablePaginator'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { RESULT_LIST, RESULT_LIST_TOTAL } from '../../../components/QueryFetch/Result'
 import DataTableCard from '../../../components/shared/DataTableCard'
+import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
@@ -70,7 +70,7 @@ export default function ResultList() {
     prevFiltersRef.current = filters
   }, [filters, page, location, navigate])
 
-  const { timezoneId } = useSelector(({ user }) => user)
+  const { timezoneId } = useAuthState()
   const validTimeZone = getTimezoneById(timezoneId)
 
   const params = omitBy(omit({ sortCol, sortDir, page, size, ...filters }, ['assayOverride']), isNil)

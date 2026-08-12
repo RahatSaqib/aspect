@@ -29,63 +29,59 @@ const DeviceTableRow = ({ device, displayPreferences: { errorRateThreshold }, ..
   const { formatMessage, formatNumber, formatRelativeTime } = useIntl()
   return (
     <TableRow {...restProps} className={`TableRow ${restProps.className}`}>
-      <TableCell>{device.get('name')}</TableCell>
-      <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
+      <TableCell>{device.name}</TableCell>
+      <TableCell hiddenOn="lg">{device.siteName}</TableCell>
       <TableCell>
-        {device.get('approvalStatusI18nKey')
-          ? formatMessage(messages[device.get('approvalStatusI18nKey')])
+        {device.approvalStatusI18nKey
+          ? formatMessage(messages[device.approvalStatusI18nKey])
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell>
         <StatusIcon
-          title={formatMessage(messages[device.get('deviceStatus')])}
+          title={formatMessage(messages[device.deviceStatus])}
           status={
-            device.get('deviceStatus') === 'up'
+            device.deviceStatus === 'up'
               ? 'success'
-              : device.get('deviceStatus') === 'down'
+              : device.deviceStatus === 'down'
               ? 'error'
-              : device.get('deviceStatus') === 'unknown'
+              : device.deviceStatus === 'unknown'
               ? 'warning'
               : 'notRecorded'
           }
         />
       </TableCell>
       <TableCell>
-        {device.get('maintenanceStatusI18nKey')
-          ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
+        {device.maintenanceStatusI18nKey
+          ? formatMessage(messages[device.maintenanceStatusI18nKey])
           : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell>
-        {device.get('lastResultConductedOn')
-          ? formatRelative(device.get('lastResultConductedOn'), formatRelativeTime)
-          : null}
+        {device.lastResultConductedOn ? formatRelative(device.lastResultConductedOn, formatRelativeTime) : null}
       </TableCell>
       <TableCell>
         <StatusIcon
-          title={formatMessage(messages[device.get('connectorStatus')])}
-          status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
+          title={formatMessage(messages[device.connectorStatus])}
+          status={device.connectorStatus === 'online' ? 'success' : 'error'}
         />
       </TableCell>
-      <TableCell>
-        {device.get('lastPingInUtc') ? formatRelative(device.get('lastPingInUtc'), formatRelativeTime) : null}
+      <TableCell>{device.lastPingInUtc ? formatRelative(device.lastPingInUtc, formatRelativeTime) : null}</TableCell>
+      <TableCell hiddenOn="lg">
+        {device.connectorVersion ? device.connectorVersion : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell hiddenOn="lg">
-        {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
+        <Rate it={device.availability} messageId={messages.availabilityOfDays} />
       </TableCell>
       <TableCell hiddenOn="lg">
-        <Rate it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />
+        <Rate it={device.error} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
       </TableCell>
       <TableCell hiddenOn="lg">
-        <Rate it={device.get('error').toJS()} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
-      </TableCell>
-      <TableCell hiddenOn="lg">
-        {device.get('createdOnInUtc') ? formatRelative(device.get('createdOnInUtc'), formatRelativeTime) : null}
+        {device.createdOnInUtc ? formatRelative(device.createdOnInUtc, formatRelativeTime) : null}
       </TableCell>
       <TableCell hiddenOn="lg" numeric>
-        {formatNumber(device.get('resultCountLastMonth'))}
+        {formatNumber(device.resultCountLastMonth)}
       </TableCell>
       <TableCell hiddenOn="lg" numeric>
-        {formatNumber(device.get('resultCountThisMonth'))}
+        {formatNumber(device.resultCountThisMonth)}
       </TableCell>
     </TableRow>
   )

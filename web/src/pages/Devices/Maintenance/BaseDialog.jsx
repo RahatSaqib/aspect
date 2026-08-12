@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, InputLabel, TextField } from '@mui/material'
 import has from 'lodash/has'
-import identity from 'lodash/identity'
 import { defineMessages, useIntl } from 'react-intl'
 import AspectDialog from '../../../components/shared/AspectDialog'
 import DateTimeInput from '../../../components/shared/DateTimeInput'
@@ -13,22 +12,6 @@ const sharedMessages = defineMessages({
     defaultMessage: 'Notes',
   },
 })
-
-export const SHARED_DEFAULT_VALUES = {
-  contextDate: undefined,
-  notes: '',
-}
-
-export const sharedFields = {
-  contextDate: {
-    fieldName: 'contextDate',
-    valueFromChangeEvent: identity,
-  },
-  notes: {
-    fieldName: 'notes',
-    valueFromChangeEvent: it => it.target.value,
-  },
-}
 
 const messages = defineMessages({
   submit: {
@@ -44,7 +27,6 @@ const messages = defineMessages({
 export const BaseDialog = ({
   isDialogActive,
   onCancel,
-  // --- injected by recompose ---
   dateFormat,
   labels,
   form,

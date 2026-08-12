@@ -76,8 +76,6 @@ const routes = [
       validate: {
         payload: {
           count: Joi.number().description('Number of deviceApiKeys should be generated').required(),
-          countryId: Joi.number().allow('').description('Country ID'),
-          partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
         },
       },

@@ -39,8 +39,15 @@ function loadFixtureReports() {
 describe('report fixtures parameters lint', () => {
   const fixtureReports = loadFixtureReports()
 
-  it('loads every fixture report object (30 common + country files)', () => {
-    assert.isAtLeast(fixtureReports.length, 46)
+  // Asserted per source rather than as one total: the number of country `reports.js`
+  // files varies by deployment, so a magic total would fail on any build that ships a
+  // subset of them.
+  it('loads the common fixtures and at least one country file', () => {
+    const common = fixtureReports.filter(({ file }) => file === 'fixtures/Report.js')
+    const countries = fixtureReports.filter(({ file }) => file !== 'fixtures/Report.js')
+
+    assert.isAtLeast(common.length, 30)
+    assert.isNotEmpty(countries)
   })
 
   fixtureReports.forEach(({ file, exportKey, report }) => {

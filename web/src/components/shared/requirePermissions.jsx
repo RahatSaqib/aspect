@@ -1,11 +1,10 @@
-import React, { memo, useState, useEffect } from 'react'
+import React, { memo } from 'react'
 import constant from 'lodash/constant'
 import flowRight from 'lodash/flowRight'
 import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
-import noop from 'lodash/noop'
 import PropTypes from 'prop-types'
-import { useStore } from 'react-redux'
+import { useAuthStore } from '../../store/authStore'
 
 const MATCH_TYPE = {
   // exact match of the item in userPermissions (i.e. 'result:edit') and item in requestedPermissions (i.e. 'result:edit')
@@ -54,7 +53,7 @@ export function groupByPermissionTypes(permissions) {
 /**
  * Returns array of JSON objects with userPermissions found in array of requestedPermissions
  *
- * @param {Immutable.List(string)} userPermissions: from state.user.jwt.permissions
+ * @param {Array(string)} userPermissions: from state.user.jwt.permissions
  * @param {Array(string)} requestedPermissions: array of requested permissions
  * @return an Array of JSON items
  *   {
@@ -152,26 +151,7 @@ export function isPermittedUser(
 // props (overriddenPermissions, extraPermissions) as well.
 export const requirePermissions = outerProps => WrappedComponent => {
   const PermissionResolver = props => {
-    const store = useStore()
-    const [userPermissions, setUserPermissions] = useState(store.getState().user.jwt.permissions)
-
-    let unsubscribe = noop
-
-    useEffect(() => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      unsubscribe = store.subscribe(handleStoreChange)
-      return () => {
-        unsubscribe()
-        unsubscribe = noop
-      }
-    }, [])
-
-    const handleStoreChange = () => {
-      if (unsubscribe === noop) {
-        return
-      }
-      setUserPermissions(store.getState().user.jwt.permissions)
-    }
+    const { jwt } = useAuthStore()
 
     const { permissions: permissionsInConfig = [], ForbiddenComponent = constant(false) } = outerProps
     const { overriddenPermissions = [], extraPermissions = [], ...restProps } = props
@@ -180,7 +160,7 @@ export const requirePermissions = outerProps => WrappedComponent => {
       overriddenPermissions,
       extraPermissions
     )
-    const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
+    const isPermitted = isPermittedUser(jwt.permissions, permissionsByTypes)
 
     return isPermitted ? <WrappedComponent {...restProps} /> : <ForbiddenComponent {...restProps} />
   }

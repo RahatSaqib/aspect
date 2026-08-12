@@ -1,10 +1,13 @@
 import React from 'react'
-import { Button, TextField } from '@mui/material'
-import { compose, withState, pure } from 'recompose'
-import recomposeForm from '../../../components/recomposeForm'
+import { Button, CircularProgress, TextField } from '@mui/material'
+import { useFormik } from 'formik'
+import PropTypes from 'prop-types'
 import StrongPasswordInput from '../../../components/shared/StrongPasswordInput'
+import PropTypeOf from '../../../utils/types'
 import messages from './messages'
 import styles from './ResetPassword.module.css'
+
+const INITIAL_VALUES = { newPassword: '', confirmNewPassword: '' }
 
 function validate({ newPassword, confirmNewPassword }, { intl }) {
   const errors = {}
@@ -23,78 +26,71 @@ function validate({ newPassword, confirmNewPassword }, { intl }) {
   return errors
 }
 
-const enhance = compose(
-  pure,
-  withState('values', 'onChange', {
-    newPassword: '',
-    confirmNewPassword: '',
-  }),
-  recomposeForm({
-    fields: [
-      'newPassword',
-      {
-        fieldName: 'confirmNewPassword',
-        valueFromChangeEvent: it => it.target.value,
-      },
-    ],
-    validate,
+const ResetPasswordEnterPassword = ({ intl, action, onSubmit }) => {
+  const { values, errors, touched, dirty, isValid, isSubmitting, handleBlur, handleChange, handleSubmit } = useFormik({
+    initialValues: INITIAL_VALUES,
+    validate: formValues => validate(formValues, { intl }),
+    onSubmit,
   })
-)
 
-const ResetPasswordEnterPassword = ({
-  intl,
-  action,
-  form,
-  values,
-  meta,
-  onNewPasswordChange,
-  onConfirmNewPasswordChange,
-  handleSubmit,
-}) => (
-  <form onSubmit={handleSubmit} className={styles.Form}>
-    <div className={styles.Form__Content}>
-      <p>{intl.formatMessage(messages.enterNewPasswordContent)}</p>
-      <StrongPasswordInput
-        intl={intl}
-        input={{
-          value: values.newPassword,
-          onChange: onNewPasswordChange,
-        }}
-        meta={meta.newPassword}
-        textFieldProps={{
-          floatingLabelText: intl.formatMessage(messages.newPassword),
-          type: 'password',
-          name: 'newPassword',
-          maxLength: 100,
-          autoFocus: true,
-          fullWidth: true,
-        }}
-        popOverProps={{}}
-      />
-      <TextField
-        fullWidth
-        type="password"
-        name="confirmNewPassword"
-        label={intl.formatMessage(messages.confirmNewPassword)}
-        value={values.confirmNewPassword}
-        onChange={onConfirmNewPasswordChange}
-        error={meta.confirmNewPassword.touched && meta.confirmNewPassword.error}
-        helperText={meta.confirmNewPassword.touched && meta.confirmNewPassword.error}
-        inputProps={{ maxLength: 100 }}
-      />
-    </div>
-    <div className={styles.Form__ActionRow}>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        disabled={form.pristine || !form.valid || form.submitting}
-      >
-        {intl.formatMessage(messages.next)}
-      </Button>
-      {action}
-    </div>
-  </form>
-)
+  return (
+    <form onSubmit={handleSubmit} className={styles.Form}>
+      <div className={styles.Form__Content}>
+        <p className={styles.Form__Intro}>{intl.formatMessage(messages.enterNewPasswordContent)}</p>
+        <StrongPasswordInput
+          intl={intl}
+          input={{
+            value: values.newPassword,
+            onChange: handleChange,
+          }}
+          meta={{ touched: !!touched.newPassword, error: errors.newPassword }}
+          textFieldProps={{
+            floatingLabelText: intl.formatMessage(messages.newPassword),
+            type: 'password',
+            name: 'newPassword',
+            maxLength: 100,
+            autoFocus: true,
+            fullWidth: true,
+          }}
+          popOverProps={{}}
+        />
+        <TextField
+          fullWidth
+          type="password"
+          name="confirmNewPassword"
+          label={intl.formatMessage(messages.confirmNewPassword)}
+          value={values.confirmNewPassword}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={!!touched.confirmNewPassword && !!errors.confirmNewPassword}
+          helperText={touched.confirmNewPassword && errors.confirmNewPassword}
+          inputProps={{ maxLength: 100 }}
+        />
+      </div>
+      <div className={styles.Form__ActionRow}>
+        {action}
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={!dirty || !isValid || isSubmitting}
+          startIcon={isSubmitting ? <CircularProgress color="inherit" size={16} /> : null}
+        >
+          {intl.formatMessage(messages.next)}
+        </Button>
+      </div>
+    </form>
+  )
+}
 
-export default enhance(ResetPasswordEnterPassword)
+ResetPasswordEnterPassword.propTypes = {
+  intl: PropTypeOf.intl.isRequired,
+  action: PropTypes.node,
+  onSubmit: PropTypes.func.isRequired,
+}
+
+ResetPasswordEnterPassword.defaultProps = {
+  action: null,
+}
+
+export default ResetPasswordEnterPassword

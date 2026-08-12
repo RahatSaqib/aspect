@@ -4,12 +4,29 @@
 const google = {
   maps: {
     LatLngBounds: class {},
-    Marker: class {},
+    Marker: class {
+      setPosition() {}
+
+      setOptions() {}
+
+      setMap() {}
+    },
     MarkerClusterer: class {},
     Map: class {
       setTilt() {}
 
       fitBounds() {}
+
+      setCenter() {}
+
+      setZoom() {}
+
+      setOptions() {}
+    },
+    event: {
+      addListener: () => ({ remove() {} }),
+      removeListener: listener => listener && listener.remove && listener.remove(),
+      clearInstanceListeners: () => {},
     },
     places: {
       Autocomplete: class {},

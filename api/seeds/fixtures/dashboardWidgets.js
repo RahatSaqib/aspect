@@ -667,7 +667,7 @@ const errorRate = {
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
-    workflowStatusId: 2,
+    resultCategoryId: 7,
     dateRange: WIDGET_FILTER_KEYS.FIXED_CURRENT_MONTH,
   },
   sortOrder: 6,
