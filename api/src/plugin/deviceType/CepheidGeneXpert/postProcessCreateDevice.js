@@ -5,7 +5,7 @@
  * @param {Object} context - The context object with device, payload, knex, now, etc.
  */
 async function postProcessCreateDevice(context) {
-  const { device, knex, now, userId, instrumentSerial } = context
+  const { device, knex, now, userId, instrumentSerial, instrumentMacAddress } = context
 
   // Check if instrument already exists for this device
   const existingInstrument = await knex('Instrument')
@@ -23,7 +23,7 @@ async function postProcessCreateDevice(context) {
   await knex('Instrument').insert({
     deviceId: device.id,
     serial: instrumentSerial,
-    macAddress: null,
+    macAddress: instrumentMacAddress || null,
     active: true,
     createdOn: now,
     createdBy: userId || null,
