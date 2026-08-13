@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
+const logger = require('../../shared/logger')
 const { getUser } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
 const { getSite } = require('../../site/service')
@@ -108,6 +109,14 @@ async function upsertFormData(request) {
   const externalId = normalizeOptionalString(payload.externalId)
   const now = new Date()
 
+  logger.info({
+    message: 'upsertFormData: Processing custom fields submission',
+    siteId,
+    sampleExternalId,
+    externalId,
+    userId: currentlyLoggedInUser.id,
+  })
+
   try {
     await knex.transaction(async trx => {
       const partnerId = await getSitePartnerId(trx, siteId)
@@ -115,7 +124,13 @@ async function upsertFormData(request) {
       const existingByExternalId = externalId ? await getFormDataByPartnerExternalId(trx, partnerId, externalId) : null
       const existingBySiteAndSample = await getFormDataBySiteAndSample(trx, siteId, sampleExternalId)
 
-      validateConflicts({ existingByExternalId, existingBySiteAndSample, siteId, sampleExternalId, externalId })
+      validateConflicts({
+        existingByExternalId,
+        existingBySiteAndSample,
+        siteId,
+        sampleExternalId,
+        externalId,
+      })
 
       const recordToUpdate = existingByExternalId || existingBySiteAndSample
       validateSampleExternalIdImmutableWhenLinked(recordToUpdate, sampleExternalId)
@@ -167,6 +182,14 @@ async function upsertFormData(request) {
 
       if (recordToUpdate) {
         await updateFormData(trx, recordToUpdate.id, formDataToSave)
+        logger.info({
+          message: 'FormData updated successfully',
+          siteId,
+          sampleExternalId,
+          externalId,
+          recordId: recordToUpdate.id,
+          userId: currentlyLoggedInUser.id,
+        })
         return
       }
 
@@ -175,16 +198,50 @@ async function upsertFormData(request) {
         createdOn: now,
         createdBy: currentlyLoggedInUser.id,
       })
+      logger.info({
+        message: 'FormData created successfully',
+        siteId,
+        sampleExternalId,
+        externalId,
+        userId: currentlyLoggedInUser.id,
+      })
     })
   } catch (error) {
     if (error.isBoom) {
+      if (error.output.statusCode === 409) {
+        logger.warn({
+          message: 'FormData upsert failed with conflict',
+          siteId,
+          sampleExternalId,
+          externalId,
+          errorMessage: error.message,
+          userId: currentlyLoggedInUser.id,
+        })
+      }
       throw error
     }
 
     if (error.code === 'ER_DUP_ENTRY') {
+      logger.error({
+        message: 'FormData upsert failed with duplicate entry',
+        siteId,
+        sampleExternalId,
+        externalId,
+        errorCode: error.code,
+        userId: currentlyLoggedInUser.id,
+      })
       throw Boom.conflict('The provided site and sample combination is already linked to another custom fields record.')
     }
 
+    logger.error({
+      message: 'FormData upsert failed with unexpected error',
+      siteId,
+      sampleExternalId,
+      externalId,
+      errorMessage: error.message,
+      errorCode: error.code,
+      userId: currentlyLoggedInUser.id,
+    })
     throw error
   }
 
@@ -214,8 +271,18 @@ async function resolveResultIdForUpsert(trx, { siteId, sampleExternalId, recordT
   return selectCandidateResultIdForSiteAndSample(trx, { siteId, sampleExternalId, collectedOn })
 }
 
-function validateConflicts({ existingByExternalId, existingBySiteAndSample, externalId }) {
+function validateConflicts({ existingByExternalId, existingBySiteAndSample, siteId, sampleExternalId, externalId }) {
   if (existingByExternalId && existingBySiteAndSample && existingByExternalId.id !== existingBySiteAndSample.id) {
+    logger.warn({
+      message: 'FormData conflict: Different records found by externalId and site+sample',
+      siteId,
+      sampleExternalId,
+      externalId,
+      recordIdByExternalId: existingByExternalId.id,
+      recordExternalIdByExternalId: existingByExternalId.externalId,
+      recordIdBySiteAndSample: existingBySiteAndSample.id,
+      recordExternalIdBySiteAndSample: existingBySiteAndSample.externalId,
+    })
     throw Boom.conflict('The provided site and sample combination is already linked to a different externalId.')
   }
 
@@ -226,6 +293,15 @@ function validateConflicts({ existingByExternalId, existingBySiteAndSample, exte
     existingBySiteAndSample.externalId !== externalId
   ) {
     if (!existingByExternalId || existingByExternalId.id !== existingBySiteAndSample.id) {
+      logger.warn({
+        message: 'FormData conflict: Site+sample already linked to different externalId',
+        siteId,
+        sampleExternalId,
+        incomingExternalId: externalId,
+        existingRecordId: existingBySiteAndSample.id,
+        existingRecordExternalId: existingBySiteAndSample.externalId,
+        existingByExternalIdFound: !!existingByExternalId,
+      })
       throw Boom.conflict('The provided site and sample combination is already linked to a different externalId.')
     }
   }
