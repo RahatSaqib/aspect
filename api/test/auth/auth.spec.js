@@ -774,6 +774,39 @@ describe('Authentication routes', () => {
           assert.equal(res.status, 200)
         })
     })
+
+    it('should reject password changes when the current password is incorrect', async () => {
+      await server
+        .put(path)
+        .send({
+          currentPassword: 'Wr0ngP@ssw0rd!',
+          clientName: webClientName,
+          newPassword: 'An0therP@ssw0rd!',
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 403)
+          assert.equal(res.body.message, 'Incorrect password.')
+        })
+    })
+  })
+
+  describe('PUT to /update-person-login-details', () => {
+    it('should reject changing your own password without using update-login-details', async () => {
+      const decoded = jwtDecode(shared.token)
+      await server
+        .put(`${authPath}/update-person-login-details/${decoded.personId}`)
+        .send({
+          canLogIn: true,
+          newUsername: adminUsername,
+          newPassword: 'BypassP@ssw0rd1',
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 403)
+          assert.equal(res.body.message, 'Changing your own login details requires your current password')
+        })
+    })
   })
 
   describe('POST to /auth/send-reset-password-token', () => {

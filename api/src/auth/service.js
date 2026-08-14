@@ -706,7 +706,8 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   }
   const pwResult = await bcrypt.compare(payload.currentPassword, loggedInUser.password)
   if (!pwResult) {
-    return Boom.unauthorized('Incorrect password.')
+    // 403 (not 401): user is authenticated; wrong current password must not trigger client logout
+    return Boom.forbidden('Incorrect password.')
   }
 
   if (payload.newUsername) {
@@ -800,7 +801,12 @@ async function updatePasswordWithResetPasswordToken(request) {
 }
 
 async function updateUsernameAndPasswordForPerson(request) {
-  const { params, payload } = request
+  const { params, payload, auth } = request
+
+  // Self-service credential changes must go through /auth/update-login-details (requires current password)
+  if (Number(params.personId) === Number(auth.credentials.personId)) {
+    return Boom.forbidden('Changing your own login details requires your current password')
+  }
 
   // TODO: check access level permissions for currently logged in user
   const responseData = {
