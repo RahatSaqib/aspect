@@ -865,6 +865,22 @@ describe('Authentication routes', () => {
           geographyId: adminPerson.geographyId,
         })
 
+        // Accept licenses so JWT auth does not return 401 on subsequent API calls
+        const licenseIds = await knex('License as l')
+          .whereNull('l.partnerId')
+          .orWhere('l.partnerId', adminPerson.lastPartnerId)
+          .pluck('l.id')
+        if (licenseIds.length) {
+          await knex('LicensePerson').insert(
+            licenseIds.map(licenseId => ({
+              licenseId,
+              personId,
+              acceptedOn: new Date(),
+              ip: '127.0.0.1',
+            }))
+          )
+        }
+
         cleanup = { userId, personId, jobFunctionId, jobContextId }
       })
 
@@ -876,6 +892,7 @@ describe('Authentication routes', () => {
         })
         assert.equal(loginRes.status, 200)
         limitedToken = loginRes.body.access
+        assert.isNull(jwtDecode(limitedToken).hasToAcceptLicenseId)
 
         await server
           .put(path)
@@ -892,7 +909,10 @@ describe('Authentication routes', () => {
       } finally {
         await runTestWithKnex(async knex => {
           if (cleanup.jobContextId) await knex('JobContext').where('id', cleanup.jobContextId).del()
-          if (cleanup.personId) await knex('Person').where('id', cleanup.personId).del()
+          if (cleanup.personId) {
+            await knex('LicensePerson').where('personId', cleanup.personId).del()
+            await knex('Person').where('id', cleanup.personId).del()
+          }
           if (cleanup.userId) {
             await knex('RefreshToken').where('userId', cleanup.userId).del()
             await knex('LoginHistory').where('userId', cleanup.userId).del()
