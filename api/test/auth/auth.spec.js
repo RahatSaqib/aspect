@@ -658,26 +658,12 @@ describe('Authentication routes', () => {
             assert.equal(decoded.name, adminUsername)
           })
         })
-      // Clean Up: Revert to previous password
-      await server
-        .put(path)
-        .send({
-          currentPassword: newPassword,
-          clientName: webClientName,
-          newPassword: adminPassword,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.isTrue(res.body.ok)
-          assert.equal(res.body.data.username, adminUsername)
-          assert.deepEqual(res.body.data.changedFields, ['password'])
-          jwt.verify(res.body.access, config.secret, async (err, decoded) => {
-            assert.isNotOk(err) // isNotOk = is falsy
-            assert.property(decoded, 'name')
-            assert.equal(decoded.name, adminUsername)
-          })
-        })
+      // Clean Up: restore the seeded legacy test password directly because new passwords must meet the current policy
+      await runTestWithKnex(async knex => {
+        await knex('User')
+          .where('name', adminUsername)
+          .update({ password: bcrypt.hashSync(adminPassword, saltRounds) })
+      })
       // ensure user can login with old credentials
       await server
         .post(authPath)
@@ -741,27 +727,15 @@ describe('Authentication routes', () => {
             assert.equal(decoded.name, newUsername)
           })
         })
-      // Clean Up: Revert to previous credentials
-      await server
-        .put(path)
-        .send({
-          currentPassword: newPassword,
-          clientName: webClientName,
-          newPassword: adminPassword,
-          newUsername: adminUsername,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.isTrue(res.body.ok)
-          assert.equal(res.body.data.username, adminUsername)
-          assert.deepEqual(res.body.data.changedFields, ['name', 'password'])
-          jwt.verify(res.body.access, config.secret, (err, decoded) => {
-            assert.isNotOk(err) // isNotOk = is falsy
-            assert.property(decoded, 'name')
-            assert.equal(decoded.name, adminUsername)
+      // Clean Up: restore the seeded legacy credentials directly because new passwords must meet the current policy
+      await runTestWithKnex(async knex => {
+        await knex('User')
+          .where('name', newUsername)
+          .update({
+            name: adminUsername,
+            password: bcrypt.hashSync(adminPassword, saltRounds),
           })
-        })
+      })
       // ensure user can login with old credentials
       await server
         .post(authPath)
@@ -788,6 +762,57 @@ describe('Authentication routes', () => {
           assert.equal(res.status, 403)
           assert.equal(res.body.message, 'Incorrect password.')
         })
+    })
+
+    it('should reject a new password that does not meet complexity requirements', async () => {
+      await server
+        .put(path)
+        .send({
+          currentPassword: adminPassword,
+          clientName: webClientName,
+          newPassword: 'qwertyqwerty',
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 400)
+          assert.equal(res.body.message, 'Password does not meet complexity requirements')
+        })
+    })
+
+    it('should accept a long passphrase without numbers or symbols', async () => {
+      const passphrase = 'correcthorsebattery'
+
+      try {
+        await server
+          .put(path)
+          .send({
+            currentPassword: adminPassword,
+            clientName: webClientName,
+            newPassword: passphrase,
+          })
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.deepEqual(res.body.data.changedFields, ['password'])
+          })
+
+        await server
+          .post(authPath)
+          .send({
+            name: adminUsername,
+            password: passphrase,
+            clientName: webClientName,
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+      } finally {
+        await runTestWithKnex(async knex => {
+          await knex('User')
+            .where('name', adminUsername)
+            .update({ password: bcrypt.hashSync(adminPassword, saltRounds) })
+        })
+      }
     })
 
     it('should reject username changes for users without person edit permission', async () => {

@@ -13,6 +13,7 @@ const config = require('../config')
 const { query, knex } = require('../db')
 const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
+const { isPasswordAcceptable } = require('./passwordComplexity')
 const { convertTimezonetoIANA } = require('../shared/date')
 const { sendEmail } = require('../email/emailUtil')
 
@@ -716,6 +717,10 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
     return Boom.forbidden('Incorrect password.')
   }
 
+  if (payload.newPassword && !isPasswordAcceptable(payload.newPassword)) {
+    return Boom.badRequest('Password does not meet complexity requirements')
+  }
+
   if (payload.newUsername && payload.newUsername !== loggedInUser.name) {
     if (!canManagePersonLogins(request.auth.credentials)) {
       return Boom.forbidden('Only administrators can change usernames')
@@ -787,6 +792,9 @@ async function updatePasswordWithResetPasswordToken(request) {
     if (userDetails.resetPasswordTokenExpires < now) {
       return Boom.resourceGone('The reset password token is no longer valid')
     }
+    if (!isPasswordAcceptable(payload.newPassword)) {
+      return Boom.badRequest('Password does not meet complexity requirements')
+    }
     await query('Save password for user')
       .from('User as u')
       .where('u.id', userDetails.id)
@@ -815,6 +823,10 @@ async function updateUsernameAndPasswordForPerson(request) {
   // Self-service credential changes must go through /auth/update-login-details (requires current password)
   if (Number(params.personId) === Number(auth.credentials.personId)) {
     return Boom.forbidden('Changing your own login details requires your current password')
+  }
+
+  if (payload.newPassword && !isPasswordAcceptable(payload.newPassword)) {
+    return Boom.badRequest('Password does not meet complexity requirements')
   }
 
   // TODO: check access level permissions for currently logged in user

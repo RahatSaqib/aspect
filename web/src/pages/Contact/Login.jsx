@@ -11,7 +11,9 @@ import usePermissions from '../../hooks/person/usePermissions'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePersonLogin from '../../hooks/person/useUpdatePersonLogin'
 import useAuthState from '../../hooks/useAuthState'
+import passwordComplexityMessages from '../../messages/passwordComplexityMessages'
 import { gotoReturnUrl } from '../../utils/utils/browser'
+import { isPasswordAcceptable } from '../../utils/utils/passwordComplexity'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -44,11 +46,11 @@ const Login = ({ setStep }) => {
     userLockedOut: person?.userLockedOut || '',
   }
 
-  const pwdValidation = string()
-    .min(8, formatMessage(messages.passwordConditionsShouldFulfilled))
-    .matches(/(?=.*?[a-z])(?=.*?[A-Z])/, formatMessage(messages.passwordConditionsShouldFulfilled))
-    .matches(/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/, formatMessage(messages.passwordConditionsShouldFulfilled))
-    .matches(/\d/, formatMessage(messages.passwordConditionsShouldFulfilled))
+  const pwdValidation = string().test(
+    'password-complexity',
+    formatMessage(passwordComplexityMessages.requirements),
+    value => !value || isPasswordAcceptable(value)
+  )
 
   const validationSchema = object({
     username: string().required(formatMessage(messages.usernameRequired)),
@@ -58,7 +60,7 @@ const Login = ({ setStep }) => {
         : pwdValidation,
     confirmNewPassword: string().when('newPassword', {
       is: val => !isEmpty(val),
-      then: pwdValidation
+      then: string()
         .required(formatMessage(messages.confirmNewPasswordRequired))
         .oneOf([ref('newPassword')], formatMessage(messages.confirmNewPasswordMatch)),
       otherwise: string().nullable(),
@@ -217,6 +219,7 @@ const Login = ({ setStep }) => {
                     <InputPassword
                       id="confirmNewPassword"
                       name="confirmNewPassword"
+                      showComplexityHint={false}
                       disabled={canLogIn !== 1}
                       label={`${formatMessage(messages.confirmNewPassword)}`}
                       value={values.confirmNewPassword}
