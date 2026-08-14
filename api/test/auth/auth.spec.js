@@ -789,6 +789,97 @@ describe('Authentication routes', () => {
           assert.equal(res.body.message, 'Incorrect password.')
         })
     })
+
+    it('should reject username changes for users without person edit permission', async () => {
+      const limitedUsername = `limited-login-${Date.now()}`
+      const limitedPassword = 'test07'
+      let limitedToken
+      let cleanup = {}
+
+      await runTestWithKnex(async knex => {
+        const accountPermission = await knex('Permission').where({ module: 'account', activity: 'edit' }).first('id')
+        const decodedAdmin = jwtDecode(shared.token)
+        const adminPerson = await knex('Person')
+          .where('id', decodedAdmin.personId)
+          .first('lastPartnerId', 'lastCountryId', 'timezone', 'culture', 'geographyId')
+
+        const [jobFunctionId] = await knex('JobFunction').insert({
+          name: `Limited Login ${Date.now()}`,
+          partnerId: adminPerson.lastPartnerId,
+          externalId: `limited-login-${Date.now()}`,
+        })
+        await knex('JobFunctionPermission').insert({
+          jobFunctionId,
+          permissionId: accountPermission.id,
+        })
+
+        const [userId] = await knex('User').insert({
+          name: limitedUsername,
+          password: bcrypt.hashSync(limitedPassword, saltRounds),
+          legacyPassword: 0,
+          approved: 1,
+          lockedOut: 0,
+          createdOn: new Date(),
+          failedPasswordAttempts: 0,
+        })
+        const [personId] = await knex('Person').insert({
+          userId,
+          name: limitedUsername,
+          lastPartnerId: adminPerson.lastPartnerId,
+          lastCountryId: adminPerson.lastCountryId,
+          timezone: adminPerson.timezone,
+          culture: adminPerson.culture,
+          geographyId: adminPerson.geographyId,
+          canLogIn: 1,
+          createdOn: new Date(),
+          updatedOn: new Date(),
+        })
+        const [jobContextId] = await knex('JobContext').insert({
+          personId,
+          jobFunctionId,
+          geographyId: adminPerson.geographyId,
+        })
+
+        cleanup = { userId, personId, jobFunctionId, jobContextId }
+      })
+
+      try {
+        const loginRes = await server.post(authPath).send({
+          name: limitedUsername,
+          password: limitedPassword,
+          clientName: webClientName,
+        })
+        assert.equal(loginRes.status, 200)
+        limitedToken = loginRes.body.access
+
+        await server
+          .put(path)
+          .send({
+            currentPassword: limitedPassword,
+            clientName: webClientName,
+            newUsername: `${limitedUsername}-renamed`,
+          })
+          .set('Authorization', `Bearer ${limitedToken}`)
+          .then(res => {
+            assert.equal(res.status, 403)
+            assert.equal(res.body.message, 'Only administrators can change usernames')
+          })
+      } finally {
+        await runTestWithKnex(async knex => {
+          if (cleanup.jobContextId) await knex('JobContext').where('id', cleanup.jobContextId).del()
+          if (cleanup.personId) await knex('Person').where('id', cleanup.personId).del()
+          if (cleanup.userId) {
+            await knex('RefreshToken').where('userId', cleanup.userId).del()
+            await knex('LoginHistory').where('userId', cleanup.userId).del()
+            await knex('User').where('id', cleanup.userId).del()
+          }
+          if (cleanup.jobFunctionId) {
+            await knex('JobFunctionPermission').where('jobFunctionId', cleanup.jobFunctionId).del()
+            await knex('JobFunction').where('id', cleanup.jobFunctionId).del()
+          }
+        })
+      }
+    })
   })
 
   describe('PUT to /update-person-login-details', () => {

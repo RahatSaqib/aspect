@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { object, ref, string } from 'yup'
 import { InputPassword, LabeledSwitch, Loading } from '../../components'
 import useUpdateOwnLoginDetails from '../../hooks/auth/useUpdateOwnLoginDetails'
+import usePermissions from '../../hooks/person/usePermissions'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePersonLogin from '../../hooks/person/useUpdatePersonLogin'
 import useAuthState from '../../hooks/useAuthState'
@@ -31,7 +32,9 @@ const Login = ({ setStep }) => {
   const location = useLocation()
   const { isLoading, data: person } = usePerson(id)
   const { personId: loggedInPersonId, userPermissions } = useAuthState()
+  const { checkPermission } = usePermissions()
   const isSelf = id === ACTION.SELF
+  const canChangeUsername = checkPermission(['person:edit', 'admin', 'person:admin'])
   const initialValues = {
     canLogIn: isSelf ? 1 : person?.canLogIn,
     username: person?.username || '',
@@ -75,7 +78,7 @@ const Login = ({ setStep }) => {
       updateOwnLogin(
         {
           currentPassword: values.currentPassword,
-          newUsername: values.username,
+          newUsername: canChangeUsername ? values.username : undefined,
           newPassword: values.newPassword,
         },
         {
@@ -151,7 +154,7 @@ const Login = ({ setStep }) => {
                     <TextField
                       id="username"
                       name="username"
-                      disabled={canLogIn !== 1}
+                      disabled={canLogIn !== 1 || !canChangeUsername}
                       label={`${formatMessage(messages.username)} *`}
                       value={values.username}
                       onChange={handleChange}

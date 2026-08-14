@@ -555,6 +555,12 @@ async function hasPermissions(auth, modules) {
   return _.intersection(auth.credentials.permissions, modules).length > 0
 }
 
+function canManagePersonLogins(credentials = {}) {
+  const scope = credentials.scope || []
+  // Same access as PUT /auth/update-person-login-details (person:edit route)
+  return scope.includes('person:edit') || scope.includes('person:admin') || scope.includes('admin')
+}
+
 // generate a new jwt for the given user data
 async function getAccessToken({ id, name, partnerId, personId, userName }, clientType = clientTypes.web) {
   const resolvedClientType = clientType || clientTypes.web
@@ -710,7 +716,10 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
     return Boom.forbidden('Incorrect password.')
   }
 
-  if (payload.newUsername) {
+  if (payload.newUsername && payload.newUsername !== loggedInUser.name) {
+    if (!canManagePersonLogins(request.auth.credentials)) {
+      return Boom.forbidden('Only administrators can change usernames')
+    }
     const usernameNotAvailable = await isUsernameAlreadyInUseBySomebodyElse(loggedInUser.id, payload.newUsername)
     if (usernameNotAvailable) {
       return usernameNotAvailable
