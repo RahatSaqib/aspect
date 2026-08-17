@@ -156,7 +156,8 @@ const CandidateInstruments = ({ deviceId, disabled = false }) => {
                     </span>
                     <span style={{ color: 'var(--aspect-color-grey-4, #91949d)' }}>
                       · {formatMessage(messages.serial)}: {instrument.instrumentSerial}
-                      {instrument.deviceName && ` · ${instrument.deviceName}`}
+                      {instrument.macAddress && ` · ${formatMessage(messages.macAddress)}: ${instrument.macAddress}`}
+                      {instrument.deviceName && ` · ${formatMessage(messages.deviceName)}: ${instrument.deviceName}`}
                     </span>
                   </div>
                 </div>

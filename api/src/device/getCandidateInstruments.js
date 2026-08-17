@@ -65,6 +65,7 @@ async function getCandidateInstruments({ params, auth }) {
       deviceName: instrument.deviceName,
       instrumentId: instrument.instrumentId,
       instrumentSerial: instrument.instrumentSerial,
+      macAddress: instrument.macAddress,
       modules,
     }
   })
@@ -97,7 +98,7 @@ function getCandidateInstrumentsData(deviceId, siteId, dataConstraints, timezone
     .whereNot('d.id', deviceId) // Exclude the base device itself
     .where('i.active', 1)
     .whereNotNull('i.serial') // Only include devices with instruments
-    .groupBy('d.id', 'd.name', 'i.id', 'i.serial')
+    .groupBy('d.id', 'd.name', 'i.id', 'i.serial', 'i.macAddress')
     .modify(
       addConstraints,
       dataConstraints,
@@ -112,6 +113,7 @@ function getCandidateInstrumentsData(deviceId, siteId, dataConstraints, timezone
       'd.name as deviceName',
       'i.id as instrumentId',
       'i.serial as instrumentSerial',
+      'i.macAddress as macAddress',
       knex.raw(
         `json_arrayagg(IF(m.moduleName IS NULL, NULL,
           json_object('moduleName', TRIM(m.moduleName), 'lastResultDate', CONVERT_TZ(m.lastResultDate, '+00:00', '${timezoneIANA}')))) as modules`

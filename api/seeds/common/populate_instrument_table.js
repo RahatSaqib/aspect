@@ -15,6 +15,8 @@ async function populateInstrumentTable(knex) {
         'd.id as deviceId',
         'r.instrumentSerial as serial',
         knex.raw('null as macAddress'),
+        knex.raw('null as letter'),
+        knex.raw('null as version'),
         knex.raw('0 as active'),
         knex.raw('now() as createdOn'),
         knex.raw('null as createdBy'),
