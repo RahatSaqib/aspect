@@ -439,11 +439,14 @@ const DeviceDetailProfile = ({
             />
             <Summary title={formatMessage(messages.notes)} description={device.notes} />
             <Summary title={formatMessage(messages.tags)} description={deviceTags.map(tag => tag.title).join(', ')} />
-            <Summary title={formatMessage(messages.partner)} description={device.implementingPartnerName ?? 'n/a'} />
+            <Summary
+              title={formatMessage(messages.partner)}
+              description={device.implementingPartnerName ?? formatMessage(messages.undefinedValue)}
+            />
             {canViewDakList && (
               <Summary
                 title={formatMessage(messages.deviceApiKey)}
-                description={device.maskedDeviceApiKey ?? 'n/a'}
+                description={device.maskedDeviceApiKey ?? formatMessage(messages.undefinedValue)}
                 to={
                   device.maskedDeviceApiKey
                     ? () => {
@@ -451,6 +454,14 @@ const DeviceDetailProfile = ({
                         navigate('/browse/deviceApiKey')
                       }
                     : undefined
+                }
+              />
+            )}
+            {isGeneXpertDevice && (
+              <Summary
+                title={formatMessage(messages.gxConnectInstallationId)}
+                description={
+                  device.configurationData?.gxConnectInstallationId ?? formatMessage(messages.undefinedValue)
                 }
               />
             )}

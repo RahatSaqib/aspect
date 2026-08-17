@@ -21,6 +21,11 @@ const getColumns = formatMessage => [
     sortable: false,
   },
   {
+    key: 'macAddress',
+    label: formatMessage(messages.macAddress),
+    sortable: false,
+  },
+  {
     key: 'modules',
     label: formatMessage(messages.bayNames),
     sortable: false,
@@ -55,6 +60,7 @@ const DeviceInstrumentsTable = ({ deviceId, disabled = false }) => {
                 {data.map(instrument => (
                   <TableRow key={instrument.instrumentId}>
                     <TableCell>{instrument.instrumentSerial}</TableCell>
+                    <TableCell>{instrument.macAddress ?? formatMessage(messages.undefinedValue)}</TableCell>
                     <TableCell>
                       <GeneXpertModulesNames modules={instrument.modules} />
                     </TableCell>

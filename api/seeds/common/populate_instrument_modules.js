@@ -58,7 +58,15 @@ async function insertActiveModulesForRange(knex, lo, hi) {
     this.from(ranked.as('ranked'))
       .where('ranked.rnModule', 1)
       .whereRaw('ranked.letter = ranked.activeLetter')
-      .select(knex.raw('null as id'), 'instrumentId', 'moduleName', 'moduleSerial', 'lastResultDate')
+      .select(
+        knex.raw('null as id'),
+        'instrumentId',
+        'moduleName',
+        'moduleSerial',
+        'lastResultDate',
+        knex.raw('null as lastLogDate'),
+        knex.raw('null as lastLogDetail')
+      )
   })
 }
 

@@ -35,14 +35,17 @@ async function recordResultModule(knex, { instrumentId, moduleName: rawModuleNam
   //    order via re-sync / transfer / backfill, so never blindly overwrite). moduleSerial
   //    is taken from the latest result only — note it is updated BEFORE lastResultDate so
   //    the comparison reads the previously-stored date, not the freshly-GREATEST'd one.
+  //    IFNULL guards rows discovered from GxConnect logs, which have no lastResultDate yet.
   await knex('InstrumentModule')
     .insert({ instrumentId, moduleName, moduleSerial, lastResultDate })
     .onConflict(['instrumentId', 'moduleName'])
     .merge({
       moduleSerial: knex.raw(
-        'IF(VALUES(lastResultDate) >= InstrumentModule.lastResultDate, VALUES(moduleSerial), InstrumentModule.moduleSerial)'
+        'IF(VALUES(lastResultDate) >= IFNULL(InstrumentModule.lastResultDate, VALUES(lastResultDate)), VALUES(moduleSerial), InstrumentModule.moduleSerial)'
       ),
-      lastResultDate: knex.raw('GREATEST(InstrumentModule.lastResultDate, VALUES(lastResultDate))'),
+      lastResultDate: knex.raw(
+        'GREATEST(IFNULL(InstrumentModule.lastResultDate, VALUES(lastResultDate)), VALUES(lastResultDate))'
+      ),
     })
 
   // 2) Best-effort cleanup of superseded letters for this instrument.

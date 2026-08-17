@@ -95,7 +95,14 @@ async function mergeAndDeleteInstrumentModules(
 
   const allSourceModules = await trknex('InstrumentModule')
     .whereIn('instrumentId', duplicateSourceInstrumentIds)
-    .select('instrumentId', trknex.raw('TRIM(moduleName) as moduleName'), 'moduleSerial', 'lastResultDate')
+    .select(
+      'instrumentId',
+      trknex.raw('TRIM(moduleName) as moduleName'),
+      'moduleSerial',
+      'lastResultDate',
+      'lastLogDate',
+      'lastLogDetail'
+    )
 
   const rowsToUpsert = allSourceModules
     .map(m => ({ ...m, instrumentId: sourceIdToTargetId.get(m.instrumentId) }))
@@ -107,9 +114,17 @@ async function mergeAndDeleteInstrumentModules(
       .onConflict(['instrumentId', 'moduleName'])
       .merge({
         moduleSerial: trknex.raw(
-          'IF(VALUES(lastResultDate) >= InstrumentModule.lastResultDate, VALUES(moduleSerial), InstrumentModule.moduleSerial)'
+          'IF(VALUES(lastResultDate) >= IFNULL(InstrumentModule.lastResultDate, VALUES(lastResultDate)), VALUES(moduleSerial), InstrumentModule.moduleSerial)'
         ),
-        lastResultDate: trknex.raw('GREATEST(InstrumentModule.lastResultDate, VALUES(lastResultDate))'),
+        lastResultDate: trknex.raw(
+          'COALESCE(GREATEST(InstrumentModule.lastResultDate, VALUES(lastResultDate)), InstrumentModule.lastResultDate, VALUES(lastResultDate))'
+        ),
+        lastLogDetail: trknex.raw(
+          'IF(VALUES(lastLogDate) >= IFNULL(InstrumentModule.lastLogDate, VALUES(lastLogDate)), VALUES(lastLogDetail), InstrumentModule.lastLogDetail)'
+        ),
+        lastLogDate: trknex.raw(
+          'GREATEST(IFNULL(InstrumentModule.lastLogDate, VALUES(lastLogDate)), VALUES(lastLogDate))'
+        ),
       })
   }
 
