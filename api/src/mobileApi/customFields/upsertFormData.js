@@ -209,7 +209,7 @@ async function upsertFormData(request) {
   } catch (error) {
     if (error.isBoom) {
       if (error.output.statusCode === 409) {
-        logger.warn({
+        logger.warning({
           message: 'FormData upsert failed with conflict',
           siteId,
           sampleExternalId,
@@ -273,7 +273,7 @@ async function resolveResultIdForUpsert(trx, { siteId, sampleExternalId, recordT
 
 function validateConflicts({ existingByExternalId, existingBySiteAndSample, siteId, sampleExternalId, externalId }) {
   if (existingByExternalId && existingBySiteAndSample && existingByExternalId.id !== existingBySiteAndSample.id) {
-    logger.warn({
+    logger.warning({
       message: 'FormData conflict: Different records found by externalId and site+sample',
       siteId,
       sampleExternalId,
@@ -293,7 +293,7 @@ function validateConflicts({ existingByExternalId, existingBySiteAndSample, site
     existingBySiteAndSample.externalId !== externalId
   ) {
     if (!existingByExternalId || existingByExternalId.id !== existingBySiteAndSample.id) {
-      logger.warn({
+      logger.warning({
         message: 'FormData conflict: Site+sample already linked to different externalId',
         siteId,
         sampleExternalId,
