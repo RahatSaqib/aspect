@@ -316,3 +316,7 @@ export function acceptLicenseStart(licenseId) {
     })
   )
 }
+
+export function updateSessionTokens({ access, refresh, clientId }) {
+  authenticated({ access, refresh, clientId })
+}

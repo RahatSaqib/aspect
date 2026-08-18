@@ -658,26 +658,12 @@ describe('Authentication routes', () => {
             assert.equal(decoded.name, adminUsername)
           })
         })
-      // Clean Up: Revert to previous password
-      await server
-        .put(path)
-        .send({
-          currentPassword: newPassword,
-          clientName: webClientName,
-          newPassword: adminPassword,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.isTrue(res.body.ok)
-          assert.equal(res.body.data.username, adminUsername)
-          assert.deepEqual(res.body.data.changedFields, ['password'])
-          jwt.verify(res.body.access, config.secret, async (err, decoded) => {
-            assert.isNotOk(err) // isNotOk = is falsy
-            assert.property(decoded, 'name')
-            assert.equal(decoded.name, adminUsername)
-          })
-        })
+      // Clean Up: restore the seeded legacy test password directly because new passwords must meet the current policy
+      await runTestWithKnex(async knex => {
+        await knex('User')
+          .where('name', adminUsername)
+          .update({ password: bcrypt.hashSync(adminPassword, saltRounds) })
+      })
       // ensure user can login with old credentials
       await server
         .post(authPath)
@@ -741,27 +727,15 @@ describe('Authentication routes', () => {
             assert.equal(decoded.name, newUsername)
           })
         })
-      // Clean Up: Revert to previous credentials
-      await server
-        .put(path)
-        .send({
-          currentPassword: newPassword,
-          clientName: webClientName,
-          newPassword: adminPassword,
-          newUsername: adminUsername,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.isTrue(res.body.ok)
-          assert.equal(res.body.data.username, adminUsername)
-          assert.deepEqual(res.body.data.changedFields, ['name', 'password'])
-          jwt.verify(res.body.access, config.secret, (err, decoded) => {
-            assert.isNotOk(err) // isNotOk = is falsy
-            assert.property(decoded, 'name')
-            assert.equal(decoded.name, adminUsername)
+      // Clean Up: restore the seeded legacy credentials directly because new passwords must meet the current policy
+      await runTestWithKnex(async knex => {
+        await knex('User')
+          .where('name', newUsername)
+          .update({
+            name: adminUsername,
+            password: bcrypt.hashSync(adminPassword, saltRounds),
           })
-        })
+      })
       // ensure user can login with old credentials
       await server
         .post(authPath)
@@ -772,6 +746,201 @@ describe('Authentication routes', () => {
         })
         .then(res => {
           assert.equal(res.status, 200)
+        })
+    })
+
+    it('should reject password changes when the current password is incorrect', async () => {
+      await server
+        .put(path)
+        .send({
+          currentPassword: 'Wr0ngP@ssw0rd!',
+          clientName: webClientName,
+          newPassword: 'An0therP@ssw0rd!',
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 403)
+          assert.equal(res.body.message, 'Incorrect password.')
+        })
+    })
+
+    it('should reject a new password that does not meet complexity requirements', async () => {
+      await server
+        .put(path)
+        .send({
+          currentPassword: adminPassword,
+          clientName: webClientName,
+          newPassword: 'qwertyqwerty',
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 400)
+          assert.equal(res.body.message, 'Password does not meet complexity requirements')
+        })
+    })
+
+    it('should accept a long passphrase without numbers or symbols', async () => {
+      const passphrase = 'correcthorsebattery'
+
+      try {
+        await server
+          .put(path)
+          .send({
+            currentPassword: adminPassword,
+            clientName: webClientName,
+            newPassword: passphrase,
+          })
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.deepEqual(res.body.data.changedFields, ['password'])
+          })
+
+        await server
+          .post(authPath)
+          .send({
+            name: adminUsername,
+            password: passphrase,
+            clientName: webClientName,
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+      } finally {
+        await runTestWithKnex(async knex => {
+          await knex('User')
+            .where('name', adminUsername)
+            .update({ password: bcrypt.hashSync(adminPassword, saltRounds) })
+        })
+      }
+    })
+
+    it('should reject username changes for users without person edit permission', async () => {
+      const limitedUsername = `limited-login-${Date.now()}`
+      const limitedPassword = 'test07'
+      let limitedToken
+      let cleanup = {}
+
+      await runTestWithKnex(async knex => {
+        const accountPermission = await knex('Permission').where({ module: 'account', activity: 'edit' }).first('id')
+        const decodedAdmin = jwtDecode(shared.token)
+        const adminPerson = await knex('Person')
+          .where('id', decodedAdmin.personId)
+          .first('lastPartnerId', 'lastCountryId', 'timezone', 'culture', 'geographyId')
+
+        const [jobFunctionId] = await knex('JobFunction').insert({
+          name: `Limited Login ${Date.now()}`,
+          partnerId: adminPerson.lastPartnerId,
+          externalId: `limited-login-${Date.now()}`,
+        })
+        await knex('JobFunctionPermission').insert({
+          jobFunctionId,
+          permissionId: accountPermission.id,
+        })
+
+        const [userId] = await knex('User').insert({
+          name: limitedUsername,
+          password: bcrypt.hashSync(limitedPassword, saltRounds),
+          legacyPassword: 0,
+          approved: 1,
+          lockedOut: 0,
+          createdOn: new Date(),
+          failedPasswordAttempts: 0,
+        })
+        const [personId] = await knex('Person').insert({
+          userId,
+          name: limitedUsername,
+          lastPartnerId: adminPerson.lastPartnerId,
+          lastCountryId: adminPerson.lastCountryId,
+          timezone: adminPerson.timezone,
+          culture: adminPerson.culture,
+          geographyId: adminPerson.geographyId,
+          canLogIn: 1,
+          createdOn: new Date(),
+          updatedOn: new Date(),
+        })
+        const [jobContextId] = await knex('JobContext').insert({
+          personId,
+          jobFunctionId,
+          geographyId: adminPerson.geographyId,
+        })
+
+        // Accept licenses so JWT auth does not return 401 on subsequent API calls
+        const licenseIds = await knex('License as l')
+          .whereNull('l.partnerId')
+          .orWhere('l.partnerId', adminPerson.lastPartnerId)
+          .pluck('l.id')
+        if (licenseIds.length) {
+          await knex('LicensePerson').insert(
+            licenseIds.map(licenseId => ({
+              licenseId,
+              personId,
+              acceptedOn: new Date(),
+              ip: '127.0.0.1',
+            }))
+          )
+        }
+
+        cleanup = { userId, personId, jobFunctionId, jobContextId }
+      })
+
+      try {
+        const loginRes = await server.post(authPath).send({
+          name: limitedUsername,
+          password: limitedPassword,
+          clientName: webClientName,
+        })
+        assert.equal(loginRes.status, 200)
+        limitedToken = loginRes.body.access
+        assert.isNull(jwtDecode(limitedToken).hasToAcceptLicenseId)
+
+        await server
+          .put(path)
+          .send({
+            currentPassword: limitedPassword,
+            clientName: webClientName,
+            newUsername: `${limitedUsername}-renamed`,
+          })
+          .set('Authorization', `Bearer ${limitedToken}`)
+          .then(res => {
+            assert.equal(res.status, 403)
+            assert.equal(res.body.message, 'Only administrators can change usernames')
+          })
+      } finally {
+        await runTestWithKnex(async knex => {
+          if (cleanup.jobContextId) await knex('JobContext').where('id', cleanup.jobContextId).del()
+          if (cleanup.personId) {
+            await knex('LicensePerson').where('personId', cleanup.personId).del()
+            await knex('Person').where('id', cleanup.personId).del()
+          }
+          if (cleanup.userId) {
+            await knex('RefreshToken').where('userId', cleanup.userId).del()
+            await knex('LoginHistory').where('userId', cleanup.userId).del()
+            await knex('User').where('id', cleanup.userId).del()
+          }
+          if (cleanup.jobFunctionId) {
+            await knex('JobFunctionPermission').where('jobFunctionId', cleanup.jobFunctionId).del()
+            await knex('JobFunction').where('id', cleanup.jobFunctionId).del()
+          }
+        })
+      }
+    })
+  })
+
+  describe('PUT to /update-person-login-details', () => {
+    it('should reject changing your own password without using update-login-details', async () => {
+      const decoded = jwtDecode(shared.token)
+      await server
+        .put(`${authPath}/update-person-login-details/${decoded.personId}`)
+        .send({
+          canLogIn: true,
+          newUsername: adminUsername,
+          newPassword: 'BypassP@ssw0rd1',
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 403)
+          assert.equal(res.body.message, 'Changing your own login details requires your current password')
         })
     })
   })

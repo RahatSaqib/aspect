@@ -3,7 +3,9 @@ import { Button, CircularProgress, TextField } from '@mui/material'
 import { useFormik } from 'formik'
 import PropTypes from 'prop-types'
 import StrongPasswordInput from '../../../components/shared/StrongPasswordInput'
+import passwordComplexityMessages from '../../../messages/passwordComplexityMessages'
 import PropTypeOf from '../../../utils/types'
+import { isPasswordAcceptable } from '../../../utils/utils/passwordComplexity'
 import messages from './messages'
 import styles from './ResetPassword.module.css'
 
@@ -12,10 +14,8 @@ const INITIAL_VALUES = { newPassword: '', confirmNewPassword: '' }
 function validate({ newPassword, confirmNewPassword }, { intl }) {
   const errors = {}
   if (newPassword) {
-    if (newPassword.trim().length < 8) {
-      errors.newPassword = intl.formatMessage(messages.newPasswordTooShort)
-    } else if (!/\d/.test(newPassword) && !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(newPassword)) {
-      errors.newPassword = intl.formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
+    if (!isPasswordAcceptable(newPassword)) {
+      errors.newPassword = intl.formatMessage(passwordComplexityMessages.requirements)
     }
     if (newPassword !== confirmNewPassword) {
       errors.confirmNewPassword = intl.formatMessage(messages.passwordsDoNotMatch)

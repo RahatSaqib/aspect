@@ -13,6 +13,7 @@ const config = require('../config')
 const { query, knex } = require('../db')
 const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
+const { isPasswordAcceptable } = require('./passwordComplexity')
 const { convertTimezonetoIANA } = require('../shared/date')
 const { sendEmail } = require('../email/emailUtil')
 
@@ -555,6 +556,12 @@ async function hasPermissions(auth, modules) {
   return _.intersection(auth.credentials.permissions, modules).length > 0
 }
 
+function canManagePersonLogins(credentials = {}) {
+  const scope = credentials.scope || []
+  // Same access as PUT /auth/update-person-login-details (person:edit route)
+  return scope.includes('person:edit') || scope.includes('person:admin') || scope.includes('admin')
+}
+
 // generate a new jwt for the given user data
 async function getAccessToken({ id, name, partnerId, personId, userName }, clientType = clientTypes.web) {
   const resolvedClientType = clientType || clientTypes.web
@@ -706,10 +713,18 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   }
   const pwResult = await bcrypt.compare(payload.currentPassword, loggedInUser.password)
   if (!pwResult) {
-    return Boom.unauthorized('Incorrect password.')
+    // 403 (not 401): user is authenticated; wrong current password must not trigger client logout
+    return Boom.forbidden('Incorrect password.')
   }
 
-  if (payload.newUsername) {
+  if (payload.newPassword && !isPasswordAcceptable(payload.newPassword)) {
+    return Boom.badRequest('Password does not meet complexity requirements')
+  }
+
+  if (payload.newUsername && payload.newUsername !== loggedInUser.name) {
+    if (!canManagePersonLogins(request.auth.credentials)) {
+      return Boom.forbidden('Only administrators can change usernames')
+    }
     const usernameNotAvailable = await isUsernameAlreadyInUseBySomebodyElse(loggedInUser.id, payload.newUsername)
     if (usernameNotAvailable) {
       return usernameNotAvailable
@@ -777,6 +792,9 @@ async function updatePasswordWithResetPasswordToken(request) {
     if (userDetails.resetPasswordTokenExpires < now) {
       return Boom.resourceGone('The reset password token is no longer valid')
     }
+    if (!isPasswordAcceptable(payload.newPassword)) {
+      return Boom.badRequest('Password does not meet complexity requirements')
+    }
     await query('Save password for user')
       .from('User as u')
       .where('u.id', userDetails.id)
@@ -800,7 +818,16 @@ async function updatePasswordWithResetPasswordToken(request) {
 }
 
 async function updateUsernameAndPasswordForPerson(request) {
-  const { params, payload } = request
+  const { params, payload, auth } = request
+
+  // Self-service credential changes must go through /auth/update-login-details (requires current password)
+  if (Number(params.personId) === Number(auth.credentials.personId)) {
+    return Boom.forbidden('Changing your own login details requires your current password')
+  }
+
+  if (payload.newPassword && !isPasswordAcceptable(payload.newPassword)) {
+    return Boom.badRequest('Password does not meet complexity requirements')
+  }
 
   // TODO: check access level permissions for currently logged in user
   const responseData = {
