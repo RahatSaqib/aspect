@@ -109,13 +109,16 @@ async function upsertFormData(request) {
   const externalId = normalizeOptionalString(payload.externalId)
   const now = new Date()
 
-  logger.info({
-    message: 'upsertFormData: Processing custom fields submission',
-    siteId,
-    sampleExternalId,
-    externalId,
-    userId: currentlyLoggedInUser.id,
-  })
+  logger.debug(
+    {
+      event: 'upsertFormData: Processing custom fields submission',
+      siteId,
+      sampleExternalId,
+      externalId,
+      userId: currentlyLoggedInUser.id,
+    },
+    { reLabel: 'mobileApi:upsertFormData' }
+  )
 
   try {
     await knex.transaction(async trx => {
@@ -182,14 +185,17 @@ async function upsertFormData(request) {
 
       if (recordToUpdate) {
         await updateFormData(trx, recordToUpdate.id, formDataToSave)
-        logger.info({
-          message: 'FormData updated successfully',
-          siteId,
-          sampleExternalId,
-          externalId,
-          recordId: recordToUpdate.id,
-          userId: currentlyLoggedInUser.id,
-        })
+        logger.debug(
+          {
+            event: 'FormData updated successfully',
+            siteId,
+            sampleExternalId,
+            externalId,
+            recordId: recordToUpdate.id,
+            userId: currentlyLoggedInUser.id,
+          },
+          { reLabel: 'mobileApi:upsertFormData' }
+        )
         return
       }
 
@@ -198,50 +204,64 @@ async function upsertFormData(request) {
         createdOn: now,
         createdBy: currentlyLoggedInUser.id,
       })
-      logger.info({
-        message: 'FormData created successfully',
-        siteId,
-        sampleExternalId,
-        externalId,
-        userId: currentlyLoggedInUser.id,
-      })
+      logger.debug(
+        {
+          event: 'FormData created successfully',
+          siteId,
+          sampleExternalId,
+          externalId,
+          userId: currentlyLoggedInUser.id,
+        },
+        { reLabel: 'mobileApi:upsertFormData' }
+      )
     })
   } catch (error) {
     if (error.isBoom) {
       if (error.output.statusCode === 409) {
-        logger.warning({
-          message: 'FormData upsert failed with conflict',
-          siteId,
-          sampleExternalId,
-          externalId,
-          errorMessage: error.message,
-          userId: currentlyLoggedInUser.id,
-        })
+        logger.warning(
+          {
+            event: 'FormData upsert failed with conflict',
+            siteId,
+            sampleExternalId,
+            externalId,
+            errorMessage: error.message,
+            userId: currentlyLoggedInUser.id,
+          },
+          { reLabel: 'mobileApi:upsertFormData' }
+        )
       }
       throw error
     }
 
     if (error.code === 'ER_DUP_ENTRY') {
-      logger.error({
-        message: 'FormData upsert failed with duplicate entry',
-        siteId,
-        sampleExternalId,
-        externalId,
-        errorCode: error.code,
-        userId: currentlyLoggedInUser.id,
-      })
+      logger.error(
+        {
+          event: 'FormData upsert failed with duplicate entry',
+          siteId,
+          sampleExternalId,
+          externalId,
+          errorCode: error.code,
+          stack: error.stack,
+          userId: currentlyLoggedInUser.id,
+        },
+        { reLabel: 'mobileApi:upsertFormData' }
+      )
       throw Boom.conflict('The provided site and sample combination is already linked to another custom fields record.')
     }
 
-    logger.error({
-      message: 'FormData upsert failed with unexpected error',
-      siteId,
-      sampleExternalId,
-      externalId,
-      errorMessage: error.message,
-      errorCode: error.code,
-      userId: currentlyLoggedInUser.id,
-    })
+    logger.error(
+      {
+        event: 'FormData upsert failed with unexpected error',
+        siteId,
+        sampleExternalId,
+        externalId,
+        errorMessage: error.message,
+        errorCode: error.code,
+        stack: error.stack,
+        userId: currentlyLoggedInUser.id,
+      },
+      { reLabel: 'mobileApi:upsertFormData' }
+    )
     throw error
   }
 
@@ -273,16 +293,19 @@ async function resolveResultIdForUpsert(trx, { siteId, sampleExternalId, recordT
 
 function validateConflicts({ existingByExternalId, existingBySiteAndSample, siteId, sampleExternalId, externalId }) {
   if (existingByExternalId && existingBySiteAndSample && existingByExternalId.id !== existingBySiteAndSample.id) {
-    logger.warning({
-      message: 'FormData conflict: Different records found by externalId and site+sample',
-      siteId,
-      sampleExternalId,
-      externalId,
-      recordIdByExternalId: existingByExternalId.id,
-      recordExternalIdByExternalId: existingByExternalId.externalId,
-      recordIdBySiteAndSample: existingBySiteAndSample.id,
-      recordExternalIdBySiteAndSample: existingBySiteAndSample.externalId,
-    })
+    logger.warning(
+      {
+        event: 'FormData conflict: Different records found by externalId and site+sample',
+        siteId,
+        sampleExternalId,
+        externalId,
+        recordIdByExternalId: existingByExternalId.id,
+        recordExternalIdByExternalId: existingByExternalId.externalId,
+        recordIdBySiteAndSample: existingBySiteAndSample.id,
+        recordExternalIdBySiteAndSample: existingBySiteAndSample.externalId,
+      },
+      { reLabel: 'mobileApi:upsertFormData' }
+    )
     throw Boom.conflict('The provided site and sample combination is already linked to a different externalId.')
   }
 
@@ -293,15 +316,18 @@ function validateConflicts({ existingByExternalId, existingBySiteAndSample, site
     existingBySiteAndSample.externalId !== externalId
   ) {
     if (!existingByExternalId || existingByExternalId.id !== existingBySiteAndSample.id) {
-      logger.warning({
-        message: 'FormData conflict: Site+sample already linked to different externalId',
-        siteId,
-        sampleExternalId,
-        incomingExternalId: externalId,
-        existingRecordId: existingBySiteAndSample.id,
-        existingRecordExternalId: existingBySiteAndSample.externalId,
-        existingByExternalIdFound: !!existingByExternalId,
-      })
+      logger.warning(
+        {
+          event: 'FormData conflict: Site+sample already linked to different externalId',
+          siteId,
+          sampleExternalId,
+          incomingExternalId: externalId,
+          existingRecordId: existingBySiteAndSample.id,
+          existingRecordExternalId: existingBySiteAndSample.externalId,
+          existingByExternalIdFound: !!existingByExternalId,
+        },
+        { reLabel: 'mobileApi:upsertFormData' }
+      )
       throw Boom.conflict('The provided site and sample combination is already linked to a different externalId.')
     }
   }
