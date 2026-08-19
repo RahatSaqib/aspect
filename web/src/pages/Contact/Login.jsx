@@ -6,14 +6,26 @@ import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { object, ref, string } from 'yup'
 import { InputPassword, LabeledSwitch, Loading } from '../../components'
+import useUpdateOwnLoginDetails from '../../hooks/auth/useUpdateOwnLoginDetails'
+import usePermissions from '../../hooks/person/usePermissions'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePersonLogin from '../../hooks/person/useUpdatePersonLogin'
 import useAuthState from '../../hooks/useAuthState'
+import passwordComplexityMessages from '../../messages/passwordComplexityMessages'
 import { gotoReturnUrl } from '../../utils/utils/browser'
+import { isPasswordAcceptable } from '../../utils/utils/passwordComplexity'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
+import styles from './Login.module.css'
 import messages from './messages'
+
+const SectionDivider = ({ label }) => (
+  <div className={styles.sectionDivider}>
+    <span className={styles.sectionDivider__label}>{label}</span>
+    <span className={styles.sectionDivider__line} />
+  </div>
+)
 
 const Login = ({ setStep }) => {
   const { id, isAdding } = useContext(FormStatusContext)
@@ -22,19 +34,23 @@ const Login = ({ setStep }) => {
   const location = useLocation()
   const { isLoading, data: person } = usePerson(id)
   const { personId: loggedInPersonId, userPermissions } = useAuthState()
+  const { checkPermission } = usePermissions()
+  const isSelf = id === ACTION.SELF
+  const canChangeUsername = checkPermission(['person:edit', 'admin', 'person:admin'])
   const initialValues = {
-    canLogIn: id === ACTION.SELF ? 1 : person?.canLogIn,
+    canLogIn: isSelf ? 1 : person?.canLogIn,
     username: person?.username || '',
     newPassword: '',
     confirmNewPassword: '',
+    currentPassword: '',
     userLockedOut: person?.userLockedOut || '',
   }
 
-  const pwdValidation = string()
-    .min(8, formatMessage(messages.passwordConditionsShouldFulfilled))
-    .matches(/(?=.*?[a-z])(?=.*?[A-Z])/, formatMessage(messages.passwordConditionsShouldFulfilled))
-    .matches(/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/, formatMessage(messages.passwordConditionsShouldFulfilled))
-    .matches(/\d/, formatMessage(messages.passwordConditionsShouldFulfilled))
+  const pwdValidation = string().test(
+    'password-complexity',
+    formatMessage(passwordComplexityMessages.requirements),
+    value => !value || isPasswordAcceptable(value)
+  )
 
   const validationSchema = object({
     username: string().required(formatMessage(messages.usernameRequired)),
@@ -44,23 +60,61 @@ const Login = ({ setStep }) => {
         : pwdValidation,
     confirmNewPassword: string().when('newPassword', {
       is: val => !isEmpty(val),
-      then: pwdValidation
+      then: string()
         .required(formatMessage(messages.confirmNewPasswordRequired))
         .oneOf([ref('newPassword')], formatMessage(messages.confirmNewPasswordMatch)),
       otherwise: string().nullable(),
     }),
+    currentPassword: isSelf ? string().required(formatMessage(messages.currentPasswordRequired)) : string().nullable(),
     userLockedOut: string().nullable(),
   })
 
-  const { mutate: updateLogin, isLoading: isUpdating } = useUpdatePersonLogin(
-    id === ACTION.SELF ? loggedInPersonId : id
+  const { mutate: updatePersonLogin, isLoading: isUpdatingPerson } = useUpdatePersonLogin(
+    isSelf ? loggedInPersonId : id
   )
+  const { mutate: updateOwnLogin, isLoading: isUpdatingOwn } = useUpdateOwnLoginDetails(loggedInPersonId)
+  const isUpdating = isUpdatingPerson || isUpdatingOwn
+
+  const submitLoginUpdate = (values, resetForm) => {
+    if (isSelf) {
+      updateOwnLogin(
+        {
+          currentPassword: values.currentPassword,
+          newUsername: canChangeUsername ? values.username : undefined,
+          newPassword: values.newPassword,
+        },
+        {
+          onSuccess: () => {
+            resetForm({ values: { ...values, newPassword: '', confirmNewPassword: '', currentPassword: '' } })
+          },
+        }
+      )
+      return
+    }
+
+    updatePersonLogin(
+      {
+        canLogIn: !!values.canLogIn,
+        newUsername: values.username,
+        newPassword: values.newPassword,
+        userLockedOut: values.userLockedOut === 1,
+      },
+      {
+        onSuccess: () => {
+          resetForm({ values })
+          if (isAdding) {
+            setStep(2)
+          }
+        },
+      }
+    )
+  }
 
   return (
     <>
       <ContactStepper
         step={2}
-        full={id !== ACTION.SELF && userPermissions.includes('person:edit')}
+        full={!isSelf && userPermissions.includes('person:edit')}
         isUpdate={id !== ACTION.ADD}
         onChange={(v, step) => setStep(+step)}
       />
@@ -70,24 +124,7 @@ const Login = ({ setStep }) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={(values, { resetForm }) => {
-            updateLogin(
-              {
-                canLogIn: !!values.canLogIn,
-                newUsername: values.username,
-                newPassword: values.newPassword,
-                userLockedOut: values.userLockedOut === 1,
-              },
-              {
-                onSuccess: () => {
-                  resetForm({ values })
-                  if (isAdding) {
-                    setStep(2)
-                  }
-                },
-              }
-            )
-          }}
+          onSubmit={(values, { resetForm }) => submitLoginUpdate(values, resetForm)}
         >
           {({ handleSubmit, handleChange, values: { canLogIn, ...values }, errors, isValid, dirty }) => (
             <>
@@ -95,7 +132,10 @@ const Login = ({ setStep }) => {
               <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    {id !== ACTION.SELF ? (
+                    <SectionDivider label={formatMessage(messages.sectionOverview)} />
+                  </Grid>
+                  {!isSelf ? (
+                    <Grid item xs={12}>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -110,13 +150,13 @@ const Login = ({ setStep }) => {
                         }
                         label={`${formatMessage(messages.userCanAlsoLogIn)} *`}
                       />
-                    ) : null}
-                  </Grid>
+                    </Grid>
+                  ) : null}
                   <Grid item xs={6}>
                     <TextField
                       id="username"
                       name="username"
-                      disabled={canLogIn !== 1}
+                      disabled={canLogIn !== 1 || !canChangeUsername}
                       label={`${formatMessage(messages.username)} *`}
                       value={values.username}
                       onChange={handleChange}
@@ -124,8 +164,8 @@ const Login = ({ setStep }) => {
                       helperText={errors.username}
                     />
                   </Grid>
-                  <Grid item xs={6}>
-                    {id !== ACTION.SELF ? (
+                  {!isSelf ? (
+                    <Grid item xs={6}>
                       <LabeledSwitch
                         id="userLockedOut"
                         name="userLockedOut"
@@ -140,9 +180,30 @@ const Login = ({ setStep }) => {
                         onLabel={formatMessage(messages.locked)}
                         offLabel={formatMessage(messages.unlocked)}
                       />
-                    ) : null}
+                    </Grid>
+                  ) : null}
+
+                  <Grid item xs={12}>
+                    <SectionDivider label={formatMessage(messages.sectionPasswordChange)} />
                   </Grid>
-                  <Grid item xs={6}>
+                  {isSelf ? (
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        id="currentPassword"
+                        name="currentPassword"
+                        fullWidth
+                        type="password"
+                        label={`${formatMessage(messages.currentPassword)} *`}
+                        value={values.currentPassword}
+                        onChange={handleChange}
+                        disabled={isUpdating}
+                        error={!!errors.currentPassword}
+                        helperText={errors.currentPassword}
+                        inputProps={{ maxLength: 100, autoComplete: 'current-password' }}
+                      />
+                    </Grid>
+                  ) : null}
+                  <Grid item xs={12} md={6}>
                     <InputPassword
                       id="newPassword"
                       name="newPassword"
@@ -154,10 +215,11 @@ const Login = ({ setStep }) => {
                       helperText={errors.newPassword}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <InputPassword
                       id="confirmNewPassword"
                       name="confirmNewPassword"
+                      showComplexityHint={false}
                       disabled={canLogIn !== 1}
                       label={`${formatMessage(messages.confirmNewPassword)}`}
                       value={values.confirmNewPassword}

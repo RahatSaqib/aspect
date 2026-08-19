@@ -16,6 +16,14 @@ export default {
       id: 'pages.PersonDetails.accountDetails',
       defaultMessage: 'Account Details',
     },
+    sectionOverview: {
+      id: 'pages.PersonDetails.sectionOverview',
+      defaultMessage: 'Overview',
+    },
+    sectionPasswordChange: {
+      id: 'pages.PersonDetails.sectionPasswordChange',
+      defaultMessage: 'Password Change',
+    },
     systemAccessControl: {
       id: 'pages.PersonDetails.systemAccessControl',
       defaultMessage: 'Login',

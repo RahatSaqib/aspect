@@ -1,17 +1,24 @@
 import React from 'react'
-import { Clear } from '@mui/icons-material'
-import { TextField, Stepper, Step, StepLabel } from '@mui/material'
+import { TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
-import messages from '../../messages/allMessages'
+import passwordComplexityMessages from '../../messages/passwordComplexityMessages'
+import { getPasswordHintKey } from '../../utils/utils/passwordComplexity'
 
-const InputPassword = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
+const InputPassword = ({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  error,
+  helperText,
+  disabled,
+  showComplexityHint = true,
+}) => {
   const { formatMessage } = useIntl()
-  const rules = [
-    { descriptionLabel: formatMessage(messages.eightCharsLong), validator: /^.{8,}$/ },
-    { descriptionLabel: formatMessage(messages.mixCase), validator: /(?=.*?[a-z])(?=.*?[A-Z])/ },
-    { descriptionLabel: formatMessage(messages.specialChar), validator: /(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/ },
-    { descriptionLabel: formatMessage(messages.numbersIncluded), validator: /\d/ },
-  ]
+  const hintKey = showComplexityHint ? getPasswordHintKey(value) : null
+  const hint = hintKey ? formatMessage(passwordComplexityMessages[hintKey]) : null
+  const displayedHelperText = !value && helperText ? helperText : hint || helperText
 
   return (
     <>
@@ -24,20 +31,9 @@ const InputPassword = ({ id, name, label, value, onChange, error, helperText, di
         autoComplete="new-password"
         onChange={onChange}
         error={error}
-        helperText={helperText}
+        helperText={displayedHelperText}
         type="password"
       />
-      {value.length ? (
-        <Stepper activeStep={rules.length - 1} orientation="vertical" connector={<span />}>
-          {rules.map(rule =>
-            !rule.validator.test(value) ? (
-              <Step key={rule.descriptionLabel}>
-                <StepLabel StepIconComponent={() => <Clear color="error" />}>{rule.descriptionLabel}</StepLabel>
-              </Step>
-            ) : null
-          )}
-        </Stepper>
-      ) : null}
     </>
   )
 }
