@@ -11,7 +11,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "formatjs": "^0.1.1",
-    "husky": "8.0.3",
+    "husky": "9.1.7",
     "lint-staged": "13.1.2",
     "lodash": "^4.17.21",
     "make-runnable": "^1.4.1",
