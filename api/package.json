@@ -74,7 +74,7 @@
   "dependencies": {
     "@hapi/basic": "^7.0.0",
     "@hapi/boom": "^10.0.0",
-    "@hapi/hapi": "^21.1.0",
+    "@hapi/hapi": "^21.4.10",
     "@hapi/inert": "^7.1.0",
     "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^7.0.1",
