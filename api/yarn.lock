@@ -6283,10 +6283,10 @@ mdurl@^1.0.1:
   resolved "https://registry.yarnpkg.com/mdurl/-/mdurl-1.0.1.tgz#fe85b2ec75a59037f2adfec100fd6c601761152e"
   integrity sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==
 
-media-type@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/media-type/-/media-type-0.3.1.tgz#5d569cdd0c52d9c41c7c6451973edd267fb21bcb"
-  integrity sha512-Sc9Ryn2fvKswd9rSWR+MRiLZ0rR02twVmsCtAjRZbM8tho+tedW6ygU6vZlqpOaXLKQOpibqvzQ1WwzgM8mf8w==
+media-type@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/media-type/-/media-type-1.0.1.tgz#bd7747dc8d74d4ddbe3f5ac8817258355985a227"
+  integrity sha512-vs0bLz7/qKl4kUbnJxSylyBdqZJvWeEcI3Uw0PMjW9h4jzBch1MZfKNulKevpxcL4nHxcBPijUDO2TjnKGt57w==
 
 memorystream@^0.3.1:
   version "0.3.1"
