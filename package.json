@@ -9,7 +9,7 @@
     "concurrently": "^8.2.2",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^4.2.5",
     "formatjs": "^0.1.1",
     "husky": "8.0.3",
     "lint-staged": "13.1.2",
