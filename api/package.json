@@ -106,7 +106,7 @@
     "handlebars": "^4.7.7",
     "hapi-auth-jwt2": "^10.2.0",
     "hapi-raven": "^7.0.1",
-    "hapi-swagger": "^16.0.1",
+    "hapi-swagger": "^17.3.2",
     "http-client": "^4.3.1",
     "ioredis": "5.4.1",
     "isomorphic-fetch": "^3.0.0",
