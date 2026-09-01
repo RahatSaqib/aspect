@@ -114,7 +114,7 @@
     "jsonwebtoken": "^9.0.0",
     "knex": "^2.3.0",
     "lodash": "^4.17.21",
-    "media-type": "^0.3.1",
+    "media-type": "^1.0.1",
     "mysql": "^2.18.1",
     "newrelic": "10.2.0",
     "node-base64-image": "^2.0.4",
