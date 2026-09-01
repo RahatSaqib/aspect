@@ -6,7 +6,7 @@
   "repository": "git@github.com:SystemOneId/aspect.git",
   "devDependencies": {
     "@formatjs/cli": "4.2.29",
-    "concurrently": "^8.2.2",
+    "concurrently": "^10.0.5",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
