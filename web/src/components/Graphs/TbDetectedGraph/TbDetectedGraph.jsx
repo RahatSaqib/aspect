@@ -15,6 +15,7 @@ import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
+  formatCompactNumber,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
   getResultCategoryGroupsForResultList,
@@ -78,6 +79,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
 
     const pie = pieData.map(d => ({
       ...d,
+      count: d.value,
       label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
       value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 1),
     }))
@@ -95,6 +97,27 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       formatMessage,
       messages
     )
+    const groupedForBarActual = formatDataByGraphType(
+      info,
+      'actual',
+      {},
+      'MMM',
+      'month',
+      'resultCategory1',
+      i18nKeys,
+      'bar',
+      endPointParams,
+      formatMessage,
+      messages
+    )
+    const actualCountsByMonth = reduce(
+      groupedForBarActual,
+      (acc, row) => {
+        acc[row.month] = row
+        return acc
+      },
+      {}
+    )
     const expandedBarData = []
     groupedForBar.map(result => {
       const allKeysButMonth = Object.keys(result).filter(key => key !== 'month' && key !== 'totalCnt')
@@ -105,13 +128,17 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
             formatMessage(messages[format(negateTimeZoneOffset(new Date(result.month)), 'MMM').toLowerCase()]) +
             format(negateTimeZoneOffset(new Date(result.month)), '-yyyy'),
           value: +result[key].toFixed(1),
+          count: actualCountsByMonth[result.month]?.[key] ?? 0,
           type: genLabel(key, assays, formatMessage, messages, i18nKeys),
           originalMonth: result.month,
         })
       )
       return result
     })
-    return { donutData: { data: pie, total: `${pieAvg}%` }, barData: { data: expandedBarData } }
+    const totalText = `${pieAvg}%<br/><span style="font-size:14px;font-weight:400;">${formatCompactNumber(
+      totalDetected
+    )} / ${formatCompactNumber(totalValidResults)}</span>`
+    return { donutData: { data: pie, total: totalText }, barData: { data: expandedBarData } }
   }, [data, assays, format, formatMessage])
 
   return !data || !assays || !resultCategoryGroups ? (

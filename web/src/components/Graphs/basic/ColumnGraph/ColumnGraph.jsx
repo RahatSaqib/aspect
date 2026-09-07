@@ -1,6 +1,6 @@
 import React from 'react'
 import { Column } from '@ant-design/plots'
-import { filterColour } from '../../graphUtils'
+import { filterColour, formatCompactNumber } from '../../graphUtils'
 
 const ColumnGraph = ({
   data,
@@ -23,7 +23,13 @@ const ColumnGraph = ({
     label: showLabel
       ? {
           position: 'middle',
-          content: originData => (isPercentage ? `${originData.value}%` : originData.value),
+          content: originData =>
+            isPercentage
+              ? `${originData.value}%${
+                  originData.count === undefined ? '' : `\n(${formatCompactNumber(originData.count)})`
+                }`
+              : originData.value,
+          style: { textAlign: 'center', fontSize: 12 },
           layout: [{ type: 'interval-adjust-position' }, { type: 'interval-hide-overlap' }, { type: 'adjust-color' }],
         }
       : false, // format for label on top of section
@@ -43,9 +49,13 @@ const ColumnGraph = ({
     animation: false,
     legend: { position: 'bottom', maxRow: 3 },
     tooltip: tooltip || {
+      // G2Plot only maps xField/yField/seriesField onto the tooltip datum by default, so count must be listed explicitly
+      fields: [xField, yField, seriesField, 'count'],
       formatter: datum => ({
         name: `${datum.type}`,
-        value: isPercentage ? `${datum.value}%` : `${datum.value}`,
+        value: isPercentage
+          ? `${datum.value}%${datum.count === undefined ? '' : ` (${datum.count.toLocaleString()})`}`
+          : `${datum.value}`,
       }),
     },
     onReady,

@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-properties */
 import React from 'react'
 import { Pie, measureTextWidth } from '@ant-design/plots'
-import { filterColour } from '../../graphUtils'
+import { filterColour, formatCompactNumber } from '../../graphUtils'
 
 function renderStatistic(containerWidth, text, style) {
   const { width: textWidth, height: textHeight } = measureTextWidth(text, style)
@@ -31,7 +31,8 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total, label, toolti
           content:
             label ||
             (obj => {
-              return obj.value < 1 ? '' : `${obj.value}%`
+              if (obj.value < 1) return ''
+              return `${obj.value}%${obj.count === undefined ? '' : ` (${formatCompactNumber(obj.count)})`}`
             }),
         }
       : false, // format for label on top of section
@@ -59,7 +60,14 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total, label, toolti
     colorField: 'label',
     radius: 1,
     innerRadius: 0.64,
-    meta: { value: { formatter: tooltip || (v => `${v} %`) } }, // format for hover tooltip
+    tooltip: {
+      formatter: datum => ({
+        name: datum.label,
+        value: tooltip
+          ? tooltip(datum.value, datum)
+          : `${datum.value}%${datum.count === undefined ? '' : ` (${datum.count.toLocaleString()})`}`,
+      }),
+    },
     animation: false,
     legend: legend ? { position: 'bottom' } : false,
     appendPadding: 10,

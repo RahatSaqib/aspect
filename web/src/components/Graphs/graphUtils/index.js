@@ -130,7 +130,7 @@ const graphColorMap = [
   { id: 113, externalId: 'assayGenoTypeMTBDRslV2', color: colors['--geno-lavender4'] },
 
   { id: 114, externalId: 'GxMtbRif', color: colors['--genex-blue1'] },
-  { id: 115, externalId: 'GxMtbRifUltra', color: colors['--genex-blue2'] },
+  { id: 115, externalId: 'GxMtbRifUltra', color: colors['--azure-radiance'] },
 
   { id: 116, externalId: 'GxHiv1Vl', color: colors['--genex-blue3'] },
   { id: 117, externalId: 'GxHiv1Qual', color: colors['--genex-blue4'] },
@@ -159,10 +159,10 @@ const graphColorMap = [
   { id: 202, externalId: 'assayLPA', color: colors['--hit-gray'] },
   { id: 204, externalId: 'assayTbLamp', color: colors['--rolling-stone'] },
 
-  { id: 220, externalId: 'assayTruenatMtb', color: colors['--covid-green4'] },
+  { id: 220, externalId: 'assayTruenatMtb', color: colors['--web-orange-2'] },
   { id: 221, externalId: 'assayTruenatRif', color: colors['--covid-green5'] },
   { id: 222, externalId: 'assayTruenatUnknown', color: colors['--web-orange'] },
-  { id: 223, externalId: 'assayTruenatMtbPlus', color: colors['--covid-green3'] },
+  { id: 223, externalId: 'assayTruenatMtbPlus', color: colors['--malachite'] },
 
   { id: 301, externalId: '2010', color: colors['--covid-green1'] },
   { id: 301, externalId: '2011', color: colors['--aspect-color-mandy'] },
@@ -275,6 +275,10 @@ const genLabel = (string, assaysFromState, formatMessage, intlMessages, i18nKeys
 const calcPercentageForGraphs = (value = 0, total, precision = 4) => {
   return ((value / total) * 100).toFixed(precision)
 }
+
+// shortens large counts (e.g. 121107 -> 121.1K) so they fit inside chart labels/statistics
+const formatCompactNumber = value =>
+  new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 }).format(value)
 
 const getAverageFromData = (data, value, which, notation, culture) => {
   if (data.length && which) {
@@ -575,6 +579,7 @@ export {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
+  formatCompactNumber,
   getAverageFromData,
   flattenAssaysStructure,
   fillYear,
